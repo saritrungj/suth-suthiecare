@@ -142,7 +142,7 @@ export default function RiskCases() {
       setCurrentFormDetails(null);
       setResponses([]);
     }
-  }, [filteredFormsList]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [filteredFormsList, selectedFormId, forms.length]); 
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -252,9 +252,6 @@ export default function RiskCases() {
     q => q.type !== "section" && q.type !== "description"
   );
 
-  const handleClinicTabClick = (clinicId) => {
-    setClinicFilter(clinicId);
-  };
 
 
   // ฟังก์ชันแปลงวันที่เป็นรูปแบบไทย (วว/ดด/ปปปป) 

@@ -52,19 +52,19 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
   );
 };
 
+const COLORS = [
+  "#FF6B6B", "#FFD93D", "#6BCB77", "#4D96FF", "#FF8FAB",
+  "#C77DFF", "#00C2A8", "#FFA94D", "#A0E7E5", "#B4F8C8",
+  "#FBE7C6", "#FFAEBC", "#A0C4FF", "#BDB2FF", "#FFC6FF",
+  "#9BF6FF", "#CAFFBF", "#FDFFB6", "#FFD6A5", "#E4C1F9"
+];
+
 const AddChartModal = ({ isOpen, onClose, onSave, formId }) => {
   const [chartName, setChartName] = useState('');
   const [selectedQuestion, setSelectedQuestion] = useState('');
   const [questions, setQuestions] = useState([])
   const [chartType, setChartType] = useState('pie');
   const [chartData, setChartData] = useState([]);
-
-  const COLORS = [
-    "#FF6B6B", "#FFD93D", "#6BCB77", "#4D96FF", "#FF8FAB",
-    "#C77DFF", "#00C2A8", "#FFA94D", "#A0E7E5", "#B4F8C8",
-    "#FBE7C6", "#FFAEBC", "#A0C4FF", "#BDB2FF", "#FFC6FF",
-    "#9BF6FF", "#CAFFBF", "#FDFFB6", "#FFD6A5", "#E4C1F9"
-  ];
 
   
   // Logic ประมวลผลข้อมูล: ใช้ item.result ที่ได้จาก Backend เป็นหลักเพื่อความแม่นยำ

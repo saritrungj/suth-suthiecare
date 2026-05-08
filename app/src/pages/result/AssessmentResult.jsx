@@ -254,7 +254,6 @@ export default function AssessmentResult() {
         };
         // 1. ตรวจสอบส่วนที่ 1: ความพึงพอใจ (q1 - q5)
         for (let i = 1; i <= 5; i++) {
-          const val = getRadio(`q1`); // เช็คไล่ไปทีละข้อ
           if (!getRadio(`q${i}`)) {
             Swal.showValidationMessage(`กรุณาตอบส่วนที่ 1 ข้อที่ ${i} ให้ครบถ้วน`);
             document.getElementsByName(`q${i}`)[0]?.closest('div')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
