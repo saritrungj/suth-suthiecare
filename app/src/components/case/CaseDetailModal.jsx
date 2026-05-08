@@ -64,7 +64,7 @@ export default function CaseDetailModal({ data, onClose, onCaseUpdated, onCaseDe
     if (staffOptions.length > 0 && !selectedStaff) {
       setSelectedStaff(staffOptions[0]);
     }
-  }, [staffOptions]);
+  }, [staffOptions, selectedStaff]);
 
   // save ทุกครั้งที่ staffOptions เปลี่ยน
   useEffect(() => {
@@ -73,10 +73,10 @@ export default function CaseDetailModal({ data, onClose, onCaseUpdated, onCaseDe
 
   // กัน selected ค้าง
   useEffect(() => {
-    if (!staffOptions.includes(selectedStaff)) {
+    if (selectedStaff && !staffOptions.includes(selectedStaff)) {
       setSelectedStaff("");
     }
-  }, [staffOptions]);
+  }, [staffOptions, selectedStaff]);
 
   const [savedRisk, setSavedRisk] = useState(defaultRisk);
   const [riskLevel, setRiskLevel] = useState(savedRisk);
@@ -151,7 +151,7 @@ export default function CaseDetailModal({ data, onClose, onCaseUpdated, onCaseDe
   };
 
   const leftPanelSummary = viewedResponse?.summary_data || {};
-  const leftPanelRawAnswers = leftPanelSummary.raw_answers || {};
+  const leftPanelRawAnswers = useMemo(() => leftPanelSummary.raw_answers || {}, [leftPanelSummary.raw_answers]);
   const leftPanelScoreResults = useMemo(() => leftPanelSummary.score_results || [], [leftPanelSummary.score_results]);
 
   useEffect(() => {

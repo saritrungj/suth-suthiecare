@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import Sidebar from "../../components/Sidebar";
 
 import AppointmentTable from "../../components/appointment/AppointmentTable";
@@ -109,7 +109,7 @@ export default function Appointment() {
   const [formStatusFilter, setFormStatusFilter] = useState('published'); 
 
   /* ================= DATA FETCHING ================= */
-  const fetchAppointments = async (formId) => {
+  const fetchAppointments = useCallback(async (formId) => {
     if (!formId) return;
 
     setIsLoading(true);
@@ -156,7 +156,7 @@ export default function Appointment() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const filteredForms = useMemo(() => {
     let list = forms;
@@ -177,11 +177,11 @@ export default function Appointment() {
       setSelectedFormId("");
       setAppointments([]);
     }
-  }, [filteredForms]); 
+  }, [forms.length, filteredForms, selectedFormId]); 
 
   useEffect(() => {
     fetchAppointments(selectedFormId);
-  }, [selectedFormId]);
+  }, [selectedFormId, fetchAppointments]);
 
   const fetchServices = async () => {
     try {

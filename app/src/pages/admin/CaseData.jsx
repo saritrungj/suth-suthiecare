@@ -2,10 +2,11 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import Sidebar from "../../components/Sidebar";
 import CaseTable from "../../components/case/CaseTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
+import ExportExcelModal from "../../components/case/ExportExcelModal";
 import { getForms, getFormById, getFormResponses } from "../../services/api";
 import "./CaseData.css";
 import { useLocation } from "react-router-dom";
-import { FiFolder, FiUsers, FiList, FiSettings, FiSearch, FiChevronDown, FiLayers, FiActivity, FiCalendar } from 'react-icons/fi';
+import { FiFolder, FiUsers, FiList, FiSettings, FiSearch, FiChevronDown, FiLayers, FiActivity, FiCalendar, FiDownload } from 'react-icons/fi';
 
 const FACULTIES = [
   "(1) สำนักวิชาวิทยาศาสตร์", "(2) สำนักวิชาเทคโนโลยีสังคม", "(3) สำนักวิชาเทคโนโลยีการเกษตร",
@@ -93,6 +94,7 @@ export default function CaseData() {
   const [faculty, setFaculty] = useState("");
   const [risk, setRisk] = useState("");
   const [selectedCase, setSelectedCase] = useState(null);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const [forms, setForms] = useState([]);
   const [selectedFormId, setSelectedFormId] = useState(initialFormId);
@@ -165,11 +167,7 @@ export default function CaseData() {
       setCurrentFormDetails(null);
       setResponses([]);
     }
-  }, [filteredFormsList, selectedFormId]);
-
-  const handleClinicTabClick = (clinicId) => {
-    setClinicFilter(clinicId);
-  };
+  }, [filteredFormsList, selectedFormId, forms.length]);
 
   useEffect(() => {
     const fetchFormAndResponses = async () => {
@@ -334,18 +332,28 @@ export default function CaseData() {
               </h2>
             </div>
 
-            <div className="scd-view-mode-group">
+            <div className="scd-header-actions">
+              <div className="scd-view-mode-group">
+                <button
+                  onClick={() => setTableViewMode('master')}
+                  className={`scd-view-mode-btn ${tableViewMode === 'master' ? 'active-master' : ''}`}
+                >
+                  <FiUsers size={16} /> ภาพรวมเคสผู้ป่วย
+                </button>
+                <button
+                  onClick={() => setTableViewMode('form')}
+                  className={`scd-view-mode-btn ${tableViewMode === 'form' ? 'active-form' : ''}`}
+                >
+                  <FiList size={16} /> คำตอบแบบฟอร์ม
+                </button>
+              </div>
+
               <button
-                onClick={() => setTableViewMode('master')}
-                className={`scd-view-mode-btn ${tableViewMode === 'master' ? 'active-master' : ''}`}
+                onClick={() => setIsExportModalOpen(true)}
+                className="scd-export-excel-btn"
+                title="ส่งออกข้อมูลเป็น Excel"
               >
-                <FiUsers size={16} /> ภาพรวมเคสผู้ป่วย
-              </button>
-              <button
-                onClick={() => setTableViewMode('form')}
-                className={`scd-view-mode-btn ${tableViewMode === 'form' ? 'active-form' : ''}`}
-              >
-                <FiList size={16} /> คำตอบแบบฟอร์ม
+                <FiDownload size={16} /> Export Excel
               </button>
             </div>
           </div>
@@ -508,6 +516,16 @@ export default function CaseData() {
                 setResponses(prev => prev.filter(r => r.id !== deletedId));
                 setSelectedCase(null);
               }}
+            />
+          )}
+
+          {isExportModalOpen && (
+            <ExportExcelModal
+              isOpen={isExportModalOpen}
+              onClose={() => setIsExportModalOpen(false)}
+              questions={currentFormDetails?.questions || []}
+              data={filteredData}
+              formTitle={currentFormDetails?.title}
             />
           )}
 

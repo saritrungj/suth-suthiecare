@@ -82,9 +82,7 @@ const FormManager = () => {
 
   // 🟢 จัดการการเปิด/ปิดเมนู
   const [openMenuId, setOpenMenuId] = useState(null);
-  const [openDropdownId, setOpenDropdownId] = useState(null);
   const menuRef = useRef(null);
-  const filterRef = useRef(null);
 
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [renamingForm, setRenamingForm] = useState({ id: null, title: '' });
@@ -126,10 +124,6 @@ const FormManager = () => {
       // ปิดเมนูการ์ดฟอร์ม
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setOpenMenuId(null);
-      }
-      // ปิด Dropdown ตัวกรอง
-      if (filterRef.current && !filterRef.current.contains(event.target)) {
-        setOpenDropdownId(null);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);

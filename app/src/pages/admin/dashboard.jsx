@@ -676,12 +676,12 @@ const SortableChart = React.memo(function SortableChart({ id, title, type, quest
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // 🟢 ดึงเกณฑ์คะแนนของคำถามนี้มาเตรียมไว้
-  const questionDetails = formQuestions?.find(q => String(q.id) === String(question));
-  const scoringRules = questionDetails?.scoringRules || [];
-
   const processedPieData = useMemo(() => {
     if (!data || data.length === 0) return [];
+
+    // 🟢 ดึงเกณฑ์คะแนนของคำถามนี้มาเตรียมไว้
+    const questionDetails = formQuestions?.find(q => String(q.id) === String(question));
+    const scoringRules = questionDetails?.scoringRules || [];
 
     const counts = {};
     data.forEach(item => {
@@ -754,7 +754,7 @@ const SortableChart = React.memo(function SortableChart({ id, title, type, quest
         color: matchedRule?.color || colors[index % colors.length]
       };
     }).sort((a, b) => b.value - a.value);
-  }, [data, question, colors, scoringRules]);
+  }, [data, question, colors, formQuestions]);
 
   return (
     <div

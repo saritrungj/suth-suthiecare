@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 export default function CaseActionTab(props) {
 
   const {
-    masterCaseInfo, selectedStaff, setSelectedStaff, staffOptions, setStaffOptions, isManagingStaff, setIsManagingStaff, newStaffName, setNewStaffName, handleAddStaff, handleDeleteStaff,
+    masterCaseInfo, selectedStaff, setSelectedStaff, staffOptions, isManagingStaff, setIsManagingStaff, newStaffName, setNewStaffName, handleAddStaff, handleDeleteStaff,
     isManagingStatus, setIsManagingStatus, status, setStatus, statusOptions, handleDeleteStatus,
     newStatusName, setNewStatusName, handleAddStatus, formRules, showSubMetrics, setShowSubMetrics,
     dynamicRisks, scoreResults, editingRiskId, setEditingRiskId, tempRiskChange, setTempRiskChange,
@@ -18,7 +18,7 @@ export default function CaseActionTab(props) {
     editingServiceName, setEditingServiceName, handleEditService, handleDeleteService, newServiceName,
     setNewServiceName, handleAddService, handleSaveAll, stripHtml,
     clinicalData = {}, setClinicalData = () => { },
-    templateSessionNo, setTemplateSessionNo, groupedLogs, handleSelectTemplate,
+    templateSessionNo, setTemplateSessionNo, handleSelectTemplate,
   } = props;
 
   const hasScoring = formRules.length > 0;
