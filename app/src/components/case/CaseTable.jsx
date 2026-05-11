@@ -118,10 +118,23 @@ export default function CaseTable({ data = [], questions = [], visibleColumns = 
 
               let calculatedRisk = null;
               if (scoreResults.length > 0) {
-                  const isHigh = scoreResults.some(r => r.color === '#ef4444' || r.color === '#d93025' || r.color === '#ff1a1a' || (r.label && r.label.includes('สูง')));
-                  const isMed = scoreResults.some(r => r.color === '#f59e0b' || r.color === '#ff9800' || (r.label && r.label.includes('ปานกลาง')));
+                  const isHigh = scoreResults.some(s => {
+                    const c = s.color?.toLowerCase() || '';
+                    return c.includes('d93025') || c.includes('e53935') || c.includes('f44336') ||
+                      c.includes('ef4444') || c.includes('dc2626') || c.includes('ff0000') || c.includes('red') ||
+                      (s.label && s.label.includes('สูง'));
+                  });
+
+                  const isMedium = scoreResults.some(s => {
+                    const c = s.color?.toLowerCase() || '';
+                    return c.includes('fbbc04') || c.includes('ff9800') || c.includes('f59e0b') ||
+                      c.includes('orange') || c.includes('yellow') ||
+                      (s.label && s.label.includes('ปานกลาง'));
+                  });
+
                   if (isHigh) calculatedRisk = 'สูง';
-                  else if (isMed) calculatedRisk = 'ปานกลาง';
+                  else if (isMedium) calculatedRisk = 'ปานกลาง';
+                  else calculatedRisk = 'ต่ำ';
               }
 
               let riskToDisplay = viewMode === 'master' ? (calculatedRisk || row.overall_risk || row.risk_level || summary.overall_risk || "ประเมินใหม่") : (calculatedRisk || row.risk_level || "ไม่ระบุ");

@@ -310,7 +310,12 @@ router.get('/admin/master-cases/stats', async (req, res) => {
                     }
 
                     const results = summary.score_results || [];
-                    const isHighRisk = results.some(res => res.color === '#ef4444' || res.color === '#d93025' || res.color === '#ff1a1a');
+                    const isHighRisk = results.some(res => {
+                        const c = res.color?.toLowerCase() || '';
+                        return c.includes('d93025') || c.includes('e53935') || c.includes('f44336') ||
+                          c.includes('ef4444') || c.includes('dc2626') || c.includes('ff0000') || c.includes('red') ||
+                          (res.label && res.label.includes('สูง'));
+                    });
                     if (isHighRisk && !isClosed) stats.highRisk++;
                 } catch (e) {}
             }

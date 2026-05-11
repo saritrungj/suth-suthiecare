@@ -208,6 +208,15 @@ to { transform: translateX(-600px); opacity: 0; }
 .sut2-hero__cta-group { flex-wrap: nowrap !important; justify-content: center !important; gap: 10px; width: 100%; }
 .sut2-hero__cta { padding: 10px 14px !important; font-size: 14px !important; flex: 1; white-space: nowrap; }
 .back-btn { font-size: 0.9rem; padding: 0.4rem 0.8rem; display: block; width: 90%; margin: 0 auto; position: relative; margin-top: auto; margin-bottom: 20px; }
+.clinic-card h3 {
+    font-size: 1rem;
+    line-height: 1.3;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 90%;
+  }
  }
 /* =========================================
    11. ANIMATIONS

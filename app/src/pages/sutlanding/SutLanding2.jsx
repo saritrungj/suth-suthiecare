@@ -55,23 +55,25 @@ function FormCard({ form, themeClass, count, isLoaded }) {
       tabIndex={0}
     >
       {/* ===== Band ด้านบน ===== */}
-      <div
-        className={`sut2-card__band ${displayImage && isBanner ? "sut2-card__band--has-img" : ""} ${displayImage && !isBanner ? "sut2-card__band--has-illust" : ""}`}
-      >
-        {/* มีรูป + เป็น banner → แสดงรูปเต็ม band */}
-        {displayImage && isBanner && (
+     <div className={`sut2-card__band ${displayImage ? "sut2-card__band--has-img" : ""}`}>
+        {displayImage && (
           <img className="sut2-card__band-img" src={displayImage} alt={form.title} />
         )}
-
+      </div>
+      
+     {/* {displayImage && isBanner && (
+    <img className="sut2-card__band-img" src={displayImage} alt={form.title} />
+  )} */}
         {/* มีรูปแต่ไม่ใช่ banner → แสดงรูปกลาง band */}
-        {displayImage && !isBanner && (
+    {/*   {displayImage && !isBanner && (
           <div className="sut2-card__illust-inline">
             <img src={displayImage} alt="Form Cover" />
           </div>
         )}
-
+     */}
         {/* ไม่มีรูป → แสดงแค่สี gradient จาก theme (ไม่มี element เพิ่ม) */}
-      </div>
+       
+   {/*   </div>  */}
 
       {/* ===== Body ตัวหนังสือ ===== */}
       <div className="sut2-card__body">

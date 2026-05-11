@@ -28,13 +28,15 @@ function getRiskLevel(summary_data) {
   const isHigh = scoreResults.some(s => {
     const c = s.color?.toLowerCase() || '';
     return c.includes('d93025') || c.includes('e53935') || c.includes('f44336') ||
-      c.includes('ef4444') || c.includes('dc2626') || c.includes('ff0000') || c.includes('red');
+      c.includes('ef4444') || c.includes('dc2626') || c.includes('ff0000') || c.includes('red') ||
+      (s.label && s.label.includes('สูง'));
   });
 
   const isMedium = scoreResults.some(s => {
     const c = s.color?.toLowerCase() || '';
     return c.includes('fbbc04') || c.includes('ff9800') || c.includes('f59e0b') ||
-      c.includes('orange') || c.includes('yellow');
+      c.includes('orange') || c.includes('yellow') ||
+      (s.label && s.label.includes('ปานกลาง'));
   });
 
   if (isHigh) return "สูง";
