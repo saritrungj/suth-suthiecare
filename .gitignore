@@ -8,6 +8,7 @@
 
 # Dependencies
 node_modules/
+.worktrees/
 
 # Logs
 *.log
