@@ -127,7 +127,6 @@ function App() {
 
   return (
     <BrowserRouter>
-<<<<<<< Updated upstream
         <Routes>
           <Route path="/" element={<SutLanding2 />} />
           <Route path="/login" element={<Login />} />
@@ -155,38 +154,6 @@ function App() {
             <Route path="help-center" element={<HelpCenterManager />} />
           </Route>
         </Routes>
-=======
-      <Routes>
-        <Route path="/" element={<SutLanding2 />} />
-        <Route path="/login" element={<Login />} />
-
-        <Route path="/assessment-result" element={<AssessmentResult />} />
-        <Route path="/assessment/:id" element={<FormView />} />
-        <Route path="/history" element={<HistorySearch />} />
-        <Route path="/history/result" element={<HistoryResult />} />
-
-        <Route
-          path="/admin"
-          element={
-            <AdminRoute>
-              <AdminLayout />
-            </AdminRoute>
-          }
-        >
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="forms" element={<FormManager />} />
-          <Route path="forms/create" element={<FormBuilder />} />
-          <Route path="forms/edit/:id" element={<FormBuilder />} />
-          <Route path="schedule" element={<Appointment />} />
-          <Route path="cases" element={<CaseData />} />
-          <Route path="roles" element={<RolesPermissions />} />
-          <Route path="users" element={<UserManagement />} />
-          <Route path="risk-cases" element={<RiskCases />} />
-          <Route path="banner" element={<BannerManagement />} />
-          <Route path="clinics" element={<ClinicManager />} />
-        </Route>
-      </Routes>
->>>>>>> Stashed changes
     </BrowserRouter>
   );
 }

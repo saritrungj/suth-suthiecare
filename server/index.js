@@ -9,7 +9,6 @@ require("dotenv").config();
 const { sendTelegramAlert } = require("./utils/telegram");
 
 // 🟢 2. นำเข้า Routes ทั้งหมดที่เราแยกไว้
-<<<<<<< Updated upstream
 const authRoutes = require('./routes/authRoutes'); // <-- เส้นทางจัดการการเข้าสู่ระบบ
 const formRoutes = require('./routes/formRoutes'); // <-- เส้นทางจัดการข้อมูลฟอร์มและคำตอบ
 const userRoutes = require('./routes/userRoutes'); // <-- เส้นทางจัดการข้อมูลผู้ใช้
@@ -21,17 +20,6 @@ const clinicRoutes = require('./routes/clinicRoutes'); // <-- เส้นทา
 const staffRoutes = require('./routes/staffRoutes');// <-- เส้นทางจัดการข้อมูลเจ้าหน้าที่
 const faqRoutes = require('./routes/faqRoutes'); // <-- เส้นทางจัดการข้อมูล FAQ
 
-=======
-const authRoutes = require("./routes/authRoutes"); // <-- เส้นทางจัดการการเข้าสู่ระบบ
-const formRoutes = require("./routes/formRoutes"); // <-- เส้นทางจัดการข้อมูลฟอร์มและคำตอบ
-const userRoutes = require("./routes/userRoutes"); // <-- เส้นทางจัดการข้อมูลผู้ใช้
-const roleRoutes = require("./routes/roleRoutes"); // <-- เส้นทางจัดการข้อมูลผู้ใช้และสิทธิ์
-const bannerRoutes = require("./routes/bannerRoutes"); // <-- เส้นทางจัดการข้อมูลแบนเนอร์
-const dashboardRoutes = require("./routes/dashboardRoutes"); // <-- เส้นทางจัดการข้อมูล Dashboard
-const caseRoutes = require("./routes/caseRoutes"); // <-- เส้นทางจัดการเคส, นัดหมาย, และประวัติ
-const clinicRoutes = require("./routes/clinicRoutes"); // <-- เส้นทางจัดการข้อมูลคลินิก
-const staffRoutes = require("./routes/staffRoutes"); // <-- เส้นทางจัดการข้อมูลเจ้าหน้าที่
->>>>>>> Stashed changes
 
 const app = express();
 
@@ -85,7 +73,6 @@ app.get("/", (req, res) => {
 });
 
 // 🟢 ผูก Routes เข้ากับ API Path หลัก
-<<<<<<< Updated upstream
 app.use('/api', authRoutes); 
 app.use('/api', formRoutes); 
 app.use('/api', userRoutes); 
@@ -96,17 +83,6 @@ app.use('/api', caseRoutes);
 app.use('/api/clinics', clinicRoutes);
 app.use('/api/staffs', staffRoutes);
 app.use('/api/admin/help-center', faqRoutes); 
-=======
-app.use("/api", authRoutes);
-app.use("/api", formRoutes);
-app.use("/api", userRoutes);
-app.use("/api", roleRoutes);
-app.use("/api", bannerRoutes);
-app.use("/api", dashboardRoutes);
-app.use("/api", caseRoutes);
-app.use("/api/clinics", clinicRoutes);
-app.use("/api/staffs", staffRoutes);
->>>>>>> Stashed changes
 
 // 🟢 6. API ทดสอบ Telegram (ป้องกันด้วย token — เฉพาะผู้ที่ล็อกอินแล้ว)
 const { verifyToken } = require("./middleware/authMiddleware");

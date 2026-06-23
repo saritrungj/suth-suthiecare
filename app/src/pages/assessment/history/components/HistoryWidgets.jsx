@@ -13,18 +13,8 @@ import {
 import { FaWeight, FaRuler } from "react-icons/fa";
 
 // ดึงการตั้งค่าจากไฟล์ Utils ที่เราเพิ่งสร้าง
-<<<<<<< Updated upstream
 import { API_BASE, axiosConfig, formatAnswerValue, stripHtml, formatDate } from '../historyUtils';
 import { useTranslation } from 'react-i18next';
-=======
-import {
-  API_BASE,
-  axiosConfig,
-  formatAnswerValue,
-  stripHtml,
-  formatDate,
-} from "../historyUtils";
->>>>>>> Stashed changes
 
 const IconMap = {
   user: FiUser,
@@ -62,19 +52,8 @@ export function MaskedIdField({ value }) {
   );
 }
 
-<<<<<<< Updated upstream
 export function EditableAnswerField({ responseId, questionId, questionLabel, answerValue, type = 'text', onSave }) {
   const { t } = useTranslation();
-=======
-export function EditableAnswerField({
-  responseId,
-  questionId,
-  questionLabel,
-  answerValue,
-  type = "text",
-  onSave,
-}) {
->>>>>>> Stashed changes
   const cleanVal = formatAnswerValue(answerValue);
   const [editing, setEditing] = useState(false);
   const [val, setVal] = useState(cleanVal);
@@ -134,22 +113,9 @@ export function EditableAnswerField({
         </div>
       ) : (
         <div className="hr-answer-editable-view">
-<<<<<<< Updated upstream
           <span className="hr-answer-v">{savedVal || '-'}</span>
           <button className="hr-edit-btn hr-edit-btn--sm" onClick={() => { setVal(savedVal); setEditing(true); }} title={t('history.result.edit_data')}>
             <FiEdit2 size={11} /><span>{t('history.result.edit_btn')}</span>
-=======
-          <span className="hr-answer-v">{savedVal || "-"}</span>
-          <button
-            className="hr-edit-btn hr-edit-btn--sm"
-            onClick={() => {
-              setVal(savedVal);
-              setEditing(true);
-            }}
-          >
-            <FiEdit2 size={11} />
-            <span>แก้ไข</span>
->>>>>>> Stashed changes
           </button>
         </div>
       )}
@@ -157,23 +123,9 @@ export function EditableAnswerField({
   );
 }
 
-<<<<<<< Updated upstream
 export function EditableField({ responseId, field, label, value, type = 'text', icon, onSave, updatedAt }) {
   const { t } = useTranslation();
   const cleanValue = stripHtml(value || '');
-=======
-export function EditableField({
-  responseId,
-  field,
-  label,
-  value,
-  updatedAt,
-  type = "text",
-  icon,
-  onSave,
-}) {
-  const cleanValue = stripHtml(value || "");
->>>>>>> Stashed changes
   const [editing, setEditing] = useState(false);
   const [val, setVal] = useState(cleanValue);
   const [saving, setSaving] = useState(false);
@@ -236,7 +188,6 @@ export function EditableField({
         </div>
       ) : (
         <div className="hr-field-view">
-<<<<<<< Updated upstream
           <span className={`hr-field-val ${!cleanValue ? 'empty' : ''}`}>{cleanValue || '-'}</span>
           <button className="hr-edit-btn" onClick={() => { setVal(cleanValue); setEditing(true); }} title={t('history.result.edit_data')}>
             <FiEdit2 size={12} /><span>{t('history.result.edit_btn')}</span>
@@ -244,44 +195,12 @@ export function EditableField({
         </div>
       )}
       {updatedAt && <span className="hr-field-updated">✎ {t('history.result.edit_last')}: {formatDate(updatedAt)}</span>}
-=======
-          <span className={`hr-field-val ${!cleanValue ? "empty" : ""}`}>
-            {cleanValue || "ยังไม่ระบุ"}
-          </span>
-          <button
-            className="hr-edit-btn"
-            onClick={() => {
-              setVal(cleanValue);
-              setEditing(true);
-            }}
-          >
-            <FiEdit2 size={12} />
-            <span>แก้ไข</span>
-          </button>
-        </div>
-      )}
-      {updatedAt && (
-        <span className="hr-field-updated">
-          ✎ แก้ไขล่าสุด: {formatDate(updatedAt)}
-        </span>
-      )}
->>>>>>> Stashed changes
     </div>
   );
 }
 
-<<<<<<< Updated upstream
 export function HeroEditableField({ value, type = 'text', icon, isTitle = false, onSave }) {
   const { t } = useTranslation();
-=======
-export function HeroEditableField({
-  value,
-  onSave,
-  type = "text",
-  isTitle = false,
-  icon = null,
-}) {
->>>>>>> Stashed changes
   const [editing, setEditing] = useState(false);
   const [val, setVal] = useState(value);
   const [saving, setSaving] = useState(false);
@@ -307,13 +226,7 @@ export function HeroEditableField({
   if (editing) {
     return (
       <div className="hr-hero-edit-wrap">
-<<<<<<< Updated upstream
         {Icon && <Icon size={12} color="rgba(255,255,255,0.7)" />}
-=======
-        {IconComponent && (
-          <IconComponent size={12} color="rgba(255,255,255,0.7)" />
-        )}
->>>>>>> Stashed changes
         <input
           type={type}
           className={`hr-hero-input ${isTitle ? "title-input" : "pill-input"}`}
@@ -325,27 +238,10 @@ export function HeroEditableField({
           }}
           autoFocus
         />
-<<<<<<< Updated upstream
         <button className="hr-hero-action-btn save" onClick={handleSave} disabled={saving} title={t('history.result.save')}>
           <FiCheck size={14} />
         </button>
         <button className="hr-hero-action-btn cancel" onClick={handleCancel} disabled={saving} title={t('history.result.cancel')}>
-=======
-        <button
-          className="hr-hero-action-btn save"
-          onClick={handleSave}
-          disabled={saving}
-          title="บันทึก"
-        >
-          <FiCheck size={14} />
-        </button>
-        <button
-          className="hr-hero-action-btn cancel"
-          onClick={handleCancel}
-          disabled={saving}
-          title="ยกเลิก"
-        >
->>>>>>> Stashed changes
           <FiX size={14} />
         </button>
       </div>
@@ -354,21 +250,9 @@ export function HeroEditableField({
 
   return (
     <div className="hr-hero-view-wrap">
-<<<<<<< Updated upstream
       {Icon && <Icon size={12} color="rgba(255,255,255,0.8)" />}
       <span className={isTitle ? "hr-name" : "hr-id-value"}>{value}</span>
       <button className="hr-hero-edit-btn" onClick={() => setEditing(true)} title={t('history.result.edit_data')}>
-=======
-      {IconComponent && (
-        <IconComponent size={12} color="rgba(255,255,255,0.8)" />
-      )}
-      <span className={isTitle ? "hr-name" : "hr-id-value"}>{value}</span>
-      <button
-        className="hr-hero-edit-btn"
-        onClick={() => setEditing(true)}
-        title="แก้ไขข้อมูล"
-      >
->>>>>>> Stashed changes
         <FiEdit2 size={12} />
       </button>
     </div>

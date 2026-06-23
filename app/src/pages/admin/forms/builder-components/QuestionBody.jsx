@@ -1,28 +1,9 @@
-<<<<<<< Updated upstream
 import React, { useState } from 'react';
 import { 
   FaCalendarAlt, FaPhoneAlt, FaIdCard, FaRegCircle, FaRegCheckSquare, 
   FaTimes, FaImage, FaChartBar, FaPlus, FaLayerGroup, FaTable, FaFont, FaCloudUploadAlt 
 } from 'react-icons/fa';
 import RichTextInput from './RichTextInput';
-=======
-import React, { useState } from "react";
-import {
-  FaCalendarAlt,
-  FaPhoneAlt,
-  FaIdCard,
-  FaRegCircle,
-  FaRegCheckSquare,
-  FaTimes,
-  FaImage,
-  FaChartBar,
-  FaPlus,
-  FaLayerGroup,
-  FaTable,
-  FaFont,
-} from "react-icons/fa";
-import RichTextInput from "./RichTextInput";
->>>>>>> Stashed changes
 
 const QuestionBody = ({
   q,
@@ -32,29 +13,10 @@ const QuestionBody = ({
   isActive = true,
 }) => {
   const {
-<<<<<<< Updated upstream
     updateScoreMode, updateRowScore, updateGridItem, removeGridItem, addGridItem,
     updateGridColScore, updateCellScore, updateOption, updateOptionScore, updateOptionLimit,
     updateOptionImage, removeOption, addOption, addSubQuestion, updateSubQuestion, removeSubQuestion,
     toggleOptionInput, updateVideoUrl
-=======
-    updateScoreMode,
-    updateRowScore,
-    updateGridItem,
-    removeGridItem,
-    addGridItem,
-    updateGridColScore,
-    updateCellScore,
-    updateOption,
-    updateOptionScore,
-    updateOptionImage,
-    removeOption,
-    addOption,
-    addSubQuestion,
-    updateSubQuestion,
-    removeSubQuestion,
-    toggleOptionInput,
->>>>>>> Stashed changes
   } = handlers;
 
   const [gridScoreExpanded, setGridScoreExpanded] = useState(false);
@@ -356,7 +318,6 @@ const QuestionBody = ({
   }
 
   // 🟢 2. UI พรีวิวสำหรับคำถามประเภทอื่นๆ
-<<<<<<< Updated upstream
   if (q.type === 'description') return null;
   if (q.type === 'file_upload') return (
     <div className="sfb-dummy-input sfb-text-underlined" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#5f6368' }}>
@@ -373,38 +334,6 @@ const QuestionBody = ({
       <div className="sfb-dummy-bmi-box">ส่วนสูง (เซนติเมตร)</div>
     </div>
   );
-=======
-  if (q.type === "description") return null;
-  if (q.type === "short_text" || q.type === "full_name")
-    return (
-      <div className="sfb-dummy-input sfb-text-underlined">
-        ข้อความคำตอบสั้นๆ
-      </div>
-    );
-  if (q.type === "paragraph" || q.type === "main_issue")
-    return (
-      <div
-        className="sfb-dummy-input sfb-text-underlined"
-        style={{ width: "80%" }}
-      >
-        ข้อความคำตอบแบบยาว
-      </div>
-    );
-  if (q.type === "date")
-    return (
-      <div className="sfb-dummy-input sfb-text-underlined sfb-dummy-date">
-        <span>เดือน วัน ปี</span>
-        <FaCalendarAlt className="sfb-dummy-date-icon" />
-      </div>
-    );
-  if (q.type === "bmi")
-    return (
-      <div className="sfb-dummy-input sfb-dummy-bmi-container">
-        <div className="sfb-dummy-bmi-box">น้ำหนัก (กิโลกรัม)</div>
-        <div className="sfb-dummy-bmi-box">ส่วนสูง (เซนติเมตร)</div>
-      </div>
-    );
->>>>>>> Stashed changes
 
   if (q.type === "phone_number")
     return (
@@ -728,25 +657,11 @@ const QuestionBody = ({
         };
         return (
           <div key={i} className="sfb-option-wrapper">
-<<<<<<< Updated upstream
             <div className="sfb-option-row" style={{ flexWrap: 'nowrap' }}>
               {(q.type === 'multiple_choice' || q.type === 'booking') && <FaRegCircle className="sfb-opt-icon" />}
               {q.type === 'checkboxes' && <FaRegCheckSquare className="sfb-opt-icon" />}
               {(q.type === 'dropdown' || q.type === 'faculty') && <span className="sfb-opt-number">{i + 1}.</span>}
               
-=======
-            <div className="sfb-option-row" style={{ flexWrap: "nowrap" }}>
-              {q.type === "multiple_choice" && (
-                <FaRegCircle className="sfb-opt-icon" />
-              )}
-              {q.type === "checkboxes" && (
-                <FaRegCheckSquare className="sfb-opt-icon" />
-              )}
-              {(q.type === "dropdown" || q.type === "faculty") && (
-                <span className="sfb-opt-number">{i + 1}.</span>
-              )}
-
->>>>>>> Stashed changes
               {/* 🟢 ห่อ Input กับ Dashed Line เข้าด้วยกัน */}
               <div className="sfb-opt-input-wrapper">
                 <input
@@ -778,57 +693,26 @@ const QuestionBody = ({
                 )}
               </div>
 
-<<<<<<< Updated upstream
               {isActive && q.isScored && <input type="number" className="sfb-opt-score-input" value={q.optionScores?.[i] ?? 0} onChange={(e) => updateOptionScore(q.id, i, parseInt(e.target.value) || 0)} title="คะแนน" placeholder="คะแนน" />}
               
               {isActive && q.type === 'booking' && (
                 <input type="number" className="sfb-opt-score-input" value={q.optionLimits?.[i] ?? ''} onChange={(e) => updateOptionLimit(q.id, i, e.target.value)} title="จำนวนโควต้า/ลิมิต" placeholder="ลิมิตจำนวน" style={{ minWidth: '90px' }} />
-=======
-              {isActive && q.isScored && (
-                <input
-                  type="number"
-                  className="sfb-opt-score-input"
-                  value={q.optionScores?.[i] ?? 0}
-                  onChange={(e) =>
-                    updateOptionScore(q.id, i, parseInt(e.target.value) || 0)
-                  }
-                  title="คะแนน"
-                  placeholder="คะแนน"
-                />
->>>>>>> Stashed changes
               )}
 
               {isActive && (
                 <div className="sfb-option-actions sfb-smooth-element">
-<<<<<<< Updated upstream
                   
                   {(q.type === 'multiple_choice' || q.type === 'checkboxes' || q.type === 'booking') && (
                     <button 
                       className={`sfb-btn-add-image-opt sfb-btn-toggle-input ${q.optionHasInput?.[i] ? 'active' : 'inactive'}`} 
                       title={q.optionHasInput?.[i] ? "ปิดช่องกรอกข้อความ" : "เพิ่มช่องให้ผู้ใช้พิมพ์ข้อความ (เช่น อื่นๆ: ___)"}
-=======
-                  {(q.type === "multiple_choice" ||
-                    q.type === "checkboxes") && (
-                    <button
-                      className={`sfb-btn-add-image-opt sfb-btn-toggle-input ${q.optionHasInput?.[i] ? "active" : "inactive"}`}
-                      title={
-                        q.optionHasInput?.[i]
-                          ? "ปิดช่องกรอกข้อความ"
-                          : "เพิ่มช่องให้ผู้ใช้พิมพ์ข้อความ (เช่น อื่นๆ: ___)"
-                      }
->>>>>>> Stashed changes
                       onClick={() => toggleOptionInput(q.id, i)}
                     >
                       <FaFont />
                     </button>
                   )}
 
-<<<<<<< Updated upstream
                   {(q.type === 'multiple_choice' || q.type === 'checkboxes' || q.type === 'booking') && (
-=======
-                  {(q.type === "multiple_choice" ||
-                    q.type === "checkboxes") && (
->>>>>>> Stashed changes
                     <>
                       <input
                         type="file"
@@ -887,28 +771,10 @@ const QuestionBody = ({
         </div>
       )}
 
-<<<<<<< Updated upstream
       <div className="sfb-option-row sfb-add-opt-row sfb-smooth-element" onClick={() => addOption(q.id)}>
         {(q.type === 'multiple_choice' || q.type === 'booking') && <FaRegCircle className="sfb-opt-icon sfb-muted" />}
         {q.type === 'checkboxes' && <FaRegCheckSquare className="sfb-opt-icon sfb-muted" />}
         {(q.type === 'dropdown' || q.type === 'faculty') && <span className="sfb-opt-number sfb-muted">{q.options.length + 1}.</span>}
-=======
-      <div
-        className="sfb-option-row sfb-add-opt-row sfb-smooth-element"
-        onClick={() => addOption(q.id)}
-      >
-        {q.type === "multiple_choice" && (
-          <FaRegCircle className="sfb-opt-icon sfb-muted" />
-        )}
-        {q.type === "checkboxes" && (
-          <FaRegCheckSquare className="sfb-opt-icon sfb-muted" />
-        )}
-        {(q.type === "dropdown" || q.type === "faculty") && (
-          <span className="sfb-opt-number sfb-muted">
-            {q.options.length + 1}.
-          </span>
-        )}
->>>>>>> Stashed changes
         <span className="sfb-add-opt-text">เพิ่มตัวเลือก (หรือกด Enter)</span>
       </div>
       </div>

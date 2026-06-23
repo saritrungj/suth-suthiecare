@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
-<<<<<<< Updated upstream
   FaEllipsisV, FaGripHorizontal, FaGripVertical, FaImage, FaTimes, 
   FaChartBar, FaPlus, FaClone, FaTrashAlt, FaIdCard, FaUser, 
   FaPhoneAlt, FaBuilding, FaClipboardList,
@@ -11,44 +10,12 @@ import {
   FaCalendarAlt, FaWeight, FaTrophy, FaCog, FaBriefcase, FaYoutube, FaFileAlt
 } from 'react-icons/fa';
 import RichTextInput from './RichTextInput';
-=======
-  FaEllipsisV,
-  FaGripHorizontal,
-  FaGripVertical,
-  FaImage,
-  FaTimes,
-  FaChartBar,
-  FaPlus,
-  FaClone,
-  FaTrashAlt,
-  FaIdCard,
-  FaUser,
-  FaPhoneAlt,
-  FaBuilding,
-  FaClipboardList,
-  FaMinus,
-  FaAlignLeft,
-  FaRegCircle,
-  FaRegCheckSquare,
-  FaCaretSquareDown,
-  FaThList,
-  FaTh,
-  FaChevronDown,
-  FaCalendarAlt,
-  FaWeight,
-  FaTrophy,
-  FaCog,
-  FaBriefcase,
-} from "react-icons/fa";
-import RichTextInput from "./RichTextInput";
->>>>>>> Stashed changes
 
 // 🟢 โครงสร้างข้อมูลประเภทคำถามพร้อม Icon
 const QUESTION_TYPES = [
   {
     group: "คำถามทั่วไป",
     options: [
-<<<<<<< Updated upstream
       { value: 'short_text', label: 'คำตอบสั้นๆ', icon: <FaMinus /> },
       { value: 'paragraph', label: 'ย่อหน้า', icon: <FaAlignLeft /> },
       { value: 'multiple_choice', label: 'หลายตัวเลือก', icon: <FaRegCircle /> },
@@ -59,23 +26,6 @@ const QUESTION_TYPES = [
       { value: 'date', label: 'วันที่', icon: <FaCalendarAlt /> },
       { value: 'video', label: 'วิดีโอ (YouTube)', icon: <FaYoutube /> },
     ]
-=======
-      { value: "short_text", label: "คำตอบสั้นๆ", icon: <FaMinus /> },
-      { value: "paragraph", label: "ย่อหน้า", icon: <FaAlignLeft /> },
-      {
-        value: "multiple_choice",
-        label: "หลายตัวเลือก",
-        icon: <FaRegCircle />,
-      },
-      {
-        value: "checkboxes",
-        label: "ช่องทำเครื่องหมาย",
-        icon: <FaRegCheckSquare />,
-      },
-      { value: "dropdown", label: "เลื่อนลง", icon: <FaCaretSquareDown /> },
-      { value: "date", label: "วันที่", icon: <FaCalendarAlt /> },
-    ],
->>>>>>> Stashed changes
   },
   {
     group: "โครงสร้างและคะแนน",
@@ -306,38 +256,9 @@ const SortableQuestion = ({
     }
   };
 
-<<<<<<< Updated upstream
   const isProfileField = ['national_id', 'full_name', 'phone_number', 'faculty', 'main_issue', 'bmi'].includes(q.type) || q.isUserStatus;
   const isScoreableType = ['multiple_choice', 'checkboxes', 'dropdown', 'grid_multiple', 'grid_checkbox', 'bmi', 'group'].includes(q.type);
   const isEditableConfigurable = !['section', 'description', 'video', 'booking', 'bmi', 'grid_multiple', 'grid_checkbox', 'group', 'file_upload'].includes(q.type);
-=======
-  const isProfileField =
-    [
-      "national_id",
-      "full_name",
-      "phone_number",
-      "faculty",
-      "main_issue",
-      "bmi",
-    ].includes(q.type) || q.isUserStatus;
-  const isScoreableType = [
-    "multiple_choice",
-    "checkboxes",
-    "dropdown",
-    "grid_multiple",
-    "grid_checkbox",
-    "bmi",
-    "group",
-  ].includes(q.type);
-  const isEditableConfigurable = ![
-    "section",
-    "description",
-    "bmi",
-    "grid_multiple",
-    "grid_checkbox",
-    "group",
-  ].includes(q.type);
->>>>>>> Stashed changes
 
   if (q.type === "section") {
     return (
@@ -676,25 +597,12 @@ const SortableQuestion = ({
         </button>
         <span className="sfb-footer-divider" aria-hidden="true" />
 
-<<<<<<< Updated upstream
         {q.type !== 'video' && (
           <label className="sfb-required-toggle">
             <input type="checkbox" checked={!!q.required} onChange={(e) => updateRequired && updateRequired(q.id, e.target.checked)} />
             <span>จำเป็นต้องตอบ</span>
           </label>
         )}
-=======
-        <label className="sfb-required-toggle">
-          <input
-            type="checkbox"
-            checked={!!q.required}
-            onChange={(e) =>
-              updateRequired && updateRequired(q.id, e.target.checked)
-            }
-          />
-          <span>จำเป็นต้องตอบ</span>
-        </label>
->>>>>>> Stashed changes
 
         <div className="sfb-question-settings-container" ref={footerMenuRef}>
           <button

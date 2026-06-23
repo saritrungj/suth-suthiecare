@@ -213,7 +213,6 @@
   margin-bottom: 10px;
 }
 /* ─── INPUTS ─── */
-<<<<<<< Updated upstream
 .preview-input { font-family: 'Sarabun', sans-serif; font-size: 15px; padding: 10px 0; border: none; border-bottom: 1px solid #ccc; background: transparent; color: #202124; width: 100%; max-width: 420px; transition: border .2s; }
 .preview-input:focus { outline: none; border-bottom: 2px solid var(--theme-color); }
 select.preview-input {
@@ -246,30 +245,6 @@ select.preview-input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   background-color: #e2e8f0;
-=======
-.preview-input {
-  font-family: "Sarabun", sans-serif;
-  font-size: 15px;
-  padding: 10px 0;
-  border: none;
-  border-bottom: 1px solid #ccc;
-  background: transparent;
-  color: #202124;
-  width: 100%;
-  max-width: 420px;
-  transition: border 0.2s;
-}
-.preview-input:focus {
-  outline: none;
-  border-bottom: 2px solid var(--theme-color);
-}
-select.preview-input {
-  width: 100%;
-  max-width: 300px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
->>>>>>> Stashed changes
 }
 /* ─── CHIPS (RADIO) ─── */
 /* ─── RADIO (แบบปกติ ไม่มีกรอบ) ─── */

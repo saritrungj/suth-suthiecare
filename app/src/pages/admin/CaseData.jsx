@@ -1,19 +1,8 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import CaseTable from "../../components/case/CaseTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
-<<<<<<< Updated upstream
 import ExportExcelModal from "../../components/case/ExportExcelModal.jsx";
 import { getForms, getFormById, getFormResponses, createCase, getActiveClinics } from "../../services/api";
-=======
-import ExportExcelModal from "../../components/case/ExportExcelModal";
-import {
-  getForms,
-  getFormById,
-  getFormResponses,
-  createCase,
-  getActiveClinics,
-} from "../../services/api";
->>>>>>> Stashed changes
 import "./CaseData.css";
 import { useLocation } from "react-router-dom";
 import {

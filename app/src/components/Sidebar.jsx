@@ -1,21 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Sidebar.css";
 import logo from "../assets/logoSUTH.png";
-<<<<<<< Updated upstream
 import { NavLink, useNavigate, useLocation , Link } from 'react-router-dom';
 import { FiChevronLeft, FiChevronDown, FiLogOut, FiCircle, FiX, FiBook } from "react-icons/fi";
-=======
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
-// 🟢 เพิ่ม FiBook สำหรับไอคอนคู่มือ
-import {
-  FiChevronLeft,
-  FiChevronDown,
-  FiLogOut,
-  FiCircle,
-  FiX,
-  FiBook,
-} from "react-icons/fi";
->>>>>>> Stashed changes
 import { getRolePermissions } from "../services/api";
 import { FaHospital, FaQuestionCircle } from 'react-icons/fa';
 
@@ -197,7 +184,6 @@ const rawMenuItems = [
   },
 
   // 🟠 หมวดจัดการระบบ
-<<<<<<< Updated upstream
   { type: 'header', label: 'การจัดการ', key: 'header-setup' },
   { href: '/admin/forms', icon: <FormIcon />, label: 'จัดการฟอร์ม', key: 'forms' },
   { href: '/admin/clinics', icon: <ClinicIcon />, label: 'จัดการคลินิก', key: 'clinics' },
@@ -210,9 +196,6 @@ const rawMenuItems = [
   { href: '/admin/banner', icon: <ContentIcon />, label: 'จัดการภาพแบนเนอร์', key: 'banner' },
   // 🟢 เพิ่มคู่มือการใช้งานตรงนี้ พร้อมกำหนด isExternal เป็น true
   { href: `${process.env.PUBLIC_URL}/docs/admin_manual.pdf`, icon: <FiBook size={22} />, label: 'คู่มือการใช้งาน', key: 'manual', isExternal: true },
-=======
-  { type: "header", label: "การจัดการ", key: "header-setup" },
->>>>>>> Stashed changes
   {
     href: "/admin/forms",
     icon: <FormIcon />,

@@ -719,7 +719,6 @@ const FormBuilder = () => {
         questions.map((q) =>
           q.id === qId
             ? {
-<<<<<<< Updated upstream
               ...q,
               options: [...q.options, `ตัวเลือก ${q.options.length + 1}`],
               optionScores: [...(q.optionScores || []), 0],
@@ -730,17 +729,6 @@ const FormBuilder = () => {
                 false,
               ],
             }
-=======
-                ...q,
-                options: [...q.options, `ตัวเลือก ${q.options.length + 1}`],
-                optionScores: [...(q.optionScores || []), 0],
-                optionImages: [...(q.optionImages || []), null],
-                optionHasInput: [
-                  ...(q.optionHasInput || Array(q.options.length).fill(false)),
-                  false,
-                ],
-              }
->>>>>>> Stashed changes
             : q,
         ),
       ),
@@ -794,7 +782,6 @@ const FormBuilder = () => {
         questions.map((q) =>
           q.id === qId && q.options.length > 1
             ? {
-<<<<<<< Updated upstream
               ...q,
               options: q.options.filter((_, i) => i !== optIdx),
               optionScores: (q.optionScores || []).filter(
@@ -810,20 +797,6 @@ const FormBuilder = () => {
                 (_, i) => i !== optIdx,
               ),
             }
-=======
-                ...q,
-                options: q.options.filter((_, i) => i !== optIdx),
-                optionScores: (q.optionScores || []).filter(
-                  (_, i) => i !== optIdx,
-                ),
-                optionImages: (q.optionImages || []).filter(
-                  (_, i) => i !== optIdx,
-                ),
-                optionHasInput: (q.optionHasInput || []).filter(
-                  (_, i) => i !== optIdx,
-                ),
-              }
->>>>>>> Stashed changes
             : q,
         ),
       ),

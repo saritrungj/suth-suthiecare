@@ -101,38 +101,17 @@ router.get("/:idOrSlug", async (req, res) => {
 // ✅ INSERT ใส่ sort_order ด้วย
 router.post("/", verifyToken, async (req, res) => {
   try {
-<<<<<<< Updated upstream
     const { slug, name, name_en, description, image, bg, is_active, show_icon } = req.body;
     if (!slug || !name) return res.status(400).json({ error: 'Slug and name are required' });
-=======
-    const { slug, name, description, image, bg, is_active, show_icon } =
-      req.body;
-    if (!slug || !name)
-      return res.status(400).json({ error: "Slug and name are required" });
->>>>>>> Stashed changes
 
     const [[{ count }]] = await db.query(
       "SELECT COUNT(*) as count FROM clinics",
     );
 
     const [result] = await db.query(
-<<<<<<< Updated upstream
       'INSERT INTO clinics (slug, name, name_en, description, image, bg, is_active, show_icon, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [slug, name, name_en || null, description || null, image || null, bg || null,
        is_active ?? 1, show_icon ?? 1, count]
-=======
-      "INSERT INTO clinics (slug, name, description, image, bg, is_active, show_icon, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-      [
-        slug,
-        name,
-        description || null,
-        image || null,
-        bg || null,
-        is_active ?? 1,
-        show_icon ?? 1,
-        count,
-      ],
->>>>>>> Stashed changes
     );
     res.status(201).json({ message: "Clinic created", id: result.insertId });
   } catch (error) {
@@ -146,32 +125,12 @@ router.post("/", verifyToken, async (req, res) => {
 router.put("/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
-<<<<<<< Updated upstream
     const { slug, name, name_en, description, image, bg, is_active, show_icon } = req.body;
     if (!slug || !name) return res.status(400).json({ error: 'Slug and name are required' });
 
     const [result] = await db.query(
       'UPDATE clinics SET slug=?, name=?, name_en=?, description=?, image=?, bg=?, is_active=?, show_icon=? WHERE id=?',
       [slug, name, name_en || null, description || null, image || null, bg || null, is_active, show_icon ?? 1, id]
-=======
-    const { slug, name, description, image, bg, is_active, show_icon } =
-      req.body;
-    if (!slug || !name)
-      return res.status(400).json({ error: "Slug and name are required" });
-
-    const [result] = await db.query(
-      "UPDATE clinics SET slug=?, name=?, description=?, image=?, bg=?, is_active=?, show_icon=? WHERE id=?",
-      [
-        slug,
-        name,
-        description || null,
-        image || null,
-        bg || null,
-        is_active,
-        show_icon ?? 1,
-        id,
-      ],
->>>>>>> Stashed changes
     );
     if (result.affectedRows === 0)
       return res.status(404).json({ error: "Clinic not found" });

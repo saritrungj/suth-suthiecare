@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -7,15 +6,6 @@ import axios from 'axios';
 import Navbar from '../../../components/Navbar';
 import './HistorySearch.css';
 import bgImage from '../../../assets/bg-new.jpg';
-=======
-import React, { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { FiSearch, FiEye, FiEyeOff } from "react-icons/fi";
-import axios from "axios";
-import Navbar from "../../../components/Navbar";
-import "./HistorySearch.css";
-import bgImage from "../../../assets/bg-new.jpg";
->>>>>>> Stashed changes
 
 const API_BASE = (
   process.env.REACT_APP_API_URL || "http://localhost:5000"
@@ -36,11 +26,7 @@ export default function HistorySearch() {
     const clean = identity.replace(/\D/g, "");
 
     if (clean.length !== 13) {
-<<<<<<< Updated upstream
       setError(t('history.search.err_incomplete'));
-=======
-      setError("กรุณากรอกเลขบัตรประชาชนให้ครบ 13 หลัก");
->>>>>>> Stashed changes
       return;
     }
 
@@ -62,15 +48,9 @@ export default function HistorySearch() {
       setLoading(false);
       // 🔴 ถ้าไม่พบข้อมูล (404) หรือเกิดข้อผิดพลาดอื่น ให้แจ้งเตือนที่หน้านี้เลย
       if (err.response?.status === 404) {
-<<<<<<< Updated upstream
         setError(t('history.search.err_not_found'));
       } else {
         setError(t('history.search.err_connection'));
-=======
-        setError("ไม่พบประวัติการรับบริการ");
-      } else {
-        setError("เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง");
->>>>>>> Stashed changes
       }
     }
   };
@@ -88,13 +68,8 @@ export default function HistorySearch() {
     >
       <Navbar
         showBack={true}
-<<<<<<< Updated upstream
         backText={t('history.search.back')}
         onBack={() => navigate('/')}
-=======
-        backText="กลับหน้าหลัก"
-        onBack={() => navigate("/")}
->>>>>>> Stashed changes
       />
 
       <main className="history-container ">
@@ -102,15 +77,8 @@ export default function HistorySearch() {
           <div className="history-icon-wrapper">
             <FiSearch className="history-main-icon" />
           </div>
-<<<<<<< Updated upstream
           <h2 className="history-title">{t('history.search.title')}</h2>
           <p className="history-desc">{t('history.search.desc')}</p>
-=======
-          <h2 className="history-title">ตรวจสอบประวัติการทำแบบประเมิน</h2>
-          <p className="history-desc">
-            กรุณากรอกเลขบัตรประชาชน 13 หลักเพื่อเรียกดูประวัติของท่าน
-          </p>
->>>>>>> Stashed changes
 
           <form onSubmit={handleSearch} className="history-form">
             <div className="history-input-wrap">
@@ -123,13 +91,8 @@ export default function HistorySearch() {
                   setIdentity(e.target.value.replace(/\D/g, "").slice(0, 13));
                   setError("");
                 }}
-<<<<<<< Updated upstream
                 placeholder={t('history.search.placeholder')}
                 className={`history-input ${error ? 'error' : ''}`}
-=======
-                placeholder="กรอกเลขบัตรประชาชน 13 หลัก"
-                className={`history-input ${error ? "error" : ""}`}
->>>>>>> Stashed changes
                 autoComplete="off"
               />
               <button
@@ -160,11 +123,7 @@ export default function HistorySearch() {
                   <span>{t('history.search.btn_searching')}</span>
                 </div>
               ) : (
-<<<<<<< Updated upstream
                 t('history.search.btn_search')
-=======
-                "ค้นหาข้อมูล"
->>>>>>> Stashed changes
               )}
             </button>
           </form>

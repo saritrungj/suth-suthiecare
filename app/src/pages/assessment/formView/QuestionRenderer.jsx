@@ -1,15 +1,9 @@
-<<<<<<< Updated upstream
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiRefreshCw, FiCheck, FiXCircle } from 'react-icons/fi';
 import { formatThaiID, validateThaiID, formatPhoneNumber } from './formUtils';
 import { translateTextSmart } from '../../../utils/translator';
 import Swal from 'sweetalert2';
-=======
-import React from "react";
-import { FiRefreshCw, FiCheck, FiXCircle } from "react-icons/fi";
-import { formatThaiID, validateThaiID, formatPhoneNumber } from "./formUtils";
->>>>>>> Stashed changes
 
 const QuestionRenderer = ({
   q,
@@ -24,7 +18,6 @@ const QuestionRenderer = ({
   handleOptionInputChange,
   handleGridAnswer,
 }) => {
-<<<<<<< Updated upstream
   const { i18n } = useTranslation();
   const [translatedQ, setTranslatedQ] = useState(null);
 
@@ -50,8 +43,6 @@ const QuestionRenderer = ({
   const displayTitle = translatedQ?.title || q.title;
   const displayText = translatedQ?.text || q.text;
 
-=======
->>>>>>> Stashed changes
   // กรณีเป็นคำถามกลุ่ม (Group)
   if (q.type === "group") {
     const subs = q.subQuestions || [];
@@ -62,21 +53,8 @@ const QuestionRenderer = ({
         style={{ animationDelay: `${index * 0.05}s` }}
       >
         <div className="preview-group-header">
-<<<<<<< Updated upstream
           <h3 className="preview-sec__title" dangerouslySetInnerHTML={{ __html: displayTitle || 'กลุ่มคำถาม' }} />
           {displayText && <div className="preview-hint" dangerouslySetInnerHTML={{ __html: displayText }} />}
-=======
-          <h3
-            className="preview-sec__title"
-            dangerouslySetInnerHTML={{ __html: q.title || "กลุ่มคำถาม" }}
-          />
-          {q.text && (
-            <div
-              className="preview-hint"
-              dangerouslySetInnerHTML={{ __html: q.text }}
-            />
-          )}
->>>>>>> Stashed changes
         </div>
         <div className="preview-group-body">
           {subs.map((sq, sIdx) => {
@@ -134,23 +112,9 @@ const QuestionRenderer = ({
     >
       <div className="preview-sec__head_wrap">
         <div style={{ flex: 1 }}>
-<<<<<<< Updated upstream
           <h3 className="preview-sec__title" dangerouslySetInnerHTML={{ __html: displayTitle || 'คำถามที่ไม่มีชื่อ' }} />
           {q.required && <span className="req">*</span>}
           {q.hasDescription && displayText && <div className="preview-hint" dangerouslySetInnerHTML={{ __html: displayText }} />}
-=======
-          <h3
-            className="preview-sec__title"
-            dangerouslySetInnerHTML={{ __html: q.title || "คำถามที่ไม่มีชื่อ" }}
-          />
-          {q.required && <span className="req">*</span>}
-          {q.hasDescription && q.text && (
-            <div
-              className="preview-hint"
-              dangerouslySetInnerHTML={{ __html: q.text }}
-            />
-          )}
->>>>>>> Stashed changes
         </div>
 
         {hasAnswer && !(q.type === "national_id" && verifiedIdentity) && (
@@ -166,7 +130,6 @@ const QuestionRenderer = ({
       </div>
 
       <div className="preview-sec__body">
-<<<<<<< Updated upstream
         {q.image && <div className="preview-q-img"><img src={q.image} alt="question" /></div>}
 
         {q.type === 'video' && (() => {
@@ -263,12 +226,6 @@ const QuestionRenderer = ({
         
         {q.type === 'date' && (
           <input type="date" className={`preview-input ${hasError ? 'preview-input--error' : ''}`} value={ans || ''} onChange={(e) => handleAnswer(q.id, e.target.value)} />
-=======
-        {q.image && (
-          <div className="preview-q-img">
-            <img src={q.image} alt="question" />
-          </div>
->>>>>>> Stashed changes
         )}
 
         {(q.type === "short_text" || q.type === "full_name") && (
@@ -370,7 +327,6 @@ const QuestionRenderer = ({
             );
           })()}
 
-<<<<<<< Updated upstream
         {q.type === 'booking' && q.displayAs === 'dropdown' && (
           <select className={`preview-input ${hasError ? 'preview-input--error' : ''}`} value={ans || ''} onChange={(e) => handleAnswer(q.id, e.target.value)}>
             <option value="" disabled>{i18n.language === 'en' ? 'Select an option' : 'เลือกคำตอบ'}</option>
@@ -442,76 +398,10 @@ const QuestionRenderer = ({
         )}
 
         {q.type === 'multiple_choice' && (
-=======
-        {q.type === "national_id" &&
-          (() => {
-            const val = answers[q.id] || "";
-            const isFullLength = val.length === 17;
-            const isValid = isFullLength ? validateThaiID(val) : true;
-            const isLocked = !!verifiedIdentity;
-
-            return (
-              <div className="national-id-wrapper">
-                <input
-                  type="text"
-                  className={`preview-input id-mask-input ${hasError || (!isValid && !isLocked) ? "preview-input--error" : ""}`}
-                  placeholder="x-xxxx-xxxxx-xx-x"
-                  value={val}
-                  onChange={(e) => {
-                    if (!isLocked)
-                      handleAnswer(q.id, formatThaiID(e.target.value));
-                  }}
-                  maxLength={17}
-                  disabled={isLocked}
-                  style={
-                    isLocked
-                      ? {
-                          backgroundColor: "#f1f5f9",
-                          color: "#64748b",
-                          cursor: "not-allowed",
-                          opacity: 0.8,
-                        }
-                      : {}
-                  }
-                />
-                {isLocked && (
-                  <div
-                    style={{
-                      fontSize: "12.5px",
-                      color: "#2563eb",
-                      marginTop: "6px",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    <FiCheck /> ดึงข้อมูลจากประวัติเดิมอัตโนมัติ
-                    (เชื่อมโยงเคสแล้ว)
-                  </div>
-                )}
-                {isFullLength && !isValid && !isLocked && (
-                  <div className="error-msg">
-                    <FiXCircle
-                      style={{
-                        display: "inline",
-                        transform: "translateY(2px)",
-                      }}
-                    />{" "}
-                    เลขบัตรประชาชนไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง
-                  </div>
-                )}
-              </div>
-            );
-          })()}
-
-        {q.type === "multiple_choice" && (
->>>>>>> Stashed changes
           <div className="preview-chip-col">
             {q.options.map((opt, i) => {
               const isSelected = ans === opt;
               const showInput = q.optionHasInput?.[i] === true;
-<<<<<<< Updated upstream
               const displayOpt = translatedQ?.options?.[i] || opt;
               
               return (
@@ -519,21 +409,6 @@ const QuestionRenderer = ({
                   <label className={`preview-chip ${isSelected ? 'active' : ''}`}>
                     <input type="radio" name={`q-${q.id}`} checked={isSelected} onChange={() => handleAnswer(q.id, opt)} />
                     <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: displayOpt }} />
-=======
-
-              return (
-                <div key={i} className="preview-option-wrapper">
-                  <label
-                    className={`preview-chip ${isSelected ? "active" : ""}`}
-                  >
-                    <input
-                      type="radio"
-                      name={`q-${q.id}`}
-                      checked={isSelected}
-                      onChange={() => handleAnswer(q.id, opt)}
-                    />
-                    <span dangerouslySetInnerHTML={{ __html: opt }} />
->>>>>>> Stashed changes
                   </label>
 
                   {isSelected && showInput && (
@@ -580,7 +455,6 @@ const QuestionRenderer = ({
             {q.options.map((opt, i) => {
               const isChecked = (ans || []).includes(opt);
               const showInput = q.optionHasInput?.[i] === true;
-<<<<<<< Updated upstream
               const displayOpt = translatedQ?.options?.[i] || opt;
               
               return (
@@ -589,23 +463,6 @@ const QuestionRenderer = ({
                     <input type="checkbox" checked={isChecked} onChange={() => handleAnswer(q.id, opt, true)} />
                     <span className="preview-check__mark">{isChecked ? <FiCheck strokeWidth={3} /> : ""}</span>
                     <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: displayOpt }} />
-=======
-
-              return (
-                <div key={i} className="preview-option-wrapper">
-                  <label
-                    className={`preview-check ${isChecked ? "active" : ""}`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={() => handleAnswer(q.id, opt, true)}
-                    />
-                    <span className="preview-check__mark">
-                      {isChecked ? <FiCheck strokeWidth={3} /> : ""}
-                    </span>
-                    <span dangerouslySetInnerHTML={{ __html: opt }} />
->>>>>>> Stashed changes
                   </label>
 
                   {isChecked && showInput && (
@@ -647,7 +504,6 @@ const QuestionRenderer = ({
           </div>
         )}
 
-<<<<<<< Updated upstream
         {(q.type === 'dropdown' || q.type === 'faculty') && (
           <select className={`preview-input ${hasError ? 'preview-input--error' : ''}`} value={ans || ''} onChange={(e) => handleAnswer(q.id, e.target.value)}>
             <option value="" disabled>{i18n.language === 'en' ? 'Select an option' : 'เลือกคำตอบ'}</option>
@@ -656,24 +512,6 @@ const QuestionRenderer = ({
               const textOnly = displayOpt.replace(/<[^>]+>/g, '');
               const originalTextOnly = opt.replace(/<[^>]+>/g, '');
               return <option key={i} value={originalTextOnly}>{textOnly}</option>;
-=======
-        {(q.type === "dropdown" || q.type === "faculty") && (
-          <select
-            className={`preview-input ${hasError ? "preview-input--error" : ""}`}
-            value={ans || ""}
-            onChange={(e) => handleAnswer(q.id, e.target.value)}
-          >
-            <option value="" disabled>
-              เลือกคำตอบ
-            </option>
-            {q.options.map((opt, i) => {
-              const textOnly = opt.replace(/<[^>]+>/g, "");
-              return (
-                <option key={i} value={textOnly}>
-                  {textOnly}
-                </option>
-              );
->>>>>>> Stashed changes
             })}
           </select>
         )}
@@ -684,35 +522,13 @@ const QuestionRenderer = ({
               <thead>
                 <tr>
                   <th></th>
-<<<<<<< Updated upstream
                   {q.cols.map((col, i) => <th key={i} dangerouslySetInnerHTML={{ __html: translatedQ?.cols?.[i] || col }} />)}
-=======
-                  {q.cols.map((col, i) => (
-                    <th key={i} dangerouslySetInnerHTML={{ __html: col }} />
-                  ))}
->>>>>>> Stashed changes
                 </tr>
               </thead>
               <tbody>
                 {q.rows.map((row, i) => (
-<<<<<<< Updated upstream
                   <tr key={i} className={hasError && (!ans || (q.type === 'grid_multiple' ? !ans[i] : !ans[i]?.length)) ? 'grid-row-error' : ''}>
                     <td dangerouslySetInnerHTML={{ __html: translatedQ?.rows?.[i] || row }} />
-=======
-                  <tr
-                    key={i}
-                    className={
-                      hasError &&
-                      (!ans ||
-                        (q.type === "grid_multiple"
-                          ? !ans[i]
-                          : !ans[i]?.length))
-                        ? "grid-row-error"
-                        : ""
-                    }
-                  >
-                    <td dangerouslySetInnerHTML={{ __html: row }} />
->>>>>>> Stashed changes
                     {q.cols.map((col, j) => {
                       const key = String(i);
                       const rowAns =

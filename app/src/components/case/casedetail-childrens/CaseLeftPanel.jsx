@@ -22,10 +22,7 @@ export default function CaseLeftPanel({
   formQuestions = [],
   selectedStaff,
   staffOptions,
-<<<<<<< Updated upstream
   fullAnswers = {}
-=======
->>>>>>> Stashed changes
 }) {
   const foundStaff = staffOptions.find((s) => s.id === Number(selectedStaff));
 
@@ -120,15 +117,7 @@ export default function CaseLeftPanel({
     }
 
     // ถ้าคำตอบเป็น Object (เช่น ข้อมูลตาราง) ให้วาดเป็น Table แทน Text
-<<<<<<< Updated upstream
     if (typeof ans === 'object' && !Array.isArray(ans)) {
-=======
-    if (typeof ans === "object" && !Array.isArray(ans)) {
-      const qDef = formQuestions.find(
-        (q) => stripHtml(q.title) === stripHtml(qTitle),
-      );
-
->>>>>>> Stashed changes
       return (
         <div className="cdm-table-container">
           <table className="cdm-table">

@@ -21,36 +21,11 @@ import { createPortal } from "react-dom";
 import Swal from "sweetalert2";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import {
-<<<<<<< Updated upstream
   getCaseLogs, addCaseLog, saveAppointment,
   getServices, createService, updateService, deleteService, getCaseAppointments, deleteCase,
   getStatusOptions, createStatusOption, deactivateStatusOption,
   getFormById, getNoteTemplates, getForms, getMasterCasesById, closeMasterCase, updateClinicalData, generateSecureToken, getStaffs,
   createStaff, deleteStaff, getCaseAnswers
-=======
-  getCaseLogs,
-  addCaseLog,
-  saveAppointment,
-  getServices,
-  createService,
-  updateService,
-  deleteService,
-  getCaseAppointments,
-  deleteCase,
-  getStatusOptions,
-  createStatusOption,
-  deactivateStatusOption,
-  getFormById,
-  getNoteTemplates,
-  getForms,
-  getMasterCasesById,
-  closeMasterCase,
-  updateClinicalData,
-  generateSecureToken,
-  getStaffs,
-  createStaff,
-  deleteStaff,
->>>>>>> Stashed changes
 } from "../../services/api";
 
 import {

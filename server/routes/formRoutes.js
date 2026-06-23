@@ -166,7 +166,6 @@ router.post("/counts", async (req, res) => {
 });
 
 // 4. ดึงข้อมูลฟอร์มตาม ID
-<<<<<<< Updated upstream
 router.get('/forms/:id', async (req, res) => {
     try {
         const [rows] = await db.query("SELECT * FROM forms WHERE id = ?", [req.params.id]);
@@ -188,20 +187,6 @@ router.get('/forms/:id', async (req, res) => {
         console.error("Error fetching form:", err);
         res.status(500).json({ message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
     }
-=======
-router.get("/forms/:id", async (req, res) => {
-  try {
-    const [rows] = await db.query("SELECT * FROM forms WHERE id = ?", [
-      req.params.id,
-    ]);
-    if (rows.length === 0)
-      return res.status(404).json({ message: "ไม่พบข้อมูลฟอร์ม" });
-    res.json(rows[0]);
-  } catch (err) {
-    console.error("Error fetching form:", err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
-  }
->>>>>>> Stashed changes
 });
 
 // 5. อัปเดตข้อมูลฟอร์มทั้งหมด (🟢 เพิ่ม form_type)

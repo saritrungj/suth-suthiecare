@@ -713,7 +713,6 @@ const FormView = () => {
         </div>
       )}
 
-<<<<<<< Updated upstream
    {!isPreviewMode && (
   <>
     <button
@@ -728,17 +727,6 @@ const FormView = () => {
     </div>
   </>
 )}
-=======
-      {!isPreviewMode && (
-        <button
-          className="form-view-back-btn"
-          onClick={() => navigate(-1)}
-          title="ย้อนกลับ"
-        >
-          <FiArrowLeft />
-        </button>
-      )}
->>>>>>> Stashed changes
 
       {bannerType !== "none" && (
         <div
@@ -844,24 +832,8 @@ const FormView = () => {
                   <FiInfo /> {t('form_view.pdpa_title')}
                 </div>
                 <p className="pdpa-desc">
-<<<<<<< Updated upstream
                   {t('form_view.pdpa_desc')}
                   <span style={{ fontSize: '12px', color: '#9aa0a6', fontStyle: 'italic' }}> {t('form_view.pdpa_secret')} </span>
-=======
-                  ระบบจำเป็นต้องใช้เลขบัตรประชาชนของคุณ
-                  เพื่อใช้ในการบันทึกและแสดงประวัติการประเมินย้อนหลัง
-                  เพื่อให้คุณสามารถติดตามผลการดูแลตัวเองได้อย่างต่อเนื่อง
-                  <span
-                    style={{
-                      fontSize: "12px",
-                      color: "#9aa0a6",
-                      fontStyle: "italic",
-                    }}
-                  >
-                    {" "}
-                    (ข้อมูลนี้จะถูกเก็บรักษาเป็นความลับ){" "}
-                  </span>
->>>>>>> Stashed changes
                 </p>
                 {nationalIdQuestions
                   .filter((q) => (answers[q.id] || "").length === 17)
@@ -884,13 +856,7 @@ const FormView = () => {
                         <div className="pdpa-check-circle">
                           {consents[q.id] === true && <FiCheck />}
                         </div>
-<<<<<<< Updated upstream
                         <span style={{ fontWeight: '600', fontSize: '15px' }}>{t('form_view.pdpa_ack')}</span>
-=======
-                        <span style={{ fontWeight: "600", fontSize: "15px" }}>
-                          รับทราบ
-                        </span>
->>>>>>> Stashed changes
                       </label>
                     </div>
                   ))}
@@ -904,7 +870,6 @@ const FormView = () => {
               onClick={() => {
                 // 🟢 เปลี่ยน confirm เป็น SweetAlert2
                 Swal.fire({
-<<<<<<< Updated upstream
                   title: t('form_view.clear_form_confirm_title'),
                   text: t('form_view.clear_form_confirm_desc'),
                   icon: 'warning',
@@ -913,16 +878,6 @@ const FormView = () => {
                   cancelButtonColor: '#64748b',
                   confirmButtonText: t('form_view.clear_form_yes'),
                   cancelButtonText: t('form_view.clear_form_cancel')
-=======
-                  title: "ยืนยันการล้างคำตอบ?",
-                  text: "ต้องการล้างคำตอบทั้งหมดหรือไม่? ข้อมูลที่คุณกรอกไว้จะหายไป",
-                  icon: "warning",
-                  showCancelButton: true,
-                  confirmButtonColor: "#d93025",
-                  cancelButtonColor: "#64748b",
-                  confirmButtonText: "ใช่, ล้างข้อมูล",
-                  cancelButtonText: "ยกเลิก",
->>>>>>> Stashed changes
                 }).then((result) => {
                   if (result.isConfirmed) {
                     const retainedAnswers = {};

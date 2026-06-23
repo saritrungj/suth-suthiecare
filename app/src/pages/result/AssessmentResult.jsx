@@ -1,20 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-<<<<<<< Updated upstream
 import { FiCheckCircle, FiActivity, FiInfo, FiCheck, FiSend, FiClock } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import { translateTextSmart } from "../../utils/translator";
 import LanguageSwitcher from "../../components/LanguageSwitcher.jsx";
-=======
-import {
-  FiCheckCircle,
-  FiActivity,
-  FiInfo,
-  FiCheck,
-  FiSend,
-  FiClock,
-} from "react-icons/fi";
->>>>>>> Stashed changes
 import riskLow from "../../assets/01.png";
 import riskMedium from "../../assets/02.png";
 import riskHigh from "../../assets/03.png";
@@ -92,15 +81,7 @@ const getLevelConfig = (result, t) => {
     title: result.title || "ผลการประเมิน",
     score: result.score,
     label: result.label || "ประเมินเสร็จสิ้น",
-<<<<<<< Updated upstream
     advice: result.advice ? (Array.isArray(result.advice) ? result.advice : result.advice.split('\n')) : [t ? t('assessment_result.advice') : "ไม่มีคำแนะนำเพิ่มเติมในขณะนี้"],
-=======
-    advice: result.advice
-      ? Array.isArray(result.advice)
-        ? result.advice
-        : result.advice.split("\n")
-      : ["ไม่มีคำแนะนำเพิ่มเติมในขณะนี้"],
->>>>>>> Stashed changes
     color: hexCriteriaColor,
     textColor: readableTextColor,
     rgb: rgbColor.join(", "),
@@ -160,20 +141,11 @@ export default function AssessmentResult() {
   // 🟢 ฟังก์ชันจัดการการยิง API
   const handleSendToStaff = () => {
     if (!formId || !payload) {
-<<<<<<< Updated upstream
       Swal.fire(t('assessment_result.error_title'), t('assessment_result.error_desc'), 'error');
-=======
-      Swal.fire(
-        "ข้อผิดพลาด",
-        "ไม่พบข้อมูลสำหรับการส่ง กรุณาทำแบบประเมินใหม่อีกครั้ง",
-        "error",
-      );
->>>>>>> Stashed changes
       return;
     }
 
     Swal.fire({
-<<<<<<< Updated upstream
       title: t('assessment_result.consent_title'),
       html: t('assessment_result.consent_html'),
       icon: 'question',
@@ -187,35 +159,13 @@ export default function AssessmentResult() {
       padding: '2.5em',
       background: '#ffffff',
       borderRadius: '20px'
-=======
-      title: "คุณยินยอมให้เจ้าหน้าที่ติดต่อกลับหรือไม่?",
-      html: `ข้อมูลของท่านจะถูกเก็บเป็นความลับ
-         และส่งต่อให้เจ้าหน้าที่ที่เกี่ยวข้องเท่านั้น
-         เพื่อการดูแลและให้คำแนะนำเบื้องต้น`,
-      icon: "question",
-      showCloseButton: true,
-      showCancelButton: true,
-      confirmButtonColor: "#3b82f6",
-      cancelButtonColor: "#ef4444",
-      confirmButtonText: "ยินยอม",
-      cancelButtonText: "ปฏิเสธ",
-      width: "500px",
-      padding: "2.5em",
-      background: "#ffffff",
-      borderRadius: "20px",
->>>>>>> Stashed changes
     }).then(async (result) => {
       if (result.isConfirmed) {
         setIsSubmitting(true);
 
         Swal.fire({
-<<<<<<< Updated upstream
           title: t('assessment_result.sending'),
           text: t('assessment_result.please_wait'),
-=======
-          title: "กำลังส่งข้อมูล...",
-          text: "กรุณารอสักครู่",
->>>>>>> Stashed changes
           allowOutsideClick: false,
           didOpen: () => {
             Swal.showLoading();
@@ -226,32 +176,18 @@ export default function AssessmentResult() {
           await submitFormAnswers(formId, payload);
           setIsSaved(true);
           Swal.fire({
-<<<<<<< Updated upstream
             icon: 'success',
             title: t('assessment_result.send_success'),
             text: t('assessment_result.send_success_desc'),
             confirmButtonColor: '#10b981'
-=======
-            icon: "success",
-            title: "ส่งข้อมูลสำเร็จ!",
-            text: "เจ้าหน้าที่ได้รับข้อมูลของท่านแล้ว ท่านสามารถตรวจสอบประวัติได้",
-            confirmButtonColor: "#10b981",
->>>>>>> Stashed changes
           });
         } catch (error) {
           console.error("Submit Error:", error);
           Swal.fire({
-<<<<<<< Updated upstream
             icon: 'error',
             title: t('assessment_result.send_error'),
             text: t('assessment_result.send_error_desc'),
             confirmButtonColor: '#ef4444'
-=======
-            icon: "error",
-            title: "ไม่สามารถส่งข้อมูลได้",
-            text: "เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง",
-            confirmButtonColor: "#ef4444",
->>>>>>> Stashed changes
           });
         } finally {
           setIsSubmitting(false);
@@ -270,19 +206,11 @@ export default function AssessmentResult() {
   const handleOpenEvaluation = () => {
     if (hasEvaluated) {
       Swal.fire({
-<<<<<<< Updated upstream
         title: t('assessment_result.eval_thanks_title'),
         text: t('assessment_result.eval_thanks_desc'),
         icon: 'success',
         confirmButtonText: t('assessment_result.ok'),
         confirmButtonColor: '#7c3aed'
-=======
-        title: "ขอบคุณสำหรับคำแนะนำ",
-        text: "คุณได้ตอบแบบประเมินการใช้งานระบบเรียบร้อยแล้ว",
-        icon: "success",
-        confirmButtonText: "ตกลง",
-        confirmButtonColor: "#7c3aed",
->>>>>>> Stashed changes
       });
       return;
     }
@@ -314,7 +242,6 @@ export default function AssessmentResult() {
 
     const renderSUS = () => {
       const questions = [
-<<<<<<< Updated upstream
         t('assessment_result.eval_sus1'),
         t('assessment_result.eval_sus2'),
         t('assessment_result.eval_sus3'),
@@ -325,18 +252,6 @@ export default function AssessmentResult() {
         t('assessment_result.eval_sus8'),
         t('assessment_result.eval_sus9'),
         t('assessment_result.eval_sus10')
-=======
-        "คุณอยากใช้แอปพลิเคชันนี้บ่อย ๆ",
-        "คุณคิดว่าระบบไม่ควรซับซ้อนขนาดนี้",
-        "คุณคิดว่าระบบใช้งานง่าย",
-        "คุณคิดว่าคุณต้องการความช่วยเหลือจากผู้เชี่ยวชาญเพื่อที่จะใช้งานระบบนี้ได้",
-        "คุณพบว่ามีหลายฟังก์ชันที่ทำงานได้ดี",
-        "คุณคิดว่าระบบไม่ค่อยมีความสม่ำเสมอ",
-        "คุณคิดว่าคนอื่นๆ น่าจะเข้าใจวิธีใช้ระบบนี้ได้เร็วเหมือนกัน",
-        "คุณพบว่าการใช้งานระบบนี้ยุ่งยาก/ซับซ้อนมากๆ",
-        "คุณรู้สึกมั่นใจตอนใช้งาน",
-        "คุณต้องการฝึกใช้งานก่อนถึงจะเริ่มใช้งานระบบนี้ได้",
->>>>>>> Stashed changes
       ];
 
       return questions
@@ -352,13 +267,8 @@ export default function AssessmentResult() {
     };
 
     Swal.fire({
-<<<<<<< Updated upstream
       title: t('assessment_result.eval_modal_title'),
       width: window.innerWidth < 768 ? '95%' : 700,
-=======
-      title: " แบบประเมินการใช้งานระบบ",
-      width: window.innerWidth < 768 ? "95%" : 700,
->>>>>>> Stashed changes
       showCloseButton: true,
       closeButtonHtml: "✕",
       html: `
@@ -384,13 +294,8 @@ export default function AssessmentResult() {
           </div>
         </div>
       `,
-<<<<<<< Updated upstream
       confirmButtonText: t('assessment_result.eval_submit'),
       confirmButtonColor: '#7c3aed',
-=======
-      confirmButtonText: "ส่งแบบประเมิน",
-      confirmButtonColor: "#7c3aed",
->>>>>>> Stashed changes
       preConfirm: () => {
         const getRadio = (name) => {
           const el = document.querySelector(`input[name="${name}"]:checked`);
@@ -399,18 +304,8 @@ export default function AssessmentResult() {
         // 1. ตรวจสอบส่วนที่ 1: ความพึงพอใจ (q1 - q5)
         for (let i = 1; i <= 5; i++) {
           if (!getRadio(`q${i}`)) {
-<<<<<<< Updated upstream
             Swal.showValidationMessage(i18n.language === 'en' ? `Please complete part 1 question ${i}` : `กรุณาตอบส่วนที่ 1 ข้อที่ ${i} ให้ครบถ้วน`);
             document.getElementsByName(`q${i}`)[0]?.closest('div')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-=======
-            Swal.showValidationMessage(
-              `กรุณาตอบส่วนที่ 1 ข้อที่ ${i} ให้ครบถ้วน`,
-            );
-            document
-              .getElementsByName(`q${i}`)[0]
-              ?.closest("div")
-              ?.scrollIntoView({ behavior: "smooth", block: "center" });
->>>>>>> Stashed changes
             return false;
           }
         }
@@ -420,18 +315,8 @@ export default function AssessmentResult() {
         for (let i = 1; i <= 10; i++) {
           const val = getRadio(`sus${i}`);
           if (!val) {
-<<<<<<< Updated upstream
             Swal.showValidationMessage(i18n.language === 'en' ? `Please complete part 2 (SUS) question ${i}` : `กรุณาตอบส่วนที่ 2 (SUS) ข้อที่ ${i} ให้ครบถ้วน`);
             document.getElementsByName(`sus${i}`)[0]?.closest('div')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-=======
-            Swal.showValidationMessage(
-              `กรุณาตอบส่วนที่ 2 (SUS) ข้อที่ ${i} ให้ครบถ้วน`,
-            );
-            document
-              .getElementsByName(`sus${i}`)[0]
-              ?.closest("div")
-              ?.scrollIntoView({ behavior: "smooth", block: "center" });
->>>>>>> Stashed changes
             return false;
           }
           susAnswers.push(Number(val));
@@ -485,11 +370,7 @@ export default function AssessmentResult() {
 
         try {
           Swal.fire({
-<<<<<<< Updated upstream
             title: t('assessment_result.saving'),
-=======
-            title: "กำลังบันทึกข้อมูล...",
->>>>>>> Stashed changes
             allowOutsideClick: false,
             didOpen: () => {
               Swal.showLoading();
@@ -504,28 +385,15 @@ export default function AssessmentResult() {
           setHasEvaluated(true);
 
           Swal.fire({
-<<<<<<< Updated upstream
             icon: 'success',
             title: t('assessment_result.eval_success_title'),
-=======
-            icon: "success",
-            title: "ส่งสำเร็จ",
->>>>>>> Stashed changes
             html: `
               <p>${t('assessment_result.eval_success_desc')}</p>
             `,
             confirmButtonColor: "#10b981",
           });
         } catch (error) {
-<<<<<<< Updated upstream
           Swal.fire(t('assessment_result.error_title'), t('assessment_result.send_error_desc'), "error");
-=======
-          Swal.fire(
-            "ผิดพลาด",
-            "ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง",
-            "error",
-          );
->>>>>>> Stashed changes
         }
       }
     });
@@ -567,7 +435,6 @@ export default function AssessmentResult() {
             )}
           </div>
           <h2 className="ar-hero-title">
-<<<<<<< Updated upstream
             {isSaved ? t('assessment_result.hero_saved_title') : t('assessment_result.hero_done_title')}
           </h2>
           <p className="ar-hero-subtitle" style={{ color: '#475569' }}>
@@ -577,33 +444,10 @@ export default function AssessmentResult() {
                 ? <span dangerouslySetInnerHTML={{ __html: t('assessment_result.hero_done_desc1') }} />
                 : <span dangerouslySetInnerHTML={{ __html: t('assessment_result.hero_done_desc2') }} />
             }
-=======
-            {isSaved
-              ? "ส่งข้อมูลให้เจ้าหน้าที่สำเร็จ"
-              : "ประเมินผลเบื้องต้นเสร็จสิ้น"}
-          </h2>
-          <p className="ar-hero-subtitle" style={{ color: "#475569" }}>
-            {isSaved ? (
-              "ข้อมูลของท่านได้รับการบันทึกเรียบร้อยแล้ว และระบบได้แจ้งให้เจ้าหน้าที่ที่เกี่ยวข้องทราบแล้ว"
-            ) : results.length > 0 ? (
-              <span>
-                ด้านล่างนี้คือสรุปผลการวิเคราะห์เบื้องต้น <br />
-                หากต้องการรับการดูแลต่อ กรุณากดปุ่ม{" "}
-                <b>“ส่งข้อมูลให้เจ้าหน้าที่”</b> ด้านล่าง
-              </span>
-            ) : (
-              <span>
-                กรอกข้อมูลเสร็จสิ้น <br />
-                กรุณากดปุ่ม <b>“ส่งข้อมูลให้เจ้าหน้าที่”</b> ด้านล่าง
-                เพื่อส่งข้อมูลให้เจ้าหน้าที่ต่อไป
-              </span>
-            )}
->>>>>>> Stashed changes
           </p>
         </div>
 
         {/* ✅ แสดงการ์ดผลการประเมิน */}
-<<<<<<< Updated upstream
         {translatedResults.length > 0 && translatedResults.map((res, index) => {
           const level = getLevelConfig(res, t);
           return (
@@ -620,33 +464,8 @@ export default function AssessmentResult() {
                 <div style={{ flex: 1, paddingRight: '16px' }}>
                   <div className="ar-level-badge" style={{ color: level.textColor }}>
                     <FiActivity size={24} /> <span>{level.label}</span>
-=======
-        {results.length > 0 &&
-          results.map((res, index) => {
-            const level = getLevelConfig(res);
-            return (
-              <div
-                key={index}
-                className="ar-result-card"
-                style={{
-                  "--card-color": level.color,
-                  animationDelay: `${index * 0.15}s`,
-                }}
-              >
-                {/* CARD HEAD */}
-                <div className="ar-result-card__head">
-                  <div style={{ flex: 1, paddingRight: "16px" }}>
-                    <div
-                      className="ar-level-badge"
-                      style={{ color: level.textColor }}
-                    >
-                      <FiActivity size={24} /> <span>{level.label}</span>
-                    </div>
-                    <div className="ar-card-title">{level.title}</div>
->>>>>>> Stashed changes
                   </div>
 
-<<<<<<< Updated upstream
                 <div className="ar-score-wrapper" style={{ backgroundColor: level.colorBg, borderColor: level.colorBorder }}>
                   <span className="ar-score__label" style={{ color: '#64748b' }}>{t('assessment_result.score')}</span>
                   <span className="ar-score__val" style={{ color: level.textColor }}>
@@ -682,27 +501,6 @@ export default function AssessmentResult() {
                 >
                   <div className="ar-visual__frame" style={{ background: `radial-gradient(circle at 50% 50%, rgba(${level.rgb}, 0.25), transparent 70%)` }}>
                     <img src={level.visualImage} alt={level.label} />
-=======
-                  <div
-                    className="ar-score-wrapper"
-                    style={{
-                      backgroundColor: level.colorBg,
-                      borderColor: level.colorBorder,
-                    }}
-                  >
-                    <span
-                      className="ar-score__label"
-                      style={{ color: "#64748b" }}
-                    >
-                      คะแนน
-                    </span>
-                    <span
-                      className="ar-score__val"
-                      style={{ color: level.textColor }}
-                    >
-                      {level.score}
-                    </span>
->>>>>>> Stashed changes
                   </div>
                 </div>
 
@@ -784,12 +582,7 @@ export default function AssessmentResult() {
               onClick={handleSendToStaff}
               disabled={isSubmitting}
             >
-<<<<<<< Updated upstream
               <FiSend /> {isSubmitting ? t('assessment_result.btn_sending') : t('assessment_result.btn_send')}
-=======
-              <FiSend />{" "}
-              {isSubmitting ? "กำลังส่ง..." : "ส่งข้อมูลให้เจ้าหน้าที่"}
->>>>>>> Stashed changes
             </button>
           )}
 

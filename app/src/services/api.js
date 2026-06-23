@@ -41,13 +41,8 @@ export const getClinicByIdOrSlug = (idOrSlug) =>
 export const createClinic = (data) => api.post("/clinics", data);
 export const updateClinic = (id, data) => api.put(`/clinics/${id}`, data);
 export const deleteClinic = (id) => api.delete(`/clinics/${id}`);
-<<<<<<< Updated upstream
 export const reorderClinics = (order) => api.patch('/clinics/reorder', { order });
 export const toggleClinicHelpCenter = (id, showInHelpCenter) => api.patch(`/clinics/${id}/toggle-help-center`, { show_in_help_center: showInHelpCenter });
-=======
-export const reorderClinics = (order) =>
-  api.patch("/clinics/reorder", { order });
->>>>>>> Stashed changes
 
 // ── เพิ่มฟังก์ชันใหม่สำหรับอัปเดตรูปปกโดยเฉพาะ ──
 export const updateFormImageOnly = (id, imageData) =>
