@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { FiSearch, FiEye, FiEyeOff } from 'react-icons/fi';
 import axios from 'axios';
 import Navbar from '../../../components/Navbar';
@@ -9,6 +10,7 @@ import bgImage from '../../../assets/bg-new.jpg';
 const API_BASE = (process.env.REACT_APP_API_URL || 'http://localhost:5000').replace(/\/api$/, '');
 
 export default function HistorySearch() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [identity, setIdentity] = useState('');
   const [showId, setShowId] = useState(false);
@@ -22,7 +24,7 @@ export default function HistorySearch() {
     const clean = identity.replace(/\D/g, '');
 
     if (clean.length !== 13) {
-      setError('กรุณากรอกเลขบัตรประชาชนให้ครบ 13 หลัก');
+      setError(t('history.search.err_incomplete'));
       return;
     }
 
@@ -42,9 +44,9 @@ export default function HistorySearch() {
       setLoading(false);
       // 🔴 ถ้าไม่พบข้อมูล (404) หรือเกิดข้อผิดพลาดอื่น ให้แจ้งเตือนที่หน้านี้เลย
       if (err.response?.status === 404) {
-        setError('ไม่พบประวัติการรับบริการ');
+        setError(t('history.search.err_not_found'));
       } else {
-        setError('เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
+        setError(t('history.search.err_connection'));
       }
     }
   };
@@ -65,7 +67,7 @@ export default function HistorySearch() {
 
       <Navbar
         showBack={true}
-        backText="กลับหน้าหลัก"
+        backText={t('history.search.back')}
         onBack={() => navigate('/')}
       />
 
@@ -74,8 +76,8 @@ export default function HistorySearch() {
           <div className="history-icon-wrapper">
             <FiSearch className="history-main-icon" />
           </div>
-          <h2 className="history-title">ตรวจสอบประวัติการทำแบบประเมิน</h2>
-          <p className="history-desc">กรุณากรอกเลขบัตรประชาชน 13 หลักเพื่อเรียกดูประวัติของท่าน</p>
+          <h2 className="history-title">{t('history.search.title')}</h2>
+          <p className="history-desc">{t('history.search.desc')}</p>
 
           <form onSubmit={handleSearch} className="history-form">
             <div className="history-input-wrap">
@@ -88,7 +90,7 @@ export default function HistorySearch() {
                   setIdentity(e.target.value.replace(/\D/g, '').slice(0, 13));
                   setError('');
                 }}
-                placeholder="กรอกเลขบัตรประชาชน 13 หลัก"
+                placeholder={t('history.search.placeholder')}
                 className={`history-input ${error ? 'error' : ''}`}
                 autoComplete="off"
               />
@@ -110,10 +112,10 @@ export default function HistorySearch() {
               {loading ? (
                 <div className="btn-loading-content">
                   <span className="btn-spinner"></span>
-                  <span>กำลังค้นหา...</span>
+                  <span>{t('history.search.btn_searching')}</span>
                 </div>
               ) : (
-                'ค้นหาข้อมูล'
+                t('history.search.btn_search')
               )}
             </button>
           </form>

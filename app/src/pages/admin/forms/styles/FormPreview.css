@@ -44,7 +44,37 @@ to { opacity: 1; transform: translateY(0); }
 /* ─── INPUTS ─── */
 .preview-input { font-family: 'Sarabun', sans-serif; font-size: 15px; padding: 10px 0; border: none; border-bottom: 1px solid #ccc; background: transparent; color: #202124; width: 100%; max-width: 420px; transition: border .2s; }
 .preview-input:focus { outline: none; border-bottom: 2px solid var(--theme-color); }
-select.preview-input { width: 100%; max-width: 300px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+select.preview-input {
+  width: 100%;
+  max-width: 340px;
+  padding: 12px 40px 12px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background-color: #f8fafc;
+  color: #334155;
+  font-size: 15px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  transition: all 0.2s ease;
+}
+select.preview-input:hover:not(:disabled) {
+  border-color: #94a3b8;
+  background-color: #f1f5f9;
+}
+select.preview-input:focus {
+  outline: none;
+  border-color: var(--theme-color, #2d7d81);
+  box-shadow: 0 0 0 3px rgba(45, 125, 129, 0.15);
+}
+select.preview-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #e2e8f0;
+}
 /* ─── CHIPS (RADIO) ─── */
 /* ─── RADIO (แบบปกติ ไม่มีกรอบ) ─── */
 .preview-chip-col { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }

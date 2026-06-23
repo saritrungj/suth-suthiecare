@@ -1,0 +1,1362 @@
+/* ============================================================
+   HELP CENTER MANAGEMENT MAIN LAYOUT
+   ============================================================ */
+.hc-admin-page {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: #f8fafc;
+  font-family: 'Noto Sans Thai', sans-serif;
+}
+
+.hc-admin-page input,
+.hc-admin-page button,
+.hc-admin-page select,
+.hc-admin-page textarea {
+  font-family: 'Noto Sans Thai', sans-serif;
+}
+
+.hc-main {
+  flex: 1;
+  padding: 30px 40px;
+  background-color: #f8fafc;
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================================
+   HEADER COMPONENT
+   ============================================================ */
+.hc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff !important;
+  border-radius: 12px;
+  padding: 25px 35px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border-left: 6px solid #F47932;
+  /* สีส้ม SUTHieCare */
+}
+
+.hc-header-info h1 {
+  font-size: 26px;
+  color: #F47932 !important;
+  margin: 0 0 6px 0;
+  font-weight: 800;
+}
+
+.hc-header-hint {
+  margin: 6px 0 0 0 !important;
+  font-size: 13.5px !important;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* ============================================================
+   BUTTONS SYSTEM
+   ============================================================ */
+.hc-btn-add {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #F47932;
+  color: #ffffff;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(244, 121, 50, 0.3);
+}
+
+.hc-btn-add:hover {
+  background-color: #ea580c;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(244, 121, 50, 0.4);
+}
+
+.hc-btn-search {
+  background-color: #0f172a;
+  color: white;
+  border: none;
+  padding: 11px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.hc-btn-search:hover {
+  background-color: #1e293b;
+}
+
+/* ============================================================
+   FILTER PANEL
+   ============================================================ */
+.hc-filter-panel {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  border: 1px solid #f1f1f1;
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+/* ============================================================
+   TABLE CONTAINER & COLUMN CONTROL
+   ============================================================ */
+.hc-table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #f1f1f1;
+  overflow-x: auto;
+}
+
+.hc-table {
+  width: 100%;
+  border-collapse: separate !important;
+  border-spacing: 0;
+  min-width: 1100px;
+}
+
+.hc-table th {
+  color: #ffffff !important;
+  background-color: #F47932 !important;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 18px 20px;
+  text-align: left;
+  border: none !important;
+  white-space: nowrap;
+}
+
+.hc-table thead tr th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.hc-table thead tr th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.hc-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+.hc-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+.hc-table td {
+  padding: 16px 20px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+  color: #475569;
+  vertical-align: middle;
+  background-color: #ffffff;
+}
+
+.hc-table tbody tr:hover td {
+  background-color: #fffaf7 !important;
+}
+
+/* กำหนดขนาดสัดส่วนคอลัมน์ FAQ โดยเฉพาะ */
+.hc-col-question {
+  font-weight: 600;
+  color: #0f172a;
+  min-width: 250px;
+}
+
+.hc-col-clinic {
+  width: 160px;
+  font-weight: 500;
+}
+
+.hc-col-category {
+  width: 160px;
+}
+
+.hc-col-homepage {
+  width: 120px;
+  text-align: center !important;
+}
+
+.hc-col-actions {
+  width: 120px;
+  text-align: center !important;
+}
+
+/* ============================================================
+   BADGES & UI COMPONENTS
+   ============================================================ */
+.hc-badge-category {
+  background-color: #f1f5f9;
+  color: #475569;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.hc-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.hc-status-badge.active {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.hc-status-badge.inactive {
+  background-color: #f1f5f9;
+  color: #94a3b8;
+}
+
+.hc-empty-state {
+  text-align: center;
+  color: #94a3b8;
+  font-weight: 600;
+  padding: 50px !important;
+}
+
+/* ============================================================
+   ACTIONS SYSTEM
+   ============================================================ */
+.hc-actions-wrapper {
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.hc-btn-action-edit,
+.hc-btn-action-delete {
+  width: 38px !important;
+  height: 38px !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: #f8fafc !important;
+  padding: 0 !important;
+  transition: all 0.3s ease !important;
+}
+
+.hc-btn-action-edit:hover {
+  background: #eff6ff !important;
+  border-color: #3b82f6 !important;
+  transform: translateY(-2px);
+}
+
+.hc-btn-action-edit:hover svg {
+  color: #2563eb !important;
+}
+
+.hc-btn-action-delete:hover {
+  background: #fef2f2 !important;
+  border-color: #fee2e2 !important;
+  transform: translateY(-2px);
+}
+
+.hc-btn-action-delete:hover svg {
+  color: #ef4444 !important;
+}
+
+.hc-btn-action-edit svg,
+.hc-btn-action-delete svg,
+.hc-actions-wrapper svg {
+  width: 16px !important;
+  height: 16px !important;
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: #94a3b8 !important;
+  transition: color 0.3s ease !important;
+}
+
+/* ============================================================
+   MODALS & FORMS
+   ============================================================ */
+.hc-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  padding: 20px;
+}
+
+.hc-modal-content {
+  background: white;
+  width: 100%;
+  max-width: 650px;
+  border-radius: 16px;
+  padding: 32px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.hc-modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.hc-form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hc-form-group label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #334155;
+  font-size: 14.5px;
+}
+
+.hc-form-group input[type="text"],
+.hc-form-group select,
+.hc-form-group textarea {
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+  background-color: #ffffff;
+}
+
+.hc-form-group input[type="text"]:focus,
+.hc-form-group select:focus,
+.hc-form-group textarea:focus {
+  border-color: #F47932;
+  box-shadow: 0 0 0 3px rgba(244, 121, 50, 0.15);
+}
+
+.hc-form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.hc-form-row .hc-form-group {
+  flex: 1;
+}
+
+.hc-form-group select:disabled,
+.hc-disabled-select {
+  background-color: #f1f5f9 !important;
+  color: #94a3b8 !important;
+  border-color: #cbd5e1 !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+}
+
+/* ============================================================
+   SUTHIE CARE PREMIUM TOGGLE SWITCH
+   ============================================================ */
+.hc-toggle-container {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.hc-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.hc-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.hc-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.hc-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+.hc-switch input:checked+.hc-slider {
+  background-color: #F47932;
+  /* สีส้มแบรนด์เมื่อเปิดใช้งาน */
+}
+
+.hc-switch input:checked+.hc-slider:before {
+  transform: translateX(24px);
+}
+
+/* ============================================================
+   MODAL ACTIONS
+   ============================================================ */
+.hc-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.hc-btn-cancel,
+.hc-btn-save {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-size: 15px;
+}
+
+.hc-btn-cancel {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.hc-btn-cancel:hover {
+  background-color: #e2e8f0;
+}
+
+.hc-btn-save {
+  background-color: #F47932;
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(244, 121, 50, 0.3);
+  transition: all 0.2s;
+}
+
+.hc-btn-save:hover {
+  background-color: #ea580c;
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   🌟 ปรับปรุงปุ่มจัดการไอคอนภายในตารางมอดัลหมวดหมู่ย่อยให้แสดงผลชัดเจน
+   ============================================================ */
+.hc-modal-content .hc-btn-action-edit,
+.hc-modal-content .hc-btn-action-delete {
+  width: 32px !important;
+  height: 32px !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: #f8fafc !important;
+  padding: 0 !important;
+  transition: all 0.2s ease !important;
+}
+
+.hc-modal-content .hc-btn-action-edit svg {
+  color: #3b82f6 !important;
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.hc-modal-content .hc-btn-action-delete svg {
+  color: #ef4444 !important;
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.hc-modal-content .hc-btn-action-edit:hover {
+  background-color: #eff6ff !important;
+  border-color: #3b82f6 !important;
+}
+
+.hc-modal-content .hc-btn-action-delete:hover {
+  background-color: #fef2f2 !important;
+  border-color: #ef4444 !important;
+}
+
+.ql-editor {
+  min-height: 220px;
+  max-height: 400px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  font-family: 'Kanit', sans-serif;
+}
+
+.ql-toolbar.ql-snow {
+  border: none !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  background-color: #f8fafc;
+}
+
+.ql-container.ql-snow {
+  border: none !important;
+}
+
+.hc-form-group div[style*="overflow: hidden"] {
+  overflow: visible !important;
+}
+
+.ql-snow .ql-tooltip {
+  z-index: 9999 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
+.ql-snow .ql-tooltip input[type=text] {
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+  font-size: 13px !important;
+  font-family: 'Kanit', sans-serif !important;
+  width: 200px !important;
+}
+
+.ql-snow .ql-tooltip::before {
+  content: "วางลิงก์ที่นี่: " !important;
+  font-family: 'Kanit', sans-serif !important;
+  font-weight: 500 !important;
+  color: #475569 !important;
+}
+
+.ql-snow .ql-tooltip a.ql-action::after {
+  content: "บันทึก" !important;
+  font-family: 'Kanit', sans-serif !important;
+  background-color: #4caf50 !important;
+  color: white !important;
+  padding: 4px 10px !important;
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+}
+
+.ql-snow .ql-tooltip a.ql-remove::before {
+  content: "ลบลิงก์" !important;
+  font-family: 'Kanit', sans-serif !important;
+  color: #ef4444 !important;
+  margin-left: 8px !important;
+}
+
+.ql-snow .ql-tooltip:not(.ql-editing) a.ql-preview {
+  font-family: 'Kanit', sans-serif !important;
+  font-size: 13px !important;
+  color: #3b82f6 !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  visibility: hidden;
+  position: relative;
+}
+
+.ql-snow .ql-tooltip:not(.ql-editing) a.ql-preview::before {
+  content: "เปิดลิงก์ 🌐";
+  visibility: visible;
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+}
+
+.hc-actions-cell,
+td button,
+.action-buttons {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+td button svg,
+td button i,
+.hc-btn-edit svg,
+.hc-btn-delete svg {
+  width: 18px !important;
+  height: 18px !important;
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.fa-edit,
+.fa-trash-alt,
+.fa-trash {
+  font-size: 16px !important;
+  visibility: visible !important;
+  display: inline-block !important;
+}
+
+/* ============================================================
+    CLINIC FAQ MANAGEMENT MODAL SYSTEM
+   ============================================================ */
+
+.hc-btn-clinic-settings {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hc-btn-clinic-settings:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.hc-clinic-modal-content {
+  background: #ffffff;
+  width: 100%;
+  max-width: 680px;
+  border-radius: 14px;
+  padding: 25px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: hc-modal-fade 0.25s ease-out;
+}
+
+.hc-clinic-search-wrapper {
+  margin: 15px 0;
+}
+
+.hc-clinic-search-input {
+  width: 100%;
+  padding: 11px 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.hc-clinic-search-input:focus {
+  border-color: #ff7315;
+  box-shadow: 0 0 0 3px rgba(255, 115, 21, 0.1);
+}
+
+.hc-clinic-table-container {
+  max-height: 380px;
+  overflow-y: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.hc-mini-clinic-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.hc-mini-clinic-table th {
+  position: sticky;
+  top: 0;
+  background-color: #f8fafc;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  border-bottom: 2px solid #e2e8f0;
+  z-index: 5;
+}
+
+.hc-mini-clinic-table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+.hc-mini-logo-container {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+}
+
+.hc-mini-clinic-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hc-clinic-name-text {
+  font-weight: 500;
+  color: #334155;
+}
+
+.hc-switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+}
+
+.hc-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.hc-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: .3s;
+  border-radius: 24px;
+}
+
+.hc-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+input:checked+.hc-slider {
+  background-color: #ff7315;
+}
+
+input:checked+.hc-slider:before {
+  transform: translateX(22px);
+}
+
+.hc-header-actions-group {
+  display: flex;
+  gap: 12px;
+}
+
+.hc-btn-outline-custom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #ffffff !important;
+  color: #F47932 !important;
+  border: 1.5px solid #F47932 !important;
+  padding: 12px 26px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-shadow: none !important;
+}
+
+.hc-btn-outline-custom:hover {
+  background-color: #fffaf7 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 121, 50, 0.1) !important;
+}
+
+/* ============================================================
+   สไตล์ปุ่มปิดกากบาท
+   ============================================================ */
+.hc-close-btn-custom {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.hc-close-btn-custom:hover {
+  background: #fee2e2 !important;
+  transform: scale(1.05);
+}
+
+.hc-close-cross {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hc-close-btn-custom:hover .hc-close-cross {
+  transform: rotate(180deg);
+}
+
+.hc-close-cross::before,
+.hc-close-cross::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 2px;
+  background-color: #475569;
+  border-radius: 1px;
+  transition: background-color 0.3s ease;
+}
+
+.hc-close-cross::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.hc-close-cross::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.hc-close-btn-custom:hover .hc-close-cross::before,
+.hc-close-btn-custom:hover .hc-close-cross::after {
+  background-color: #b91c1c !important;
+}
+
+.hc-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.hc-status.active {
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
+  border: 1px solid #bbf7d0;
+}
+
+.hc-status.active svg {
+  color: #15803d !important;
+  font-size: 14px;
+}
+
+.hc-status.inactive {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+  border: 1px solid #fecaca;
+}
+
+.hc-status.inactive svg {
+  color: #dc2626 !important;
+  font-size: 14px;
+}
+
+/* ============================================================
+  SYSTEM ANIMATIONS & LOADERS (ระบบสปินเนอร์หมุนโหลดข้อมูลศูนย์ช่วยเหลือ)
+   ============================================================ */
+.hc-loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  width: 100%;
+}
+
+.hc-loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f1f5f9;
+  border-top: 4px solid #F47932;
+  border-radius: 50%;
+  animation: hc-spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes hc-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.hc-loading-state p {
+  color: #64748b;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  animation: hc-pulseText 1.5s ease-in-out infinite;
+}
+
+@keyframes hc-pulseText {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ==============================
+   PAGINATION FOOTER (Help Center)
+================================ */
+.table-scroll-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  border-radius: 12px 12px 0 0;
+  flex: 1;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+}
+
+.table-pagination-footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: rgba(248, 250, 252, 0.98);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid #e2e8f0;
+  border-radius: 0 0 12px 12px;
+  flex-wrap: wrap;
+  gap: 16px;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.03);
+  flex-shrink: 0;
+  width: 100%;
+  min-width: fit-content;
+}
+
+.pagination-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: #64748b;
+}
+
+.pagination-select {
+  padding: 6px 12px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #1e293b;
+  font-size: 13.5px;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.pagination-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-indicator {
+  font-size: 13.5px;
+  color: #64748b;
+}
+
+.page-highlight {
+  color: #1e40af;
+}
+
+.page-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  min-width: 36px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #1e40af;
+}
+
+.page-btn:active:not(:disabled) {
+  background: #e2e8f0;
+  transform: translateY(1px);
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f8fafc;
+}
+
+.page-icon {
+  flex-shrink: 0;
+  display: block;
+}
+
+.hc-homepage-toggle-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-sizing: border-box;
+}
+
+.hc-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.hc-toggle-row .hc-switch {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.hc-toggle-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #334155;
+  user-select: none;
+  cursor: pointer;
+}
+
+.hc-toggle-label.disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.hc-toggle-quota-info {
+  width: 100%;
+  padding-top: 10px;
+  border-top: 1px dashed #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hc-toggle-quota-info small {
+  display: block;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.hc-toggle-error-msg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ef4444;
+  font-size: 12.5px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.hc-form-group select,
+.hc-modal-content select {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  white-space: normal !important; 
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  padding-right: 30px !important;
+  height: auto !important; 
+  min-height: 42px; 
+}
+
+.hc-form-group select option,
+.hc-modal-content select option {
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+}
+/* ============================================================
+   RESPONSIVE DESIGN SYSTEM
+   ============================================================ */
+@media (max-width: 992px) {
+  .hc-filter-panel {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hc-btn-search {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .hc-main { 
+    padding: 16px; 
+  }
+  
+  .hc-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 15px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .hc-header-info {
+    width: 100%;
+  }
+  
+  .hc-header-info h1 {
+    font-size: 20px; 
+    margin-bottom: 4px;
+  }
+  
+  .hc-header-hint {
+    font-size: 13px;
+  }
+  
+  .hc-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  .hc-header-actions-group {
+    display: flex;
+    flex-direction: column; 
+    width: 100%;            
+    gap: 10px;              
+  }
+  
+  .hc-btn-outline-custom, 
+  .hc-btn-add {
+    width: 100% !important; 
+    height: 45px;            
+    justify-content: center;  
+    font-size: 14px;
+    padding: 0 15px;
+    box-sizing: border-box;
+    margin: 0 !important;     
+  }
+  
+  .table-pagination-footer { 
+    flex-direction: column; 
+    justify-content: center; 
+    text-align: center; 
+    gap: 12px; 
+    padding: 14px 16px; 
+  }
+  
+  .table-pagination-footer .pagination-info { 
+    width: 100%; 
+    justify-content: center; 
+    flex-wrap: wrap; 
+  }
+  
+  .table-pagination-footer .pagination-controls { 
+    width: 100%; 
+    justify-content: center; 
+  }
+  
+  .page-btn { 
+    width: 32px; 
+    height: 32px; 
+    font-size: 16px; 
+  }
+  
+  .pagination-select { 
+    padding: 5px 10px; 
+    font-size: 12px; 
+  }
+  
+  .page-indicator { 
+    font-size: 12px; 
+  }
+
+  .hc-modal-overlay {
+    z-index: 999999 !important; 
+    display: block !important;  
+    overflow-y: auto !important; 
+    padding: 16px !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hc-modal-content,
+  .hc-clinic-modal-content {
+    margin: 30px auto !important;
+    padding: 24px 16px !important; 
+    max-height: none !important;   
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+  }
+
+  .hc-modal-content h2,
+  .hc-clinic-modal-content h3,
+  .hc-modal-header h3 {
+    font-size: 19px !important;
+    margin-top: 5px !important;
+    margin-bottom: 20px !important;
+    padding-bottom: 12px !important;
+    padding-right: 45px !important; 
+    line-height: 1.4 !important;
+    word-break: break-word !important; 
+  }
+
+  .hc-close-btn-custom {
+    top: 20px !important;  
+    right: 16px !important;
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .hc-form-group {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .hc-form-group input[type="text"],
+  .hc-form-group select,
+  .hc-form-group textarea,
+  .hc-clinic-search-input {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important; 
+  }
+
+  .hc-modal-content form {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+
+  .hc-modal-content form button[type="submit"] {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .hc-modal-actions {
+    flex-direction: column-reverse !important; 
+    gap: 10px !important;
+    margin-top: 24px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .hc-btn-cancel, 
+  .hc-btn-save {
+    width: 100% !important;
+    margin: 0 !important;
+    height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+  }
+
+  .hc-clinic-table-container,
+  .hc-modal-content div[style*="maxHeight"] {
+    max-height: 280px !important;
+    overflow-x: auto !important; 
+    overflow-y: auto !important; 
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .hc-table,
+  .hc-mini-clinic-table {
+    min-width: 550px !important; 
+    width: 100% !important;
+  }
+}

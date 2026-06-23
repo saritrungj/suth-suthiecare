@@ -236,15 +236,8 @@ to { opacity: 1; transform: translateY(0) scale(1); }
    🟢 ACTIVE CASES & APPOINTMENTS (Grid Layout)
 ========================================= */
 /* เปลี่ยนให้ Container คลุม Active Cases แสดงเป็น Grid */
-.hr-active-cases-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-top: 20px; }
-.hr-active-case-card { background-color: var(--gray-50); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; /* เปลี่ยนเป็นแนวตั้งในตัวกล่อง */
-  gap: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); transition: transform 0.2s, box-shadow 0.2s; height: 100%; /* ให้ความสูงเท่ากันทุกล่องใน Grid */ }
+
 .hr-active-case-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.hr-active-case-info-wrap { display: flex; align-items: flex-start; gap: 16px; }
-.hr-active-case-icon { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.hr-active-case-title { margin: 0 0 4px 0; font-size: 16px; color: var(--gray-800); font-weight: 700; line-height: 1.3; }
-.hr-active-case-status { margin: 0; font-size: 13px; color: var(--gray-500); }
-.hr-active-case-id { font-size: 11px; color: var(--gray-400); margin-left: 6px; }
 .hr-upcoming-appt-box { background-color: var(--theme-orange-50); border: 1px dashed var(--theme-orange-300); border-radius: 12px; padding: 12px; display: flex; align-items: flex-start; gap: 12px; margin-top: auto; /* ดันให้อยู่ล่างสุดเสมอ */ }
 .hr-upcoming-appt-title { font-size: 12px; color: var(--theme-orange-600); font-weight: 700; margin-bottom: 2px; }
 .hr-upcoming-appt-date { font-size: 13.5px; color: #431407; font-weight: 600; }
@@ -268,6 +261,161 @@ to { opacity: 1; transform: translateY(0) scale(1); }
 /* Buttons (สำหรับหน้า Empty) */
 .hr-empty-refresh-btn { margin-top: 24px; background: white; color: var(--gray-600); border: 1.5px solid var(--gray-200); padding: 10px 24px; border-radius: 100px; font-weight: 700; cursor: pointer; transition: 0.3s; }
 .hr-empty-refresh-btn:hover { background: var(--gray-50); color: var(--theme-orange-600); border-color: var(--theme-orange-200); transform: translateY(-2px); }
+
+/* =========================
+   Current Treatment
+========================= */
+
+.hr-current-treatment-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 32px;
+  margin-bottom: 18px;
+  color: #222;
+}
+
+.hr-current-treatment-title::before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 2px;
+  background: #ea580c;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.hr-active-cases-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hr-active-case-card {
+  background: #fff;
+  border: 1px solid #edf2f7 !important;
+  border-radius: 16px;
+  min-height: 88px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: .25s;
+  cursor: pointer;
+}
+
+.hr-active-case-card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,.06);
+  transform: translateY(-2px);
+}
+
+.hr-case-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 32%;
+}
+
+.hr-case-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.hr-case-info h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.hr-case-status {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.hr-case-status span {
+  margin-left: 4px;
+}
+
+.hr-case-code {
+  margin-top: 5px;
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.hr-case-center {
+  width: 40%;
+  border-left: 1px solid #f1f5f9;
+  padding-left: 24px;
+}
+
+.hr-case-detail-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 6px;
+}
+
+.hr-case-detail-text {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.hr-case-right {
+  width: 20%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.hr-case-btn {
+  border: none;
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.hr-case-btn:hover {
+  background: #dbeafe;
+}
+
+@media(max-width:768px){
+
+  .hr-active-case-card{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:16px;
+  }
+
+  .hr-case-left,
+  .hr-case-center,
+  .hr-case-right{
+    width:100%;
+  }
+
+  .hr-case-center{
+    border-left:none;
+    padding-left:0;
+  }
+
+  .hr-case-right{
+    justify-content:flex-start;
+  }
+}
 /* Animations */
 @keyframes hrRotate {
  from { transform: rotate(0deg); }

@@ -181,12 +181,12 @@ export default function HistoryResult() {
             }));
           }
           if (sd.raw_answers) {
-            const tRaw = {};
-            for (const [k, v] of Object.entries(sd.raw_answers)) {
-              const tK = await translateTextSmart(k);
-              tRaw[tK] = v;
-            }
-            sd.raw_answers = tRaw;
+             const tRaw = {};
+             for (const [k, v] of Object.entries(sd.raw_answers)) {
+                const tK = await translateTextSmart(k);
+                tRaw[tK] = v;
+             }
+             sd.raw_answers = tRaw;
           }
           dCopy.summary_data = sd;
         }
@@ -202,84 +202,84 @@ export default function HistoryResult() {
       const tAnswers = {};
       for (const [idStr, answers] of Object.entries(formAnswers)) {
         if (Array.isArray(answers)) {
-          const record = data.find(d => String(d.id) === String(idStr));
-          const formQs = record ? (formQuestionsMap[record.form_id] || []) : [];
+           const record = data.find(d => String(d.id) === String(idStr));
+           const formQs = record ? (formQuestionsMap[record.form_id] || []) : [];
+           
+           const flatFormQs = [];
+           formQs.forEach(q => {
+             if (q.type === 'group' && q.subQuestions) flatFormQs.push(...q.subQuestions);
+             else flatFormQs.push(q);
+           });
 
-          const flatFormQs = [];
-          formQs.forEach(q => {
-            if (q.type === 'group' && q.subQuestions) flatFormQs.push(...q.subQuestions);
-            else flatFormQs.push(q);
-          });
+           tAnswers[idStr] = await Promise.all(answers.map(async (ans) => {
+             const ansCopy = { ...ans };
+             const qLabel = stripHtml(ans.question_title || '');
+             const qDef = flatFormQs.find(q => stripHtml(q.title) === qLabel || stripHtml(q.title) === stripHtml(ansCopy.question_title));
 
-          tAnswers[idStr] = await Promise.all(answers.map(async (ans) => {
-            const ansCopy = { ...ans };
-            const qLabel = stripHtml(ans.question_title || '');
-            const qDef = flatFormQs.find(q => stripHtml(q.title) === qLabel || stripHtml(q.title) === stripHtml(ansCopy.question_title));
+             if (ansCopy.question_title) ansCopy.question_title = await translateTextSmart(ansCopy.question_title);
 
-            if (ansCopy.question_title) ansCopy.question_title = await translateTextSmart(ansCopy.question_title);
+             if (ansCopy.answer_value !== undefined && ansCopy.answer_value !== null) {
+                let isGrid = false;
+                if (qDef && (qDef.type === 'grid_multiple' || qDef.type === 'grid_checkbox')) isGrid = true;
+                else if (typeof ansCopy.answer_value === 'object' && !Array.isArray(ansCopy.answer_value)) isGrid = true;
 
-            if (ansCopy.answer_value !== undefined && ansCopy.answer_value !== null) {
-              let isGrid = false;
-              if (qDef && (qDef.type === 'grid_multiple' || qDef.type === 'grid_checkbox')) isGrid = true;
-              else if (typeof ansCopy.answer_value === 'object' && !Array.isArray(ansCopy.answer_value)) isGrid = true;
+                if (isGrid) {
+                   const tGrid = {};
+                   for (const [rKey, rVal] of Object.entries(ansCopy.answer_value)) {
+                      let rowTitle = rKey;
+                      const match = String(rKey).match(/^(?:แถวที่|Row)\s*(\d+)$/i);
+                      let rIdx = -1;
+                      if (match) rIdx = parseInt(match[1], 10) - 1;
+                      else if (!isNaN(rKey)) rIdx = parseInt(rKey, 10);
 
-              if (isGrid) {
-                const tGrid = {};
-                for (const [rKey, rVal] of Object.entries(ansCopy.answer_value)) {
-                  let rowTitle = rKey;
-                  const match = String(rKey).match(/^(?:แถวที่|Row)\s*(\d+)$/i);
-                  let rIdx = -1;
-                  if (match) rIdx = parseInt(match[1], 10) - 1;
-                  else if (!isNaN(rKey)) rIdx = parseInt(rKey, 10);
-
-                  if (rIdx >= 0 && qDef && qDef.rows && qDef.rows[rIdx]) {
-                    const stripped = stripHtml(qDef.rows[rIdx]);
-                    if (stripped) rowTitle = stripped;
-                  }
-
-                  let tRKey = rowTitle;
-                  if (typeof rowTitle === 'string' && rowTitle.trim() !== '') {
-                    if (rowTitle.match(/^(?:แถวที่|Row)\s*(\d+)$/i)) {
-                      tRKey = `Row ${rowTitle.match(/(\d+)/)[1]}`;
-                    } else {
-                      tRKey = await translateTextSmart(rowTitle);
-                    }
-                  } else if (rIdx >= 0) {
-                    tRKey = `Row ${rIdx + 1}`;
-                  }
-
-                  let tRVal = rVal;
-                  if (typeof rVal === 'string') tRVal = await translateTextSmart(rVal);
-                  else if (Array.isArray(rVal)) tRVal = await Promise.all(rVal.map(async v => typeof v === 'string' ? await translateTextSmart(v) : v));
-                  tGrid[tRKey] = tRVal;
-                }
-                ansCopy.answer_value = tGrid;
-              } else if (qDef) {
-                const choiceTypes = ['multiple_choice', 'checkboxes', 'dropdown', 'radio', 'linear_scale'];
-                if (choiceTypes.includes(qDef.type)) {
-                  if (Array.isArray(ansCopy.answer_value)) {
-                    ansCopy.answer_value = await Promise.all(ansCopy.answer_value.map(async v => {
-                      if (typeof v === 'string' && v.includes(' : ')) {
-                        const parts = v.split(' : ');
-                        return `${await translateTextSmart(parts[0])} : ${parts[1]}`;
+                      if (rIdx >= 0 && qDef && qDef.rows && qDef.rows[rIdx]) {
+                          const stripped = stripHtml(qDef.rows[rIdx]);
+                          if (stripped) rowTitle = stripped;
                       }
-                      return typeof v === 'string' ? await translateTextSmart(v) : v;
-                    }));
-                  } else if (typeof ansCopy.answer_value === 'string') {
-                    if (ansCopy.answer_value.includes(' : ')) {
-                      const parts = ansCopy.answer_value.split(' : ');
-                      ansCopy.answer_value = `${await translateTextSmart(parts[0])} : ${parts[1]}`;
-                    } else {
-                      ansCopy.answer_value = await translateTextSmart(ansCopy.answer_value);
-                    }
-                  }
+
+                      let tRKey = rowTitle;
+                      if (typeof rowTitle === 'string' && rowTitle.trim() !== '') {
+                          if (rowTitle.match(/^(?:แถวที่|Row)\s*(\d+)$/i)) {
+                              tRKey = `Row ${rowTitle.match(/(\d+)/)[1]}`;
+                          } else {
+                              tRKey = await translateTextSmart(rowTitle);
+                          }
+                      } else if (rIdx >= 0) {
+                          tRKey = `Row ${rIdx + 1}`;
+                      }
+
+                      let tRVal = rVal;
+                      if (typeof rVal === 'string') tRVal = await translateTextSmart(rVal);
+                      else if (Array.isArray(rVal)) tRVal = await Promise.all(rVal.map(async v => typeof v === 'string' ? await translateTextSmart(v) : v));
+                      tGrid[tRKey] = tRVal;
+                   }
+                   ansCopy.answer_value = tGrid;
+                } else if (qDef) {
+                   const choiceTypes = ['multiple_choice', 'checkboxes', 'dropdown', 'radio', 'linear_scale'];
+                   if (choiceTypes.includes(qDef.type)) {
+                      if (Array.isArray(ansCopy.answer_value)) {
+                         ansCopy.answer_value = await Promise.all(ansCopy.answer_value.map(async v => {
+                            if (typeof v === 'string' && v.includes(' : ')) {
+                               const parts = v.split(' : ');
+                               return `${await translateTextSmart(parts[0])} : ${parts[1]}`;
+                            }
+                            return typeof v === 'string' ? await translateTextSmart(v) : v;
+                         }));
+                      } else if (typeof ansCopy.answer_value === 'string') {
+                         if (ansCopy.answer_value.includes(' : ')) {
+                            const parts = ansCopy.answer_value.split(' : ');
+                            ansCopy.answer_value = `${await translateTextSmart(parts[0])} : ${parts[1]}`;
+                         } else {
+                            ansCopy.answer_value = await translateTextSmart(ansCopy.answer_value);
+                         }
+                      }
+                   }
                 }
-              }
-            }
-            return ansCopy;
-          }));
+             }
+             return ansCopy;
+           }));
         } else {
-          tAnswers[idStr] = answers;
+           tAnswers[idStr] = answers;
         }
       }
 
@@ -587,148 +587,35 @@ export default function HistoryResult() {
           </div>
         </div>
 
-        {/* แบนเนอร์แนะนำดาวน์โหลดแอป */}
-        <div className="hr-suth-promo-banner">
-          {/* ฝั่งซ้าย */}
-          <div className="promo-left">
-            <img src="/sutapp/phone.png" alt="SUTH App Phone" className="promo-phone-img" />
-            <div className="promo-text-content">
-              <h2>{t('history.result.download_app_title')} <span className="highlight-orange">SUTH App</span></h2>
-              <p className="promo-desc">{t('history.result.download_app_desc')}</p>
-            </div>
-          </div>
-
-          <div className="promo-divider"></div>
-
-          {/* ฝั่งขวา */}
-          <div className="promo-right">
-            <div className="promo-top-content">
-              <img src="/sutapp/qr.png" alt="QR Code" className="promo-qr" />
-              <div className="promo-store-logos">
-                <img src="/sutapp/logo-download.png" alt="Download Buttons" />
-              </div>
-            </div>
-            <button className="download-btn" onClick={() => window.open("https://play.google.com/store/apps/details?id=th.go.suth.app", "_blank")}>
-              <FiDownload style={{ marginRight: '8px' }} /> {t('history.result.download_now')}
-            </button>
-          </div>
-        </div>
-
         {activeCases.length > 0 && (
-          <>
-            <h3 className="hr-current-treatment-title">
-              {i18n.language === 'en' ? 'Current Treatment by Clinic' : 'การรักษาปัจจุบันของแต่ละคลินิก'}
-            </h3>
+          <div className="hr-active-cases-grid">
+            {activeCases.map(mc => {
+              const relatedResponse = translatedData.find(d => d.master_case_id === mc.id);
+              const actualClinicType = mc.clinicType || mc.clinic_type || relatedResponse?.clinicType || relatedResponse?.clinic_type || 'general';
+              const cInfo = CLINIC_INFO[actualClinicType] || CLINIC_INFO.general;
 
-            <div className="hr-active-cases-list">
-              {activeCases.map((mc) => {
-                const relatedResponse = translatedData.find(
-                  (d) => d.master_case_id === mc.id,
-                );
+              const currentStatus = relatedResponse?.status || "รอติดต่อ (รอดำเนินการ)";
 
-                const actualClinicType =
-                  mc.clinicType ||
-                  mc.clinic_type ||
-                  relatedResponse?.clinicType ||
-                  relatedResponse?.clinic_type ||
-                  "general";
-
-                const cInfo =
-                  CLINIC_INFO[actualClinicType] || CLINIC_INFO.general;
-
-                const currentStatus =
-                  relatedResponse?.status || "รอติดต่อ (รอดำเนินการ)";
-
-                return (
-                  <div
-                    key={mc.id}
-                    className="hr-active-case-card"
-                    onClick={(e) => {
-                      e.stopPropagation();
-
-                      navigate("/clinic-detail", {
-                        state: {
-                          identity,
-                          masterCase: mc,
-                          clinicType: actualClinicType,
-
-                          bmiRecords,
-                          adviceByClinic,
-                          timelineEvents,
-                          responses: translatedData,
-                          logs: translatedLogs,
-                        },
-                      });
-                    }}
-                  >
-                    {/* ซ้าย */}
-                    <div className="hr-case-left">
-                      <div
-                        className="hr-case-icon"
-                        style={{
-                          backgroundColor: cInfo.bg,
-                        }}
-                      >
-                        <FiAlertCircle size={24} color={cInfo.color} />
-                      </div>
-
-                      <div className="hr-case-info">
-                        <h4>{getClinicName(cInfo, i18n.language)}</h4>
-
-                        <div className="hr-case-status">
-                          ● {t('history.result.status')}:
-                          <span>{translateStatus(currentStatus, i18n.language)}</span>
-                        </div>
-
-                        <div className="hr-case-code">
-                          MC-{String(mc.id).padStart(4, "0")}
-                        </div>
-                      </div>
+              return (
+                <div key={mc.id} className="hr-active-case-card" style={{ border: `2px solid ${cInfo.color}` }}>
+                  <div className="hr-active-case-info-wrap">
+                    <div className="hr-active-case-icon" style={{ backgroundColor: cInfo.bg }}>
+                      <FiAlertCircle size={22} color={cInfo.color} />
                     </div>
-
-                    {/* กลาง */}
-                    <div className="hr-case-center">
-                      <div className="hr-case-detail-title">
-                        {i18n.language === 'en' ? 'Treatment Details' : 'รายละเอียดการรักษา'}
-                      </div>
-
-                      <div className="hr-case-detail-text">
-                        {i18n.language === 'en' ? 'Under evaluation by psychologist' : 'อยู่ระหว่างการประเมินโดยนักจิตวิทยา'}
-                        <br />
-                        {i18n.language === 'en' ? 'Waiting for staff to contact back for treatment plan' : 'รอเจ้าหน้าที่ติดต่อกลับเพื่อนัดแผนการรักษา'}
-                      </div>
-                    </div>
-
-                    {/* ขวา */}
-                    <div className="hr-case-right">
-                      <button
-                        className="hr-case-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-
-                          navigate("/clinic-detail", {
-                            state: {
-                              identity,
-                              masterCase: mc,
-                              clinicType: actualClinicType,
-
-                              bmiRecords,
-                              adviceByClinic,
-                              timelineEvents,
-                              responses: translatedData,
-                              logs: translatedLogs,
-                            },
-                          });
-                        }}
-                      >
-                        {i18n.language === 'en' ? 'View Details →' : 'ดูรายละเอียด →'}
-                      </button>
+                    <div>
+                      <h3 className="hr-active-case-title">{t('history.result.current_treatment')} {getClinicName(cInfo, i18n.language)}</h3>
+                      <p className="hr-active-case-status">
+                        {t('history.result.status')} <strong>{translateStatus(currentStatus, i18n.language)}</strong>
+                        <span className="hr-active-case-id">(MC-{String(mc.id).padStart(4, '0')})</span>
+                      </p>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </>
+
+
+                </div>
+              );
+            })}
+          </div>
         )}
 
         {/* 🟢 แนวโน้ม BMI และคำแนะนำ */}
@@ -811,6 +698,34 @@ export default function HistoryResult() {
           </div>
         )}
 
+       {/* แบนเนอร์แนะนำดาวน์โหลดแอป */}
+        <div className="hr-suth-promo-banner">
+          {/* ฝั่งซ้าย */}
+          <div className="promo-left">
+            <img src="/sutapp/phone.png" alt="SUTH App Phone" className="promo-phone-img" />
+            <div className="promo-text-content">
+            <h2>{t('history.result.download_app_title')} <span className="highlight-orange">SUTH App</span></h2>
+            <p className="promo-desc">{t('history.result.download_app_desc')}</p>
+          </div>
+          </div>
+
+          <div className="promo-divider"></div>
+
+          {/* ฝั่งขวา */}
+          <div className="promo-right">
+            <div className="promo-top-content">
+              <img src="/sutapp/qr.png" alt="QR Code" className="promo-qr" />
+              <div className="promo-store-logos">
+                <img src="/sutapp/logo-download.png" alt="Download Buttons" />
+              </div>
+            </div>
+            <button className="download-btn" onClick={() => window.open("https://play.google.com/store/apps/details?id=th.go.suth.app", "_blank")}>
+             <FiDownload style={{ marginRight: '8px' }} /> {t('history.result.download_now')}
+            </button>
+          </div>
+        </div>
+
+
         <div className="hr-section-label" style={{ marginTop: 40, marginBottom: 12 }}>
           <div className="hr-section-dot" /> {t('history.result.service_history')}
         </div>
@@ -885,8 +800,8 @@ export default function HistoryResult() {
             }).map(ans => ans.question_id || stripHtml(ans.question_title || ''));
 
             const editableQuestions = allAnswers.filter((ans, i) => {
-              const idOrTitle = ans.question_id || stripHtml((origAllAnswers[i] && origAllAnswers[i].question_title) || '');
-              return editableQuestionIds.includes(idOrTitle);
+               const idOrTitle = ans.question_id || stripHtml((origAllAnswers[i] && origAllAnswers[i].question_title) || '');
+               return editableQuestionIds.includes(idOrTitle);
             });
 
             return (

@@ -41,6 +41,7 @@ export const createClinic = (data) => api.post('/clinics', data);
 export const updateClinic = (id, data) => api.put(`/clinics/${id}`, data);
 export const deleteClinic = (id) => api.delete(`/clinics/${id}`);
 export const reorderClinics = (order) => api.patch('/clinics/reorder', { order });
+export const toggleClinicHelpCenter = (id, showInHelpCenter) => api.patch(`/clinics/${id}/toggle-help-center`, { show_in_help_center: showInHelpCenter });
 
 // ── เพิ่มฟังก์ชันใหม่สำหรับอัปเดตรูปปกโดยเฉพาะ ──
 export const updateFormImageOnly = (id, imageData) => api.patch(`/forms/${id}/image`, imageData);
@@ -134,6 +135,16 @@ export const getCaseAnswers = (id) => api.get(`/cases/${id}/answers`);
 // ── System Evaluations (สำหรับ Dashboard) ──
 export const getSystemEvaluationsStats = () => api.get('/evaluations/stats');
 export const getSystemEvaluationsList = (page = 1, limit = 10) => api.get(`/evaluations/list?page=${page}&limit=${limit}`);
+
+// ── ช่วยเหลือ ──
+export const getFaqCategories = (clinicId) => api.get(`/admin/help-center/categories/${clinicId}`);
+export const createFaqCategory = (data) => api.post('/admin/help-center/categories', data);
+export const getFaqsAdmin = (params) => api.get('/admin/help-center/faqs', { params });
+export const createFaq = (data) => api.post('/admin/help-center/faqs', data);
+export const updateFaq = (id, data) => api.put(`/admin/help-center/faqs/${id}`, data);
+export const deleteFaq = (id) => api.delete(`/admin/help-center/faqs/${id}`);
+export const updateFaqCategory = (id, data) => api.patch(`/admin/help-center/categories/${id}`, data);
+export const deleteFaqCategory = (id) => api.delete(`/admin/help-center/categories/${id}`);
 
 // 🟢 ดึง Token สดๆ จาก Storage ทุกครั้งที่ยิง API (ชัวร์ 100% ไม่ค้าง)
 api.interceptors.request.use((config) => {

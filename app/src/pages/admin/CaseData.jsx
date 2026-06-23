@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import CaseTable from "../../components/case/CaseTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
-import ExportExcelModal from "../../components/case/ExportExcelModal";
+import ExportExcelModal from "../../components/case/ExportExcelModal.jsx";
 import { getForms, getFormById, getFormResponses, createCase, getActiveClinics } from "../../services/api";
 import "./CaseData.css";
 import { useLocation } from "react-router-dom";

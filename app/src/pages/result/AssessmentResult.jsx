@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FiCheckCircle, FiActivity, FiInfo, FiCheck, FiSend, FiClock } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
+import { translateTextSmart } from "../../utils/translator";
+import LanguageSwitcher from "../../components/LanguageSwitcher.jsx";
 import riskLow from "../../assets/01.png";
 import riskMedium from "../../assets/02.png";
 import riskHigh from "../../assets/03.png";
@@ -28,13 +31,13 @@ const isColorTooBright = (hex) => {
 };
 
 // 🟢 ฟังก์ชันสร้าง Config การ์ดแบบไดนามิก + เลือกรูปภาพ + จัดการ Contrast สี
-const getLevelConfig = (result) => {
+const getLevelConfig = (result, t) => {
   if (!result) {
     return {
-      title: "ผลการประเมิน",
+      title: t ? t('assessment_result.score') : "ผลการประเมิน",
       score: 0,
-      label: "บันทึกสำเร็จ",
-      advice: ["ไม่มีคำแนะนำเพิ่มเติมในขณะนี้"],
+      label: t ? t('assessment_result.send_success') : "บันทึกสำเร็จ",
+      advice: [t ? t('assessment_result.advice') : "ไม่มีคำแนะนำเพิ่มเติมในขณะนี้"],
       color: "#2d7d81",
       textColor: "#2d7d81",
       rgb: "45, 125, 129",
@@ -65,7 +68,7 @@ const getLevelConfig = (result) => {
     title: result.title || "ผลการประเมิน",
     score: result.score,
     label: result.label || "ประเมินเสร็จสิ้น",
-    advice: result.advice ? (Array.isArray(result.advice) ? result.advice : result.advice.split('\n')) : ["ไม่มีคำแนะนำเพิ่มเติมในขณะนี้"],
+    advice: result.advice ? (Array.isArray(result.advice) ? result.advice : result.advice.split('\n')) : [t ? t('assessment_result.advice') : "ไม่มีคำแนะนำเพิ่มเติมในขณะนี้"],
     color: hexCriteriaColor,
     textColor: readableTextColor,
     rgb: rgbColor.join(', '),
@@ -79,15 +82,40 @@ const getLevelConfig = (result) => {
 export default function AssessmentResult() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
   // 🟢 รับ Payload ที่ถูกส่งมาจาก FormView
   const results = location.state?.results || [];
   const formId = location.state?.formId;
   const payload = location.state?.payload;
+  const hasBooking = location.state?.hasBooking;
 
   // 🟢 State ควบคุมสถานะการส่งข้อมูล
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [translatedResults, setTranslatedResults] = useState([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const translateResults = async () => {
+      if (results.length === 0) return;
+      if (i18n.language !== 'en') {
+        if (isMounted) setTranslatedResults(results);
+        return;
+      }
+      
+      const trs = await Promise.all(results.map(async (res) => {
+        const tTitle = res.title ? await translateTextSmart(res.title) : res.title;
+        const tLabel = res.label ? await translateTextSmart(res.label) : res.label;
+        const tAdvice = res.advice ? await translateTextSmart(res.advice) : res.advice;
+        return { ...res, title: tTitle, label: tLabel, advice: tAdvice };
+      }));
+      
+      if (isMounted) setTranslatedResults(trs);
+    };
+    translateResults();
+    return () => { isMounted = false; };
+  }, [results, i18n.language]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -100,22 +128,20 @@ export default function AssessmentResult() {
   // 🟢 ฟังก์ชันจัดการการยิง API
   const handleSendToStaff = () => {
     if (!formId || !payload) {
-      Swal.fire('ข้อผิดพลาด', 'ไม่พบข้อมูลสำหรับการส่ง กรุณาทำแบบประเมินใหม่อีกครั้ง', 'error');
+      Swal.fire(t('assessment_result.error_title'), t('assessment_result.error_desc'), 'error');
       return;
     }
 
     Swal.fire({
-      title: 'คุณยินยอมให้เจ้าหน้าที่ติดต่อกลับหรือไม่?',
-      html: `ข้อมูลของท่านจะถูกเก็บเป็นความลับ
-         และส่งต่อให้เจ้าหน้าที่ที่เกี่ยวข้องเท่านั้น
-         เพื่อการดูแลและให้คำแนะนำเบื้องต้น`,
+      title: t('assessment_result.consent_title'),
+      html: t('assessment_result.consent_html'),
       icon: 'question',
       showCloseButton: true,
       showCancelButton: true,
       confirmButtonColor: '#3b82f6',
       cancelButtonColor: '#ef4444',
-      confirmButtonText: 'ยินยอม',
-      cancelButtonText: 'ปฏิเสธ',
+      confirmButtonText: t('assessment_result.agree'),
+      cancelButtonText: t('assessment_result.decline'),
       width: '500px',
       padding: '2.5em',
       background: '#ffffff',
@@ -125,8 +151,8 @@ export default function AssessmentResult() {
         setIsSubmitting(true);
 
         Swal.fire({
-          title: 'กำลังส่งข้อมูล...',
-          text: 'กรุณารอสักครู่',
+          title: t('assessment_result.sending'),
+          text: t('assessment_result.please_wait'),
           allowOutsideClick: false,
           didOpen: () => { Swal.showLoading(); }
         });
@@ -136,16 +162,16 @@ export default function AssessmentResult() {
           setIsSaved(true);
           Swal.fire({
             icon: 'success',
-            title: 'ส่งข้อมูลสำเร็จ!',
-            text: 'เจ้าหน้าที่ได้รับข้อมูลของท่านแล้ว ท่านสามารถตรวจสอบประวัติได้',
+            title: t('assessment_result.send_success'),
+            text: t('assessment_result.send_success_desc'),
             confirmButtonColor: '#10b981'
           });
         } catch (error) {
           console.error("Submit Error:", error);
           Swal.fire({
             icon: 'error',
-            title: 'ไม่สามารถส่งข้อมูลได้',
-            text: 'เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง',
+            title: t('assessment_result.send_error'),
+            text: t('assessment_result.send_error_desc'),
             confirmButtonColor: '#ef4444'
           });
         } finally {
@@ -165,10 +191,10 @@ export default function AssessmentResult() {
   const handleOpenEvaluation = () => {
     if (hasEvaluated) {
       Swal.fire({
-        title: 'ขอบคุณสำหรับคำแนะนำ',
-        text: 'คุณได้ตอบแบบประเมินการใช้งานระบบเรียบร้อยแล้ว',
+        title: t('assessment_result.eval_thanks_title'),
+        text: t('assessment_result.eval_thanks_desc'),
         icon: 'success',
-        confirmButtonText: 'ตกลง',
+        confirmButtonText: t('assessment_result.ok'),
         confirmButtonColor: '#7c3aed'
       });
       return;
@@ -183,8 +209,8 @@ export default function AssessmentResult() {
         `).join("")}
       </div>
       <div class="evaluation-labels-wrap">
-        <span>น้อยที่สุด</span>
-        <span>มากที่สุด</span>
+        <span>${t('assessment_result.eval_min')}</span>
+        <span>${t('assessment_result.eval_max')}</span>
       </div>
     `;
 
@@ -197,16 +223,16 @@ export default function AssessmentResult() {
 
     const renderSUS = () => {
       const questions = [
-        "คุณอยากใช้แอปพลิเคชันนี้บ่อย ๆ",
-        "คุณคิดว่าระบบไม่ควรซับซ้อนขนาดนี้",
-        "คุณคิดว่าระบบใช้งานง่าย",
-        "คุณคิดว่าคุณต้องการความช่วยเหลือจากผู้เชี่ยวชาญเพื่อที่จะใช้งานระบบนี้ได้",
-        "คุณพบว่ามีหลายฟังก์ชันที่ทำงานได้ดี",
-        "คุณคิดว่าระบบไม่ค่อยมีความสม่ำเสมอ",
-        "คุณคิดว่าคนอื่นๆ น่าจะเข้าใจวิธีใช้ระบบนี้ได้เร็วเหมือนกัน",
-        "คุณพบว่าการใช้งานระบบนี้ยุ่งยาก/ซับซ้อนมากๆ",
-        "คุณรู้สึกมั่นใจตอนใช้งาน",
-        "คุณต้องการฝึกใช้งานก่อนถึงจะเริ่มใช้งานระบบนี้ได้"
+        t('assessment_result.eval_sus1'),
+        t('assessment_result.eval_sus2'),
+        t('assessment_result.eval_sus3'),
+        t('assessment_result.eval_sus4'),
+        t('assessment_result.eval_sus5'),
+        t('assessment_result.eval_sus6'),
+        t('assessment_result.eval_sus7'),
+        t('assessment_result.eval_sus8'),
+        t('assessment_result.eval_sus9'),
+        t('assessment_result.eval_sus10')
       ];
 
       return questions.map((q, i) => `
@@ -218,7 +244,7 @@ export default function AssessmentResult() {
     };
 
     Swal.fire({
-      title: ' แบบประเมินการใช้งานระบบ',
+      title: t('assessment_result.eval_modal_title'),
       width: window.innerWidth < 768 ? '95%' : 700,
       showCloseButton: true,
       closeButtonHtml: '✕',
@@ -226,26 +252,26 @@ export default function AssessmentResult() {
         <div style="text-align:left; max-height:450px; overflow:auto overflow-x:hidden;">
          
         <div style="background:#fff; border-radius:12px; padding:20px; margin-bottom:15px; border-top:6px solid #7c3aed; box-shadow:0 4px 12px rgba(0,0,0,0.06)">
-            <h3 style="margin-bottom:15px"> ส่วนที่ 1: ความพึงพอใจ</h3>
-            ${renderQuestionBox(1, "คุณมีความพึงพอใจต่อหน้าตาของระบบ โทนสี และขนาดตัวอักษรที่อ่านง่ายและทันสมัย", "q1")}
-            ${renderQuestionBox(2, "ระบบมีการตอบสนองและประมวลผลข้อมูล (เช่น การโหลดหน้าเว็บหรือการส่งฟอร์ม) ได้อย่างรวดเร็ว", "q2")}
-            ${renderQuestionBox(3, "ข้อมูลและคำแนะนำเบื้องต้นที่ได้รับจากระบบมีความชัดเจนและเป็นประโยชน์ต่อคุณ", "q3")}
-            ${renderQuestionBox(4, "ระบบมีความชัดเจน เข้าใจง่าย ไม่สับสนในการใช้งาน", "q4")}
-            ${renderQuestionBox(5, "โดยรวมแล้วคุณมีความพึงพอใจต่อการใช้งานระบบ", "q5")}
+            <h3 style="margin-bottom:15px"> ${t('assessment_result.eval_part1')}</h3>
+            ${renderQuestionBox(1, t('assessment_result.eval_q1'), "q1")}
+            ${renderQuestionBox(2, t('assessment_result.eval_q2'), "q2")}
+            ${renderQuestionBox(3, t('assessment_result.eval_q3'), "q3")}
+            ${renderQuestionBox(4, t('assessment_result.eval_q4'), "q4")}
+            ${renderQuestionBox(5, t('assessment_result.eval_q5'), "q5")}
           </div>
 
           <div style="background:#fff; border-radius:12px; padding:20px; border-top:6px solid #6366f1; box-shadow:0 4px 12px rgba(0,0,0,0.06)">
-            <h3 style="margin-bottom:15px"> ส่วนที่ 2: ความสามารถในการใช้งาน (System Usability Scale )</h3>
+            <h3 style="margin-bottom:15px"> ${t('assessment_result.eval_part2')}</h3>
             ${renderSUS()}
           </div>
 
           <div style="margin-top:20px; background:#fff; border-radius:12px; padding:20px; border-top:6px solid #10b981; box-shadow:0 4px 12px rgba(0,0,0,0.06)">
-            <p><b> ข้อเสนอแนะเพิ่มเติม (ถ้ามี)</b></p>
-            <textarea id="comment" class="swal2-textarea" placeholder="พิมพ์ความคิดเห็น..." style="height:80px; width: 250px; font-size:14px; padding:10px; margin-right:10px; border-radius:10px; box-sizing: border-box;"></textarea>
+            <p><b> ${t('assessment_result.eval_comment')}</b></p>
+            <textarea id="comment" class="swal2-textarea" placeholder="${t('assessment_result.eval_placeholder')}" style="height:80px; width: 250px; font-size:14px; padding:10px; margin-right:10px; border-radius:10px; box-sizing: border-box;"></textarea>
           </div>
         </div>
       `,
-      confirmButtonText: 'ส่งแบบประเมิน',
+      confirmButtonText: t('assessment_result.eval_submit'),
       confirmButtonColor: '#7c3aed',
       preConfirm: () => {
         const getRadio = (name) => {
@@ -255,7 +281,7 @@ export default function AssessmentResult() {
         // 1. ตรวจสอบส่วนที่ 1: ความพึงพอใจ (q1 - q5)
         for (let i = 1; i <= 5; i++) {
           if (!getRadio(`q${i}`)) {
-            Swal.showValidationMessage(`กรุณาตอบส่วนที่ 1 ข้อที่ ${i} ให้ครบถ้วน`);
+            Swal.showValidationMessage(i18n.language === 'en' ? `Please complete part 1 question ${i}` : `กรุณาตอบส่วนที่ 1 ข้อที่ ${i} ให้ครบถ้วน`);
             document.getElementsByName(`q${i}`)[0]?.closest('div')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return false;
           }
@@ -266,7 +292,7 @@ export default function AssessmentResult() {
         for (let i = 1; i <= 10; i++) {
           const val = getRadio(`sus${i}`);
           if (!val) {
-            Swal.showValidationMessage(`กรุณาตอบส่วนที่ 2 (SUS) ข้อที่ ${i} ให้ครบถ้วน`);
+            Swal.showValidationMessage(i18n.language === 'en' ? `Please complete part 2 (SUS) question ${i}` : `กรุณาตอบส่วนที่ 2 (SUS) ข้อที่ ${i} ให้ครบถ้วน`);
             document.getElementsByName(`sus${i}`)[0]?.closest('div')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return false;
           }
@@ -312,7 +338,7 @@ export default function AssessmentResult() {
 
         try {
           Swal.fire({
-            title: 'กำลังบันทึกข้อมูล...',
+            title: t('assessment_result.saving'),
             allowOutsideClick: false,
             didOpen: () => { Swal.showLoading(); }
           });
@@ -326,14 +352,14 @@ export default function AssessmentResult() {
 
           Swal.fire({
             icon: 'success',
-            title: 'ส่งสำเร็จ',
+            title: t('assessment_result.eval_success_title'),
             html: `
-              <p>ขอบคุณสำหรับการประเมิน</p>
+              <p>${t('assessment_result.eval_success_desc')}</p>
             `,
             confirmButtonColor: '#10b981'
           });
         } catch (error) {
-          Swal.fire("ผิดพลาด", "ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง", "error");
+          Swal.fire(t('assessment_result.error_title'), t('assessment_result.send_error_desc'), "error");
         }
       }
     });
@@ -351,9 +377,10 @@ export default function AssessmentResult() {
             className="ar-nav__logo"
           />
         </div>
-        <div className="ar-nav__actions">
+        <div className="ar-nav__actions" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <LanguageSwitcher darkText={true} />
           <button className="ar-btn-close" onClick={() => navigate("/")}>
-            ✕ ปิดหน้าต่าง
+            {t('assessment_result.close_window')}
           </button>
         </div>
       </nav>
@@ -376,21 +403,21 @@ export default function AssessmentResult() {
             {isSaved ? <FiCheckCircle size={40} color="#fff" /> : <FiCheck size={40} color="#fff" />}
           </div>
           <h2 className="ar-hero-title">
-            {isSaved ? "ส่งข้อมูลให้เจ้าหน้าที่สำเร็จ" : "ประเมินผลเบื้องต้นเสร็จสิ้น"}
+            {isSaved ? t('assessment_result.hero_saved_title') : t('assessment_result.hero_done_title')}
           </h2>
           <p className="ar-hero-subtitle" style={{ color: '#475569' }}>
             {isSaved
-              ? "ข้อมูลของท่านได้รับการบันทึกเรียบร้อยแล้ว และระบบได้แจ้งให้เจ้าหน้าที่ที่เกี่ยวข้องทราบแล้ว"
+              ? t('assessment_result.hero_saved_desc')
               : results.length > 0 
-                ? <span>ด้านล่างนี้คือสรุปผลการวิเคราะห์เบื้องต้น <br />หากต้องการรับการดูแลต่อ กรุณากดปุ่ม <b>“ส่งข้อมูลให้เจ้าหน้าที่”</b> ด้านล่าง</span>
-                : <span>กรอกข้อมูลเสร็จสิ้น <br />กรุณากดปุ่ม <b>“ส่งข้อมูลให้เจ้าหน้าที่”</b> ด้านล่าง เพื่อส่งข้อมูลให้เจ้าหน้าที่ต่อไป</span>
+                ? <span dangerouslySetInnerHTML={{ __html: t('assessment_result.hero_done_desc1') }} />
+                : <span dangerouslySetInnerHTML={{ __html: t('assessment_result.hero_done_desc2') }} />
             }
           </p>
         </div>
 
         {/* ✅ แสดงการ์ดผลการประเมิน */}
-        {results.length > 0 && results.map((res, index) => {
-          const level = getLevelConfig(res);
+        {translatedResults.length > 0 && translatedResults.map((res, index) => {
+          const level = getLevelConfig(res, t);
           return (
             <div
               key={index}
@@ -410,7 +437,7 @@ export default function AssessmentResult() {
                 </div>
 
                 <div className="ar-score-wrapper" style={{ backgroundColor: level.colorBg, borderColor: level.colorBorder }}>
-                  <span className="ar-score__label" style={{ color: '#64748b' }}>คะแนน</span>
+                  <span className="ar-score__label" style={{ color: '#64748b' }}>{t('assessment_result.score')}</span>
                   <span className="ar-score__val" style={{ color: level.textColor }}>
                     {level.score}
                   </span>
@@ -423,7 +450,7 @@ export default function AssessmentResult() {
                 {/* ADVICE */}
                 <div className="ar-advice-box" style={{ backgroundColor: level.colorBg, borderColor: level.colorBorder }}>
                   <h3 className="ar-advice-box__title" style={{ color: level.textColor }}>
-                    <FiInfo size={18} /> คำแนะนำเบื้องต้น
+                    <FiInfo size={18} /> {t('assessment_result.advice')}
                   </h3>
 
                   <ul className="ar-advice__list">
@@ -453,6 +480,12 @@ export default function AssessmentResult() {
         })}
 
         {/* 🟢 ACTIONS BUTTONS ควบคุมการแสดงผลตาม State */}
+        {hasBooking && !isSaved && (
+          <div style={{ color: '#d32f2f', fontSize: '14px', background: '#ffebee', padding: '12px 16px', borderRadius: '12px', margin: '0 auto 20px auto', maxWidth: '600px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+            <FiInfo style={{ transform: 'translateY(2px)', marginRight: '6px' }} size={16} />
+            <b>หมายเหตุ:</b> การเลือกโควต้าจะยังไม่สมบูรณ์จนกว่าคุณจะกด <b>"ส่งข้อมูลให้เจ้าหน้าที่"</b> กรุณากดส่งข้อมูลเพื่อยืนยันสิทธิ์
+          </div>
+        )}
         <div className="ar-actions">
 
           {/* ปุ่มกลับหน้าหลัก (แสดงตลอด) */}
@@ -461,7 +494,7 @@ export default function AssessmentResult() {
             onClick={() => navigate("/")}
             disabled={isSubmitting}
           >
-            ← กลับหน้าหลัก
+            {t('assessment_result.back_home')}
           </button>
 
           {/* ปุ่มส่งข้อมูลให้เจ้าหน้าที่ (แสดงตอนยังไม่ส่ง) */}
@@ -472,7 +505,7 @@ export default function AssessmentResult() {
               onClick={handleSendToStaff}
               disabled={isSubmitting}
             >
-              <FiSend /> {isSubmitting ? "กำลังส่ง..." : "ส่งข้อมูลให้เจ้าหน้าที่"}
+              <FiSend /> {isSubmitting ? t('assessment_result.btn_sending') : t('assessment_result.btn_send')}
             </button>
           )}
 
@@ -488,7 +521,7 @@ export default function AssessmentResult() {
               }}
               onClick={() => navigate("/history")}
             >
-              <FiClock /> ตรวจสอบประวัติ
+              <FiClock /> {t('assessment_result.btn_history')}
             </button>
           )}
 
@@ -504,7 +537,7 @@ export default function AssessmentResult() {
             }}
             onClick={handleOpenEvaluation}
           >
-            ประเมินการใช้งานระบบ
+            {t('assessment_result.btn_eval')}
           </button>
 
         </div>

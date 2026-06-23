@@ -17,7 +17,7 @@ import {
   getServices, createService, updateService, deleteService, getCaseAppointments, deleteCase,
   getStatusOptions, createStatusOption, deactivateStatusOption,
   getFormById, getNoteTemplates, getForms, getMasterCasesById, closeMasterCase, updateClinicalData, generateSecureToken, getStaffs,
-  createStaff, deleteStaff
+  createStaff, deleteStaff, getCaseAnswers
 } from "../../services/api";
 
 import { FaRegEdit, FaHistory, FaTrashAlt, FaChevronDown, FaTimes, FaCog, FaShareSquare, FaArchive, FaPrint, FaRegCopy, FaClipboardList, FaCheckSquare, FaUserCircle } from "react-icons/fa";
@@ -158,6 +158,20 @@ export default function CaseDetailModal({ data, onClose, onCaseUpdated, onCaseDe
     if (!journeyResponses || journeyResponses.length === 0) return data;
     return journeyResponses.find(r => r.id === viewingResponseId) || data;
   }, [viewingResponseId, data, journeyResponses]);
+
+  const [fullAnswersMap, setFullAnswersMap] = useState({});
+
+  useEffect(() => {
+    if (viewingResponseId) {
+      getCaseAnswers(viewingResponseId).then(res => {
+        const mapped = {};
+        res.data.forEach(ans => {
+          mapped[ans.question_id] = ans.answer_value;
+        });
+        setFullAnswersMap(mapped);
+      }).catch(err => console.error("Failed to fetch full answers", err));
+    }
+  }, [viewingResponseId]);
 
   const handleAddStaff = async () => {
     if (!newStaffName.trim()) return;
@@ -831,6 +845,7 @@ export default function CaseDetailModal({ data, onClose, onCaseUpdated, onCaseDe
                 formQuestions={formQuestions}
                 selectedStaff={selectedStaff}  
                 staffOptions={staffOptions}
+                fullAnswers={fullAnswersMap}
               />
             )}
 
@@ -860,6 +875,9 @@ export default function CaseDetailModal({ data, onClose, onCaseUpdated, onCaseDe
                     scoreResults={leftPanelScoreResults} rawAnswers={leftPanelRawAnswers}
                     stripHtml={stripHtml} formatAnswer={formatAnswer}
                     formQuestions={formQuestions}
+                    selectedStaff={selectedStaff}  
+                    staffOptions={staffOptions}
+                    fullAnswers={fullAnswersMap}
                   />
                 )}
                 {activeTab === 'action' && (

@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { 
   FaCalendarAlt, FaPhoneAlt, FaIdCard, FaRegCircle, FaRegCheckSquare, 
-  FaTimes, FaImage, FaChartBar, FaPlus, FaLayerGroup, FaTable, FaFont 
+  FaTimes, FaImage, FaChartBar, FaPlus, FaLayerGroup, FaTable, FaFont, FaCloudUploadAlt 
 } from 'react-icons/fa';
 import RichTextInput from './RichTextInput';
 
 const QuestionBody = ({ q, editingCell, setEditingCell, handlers, isActive = true }) => {
   const {
     updateScoreMode, updateRowScore, updateGridItem, removeGridItem, addGridItem,
-    updateGridColScore, updateCellScore, updateOption, updateOptionScore,
+    updateGridColScore, updateCellScore, updateOption, updateOptionScore, updateOptionLimit,
     updateOptionImage, removeOption, addOption, addSubQuestion, updateSubQuestion, removeSubQuestion,
-    toggleOptionInput
+    toggleOptionInput, updateVideoUrl
   } = handlers;
 
   const [gridScoreExpanded, setGridScoreExpanded] = useState(false);
@@ -188,6 +188,12 @@ const QuestionBody = ({ q, editingCell, setEditingCell, handlers, isActive = tru
 
   // 🟢 2. UI พรีวิวสำหรับคำถามประเภทอื่นๆ
   if (q.type === 'description') return null;
+  if (q.type === 'file_upload') return (
+    <div className="sfb-dummy-input sfb-text-underlined" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#5f6368' }}>
+      <FaCloudUploadAlt size={20} />
+      <span>ผู้ตอบสามารถอัปโหลดไฟล์รูปภาพหรือเสียงได้ที่นี่</span>
+    </div>
+  );
   if (q.type === 'short_text' || q.type === 'full_name') return <div className="sfb-dummy-input sfb-text-underlined">ข้อความคำตอบสั้นๆ</div>;
   if (q.type === 'paragraph' || q.type === 'main_issue') return <div className="sfb-dummy-input sfb-text-underlined" style={{ width: '80%' }}>ข้อความคำตอบแบบยาว</div>;
   if (q.type === 'date') return <div className="sfb-dummy-input sfb-text-underlined sfb-dummy-date"><span>เดือน วัน ปี</span><FaCalendarAlt className="sfb-dummy-date-icon" /></div>;
@@ -211,6 +217,51 @@ const QuestionBody = ({ q, editingCell, setEditingCell, handlers, isActive = tru
       <div><div className="sfb-dummy-phone-hint">รูปแบบช่องกรอก: x-xxxx-xxxxx-xx-x</div><div className="sfb-dummy-phone-sub">* กล่องยินยอม PDPA จะแสดงอัตโนมัติในหน้าผู้กรอกฟอร์ม</div></div>
     </div>
   );
+
+  if (q.type === 'video') {
+    const getYoutubeEmbedUrl = (url) => {
+      if (!url) return '';
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
+      const match = url.match(regExp);
+      const videoId = (match && match[2].length === 11) ? match[2] : '';
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
+    };
+
+    const embedUrl = getYoutubeEmbedUrl(q.videoUrl);
+
+    return (
+      <div className="sfb-video-container">
+        {isActive && (
+          <div style={{ marginBottom: '15px' }}>
+            <input 
+              type="text" 
+              className="sfb-opt-input sfb-editable" 
+              placeholder="วางลิ้งก์ YouTube ที่นี่ (เช่น https://www.youtube.com/watch?v=...)" 
+              value={q.videoUrl || ''} 
+              onChange={(e) => updateVideoUrl && updateVideoUrl(q.id, e.target.value)} 
+              style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }}
+            />
+          </div>
+        )}
+        {embedUrl ? (
+          <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '8px' }}>
+            <iframe 
+              src={embedUrl} 
+              style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }} 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+              allowFullScreen 
+              referrerPolicy="strict-origin-when-cross-origin"
+              title="YouTube Video"
+            />
+          </div>
+        ) : (
+          <div style={{ padding: '30px', textAlign: 'center', background: '#f8f9fa', borderRadius: '8px', border: '1px dashed #ccc', color: '#666' }}>
+            {isActive ? 'กรุณาวางลิ้งก์ YouTube เพื่อแสดงตัวอย่างวิดีโอ' : 'วิดีโอ (ไม่มีลิ้งก์)'}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   // 🟢 3. UI สำหรับคำถามแบบ Grid
   if (q.type === 'grid_multiple' || q.type === 'grid_checkbox') {
@@ -310,7 +361,21 @@ const QuestionBody = ({ q, editingCell, setEditingCell, handlers, isActive = tru
   const hiddenOptionsCount = q.options.length - visibleOptions.length;
 
   return (
-    <div className="sfb-options-container">
+    <>
+      {isActive && q.type === 'booking' && (
+        <div className="sfb-smooth-element sfb-grid-score-toggle" style={{ marginBottom: '15px' }}>
+          <span className="sfb-grid-score-label">รูปแบบการแสดงผล</span>
+          <select 
+            className="sfb-grid-score-select sfb-type-selector" 
+            value={q.displayAs || "radio"} 
+            onChange={(e) => handlers.updateDisplayAs && handlers.updateDisplayAs(q.id, e.target.value)}
+          >
+            <option value="radio">หลายตัวเลือก (Radio)</option>
+            <option value="dropdown">เลื่อนลง (Dropdown)</option>
+          </select>
+        </div>
+      )}
+      <div className="sfb-options-container">
       {visibleOptions.map((opt, i) => {
         const handleOptImgUpload = (e) => {
           const file = e.target.files[0];
@@ -320,7 +385,7 @@ const QuestionBody = ({ q, editingCell, setEditingCell, handlers, isActive = tru
         return (
           <div key={i} className="sfb-option-wrapper">
             <div className="sfb-option-row" style={{ flexWrap: 'nowrap' }}>
-              {q.type === 'multiple_choice' && <FaRegCircle className="sfb-opt-icon" />}
+              {(q.type === 'multiple_choice' || q.type === 'booking') && <FaRegCircle className="sfb-opt-icon" />}
               {q.type === 'checkboxes' && <FaRegCheckSquare className="sfb-opt-icon" />}
               {(q.type === 'dropdown' || q.type === 'faculty') && <span className="sfb-opt-number">{i + 1}.</span>}
               
@@ -342,10 +407,14 @@ const QuestionBody = ({ q, editingCell, setEditingCell, handlers, isActive = tru
 
               {isActive && q.isScored && <input type="number" className="sfb-opt-score-input" value={q.optionScores?.[i] ?? 0} onChange={(e) => updateOptionScore(q.id, i, parseInt(e.target.value) || 0)} title="คะแนน" placeholder="คะแนน" />}
               
+              {isActive && q.type === 'booking' && (
+                <input type="number" className="sfb-opt-score-input" value={q.optionLimits?.[i] ?? ''} onChange={(e) => updateOptionLimit(q.id, i, e.target.value)} title="จำนวนโควต้า/ลิมิต" placeholder="ลิมิตจำนวน" style={{ minWidth: '90px' }} />
+              )}
+
               {isActive && (
                 <div className="sfb-option-actions sfb-smooth-element">
                   
-                  {(q.type === 'multiple_choice' || q.type === 'checkboxes') && (
+                  {(q.type === 'multiple_choice' || q.type === 'checkboxes' || q.type === 'booking') && (
                     <button 
                       className={`sfb-btn-add-image-opt sfb-btn-toggle-input ${q.optionHasInput?.[i] ? 'active' : 'inactive'}`} 
                       title={q.optionHasInput?.[i] ? "ปิดช่องกรอกข้อความ" : "เพิ่มช่องให้ผู้ใช้พิมพ์ข้อความ (เช่น อื่นๆ: ___)"}
@@ -355,7 +424,7 @@ const QuestionBody = ({ q, editingCell, setEditingCell, handlers, isActive = tru
                     </button>
                   )}
 
-                  {(q.type === 'multiple_choice' || q.type === 'checkboxes') && (
+                  {(q.type === 'multiple_choice' || q.type === 'checkboxes' || q.type === 'booking') && (
                     <>
                       <input type="file" accept="image/*" id={`file-opt-${q.id}-${i}`} hidden onChange={handleOptImgUpload} />
                       <button className="sfb-btn-add-image-opt" title="เพิ่มรูปภาพ" onClick={() => document.getElementById(`file-opt-${q.id}-${i}`).click()}><FaImage /></button>
@@ -385,12 +454,13 @@ const QuestionBody = ({ q, editingCell, setEditingCell, handlers, isActive = tru
       )}
 
       <div className="sfb-option-row sfb-add-opt-row sfb-smooth-element" onClick={() => addOption(q.id)}>
-        {q.type === 'multiple_choice' && <FaRegCircle className="sfb-opt-icon sfb-muted" />}
+        {(q.type === 'multiple_choice' || q.type === 'booking') && <FaRegCircle className="sfb-opt-icon sfb-muted" />}
         {q.type === 'checkboxes' && <FaRegCheckSquare className="sfb-opt-icon sfb-muted" />}
         {(q.type === 'dropdown' || q.type === 'faculty') && <span className="sfb-opt-number sfb-muted">{q.options.length + 1}.</span>}
         <span className="sfb-add-opt-text">เพิ่มตัวเลือก (หรือกด Enter)</span>
       </div>
-    </div>
+      </div>
+    </>
   );
 }; 
 
