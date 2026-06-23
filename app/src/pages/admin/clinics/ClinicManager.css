@@ -652,3 +652,28 @@ input:checked + .cm-slider:before {
     gap: 0;
   }
 }
+
+/* ===============================
+   Help Center Toggle Switch 
+   ===============================*/
+.cm-col-help-center {
+  width: 180px;
+  text-align: center;
+  vertical-align: middle;
+}
+.cm-col-help-center .flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.cm-col-help-center .cursor-pointer {
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.cm-col-help-center input[type="checkbox"] + div {
+  transition: all 0.2s ease-in-out;
+}
+.cm-col-help-center input:checked + .cm-slider {
+  background-color: #F47932;
+}

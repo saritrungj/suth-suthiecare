@@ -1,0 +1,556 @@
+/* ── 🎯 โครงสร้างเว็บบล็อกศูนย์ช่วยเหลือ ── */
+.hc-clinic-detail-wrapper {
+  width: 100%;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* สถานะกำลังโหลด */
+.hc-clinic-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; 
+  width: 100%;
+  gap: 16px;
+  background-color: #ffffff;
+}
+
+.hc-clinic-loading-spinner {
+  width: 45px;
+  height: 45px;
+  border: 4px solid #f1f5f9;
+  border-top: 4px solid #f47932; 
+  border-radius: 50%;
+  animation: hcClinicSpin 1s linear infinite;
+}
+
+.hc-clinic-loading-container p {
+  color: #64748b;
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+}
+
+@keyframes hcClinicSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* แบนเนอร์หัวคลินิก */
+.hc-clinic-detail-hero {
+  background-color: #F47932;
+  background-image: none; 
+  
+  padding: 50px 0; 
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.hc-clinic-hero-inner {
+  display: flex;
+  flex-direction: row; 
+  align-items: center;
+  gap: 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.hc-clinic-logo-frame {
+  width: 90px;
+  height: 90px;
+  background: #ffffff;
+  border-radius: 50% !important; 
+  padding: 0 !important; 
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06); 
+  border: 1px solid rgba(255, 255, 255, 0.2); 
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hc-clinic-logo-frame img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+
+.hc-clinic-text-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+
+.hc-clinic-badge-label {
+  background: rgba(255, 255, 255, 0.15) !important; 
+  border: 1px solid rgba(255, 255, 255, 0.25) !important; 
+  color: #ffffff !important; /* อักษรขาวคมชัด */
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.hc-clinic-badge-label .mini-heart {
+  color: #ffffff !important; 
+}
+
+.hc-clinic-detail-hero h1 {
+  font-size: 30px;
+  font-weight: 800;
+  color: #ffffff; 
+  margin: 0;
+  letter-spacing: -0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); 
+}
+
+.hc-clinic-detail-hero p {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.9); 
+  margin: 0;
+}
+
+/* โครงสร้างแบบสองฝั่งแบ่งซ้ายขวา (Split Layout) */
+.hc-split-layout-container {
+  display: flex;
+  gap: 32px;
+  margin-top: 40px;
+  margin-bottom: 80px;
+  align-items: flex-start;
+}
+
+/* ==========================================================================
+   🎯 [ฝั่งซ้าย]: SIDEBAR MENU (ฉบับสมบูรณ์: ซัพพอร์ตระบบมีหมวดหมู่ย่อย)
+   ========================================================================== */
+.hc-clinic-sidebar-menu {
+  flex: 0 0 340px;
+  width: 340px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px 18px;
+  position: sticky;
+  top: 100px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+  box-sizing: border-box;
+}
+
+/* หัวข้อคำแนะนำด้านบนเมนู */
+.hc-sidebar-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 14px;
+  padding-left: 4px;
+}
+
+/* คลุมกล่องค้นหาภายใน Sidebar */
+.hc-clinic-internal-search-box {
+  position: relative;
+  width: 100%;
+  margin-bottom: 22px;
+}
+
+.hc-clinic-internal-search-box .internal-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  font-size: 16px;
+  z-index: 5;
+}
+
+.hc-clinic-internal-search-box input {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  font-size: 14px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  outline: none;
+  background-color: #f8fafc;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.hc-clinic-internal-search-box input:focus {
+  border-color: #f47932; /* ใช้สีส้มของระบบ */
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(244, 121, 50, 0.12);
+}
+
+/* โครงสร้างรายการเมนูด้านใน */
+.hc-sidebar-nested-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── 🟢 ส่วนเสริมพิเศษ: จัดการแท็กหัวข้อโฟลเดอร์หมวดหมู่ (Category Header) ── */
+.hc-nested-menu-item {
+  list-style: none;
+  margin-bottom: 10px;
+}
+
+.hc-nested-cat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #334155;
+  transition: all 0.2s ease;
+}
+
+.hc-nested-cat-header:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* เมื่อโฟลเดอร์หมวดหมู่นั้นถูกกดเปิดกางออก */
+.hc-nested-menu-item.expanded .hc-nested-cat-header {
+  background: #fff7ed; /* เปลี่ยนเป็นสีส้มครีมอ่อนคุมโทนระบบ */
+  border-color: #fed7aa;
+  color: #f47932; /* ตัวหนังสือเปลี่ยนเป็นสีส้มระบบ */
+}
+
+/* ลูกศรชี้เปิด-ปิด */
+.hc-nested-cat-header .arrow-toggle-icon {
+  color: #94a3b8;
+  font-size: 16px;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hc-nested-menu-item.expanded .arrow-toggle-icon {
+  transform: rotate(180deg); /* หมุนลูกศรชี้ขึ้นเมื่อกางออก */
+  color: #f47932;
+}
+
+/* ── 🟢 รายการคำถามย่อยสไตล์กล่องมน (ซัพพอร์ตทั้งข้อเดี่ยว และในหมวดหมู่) ── */
+.hc-sidebar-sub-question-list {
+  list-style: none;
+  padding: 8px 0 0 12px; /* ดันเยื้องเข้าขวาเล็กน้อยเพื่อให้ดูเป็นโครงสร้างย่อยใต้โฟลเดอร์ */
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hc-sub-question-item {
+  padding: 12px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  transition: all 0.2s ease;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.hc-sub-question-item:hover {
+  background: #fff7ed;
+  border-color: #ffedd5;
+  color: #f47932;
+  transform: translateX(3px); /* ขยับเยื้องนิดๆ ให้ดูโมเดิร์น */
+}
+
+/* 🟢 จุดเปลี่ยนสถานะ Active (ข้อคำถามที่กำลังเปิดอ่านคำตอบ) */
+.hc-sub-question-item.active {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%) !important;
+  border-color: #f47932 !important; /* ล็อกกรอบสีส้มระบบแท้ */
+  color: #c2410c !important; /* ตัวหนังสือส้มเข้มคมชัด */
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(244, 121, 50, 0.06);
+}
+
+/* ไอคอนเอกสารหน้าข้อคำถาม */
+.sub-q-icon {
+  margin-top: 3px;
+  flex-shrink: 0;
+  color: #0284c7; /* สีฟ้าการแพทย์ช่วยตัดแบ่งมิติสายตา */
+  opacity: 0.8;
+}
+
+.hc-sub-question-item.active .sub-q-icon {
+  color: #f47932; /* เปลี่ยนเป็นสีส้มระบบเมื่อกดทำงาน */
+}
+
+/* ==========================================================================
+   🎯 [ฝั่งขวา]: ANSWER DISPLAY CARD (ฉบับอัปเกรด มิติตัดสลับพรีเมียม อักษรคมชัด)
+   ========================================================================== */
+.hc-clinic-main-content-pane {
+  flex: 1;
+  min-width: 0; /* 🟢 ป้องกันเนื้อหา Rich Text ดันกรอบจนหลุดขอบขวาจอ */
+}
+
+.hc-clinic-main-content-pane .hc-answer-display-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px; /* เพิ่มความโค้งมนให้ดูโมเดิร์นและเป็นมิตร */
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* 🟢 หัวกล่องแสดงคำถาม: ถมสีฟ้านวลไล่เฉดสไตล์คลินิกยุคใหม่ ลบล้างความจืดชืด */
+.hc-clinic-main-content-pane .hc-answer-header-zone {
+  background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%) !important; 
+  padding: 32px 36px !important;
+  border-bottom: 1px solid #e0f2fe !important;
+}
+
+/* ป้าย Tag หมวดหมู่ย่อยสีน้ำเงิน-ฟ้านวล */
+.hc-clinic-main-content-pane .hc-answer-tag-category {
+  display: inline-block !important;
+  background-color: #e0f2fe !important; 
+  color: #0369a1 !important; 
+  padding: 6px 14px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  margin-bottom: 14px !important;
+  letter-spacing: 0.3px;
+}
+
+/* ข้อคำถามขนาดใหญ่ คมชัด มีน้ำหนักนำสายตา */
+.hc-clinic-main-content-pane .hc-answer-header-zone h3 {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  margin: 0 !important;
+  line-height: 1.4 !important;
+  letter-spacing: -0.3px;
+}
+
+/* 🟢 โซนกล่องเนื้อหาคำตอบ (Body Content) */
+.hc-clinic-main-content-pane .hc-answer-body-content {
+  padding: 36px !important; /* เพิ่มพื้นที่ว่างรอบๆ ให้โปร่ง โล่ง สบายตา */
+  background: #ffffff !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ชุดคำตอบประเภท Rich Text จาก Text Editor หลังบ้าน */
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content {
+  color: #334155 !important;
+  font-size: 16px !important; /* ขนาดพอเหมาะแก่อ่านบนหน้าจอ */
+  line-height: 1.85 !important; /* เพิ่มช่องไฟระหว่างบรรทัดไม่ให้อึดอัด */
+}
+
+/* ปรับความคมเข้มของตัวหนา (strong / b) ในบทความ */
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content strong, 
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content b {
+  font-weight: 700 !important;
+  color: #0f172a !important;
+}
+
+/* จัดระยะตำแหน่งชุดรายการ Bullet (ul) และตัวเลข (ol) ด้านใน */
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content ul,
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content ol {
+  margin: 14px 0 18px 24px !important;
+  padding: 0 !important;
+}
+
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content li {
+  margin-bottom: 10px !important; /* เพิ่มช่องไฟระหว่างข้อย่อยให้เด่นชัด */
+  color: #475569 !important;
+}
+
+/* การย่อหน้าแท็บคำตอบ (Indent) */
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content .ql-indent-1 { padding-left: 2em !important; }
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content .ql-indent-2 { padding-left: 4em !important; }
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content .ql-indent-3 { padding-left: 6em !important; }
+
+/* รูปแบบตัวเอียง ขีดเส้นใต้ และขีดฆ่า */
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content em, 
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content i {
+  font-style: italic !important;
+}
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content u {
+  text-decoration: underline !important;
+}
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content s, 
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content strike {
+  text-decoration: line-through !important;
+}
+
+/* สีฟอนต์และไฮไลต์แบบ Rich Text */
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content span[style*="color"],
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content span[style*="background-color"] {
+  display: inline;
+}
+
+/* ควบคุมรูปภาพประกอบภายในคำตอบให้อยู่ในสเกลปลอดภัย ไม่ล้นขอบขวา */
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 12px;
+  margin: 20px 0;
+  display: block;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+}
+
+/* ลิงก์เชื่อมโยง URL ภายในคำตอบ: ปรับใช้สีส้มระบบเพื่อให้ตัดกับฟ้านวลด้านบน */
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content a {
+  color: #f47932 !important; 
+  text-decoration: underline !important;
+  font-weight: 600;
+}
+
+/* การ์ดเปล่ากรณีที่ยังไม่ได้เลือกคำถาม (Placeholder) */
+.hc-answer-placeholder-card {
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 20px;
+  padding: 60px 40px;
+  text-align: center;
+  color: #64748b;
+}
+
+.hc-answer-placeholder-card .placeholder-icon {
+  color: #cbd5e1;
+  margin-bottom: 16px;
+}
+
+.hc-answer-placeholder-card h4 {
+  font-size: 18px;
+  color: #334155;
+  margin: 0 0 8px 0;
+}
+
+/* Responsive ปรับปรุงใหม่ */
+@media (max-width: 991px) {
+  .hc-split-layout-container {
+    flex-direction: column !important; 
+    gap: 20px !important;
+    margin-top: 20px !important;
+    margin-bottom: 50px !important;
+  }
+  
+  .hc-clinic-sidebar-menu {
+    width: 100% !important;
+    flex: none !important;
+    position: static !important; 
+    max-height: none !important;
+    padding: 18px 14px !important;
+    box-sizing: border-box !important;
+  }
+
+  .hc-sidebar-sub-question-list {
+    padding-left: 6px !important; 
+  }
+
+  .hc-clinic-main-content-pane {
+    width: 100% !important;
+    min-width: 0 !important; 
+    box-sizing: border-box !important;
+  }
+
+  .hc-clinic-main-content-pane .hc-answer-display-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important; 
+  }
+
+  .hc-clinic-main-content-pane .hc-answer-header-zone {
+    padding: 20px 14px !important; 
+    box-sizing: border-box !important;
+  }
+
+  .hc-clinic-main-content-pane .hc-answer-header-zone h3 {
+    font-size: 16px !important; 
+    line-height: 1.4 !important;
+    word-break: break-word !important; 
+  }
+
+  .hc-clinic-main-content-pane .hc-answer-body-content {
+    padding: 18px 14px !important; 
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: auto !important; 
+  }
+
+  .hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content {
+    font-size: 14px !important; 
+    line-height: 1.6 !important;
+    word-break: break-word !important; 
+    overflow-wrap: break-word !important;
+    width: 100% !important;
+  }
+
+  .hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content img {
+    max-width: 100% !important; 
+    width: 100% !important;
+    height: auto !important;
+    margin: 12px 0 !important;
+    border-radius: 8px !important;
+  }
+  .hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content ul,
+  .hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content ol {
+    margin: 10px 0 12px 18px !important; 
+    padding: 0 !important;
+  }
+  .hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content table {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+    overflow-x: auto !important; 
+  }
+}
+
+@media (max-width: 576px) {
+  .hc-clinic-detail-hero {
+    padding: 30px 0 !important;
+  }
+
+  .hc-clinic-hero-inner {
+    flex-direction: column !important; 
+    text-align: center !important;
+    gap: 14px !important;
+  }
+
+  .hc-clinic-text-block {
+    align-items: center !important; 
+  }
+
+  .hc-clinic-logo-frame {
+    width: 76px !important;
+    height: 76px !important;
+  }
+
+  .hc-clinic-detail-hero h1 {
+    font-size: 22px !important;
+  }
+}

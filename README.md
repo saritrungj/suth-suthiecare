@@ -21,7 +21,7 @@
 | **Color Picker** | React Color |
 | **Export** | ExcelJS, FileSaver |
 | **API / Real-time** | Axios, Socket.io Client |
-| **CAPTCHA** | hCaptcha |
+| **CAPTCHA** | CloudFlare Captcha |
 | **Testing** | Jest, React Testing Library |
 
 ### Backend — `server/`

@@ -18,6 +18,7 @@ const dashboardRoutes = require('./routes/dashboardRoutes');// <-- เส้น�
 const caseRoutes = require('./routes/caseRoutes'); // <-- เส้นทางจัดการเคส, นัดหมาย, และประวัติ
 const clinicRoutes = require('./routes/clinicRoutes'); // <-- เส้นทางจัดการข้อมูลคลินิก
 const staffRoutes = require('./routes/staffRoutes');// <-- เส้นทางจัดการข้อมูลเจ้าหน้าที่
+const faqRoutes = require('./routes/faqRoutes'); // <-- เส้นทางจัดการข้อมูล FAQ
 
 
 const app = express();
@@ -72,6 +73,7 @@ app.use('/api', dashboardRoutes);
 app.use('/api', caseRoutes); 
 app.use('/api/clinics', clinicRoutes);
 app.use('/api/staffs', staffRoutes);
+app.use('/api/admin/help-center', faqRoutes); 
 
 // 🟢 6. API ทดสอบ Telegram (ป้องกันด้วย token — เฉพาะผู้ที่ล็อกอินแล้ว)
 const { verifyToken } = require('./middleware/authMiddleware');

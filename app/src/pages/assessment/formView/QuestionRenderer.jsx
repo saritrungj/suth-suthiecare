@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FiRefreshCw, FiCheck, FiXCircle } from 'react-icons/fi';
 import { formatThaiID, validateThaiID, formatPhoneNumber } from './formUtils';
+import { translateTextSmart } from '../../../utils/translator';
+import Swal from 'sweetalert2';
 
 const QuestionRenderer = ({
   q,
@@ -9,11 +12,36 @@ const QuestionRenderer = ({
   errors,
   verifiedIdentity,
   optionInputValues,
+  optionUsage,
   handleClearQuestionAnswer,
   handleAnswer,
   handleOptionInputChange,
   handleGridAnswer
 }) => {
+  const { i18n } = useTranslation();
+  const [translatedQ, setTranslatedQ] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    const translateQuestion = async () => {
+      if (i18n.language !== 'en') {
+        if (isMounted) setTranslatedQ(null);
+        return;
+      }
+      const tq = {};
+      if (q.title) tq.title = await translateTextSmart(q.title);
+      if (q.text) tq.text = await translateTextSmart(q.text);
+      if (q.options) tq.options = await Promise.all(q.options.map(opt => translateTextSmart(opt)));
+      if (q.rows) tq.rows = await Promise.all(q.rows.map(row => translateTextSmart(row)));
+      if (q.cols) tq.cols = await Promise.all(q.cols.map(col => translateTextSmart(col)));
+      if (isMounted) setTranslatedQ(tq);
+    };
+    translateQuestion();
+    return () => { isMounted = false; };
+  }, [q, i18n.language]);
+
+  const displayTitle = translatedQ?.title || q.title;
+  const displayText = translatedQ?.text || q.text;
 
   // กรณีเป็นคำถามกลุ่ม (Group)
   if (q.type === 'group') {
@@ -21,8 +49,8 @@ const QuestionRenderer = ({
     return (
       <div id={`question-${q.id}`} className="preview-group-wrapper" style={{ animationDelay: `${index * 0.05}s` }}>
         <div className="preview-group-header">
-          <h3 className="preview-sec__title" dangerouslySetInnerHTML={{ __html: q.title || 'กลุ่มคำถาม' }} />
-          {q.text && <div className="preview-hint" dangerouslySetInnerHTML={{ __html: q.text }} />}
+          <h3 className="preview-sec__title" dangerouslySetInnerHTML={{ __html: displayTitle || 'กลุ่มคำถาม' }} />
+          {displayText && <div className="preview-hint" dangerouslySetInnerHTML={{ __html: displayText }} />}
         </div>
         <div className="preview-group-body">
           {subs.map((sq, sIdx) => {
@@ -65,6 +93,8 @@ const QuestionRenderer = ({
     }
   } else if (q.type === 'bmi') {
     hasAnswer = ans && (ans.weight || ans.height);
+  } else if (q.type === 'file_upload') {
+    hasAnswer = ans && ans.data;
   } else {
     hasAnswer = !!ans && String(ans).trim() !== '';
   }
@@ -74,9 +104,9 @@ const QuestionRenderer = ({
       
       <div className="preview-sec__head_wrap">
         <div style={{ flex: 1 }}>
-          <h3 className="preview-sec__title" dangerouslySetInnerHTML={{ __html: q.title || 'คำถามที่ไม่มีชื่อ' }} />
+          <h3 className="preview-sec__title" dangerouslySetInnerHTML={{ __html: displayTitle || 'คำถามที่ไม่มีชื่อ' }} />
           {q.required && <span className="req">*</span>}
-          {q.hasDescription && q.text && <div className="preview-hint" dangerouslySetInnerHTML={{ __html: q.text }} />}
+          {q.hasDescription && displayText && <div className="preview-hint" dangerouslySetInnerHTML={{ __html: displayText }} />}
         </div>
         
         {hasAnswer && !(q.type === 'national_id' && verifiedIdentity) && (
@@ -93,6 +123,86 @@ const QuestionRenderer = ({
 
       <div className="preview-sec__body">
         {q.image && <div className="preview-q-img"><img src={q.image} alt="question" /></div>}
+
+        {q.type === 'video' && (() => {
+          const getYoutubeEmbedUrl = (url) => {
+            if (!url) return '';
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
+            const match = url.match(regExp);
+            const videoId = (match && match[2].length === 11) ? match[2] : '';
+            return videoId ? `https://www.youtube.com/embed/${videoId}` : '';
+          };
+          const embedUrl = getYoutubeEmbedUrl(q.videoUrl);
+          if (!embedUrl) return null;
+          return (
+            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: '8px', marginBottom: '15px' }}>
+              <iframe 
+                src={embedUrl} 
+                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }} 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowFullScreen 
+                referrerPolicy="strict-origin-when-cross-origin"
+                title="YouTube Video"
+              />
+            </div>
+          );
+        })()}
+
+        {q.type === 'file_upload' && (
+          <div className="preview-file-upload-wrapper">
+            <input 
+              type="file" 
+              accept="image/*,audio/*" 
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const isAudio = file.type.startsWith('audio/');
+                  const maxSize = isAudio ? 10 * 1024 * 1024 : 5 * 1024 * 1024;
+                  const maxSizeLabel = isAudio ? '10 MB' : '5 MB';
+
+                  if (file.size > maxSize) {
+                    Swal.fire({
+                      icon: 'warning',
+                      title: 'ไฟล์ขนาดใหญ่เกินไป',
+                      text: `กรุณาอัปโหลดไฟล์ที่มีขนาดไม่เกิน ${maxSizeLabel}`,
+                      confirmButtonColor: 'var(--theme-color)'
+                    });
+                    e.target.value = ''; // Reset input
+                    return;
+                  }
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    handleAnswer(q.id, {
+                      name: file.name,
+                      type: file.type,
+                      data: reader.result
+                    });
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }} 
+              style={{ marginBottom: '10px' }}
+            />
+            {ans && ans.data && (
+              <div className="preview-file-display" style={{ marginTop: '10px' }}>
+                {ans.type.startsWith('image/') ? (
+                  <img src={ans.data} alt="uploaded" style={{ maxWidth: '100%', maxHeight: '300px', borderRadius: '8px' }} />
+                ) : ans.type.startsWith('audio/') ? (
+                  <audio controls src={ans.data} style={{ width: '100%' }} />
+                ) : (
+                  <div>ไฟล์ที่อัปโหลด: {ans.name}</div>
+                )}
+                <button 
+                  type="button"
+                  onClick={() => handleAnswer(q.id, null)}
+                  style={{ display: 'block', marginTop: '10px', padding: '6px 12px', background: '#f44336', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  <FiXCircle style={{ verticalAlign: 'middle', marginRight: '4px' }}/> ลบไฟล์
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {(q.type === 'short_text' || q.type === 'full_name') && (
           <input type="text" className={`preview-input ${hasError ? 'preview-input--error' : ''}`} placeholder="คำตอบของคุณ" value={ans || ''} onChange={(e) => handleAnswer(q.id, e.target.value)} />
@@ -156,17 +266,88 @@ const QuestionRenderer = ({
           );
         })()}
 
+        {q.type === 'booking' && q.displayAs === 'dropdown' && (
+          <select className={`preview-input ${hasError ? 'preview-input--error' : ''}`} value={ans || ''} onChange={(e) => handleAnswer(q.id, e.target.value)}>
+            <option value="" disabled>{i18n.language === 'en' ? 'Select an option' : 'เลือกคำตอบ'}</option>
+            {q.options.map((opt, i) => {
+              const displayOpt = translatedQ?.options?.[i] || opt;
+              const textOnly = displayOpt.replace(/<[^>]+>/g, '');
+              const originalTextOnly = opt.replace(/<[^>]+>/g, '');
+              const limit = q.optionLimits?.[i];
+              const usageCount = optionUsage?.[q.id]?.[opt] || 0;
+              const isLimited = limit !== undefined && limit !== null && limit !== '';
+              const remaining = isLimited ? Math.max(0, limit - usageCount) : null;
+              const isFull = isLimited && remaining === 0;
+              const fullText = i18n.language === 'en' ? 'Full' : 'เต็ม';
+              const leftText = i18n.language === 'en' ? 'Left' : 'เหลือ';
+              const optionLabel = isFull ? `[ ${fullText} ] - ${textOnly}` : (isLimited ? `[ ${leftText} ${remaining} ] - ${textOnly}` : textOnly);
+              return <option key={i} value={originalTextOnly} disabled={isFull}>{optionLabel}</option>;
+            })}
+          </select>
+        )}
+
+        {q.type === 'booking' && q.displayAs !== 'dropdown' && (
+          <div className="preview-chip-col">
+            {q.options.map((opt, i) => {
+              const isSelected = ans === opt;
+              const showInput = q.optionHasInput?.[i] === true;
+              const displayOpt = translatedQ?.options?.[i] || opt;
+              
+              const limit = q.optionLimits?.[i];
+              const usageCount = optionUsage?.[q.id]?.[opt] || 0;
+              const isLimited = limit !== undefined && limit !== null && limit !== '';
+              const remaining = isLimited ? Math.max(0, limit - usageCount) : null;
+              const isFull = isLimited && remaining === 0;
+              const fullText = i18n.language === 'en' ? 'Full' : 'เต็มแล้ว';
+              const leftText = i18n.language === 'en' ? 'Left' : 'เหลือ';
+
+              return (
+                <div key={i} className="preview-option-wrapper">
+                  <label className={`preview-chip ${isSelected ? 'active' : ''}`} style={isFull ? { opacity: 0.5, cursor: 'not-allowed', backgroundColor: '#f1f5f9' } : {}}>
+                    <input type="radio" name={`q-${q.id}`} checked={isSelected} disabled={isFull} onChange={() => { if (!isFull) handleAnswer(q.id, opt); }} />
+                    <span style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                      <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: displayOpt }} />
+                      {isLimited && (
+                        <span style={{ marginLeft: '8px', fontSize: '0.85em', color: isFull ? '#d32f2f' : '#2e7d32', fontWeight: 'bold', background: isFull ? '#ffebee' : '#e8f5e9', padding: '2px 8px', borderRadius: '12px', flexShrink: 0 }}>
+                          {isFull ? fullText : `${leftText} ${remaining}`}
+                        </span>
+                      )}
+                    </span>
+                  </label>
+                  
+                  {isSelected && showInput && (
+                    <div style={{ marginLeft: '30px', animation: 'fadeIn 0.2s ease-out' }}>
+                      <input 
+                        type="text" 
+                        className="preview-input" 
+                        placeholder="โปรดระบุรายละเอียด..." 
+                        value={optionInputValues[`${q.id}_${opt}`] || ''}
+                        onChange={(e) => handleOptionInputChange(q.id, opt, e.target.value)}
+                        style={{ fontSize: '14px', padding: '6px 0', borderBottomColor: 'var(--theme-color)', maxWidth: '300px' }}
+                        autoFocus
+                      />
+                    </div>
+                  )}
+                  
+                  {q.optionImages && q.optionImages[i] && <img src={q.optionImages[i]} alt="option" className="preview-opt-img" style={isFull ? { opacity: 0.5 } : {}} />}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         {q.type === 'multiple_choice' && (
           <div className="preview-chip-col">
             {q.options.map((opt, i) => {
               const isSelected = ans === opt;
               const showInput = q.optionHasInput?.[i] === true;
+              const displayOpt = translatedQ?.options?.[i] || opt;
               
               return (
                 <div key={i} className="preview-option-wrapper">
                   <label className={`preview-chip ${isSelected ? 'active' : ''}`}>
                     <input type="radio" name={`q-${q.id}`} checked={isSelected} onChange={() => handleAnswer(q.id, opt)} />
-                    <span dangerouslySetInnerHTML={{ __html: opt }} />
+                    <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: displayOpt }} />
                   </label>
                   
                   {isSelected && showInput && (
@@ -195,13 +376,14 @@ const QuestionRenderer = ({
             {q.options.map((opt, i) => {
               const isChecked = (ans || []).includes(opt);
               const showInput = q.optionHasInput?.[i] === true;
+              const displayOpt = translatedQ?.options?.[i] || opt;
               
               return (
                 <div key={i} className="preview-option-wrapper">
                   <label className={`preview-check ${isChecked ? 'active' : ''}`}>
                     <input type="checkbox" checked={isChecked} onChange={() => handleAnswer(q.id, opt, true)} />
                     <span className="preview-check__mark">{isChecked ? <FiCheck strokeWidth={3} /> : ""}</span>
-                    <span dangerouslySetInnerHTML={{ __html: opt }} />
+                    <div style={{ display: 'inline' }} dangerouslySetInnerHTML={{ __html: displayOpt }} />
                   </label>
                   
                   {isChecked && showInput && (
@@ -227,10 +409,12 @@ const QuestionRenderer = ({
 
         {(q.type === 'dropdown' || q.type === 'faculty') && (
           <select className={`preview-input ${hasError ? 'preview-input--error' : ''}`} value={ans || ''} onChange={(e) => handleAnswer(q.id, e.target.value)}>
-            <option value="" disabled>เลือกคำตอบ</option>
+            <option value="" disabled>{i18n.language === 'en' ? 'Select an option' : 'เลือกคำตอบ'}</option>
             {q.options.map((opt, i) => {
-              const textOnly = opt.replace(/<[^>]+>/g, '');
-              return <option key={i} value={textOnly}>{textOnly}</option>;
+              const displayOpt = translatedQ?.options?.[i] || opt;
+              const textOnly = displayOpt.replace(/<[^>]+>/g, '');
+              const originalTextOnly = opt.replace(/<[^>]+>/g, '');
+              return <option key={i} value={originalTextOnly}>{textOnly}</option>;
             })}
           </select>
         )}
@@ -241,13 +425,13 @@ const QuestionRenderer = ({
               <thead>
                 <tr>
                   <th></th>
-                  {q.cols.map((col, i) => <th key={i} dangerouslySetInnerHTML={{ __html: col }} />)}
+                  {q.cols.map((col, i) => <th key={i} dangerouslySetInnerHTML={{ __html: translatedQ?.cols?.[i] || col }} />)}
                 </tr>
               </thead>
               <tbody>
                 {q.rows.map((row, i) => (
                   <tr key={i} className={hasError && (!ans || (q.type === 'grid_multiple' ? !ans[i] : !ans[i]?.length)) ? 'grid-row-error' : ''}>
-                    <td dangerouslySetInnerHTML={{ __html: row }} />
+                    <td dangerouslySetInnerHTML={{ __html: translatedQ?.rows?.[i] || row }} />
                     {q.cols.map((col, j) => {
                       const key = String(i);
                       const rowAns = ans?.[key] || (q.type === 'grid_multiple' ? null : []);

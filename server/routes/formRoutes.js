@@ -134,7 +134,19 @@ router.get('/forms/:id', async (req, res) => {
     try {
         const [rows] = await db.query("SELECT * FROM forms WHERE id = ?", [req.params.id]);
         if (rows.length === 0) return res.status(404).json({ message: "ไม่พบข้อมูลฟอร์ม" });
-        res.json(rows[0]);
+
+        // Calculate option usage for quota limits
+        const [usageRows] = await db.query("SELECT question_id, answer_value, COUNT(*) as count FROM form_answers WHERE form_id = ? GROUP BY question_id, answer_value", [req.params.id]);
+        const optionUsage = {};
+        usageRows.forEach(row => {
+            if (!optionUsage[row.question_id]) optionUsage[row.question_id] = {};
+            optionUsage[row.question_id][row.answer_value] = row.count;
+        });
+
+        const form = rows[0];
+        form.optionUsage = optionUsage;
+
+        res.json(form);
     } catch (err) {
         console.error("Error fetching form:", err);
         res.status(500).json({ message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });

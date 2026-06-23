@@ -4,6 +4,9 @@ import React, { lazy, useEffect, useState } from "react";
 import Login from "./pages/login/Login";
 import SutLanding2 from "./pages/sutlanding/SutLanding2";
 import ClinicManager from "./pages/admin/clinics/ClinicManager";
+import HelpCenterManager from "./pages/admin/HelpCenterManager"; 
+import HelpCenterUser from "./pages/helpCenter/HelpCenterUser";
+import ClinicHelpDetail from './pages/helpCenter/ClinicHelpDetail';
 
 // ✅ Lazy load ทุกหน้าที่เหลือ
 const AssessmentResult = lazy(() => import("./pages/result/AssessmentResult"));
@@ -20,6 +23,7 @@ const FormView = lazy(() => import("./pages/assessment/formView/FormView"));
 const HistorySearch = lazy(() => import("./pages/assessment/history/HistorySearch"));
 const HistoryResult = lazy(() => import("./pages/assessment/history/HistoryResult"));
 const AdminLayout = lazy(() => import("./components/AdminLayout"));
+const ClinicDetail = lazy(() => import("./pages/assessment/history/ClinicDetail"));
 
 const AdminRoute = ({ children }) => {
   const userStr = sessionStorage.getItem("suth_user") || localStorage.getItem("suth_user");
@@ -103,12 +107,14 @@ function App() {
         <Routes>
           <Route path="/" element={<SutLanding2 />} />
           <Route path="/login" element={<Login />} />
-        
+           <Route path="/help-center" element={<HelpCenterUser />} />
+           <Route path="/help-center/clinic/:id" element={<ClinicHelpDetail />} />
       
           <Route path="/assessment-result" element={<AssessmentResult />} />
           <Route path="/assessment/:id" element={<FormView />} />
           <Route path="/history" element={<HistorySearch />} />
           <Route path="/history/result" element={<HistoryResult />} />
+          <Route path="/clinic-detail" element={<ClinicDetail />} />
 
           <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
             <Route path="dashboard" element={<Dashboard />} />
@@ -122,6 +128,7 @@ function App() {
             <Route path="risk-cases" element={<RiskCases />} />
             <Route path="banner" element={<BannerManagement />} />
             <Route path="clinics" element={<ClinicManager />} />
+            <Route path="help-center" element={<HelpCenterManager />} />
           </Route>
         </Routes>
     </BrowserRouter>

@@ -7,7 +7,7 @@ import {
   FaPhoneAlt, FaBuilding, FaClipboardList,
   FaMinus, FaAlignLeft, FaRegCircle, FaRegCheckSquare, 
   FaCaretSquareDown, FaThList, FaTh, FaChevronDown,
-  FaCalendarAlt, FaWeight, FaTrophy, FaCog, FaBriefcase
+  FaCalendarAlt, FaWeight, FaTrophy, FaCog, FaBriefcase, FaYoutube, FaFileAlt
 } from 'react-icons/fa';
 import RichTextInput from './RichTextInput';
 
@@ -21,7 +21,10 @@ const QUESTION_TYPES = [
       { value: 'multiple_choice', label: 'หลายตัวเลือก', icon: <FaRegCircle /> },
       { value: 'checkboxes', label: 'ช่องทำเครื่องหมาย', icon: <FaRegCheckSquare /> },
       { value: 'dropdown', label: 'เลื่อนลง', icon: <FaCaretSquareDown /> },
+      { value: 'file_upload', label: 'อัปโหลดไฟล์ (รูปภาพ/เสียง)', icon: <FaFileAlt /> },
+      { value: 'booking', label: 'ตัวเลือกแบบกำหนดจำนวน', icon: <FaClipboardList /> },
       { value: 'date', label: 'วันที่', icon: <FaCalendarAlt /> },
+      { value: 'video', label: 'วิดีโอ (YouTube)', icon: <FaYoutube /> },
     ]
   },
   {
@@ -164,7 +167,7 @@ const SortableQuestion = ({
 
   const isProfileField = ['national_id', 'full_name', 'phone_number', 'faculty', 'main_issue', 'bmi'].includes(q.type) || q.isUserStatus;
   const isScoreableType = ['multiple_choice', 'checkboxes', 'dropdown', 'grid_multiple', 'grid_checkbox', 'bmi', 'group'].includes(q.type);
-  const isEditableConfigurable = !['section', 'description', 'bmi', 'grid_multiple', 'grid_checkbox', 'group'].includes(q.type);
+  const isEditableConfigurable = !['section', 'description', 'video', 'booking', 'bmi', 'grid_multiple', 'grid_checkbox', 'group', 'file_upload'].includes(q.type);
 
   if (q.type === 'section') {
     return (
@@ -320,10 +323,12 @@ const SortableQuestion = ({
         <button className="sfb-btn-delete" title="ลบ" onClick={() => removeQuestion(q.id)}><FaTrashAlt /></button>
         <span className="sfb-footer-divider" aria-hidden="true" />
 
-        <label className="sfb-required-toggle">
-          <input type="checkbox" checked={!!q.required} onChange={(e) => updateRequired && updateRequired(q.id, e.target.checked)} />
-          <span>จำเป็นต้องตอบ</span>
-        </label>
+        {q.type !== 'video' && (
+          <label className="sfb-required-toggle">
+            <input type="checkbox" checked={!!q.required} onChange={(e) => updateRequired && updateRequired(q.id, e.target.checked)} />
+            <span>จำเป็นต้องตอบ</span>
+          </label>
+        )}
 
         <div className="sfb-question-settings-container" ref={footerMenuRef}>
           <button className="sfb-btn-question-settings" onClick={() => setFooterMenuOpen(!footerMenuOpen)} title="การตั้งค่าเพิ่มเติม">

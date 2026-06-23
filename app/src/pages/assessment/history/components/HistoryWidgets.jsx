@@ -5,6 +5,7 @@ import { FaWeight, FaRuler } from 'react-icons/fa';
 
 // ดึงการตั้งค่าจากไฟล์ Utils ที่เราเพิ่งสร้าง
 import { API_BASE, axiosConfig, formatAnswerValue, stripHtml, formatDate } from '../historyUtils';
+import { useTranslation } from 'react-i18next';
 
 const IconMap = {
   user: FiUser,
@@ -30,6 +31,7 @@ export function MaskedIdField({ value }) {
 }
 
 export function EditableAnswerField({ responseId, questionId, questionLabel, answerValue, type = 'text', onSave }) {
+  const { t } = useTranslation();
   const cleanVal = formatAnswerValue(answerValue);
   const [editing, setEditing]   = useState(false);
   const [val, setVal]           = useState(cleanVal);
@@ -61,8 +63,8 @@ export function EditableAnswerField({ responseId, questionId, questionLabel, ans
       ) : (
         <div className="hr-answer-editable-view">
           <span className="hr-answer-v">{savedVal || '-'}</span>
-          <button className="hr-edit-btn hr-edit-btn--sm" onClick={() => { setVal(savedVal); setEditing(true); }}>
-            <FiEdit2 size={11} /><span>แก้ไข</span>
+          <button className="hr-edit-btn hr-edit-btn--sm" onClick={() => { setVal(savedVal); setEditing(true); }} title={t('history.result.edit_data')}>
+            <FiEdit2 size={11} /><span>{t('history.result.edit_btn')}</span>
           </button>
         </div>
       )}
@@ -70,7 +72,8 @@ export function EditableAnswerField({ responseId, questionId, questionLabel, ans
   );
 }
 
-export function EditableField({ responseId, field, label, value, updatedAt, type = 'text', icon, onSave }) {
+export function EditableField({ responseId, field, label, value, type = 'text', icon, onSave, updatedAt }) {
+  const { t } = useTranslation();
   const cleanValue = stripHtml(value || '');
   const [editing, setEditing] = useState(false);
   const [val, setVal] = useState(cleanValue);
@@ -103,23 +106,24 @@ export function EditableField({ responseId, field, label, value, updatedAt, type
         </div>
       ) : (
         <div className="hr-field-view">
-          <span className={`hr-field-val ${!cleanValue ? 'empty' : ''}`}>{cleanValue || 'ยังไม่ระบุ'}</span>
-          <button className="hr-edit-btn" onClick={() => { setVal(cleanValue); setEditing(true); }}>
-            <FiEdit2 size={12} /><span>แก้ไข</span>
+          <span className={`hr-field-val ${!cleanValue ? 'empty' : ''}`}>{cleanValue || '-'}</span>
+          <button className="hr-edit-btn" onClick={() => { setVal(cleanValue); setEditing(true); }} title={t('history.result.edit_data')}>
+            <FiEdit2 size={12} /><span>{t('history.result.edit_btn')}</span>
           </button>
         </div>
       )}
-      {updatedAt && <span className="hr-field-updated">✎ แก้ไขล่าสุด: {formatDate(updatedAt)}</span>}
+      {updatedAt && <span className="hr-field-updated">✎ {t('history.result.edit_last')}: {formatDate(updatedAt)}</span>}
     </div>
   );
 }
 
-export function HeroEditableField({ value, onSave, type = 'text', isTitle = false, icon = null }) {
+export function HeroEditableField({ value, type = 'text', icon, isTitle = false, onSave }) {
+  const { t } = useTranslation();
   const [editing, setEditing] = useState(false);
   const [val, setVal] = useState(value);
   const [saving, setSaving] = useState(false);
 
-  const IconComponent = icon ? IconMap[icon] : null;
+  const Icon = icon ? IconMap[icon] : null;
 
   useEffect(() => { setVal(value); }, [value]);
 
@@ -135,7 +139,7 @@ export function HeroEditableField({ value, onSave, type = 'text', isTitle = fals
   if (editing) {
     return (
       <div className="hr-hero-edit-wrap">
-        {IconComponent && <IconComponent size={12} color="rgba(255,255,255,0.7)" />}
+        {Icon && <Icon size={12} color="rgba(255,255,255,0.7)" />}
         <input
           type={type}
           className={`hr-hero-input ${isTitle ? 'title-input' : 'pill-input'}`}
@@ -144,10 +148,10 @@ export function HeroEditableField({ value, onSave, type = 'text', isTitle = fals
           onKeyDown={e => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') handleCancel(); }}
           autoFocus
         />
-        <button className="hr-hero-action-btn save" onClick={handleSave} disabled={saving} title="บันทึก">
+        <button className="hr-hero-action-btn save" onClick={handleSave} disabled={saving} title={t('history.result.save')}>
           <FiCheck size={14} />
         </button>
-        <button className="hr-hero-action-btn cancel" onClick={handleCancel} disabled={saving} title="ยกเลิก">
+        <button className="hr-hero-action-btn cancel" onClick={handleCancel} disabled={saving} title={t('history.result.cancel')}>
           <FiX size={14} />
         </button>
       </div>
@@ -156,9 +160,9 @@ export function HeroEditableField({ value, onSave, type = 'text', isTitle = fals
 
   return (
     <div className="hr-hero-view-wrap">
-      {IconComponent && <IconComponent size={12} color="rgba(255,255,255,0.8)" />}
+      {Icon && <Icon size={12} color="rgba(255,255,255,0.8)" />}
       <span className={isTitle ? "hr-name" : "hr-id-value"}>{value}</span>
-      <button className="hr-hero-edit-btn" onClick={() => setEditing(true)} title="แก้ไขข้อมูล">
+      <button className="hr-hero-edit-btn" onClick={() => setEditing(true)} title={t('history.result.edit_data')}>
         <FiEdit2 size={12} />
       </button>
     </div>

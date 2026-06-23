@@ -164,6 +164,39 @@
 .sut2-step-icon { width: 80px; height: 80px; border-radius: 50%; background: rgba(244, 121, 50, 0.2); color: #f47932; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 24px auto; }
 .sut2-step-glass h3 { font-size: 1.2rem; margin-bottom: 16px; }
 .sut2-step-glass p { font-size: 1.05rem; color: #cbd5e1; line-height: 1.6; }
+
+.sut2-floating-help-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 56px;
+  height: 56px;
+  background-color: #e1c929; 
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9999; 
+  box-shadow: 0 4px 20px rgba(244, 121, 50, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sut2-floating-help-btn svg {
+  width: 26px;
+  height: 26px;
+  display: block;
+}
+.sut2-floating-help-btn:hover {
+  transform: scale(1.1) translateY(-4px);
+  background-color: #ccb521;
+  box-shadow: 0 8px 25px rgba(215, 193, 21, 0.6);
+}
+.sut2-floating-help-btn:active {
+  transform: scale(0.95) translateY(-2px);
+}
+
 /* =========================================
    9. SELECT ANIMATION
 ========================================= */
@@ -172,6 +205,15 @@
  from { transform: translateX(0); opacity: 1; }
 to { transform: translateX(-600px); opacity: 0; }
  }
+ 
+ /* =========================================
+   11. ANIMATIONS
+========================================= */
+@keyframes sut2FadeInUp {
+ from { opacity: 0; transform: translateY(40px); }
+to { opacity: 1; transform: translateY(0); }
+ }
+
 /* =========================================
    10. RESPONSIVE
 ========================================= */
@@ -218,10 +260,15 @@ to { transform: translateX(-600px); opacity: 0; }
     width: 90%;
   }
  }
-/* =========================================
-   11. ANIMATIONS
-========================================= */
-@keyframes sut2FadeInUp {
- from { opacity: 0; transform: translateY(40px); }
-to { opacity: 1; transform: translateY(0); }
- }
+ .sut2-floating-help-btn {
+    bottom: 24px;
+    right: 24px;
+    width: 50px;
+    height: 50px;
+    box-shadow: 0 4px 15px rgba(244, 121, 50, 0.3);
+  }
+  .sut2-floating-help-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+
