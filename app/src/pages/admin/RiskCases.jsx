@@ -2,32 +2,86 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import "./RiskCases.css";
 import CaseTable from "../../components/case/CaseTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
-import { getForms, getFormById, getFormResponses, getActiveClinics } from "../../services/api";
-import { FiFolder, FiSettings, FiSearch, FiChevronDown, FiLayers, FiCalendar } from "react-icons/fi";
+import {
+  getForms,
+  getFormById,
+  getFormResponses,
+  getActiveClinics,
+} from "../../services/api";
+import {
+  FiFolder,
+  FiSettings,
+  FiSearch,
+  FiChevronDown,
+  FiLayers,
+  FiCalendar,
+} from "react-icons/fi";
 
 const FACULTIES = [
-  "(1) สำนักวิชาวิทยาศาสตร์", "(2) สำนักวิชาเทคโนโลยีสังคม", "(3) สำนักวิชาเทคโนโลยีการเกษตร",
-  "(4) สำนักวิชาวิศวกรรมศาสตร์", "(5) สำนักวิชาแพทยศาสตร์", "(6) สำนักวิชาพยาบาลศาสตร์",
-  "(7) สำนักวิชาทันตแพทยศาสตร์", "(8) สำนักวิชาสาธารณสุขศาสตร์", "(9) สำนักวิชาศาสตร์และศิลป์ดิจิทัล", "อื่นๆ"
+  "(1) สำนักวิชาวิทยาศาสตร์",
+  "(2) สำนักวิชาเทคโนโลยีสังคม",
+  "(3) สำนักวิชาเทคโนโลยีการเกษตร",
+  "(4) สำนักวิชาวิศวกรรมศาสตร์",
+  "(5) สำนักวิชาแพทยศาสตร์",
+  "(6) สำนักวิชาพยาบาลศาสตร์",
+  "(7) สำนักวิชาทันตแพทยศาสตร์",
+  "(8) สำนักวิชาสาธารณสุขศาสตร์",
+  "(9) สำนักวิชาศาสตร์และศิลป์ดิจิทัล",
+  "อื่นๆ",
 ];
 
-const CLINIC_COLORS = ['#e0f2fe', '#dcfce7', '#fce7f3', '#fef3c7', '#e0e7ff', '#f3e8ff'];
-const CLINIC_TEXT_COLORS = ['#0284c7', '#166534', '#be185d', '#d97706', '#4338ca', '#7e22ce'];
-const CLINIC_BORDER_COLORS = ['#7dd3fc', '#86efac', '#f9a8d4', '#fcd34d', '#a5b4fc', '#d8b4fe'];
+const CLINIC_COLORS = [
+  "#e0f2fe",
+  "#dcfce7",
+  "#fce7f3",
+  "#fef3c7",
+  "#e0e7ff",
+  "#f3e8ff",
+];
+const CLINIC_TEXT_COLORS = [
+  "#0284c7",
+  "#166534",
+  "#be185d",
+  "#d97706",
+  "#4338ca",
+  "#7e22ce",
+];
+const CLINIC_BORDER_COLORS = [
+  "#7dd3fc",
+  "#86efac",
+  "#f9a8d4",
+  "#fcd34d",
+  "#a5b4fc",
+  "#d8b4fe",
+];
 
 function getClinicConfig(slug, clinicsList = []) {
-  if (slug === 'general') return { id: 'general', text: 'ทั่วไป', color: '#475569', bg: '#f1f5f9', border: '#cbd5e1' };
-  const clinic = clinicsList.find(c => c.slug === slug);
-  if (!clinic) return { id: slug, text: slug || '-', color: '#475569', bg: '#f1f5f9', border: '#cbd5e1' };
-  
-  const index = clinicsList.findIndex(c => c.slug === slug);
+  if (slug === "general")
+    return {
+      id: "general",
+      text: "ทั่วไป",
+      color: "#475569",
+      bg: "#f1f5f9",
+      border: "#cbd5e1",
+    };
+  const clinic = clinicsList.find((c) => c.slug === slug);
+  if (!clinic)
+    return {
+      id: slug,
+      text: slug || "-",
+      color: "#475569",
+      bg: "#f1f5f9",
+      border: "#cbd5e1",
+    };
+
+  const index = clinicsList.findIndex((c) => c.slug === slug);
   const colorIndex = index % CLINIC_COLORS.length;
   return {
     id: slug,
     text: clinic.name,
     bg: CLINIC_COLORS[colorIndex],
     color: CLINIC_TEXT_COLORS[colorIndex],
-    border: CLINIC_BORDER_COLORS[colorIndex]
+    border: CLINIC_BORDER_COLORS[colorIndex],
   };
 }
 
@@ -35,18 +89,30 @@ function getRiskLevel(summary_data) {
   const scoreResults = summary_data?.score_results || [];
   if (scoreResults.length === 0) return "ต่ำ";
 
-  const isHigh = scoreResults.some(s => {
-    const c = s.color?.toLowerCase() || '';
+  const isHigh = scoreResults.some((s) => {
+    const c = s.color?.toLowerCase() || "";
     // 🔴 ดักจับสีแดงครอบคลุมขึ้น (รวมรหัสสีแดงยอดฮิตและคำว่า red)
-    return c.includes('d93025') || c.includes('e53935') || c.includes('f44336') ||
-      c.includes('ef4444') || c.includes('dc2626') || c.includes('ff0000') || c.includes('red');
+    return (
+      c.includes("d93025") ||
+      c.includes("e53935") ||
+      c.includes("f44336") ||
+      c.includes("ef4444") ||
+      c.includes("dc2626") ||
+      c.includes("ff0000") ||
+      c.includes("red")
+    );
   });
 
-  const isMedium = scoreResults.some(s => {
-    const c = s.color?.toLowerCase() || '';
+  const isMedium = scoreResults.some((s) => {
+    const c = s.color?.toLowerCase() || "";
     // 🟡 ดักจับสีส้ม/เหลืองครอบคลุมขึ้น
-    return c.includes('fbbc04') || c.includes('ff9800') || c.includes('f59e0b') ||
-      c.includes('orange') || c.includes('yellow');
+    return (
+      c.includes("fbbc04") ||
+      c.includes("ff9800") ||
+      c.includes("f59e0b") ||
+      c.includes("orange") ||
+      c.includes("yellow")
+    );
   });
 
   if (isHigh) return "สูง";
@@ -55,7 +121,15 @@ function getRiskLevel(summary_data) {
 }
 
 // 🟢 คอมโพเนนต์ Custom Dropdown สำหรับ RiskCases
-const CustomDropdown = ({ icon: Icon, value, options, onChange, style, iconStyle, textStyle }) => {
+const CustomDropdown = ({
+  icon: Icon,
+  value,
+  options,
+  onChange,
+  style,
+  iconStyle,
+  textStyle,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
 
@@ -67,8 +141,12 @@ const CustomDropdown = ({ icon: Icon, value, options, onChange, style, iconStyle
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const selectedOption = options.find((opt) => String(opt.value) === String(value));
-  const displayLabel = selectedOption ? selectedOption.label : (options[0]?.label || "โปรดเลือก...");
+  const selectedOption = options.find(
+    (opt) => String(opt.value) === String(value),
+  );
+  const displayLabel = selectedOption
+    ? selectedOption.label
+    : options[0]?.label || "โปรดเลือก...";
 
   return (
     <div
@@ -78,16 +156,25 @@ const CustomDropdown = ({ icon: Icon, value, options, onChange, style, iconStyle
       onClick={() => setIsOpen(!isOpen)}
     >
       <Icon className="rc-filter-icon" style={iconStyle} />
-      <span className="rc-select-value" style={textStyle}>{displayLabel}</span>
-      <FiChevronDown className={`rc-dropdown-icon ${isOpen ? 'open' : ''}`} style={iconStyle} />
+      <span className="rc-select-value" style={textStyle}>
+        {displayLabel}
+      </span>
+      <FiChevronDown
+        className={`rc-dropdown-icon ${isOpen ? "open" : ""}`}
+        style={iconStyle}
+      />
 
       {isOpen && (
         <div className="rc-select-menu">
           {options.map((opt) => (
             <div
               key={opt.value}
-              className={`rc-select-option ${String(value) === String(opt.value) ? 'selected' : ''}`}
-              onClick={() => onChange(opt.value)} > {opt.label} </div>
+              className={`rc-select-option ${String(value) === String(opt.value) ? "selected" : ""}`}
+              onClick={() => onChange(opt.value)}
+            >
+              {" "}
+              {opt.label}{" "}
+            </div>
           ))}
         </div>
       )}
@@ -110,15 +197,16 @@ export default function RiskCases() {
   const [showColMenu, setShowColMenu] = useState(false);
   const colMenuRef = useRef(null);
 
-  const [clinicFilter, setClinicFilter] = useState('all');
-  const [formStatusFilter, setFormStatusFilter] = useState('published');
+  const [clinicFilter, setClinicFilter] = useState("all");
+  const [formStatusFilter, setFormStatusFilter] = useState("published");
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (colMenuRef.current && !colMenuRef.current.contains(e.target)) setShowColMenu(false);
+      if (colMenuRef.current && !colMenuRef.current.contains(e.target))
+        setShowColMenu(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -129,20 +217,22 @@ export default function RiskCases() {
       try {
         const [clinicRes, formsRes] = await Promise.all([
           getActiveClinics().catch(() => ({ data: { data: [] } })),
-          getForms("latest").catch(() => ({ data: [] }))
+          getForms("latest").catch(() => ({ data: [] })),
         ]);
-        
+
         setClinics(clinicRes.data.data || []);
         const fetchedForms = formsRes.data || [];
         setForms(fetchedForms);
 
-        const publishedForms = fetchedForms.filter(f => f.status === 'published');
+        const publishedForms = fetchedForms.filter(
+          (f) => f.status === "published",
+        );
         if (publishedForms.length > 0) {
           setSelectedFormId(publishedForms[0].id);
-          setFormStatusFilter('published');
+          setFormStatusFilter("published");
         } else if (fetchedForms.length > 0) {
           setSelectedFormId(fetchedForms[0].id);
-          setFormStatusFilter('all');
+          setFormStatusFilter("all");
         }
       } finally {
         setIsInitialSetup(false);
@@ -153,23 +243,28 @@ export default function RiskCases() {
 
   const filteredFormsList = useMemo(() => {
     let list = forms;
-    if (clinicFilter !== 'all') list = list.filter(f => (f.clinic_type || 'general') === clinicFilter);
-    if (formStatusFilter === 'published') list = list.filter(f => f.status === 'published');
-    else if (formStatusFilter === 'draft') list = list.filter(f => f.status !== 'published');
+    if (clinicFilter !== "all")
+      list = list.filter((f) => (f.clinic_type || "general") === clinicFilter);
+    if (formStatusFilter === "published")
+      list = list.filter((f) => f.status === "published");
+    else if (formStatusFilter === "draft")
+      list = list.filter((f) => f.status !== "published");
     return list;
   }, [forms, clinicFilter, formStatusFilter]);
 
   useEffect(() => {
     if (forms.length === 0) return;
     if (filteredFormsList.length > 0) {
-      const isValid = filteredFormsList.some(f => String(f.id) === String(selectedFormId));
+      const isValid = filteredFormsList.some(
+        (f) => String(f.id) === String(selectedFormId),
+      );
       if (!isValid) setSelectedFormId(filteredFormsList[0].id);
     } else {
       setSelectedFormId("");
       setCurrentFormDetails(null);
       setResponses([]);
     }
-  }, [filteredFormsList, selectedFormId, forms.length]); 
+  }, [filteredFormsList, selectedFormId, forms.length]);
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -196,22 +291,23 @@ export default function RiskCases() {
         }
         setCurrentFormDetails(formDetails);
 
-        const allResponsesPromises = forms.map(f => getFormResponses(f.id));
+        const allResponsesPromises = forms.map((f) => getFormResponses(f.id));
         const allResResults = await Promise.all(allResponsesPromises);
-        const allParsedResponses = allResResults.flatMap(responseRes =>
-          responseRes.data.map(r => ({
+        const allParsedResponses = allResResults.flatMap((responseRes) =>
+          responseRes.data.map((r) => ({
             ...r,
-            summary_data: typeof r.summary_data === "string"
-              ? JSON.parse(r.summary_data) : (r.summary_data || {}),
-          }))
+            summary_data:
+              typeof r.summary_data === "string"
+                ? JSON.parse(r.summary_data)
+                : r.summary_data || {},
+          })),
         );
         setResponses(allParsedResponses);
 
         const realQuestions = formDetails.questions.filter(
-          q => q.type !== "section" && q.type !== "description"
+          (q) => q.type !== "section" && q.type !== "description",
         );
-        setVisibleColumns(realQuestions.slice(0, 5).map(q => q.id));
-
+        setVisibleColumns(realQuestions.slice(0, 5).map((q) => q.id));
       } catch (err) {
         setResponses([]);
       } finally {
@@ -223,18 +319,18 @@ export default function RiskCases() {
   }, [selectedFormId, forms]);
 
   const filteredData = useMemo(() => {
-    const mappedData = responses.map(res => {
+    const mappedData = responses.map((res) => {
       const summary = res.summary_data || {};
       const realRisk = getRiskLevel(summary);
 
       return {
         ...res,
         risk_level: realRisk,
-        overall_risk: res.overall_risk || summary.overall_risk || realRisk
+        overall_risk: res.overall_risk || summary.overall_risk || realRisk,
       };
     });
 
-    return mappedData.filter(res => {
+    return mappedData.filter((res) => {
       const summary = res.summary_data || {};
       const caseIdStr = `CASE-${String(res.id).padStart(4, "0")}`;
       const name = summary.display_name || "-";
@@ -245,7 +341,8 @@ export default function RiskCases() {
 
       if (res.risk_level !== "สูง" && res.overall_risk !== "สูง") return false;
 
-      const matchSearch = search === "" ||
+      const matchSearch =
+        search === "" ||
         caseIdStr.toLowerCase().includes(search.toLowerCase()) ||
         name.toLowerCase().includes(search.toLowerCase()) ||
         (res.identity_value && res.identity_value.includes(search));
@@ -253,39 +350,43 @@ export default function RiskCases() {
 
       let matchDate = true;
       if (res.submitted_at) {
-      const submitDate = new Date(res.submitted_at);
-      submitDate.setHours(0, 0, 0, 0);
+        const submitDate = new Date(res.submitted_at);
+        submitDate.setHours(0, 0, 0, 0);
 
-      if (startDate) {
-        const start = new Date(startDate);
-        start.setHours(0, 0, 0, 0);
-        if (submitDate < start) matchDate = false;
+        if (startDate) {
+          const start = new Date(startDate);
+          start.setHours(0, 0, 0, 0);
+          if (submitDate < start) matchDate = false;
+        }
+        if (endDate) {
+          const end = new Date(endDate);
+          end.setHours(23, 59, 59, 999);
+          if (submitDate > end) matchDate = false;
+        }
+      } else if (startDate || endDate) {
+        matchDate = false;
       }
-      if (endDate) {
-        const end = new Date(endDate);
-        end.setHours(23, 59, 59, 999);
-        if (submitDate > end) matchDate = false;
-      }
-    } else if (startDate || endDate) {
-      matchDate = false;
-    }
       return matchSearch && matchFaculty && matchDate;
     });
   }, [responses, search, faculty, selectedFormId, startDate, endDate]);
 
   const toggleColumn = (qId) =>
-    setVisibleColumns(prev => prev.includes(qId) ? prev.filter(id => id !== qId) : [...prev, qId]);
+    setVisibleColumns((prev) =>
+      prev.includes(qId) ? prev.filter((id) => id !== qId) : [...prev, qId],
+    );
 
-  const selectedFormObj = forms.find(f => String(f.id) === String(selectedFormId));
-  const cInfo = selectedFormObj ? getClinicConfig(selectedFormObj.clinic_type || 'general', clinics) : null;
+  const selectedFormObj = forms.find(
+    (f) => String(f.id) === String(selectedFormId),
+  );
+  const cInfo = selectedFormObj
+    ? getClinicConfig(selectedFormObj.clinic_type || "general", clinics)
+    : null;
 
   const allDynamicQuestions = (currentFormDetails?.questions || []).filter(
-    q => q.type !== "section" && q.type !== "description"
+    (q) => q.type !== "section" && q.type !== "description",
   );
 
-
-
-  // ฟังก์ชันแปลงวันที่เป็นรูปแบบไทย (วว/ดด/ปปปป) 
+  // ฟังก์ชันแปลงวันที่เป็นรูปแบบไทย (วว/ดด/ปปปป)
   const displayThaiDate = (dateString) => {
     if (!dateString) return "";
     const [year, month, day] = dateString.split("-");
@@ -294,25 +395,33 @@ export default function RiskCases() {
 
   return (
     <div className="admin-wrapper2">
-<main className="main-content">
+      <main className="main-content">
         <div className="risk-container">
-
           {/* Header */}
           <div className="rc-header">
             <div className="rc-header__left">
               <div>
                 <h2 className="rc-title">
-                  <label className="rc-inside-title">เคสเสี่ยง:</label> {
+                  <label className="rc-inside-title">เคสเสี่ยง:</label>{" "}
+                  {
                     //  1. เช็ค isInitialSetup ก่อน
-                    isInitialSetup 
+                    isInitialSetup
                       ? "กำลังโหลด..."
                       : filteredFormsList.length === 0
                         ? "ไม่มีข้อมูลแบบฟอร์ม"
-                        : isLoading ? "กำลังโหลด..." : (currentFormDetails?.title || "ไม่พบชื่อแบบฟอร์ม")
+                        : isLoading
+                          ? "กำลังโหลด..."
+                          : currentFormDetails?.title || "ไม่พบชื่อแบบฟอร์ม"
                   }
-                  
                   {filteredFormsList.length > 0 && cInfo && (
-                    <span className="rc-title-badge" style={{ backgroundColor: cInfo.bg, color: cInfo.color, border: `1px solid ${cInfo.border}` }}>
+                    <span
+                      className="rc-title-badge"
+                      style={{
+                        backgroundColor: cInfo.bg,
+                        color: cInfo.color,
+                        border: `1px solid ${cInfo.border}`,
+                      }}
+                    >
                       {cInfo.text}
                     </span>
                   )}
@@ -328,7 +437,6 @@ export default function RiskCases() {
 
           {/* Filter Bar */}
           <div className="filter-bar">
-            
             {/* 1. ค้นหา */}
             <div className="rc-search-group">
               <FiSearch className="rc-filter-icon" />
@@ -347,12 +455,15 @@ export default function RiskCases() {
               onChange={setSelectedFormId}
               options={
                 isInitialSetup
-                  ? [{ value: '', label: 'กำลังโหลดแบบฟอร์ม...' }]
+                  ? [{ value: "", label: "กำลังโหลดแบบฟอร์ม..." }]
                   : filteredFormsList.length > 0
-                    ? filteredFormsList.map(f => ({ value: f.id, label: f.title }))
-                    : [{ value: '', label: '-- ไม่มีแบบฟอร์ม --' }]
+                    ? filteredFormsList.map((f) => ({
+                        value: f.id,
+                        label: f.title,
+                      }))
+                    : [{ value: "", label: "-- ไม่มีแบบฟอร์ม --" }]
               }
-              style={{ borderColor: '#e53935' }}
+              style={{ borderColor: "#e53935" }}
             />
 
             {/* 3. ช่วงวันที่ */}
@@ -374,7 +485,9 @@ export default function RiskCases() {
                     className="rc-date-native-hidden"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    onClick={(e) => e.target.showPicker && e.target.showPicker()}
+                    onClick={(e) =>
+                      e.target.showPicker && e.target.showPicker()
+                    }
                   />
                 </div>
 
@@ -394,7 +507,9 @@ export default function RiskCases() {
                     className="rc-date-native-hidden"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    onClick={(e) => e.target.showPicker && e.target.showPicker()}
+                    onClick={(e) =>
+                      e.target.showPicker && e.target.showPicker()
+                    }
                   />
                 </div>
               </div>
@@ -405,23 +520,23 @@ export default function RiskCases() {
               value={clinicFilter}
               onChange={setClinicFilter}
               options={[
-                { value: 'all', label: 'ทุกคลินิก' },
-                { value: 'general', label: 'ทั่วไป' },
-                ...clinics.map(c => ({
+                { value: "all", label: "ทุกคลินิก" },
+                { value: "general", label: "ทั่วไป" },
+                ...clinics.map((c) => ({
                   value: c.slug,
-                  label: c.name
-                }))
+                  label: c.name,
+                })),
               ]}
             />
- 
+
             {/* 4. สำนักวิชา */}
             <CustomDropdown
               icon={FiLayers}
               value={faculty}
               onChange={setFaculty}
               options={[
-                { value: '', label: 'ทุกสำนักวิชา' },
-                ...FACULTIES.map(f => ({ value: f, label: f }))
+                { value: "", label: "ทุกสำนักวิชา" },
+                ...FACULTIES.map((f) => ({ value: f, label: f })),
               ]}
             />
 
@@ -431,13 +546,13 @@ export default function RiskCases() {
               value={formStatusFilter}
               onChange={setFormStatusFilter}
               options={[
-                { value: 'published', label: '✓ ฟอร์มที่เผยแพร่แล้ว' },
-                { value: 'draft', label: '✎ ฟอร์มฉบับร่าง/ซ่อนอยู่' },
-                { value: 'all', label: '☰ สถานะฟอร์มทั้งหมด' }
+                { value: "published", label: "✓ ฟอร์มที่เผยแพร่แล้ว" },
+                { value: "draft", label: "✎ ฟอร์มฉบับร่าง/ซ่อนอยู่" },
+                { value: "all", label: "☰ สถานะฟอร์มทั้งหมด" },
               ]}
-              style={{ borderColor: '#bfdbfe', backgroundColor: '#eff6ff' }}
-              iconStyle={{ color: '#2563eb' }}
-              textStyle={{ color: '#1e40af', fontWeight: '600' }}
+              style={{ borderColor: "#bfdbfe", backgroundColor: "#eff6ff" }}
+              iconStyle={{ color: "#2563eb" }}
+              textStyle={{ color: "#1e40af", fontWeight: "600" }}
             />
 
             {/* 6. เลือกคอลัมน์ */}
@@ -445,23 +560,41 @@ export default function RiskCases() {
               <button
                 className="rc-custom-select"
                 onClick={() => setShowColMenu(!showColMenu)}
-                style={{ width: '100%', border: '1px solid #cbd5e1', background: '#ffffff' }}
+                style={{
+                  width: "100%",
+                  border: "1px solid #cbd5e1",
+                  background: "#ffffff",
+                }}
               >
                 <FiSettings className="rc-filter-icon" />
-                <span className="rc-select-value" style={{ textAlign: 'left' }}>เลือกคอลัมน์ ({visibleColumns.length})</span>
+                <span className="rc-select-value" style={{ textAlign: "left" }}>
+                  เลือกคอลัมน์ ({visibleColumns.length})
+                </span>
                 <FiChevronDown className="rc-dropdown-icon" />
               </button>
               {showColMenu && (
                 <div className="col-dropdown-menu">
-                  <div className="col-menu-header">เลือกคำถามที่ต้องการแสดง</div>
+                  <div className="col-menu-header">
+                    เลือกคำถามที่ต้องการแสดง
+                  </div>
                   <div className="col-menu-list">
-                    {allDynamicQuestions.map(q => {
-                      const cleanTitle = q.title.replace(/<[^>]+>/g, "").replace(/&nbsp;/gi, " ").replace(/\s+/g, " ").trim();
+                    {allDynamicQuestions.map((q) => {
+                      const cleanTitle = q.title
+                        .replace(/<[^>]+>/g, "")
+                        .replace(/&nbsp;/gi, " ")
+                        .replace(/\s+/g, " ")
+                        .trim();
                       return (
-                        <label key={q.id} className="col-menu-item" title={cleanTitle}>
-                          <input type="checkbox"
+                        <label
+                          key={q.id}
+                          className="col-menu-item"
+                          title={cleanTitle}
+                        >
+                          <input
+                            type="checkbox"
                             checked={visibleColumns.includes(q.id)}
-                            onChange={() => toggleColumn(q.id)} />
+                            onChange={() => toggleColumn(q.id)}
+                          />
                           <span className="col-text">{cleanTitle}</span>
                         </label>
                       );
@@ -487,14 +620,14 @@ export default function RiskCases() {
               data={selectedCase}
               onClose={() => setSelectedCase(null)}
               onCaseUpdated={(updatedCase) => {
-                setResponses(prev =>
-                  prev.map(r =>
-                    r.id === updatedCase.id ? { ...r, ...updatedCase } : r
-                  )
+                setResponses((prev) =>
+                  prev.map((r) =>
+                    r.id === updatedCase.id ? { ...r, ...updatedCase } : r,
+                  ),
                 );
               }}
               onCaseDeleted={(deletedId) => {
-                setResponses(prev => prev.filter(r => r.id !== deletedId));
+                setResponses((prev) => prev.filter((r) => r.id !== deletedId));
                 setSelectedCase(null);
               }}
             />

@@ -12,23 +12,47 @@
    🟢 KEYFRAMES สำหรับ Animations
 ================================================= */
 @keyframes aptFadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes aptFadeInDown {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes aptPopIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes aptMenuDrop {
-  from { opacity: 0; transform: translateY(-10px) scaleY(0.95); }
-  to { opacity: 1; transform: translateY(0) scaleY(1); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scaleY(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
 }
 
 /* =================================================
@@ -38,16 +62,16 @@
   display: flex;
   min-height: 100vh;
   background: #ffffff;
-  max-width: 100%; 
+  max-width: 100%;
 }
 
 .apt-main-content {
-  font-family: 'Noto Sans Thai', sans-serif;
+  font-family: "Noto Sans Thai", sans-serif;
   flex: 1;
   padding: 40px;
-  box-sizing: border-box; 
-  min-width: 0; 
-  overflow-x: hidden; 
+  box-sizing: border-box;
+  min-width: 0;
+  overflow-x: hidden;
   background: #ffffff;
 }
 
@@ -55,9 +79,11 @@
   background: #ffffff;
   border-radius: 12px;
   padding: 40px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06), 0 2px 10px rgba(0, 0, 0, 0.04) !important;
-  box-sizing: border-box; 
-  width: 100%; 
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.06),
+    0 2px 10px rgba(0, 0, 0, 0.04) !important;
+  box-sizing: border-box;
+  width: 100%;
   opacity: 0;
   animation: aptFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -70,7 +96,7 @@
 }
 
 .apt-title {
-  color: #F47932;
+  color: #f47932;
   margin: 0;
   font-size: 28px;
   font-weight: 700;
@@ -116,18 +142,18 @@
 .apt-view-btn.active {
   background: #ffffff;
   color: #0f766e;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 /* =================================================
    🟢 FILTER SECTION (CLEAN & MODERN)
 ================================================= */
 .apt-filter-section {
-  position: relative; 
+  position: relative;
   z-index: 100;
   display: flex;
-  flex-direction: row; 
-  flex-wrap: wrap;     
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   gap: 16px;
   margin-bottom: 24px;
@@ -141,13 +167,12 @@
 
 .apt-filter-primary,
 .apt-filter-secondary {
-  display: contents; 
+  display: contents;
 }
-
 
 /* 🟢 ช่องค้นหา (Search) */
 .apt-search-group {
-  flex: 1 1 250px; 
+  flex: 1 1 250px;
   min-width: 250px;
   display: flex;
   align-items: center;
@@ -186,7 +211,7 @@
 
 /* 🟢 ช่องวันที่ (Date Range) */
 .apt-date-wrapper {
-  flex: 0 0 320px; 
+  flex: 0 0 320px;
   display: flex;
   align-items: center;
   background: #ffffff;
@@ -220,7 +245,8 @@
   position: relative; /* 🟢 ต้องมี เพื่อใช้ควบคุมไอคอนที่ซ่อนไว้ */
 }
 
-.apt-date-input:hover, .apt-date-input:focus {
+.apt-date-input:hover,
+.apt-date-input:focus {
   background: #f8fafc;
   color: var(--apt-primary);
 }
@@ -246,7 +272,7 @@
 }
 /* 🟢 Custom Dropdown (กดง่าย & สวย) */
 .apt-custom-select {
-  flex: 0 0 230px; 
+  flex: 0 0 230px;
   position: relative;
   display: flex;
   align-items: center;
@@ -306,14 +332,14 @@
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
-  width: 100% !important;      
-  max-width: 100% !important;  
+  width: 100% !important;
+  max-width: 100% !important;
   min-width: 100% !important;
-  box-sizing: border-box;      
+  box-sizing: border-box;
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
   max-height: 250px;
   overflow-y: auto;
   padding: 8px 0;
@@ -338,8 +364,8 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  white-space: normal;      /* 🟢 อนุญาตให้ขึ้นบรรทัดใหม่ได้ */
-  word-break: break-word;   /* 🟢 ตัดคำไม่ให้ล้นขอบ */
+  white-space: normal; /* 🟢 อนุญาตให้ขึ้นบรรทัดใหม่ได้ */
+  word-break: break-word; /* 🟢 ตัดคำไม่ให้ล้นขอบ */
   line-height: 1.4;
 }
 
@@ -347,7 +373,7 @@
 .apt-select-option:hover {
   background: #f8fafc;
   color: var(--apt-primary);
-  padding-left: 22px; 
+  padding-left: 22px;
 }
 
 .apt-select-option.selected {
@@ -357,7 +383,6 @@
   border-left: 4px solid #2563eb;
   padding-left: 12px; /* หักลบความกว้างขอบซ้าย */
 }
-
 
 /* =================================================
    CALENDAR BOX & FULLCALENDAR CUSTOM
@@ -370,16 +395,16 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
   opacity: 0;
   animation: aptFadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
-  
+
   --fc-border-color: #e2e8f0;
   --fc-button-text-color: #ffffff;
-  --fc-button-bg-color: #F47932;
-  --fc-button-border-color: #F47932;
+  --fc-button-bg-color: #f47932;
+  --fc-button-border-color: #f47932;
   --fc-button-hover-bg-color: #e06825;
   --fc-button-hover-border-color: #e06825;
   --fc-button-active-bg-color: #c95d22;
   --fc-button-active-border-color: #c95d22;
-  --fc-today-bg-color: #fff4ed; 
+  --fc-today-bg-color: #fff4ed;
 }
 
 /* =========================================
@@ -392,72 +417,72 @@
 }
 
 .fc .fc-toolbar-chunk:nth-child(2) {
-    display: flex !important;
-    align-items: center !important; 
-    justify-content: center !important;
-    gap: 16px !important; 
-    margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 16px !important;
+  margin: 0 !important;
 }
 
 .fc .fc-toolbar-title {
-    font-size: 20px !important; 
-    font-weight: 700 !important;
-    color: #475569 !important; 
-    margin: 0 !important;
-    line-height: 1.2 !important;
-    white-space: nowrap !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #475569 !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
 }
 
-.fc .fc-prev-button, 
+.fc .fc-prev-button,
 .fc .fc-next-button {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 44px !important;  
-    height: 44px !important;
-    padding: 0 !important;
-    border-radius: 50% !important; 
-    flex-shrink: 0 !important;
-    background: #fff1e0 !important; 
-    border: 1px solid #fed7aa !important; 
-    color: #f97316 !important; 
-    
-    box-shadow: 0 4px 10px rgba(234, 88, 12, 0.08) !important; 
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 44px !important;
+  height: 44px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
+  background: #fff1e0 !important;
+  border: 1px solid #fed7aa !important;
+  color: #f97316 !important;
+
+  box-shadow: 0 4px 10px rgba(234, 88, 12, 0.08) !important;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
-.fc .fc-prev-button:hover, 
+.fc .fc-prev-button:hover,
 .fc .fc-next-button:hover {
-    background: #ffedd5 !important; 
-    border-color: #fdba74 !important;
-    color: #c2410c !important;
-    transform: translateY(-3px) scale(1.05) !important; 
-    box-shadow: 0 8px 20px rgba(234, 88, 12, 0.18) !important; 
+  background: #ffedd5 !important;
+  border-color: #fdba74 !important;
+  color: #c2410c !important;
+  transform: translateY(-3px) scale(1.05) !important;
+  box-shadow: 0 8px 20px rgba(234, 88, 12, 0.18) !important;
 }
 
-.fc .fc-prev-button:active, 
+.fc .fc-prev-button:active,
 .fc .fc-next-button:active {
-    transform: translateY(-1px) scale(1) !important;
+  transform: translateY(-1px) scale(1) !important;
 }
 
 .fc .fc-icon {
-    font-size: 16px !important;
-    font-weight: bold !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
 }
 
 .fc .fc-today-button {
-    border-radius: 12px !important;
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    color: #64748b !important;
-    font-weight: 700 !important;
-    padding: 8px 18px !important;
+  border-radius: 12px !important;
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #64748b !important;
+  font-weight: 700 !important;
+  padding: 8px 18px !important;
 }
 
 .fc .fc-button-primary {
-  background: #fff7f2 !important; 
-  border: 1px solid #fed7aa !important; 
-  color: #ea580c !important; 
+  background: #fff7f2 !important;
+  border: 1px solid #fed7aa !important;
+  color: #ea580c !important;
   font-family: inherit !important;
   font-weight: 700 !important;
   text-transform: capitalize !important;
@@ -519,10 +544,10 @@
 .fc .fc-daygrid-day-number:hover {
   background: #f1f5f9;
   text-decoration: none;
-  transform: scale(1.1); 
+  transform: scale(1.1);
 }
 .fc .fc-day-today .fc-daygrid-day-number {
-  background: #F47932;
+  background: #f47932;
   color: white;
   box-shadow: 0 4px 10px rgba(244, 121, 50, 0.3);
 }
@@ -536,13 +561,15 @@
   font-weight: 500;
   border: none !important;
   margin: 2px 6px !important;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
-  animation: aptPopIn 0.3s ease-out forwards; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition:
+    transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.3s ease;
+  animation: aptPopIn 0.3s ease-out forwards;
 }
 .fc-event:hover {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
   z-index: 5;
 }
 .fc-event-main {
@@ -555,15 +582,19 @@
    RESPONSIVE DESIGN (Tablet & Mobile)
 ================================================= */
 @media (max-width: 1024px) {
-  .apt-main-content { padding: 30px 20px; }
-  .apt-container { padding: 30px 20px; }
+  .apt-main-content {
+    padding: 30px 20px;
+  }
+  .apt-container {
+    padding: 30px 20px;
+  }
   .apt-filter-section {
     gap: 12px;
   }
-  .apt-search-group, 
-  .apt-date-wrapper, 
+  .apt-search-group,
+  .apt-date-wrapper,
   .apt-custom-select {
-    flex: 1 1 calc(50% - 12px) !important; 
+    flex: 1 1 calc(50% - 12px) !important;
     min-width: 250px;
   }
   .apt-custom-select:last-child:nth-child(odd) {
@@ -572,17 +603,28 @@
 }
 
 @media (max-width: 768px) {
-  .apt-admin-layout { flex-direction: column; }
-  .apt-main-content { padding: 20px 10px; }
-  .apt-container { padding: 20px 15px; border-radius: 12px; }
-  
+  .apt-admin-layout {
+    flex-direction: column;
+  }
+  .apt-main-content {
+    padding: 20px 10px;
+  }
+  .apt-container {
+    padding: 20px 15px;
+    border-radius: 12px;
+  }
+
   .apt-header-wrapper {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
   }
-  .apt-view-toggle { width: 100%; }
-  .apt-view-btn { flex: 1; }
+  .apt-view-toggle {
+    width: 100%;
+  }
+  .apt-view-btn {
+    flex: 1;
+  }
 
   .apt-filter-section {
     padding: 16px;
@@ -597,17 +639,17 @@
   }
   .apt-date-input {
     max-width: 45%;
-    font-size: 13px !important; 
+    font-size: 13px !important;
   }
   .apt-filter-secondary {
-    grid-template-columns: 1fr; 
+    grid-template-columns: 1fr;
   }
 
   .apt-calendar-box {
     padding: 16px;
     border-radius: 12px;
   }
-  
+
   /* 🟢 จัดระเบียบในมือถือให้ชื่อเดือนกับลูกศรเรียงกันสวยๆ */
   .fc .fc-toolbar {
     flex-direction: column;
@@ -621,32 +663,30 @@
   .fc-view-harness {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 10px; 
+    padding-bottom: 10px;
   }
-  
+
   .fc-scrollgrid {
-    min-width: 650px; 
+    min-width: 650px;
   }
 
   .fc-event {
-    font-size: 11px; 
+    font-size: 11px;
     padding: 3px 6px;
     margin: 2px 4px !important;
   }
-  
+
   .fc-event:hover {
     transform: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
 }
 
 @media (max-width: 768px) {
-
-
   /* 🟢 กัน text ถูกบีบ */
   .apt-select-value {
     flex: 1;
-    min-width: 0;              /* 🔥 สำคัญมาก (กันล้นใน flex) */
+    min-width: 0; /* 🔥 สำคัญมาก (กันล้นใน flex) */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -655,10 +695,10 @@
   /* 🟢 menu dropdown ให้กว้างเต็ม */
   .apt-select-menu {
     left: 0;
-    right: 0;              /* 🔥 กันล้น */
+    right: 0; /* 🔥 กันล้น */
     width: 100%;
     min-width: unset;
-    max-width: 100%;      /* 🔥 จำกัดไม่ให้เกินจอ */
+    max-width: 100%; /* 🔥 จำกัดไม่ให้เกินจอ */
     box-sizing: border-box;
   }
 
@@ -672,7 +712,6 @@
   .apt-filter-secondary {
     grid-template-columns: 1fr !important;
   }
-
 
   /* ✅ กัน flex บีบทุกตัว */
   .apt-filter-primary > * {
@@ -691,6 +730,4 @@
     min-width: 100% !important;
     flex: none !important;
   }
-
 }
-

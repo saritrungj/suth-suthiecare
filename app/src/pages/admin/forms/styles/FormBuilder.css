@@ -1,537 +1,2418 @@
 /* =========================================
    1. Layout หลัก & Header (Fixed Sticky)
    ========================================= */
-.sfb-admin-layout { display: flex; min-height: 100vh; background-color: #f0f2f5; }
-.sfb-builder-container { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; z-index: 99; -webkit-overflow-scrolling: touch; scroll-behavior: smooth; }
+.sfb-admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+.sfb-builder-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 99;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
 /* 🟢 ทำให้ Header ติดหนึบด้านบนตลอดเวลา */
-.sfb-builder-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 40px; background: #ffffff; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); }
-.sfb-header-left { display: flex; align-items: center; gap: 15px; }
-.sfb-btn-back { background: none; border: none; color: #3c4043; cursor: pointer; padding: 6px; margin-right: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 18px; border-radius: 12px; transition:
-      background 0.12s,
-      color 0.12s; }
-.sfb-btn-back:hover { background: rgba(0, 0, 0, 0.06); color: #000; }
-.sfb-header-actions { display: flex; align-items: center; gap: 25px; }
-.sfb-action-icons { display: flex; gap: 20px; }
-.sfb-icon-group { text-align: center; color: #5f6368; cursor: pointer; transition: color 0.2s; }
-.sfb-icon-group:hover { color: #000; }
-.sfb-icon-group p { font-size: 10px; margin-top: 2px; }
-.sfb-btn-save { background-color: #bdc1c6; color: #3c4043; border: none; padding: 8px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; }
+.sfb-builder-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 40px;
+  background: #ffffff;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+.sfb-header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.sfb-btn-back {
+  background: none;
+  border: none;
+  color: #3c4043;
+  cursor: pointer;
+  padding: 6px;
+  margin-right: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  border-radius: 12px;
+  transition:
+    background 0.12s,
+    color 0.12s;
+}
+.sfb-btn-back:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #000;
+}
+.sfb-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+.sfb-action-icons {
+  display: flex;
+  gap: 20px;
+}
+.sfb-icon-group {
+  text-align: center;
+  color: #5f6368;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.sfb-icon-group:hover {
+  color: #000;
+}
+.sfb-icon-group p {
+  font-size: 10px;
+  margin-top: 2px;
+}
+.sfb-btn-save {
+  background-color: #bdc1c6;
+  color: #3c4043;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
 /* =========================================
    2. Canvas & Form Cards
    ========================================= */
-.sfb-form-content { display: flex; justify-content: center; padding: 30px 20px; gap: 20px; position: relative; }
-.sfb-form-canvas { width: 100%; max-width: 680px; padding-bottom: 100px; }
-.sfb-form-card { background: #ffffff; border-radius: 12px; padding: 18px 24px 24px 24px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); transition: box-shadow 0.2s; touch-action: auto; /* 🟢 แก้บัคเลื่อนจอไม่ได้บนมือถือ */ }
-.sfb-border-top-suth { border-top: 10px solid #f47b20; }
+.sfb-form-content {
+  display: flex;
+  justify-content: center;
+  padding: 30px 20px;
+  gap: 20px;
+  position: relative;
+}
+.sfb-form-canvas {
+  width: 100%;
+  max-width: 680px;
+  padding-bottom: 100px;
+}
+.sfb-form-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 18px 24px 24px 24px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  transition: box-shadow 0.2s;
+  touch-action: auto; /* 🟢 แก้บัคเลื่อนจอไม่ได้บนมือถือ */
+}
+.sfb-border-top-suth {
+  border-top: 10px solid #f47b20;
+}
 /* =========================================
    3. Inputs & Questions
    ========================================= */
-.sfb-input-title { width: 100%; font-size: 28px; font-weight: 500; color: #202124; border: none; border-bottom: 2px solid transparent; padding: 8px 0; margin: 0 0 8px 0; outline: none; text-align: left; transition: border-color 0.3s ease; }
-.sfb-input-title:focus { border-bottom: 2px solid #f47b20; }
-.sfb-input-desc { width: 100%; font-size: 14px; color: #5f6368; border: none; border-bottom: 1px solid transparent; padding: 4px 0; outline: none; text-align: left; }
-.sfb-question-row { display: flex; align-items: flex-start; gap: 16px; width: 100%; margin-bottom: 16px; }
-.sfb-question-body { margin-top: 1%; }
-.sfb-question-input-wrapper { flex: 1; display: flex; align-items: center; background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; transition: all 0.2s ease; padding: 0 8px 0 12px; min-height: 48px; }
-.sfb-question-input-wrapper:hover { border-color: #cbd5e1; }
-.sfb-question-input-wrapper:focus-within { background-color: #ffffff; border-color: var(--theme-color, #3b82f6); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
-.sfb-input-question-main { flex: 1; font-size: 16px; font-weight: 600; color: #1e293b !important; border: none; background: transparent; padding: 10px 4px; outline: none; text-align: left; }
-.sfb-btn-add-image { background: #f1f5f9; border: none; color: #64748b; cursor: pointer; font-size: 18px; padding: 8px; border-radius: 12px; transition: all 0.2s ease; flex-shrink: 0; }
-.sfb-btn-add-image:hover { background-color: #e2e8f0; color: #0f172a; transform: scale(1.05); }
-.sfb-type-selector-wrapper { flex-shrink: 0; }
-.sfb-profile-badge-header { font-size: 12px; color: #1967d2; background: #e8f0fe; border: 1px solid #d2e3fc; padding: 4px 10px; border-radius: 12px; font-weight: bold; margin-bottom: 12px; display: inline-flex; align-items: center; gap: 6px; }
-.sfb-identity-highlight .sfb-profile-badge-header { color: #e65100; background: #feefe6; border-color: #fad2cf; }
-.sfb-dummy-input { color: #70757a; font-size: 14px; padding-left: 1%; padding-right: 1%; }
-.sfb-text-underlined { border-bottom: 1px dotted #ccc; width: 50%; margin-left: 1%; margin-right: 1%; }
+.sfb-input-title {
+  width: 100%;
+  font-size: 28px;
+  font-weight: 500;
+  color: #202124;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 8px 0;
+  margin: 0 0 8px 0;
+  outline: none;
+  text-align: left;
+  transition: border-color 0.3s ease;
+}
+.sfb-input-title:focus {
+  border-bottom: 2px solid #f47b20;
+}
+.sfb-input-desc {
+  width: 100%;
+  font-size: 14px;
+  color: #5f6368;
+  border: none;
+  border-bottom: 1px solid transparent;
+  padding: 4px 0;
+  outline: none;
+  text-align: left;
+}
+.sfb-question-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+.sfb-question-body {
+  margin-top: 1%;
+}
+.sfb-question-input-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+  padding: 0 8px 0 12px;
+  min-height: 48px;
+}
+.sfb-question-input-wrapper:hover {
+  border-color: #cbd5e1;
+}
+.sfb-question-input-wrapper:focus-within {
+  background-color: #ffffff;
+  border-color: var(--theme-color, #3b82f6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+.sfb-input-question-main {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b !important;
+  border: none;
+  background: transparent;
+  padding: 10px 4px;
+  outline: none;
+  text-align: left;
+}
+.sfb-btn-add-image {
+  background: #f1f5f9;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 8px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.sfb-btn-add-image:hover {
+  background-color: #e2e8f0;
+  color: #0f172a;
+  transform: scale(1.05);
+}
+.sfb-type-selector-wrapper {
+  flex-shrink: 0;
+}
+.sfb-profile-badge-header {
+  font-size: 12px;
+  color: #1967d2;
+  background: #e8f0fe;
+  border: 1px solid #d2e3fc;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sfb-identity-highlight .sfb-profile-badge-header {
+  color: #e65100;
+  background: #feefe6;
+  border-color: #fad2cf;
+}
+.sfb-dummy-input {
+  color: #70757a;
+  font-size: 14px;
+  padding-left: 1%;
+  padding-right: 1%;
+}
+.sfb-text-underlined {
+  border-bottom: 1px dotted #ccc;
+  width: 50%;
+  margin-left: 1%;
+  margin-right: 1%;
+}
 /* =========================================
    4. Buttons & Options Tools
    ========================================= */
-.sfb-btn-add-image-opt { background: none; border: none; color: #70757a; cursor: pointer; padding: 5px; display: flex; align-items: center; font-size: 16px; opacity: 0; transition:
-      opacity 0.2s,
-      color 0.2s; }
-.sfb-btn-remove-opt { background: none; border: none; color: #70757a; cursor: pointer; padding: 5px; display: flex; align-items: center; opacity: 0; transition: opacity 0.2s; }
-.sfb-option-row:hover .sfb-btn-add-image-opt { opacity: 1; }
-.sfb-btn-add-image-opt:hover { color: #5f6368; }
-.sfb-type-selector { height: 48px; padding: 0 12px; font-size: 14px; border: 1px solid #dadce0; border-radius: 12px; background: white; cursor: pointer; width: 200px; color: #202124; box-sizing: border-box; flex-shrink: 0; }
+.sfb-btn-add-image-opt {
+  background: none;
+  border: none;
+  color: #70757a;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  opacity: 0;
+  transition:
+    opacity 0.2s,
+    color 0.2s;
+}
+.sfb-btn-remove-opt {
+  background: none;
+  border: none;
+  color: #70757a;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.sfb-option-row:hover .sfb-btn-add-image-opt {
+  opacity: 1;
+}
+.sfb-btn-add-image-opt:hover {
+  color: #5f6368;
+}
+.sfb-type-selector {
+  height: 48px;
+  padding: 0 12px;
+  font-size: 14px;
+  border: 1px solid #dadce0;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  width: 200px;
+  color: #202124;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
 /* =========================================
    5. Options List & 🟢 Input Wrapper 🟢
    ========================================= */
-.sfb-option-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; color: #202124; }
-.sfb-opt-number { font-size: 14px; color: #202124; min-width: 20px; text-align: center; }
-.sfb-opt-number.sfb-muted { color: #b4b5b8; }
-.sfb-opt-icon { width: 20px; height: 20px; color: #dadce0; }
-.sfb-opt-icon.sfb-muted { color: #dadce0; }
+.sfb-option-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  color: #202124;
+}
+.sfb-opt-number {
+  font-size: 14px;
+  color: #202124;
+  min-width: 20px;
+  text-align: center;
+}
+.sfb-opt-number.sfb-muted {
+  color: #b4b5b8;
+}
+.sfb-opt-icon {
+  width: 20px;
+  height: 20px;
+  color: #dadce0;
+}
+.sfb-opt-icon.sfb-muted {
+  color: #dadce0;
+}
 /* 🟢 ห่อช่องพิมพ์กับเส้นประให้อยู่บรรทัดเดียวกัน */
-.sfb-opt-input-wrapper { display: flex; align-items: center; flex: 1; min-width: 0; position: relative; }
-.sfb-opt-input.sfb-editable { border: none; border-bottom: 1px solid transparent; cursor: text; transition: border-bottom 0.2s; font-size: 14px; color: #202124; flex: 1; min-width: 120px; max-width: 100%; outline: none; padding: 4px 2px; text-align: left; }
-.sfb-opt-input.sfb-editable:focus { border-bottom: 1px solid #ddd; }
-.sfb-option-row:hover .sfb-btn-remove-opt { opacity: 1; }
-.sfb-btn-remove-opt:hover { color: #d93025; }
-.sfb-add-opt-row { cursor: pointer; margin-top: 5px; color: #70757a; }
-.sfb-add-opt-text { font-size: 14px; }
-.sfb-add-opt-row:hover .sfb-add-opt-text { text-decoration: underline; }
-.sfb-options-container { padding-left: 1%; padding-right: 1%; }
+.sfb-opt-input-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+.sfb-opt-input.sfb-editable {
+  border: none;
+  border-bottom: 1px solid transparent;
+  cursor: text;
+  transition: border-bottom 0.2s;
+  font-size: 14px;
+  color: #202124;
+  flex: 1;
+  min-width: 120px;
+  max-width: 100%;
+  outline: none;
+  padding: 4px 2px;
+  text-align: left;
+}
+.sfb-opt-input.sfb-editable:focus {
+  border-bottom: 1px solid #ddd;
+}
+.sfb-option-row:hover .sfb-btn-remove-opt {
+  opacity: 1;
+}
+.sfb-btn-remove-opt:hover {
+  color: #d93025;
+}
+.sfb-add-opt-row {
+  cursor: pointer;
+  margin-top: 5px;
+  color: #70757a;
+}
+.sfb-add-opt-text {
+  font-size: 14px;
+}
+.sfb-add-opt-row:hover .sfb-add-opt-text {
+  text-decoration: underline;
+}
+.sfb-options-container {
+  padding-left: 1%;
+  padding-right: 1%;
+}
 /* =========================================
    6. Grid Layout
    ========================================= */
-.sfb-grid-setup-container { display: flex; gap: 40px; margin-top: 10px; }
-.sfb-grid-section { flex: 1; }
-.sfb-grid-label { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
-.sfb-grid-item-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-.sfb-idx-num { font-size: 14px; color: #70757a; min-width: 20px; }
-.sfb-idx-num.sfb-muted { color: #bdc1c6; }
-.sfb-add-row-trigger { cursor: pointer; margin-top: 10px; opacity: 0.7; transition: opacity 0.2s; }
-.sfb-add-row-trigger:hover { opacity: 1; }
-.sfb-add-row-trigger .sfb-add-opt-text { color: #70757a; font-size: 14px; }
-.sfb-add-row-trigger:hover .sfb-add-opt-text { text-decoration: underline; }
-.sfb-grid-item-row .sfb-opt-input { flex: 1; font-size: 14px; padding: 4px 0; }
-.sfb-grid-item-row .sfb-btn-remove-opt { opacity: 0; transition: opacity 0.2s; }
-.sfb-grid-item-row:hover .sfb-btn-remove-opt { opacity: 1; }
+.sfb-grid-setup-container {
+  display: flex;
+  gap: 40px;
+  margin-top: 10px;
+}
+.sfb-grid-section {
+  flex: 1;
+}
+.sfb-grid-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.sfb-grid-item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.sfb-idx-num {
+  font-size: 14px;
+  color: #70757a;
+  min-width: 20px;
+}
+.sfb-idx-num.sfb-muted {
+  color: #bdc1c6;
+}
+.sfb-add-row-trigger {
+  cursor: pointer;
+  margin-top: 10px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.sfb-add-row-trigger:hover {
+  opacity: 1;
+}
+.sfb-add-row-trigger .sfb-add-opt-text {
+  color: #70757a;
+  font-size: 14px;
+}
+.sfb-add-row-trigger:hover .sfb-add-opt-text {
+  text-decoration: underline;
+}
+.sfb-grid-item-row .sfb-opt-input {
+  flex: 1;
+  font-size: 14px;
+  padding: 4px 0;
+}
+.sfb-grid-item-row .sfb-btn-remove-opt {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.sfb-grid-item-row:hover .sfb-btn-remove-opt {
+  opacity: 1;
+}
 /* =========================================
    7. Card Footer & Toggles
    ========================================= */
-.sfb-card-footer { margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; align-items: center; }
+.sfb-card-footer {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
 .sfb-btn-duplicate,
-.sfb-btn-delete { background: none; border: none; color: #5f6368; cursor: pointer; font-size: 16px; margin-right: 8px; display: inline-flex; align-items: center; padding: 4px; }
-.sfb-btn-duplicate:hover { color: #3c4043; }
-.sfb-btn-delete:hover { color: #d93025; }
+.sfb-btn-delete {
+  background: none;
+  border: none;
+  color: #5f6368;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 8px;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px;
+}
+.sfb-btn-duplicate:hover {
+  color: #3c4043;
+}
+.sfb-btn-delete:hover {
+  color: #d93025;
+}
 .sfb-required-toggle,
 .sfb-desc-footer-toggle,
-.sfb-desc-toggle { display: flex; align-items: center; gap: 8px; color: #5f6368; font-size: 14px; cursor: pointer; user-select: none; min-width: 0 !important; width: auto !important; margin: 0; }
+.sfb-desc-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #5f6368;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  min-width: 0 !important;
+  width: auto !important;
+  margin: 0;
+}
 .sfb-required-toggle input,
 .sfb-desc-footer-toggle input,
-.sfb-desc-toggle input { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
+.sfb-desc-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
 .sfb-required-toggle span,
 .sfb-desc-footer-toggle span,
-.sfb-desc-toggle span { position: relative; padding-left: 52px; display: inline-block; line-height: 1; }
+.sfb-desc-toggle span {
+  position: relative;
+  padding-left: 52px;
+  display: inline-block;
+  line-height: 1;
+}
 .sfb-required-toggle span::before,
 .sfb-desc-footer-toggle span::before,
-.sfb-desc-toggle span::before { content: ""; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 44px; height: 24px; background: #e6e7e9; border-radius: 999px; transition: background 0.18s ease; box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.04); }
+.sfb-desc-toggle span::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 24px;
+  background: #e6e7e9;
+  border-radius: 999px;
+  transition: background 0.18s ease;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+}
 .sfb-required-toggle span::after,
 .sfb-desc-footer-toggle span::after,
-.sfb-desc-toggle span::after { content: ""; position: absolute; left: 4px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; background: #ffffff; border-radius: 50%; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15); transition:
-      left 0.18s ease,
-      background 0.18s ease; }
-.sfb-required-toggle input:checked+span::before,
-.sfb-desc-footer-toggle input:checked+span::before,
-.sfb-desc-toggle input:checked+span::before { background: #d93025; }
-.sfb-required-toggle input:checked+span::after,
-.sfb-desc-footer-toggle input:checked+span::after,
-.sfb-desc-toggle input:checked+span::after { left: 24px; }
-.sfb-required-toggle input:checked+span,
-.sfb-desc-footer-toggle input:checked+span,
-.sfb-desc-toggle input:checked+span { color: #d93025; }
-.sfb-card-footer .sfb-desc-footer-toggle { margin-left: 8px; }
-.sfb-footer-divider { width: 1px; height: 24px; background-color: #dadce0; margin: 0 16px; }
+.sfb-desc-toggle span::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  transition:
+    left 0.18s ease,
+    background 0.18s ease;
+}
+.sfb-required-toggle input:checked + span::before,
+.sfb-desc-footer-toggle input:checked + span::before,
+.sfb-desc-toggle input:checked + span::before {
+  background: #d93025;
+}
+.sfb-required-toggle input:checked + span::after,
+.sfb-desc-footer-toggle input:checked + span::after,
+.sfb-desc-toggle input:checked + span::after {
+  left: 24px;
+}
+.sfb-required-toggle input:checked + span,
+.sfb-desc-footer-toggle input:checked + span,
+.sfb-desc-toggle input:checked + span {
+  color: #d93025;
+}
+.sfb-card-footer .sfb-desc-footer-toggle {
+  margin-left: 8px;
+}
+.sfb-footer-divider {
+  width: 1px;
+  height: 24px;
+  background-color: #dadce0;
+  margin: 0 16px;
+}
 .sfb-required-toggle:hover span::before,
 .sfb-desc-footer-toggle:hover span::before,
-.sfb-desc-toggle:hover span::before { filter: brightness(0.98); }
+.sfb-desc-toggle:hover span::before {
+  filter: brightness(0.98);
+}
 /* =========================================
    8. Toolbar ด้านข้าง
    ========================================= */
-.sfb-floating-toolbar { position: sticky; top: 80px; height: fit-content; display: flex; flex-direction: column; background: #ffffff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); padding: 10px; gap: 12px; z-index: 100; }
-.sfb-floating-toolbar button { background: none; border: none; display: flex; align-items: center; gap: 10px; cursor: pointer; color: #5f6368; padding: 5px; }
-.sfb-floating-toolbar button:hover { color: #000; }
-.sfb-tool-icon { font-size: 20px; }
-.sfb-floating-toolbar span { font-size: 13px; font-weight: 500; }
+.sfb-floating-toolbar {
+  position: sticky;
+  top: 80px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  gap: 12px;
+  z-index: 100;
+}
+.sfb-floating-toolbar button {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: #5f6368;
+  padding: 5px;
+}
+.sfb-floating-toolbar button:hover {
+  color: #000;
+}
+.sfb-tool-icon {
+  font-size: 20px;
+}
+.sfb-floating-toolbar span {
+  font-size: 13px;
+  font-weight: 500;
+}
 /* =========================================
    9. Rich Text Editor
    ========================================= */
-.sfb-rich-text-wrapper { position: relative; width: 100%; }
-.sfb-rich-text-input { cursor: text; outline: none; min-height: 1.2em; white-space: pre-wrap; word-break: break-word; line-height: 1.5; text-align: left; }
-.sfb-rich-text-input:empty:before { content: attr(placeholder); color: #70757a; pointer-events: none; display: block; }
+.sfb-rich-text-wrapper {
+  position: relative;
+  width: 100%;
+}
+.sfb-rich-text-input {
+  cursor: text;
+  outline: none;
+  min-height: 1.2em;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.5;
+  text-align: left;
+}
+.sfb-rich-text-input:empty:before {
+  content: attr(placeholder);
+  color: #70757a;
+  pointer-events: none;
+  display: block;
+}
 .sfb-rich-text-input ul,
-.sfb-rich-text-input ol { margin-left: 20px; padding-left: 10px; margin-top: 4px; margin-bottom: 4px; text-align: left; }
-.sfb-inline-format-toolbar { display: flex; align-items: center; position: absolute; bottom: -40px; left: 0; z-index: 50; background: #ffffff; border: 1px solid #dadce0; border-radius: 12px; padding: 4px 6px; gap: 4px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); animation: fadeIn 0.15s ease; }
+.sfb-rich-text-input ol {
+  margin-left: 20px;
+  padding-left: 10px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  text-align: left;
+}
+.sfb-inline-format-toolbar {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  bottom: -40px;
+  left: 0;
+  z-index: 50;
+  background: #ffffff;
+  border: 1px solid #dadce0;
+  border-radius: 12px;
+  padding: 4px 6px;
+  gap: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 0.15s ease;
+}
 @keyframes fadeIn {
- from { opacity: 0; transform: translateY(-5px); }
-to { opacity: 1; transform: translateY(0); }
- }
-.sfb-inline-format-toolbar button { background: none; border: none; cursor: pointer; font-size: 14px; color: #5f6368; padding: 6px; border-radius: 12px; display: flex; align-items: center; justify-content: center; transition:
-      background 0.1s,
-      color 0.1s; }
-.sfb-inline-format-toolbar button:hover { background-color: #f1f3f4; color: #202124; }
-.sfb-inline-format-toolbar .sfb-toolbar-divider { width: 1px; height: 18px; background-color: #dadce0; margin: 0 4px; }
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.sfb-inline-format-toolbar button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #5f6368;
+  padding: 6px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.1s,
+    color 0.1s;
+}
+.sfb-inline-format-toolbar button:hover {
+  background-color: #f1f3f4;
+  color: #202124;
+}
+.sfb-inline-format-toolbar .sfb-toolbar-divider {
+  width: 1px;
+  height: 18px;
+  background-color: #dadce0;
+  margin: 0 4px;
+}
 .sfb-rich-text-input i,
-.sfb-rich-text-input em { font-style: italic !important; }
+.sfb-rich-text-input em {
+  font-style: italic !important;
+}
 .sfb-rich-text-input b,
-.sfb-rich-text-input strong { font-weight: bold !important; }
-.sfb-rich-text-input u { text-decoration: underline !important; }
-.sfb-description-body { padding-top: 6px; }
-div.sfb-description-input { display: block; min-height: 40px; border: 1px solid #e6e7e9; border-radius: 12px; padding: 10px; font-size: 14px; color: #202124; background: #fafafa; text-align: left; }
-div.sfb-description-input:focus { border-color: #d0d4d8; box-shadow: 0 0 0 3px rgba(244, 123, 32, 0.06); }
+.sfb-rich-text-input strong {
+  font-weight: bold !important;
+}
+.sfb-rich-text-input u {
+  text-decoration: underline !important;
+}
+.sfb-description-body {
+  padding-top: 6px;
+}
+div.sfb-description-input {
+  display: block;
+  min-height: 40px;
+  border: 1px solid #e6e7e9;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 14px;
+  color: #202124;
+  background: #fafafa;
+  text-align: left;
+}
+div.sfb-description-input:focus {
+  border-color: #d0d4d8;
+  box-shadow: 0 0 0 3px rgba(244, 123, 32, 0.06);
+}
 /* =========================================
    10. Image Preview
    ========================================= */
-.sfb-option-wrapper { display: flex; flex-direction: column; }
-.sfb-question-image-preview { position: relative; display: inline-block; margin-top: 15px; max-width: 100%; }
-.sfb-question-image-preview img { max-width: 100%; max-height: 350px; border-radius: 12px; border: 1px solid #dadce0; display: block; }
-.sfb-option-image-preview { position: relative; display: inline-block; margin-left: 32px; margin-bottom: 15px; max-width: calc(100% - 32px); }
-.sfb-option-image-preview img { max-width: 100%; max-height: 200px; border-radius: 12px; border: 1px solid #dadce0; display: block; }
-.sfb-btn-remove-image { position: absolute; top: -12px; right: -12px; background-color: #ffffff !important; border: 1px solid #dadce0 !important; color: #5f6368 !important; width: 30px !important; height: 30px !important; border-radius: 50% !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 0 !important; font-size: 14px !important; cursor: pointer; z-index: 999; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); opacity: 0; transition:
-      opacity 0.2s,
-      background-color 0.2s,
-      color 0.2s; }
+.sfb-option-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.sfb-question-image-preview {
+  position: relative;
+  display: inline-block;
+  margin-top: 15px;
+  max-width: 100%;
+}
+.sfb-question-image-preview img {
+  max-width: 100%;
+  max-height: 350px;
+  border-radius: 12px;
+  border: 1px solid #dadce0;
+  display: block;
+}
+.sfb-option-image-preview {
+  position: relative;
+  display: inline-block;
+  margin-left: 32px;
+  margin-bottom: 15px;
+  max-width: calc(100% - 32px);
+}
+.sfb-option-image-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 12px;
+  border: 1px solid #dadce0;
+  display: block;
+}
+.sfb-btn-remove-image {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  background-color: #ffffff !important;
+  border: 1px solid #dadce0 !important;
+  color: #5f6368 !important;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  font-size: 14px !important;
+  cursor: pointer;
+  z-index: 999;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transition:
+    opacity 0.2s,
+    background-color 0.2s,
+    color 0.2s;
+}
 .sfb-question-image-preview:hover .sfb-btn-remove-image,
-.sfb-option-image-preview:hover .sfb-btn-remove-image { opacity: 1 !important; }
-.sfb-btn-remove-image:hover { background-color: #f8d7da !important; color: #d93025 !important; border-color: #d93025 !important; }
+.sfb-option-image-preview:hover .sfb-btn-remove-image {
+  opacity: 1 !important;
+}
+.sfb-btn-remove-image:hover {
+  background-color: #f8d7da !important;
+  color: #d93025 !important;
+  border-color: #d93025 !important;
+}
 /* =========================================
    11. การแบ่งส่วน (Sections)
    ========================================= */
-.sfb-section-card { padding-top: 0 !important; border-top: none !important; overflow: visible; }
-.sfb-section-header-bar { background-color: #34a853; color: white; padding: 8px 16px; border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center; margin: 0 -24px 15px -24px; }
-.sfb-section-indicator { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; background: rgba(0, 0, 0, 0.15); padding: 4px 10px; border-radius: 12px; white-space: nowrap; }
-.sfb-section-menu-container { position: relative; }
-.sfb-btn-section-menu { background: none; border: none; color: white; cursor: pointer; font-size: 18px; padding: 4px; border-radius: 50%; display: flex; align-items: center; transition: background 0.2s; }
-.sfb-btn-section-menu:hover { background: rgba(255, 255, 255, 0.2); }
-.sfb-section-dropdown-menu { position: absolute; top: 100%; right: 0; background: white; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); border-radius: 12px; min-width: 150px; z-index: 1000; padding: 8px 0; }
-.sfb-section-dropdown-menu button { display: block; width: 100%; text-align: left; background: none; border: none; padding: 10px 16px; font-size: 14px; color: #202124; cursor: pointer; }
-.sfb-section-dropdown-menu button:hover { background-color: #f1f3f4; }
-.sfb-section-drag { margin-top: 10px; cursor: grab; }
-.sfb-section-header-left { display: flex; align-items: center; gap: 12px; flex: 1; flex-wrap: wrap; }
-.sfb-step-name-input-inline { flex: 1; max-width: 250px; background: transparent; border: none; border-bottom: 1px dashed rgba(255, 255, 255, 0.5); color: #ffffff; font-family: "Sarabun", sans-serif; font-size: 14px; font-weight: 500; padding: 2px 4px; outline: none; transition: all 0.2s; }
-.sfb-step-name-input-inline::placeholder { color: rgba(255, 255, 255, 0.7); font-weight: 400; }
-.sfb-step-name-input-inline:focus { border-bottom: 1px dashed #ffffff; background: rgba(255, 255, 255, 0.15); border-radius: 12px 12px 0 0; }
+.sfb-section-card {
+  padding-top: 0 !important;
+  border-top: none !important;
+  overflow: visible;
+}
+.sfb-section-header-bar {
+  background-color: #34a853;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 -24px 15px -24px;
+}
+.sfb-section-indicator {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 4px 10px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+.sfb-section-menu-container {
+  position: relative;
+}
+.sfb-btn-section-menu {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s;
+}
+.sfb-btn-section-menu:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.sfb-section-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  min-width: 150px;
+  z-index: 1000;
+  padding: 8px 0;
+}
+.sfb-section-dropdown-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: #202124;
+  cursor: pointer;
+}
+.sfb-section-dropdown-menu button:hover {
+  background-color: #f1f3f4;
+}
+.sfb-section-drag {
+  margin-top: 10px;
+  cursor: grab;
+}
+.sfb-section-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+.sfb-step-name-input-inline {
+  flex: 1;
+  max-width: 250px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.5);
+  color: #ffffff;
+  font-family: "Sarabun", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 2px 4px;
+  outline: none;
+  transition: all 0.2s;
+}
+.sfb-step-name-input-inline::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 400;
+}
+.sfb-step-name-input-inline:focus {
+  border-bottom: 1px dashed #ffffff;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px 12px 0 0;
+}
 /* =========================================
    12. หน้าต่างย้ายส่วน (Move Section Modal)
    ========================================= */
-.sfb-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 9999; }
-.sfb-move-section-modal { background: white; border-radius: 12px; width: 500px; max-width: 90%; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; }
-.sfb-move-section-modal h3 { padding: 20px 24px; margin: 0; border-bottom: 1px solid #ddd; font-size: 18px; color: #202124; }
-.sfb-modal-body { max-height: 400px; overflow-y: auto; padding: 0; }
-.sfb-move-section-item { display: flex; align-items: center; padding: 12px 24px; border-bottom: 1px solid #f1f3f4; background: white; }
-.sfb-move-section-item:hover { background: #f8f9fa; }
-.sfb-move-section-item .sfb-form-drag-handle { margin: 0 15px 0 0; color: #dadce0; }
-.sfb-move-section-item .sfb-section-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-.sfb-move-section-item .sfb-section-info strong { font-size: 14px; color: #202124; }
-.sfb-move-section-item .sfb-section-info span { font-size: 12px; color: #70757a; }
-.sfb-section-actions { display: flex; gap: 8px; }
-.sfb-section-actions button { background: none; border: none; color: #5f6368; cursor: pointer; padding: 8px; border-radius: 12px; display: flex; align-items: center; }
-.sfb-section-actions button:hover:not(:disabled) { background: #e8eaed; color: #202124; }
-.sfb-section-actions button:disabled { opacity: 0.3; cursor: not-allowed; }
-.sfb-modal-footer { padding: 16px 0px 0px; border-top: 1px solid #ddd; display: flex; justify-content: flex-end; gap: 12px; }
-.sfb-btn-cancel { background: none; border: none; color: #5f6368; font-weight: 500; cursor: pointer; padding: 8px 16px; border-radius: 12px; }
-.sfb-btn-cancel:hover { background: #f1f3f4; }
-.sfb-btn-save-modal { background: white; border: none; color: #188038; font-weight: bold; cursor: pointer; padding: 8px 16px; border-radius: 12px; }
-.sfb-btn-save-modal:hover { background: rgba(24, 128, 56, 0.05); }
+.sfb-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.sfb-move-section-modal {
+  background: white;
+  border-radius: 12px;
+  width: 500px;
+  max-width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+.sfb-move-section-modal h3 {
+  padding: 20px 24px;
+  margin: 0;
+  border-bottom: 1px solid #ddd;
+  font-size: 18px;
+  color: #202124;
+}
+.sfb-modal-body {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0;
+}
+.sfb-move-section-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 24px;
+  border-bottom: 1px solid #f1f3f4;
+  background: white;
+}
+.sfb-move-section-item:hover {
+  background: #f8f9fa;
+}
+.sfb-move-section-item .sfb-form-drag-handle {
+  margin: 0 15px 0 0;
+  color: #dadce0;
+}
+.sfb-move-section-item .sfb-section-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.sfb-move-section-item .sfb-section-info strong {
+  font-size: 14px;
+  color: #202124;
+}
+.sfb-move-section-item .sfb-section-info span {
+  font-size: 12px;
+  color: #70757a;
+}
+.sfb-section-actions {
+  display: flex;
+  gap: 8px;
+}
+.sfb-section-actions button {
+  background: none;
+  border: none;
+  color: #5f6368;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+}
+.sfb-section-actions button:hover:not(:disabled) {
+  background: #e8eaed;
+  color: #202124;
+}
+.sfb-section-actions button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.sfb-modal-footer {
+  padding: 16px 0px 0px;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.sfb-btn-cancel {
+  background: none;
+  border: none;
+  color: #5f6368;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 12px;
+}
+.sfb-btn-cancel:hover {
+  background: #f1f3f4;
+}
+.sfb-btn-save-modal {
+  background: white;
+  border: none;
+  color: #188038;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 12px;
+}
+.sfb-btn-save-modal:hover {
+  background: rgba(24, 128, 56, 0.05);
+}
 /* =========================================
    13. Theme Sidebar
    ========================================= */
-.sfb-theme-sidebar { position: fixed; top: 0; right: -320px; width: 300px; height: 100vh; background-color: #ffffff; box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1); z-index: 10000; transition: right 0.3s ease; display: flex; flex-direction: column; }
-.sfb-theme-sidebar.open { right: 0; }
-.sfb-theme-sidebar-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #ddd; }
-.sfb-theme-title-group { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 500; color: #202124; }
-.sfb-btn-close-theme { background: none; border: none; cursor: pointer; font-size: 18px; color: #5f6368; transition: color 0.2s; }
-.sfb-btn-close-theme:hover { color: #202124; }
-.sfb-theme-sidebar-body { padding: 20px; overflow-y: auto; }
-.sfb-theme-setting-section h4 { font-size: 14px; color: #202124; margin-top: 0; margin-bottom: 15px; }
-.sfb-btn-theme-upload { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; background: white; border: 1px solid #dadce0; border-radius: 4px; color: #1a73e8; font-weight: 500; cursor: pointer; transition: background 0.2s; }
-.sfb-btn-theme-upload:hover { background: #f8f9fa; }
-.sfb-btn-theme-remove-img { display: block; width: 100%; text-align: center; background: none; border: none; color: #d93025; margin-top: 8px; cursor: pointer; font-size: 13px; }
-.sfb-btn-theme-remove-img:hover { text-decoration: underline; }
-.sfb-theme-divider { border: none; border-top: 1px solid #f1f3f4; margin: 20px 0; }
-.sfb-color-grid { display: flex; flex-wrap: wrap; gap: 12px; }
-.sfb-color-circle { width: 32px; height: 32px; min-width: 32px; padding: 0 !important; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; transition: transform 0.1s; flex-shrink: 0; }
-.sfb-color-circle svg { flex-shrink: 0; }
-.sfb-color-circle:hover { transform: scale(1.1); }
-.sfb-color-check-icon { color: white; font-size: 14px; }
-.sfb-color-check-icon.sfb-dark-check { color: #202124; }
-.sfb-bg-circle { border: 1px solid #dadce0; }
-.sfb-theme-sidebar-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9999; }
-.sfb-custom-color-btn { border: 1px solid #dadce0 !important; transition:
-      background-color 0.2s,
-      filter 0.2s; }
-.sfb-custom-color-btn:hover { filter: brightness(0.95); }
+.sfb-theme-sidebar {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  width: 300px;
+  height: 100vh;
+  background-color: #ffffff;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 10000;
+  transition: right 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+.sfb-theme-sidebar.open {
+  right: 0;
+}
+.sfb-theme-sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #ddd;
+}
+.sfb-theme-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #202124;
+}
+.sfb-btn-close-theme {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #5f6368;
+  transition: color 0.2s;
+}
+.sfb-btn-close-theme:hover {
+  color: #202124;
+}
+.sfb-theme-sidebar-body {
+  padding: 20px;
+  overflow-y: auto;
+}
+.sfb-theme-setting-section h4 {
+  font-size: 14px;
+  color: #202124;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+.sfb-btn-theme-upload {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  background: white;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  color: #1a73e8;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.sfb-btn-theme-upload:hover {
+  background: #f8f9fa;
+}
+.sfb-btn-theme-remove-img {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: none;
+  border: none;
+  color: #d93025;
+  margin-top: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.sfb-btn-theme-remove-img:hover {
+  text-decoration: underline;
+}
+.sfb-theme-divider {
+  border: none;
+  border-top: 1px solid #f1f3f4;
+  margin: 20px 0;
+}
+.sfb-color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.sfb-color-circle {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  padding: 0 !important;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.1s;
+  flex-shrink: 0;
+}
+.sfb-color-circle svg {
+  flex-shrink: 0;
+}
+.sfb-color-circle:hover {
+  transform: scale(1.1);
+}
+.sfb-color-check-icon {
+  color: white;
+  font-size: 14px;
+}
+.sfb-color-check-icon.sfb-dark-check {
+  color: #202124;
+}
+.sfb-bg-circle {
+  border: 1px solid #dadce0;
+}
+.sfb-theme-sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+}
+.sfb-custom-color-btn {
+  border: 1px solid #dadce0 !important;
+  transition:
+    background-color 0.2s,
+    filter 0.2s;
+}
+.sfb-custom-color-btn:hover {
+  filter: brightness(0.95);
+}
 /* =========================================
    14. Full Width Banner & Controls
    ========================================= */
-.sfb-builder-full-banner { width: 100%; min-height: 220px; background-size: cover; background-position: center; background-repeat: no-repeat; position: relative; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); margin-bottom: -15px; z-index: 10; }
-.sfb-banner-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.2); z-index: 1; }
-.sfb-builder-full-banner .sfb-rich-text-wrapper { position: relative; z-index: 2; width: 80%; max-width: 800px; }
-.sfb-banner-text-input { width: 100%; font-size: clamp(24px, 4vw, 42px); font-weight: bold; color: #ffffff !important; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); background: transparent; border: 1px solid transparent; border-radius: 12px; padding: 15px; outline: none; transition:
-      background 0.2s,
-      border 0.2s; }
-.sfb-banner-text-input:hover { border: 1px dashed rgba(255, 255, 255, 0.4); }
-.sfb-banner-text-input:focus { border: 1px solid rgba(255, 255, 255, 0.8); background: rgba(0, 0, 0, 0.3); }
-.sfb-banner-type-toggles { display: flex; gap: 8px; margin-bottom: 12px; }
-.sfb-banner-type-toggles button { flex: 1; padding: 8px 0; border: 1px solid #dadce0; background: white; border-radius: 12px; color: #5f6368; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
-.sfb-banner-type-toggles button.active { background: var(--theme-color); color: white; border-color: var(--theme-color); }
-.sfb-banner-color-picker-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 14px; color: #202124; }
-.sfb-banner-color-picker-wrap input[type="color"] { width: 40px; height: 30px; padding: 0; border: 1px solid #dadce0; border-radius: 12px; cursor: pointer; }
-.sfb-theme-hint-text { font-size: 12px; color: #70757a; margin-bottom: 10px; line-height: 1.4; }
-.sfb-align-buttons { display: flex; gap: 6px; }
-.sfb-align-buttons button { flex: 1; padding: 8px 0; border: 1px solid #dadce0; background: white; border-radius: 12px; color: #5f6368; font-size: 14px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
-.sfb-align-buttons button:hover { background: #f8f9fa; color: #202124; }
-.sfb-align-buttons button.active { background: var(--theme-color); color: white; border-color: var(--theme-color); }
+.sfb-builder-full-banner {
+  width: 100%;
+  min-height: 220px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: -15px;
+  z-index: 10;
+}
+.sfb-banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+.sfb-builder-full-banner .sfb-rich-text-wrapper {
+  position: relative;
+  z-index: 2;
+  width: 80%;
+  max-width: 800px;
+}
+.sfb-banner-text-input {
+  width: 100%;
+  font-size: clamp(24px, 4vw, 42px);
+  font-weight: bold;
+  color: #ffffff !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 15px;
+  outline: none;
+  transition:
+    background 0.2s,
+    border 0.2s;
+}
+.sfb-banner-text-input:hover {
+  border: 1px dashed rgba(255, 255, 255, 0.4);
+}
+.sfb-banner-text-input:focus {
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.3);
+}
+.sfb-banner-type-toggles {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.sfb-banner-type-toggles button {
+  flex: 1;
+  padding: 8px 0;
+  border: 1px solid #dadce0;
+  background: white;
+  border-radius: 12px;
+  color: #5f6368;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sfb-banner-type-toggles button.active {
+  background: var(--theme-color);
+  color: white;
+  border-color: var(--theme-color);
+}
+.sfb-banner-color-picker-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #202124;
+}
+.sfb-banner-color-picker-wrap input[type="color"] {
+  width: 40px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid #dadce0;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.sfb-theme-hint-text {
+  font-size: 12px;
+  color: #70757a;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+.sfb-align-buttons {
+  display: flex;
+  gap: 6px;
+}
+.sfb-align-buttons button {
+  flex: 1;
+  padding: 8px 0;
+  border: 1px solid #dadce0;
+  background: white;
+  border-radius: 12px;
+  color: #5f6368;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sfb-align-buttons button:hover {
+  background: #f8f9fa;
+  color: #202124;
+}
+.sfb-align-buttons button.active {
+  background: var(--theme-color);
+  color: white;
+  border-color: var(--theme-color);
+}
 /* =========================================
    15. CSS Variables & Formats
    ========================================= */
-.sfb-main-container .sfb-border-top-suth { border-top: 10px solid var(--theme-color) !important; }
-.sfb-main-container .sfb-theme-bg { background-color: var(--theme-color) !important; }
-.sfb-main-container .sfb-input-question-main:focus-within { border-bottom: 2px solid var(--theme-color) !important; }
-.sfb-opt-score-input { width: 70px; padding: 8px; border: 1.5px solid #dadce0; border-radius: 12px; font-size: 14px; text-align: center; margin-left: 10px; color: #1967d2; font-weight: bold; background-color: #f8f9fa; transition: all 0.2s; }
-.sfb-opt-score-input:focus { border-color: var(--theme-color); background-color: #fff; outline: none; box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05); }
+.sfb-main-container .sfb-border-top-suth {
+  border-top: 10px solid var(--theme-color) !important;
+}
+.sfb-main-container .sfb-theme-bg {
+  background-color: var(--theme-color) !important;
+}
+.sfb-main-container .sfb-input-question-main:focus-within {
+  border-bottom: 2px solid var(--theme-color) !important;
+}
+.sfb-opt-score-input {
+  width: 70px;
+  padding: 8px;
+  border: 1.5px solid #dadce0;
+  border-radius: 12px;
+  font-size: 14px;
+  text-align: center;
+  margin-left: 10px;
+  color: #1967d2;
+  font-weight: bold;
+  background-color: #f8f9fa;
+  transition: all 0.2s;
+}
+.sfb-opt-score-input:focus {
+  border-color: var(--theme-color);
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
 .sfb-opt-score-input::-webkit-outer-spin-button,
-.sfb-opt-score-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.sfb-question-settings-container { position: relative; display: inline-block; }
-.sfb-btn-question-settings { background: transparent; border: none; color: #5f6368; font-size: 18px; cursor: pointer; padding: 8px; border-radius: 50%; transition: background 0.2s; display: flex; align-items: center; justify-content: center; }
-.sfb-btn-question-settings:hover { background: rgba(0, 0, 0, 0.05); }
-.sfb-question-settings-dropdown { position: absolute; bottom: 100%; right: 0; background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); border: 1px solid #e0e0e0; padding: 8px 0; min-width: 220px; z-index: 50; margin-bottom: 8px; display: flex; flex-direction: column; }
-.sfb-dropdown-toggle-item { display: flex; align-items: center; gap: 12px; padding: 10px 16px; cursor: pointer; font-size: 14.5px; color: #202124; transition: background 0.2s; margin: 0; }
-.sfb-dropdown-toggle-item:hover { background: #f8f9fa; }
-.sfb-dropdown-toggle-item input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--theme-color); cursor: pointer; margin: 0; }
-.sfb-scoring-rules-section { margin-top: 20px; padding-top: 15px; border-top: 2px dashed #e0e0e0; }
-.sfb-scoring-rules-title { font-size: 15px; color: #202124; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-.sfb-scoring-rule-card { background: #f8f9fa; border: 1px solid #dadce0; border-radius: 12px; padding: 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 10px; position: relative; }
-.sfb-scoring-rule-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.sfb-rule-score-input { width: 60px; padding: 6px; border: 1px solid #ccc; border-radius: 12px; text-align: center; font-family: inherit; }
-.sfb-rule-color-input { width:32px;height:32px;padding:0;border:1px solid #ccc;border-radius:4px;cursor:pointer;overflow:hidden;background:none; }
-.sfb-rule-color-input::-webkit-color-swatch-wrapper { padding:0; }
-.sfb-rule-color-input::-webkit-color-swatch { border:none;border-radius:0; }
-.sfb-rule-text-input { flex: 1; min-width: 150px; padding: 8px 12px; border: 1px solid #ccc; border-radius: 12px; font-family: inherit; font-size: 14px; }
-.sfb-btn-remove-rule { position: absolute; top: -2px; right: -15px; background: #fceeee; border: none; color: #9aa0a6; cursor: pointer; padding: 4px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-.sfb-btn-remove-rule:hover { background: #fce8e6; color: #d93025; }
-.sfb-btn-add-rule { background: transparent; border: 1px dashed #1967d2; color: #1967d2; padding: 8px 16px; border-radius: 12px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
-.sfb-btn-add-rule:hover { background: #e8f0fe; }
+.sfb-opt-score-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.sfb-question-settings-container {
+  position: relative;
+  display: inline-block;
+}
+.sfb-btn-question-settings {
+  background: transparent;
+  border: none;
+  color: #5f6368;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sfb-btn-question-settings:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+.sfb-question-settings-dropdown {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e0e0e0;
+  padding: 8px 0;
+  min-width: 220px;
+  z-index: 50;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+}
+.sfb-dropdown-toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14.5px;
+  color: #202124;
+  transition: background 0.2s;
+  margin: 0;
+}
+.sfb-dropdown-toggle-item:hover {
+  background: #f8f9fa;
+}
+.sfb-dropdown-toggle-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--theme-color);
+  cursor: pointer;
+  margin: 0;
+}
+.sfb-scoring-rules-section {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 2px dashed #e0e0e0;
+}
+.sfb-scoring-rules-title {
+  font-size: 15px;
+  color: #202124;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sfb-scoring-rule-card {
+  background: #f8f9fa;
+  border: 1px solid #dadce0;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+.sfb-scoring-rule-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.sfb-rule-score-input {
+  width: 60px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  text-align: center;
+  font-family: inherit;
+}
+.sfb-rule-color-input {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  overflow: hidden;
+  background: none;
+}
+.sfb-rule-color-input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.sfb-rule-color-input::-webkit-color-swatch {
+  border: none;
+  border-radius: 0;
+}
+.sfb-rule-text-input {
+  flex: 1;
+  min-width: 150px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 14px;
+}
+.sfb-btn-remove-rule {
+  position: absolute;
+  top: -2px;
+  right: -15px;
+  background: #fceeee;
+  border: none;
+  color: #9aa0a6;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.sfb-btn-remove-rule:hover {
+  background: #fce8e6;
+  color: #d93025;
+}
+.sfb-btn-add-rule {
+  background: transparent;
+  border: 1px dashed #1967d2;
+  color: #1967d2;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.sfb-btn-add-rule:hover {
+  background: #e8f0fe;
+}
 /* =========================================
    16. การแสดงผล Responsive (Tablet & Mobile)
    ========================================= */
 @media screen and (max-width: 1024px) {
- .sfb-form-content { flex-direction: column; padding: 20px 15px; padding-bottom: 100px; }
-.sfb-form-canvas { max-width: 100%; }
-.sfb-floating-toolbar { position: fixed; bottom: 0; top: auto; left: 0; right: 0; width: 100%; flex-direction: row; justify-content: space-around; background: #ffffff; border-radius: 20px 20px 0 0; padding: 12px 10px; box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1); z-index: 1000; margin: 0; }
-.sfb-floating-toolbar span { display: none; }
-.sfb-builder-header { padding: 12px 20px; }
-/* 🟢 ยึด container ไว้ใต้ mobile-header-bar เสมอ ป้องกันจมหาย */
-   .sfb-builder-container { position: fixed; top: 65px; left: 0; right: 0; bottom: 0; height: auto; background: var(--bg-color, #f0f2f5); }
- }
+  .sfb-form-content {
+    flex-direction: column;
+    padding: 20px 15px;
+    padding-bottom: 100px;
+  }
+  .sfb-form-canvas {
+    max-width: 100%;
+  }
+  .sfb-floating-toolbar {
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    left: 0;
+    right: 0;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    background: #ffffff;
+    border-radius: 20px 20px 0 0;
+    padding: 12px 10px;
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    margin: 0;
+  }
+  .sfb-floating-toolbar span {
+    display: none;
+  }
+  .sfb-builder-header {
+    padding: 12px 20px;
+  }
+  /* 🟢 ยึด container ไว้ใต้ mobile-header-bar เสมอ ป้องกันจมหาย */
+  .sfb-builder-container {
+    position: fixed;
+    top: 65px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: auto;
+    background: var(--bg-color, #f0f2f5);
+  }
+}
 @media screen and (max-width: 768px) {
- /* 🟢 ป้องกันการเด้งของ Header เวลาปัดนิ้ว */
-   .sfb-builder-header { flex-direction: column; gap: 10px; padding: 12px 15px; align-items: stretch; position: sticky !important; top: 0 !important; z-index: 1000; }
-.sfb-header-left { justify-content: flex-start; gap: 8px; align-items: center; min-width: 0; }
-.sfb-header-left h3 { font-size: 14px; line-height: 1.4; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; min-width: 0; }
-.sfb-badge-clinic,
-   .sfb-badge-type { font-size: 10px !important; padding: 1px 5px !important; margin-left: 0 !important; }
-.sfb-header-actions { justify-content: space-between; }
-.sfb-builder-full-banner { min-height: 150px; }
-.sfb-banner-text-input { font-size: 22px; }
-.sfb-grid-setup-container { flex-direction: column; gap: 20px; }
-.sfb-theme-sidebar { width: 100%; right: -100%; }
-.sfb-move-section-modal,
-   .sfb-modal-content { width: 95%; }
-.sfb-step-name-input-inline { max-width: 150px; }
-.sfb-form-card { padding: 15px 12px; touch-action: auto !important; /* 🟢 สำคัญ: ปลดล็อกการเลื่อนจอบนมือถือ */ }
-.sfb-question-row { flex-direction: column; align-items: stretch; gap: 12px; }
-.sfb-type-selector { width: 100%; height: 44px; margin-top: 4px; }
-.sfb-input-question-main { width: 100%; border-radius: 12px; }
-.sfb-card-footer { flex-wrap: wrap; justify-content: flex-end; gap: 12px; padding-top: 15px; }
-.sfb-footer-divider { display: none; }
-.sfb-required-toggle,
-   .sfb-desc-footer-toggle { margin-left: 0 !important; }
-.sfb-inline-format-toolbar { flex-wrap: wrap; max-width: 250px; bottom: -50px; }
-.sfb-option-row,
-   .sfb-grid-item-row { flex-wrap: wrap; background: #fdfdfd; border: 1px solid #e8eaed; border-radius: 12px; padding: 10px; gap: 10px; position: relative; }
-.sfb-opt-icon,
-   .sfb-opt-number,
-   .sfb-idx-num { margin-top: 5px; }
-.sfb-btn-add-image-opt,
-   .sfb-btn-remove-opt { opacity: 1 !important; background: #ffffff; border: 1px solid #dadce0; border-radius: 12px; padding: 6px 12px; height: 32px; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
-.sfb-btn-remove-opt { color: #d93025; }
-.sfb-opt-score-input { margin-left: 32px; margin-right: auto; width: 80px; height: 32px; }
-.sfb-opt-input~.sfb-btn-add-image-opt { margin-left: auto; }
-.sfb-opt-input+.sfb-btn-remove-opt,
-   .sfb-opt-input+input[type="file"]+.sfb-btn-remove-opt { margin-left: auto; }
-.sfb-add-opt-row,
-   .sfb-add-row-trigger { background: #f1f3f4; border: 1px dashed #dadce0; border-radius: 12px; padding: 10px; justify-content: center; margin-top: 10px; }
-.sfb-add-opt-text { font-weight: 600; color: #1967d2; }
- }
+  /* 🟢 ป้องกันการเด้งของ Header เวลาปัดนิ้ว */
+  .sfb-builder-header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 15px;
+    align-items: stretch;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000;
+  }
+  .sfb-header-left {
+    justify-content: flex-start;
+    gap: 8px;
+    align-items: center;
+    min-width: 0;
+  }
+  .sfb-header-left h3 {
+    font-size: 14px;
+    line-height: 1.4;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+  }
+  .sfb-badge-clinic,
+  .sfb-badge-type {
+    font-size: 10px !important;
+    padding: 1px 5px !important;
+    margin-left: 0 !important;
+  }
+  .sfb-header-actions {
+    justify-content: space-between;
+  }
+  .sfb-builder-full-banner {
+    min-height: 150px;
+  }
+  .sfb-banner-text-input {
+    font-size: 22px;
+  }
+  .sfb-grid-setup-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .sfb-theme-sidebar {
+    width: 100%;
+    right: -100%;
+  }
+  .sfb-move-section-modal,
+  .sfb-modal-content {
+    width: 95%;
+  }
+  .sfb-step-name-input-inline {
+    max-width: 150px;
+  }
+  .sfb-form-card {
+    padding: 15px 12px;
+    touch-action: auto !important; /* 🟢 สำคัญ: ปลดล็อกการเลื่อนจอบนมือถือ */
+  }
+  .sfb-question-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .sfb-type-selector {
+    width: 100%;
+    height: 44px;
+    margin-top: 4px;
+  }
+  .sfb-input-question-main {
+    width: 100%;
+    border-radius: 12px;
+  }
+  .sfb-card-footer {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 15px;
+  }
+  .sfb-footer-divider {
+    display: none;
+  }
+  .sfb-required-toggle,
+  .sfb-desc-footer-toggle {
+    margin-left: 0 !important;
+  }
+  .sfb-inline-format-toolbar {
+    flex-wrap: wrap;
+    max-width: 250px;
+    bottom: -50px;
+  }
+  .sfb-option-row,
+  .sfb-grid-item-row {
+    flex-wrap: wrap;
+    background: #fdfdfd;
+    border: 1px solid #e8eaed;
+    border-radius: 12px;
+    padding: 10px;
+    gap: 10px;
+    position: relative;
+  }
+  .sfb-opt-icon,
+  .sfb-opt-number,
+  .sfb-idx-num {
+    margin-top: 5px;
+  }
+  .sfb-btn-add-image-opt,
+  .sfb-btn-remove-opt {
+    opacity: 1 !important;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 12px;
+    padding: 6px 12px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  .sfb-btn-remove-opt {
+    color: #d93025;
+  }
+  .sfb-opt-score-input {
+    margin-left: 32px;
+    margin-right: auto;
+    width: 80px;
+    height: 32px;
+  }
+  .sfb-opt-input ~ .sfb-btn-add-image-opt {
+    margin-left: auto;
+  }
+  .sfb-opt-input + .sfb-btn-remove-opt,
+  .sfb-opt-input + input[type="file"] + .sfb-btn-remove-opt {
+    margin-left: auto;
+  }
+  .sfb-add-opt-row,
+  .sfb-add-row-trigger {
+    background: #f1f3f4;
+    border: 1px dashed #dadce0;
+    border-radius: 12px;
+    padding: 10px;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  .sfb-add-opt-text {
+    font-weight: 600;
+    color: #1967d2;
+  }
+}
 @media screen and (max-width: 480px) {
- .sfb-action-icons { gap: 12px; }
-.sfb-icon-group p { display: none; }
-.sfb-btn-save { padding: 8px 12px; font-size: 13px; }
-.sfb-section-header-bar { flex-direction: column; align-items: flex-start; gap: 8px; }
-.sfb-step-name-input-inline { max-width: 100%; }
-/* 🟢 ซ่อน badge คลินิก/ประเภทฟอร์มบนจอเล็กมาก — ประหยัดพื้นที่ header */
-   .sfb-badge-clinic,
-   .sfb-badge-type { display: none !important; }
- }
+  .sfb-action-icons {
+    gap: 12px;
+  }
+  .sfb-icon-group p {
+    display: none;
+  }
+  .sfb-btn-save {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .sfb-section-header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .sfb-step-name-input-inline {
+    max-width: 100%;
+  }
+  /* 🟢 ซ่อน badge คลินิก/ประเภทฟอร์มบนจอเล็กมาก — ประหยัดพื้นที่ header */
+  .sfb-badge-clinic,
+  .sfb-badge-type {
+    display: none !important;
+  }
+}
 /* =========================================
    18. Custom Select Dropdown
    ========================================= */
-.sfb-custom-select-container { position: relative; width: 250px; flex-shrink: 0; user-select: none; }
-.sfb-custom-select-trigger { display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 14px; font-size: 14.5px; font-weight: 500; border: 1px solid #dadce0; border-radius: 12px; background: white; cursor: pointer; color: #202124; box-sizing: border-box; transition: all 0.2s; }
-.sfb-custom-select-trigger:hover { background: #f8f9fa; border-color: #b0b0b0; }
-.sfb-custom-select-trigger.open { border-color: var(--theme-color, #1967d2); box-shadow: 0 0 0 1px var(--theme-color, #1967d2); }
-.sfb-custom-select-val { display: flex; align-items: center; gap: 12px; }
-.sfb-opt-icon-sm { color: #5f6368; font-size: 16px; display: flex; align-items: center; }
-.sfb-custom-select-arrow { color: #70757a; font-size: 12px; transition: transform 0.2s; }
-.sfb-custom-select-trigger.open .sfb-custom-select-arrow { transform: rotate(180deg); }
-.sfb-custom-select-dropdown { position: absolute; top: 52px; left: 0; width: 100%; background: #ffffff; border: 1px solid #dadce0; border-radius: 12px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); z-index: 150; max-height: 320px; overflow-y: auto; padding: 8px 0; animation: dropdownFadeIn 0.15s ease; }
+.sfb-custom-select-container {
+  position: relative;
+  width: 250px;
+  flex-shrink: 0;
+  user-select: none;
+}
+.sfb-custom-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 0 14px;
+  font-size: 14.5px;
+  font-weight: 500;
+  border: 1px solid #dadce0;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  color: #202124;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+.sfb-custom-select-trigger:hover {
+  background: #f8f9fa;
+  border-color: #b0b0b0;
+}
+.sfb-custom-select-trigger.open {
+  border-color: var(--theme-color, #1967d2);
+  box-shadow: 0 0 0 1px var(--theme-color, #1967d2);
+}
+.sfb-custom-select-val {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sfb-opt-icon-sm {
+  color: #5f6368;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+.sfb-custom-select-arrow {
+  color: #70757a;
+  font-size: 12px;
+  transition: transform 0.2s;
+}
+.sfb-custom-select-trigger.open .sfb-custom-select-arrow {
+  transform: rotate(180deg);
+}
+.sfb-custom-select-dropdown {
+  position: absolute;
+  top: 52px;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #dadce0;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  z-index: 150;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 8px 0;
+  animation: dropdownFadeIn 0.15s ease;
+}
 @keyframes dropdownFadeIn {
- from { opacity: 0; transform: translateY(-5px); }
-to { opacity: 1; transform: translateY(0); }
- }
-.sfb-select-group-label { font-size: 12px; font-weight: 700; color: #70757a; padding: 12px 16px 6px 16px; text-transform: uppercase; letter-spacing: 0.5px; }
-.sfb-select-option { display: flex; align-items: center; gap: 12px; padding: 10px 16px; cursor: pointer; font-size: 14.5px; color: #202124; transition: background 0.2s; }
-.sfb-select-option:hover { background: #f1f3f4; }
-.sfb-select-option.selected { background: #e8f0fe; color: #1967d2; font-weight: bold; }
-.sfb-select-option.selected .sfb-opt-icon-sm { color: #1967d2; }
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.sfb-select-group-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #70757a;
+  padding: 12px 16px 6px 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.sfb-select-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14.5px;
+  color: #202124;
+  transition: background 0.2s;
+}
+.sfb-select-option:hover {
+  background: #f1f3f4;
+}
+.sfb-select-option.selected {
+  background: #e8f0fe;
+  color: #1967d2;
+  font-weight: bold;
+}
+.sfb-select-option.selected .sfb-opt-icon-sm {
+  color: #1967d2;
+}
 /* ===== Grid Score Table ===== */
-.sfb-cell-score-table { width: 100%; margin-top: 20px; border-collapse: separate; border-spacing: 0; background: #ffffff; border: 1px solid #e6e7e9; border-radius: 12px; overflow: hidden; font-family: inherit; font-size: 13px; font-weight: 400; }
-.sfb-cell-score-table thead { background: #f8f9fa; }
-.sfb-cell-score-table th { font-size: 14px; font-weight: 400; color: #202124; padding: 12px 10px; text-align: center; border-bottom: 1px solid #e6e7e9; }
-.sfb-cell-score-table td { padding: 10px; text-align: center; border-bottom: 1px solid #f1f3f4; font-size: 14px; }
-.sfb-cell-score-table tbody tr:last-child td { border-bottom: none; }
-.sfb-cell-score-table td:first-child { text-align: left; font-weight: 400; font-size: 14px; color: #242023; padding-left: 14px; }
-.sfb-cell-score-table tbody tr:hover { background: #f8f9fa; }
-.sfb-cell-input { width: 70px; height: 36px; border: 1.5px solid #dadce0; border-radius: 12px; text-align: center; font-size: 14px; font-weight: 600; color: #1967d2; background: #f8f9fa; transition: all 0.2s ease; }
-.sfb-cell-input:hover { border-color: #c6c6c6; }
-.sfb-cell-input:focus { outline: none; border-color: var(--theme-color); background: #ffffff; box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05); }
+.sfb-cell-score-table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #ffffff;
+  border: 1px solid #e6e7e9;
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+}
+.sfb-cell-score-table thead {
+  background: #f8f9fa;
+}
+.sfb-cell-score-table th {
+  font-size: 14px;
+  font-weight: 400;
+  color: #202124;
+  padding: 12px 10px;
+  text-align: center;
+  border-bottom: 1px solid #e6e7e9;
+}
+.sfb-cell-score-table td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #f1f3f4;
+  font-size: 14px;
+}
+.sfb-cell-score-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.sfb-cell-score-table td:first-child {
+  text-align: left;
+  font-weight: 400;
+  font-size: 14px;
+  color: #242023;
+  padding-left: 14px;
+}
+.sfb-cell-score-table tbody tr:hover {
+  background: #f8f9fa;
+}
+.sfb-cell-input {
+  width: 70px;
+  height: 36px;
+  border: 1.5px solid #dadce0;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1967d2;
+  background: #f8f9fa;
+  transition: all 0.2s ease;
+}
+.sfb-cell-input:hover {
+  border-color: #c6c6c6;
+}
+.sfb-cell-input:focus {
+  outline: none;
+  border-color: var(--theme-color);
+  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
 .sfb-cell-input::-webkit-outer-spin-button,
-.sfb-cell-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.sfb-cell-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 @media screen and (max-width: 768px) {
- .sfb-custom-select-container { width: 100%; margin-top: 4px; }
-.sfb-custom-select-trigger { height: 46px; }
- }
+  .sfb-custom-select-container {
+    width: 100%;
+    margin-top: 4px;
+  }
+  .sfb-custom-select-trigger {
+    height: 46px;
+  }
+}
 /* =========================================
    🟢 FOCUS MODE & SMART UI OVERRIDES
    ========================================= */
 /* 🟢 ลบ touch-action ออกเพื่อให้เลื่อนได้อิสระ */
-.sfb-form-card { border-left: 6px solid transparent; transition:
-      box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
-      border-left 0.4s ease,
-      transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
-      background-color 0.4s ease; position: relative; margin-bottom: 24px; border-radius: 12px; }
-.sfb-form-card.inactive { box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important; border: 1px solid #eaebed; cursor: pointer; z-index: 1; background-color: #fdfdfd; }
-.sfb-form-card.inactive:hover { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important; transform: translateY(-2px); background-color: #ffffff; }
-.sfb-form-card.active { border-left-color: var(--theme-color, #1967d2) !important; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12) !important; border: 1px solid transparent; background-color: #ffffff; transform: translateY(-4px); z-index: 50; }
+.sfb-form-card {
+  border-left: 6px solid transparent;
+  transition:
+    box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-left 0.4s ease,
+    transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 0.4s ease;
+  position: relative;
+  margin-bottom: 24px;
+  border-radius: 12px;
+}
+.sfb-form-card.inactive {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) !important;
+  border: 1px solid #eaebed;
+  cursor: pointer;
+  z-index: 1;
+  background-color: #fdfdfd;
+}
+.sfb-form-card.inactive:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-2px);
+  background-color: #ffffff;
+}
+.sfb-form-card.active {
+  border-left-color: var(--theme-color, #1967d2) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12) !important;
+  border: 1px solid transparent;
+  background-color: #ffffff;
+  transform: translateY(-4px);
+  z-index: 50;
+}
 .sfb-form-card.inactive .sfb-opt-input,
 .sfb-form-card.inactive .sfb-input-question-main,
-.sfb-form-card.inactive .sfb-input-desc { pointer-events: none; border-bottom-color: transparent !important; background: transparent !important; }
+.sfb-form-card.inactive .sfb-input-desc {
+  pointer-events: none;
+  border-bottom-color: transparent !important;
+  background: transparent !important;
+}
 .sfb-smooth-element,
 .sfb-card-footer,
 .sfb-type-selector-wrapper,
 .sfb-scoring-rules-section,
 .sfb-btn-add-image,
-.sfb-add-opt-row { max-height: 800px; opacity: 1; overflow: visible; transition:
-      max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-      opacity 0.3s ease,
-      margin 0.3s ease,
-      padding 0.3s ease; }
+.sfb-add-opt-row {
+  max-height: 800px;
+  opacity: 1;
+  overflow: visible;
+  transition:
+    max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease,
+    margin 0.3s ease,
+    padding 0.3s ease;
+}
 .sfb-form-card.inactive .sfb-smooth-element,
 .sfb-form-card.inactive .sfb-card-footer,
 .sfb-form-card.inactive .sfb-type-selector-wrapper,
 .sfb-form-card.inactive .sfb-scoring-rules-section,
 .sfb-form-card.inactive .sfb-btn-add-image,
-.sfb-form-card.inactive .sfb-add-opt-row { max-height: 0 !important; opacity: 0 !important; margin-top: 0 !important; margin-bottom: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; pointer-events: none; border: none !important; overflow: hidden !important; }
+.sfb-form-card.inactive .sfb-add-opt-row {
+  max-height: 0 !important;
+  opacity: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  pointer-events: none;
+  border: none !important;
+  overflow: hidden !important;
+}
 .sfb-form-card.inactive .sfb-btn-remove-opt,
 .sfb-form-card.inactive .sfb-btn-add-image-opt,
-.sfb-form-card.inactive .sfb-btn-remove-image { opacity: 0 !important; pointer-events: none; width: 0; padding: 0; margin: 0; overflow: hidden; transition: all 0.3s ease; }
+.sfb-form-card.inactive .sfb-btn-remove-image {
+  opacity: 0 !important;
+  pointer-events: none;
+  width: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
 /* 🟢 ปุ่มจับลาก ต้องมี touch-action: none เพื่อให้ลากได้โดยที่จอไม่เลื่อน */
-.sfb-form-drag-handle { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); opacity: 1; transition: opacity 0.3s ease; z-index: 10; touch-action: none; cursor: grab; }
-.sfb-form-card.inactive .sfb-form-drag-handle { opacity: 0 !important; pointer-events: none; }
+.sfb-form-drag-handle {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+  touch-action: none;
+  cursor: grab;
+}
+.sfb-form-card.inactive .sfb-form-drag-handle {
+  opacity: 0 !important;
+  pointer-events: none;
+}
 /* =========================================
    🟢 1. แก้ไขปุ่มลาก & ระยะห่าง (Drag Handle Fix)
    ========================================= */
-.sfb-question-card.active { padding-top: 40px !important; }
-.sfb-section-card.active { padding-top: 0 !important; }
-.sfb-form-drag-handle-inline { display: flex; align-items: center; color: rgba(255, 255, 255, 0.6); cursor: grab; margin-right: 8px; transition: color 0.2s; padding: 4px; touch-action: none; }
-.sfb-form-drag-handle-inline:hover { color: #ffffff; }
+.sfb-question-card.active {
+  padding-top: 40px !important;
+}
+.sfb-section-card.active {
+  padding-top: 0 !important;
+}
+.sfb-form-drag-handle-inline {
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: grab;
+  margin-right: 8px;
+  transition: color 0.2s;
+  padding: 4px;
+  touch-action: none;
+}
+.sfb-form-drag-handle-inline:hover {
+  color: #ffffff;
+}
 /* =========================================
    🟢 2. ป้ายกำกับคะแนน (Score Indicator) & แก้ไขได้ (Editable Badge)
    ========================================= */
-.sfb-editable-badge { position: absolute; top: -12px; left: 16px; background: #f59e0b; color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); z-index: 10; display: flex; align-items: center; gap: 4px; transition: all 0.3s ease; }
-.sfb-score-indicator-badge { position: absolute; top: -14px; right: 16px; background: #fff8e1; color: #fbbc04; border: 1px solid #ffecb3; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); z-index: 10; transition: all 0.3s ease; }
+.sfb-editable-badge {
+  position: absolute;
+  top: -12px;
+  left: 16px;
+  background: #f59e0b;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.3s ease;
+}
+.sfb-score-indicator-badge {
+  position: absolute;
+  top: -14px;
+  right: 16px;
+  background: #fff8e1;
+  color: #fbbc04;
+  border: 1px solid #ffecb3;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  transition: all 0.3s ease;
+}
 /* =========================================
    🟢 3. ปุ่มพับเก็บตารางคะแนน (Collapsible Rules)
-   ========================================= */ 
-.sfb-scoring-accordion-wrapper { margin-top: 16px; border-top: 1px dashed #e0e0e0; padding-top: 16px; }
-.sfb-btn-toggle-rules { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px; background: #f8f9fa; border: 1px dashed #dadce0; border-radius: 12px; color: #1967d2; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-.sfb-btn-toggle-rules:hover { background: #e8f0fe; border-color: #1967d2; }
-.sfb-scoring-rules-collapse { max-height: 0; opacity: 0; overflow: hidden; transition:
-      max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-      opacity 0.3s ease,
-      margin 0.3s ease; }
-.sfb-scoring-rules-collapse.open { max-height: 2000px; opacity: 1; margin-top: 16px; overflow: visible; }
+   ========================================= */
+.sfb-scoring-accordion-wrapper {
+  margin-top: 16px;
+  border-top: 1px dashed #e0e0e0;
+  padding-top: 16px;
+}
+.sfb-btn-toggle-rules {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  background: #f8f9fa;
+  border: 1px dashed #dadce0;
+  border-radius: 12px;
+  color: #1967d2;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sfb-btn-toggle-rules:hover {
+  background: #e8f0fe;
+  border-color: #1967d2;
+}
+.sfb-scoring-rules-collapse {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease,
+    margin 0.3s ease;
+}
+.sfb-scoring-rules-collapse.open {
+  max-height: 2000px;
+  opacity: 1;
+  margin-top: 16px;
+  overflow: visible;
+}
 /* =========================================
    19. ป้ายกำกับ (Badges) & กฎการให้คะแนน 
    ========================================= */
-.sfb-dropdown-highlight-scored { color: #1967d2; font-weight: bold; }
-.sfb-dropdown-highlight-editable { color: #f59e0b; font-weight: bold; }
-.sfb-dropdown-item-disabled { opacity: 0.6; cursor: not-allowed; }
-.sfb-description-box { margin-top: 12px; }
-.sfb-scoring-rule-label { font-size: 14px; color: #5f6368; }
-.sfb-rule-gap { width: 10px; }
-.sfb-rule-advice-input { background: #ffffff; }
+.sfb-dropdown-highlight-scored {
+  color: #1967d2;
+  font-weight: bold;
+}
+.sfb-dropdown-highlight-editable {
+  color: #f59e0b;
+  font-weight: bold;
+}
+.sfb-dropdown-item-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.sfb-description-box {
+  margin-top: 12px;
+}
+.sfb-scoring-rule-label {
+  font-size: 14px;
+  color: #5f6368;
+}
+.sfb-rule-gap {
+  width: 10px;
+}
+.sfb-rule-advice-input {
+  background: #ffffff;
+}
 /* =========================================
    20. Group Question Styles (คำถามย่อย)
    ========================================= */
-.sfb-group-container { background: #f8f9fa; border-left: 4px solid #dadce0; border-radius: 0 8px 8px 0; padding: 16px; margin-top: 12px; }
-.sfb-group-header { font-size: 13px; color: #5f6368; margin-bottom: 16px; font-weight: bold; display: flex; align-items: center; gap: 6px; }
-.sfb-group-subs-wrapper { display: flex; flex-direction: column; gap: 16px; }
-.sfb-sub-question-card { background: white; border: 1px solid #e0e0e0; padding: 12px; border-radius: 12px; position: relative; }
-.sfb-sub-question-header { display: flex; gap: 8px; margin-bottom: 12px; }
-.sfb-sub-question-number { font-weight: bold; color: #1967d2; margin-top: 5px; }
-.sfb-btn-remove-sub { background: none; border: none; color: #d93025; cursor: pointer; padding: 4px; }
-.sfb-sub-options-wrapper { padding-left: 24px; display: flex; flex-direction: column; gap: 8px; }
-.sfb-sub-option-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.sfb-sub-score-input { width: 50px; padding: 4px; font-size: 12px; border: 1px solid #ccc; border-radius: 12px; text-align: center; margin: 0; }
-.sfb-btn-toggle-input { border: none; cursor: pointer; padding: 6px; border-radius: 12px; transition: all 0.2s; }
-.sfb-btn-toggle-input.active { background: #e8f0fe; color: #1967d2; }
-.sfb-btn-toggle-input.inactive { background: transparent; color: #70757a; }
-.sfb-btn-remove-sub-opt { border: none; background: none; color: #70757a; cursor: pointer; padding: 4px; transition: color 0.2s; }
-.sfb-btn-remove-sub-opt:hover { color: #d93025; }
-.sfb-hidden-options-hint { color: #70757a; font-size: 12px; font-style: italic; padding-left: 24px; display: flex; align-items: center; gap: 6px; }
-.sfb-btn-add-sub-opt { background: none; border: none; color: #1967d2; font-size: 13px; cursor: pointer; text-align: left; margin-top: 4px; font-weight: bold; }
-.sfb-hidden-subs-hint { text-align: center; padding: 10px; color: #70757a; font-size: 13px; background: #f1f3f4; border-radius: 12px; font-style: italic; display: flex; align-items: center; justify-content: center; gap: 6px; }
-.sfb-empty-subs-state { text-align: center; padding: 20px; color: #80868b; font-size: 13px; border: 1px dashed #ccc; border-radius: 12px; }
-.sfb-sub-actions-footer { display: flex; gap: 8px; margin-top: 16px; border-top: 1px solid #eee; padding-top: 16px; }
-.sfb-btn-add-sub-type { background: #fff; border: 1px solid #dadce0; padding: 6px 12px; border-radius: 16px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #3c4043; transition: background 0.2s; }
-.sfb-btn-add-sub-type:hover { background: #f1f3f4; }
+.sfb-group-container {
+  background: #f8f9fa;
+  border-left: 4px solid #dadce0;
+  border-radius: 0 8px 8px 0;
+  padding: 16px;
+  margin-top: 12px;
+}
+.sfb-group-header {
+  font-size: 13px;
+  color: #5f6368;
+  margin-bottom: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sfb-group-subs-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.sfb-sub-question-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  padding: 12px;
+  border-radius: 12px;
+  position: relative;
+}
+.sfb-sub-question-header {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.sfb-sub-question-number {
+  font-weight: bold;
+  color: #1967d2;
+  margin-top: 5px;
+}
+.sfb-btn-remove-sub {
+  background: none;
+  border: none;
+  color: #d93025;
+  cursor: pointer;
+  padding: 4px;
+}
+.sfb-sub-options-wrapper {
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sfb-sub-option-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.sfb-sub-score-input {
+  width: 50px;
+  padding: 4px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  text-align: center;
+  margin: 0;
+}
+.sfb-btn-toggle-input {
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+.sfb-btn-toggle-input.active {
+  background: #e8f0fe;
+  color: #1967d2;
+}
+.sfb-btn-toggle-input.inactive {
+  background: transparent;
+  color: #70757a;
+}
+.sfb-btn-remove-sub-opt {
+  border: none;
+  background: none;
+  color: #70757a;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s;
+}
+.sfb-btn-remove-sub-opt:hover {
+  color: #d93025;
+}
+.sfb-hidden-options-hint {
+  color: #70757a;
+  font-size: 12px;
+  font-style: italic;
+  padding-left: 24px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sfb-btn-add-sub-opt {
+  background: none;
+  border: none;
+  color: #1967d2;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  margin-top: 4px;
+  font-weight: bold;
+}
+.sfb-hidden-subs-hint {
+  text-align: center;
+  padding: 10px;
+  color: #70757a;
+  font-size: 13px;
+  background: #f1f3f4;
+  border-radius: 12px;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.sfb-empty-subs-state {
+  text-align: center;
+  padding: 20px;
+  color: #80868b;
+  font-size: 13px;
+  border: 1px dashed #ccc;
+  border-radius: 12px;
+}
+.sfb-sub-actions-footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+}
+.sfb-btn-add-sub-type {
+  background: #fff;
+  border: 1px solid #dadce0;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #3c4043;
+  transition: background 0.2s;
+}
+.sfb-btn-add-sub-type:hover {
+  background: #f1f3f4;
+}
 /* =========================================
    21. Dummy Inputs (พรีวิวตอนออกแบบ)
    ========================================= */
-.sfb-dummy-date { display: flex; align-items: center; gap: 8px; width: 200px; }
-.sfb-dummy-date-icon { margin-left: auto; color: #5f6368; }
-.sfb-dummy-bmi-container { display: flex; gap: 15px; padding: 10px 0; flex-wrap: wrap; }
-.sfb-dummy-bmi-box { flex: 1; min-width: 120px; padding: 12px; border: 1px dashed #ccc; border-radius: 6px; background: #fafafa; color: #70757a; }
-.sfb-dummy-phone { display: flex; align-items: center; gap: 8px; color: #e65100; background-color: #fff3e0; padding: 12px; border-radius: 8px; border: 1px dashed #e65100; margin-top: 8px; }
-.sfb-dummy-phone-hint { font-weight: bold; }
-.sfb-dummy-phone-sub { font-size: 12px; margin-top: 2px; }
-.sfb-dummy-id { display: flex; align-items: center; gap: 8px; color: #1967d2; background: #e8f0fe; padding: 12px; border-radius: 8px; border: 1px dashed #1967d2; margin-top: 8px; }
+.sfb-dummy-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 200px;
+}
+.sfb-dummy-date-icon {
+  margin-left: auto;
+  color: #5f6368;
+}
+.sfb-dummy-bmi-container {
+  display: flex;
+  gap: 15px;
+  padding: 10px 0;
+  flex-wrap: wrap;
+}
+.sfb-dummy-bmi-box {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px;
+  border: 1px dashed #ccc;
+  border-radius: 6px;
+  background: #fafafa;
+  color: #70757a;
+}
+.sfb-dummy-phone {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #e65100;
+  background-color: #fff3e0;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px dashed #e65100;
+  margin-top: 8px;
+}
+.sfb-dummy-phone-hint {
+  font-weight: bold;
+}
+.sfb-dummy-phone-sub {
+  font-size: 12px;
+  margin-top: 2px;
+}
+.sfb-dummy-id {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1967d2;
+  background: #e8f0fe;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px dashed #1967d2;
+  margin-top: 8px;
+}
 /* =========================================
    22. Grid Options Layout
    ========================================= */
-.sfb-grid-score-toggle { margin-top: 10px; margin-bottom: 10px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; }
-.sfb-grid-score-label { font-size: 14px; color: #5f6368; }
-.sfb-grid-score-select { padding: 6px 10px; border-radius: 6px; border: 1px solid #dadce0; font-size: 14px; background: #fff; cursor: pointer; }
-.sfb-cell-scoring-wrapper { margin-top: 20px; border-top: none; }
+.sfb-grid-score-toggle {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+.sfb-grid-score-label {
+  font-size: 14px;
+  color: #5f6368;
+}
+.sfb-grid-score-select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #dadce0;
+  font-size: 14px;
+  background: #fff;
+  cursor: pointer;
+}
+.sfb-cell-scoring-wrapper {
+  margin-top: 20px;
+  border-top: none;
+}
 /* 🟢 ห่อช่องพิมพ์กับเส้นประให้อยู่บรรทัดเดียวกัน */
 .sfb-opt-input-wrapper,
-.sfb-sub-opt-input-wrapper { display: flex; align-items: center; flex: 1; min-width: 0; position: relative; }
+.sfb-sub-opt-input-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
 /* 🟢 ช่องพิมพ์หลัก (ค่าเริ่มต้นคือขยายเต็มพื้นที่ flex: 1) */
-.sfb-opt-input.sfb-editable { border: none; border-bottom: 1px solid transparent; cursor: text; transition: border-bottom 0.2s; font-size: 14px; color: #202124; outline: none; padding: 4px 2px; text-align: left; flex: 1; min-width: 120px; }
-.sfb-opt-input.sfb-editable:focus { border-bottom: 1px solid #1967d2; }
+.sfb-opt-input.sfb-editable {
+  border: none;
+  border-bottom: 1px solid transparent;
+  cursor: text;
+  transition: border-bottom 0.2s;
+  font-size: 14px;
+  color: #202124;
+  outline: none;
+  padding: 4px 2px;
+  text-align: left;
+  flex: 1;
+  min-width: 120px;
+}
+.sfb-opt-input.sfb-editable:focus {
+  border-bottom: 1px solid #1967d2;
+}
 /* 🟢 ช่องพิมพ์ย่อย (ค่าเริ่มต้นคือขยายเต็มพื้นที่ flex: 1) */
-.sfb-sub-opt-input { border: none; border-bottom: 1px solid transparent; outline: none; padding: 4px 2px; font-size: 13px; color: #202124; flex: 1; min-width: 100px; transition: border-bottom 0.2s; }
-.sfb-sub-opt-input:focus { border-bottom: 1px solid #1967d2; }
+.sfb-sub-opt-input {
+  border: none;
+  border-bottom: 1px solid transparent;
+  outline: none;
+  padding: 4px 2px;
+  font-size: 13px;
+  color: #202124;
+  flex: 1;
+  min-width: 100px;
+  transition: border-bottom 0.2s;
+}
+.sfb-sub-opt-input:focus {
+  border-bottom: 1px solid #1967d2;
+}
 /* 🟢 เส้นประ (จะขยายตัวกินพื้นที่ที่เหลือทั้งหมด flex: 1) */
-.sfb-option-dashed-line { border-bottom: 1.5px dashed #1872bb; flex: 1; min-width: 60px; height: 0; transform: translateY(6px); margin: 0 4px 0 8px; opacity: 1; }
-.sfb-dashed-line { border-bottom: 1.5px dashed #80868b; flex: 1; min-width: 50px; height: 0; transform: translateY(6px); margin: 0 4px 0 8px; opacity: 1; }
-.sfb-option-actions { display: flex; align-items: center; }
-.sfb-hidden-options-main { color: #70757a; font-size: 13px; font-style: italic; display: flex; align-items: center; gap: 6px; }
+.sfb-option-dashed-line {
+  border-bottom: 1.5px dashed #1872bb;
+  flex: 1;
+  min-width: 60px;
+  height: 0;
+  transform: translateY(6px);
+  margin: 0 4px 0 8px;
+  opacity: 1;
+}
+.sfb-dashed-line {
+  border-bottom: 1.5px dashed #80868b;
+  flex: 1;
+  min-width: 50px;
+  height: 0;
+  transform: translateY(6px);
+  margin: 0 4px 0 8px;
+  opacity: 1;
+}
+.sfb-option-actions {
+  display: flex;
+  align-items: center;
+}
+.sfb-hidden-options-main {
+  color: #70757a;
+  font-size: 13px;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
 /* =========================================
    Section Indicator Badge (ป้ายบอกส่วน)
    ========================================= */
-.sfb-section-badge { position: absolute; top: 10px; right: 52px; padding: 2px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #333; border: 1.5px solid; z-index: 10; pointer-events: none; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); letter-spacing: 0.3px; }
+.sfb-section-badge {
+  position: absolute;
+  top: 10px;
+  right: 52px;
+  padding: 2px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #333;
+  border: 1.5px solid;
+  z-index: 10;
+  pointer-events: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.3px;
+}
 /* =========================================
    🟢 Mobile Touch Optimization (Clean & Minimal Fix)
    ========================================= */
 @media (hover: none) and (pointer: coarse) {
- /* 🟢 ลบคำสั่งที่ล็อกการเลื่อนจอบนมือถือออก */
-   /* 🟢 ใช้ height: auto เพื่อไม่ override position: fixed ที่ตั้งไว้ใน ≤1024px */
-   .sfb-builder-container { height: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-.sfb-form-canvas { padding-bottom: 120px; }
-.sfb-form-card,
-   .sfb-form-card.active,
-   .sfb-form-card:active { touch-action: auto !important; }
- }
+  /* 🟢 ลบคำสั่งที่ล็อกการเลื่อนจอบนมือถือออก */
+  /* 🟢 ใช้ height: auto เพื่อไม่ override position: fixed ที่ตั้งไว้ใน ≤1024px */
+  .sfb-builder-container {
+    height: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sfb-form-canvas {
+    padding-bottom: 120px;
+  }
+  .sfb-form-card,
+  .sfb-form-card.active,
+  .sfb-form-card:active {
+    touch-action: auto !important;
+  }
+}

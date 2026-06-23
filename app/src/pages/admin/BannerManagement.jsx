@@ -1,12 +1,28 @@
 import { useState, useEffect } from "react";
 import "./BannerManagement.css";
-import { FiChevronLeft, FiChevronRight, FiPlus, FiInfo, FiImage } from "react-icons/fi";
+import {
+  FiChevronLeft,
+  FiChevronRight,
+  FiPlus,
+  FiInfo,
+  FiImage,
+} from "react-icons/fi";
 import AddBannerModal from "../../components/AddBannerModal";
 import EditBannerModal from "../../components/EditBannerModal";
 import SortableBannerRow from "../../components/SortableBannerRow";
-import { getBanners, createBanner, deleteBanner, reorderBanners, updateBannerImage } from "../../services/api";
+import {
+  getBanners,
+  createBanner,
+  deleteBanner,
+  reorderBanners,
+  updateBannerImage,
+} from "../../services/api";
 import { DndContext, closestCenter } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
 import Swal from "sweetalert2";
 
 export default function BannerManagement() {
@@ -37,8 +53,8 @@ export default function BannerManagement() {
     if (!over) return;
     if (active.id !== over.id) {
       setBanners((items) => {
-        const oldIndex = items.findIndex(i => i.id === active.id);
-        const newIndex = items.findIndex(i => i.id === over.id);
+        const oldIndex = items.findIndex((i) => i.id === active.id);
+        const newIndex = items.findIndex((i) => i.id === over.id);
         const newItems = arrayMove(items, oldIndex, newIndex);
         reorderBanners(newItems);
         return newItems;
@@ -56,7 +72,7 @@ export default function BannerManagement() {
       cancelButtonColor: "#94a3b8",
       confirmButtonText: "ใช่, ลบเลย!",
       cancelButtonText: "ยกเลิก",
-      reverseButtons: true
+      reverseButtons: true,
     });
 
     // ถ้าแอดมินกดยืนยันการลบ
@@ -69,11 +85,14 @@ export default function BannerManagement() {
           text: "แบนเนอร์ถูกลบออกจากระบบแล้ว",
           icon: "success",
           timer: 1500,
-          showConfirmButton: false
+          showConfirmButton: false,
         });
       } catch (error) {
-
-        Swal.fire("เกิดข้อผิดพลาด!", "ไม่สามารถลบแบนเนอร์ได้ กรุณาลองใหม่", "error");
+        Swal.fire(
+          "เกิดข้อผิดพลาด!",
+          "ไม่สามารถลบแบนเนอร์ได้ กรุณาลองใหม่",
+          "error",
+        );
       }
     }
   };
@@ -84,41 +103,42 @@ export default function BannerManagement() {
       await updateBannerImage(updatedBanner.id, {
         image: updatedBanner.image,
         filename: updatedBanner.filename,
-        link: updatedBanner.link || ""
+        link: updatedBanner.link || "",
       });
       setEditingBanner(null);
       await loadBanners();
-
     } catch (err) {
-
       alert("อัปเดตแบนเนอร์ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
     }
   };
 
-  const nextSlide = () => setCurrentSlide(prev => prev === banners.length - 1 ? 0 : prev + 1);
-  const prevSlide = () => setCurrentSlide(prev => prev === 0 ? banners.length - 1 : prev - 1);
+  const nextSlide = () =>
+    setCurrentSlide((prev) => (prev === banners.length - 1 ? 0 : prev + 1));
+  const prevSlide = () =>
+    setCurrentSlide((prev) => (prev === 0 ? banners.length - 1 : prev - 1));
 
   //  ตัวแปรเช็คว่าแบนเนอร์ครบ 5 รูปหรือยัง
   const isLimitReached = banners.length >= 5;
 
   return (
     <div className="bm-wrapper">
-<div className="bm-page">
-
+      <div className="bm-page">
         <div className="bm-header">
-          <h2 className="bm-title" >จัดการภาพแบนเนอร์</h2>
+          <h2 className="bm-title">จัดการภาพแบนเนอร์</h2>
           <button
             className="bm-add-btn"
             onClick={() => {
               if (isLimitReached) {
-                alert("คุณมีแบนเนอร์ครบ 5 รูปแล้ว กรุณาลบแบนเนอร์เก่าออกก่อนเพิ่มรูปใหม่");
+                alert(
+                  "คุณมีแบนเนอร์ครบ 5 รูปแล้ว กรุณาลบแบนเนอร์เก่าออกก่อนเพิ่มรูปใหม่",
+                );
                 return;
               }
               setShowModal(true);
             }}
             style={{
               opacity: isLimitReached ? 0.5 : 1,
-              cursor: isLimitReached ? 'not-allowed' : 'pointer'
+              cursor: isLimitReached ? "not-allowed" : "pointer",
             }}
           >
             <FiPlus /> เพิ่มแบนเนอร์ใหม่
@@ -132,26 +152,44 @@ export default function BannerManagement() {
           </div>
         ) : (
           <div className="bm-content-grid">
-
             {/* --- คอลัมน์ซ้าย: ตารางจัดการแบนเนอร์ --- */}
             <div className="bm-table-container">
               <div className="bm-table-card">
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', flexWrap: 'wrap', gap: '10px' }}>
-                  <h3 style={{ margin: 0, fontWeight: '800', color: '#334155', fontSize: '20px' }}>รายการภาพ Banner ทั้งหมด</h3>
-                  <span style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    fontSize: '13px',
-                    color: '#ea580c',
-                    background: '#fffcf9',
-                    border: '1.5px dashed #fed7aa',
-                    padding: '8px 18px',
-                    borderRadius: '100px',
-                    fontWeight: '700',
-                    boxShadow: '0 4px 12px rgba(244, 121, 50, 0.08)'
-                  }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "25px",
+                    flexWrap: "wrap",
+                    gap: "10px",
+                  }}
+                >
+                  <h3
+                    style={{
+                      margin: 0,
+                      fontWeight: "800",
+                      color: "#334155",
+                      fontSize: "20px",
+                    }}
+                  >
+                    รายการภาพ Banner ทั้งหมด
+                  </h3>
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      fontSize: "13px",
+                      color: "#ea580c",
+                      background: "#fffcf9",
+                      border: "1.5px dashed #fed7aa",
+                      padding: "8px 18px",
+                      borderRadius: "100px",
+                      fontWeight: "700",
+                      boxShadow: "0 4px 12px rgba(244, 121, 50, 0.08)",
+                    }}
+                  >
                     <FiInfo size={16} strokeWidth={2.5} />
                     สามารถเพิ่มรูปได้สูงสุด 5 รูป ({banners.length}/5)
                   </span>
@@ -159,8 +197,14 @@ export default function BannerManagement() {
                     ลากแถวเพื่อเรียงลำดับคลินิก — ลำดับจะแสดงผลบนหน้าเว็บทันที
                   </p>
                 </div>
-                <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                  <SortableContext items={banners.map(b => b.id)} strategy={verticalListSortingStrategy}>
+                <DndContext
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext
+                    items={banners.map((b) => b.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
                     <table>
                       <thead>
                         <tr>
@@ -177,7 +221,9 @@ export default function BannerManagement() {
                                 <div className="bm-empty-icon">
                                   <FiImage size={48} strokeWidth={1.5} />
                                 </div>
-                                <h3 className="bm-empty-text">ยังไม่มีข้อมูล Banner</h3>
+                                <h3 className="bm-empty-text">
+                                  ยังไม่มีข้อมูล Banner
+                                </h3>
                               </div>
                             </td>
                           </tr>
@@ -208,15 +254,23 @@ export default function BannerManagement() {
                   ) : (
                     <>
                       <img src={banners[currentSlide]?.image} alt="" />
-                      <button onClick={prevSlide} className="bm-slide-btn bm-left"><FiChevronLeft /></button>
-                      <button onClick={nextSlide} className="bm-slide-btn bm-right"><FiChevronRight /></button>
+                      <button
+                        onClick={prevSlide}
+                        className="bm-slide-btn bm-left"
+                      >
+                        <FiChevronLeft />
+                      </button>
+                      <button
+                        onClick={nextSlide}
+                        className="bm-slide-btn bm-right"
+                      >
+                        <FiChevronRight />
+                      </button>
                     </>
                   )}
                 </div>
-
               </div>
             </div>
-
           </div>
         )}
       </div>

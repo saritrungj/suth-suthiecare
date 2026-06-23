@@ -1,121 +1,350 @@
-.crm-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(6px); display: flex; justify-content: center; align-items: center; z-index: 9999; padding: 20px; }
-.crm-card { width: 750px; max-width: 100%; background: #ffffff; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); position: relative; overflow: hidden; animation: crmPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.crm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+}
+.crm-card {
+  width: 750px;
+  max-width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+  animation: crmPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 @keyframes crmPop {
- from { transform: scale(0.95); opacity: 0; }
-to { transform: scale(1); opacity: 1; }
- }
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
 /* --- Header (ใช้สีส้ม) --- */
-.crm-header { display: flex; justify-content: space-between; align-items: center; padding: 24px 35px; background: #ffffff; border-bottom: 1px solid #f1f5f9; }
-.crm-header-title { display: flex; align-items: center; gap: 15px; }
-.crm-icon-badge { width: 40px; height: 40px; background: #fff4ed; color: #F47932 ; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-.crm-header h3 { margin: 0; font-size: 22px; font-weight: 800; color: #1e293b; }
+.crm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 35px;
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+}
+.crm-header-title {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.crm-icon-badge {
+  width: 40px;
+  height: 40px;
+  background: #fff4ed;
+  color: #f47932;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+.crm-header h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #1e293b;
+}
 /* ----ปุ่มปิดวงกลมหมุน ----*/
-.crm-close-circle-btn { position: absolute !important; top: 22px !important; right: 25px !important; width: 36px !important; height: 36px !important; display: flex !important; align-items: center !important; justify-content: center !important; background: #f1f5f9 !important; border: none !important; border-radius: 50% !important; cursor: pointer !important; padding: 0 !important; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important; z-index: 10; }
-.crm-close-icon-line { position: relative; display: block; width: 16px; height: 16px; }
-.crm-close-icon-line::before, 
-.crm-close-icon-line::after { content: ''; position: absolute; width: 100%; height: 2px; background-color: #64748b; border-radius: 12px; top: 50%; left: 0; transition: background-color 0.3s ease; }
-.crm-close-icon-line::before { transform: translateY(-50%) rotate(45deg); }
-.crm-close-icon-line::after { transform: translateY(-50%) rotate(-45deg); }
-.crm-close-circle-btn:hover { background: #fee2e2 !important; transform: rotate(90deg) !important; }
+.crm-close-circle-btn {
+  position: absolute !important;
+  top: 22px !important;
+  right: 25px !important;
+  width: 36px !important;
+  height: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #f1f5f9 !important;
+  border: none !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  z-index: 10;
+}
+.crm-close-icon-line {
+  position: relative;
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+.crm-close-icon-line::before,
+.crm-close-icon-line::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: #64748b;
+  border-radius: 12px;
+  top: 50%;
+  left: 0;
+  transition: background-color 0.3s ease;
+}
+.crm-close-icon-line::before {
+  transform: translateY(-50%) rotate(45deg);
+}
+.crm-close-icon-line::after {
+  transform: translateY(-50%) rotate(-45deg);
+}
+.crm-close-circle-btn:hover {
+  background: #fee2e2 !important;
+  transform: rotate(90deg) !important;
+}
 .crm-close-circle-btn:hover .crm-close-icon-line::before,
-.crm-close-circle-btn:hover .crm-close-icon-line::after { background-color: #ef4444 !important; }
+.crm-close-circle-btn:hover .crm-close-icon-line::after {
+  background-color: #ef4444 !important;
+}
 /* --- Body & Inputs (ใช้สีส้ม) --- */
-.crm-body { padding: 30px 35px; max-height: 65vh; overflow-y: auto; }
-.crm-role-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
-.crm-input-group label { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; color: #475569; margin-bottom: 10px; }
-.label-icon { color: #F47932; }
+.crm-body {
+  padding: 30px 35px;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+.crm-role-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+.crm-input-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #475569;
+  margin-bottom: 10px;
+}
+.label-icon {
+  color: #f47932;
+}
 /* ไอคอนหน้า Input สีส้ม */
-.crm-input { width: 100%; padding: 12px 16px; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 15px; background: #f8fafc; transition: all 0.2s; box-sizing: border-box; }
-.crm-input:focus { outline: none; border-color: #F47932; background: #ffffff; box-shadow:0 0 0 4px rgba(244, 121, 50, 0.1); }
-.crm-section-title { font-size: 16px; font-weight: 800; color: #1e293b; margin: 0 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #fff4ed; }
+.crm-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  background: #f8fafc;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+.crm-input:focus {
+  outline: none;
+  border-color: #f47932;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(244, 121, 50, 0.1);
+}
+.crm-section-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0 0 20px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #fff4ed;
+}
 /* --- Module Card  --- */
-.crm-module-card { background: #ffffff; 
-  border: 1.5px solid #f1f5f9; 
-  border-radius: 12px; 
-  margin-bottom: 12px; 
-  transition: all 0.3s ease; 
-  overflow: hidden; }
-.crm-module-header { display: flex;
+.crm-module-card {
+  background: #ffffff;
+  border: 1.5px solid #f1f5f9;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+.crm-module-header {
+  display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 14px 20px;
-  background: #ffffff; 
-  border: 1.5px solid #e2e8f0; 
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-bottom: 8px; }
-  .crm-module-header.active {
-  background: #f8fafc; 
-  border-color: #64748b; 
+  margin-bottom: 8px;
+}
+.crm-module-header.active {
+  background: #f8fafc;
+  border-color: #64748b;
 }
 .crm-module-info h4 {
   margin: 0;
   font-size: 15px;
   font-weight: 700;
-  color: #334155; 
+  color: #334155;
 }
 .crm-chevron {
-  color: #64748b; 
+  color: #64748b;
   transition: transform 0.3s;
 }
-.crm-module-header:hover { background: #f8fafc; }
-.crm-module-title-text { display: flex; align-items: center; gap: 10px; font-weight: 700; color: #334155; }
+.crm-module-header:hover {
+  background: #f8fafc;
+}
+.crm-module-title-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: #334155;
+}
 .crm-module-title-text svg,
-.crm-chevron { 
-  color: #64748b !important; 
-  font-size: 18px; 
+.crm-chevron {
+  color: #64748b !important;
+  font-size: 18px;
 }
 /* ลูกศรสีส้ม */
-.crm-module-card.expanded { border-color: #94a3b8;; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
+.crm-module-card.expanded {
+  border-color: #94a3b8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
 /* กรอบโมดูลสีส้ม */
-.crm-module-card.expanded .crm-module-header { background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
-.crm-permission-row-container { padding: 20px; background: #ffffff; animation: crmSlideDown 0.3s ease-out; }
+.crm-module-card.expanded .crm-module-header {
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+.crm-permission-row-container {
+  padding: 20px;
+  background: #ffffff;
+  animation: crmSlideDown 0.3s ease-out;
+}
 @keyframes crmSlideDown {
- from { opacity: 0; transform: translateY(-10px); }
-to { opacity: 1; transform: translateY(0); }
- }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 /* --- Checkbox Labels ( เปลี่ยนแค่ตอนคลิกเลือกสิทธิ์เป็นสีเขียว) --- */
-.crm-permission-row { display: flex; flex-wrap: wrap; gap: 12px; }
-.crm-checkbox-label { display: flex;
+.crm-permission-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.crm-checkbox-label {
+  display: flex;
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  background: #f1f5f9; 
+  background: #f1f5f9;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
-  color: #64748b; 
-  transition: all 0.2s ease; }
+  color: #64748b;
+  transition: all 0.2s ease;
+}
 /* 🟢 เมื่อคลิกเลือก (Active) -> เปลี่ยนเป็นสีเขียว */
-.crm-checkbox-label.active { background: #f0fdfa !important; border-color: #2f7d7a !important; color: #2f7d7a !important; box-shadow: 0 2px 5px rgba(47, 125, 122, 0.1); }
-.crm-checkbox-label input { display: none; }
-.crm-custom-checkbox { color: #2f7d7a; display: flex; align-items: center; }
+.crm-checkbox-label.active {
+  background: #f0fdfa !important;
+  border-color: #2f7d7a !important;
+  color: #2f7d7a !important;
+  box-shadow: 0 2px 5px rgba(47, 125, 122, 0.1);
+}
+.crm-checkbox-label input {
+  display: none;
+}
+.crm-custom-checkbox {
+  color: #2f7d7a;
+  display: flex;
+  align-items: center;
+}
 /* ไอคอนติ๊กถูกสีเขียว */
 /* --- Footer --- */
-.crm-footer { padding: 24px 35px; background: #f8fafc; display: flex; justify-content: flex-end; gap: 15px; border-top: 1px solid #f1f5f9; }
-.crm-btn-cancel { padding: 12px 25px; background: white; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 700; color: #64748b; cursor: pointer; }
-.crm-btn-save { padding: 12px 35px; background: #F47932; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(244, 121, 50, 0.3); }
-.crm-btn-save:hover { transform: translateY(-2px); background: #ea580c; }
+.crm-footer {
+  padding: 24px 35px;
+  background: #f8fafc;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  border-top: 1px solid #f1f5f9;
+}
+.crm-btn-cancel {
+  padding: 12px 25px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+}
+.crm-btn-save {
+  padding: 12px 35px;
+  background: #f47932;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(244, 121, 50, 0.3);
+}
+.crm-btn-save:hover {
+  transform: translateY(-2px);
+  background: #ea580c;
+}
 /* ── RESPONSIVE ── */
 /* ── RESPONSIVE: บังคับปุ่มให้ยาวและเรียงบรรทัดเดียว (Style เดียวกับหน้าผู้ใช้งาน) ── */
 @media (max-width: 768px) {
- /* จัดการตัวการ์ดให้มนและลอยตัวสวยงาม */
-  .crm-card { width: 95% !important; max-width: 400px !important; /* ล็อกขนาดให้ดูเป็นกล่องเหมือน Add Admin */
-    border-radius: 20px !important; margin: 0 auto !important; }
-/* 🟢 บังคับ Footer ให้ใช้ Grid เพื่อคุมให้ปุ่มยาวบรรทัดเดียวกัน */
-  .crm-footer { padding: 20px 24px !important; background: #f8fafc !important; border-top: 1px solid #f1f5f9 !important; display: grid !important; /* แบ่ง 2 คอลัมน์: ปุ่มยกเลิก 1 ส่วน, ปุ่มบันทึก 1.5 ส่วน (ให้บันทึกดูยาวเด่นกว่า) */
-    grid-template-columns: 1fr 1.5fr !important; gap: 12px !important; /* ล้างค่า flex เดิม */
-    flex-direction: row !important; justify-content: stretch !important; }
-/* 🟢 บังคับให้ปุ่มขยายยาวเต็มพื้นที่ช่อง Grid */
-  .crm-btn-cancel, 
-  .crm-btn-save { width: 100% !important; /* บังคับยาวเต็มช่อง */
+  /* จัดการตัวการ์ดให้มนและลอยตัวสวยงาม */
+  .crm-card {
+    width: 95% !important;
+    max-width: 400px !important; /* ล็อกขนาดให้ดูเป็นกล่องเหมือน Add Admin */
+    border-radius: 20px !important;
+    margin: 0 auto !important;
+  }
+  /* 🟢 บังคับ Footer ให้ใช้ Grid เพื่อคุมให้ปุ่มยาวบรรทัดเดียวกัน */
+  .crm-footer {
+    padding: 20px 24px !important;
+    background: #f8fafc !important;
+    border-top: 1px solid #f1f5f9 !important;
+    display: grid !important; /* แบ่ง 2 คอลัมน์: ปุ่มยกเลิก 1 ส่วน, ปุ่มบันทึก 1.5 ส่วน (ให้บันทึกดูยาวเด่นกว่า) */
+    grid-template-columns: 1fr 1.5fr !important;
+    gap: 12px !important; /* ล้างค่า flex เดิม */
+    flex-direction: row !important;
+    justify-content: stretch !important;
+  }
+  /* 🟢 บังคับให้ปุ่มขยายยาวเต็มพื้นที่ช่อง Grid */
+  .crm-btn-cancel,
+  .crm-btn-save {
+    width: 100% !important; /* บังคับยาวเต็มช่อง */
     height: 48px !important; /* เพิ่มความสูงให้กดง่ายและดูยาวขึ้น */
-    margin: 0 !important; padding: 0 !important; font-size: 14px !important; font-weight: 700 !important; border-radius: 12px !important; /* จัดข้อความให้อยู่กลางปุ่ม */
-    display: flex !important; justify-content: center !important; align-items: center !important; white-space: nowrap !important; box-shadow: none !important; }
-/* ปรับแต่งส่วนเนื้อหาด้านบนให้ประหยัดพื้นที่ */
-  .crm-body { padding: 20px 24px !important; }
-.crm-role-info-grid { grid-template-columns: 1fr !important; gap: 15px !important; }
- }
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    border-radius: 12px !important; /* จัดข้อความให้อยู่กลางปุ่ม */
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    white-space: nowrap !important;
+    box-shadow: none !important;
+  }
+  /* ปรับแต่งส่วนเนื้อหาด้านบนให้ประหยัดพื้นที่ */
+  .crm-body {
+    padding: 20px 24px !important;
+  }
+  .crm-role-info-grid {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+  }
+}

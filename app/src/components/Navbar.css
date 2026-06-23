@@ -9,7 +9,7 @@
   position: sticky;
   top: 0;
   z-index: 999;
-  font-family: 'Noto Sans Thai', sans-serif;
+  font-family: "Noto Sans Thai", sans-serif;
 }
 
 .main-nav__logo {
@@ -30,24 +30,24 @@
 
 /* 🟢 ดีไซน์ปุ่ม Back ให้เรียบหรู */
 .main-nav__back {
-  border: 1px solid #e2e8f0; 
+  border: 1px solid #e2e8f0;
   background: white;
-  padding: 8px 16px; 
+  padding: 8px 16px;
   border-radius: 12px;
-  display: flex; 
-  align-items: center; 
+  display: flex;
+  align-items: center;
   gap: 8px;
-  color: #64748b; 
-  font-size: 14px; 
+  color: #64748b;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s; 
+  transition: all 0.2s;
   font-family: inherit;
 }
 
-.main-nav__back:hover { 
-  background: #f8fafc; 
-  color: #1e293b; 
+.main-nav__back:hover {
+  background: #f8fafc;
+  color: #1e293b;
   border-color: #cbd5e1;
 }
 /* =========================================
@@ -55,22 +55,22 @@
 ========================================= */
 @media screen and (max-width: 768px) {
   .main-nav {
-    padding: 0 16px !important; 
+    padding: 0 16px !important;
     justify-content: space-between !important;
     height: 70px !important;
   }
 
   /* 2. จัดการโลโก้ให้ชิดซ้ายสุด */
   .main-nav__logo {
-    height: 100px !important; 
+    height: 100px !important;
     margin-top: 15px !important;
-    margin-left: -15px !important; 
+    margin-left: -15px !important;
   }
 
   /* 3. จัดกลุ่มปุ่มฝั่งขวาให้ชิดขอบขวา */
   .main-nav > div:last-child {
-    margin-left: auto !important; 
-    gap: 8px !important; 
+    margin-left: auto !important;
+    gap: 8px !important;
   }
 
   .main-nav__back {

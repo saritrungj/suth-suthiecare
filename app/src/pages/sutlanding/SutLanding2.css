@@ -1,158 +1,849 @@
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300; 400; 500; 600; 700; 800&display=swap'); /* =========================================
+@import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@300; 400; 500; 600; 700; 800&display=swap"); /* =========================================
    1. RESET & VARIABLES 
 ========================================= */
-.sut2-page { font-family: 'Sarabun', sans-serif; background-color: #0f172a; overflow-x: hidden; }
-.sut2-page * { box-sizing: border-box; margin: 0; padding: 0; }
+.sut2-page {
+  font-family: "Sarabun", sans-serif;
+  background-color: #0f172a;
+  overflow-x: hidden;
+}
+.sut2-page * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 /* =========================================
    2. REVEAL FOOTER TRICK
 ========================================= */
-.sut2-main-wrapper { position: relative; z-index: 2; background-color: #f8fafc; margin-bottom: 350px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: translateZ(0); will-change: transform; }
-.sut2-footer { position: fixed; bottom: 0; left: 0; width: 100%; height: 350px; z-index: 1; background: #0f172a; color: #94a3b8; display: flex; flex-direction: column; justify-content: center; padding: 40px 10%; }
-.sut2-footer-content { display: flex; justify-content: space-between; gap: 40px; border-bottom: 1px solid #1e293b; padding-bottom: 30px; margin-bottom: 20px; }
-.sut2-footer-logo { height: 150px; margin-bottom: 1px; filter: brightness(0) invert(1); transform: translate(-35px, -20px); }
-.sut2-footer-col h4 { color: #f8fafc; font-size: 18px; margin-bottom: 16px; }
-.sut2-footer-bottom { text-align: center; font-size: 14px; }
+.sut2-main-wrapper {
+  position: relative;
+  z-index: 2;
+  background-color: #f8fafc;
+  margin-bottom: 350px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  transform: translateZ(0);
+  will-change: transform;
+}
+.sut2-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 350px;
+  z-index: 1;
+  background: #0f172a;
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 10%;
+}
+.sut2-footer-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 30px;
+  margin-bottom: 20px;
+}
+.sut2-footer-logo {
+  height: 150px;
+  margin-bottom: 1px;
+  filter: brightness(0) invert(1);
+  transform: translate(-35px, -20px);
+}
+.sut2-footer-col h4 {
+  color: #f8fafc;
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+.sut2-footer-bottom {
+  text-align: center;
+  font-size: 14px;
+}
 @media (max-width: 768px) {
- .sut2-main-wrapper { margin-bottom: 0; }
-.sut2-footer { position: relative; height: auto; z-index: 2; padding: 40px 20px; }
-.sut2-footer-content { flex-direction: column; }
- }
+  .sut2-main-wrapper {
+    margin-bottom: 0;
+  }
+  .sut2-footer {
+    position: relative;
+    height: auto;
+    z-index: 2;
+    padding: 40px 20px;
+  }
+  .sut2-footer-content {
+    flex-direction: column;
+  }
+}
 /* =========================================
    3. NAVBAR
 ========================================= */
-.sut2-nav { position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 6px 5%; z-index: 100; transition: all 0.4s ease; transform: translateZ(0); }
-.sut2-nav--scrolled { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); padding: 1px 5%; box-shadow: 0 4px 20px rgba(0,0,0,0.05); height: 80px; }
-.sut2-nav__logo img { height: 150px; margin-top: 10%; }
-.sut2-nav__actions { display: flex; gap: 12px; }
-.sut2-nav__btn { display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 30px; font-family: 'Noto Sans Thai', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; border: none; transition: 0.3s; }
-.sut2-nav__btn--history { background: rgba(30, 41, 59, 0.6); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px); }
-.sut2-nav__btn--history:hover { background: linear-gradient(135deg, #d4af37, #facc15); color: #1e293b; border: none; }
-.sut2-nav--scrolled .sut2-nav__btn--history:hover { background: #f1f5f9; }
-.sut2-nav__btn--login { background: #f47932; color: white; box-shadow: 0 4px 15px rgba(244, 121, 50, 0.3); }
-.sut2-nav__btn--login:hover { transform: translateY(-2px); background: #e06825; }
-.sut2-nav__menu-btn { display: none; font-size: 28px; cursor: pointer; color: #1e293b; }
+.sut2-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 5%;
+  z-index: 100;
+  transition: all 0.4s ease;
+  transform: translateZ(0);
+}
+.sut2-nav--scrolled {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  padding: 1px 5%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  height: 80px;
+}
+.sut2-nav__logo img {
+  height: 150px;
+  margin-top: 10%;
+}
+.sut2-nav__actions {
+  display: flex;
+  gap: 12px;
+}
+.sut2-nav__btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-family: "Noto Sans Thai", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: 0.3s;
+}
+.sut2-nav__btn--history {
+  background: rgba(30, 41, 59, 0.6);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+}
+.sut2-nav__btn--history:hover {
+  background: linear-gradient(135deg, #d4af37, #facc15);
+  color: #1e293b;
+  border: none;
+}
+.sut2-nav--scrolled .sut2-nav__btn--history:hover {
+  background: #f1f5f9;
+}
+.sut2-nav__btn--login {
+  background: #f47932;
+  color: white;
+  box-shadow: 0 4px 15px rgba(244, 121, 50, 0.3);
+}
+.sut2-nav__btn--login:hover {
+  transform: translateY(-2px);
+  background: #e06825;
+}
+.sut2-nav__menu-btn {
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #1e293b;
+}
 @media (max-width: 1024px) {
- .sut2-nav__menu-btn { display: block; color: white; }
-.sut2-nav--scrolled .sut2-nav__menu-btn { color: #1e293b; }
-.sut2-nav__actions { position: absolute; top: 100%; right: 5%; flex-direction: column; background: white; padding: 16px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); opacity: 0; pointer-events: none; transform: translateY(-10px); transition: 0.3s; z-index: 101; }
-.sut2-open { opacity: 1; pointer-events: auto; transform: translateY(0); }
-.sut2-nav { background: transparent !important; box-shadow: none !important; padding-left: 15px !important; padding-right: 5% !important; }
-.sut2-nav--scrolled { background: rgba(255, 255, 255, 0.95) !important; box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important; height: 70px !important; }
- }
+  .sut2-nav__menu-btn {
+    display: block;
+    color: white;
+  }
+  .sut2-nav--scrolled .sut2-nav__menu-btn {
+    color: #1e293b;
+  }
+  .sut2-nav__actions {
+    position: absolute;
+    top: 100%;
+    right: 5%;
+    flex-direction: column;
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: 0.3s;
+    z-index: 101;
+  }
+  .sut2-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .sut2-nav {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding-left: 15px !important;
+    padding-right: 5% !important;
+  }
+  .sut2-nav--scrolled {
+    background: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+    height: 70px !important;
+  }
+}
 /* =========================================
    4. HERO SPLIT SECTION 
 ========================================= */
-.sut2-hero { position: relative; min-height: 100vh; display: flex; align-items: center; padding: 100px 5%; overflow: hidden; transform: translateZ(0); z-index: 1; background-color: #0f172a; }
-.sut2-hero__bg { position: absolute; top: -30%; left: 0; width: 100%; height: 160%; background-position: center; background-size: cover; z-index: 0; pointer-events: none; will-change: transform; }
-.sut2-hero__overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(15,23,42,0.4) 100%); z-index: 1; transform: translateZ(0); }
-.sut2-hero__content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 1300px; margin: 0 auto; gap: 40px; }
-.sut2-hero__text-box { flex: 1; font-family: 'Noto Sans Thai', sans-serif; color: white; animation: sut2FadeInUp 1s ease-out; will-change: transform; width: 100%; }
-.sut2-hero__badge { display: none; background: rgba(255,255,255,0.1); backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; font-size: 14px; font-weight: 600; letter-spacing: 1px; margin-bottom: 20px; }
-.sut2-hero__title { font-size: 4rem; line-height: 1.3; font-weight: 700; margin-bottom: 20px; }
-.sut2-hero__highlight { color: #f47932; font-size: 3.2rem; }
-.sut2-hero__subtitle { font-size: 1.2rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 40px; max-width: 500px; }
-.sut2-hero__cta { padding: 16px 32px; font-size: 18px; font-weight: 700; font-family: inherit; border-radius: 40px; border: none; cursor: pointer; background: #f47932; color: white; transition: 0.3s; box-shadow: 0 10px 30px rgba(244, 121, 50, 0.4); }
-.sut2-hero__cta-group { display: flex; gap: 16px; flex-wrap: wrap; }
-.sut2-hero__cta--secondary { background: #3f6f70; border: 2px solid #3f6f70; color: #ffffff; box-shadow: none; transition: all 0.3s ease; }
-.sut2-hero__cta--secondary:hover { background: #355e5f; border-color: #355e5f; transform: translateY(-2px); color: #fff; }
-.sut2-hero__banner-box { flex: 1; max-width: 500px; animation: sut2FadeInUp 1s ease-out 0.2s backwards; will-change: transform; }
-.sut2-banner-slider { position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 24px; overflow: hidden; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 20px 50px rgba(0,0,0,0.3); transform: translateZ(0); }
-.sut2-banner-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.8s ease-in-out; transform: translateZ(0); backface-visibility: hidden; }
-.sut2-banner-slide.active { opacity: 1; }
-.sut2-banner-dots { position: absolute; bottom: 20px; width: 100%; display: flex; justify-content: center; gap: 8px; z-index: 10; }
-.sut2-banner-dot { width: 10px; height: 10px; border-radius: 50%; border: none; cursor: pointer; background: rgba(255,255,255,0.4); transition: 0.3s; }
-.sut2-banner-dot.active { background: white; transform: scale(1.3); }
-.sut2-banner-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: white; background: rgba(255,255,255,0.05); border-radius: 24px; }
+.sut2-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 100px 5%;
+  overflow: hidden;
+  transform: translateZ(0);
+  z-index: 1;
+  background-color: #0f172a;
+}
+.sut2-hero__bg {
+  position: absolute;
+  top: -30%;
+  left: 0;
+  width: 100%;
+  height: 160%;
+  background-position: center;
+  background-size: cover;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+.sut2-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.9) 0%,
+    rgba(15, 23, 42, 0.4) 100%
+  );
+  z-index: 1;
+  transform: translateZ(0);
+}
+.sut2-hero__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  gap: 40px;
+}
+.sut2-hero__text-box {
+  flex: 1;
+  font-family: "Noto Sans Thai", sans-serif;
+  color: white;
+  animation: sut2FadeInUp 1s ease-out;
+  will-change: transform;
+  width: 100%;
+}
+.sut2-hero__badge {
+  display: none;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+.sut2-hero__title {
+  font-size: 4rem;
+  line-height: 1.3;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.sut2-hero__highlight {
+  color: #f47932;
+  font-size: 3.2rem;
+}
+.sut2-hero__subtitle {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #cbd5e1;
+  margin-bottom: 40px;
+  max-width: 500px;
+}
+.sut2-hero__cta {
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: inherit;
+  border-radius: 40px;
+  border: none;
+  cursor: pointer;
+  background: #f47932;
+  color: white;
+  transition: 0.3s;
+  box-shadow: 0 10px 30px rgba(244, 121, 50, 0.4);
+}
+.sut2-hero__cta-group {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.sut2-hero__cta--secondary {
+  background: #3f6f70;
+  border: 2px solid #3f6f70;
+  color: #ffffff;
+  box-shadow: none;
+  transition: all 0.3s ease;
+}
+.sut2-hero__cta--secondary:hover {
+  background: #355e5f;
+  border-color: #355e5f;
+  transform: translateY(-2px);
+  color: #fff;
+}
+.sut2-hero__banner-box {
+  flex: 1;
+  max-width: 500px;
+  animation: sut2FadeInUp 1s ease-out 0.2s backwards;
+  will-change: transform;
+}
+.sut2-banner-slider {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  border-radius: 24px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  transform: translateZ(0);
+}
+.sut2-banner-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+.sut2-banner-slide.active {
+  opacity: 1;
+}
+.sut2-banner-dots {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  z-index: 10;
+}
+.sut2-banner-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.4);
+  transition: 0.3s;
+}
+.sut2-banner-dot.active {
+  background: white;
+  transform: scale(1.3);
+}
+.sut2-banner-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: white;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+}
 @media (max-width: 992px) {
- .sut2-hero__content { flex-direction: column; text-align: center; }
-.sut2-hero__subtitle { margin: 0 auto 30px auto; }
-.sut2-hero__banner-box { width: 100%; max-width: 600px; }
- }
+  .sut2-hero__content {
+    flex-direction: column;
+    text-align: center;
+  }
+  .sut2-hero__subtitle {
+    margin: 0 auto 30px auto;
+  }
+  .sut2-hero__banner-box {
+    width: 100%;
+    max-width: 600px;
+  }
+}
 /* =========================================
    5. UNIVERSAL HORIZONTAL SCROLL
 ========================================= */
-.sut2-3d-layout-container { flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; gap: 20px !important; padding: 20px 5vw !important; overflow-x: auto !important; overflow-y: hidden !important; scroll-snap-type: x mandatory !important; -webkit-overflow-scrolling: touch !important; scroll-behavior: smooth !important; width: 100vw !important; margin-left: calc(-50vw + 50%) !important; transform: translateZ(0); display: flex !important; }
-.sut2-3d-layout-container::-webkit-scrollbar { display: none !important; }
-.sut2-left-column { flex-shrink: 0 !important; width: auto !important; height: 480px !important; display: flex !important; align-items: center !important; scroll-snap-align: center !important; justify-content: center !important; }
-.sut2-promo-static-card { width: 320px !important; height: 480px !important; transform: none !important; margin: 0 !important; background: linear-gradient(135deg, #f97316 0%, #fb923c 100%); border-radius: 30px; padding: 40px 30px; color: white; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(249, 115, 22, 0.15); display: flex; flex-direction: column; z-index: 10; }
-.sut2-promo-static-card.promo-flip { transform: rotateY(180deg) !important; }
-.sut2-promo-static-card::before { content: ""; position: absolute; bottom: -30px; right: 10px; width: 200px; height: 200px; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 140 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 90 L25 70 A10 10 0 0 1 40 55 A10 10 0 0 1 55 70 Z' stroke='white' stroke-width='2.5' fill='none'/%3E%3Cpath d='M90 100 L50 60 A20 20 0 0 1 90 30 A20 20 0 0 1 130 60 Z' stroke='white' stroke-width='3' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-size: contain; opacity: 0.3; pointer-events: none; z-index: 1; transform: translateZ(0); }
-.sut2-promo-static-card > * { position: relative; z-index: 2; }
-.sut2-3d-main-content { flex-shrink: 0 !important; width: auto !important; height: 480px !important; display: flex !important; align-items: center !important; margin: 0 !important; }
-.sut2-stacked-viewport { width: auto !important; height: 100% !important; display: flex !important; align-items: center !important; overflow: visible !important; transform: none !important; padding: 0 !important; z-index: 50; position: relative; flex-shrink: 0; }
-.sut2-stacked-viewport::after { display: none !important; }
-.sut2-stacked-list { display: flex !important; align-items: center !important; gap: 20px !important; width: max-content !important; height: 100% !important; transform: none !important; position: static !important; }
-.sut2-stacked-item, .sut2-stacked-item.active, .sut2-stacked-item.exit, .sut2-stacked-item.hidden, .sut2-stacked-item.waiting, .sut2-stacked-item.visible { position: relative !important; width: 320px !important; height: 480px !important; flex-shrink: 0 !important; scroll-snap-align: center !important; transform: none !important; opacity: 1 !important; visibility: visible !important; display: block !important; pointer-events: auto !important; transition: none !important; z-index: 1 !important; left: auto !important; top: auto !important; cursor: pointer; }
-.sut2-compact-controls, .sut2-stacked-controls, .sut2-dots-wrapper-left, .promo-back-forms { display: none !important; }
-.sut2-3d-section { position: relative; padding: 100px 0; margin-top: -80px; margin-bottom: -80px; background: linear-gradient(to bottom, rgba(15,23,42,0) 0px, rgba(15,23,42,0.05) 10px, rgba(15,23,42,0.15) 20px, rgba(15,23,42,0.3) 30px, rgba(15,23,42,0.5) 40px, rgba(15,23,42,0.7) 50px, rgba(15,23,42,0.85) 60px, rgba(15,23,42,0.95) 70px, rgba(15,23,42,1) 80px, rgba(15,23,42,1) calc(100% - 80px), rgba(15,23,42,0.95) calc(100% - 70px), rgba(15,23,42,0.85) calc(100% - 60px), rgba(15,23,42,0.7) calc(100% - 50px), rgba(15,23,42,0.5) calc(100% - 40px), rgba(15,23,42,0.3) calc(100% - 30px), rgba(15,23,42,0.15) calc(100% - 20px), rgba(15,23,42,0.05) calc(100% - 10px), rgba(15,23,42,0) 100%); overflow: visible; z-index: 10; transform: translateZ(0); }
-.form-panel { transform: none !important; opacity: 1 !important; transition: none !important; }
-.promo-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.7s ease; }
-.sut2-promo-static-card.promo-flip .promo-inner { transform: rotateY(180deg); }
-.promo-front, .promo-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 30px; overflow: hidden; -webkit-backface-visibility: hidden; background: transparent; }
-.promo-back { transform: rotateY(180deg) scaleX(-1); display: flex; flex-direction: column; justify-content: flex-start; padding-top: 1px; }
-.promo-back * { transform: rotateY(180deg); }
-.promo-back .sut2-promo-content { margin-bottom: 20px; }
-.sut2-promo-title { font-size: 2.2rem; font-weight: 800; line-height: 1.2; letter-spacing: -0.5px; }
-.sut2-promo-divider { width: 40px; height: 4px; background: white; margin: 20px 0; border-radius: 2px; }
-.sut2-promo-desc { font-size: 1.05rem; line-height: 1.7; opacity: 0.9; }
-.sut2-promo-content { height: 100%; font-family: 'Noto Sans Thai', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 30px; text-align: center; gap: 5px; }
-.promo-back .back-btn { margin-top: auto !important; margin-bottom: 20px !important; padding: 10px 24px !important; border-radius: 25px !important; border: 1px solid rgba(255, 255, 255, 0.3) !important; background: #f1f5f9 !important; color: #1e293b !important; font-weight: 700 !important; cursor: pointer !important; display: flex !important; align-items: center !important; justify-content: center !important; gap: 8px !important; transform: rotateY(180deg) !important; transition: background 0.3s, color 0.3s, box-shadow 0.3s, transform 0.3s !important; }
-.promo-back .back-btn:hover { background: #334155 !important; color: #ffffff !important; border-color: #334155 !important; transform: rotateY(180deg) translateY(-3px) !important; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2) !important; }
-.promo-back .back-btn * { transform: none !important; }
+.sut2-3d-layout-container {
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 20px !important;
+  padding: 20px 5vw !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scroll-snap-type: x mandatory !important;
+  -webkit-overflow-scrolling: touch !important;
+  scroll-behavior: smooth !important;
+  width: 100vw !important;
+  margin-left: calc(-50vw + 50%) !important;
+  transform: translateZ(0);
+  display: flex !important;
+}
+.sut2-3d-layout-container::-webkit-scrollbar {
+  display: none !important;
+}
+.sut2-left-column {
+  flex-shrink: 0 !important;
+  width: auto !important;
+  height: 480px !important;
+  display: flex !important;
+  align-items: center !important;
+  scroll-snap-align: center !important;
+  justify-content: center !important;
+}
+.sut2-promo-static-card {
+  width: 320px !important;
+  height: 480px !important;
+  transform: none !important;
+  margin: 0 !important;
+  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+  border-radius: 30px;
+  padding: 40px 30px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(249, 115, 22, 0.15);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+.sut2-promo-static-card.promo-flip {
+  transform: rotateY(180deg) !important;
+}
+.sut2-promo-static-card::before {
+  content: "";
+  position: absolute;
+  bottom: -30px;
+  right: 10px;
+  width: 200px;
+  height: 200px;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 140 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 90 L25 70 A10 10 0 0 1 40 55 A10 10 0 0 1 55 70 Z' stroke='white' stroke-width='2.5' fill='none'/%3E%3Cpath d='M90 100 L50 60 A20 20 0 0 1 90 30 A20 20 0 0 1 130 60 Z' stroke='white' stroke-width='3' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 1;
+  transform: translateZ(0);
+}
+.sut2-promo-static-card > * {
+  position: relative;
+  z-index: 2;
+}
+.sut2-3d-main-content {
+  flex-shrink: 0 !important;
+  width: auto !important;
+  height: 480px !important;
+  display: flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+}
+.sut2-stacked-viewport {
+  width: auto !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  overflow: visible !important;
+  transform: none !important;
+  padding: 0 !important;
+  z-index: 50;
+  position: relative;
+  flex-shrink: 0;
+}
+.sut2-stacked-viewport::after {
+  display: none !important;
+}
+.sut2-stacked-list {
+  display: flex !important;
+  align-items: center !important;
+  gap: 20px !important;
+  width: max-content !important;
+  height: 100% !important;
+  transform: none !important;
+  position: static !important;
+}
+.sut2-stacked-item,
+.sut2-stacked-item.active,
+.sut2-stacked-item.exit,
+.sut2-stacked-item.hidden,
+.sut2-stacked-item.waiting,
+.sut2-stacked-item.visible {
+  position: relative !important;
+  width: 320px !important;
+  height: 480px !important;
+  flex-shrink: 0 !important;
+  scroll-snap-align: center !important;
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  pointer-events: auto !important;
+  transition: none !important;
+  z-index: 1 !important;
+  left: auto !important;
+  top: auto !important;
+  cursor: pointer;
+}
+.sut2-compact-controls,
+.sut2-stacked-controls,
+.sut2-dots-wrapper-left,
+.promo-back-forms {
+  display: none !important;
+}
+.sut2-3d-section {
+  position: relative;
+  padding: 100px 0;
+  margin-top: -80px;
+  margin-bottom: -80px;
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 23, 42, 0) 0px,
+    rgba(15, 23, 42, 0.05) 10px,
+    rgba(15, 23, 42, 0.15) 20px,
+    rgba(15, 23, 42, 0.3) 30px,
+    rgba(15, 23, 42, 0.5) 40px,
+    rgba(15, 23, 42, 0.7) 50px,
+    rgba(15, 23, 42, 0.85) 60px,
+    rgba(15, 23, 42, 0.95) 70px,
+    rgba(15, 23, 42, 1) 80px,
+    rgba(15, 23, 42, 1) calc(100% - 80px),
+    rgba(15, 23, 42, 0.95) calc(100% - 70px),
+    rgba(15, 23, 42, 0.85) calc(100% - 60px),
+    rgba(15, 23, 42, 0.7) calc(100% - 50px),
+    rgba(15, 23, 42, 0.5) calc(100% - 40px),
+    rgba(15, 23, 42, 0.3) calc(100% - 30px),
+    rgba(15, 23, 42, 0.15) calc(100% - 20px),
+    rgba(15, 23, 42, 0.05) calc(100% - 10px),
+    rgba(15, 23, 42, 0) 100%
+  );
+  overflow: visible;
+  z-index: 10;
+  transform: translateZ(0);
+}
+.form-panel {
+  transform: none !important;
+  opacity: 1 !important;
+  transition: none !important;
+}
+.promo-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.7s ease;
+}
+.sut2-promo-static-card.promo-flip .promo-inner {
+  transform: rotateY(180deg);
+}
+.promo-front,
+.promo-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 30px;
+  overflow: hidden;
+  -webkit-backface-visibility: hidden;
+  background: transparent;
+}
+.promo-back {
+  transform: rotateY(180deg) scaleX(-1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 1px;
+}
+.promo-back * {
+  transform: rotateY(180deg);
+}
+.promo-back .sut2-promo-content {
+  margin-bottom: 20px;
+}
+.sut2-promo-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+.sut2-promo-divider {
+  width: 40px;
+  height: 4px;
+  background: white;
+  margin: 20px 0;
+  border-radius: 2px;
+}
+.sut2-promo-desc {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  opacity: 0.9;
+}
+.sut2-promo-content {
+  height: 100%;
+  font-family: "Noto Sans Thai", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 30px;
+  text-align: center;
+  gap: 5px;
+}
+.promo-back .back-btn {
+  margin-top: auto !important;
+  margin-bottom: 20px !important;
+  padding: 10px 24px !important;
+  border-radius: 25px !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  background: #f1f5f9 !important;
+  color: #1e293b !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  transform: rotateY(180deg) !important;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    box-shadow 0.3s,
+    transform 0.3s !important;
+}
+.promo-back .back-btn:hover {
+  background: #334155 !important;
+  color: #ffffff !important;
+  border-color: #334155 !important;
+  transform: rotateY(180deg) translateY(-3px) !important;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2) !important;
+}
+.promo-back .back-btn * {
+  transform: none !important;
+}
 /* =========================================
    6. CARDS STYLING ✅ แก้ไขใหม่ทั้งหมด
 ========================================= */
-.sut2-card { width: 100%; height: 100%; background: white; border-radius: 20px; overflow: hidden; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important; display: flex; flex-direction: column; border: 1px solid #f1f5f9; transform: none !important; transition: all 0.3s ease !important; }
-.sut2-card:hover { transform: translateY(-5px) !important; box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important; }
+.sut2-card {
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #f1f5f9;
+  transform: none !important;
+  transition: all 0.3s ease !important;
+}
+.sut2-card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+}
 /* ===== Band ด้านบน ===== */
-.sut2-card__band { /* ความสูงคงที่ทุกการ์ด */
-  height: 160px; flex-shrink: 0; position: relative; overflow: hidden; /* สีเริ่มต้น (จะถูก override โดย theme class ด้านล่าง) */
-  background: #e2e8f0; }
+.sut2-card__band {
+  /* ความสูงคงที่ทุกการ์ด */
+  height: 160px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden; /* สีเริ่มต้น (จะถูก override โดย theme class ด้านล่าง) */
+  background: #e2e8f0;
+}
 /* ถ้ามีรูปเป็น banner → รูปเต็ม band */
-.sut2-card__band--has-img { background: transparent !important; }
-.sut2-card__band-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sut2-card__band--has-img {
+  background: transparent !important;
+}
+.sut2-card__band-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 /* ถ้ามีรูปไม่ใช่ banner → แสดงรูปกลาง band บนพื้นสีขาว */
-.sut2-card__band--has-illust { background: #f8fafc !important; display: flex; align-items: center; justify-content: center; }
-.sut2-card__illust-inline { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-.sut2-card__illust-inline img { height: 120px; width: 120px; object-fit: contain; }
+.sut2-card__band--has-illust {
+  background: #f8fafc !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sut2-card__illust-inline {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sut2-card__illust-inline img {
+  height: 120px;
+  width: 120px;
+  object-fit: contain;
+}
 /* ===== Theme colors สำหรับ band เมื่อไม่มีรูป ===== */
-.sut2-card--blue .sut2-card__band { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-.sut2-card--pink .sut2-card__band { background: linear-gradient(135deg, #ec4899, #db2777); }
-.sut2-card--green .sut2-card__band { background: linear-gradient(135deg, #10b981, #059669); }
+.sut2-card--blue .sut2-card__band {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+.sut2-card--pink .sut2-card__band {
+  background: linear-gradient(135deg, #ec4899, #db2777);
+}
+.sut2-card--green .sut2-card__band {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
 /* เมื่อมีรูป banner → ลบ gradient ออก */
-.sut2-card--blue  .sut2-card__band--has-img,
-.sut2-card--pink  .sut2-card__band--has-img,
-.sut2-card--green .sut2-card__band--has-img { background: transparent !important; }
+.sut2-card--blue .sut2-card__band--has-img,
+.sut2-card--pink .sut2-card__band--has-img,
+.sut2-card--green .sut2-card__band--has-img {
+  background: transparent !important;
+}
 /* เมื่อมีรูปแต่ไม่ใช่ banner → พื้นขาว */
-.sut2-card--blue  .sut2-card__band--has-illust,
-.sut2-card--pink  .sut2-card__band--has-illust,
-.sut2-card--green .sut2-card__band--has-illust { background: #f8fafc !important; }
+.sut2-card--blue .sut2-card__band--has-illust,
+.sut2-card--pink .sut2-card__band--has-illust,
+.sut2-card--green .sut2-card__band--has-illust {
+  background: #f8fafc !important;
+}
 /* ===== Body ตัวหนังสือ (ความสูงเท่ากันทุกการ์ด) ===== */
-.sut2-card__body { padding: 20px 20px 16px 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
-.sut2-card__title { font-size: 1.05rem; color: #1e293b; font-weight: 700; line-height: 1.45; margin: 0; /* จำกัด 2 บรรทัด + ความสูงคงที่ */
-  display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 3.05rem; }
-.sut2-card__desc { font-size: 0.9rem; color: #64748b; font-weight: 400; line-height: 1.6; margin: 0; /* จำกัด 3 บรรทัด + ความสูงคงที่ */
-  display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; min-height: 4.3rem; }
+.sut2-card__body {
+  padding: 20px 20px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+.sut2-card__title {
+  font-size: 1.05rem;
+  color: #1e293b;
+  font-weight: 700;
+  line-height: 1.45;
+  margin: 0; /* จำกัด 2 บรรทัด + ความสูงคงที่ */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 3.05rem;
+}
+.sut2-card__desc {
+  font-size: 0.9rem;
+  color: #64748b;
+  font-weight: 400;
+  line-height: 1.6;
+  margin: 0; /* จำกัด 3 บรรทัด + ความสูงคงที่ */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 4.3rem;
+}
 /* ===== Count footer ===== */
-.sut2-card__count { padding: 14px 20px; background: #f8fafc; border-top: 1px solid #f1f5f9; text-align: right; flex-shrink: 0; }
-.sut2-card__count-text { font-size: 0.9rem; color: #475569; }
-.sut2-card__count-text strong { color: #f47932; font-size: 1.05rem; }
+.sut2-card__count {
+  padding: 14px 20px;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+  text-align: right;
+  flex-shrink: 0;
+}
+.sut2-card__count-text {
+  font-size: 0.9rem;
+  color: #475569;
+}
+.sut2-card__count-text strong {
+  color: #f47932;
+  font-size: 1.05rem;
+}
 /* ลบ class เก่าที่ไม่ใช้แล้ว */
-.sut2-card__illust { display: none !important; }
-.sut2-card__band--no-img { background: #e2e8f0 !important; }
+.sut2-card__illust {
+  display: none !important;
+}
+.sut2-card__band--no-img {
+  background: #e2e8f0 !important;
+}
 /* =========================================
    7. CLINIC CARD
 ========================================= */
-.clinic-card { width: 100%; height: 100%; background-size: cover; background-position: center; background-repeat: no-repeat; overflow: hidden; position: relative; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.5s ease, opacity 0.5s ease; will-change: transform; backface-visibility: hidden; transform: translateZ(0); }
-.clinic-card > * { position: relative; z-index: 2; }
-.clinic-card::before { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,0.35); }
-.clinic-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
-.clinic-icon { width: 90px; height: 90px; border-radius: 50%; background: #fff7ed; color: #f97316; display: flex; align-items: center; justify-content: center; font-size: 40px; transform: translateZ(0); }
-.clinic-icon img { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 2px solid #e2e8f0; }
-.clinic-card h3 { font-family: 'Noto Sans Thai', sans-serif; font-size: 1.3rem; font-weight: 700; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
+.clinic-card {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  position: relative;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.5s ease,
+    opacity 0.5s ease;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+.clinic-card > * {
+  position: relative;
+  z-index: 2;
+}
+.clinic-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+}
+.clinic-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+.clinic-icon {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #fff7ed;
+  color: #f97316;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  transform: translateZ(0);
+}
+.clinic-icon img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #e2e8f0;
+}
+.clinic-card h3 {
+  font-family: "Noto Sans Thai", sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
 /* =========================================
    8. HOW IT WORKS
 ========================================= */
+<<<<<<< Updated upstream
 .sut2-steps-section { position: relative; padding: 150px 5%; overflow: hidden; transform: translateZ(0); z-index: 1; }
 .sut2-steps__bg { position: absolute; top: -30%; left: 0; width: 100%; height: 160%; background-position: center; background-size: cover; z-index: 0; will-change: transform; transform: translateZ(0); }
 .sut2-steps-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 1; transform: translateZ(0); }
@@ -197,11 +888,101 @@
   transform: scale(0.95) translateY(-2px);
 }
 
+=======
+.sut2-steps-section {
+  position: relative;
+  padding: 150px 5%;
+  overflow: hidden;
+  transform: translateZ(0);
+  z-index: 1;
+}
+.sut2-steps__bg {
+  position: absolute;
+  top: -30%;
+  left: 0;
+  width: 100%;
+  height: 160%;
+  background-position: center;
+  background-size: cover;
+  z-index: 0;
+  will-change: transform;
+  transform: translateZ(0);
+}
+.sut2-steps-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  z-index: 1;
+  transform: translateZ(0);
+}
+.sut2-steps-content {
+  font-family: "Noto Sans Thai", sans-serif;
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.sut2-steps-title {
+  text-align: center;
+  color: white;
+  font-size: 2.5rem;
+  margin-bottom: 60px;
+}
+.sut2-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 50px;
+}
+.sut2-step-glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 40px 30px;
+  text-align: center;
+  color: white;
+  transition:
+    box-shadow 0.3s,
+    transform 0.3s,
+    background 0.3s;
+  will-change: transform;
+}
+.sut2-step-glass:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+.sut2-step-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(244, 121, 50, 0.2);
+  color: #f47932;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 24px auto;
+}
+.sut2-step-glass h3 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+}
+.sut2-step-glass p {
+  font-size: 1.05rem;
+  color: #cbd5e1;
+  line-height: 1.6;
+}
+>>>>>>> Stashed changes
 /* =========================================
    9. SELECT ANIMATION
 ========================================= */
-.clinic-fly { animation: slideLeft 0.5s linear forwards; }
+.clinic-fly {
+  animation: slideLeft 0.5s linear forwards;
+}
 @keyframes slideLeft {
+<<<<<<< Updated upstream
  from { transform: translateX(0); opacity: 1; }
 to { transform: translateX(-600px); opacity: 0; }
  }
@@ -214,43 +995,154 @@ to { transform: translateX(-600px); opacity: 0; }
 to { opacity: 1; transform: translateY(0); }
  }
 
+=======
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-600px);
+    opacity: 0;
+  }
+}
+>>>>>>> Stashed changes
 /* =========================================
    10. RESPONSIVE
 ========================================= */
 @media (max-width: 1024px) {
- .sut2-hero__cta-group { justify-content: center !important; width: 100% !important; display: flex !important; }
-.sut2-left-column { height: 420px !important; }
-.sut2-promo-static-card { width: 280px !important; height: 420px !important; }
-.sut2-3d-main-content { height: 420px !important; }
-.sut2-stacked-item, .sut2-stacked-item.active, .sut2-stacked-item.exit, .sut2-stacked-item.hidden, .sut2-stacked-item.waiting, .sut2-stacked-item.visible { width: 280px !important; height: 420px !important; }
-/* ปรับ band บน tablet */
-  .sut2-card__band { height: 140px; }
-.sut2-card__illust-inline img { height: 100px; width: 100px; }
- }
+  .sut2-hero__cta-group {
+    justify-content: center !important;
+    width: 100% !important;
+    display: flex !important;
+  }
+  .sut2-left-column {
+    height: 420px !important;
+  }
+  .sut2-promo-static-card {
+    width: 280px !important;
+    height: 420px !important;
+  }
+  .sut2-3d-main-content {
+    height: 420px !important;
+  }
+  .sut2-stacked-item,
+  .sut2-stacked-item.active,
+  .sut2-stacked-item.exit,
+  .sut2-stacked-item.hidden,
+  .sut2-stacked-item.waiting,
+  .sut2-stacked-item.visible {
+    width: 280px !important;
+    height: 420px !important;
+  }
+  /* ปรับ band บน tablet */
+  .sut2-card__band {
+    height: 140px;
+  }
+  .sut2-card__illust-inline img {
+    height: 100px;
+    width: 100px;
+  }
+}
 @media (max-width: 768px) {
- .sut2-left-column { height: 380px !important; }
-.sut2-promo-static-card { width: 260px !important; height: 380px !important; padding: 30px 20px !important; }
-.sut2-3d-main-content { height: 380px !important; }
-.sut2-stacked-item, .sut2-stacked-item.active, .sut2-stacked-item.exit, .sut2-stacked-item.hidden, .sut2-stacked-item.waiting, .sut2-stacked-item.visible { width: 260px !important; height: 380px !important; }
-/* ปรับ band บน mobile */
-  .sut2-card__band { height: 120px; }
-.sut2-card__illust-inline img { height: 85px; width: 85px; }
-.sut2-card__title { font-size: 0.95rem; min-height: 2.75rem; }
-.sut2-card__desc { font-size: 0.82rem; min-height: 3.9rem; }
-.sut2-step-glass { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: rgba(30, 41, 59, 0.95); border-color: rgba(255,255,255,0.05); box-shadow: none; }
-.sut2-hero__title { font-size: 30px !important; line-height: 1.35; }
-.sut2-hero__highlight { font-size: 20px !important; }
-.sut2-hero__subtitle { font-size: 15px !important; line-height: 1.6; margin: 0 auto 30px auto !important; }
-.sut2-nav__logo { margin-left: -6px; }
-.sut2-nav__logo img { height: 100px !important; }
-.sut2-nav__menu-btn { font-size: 24px; color: white; }
-.sut2-nav--scrolled .sut2-nav__menu-btn { color: #1e293b; }
-.sut2-nav__actions { top: 90% !important; right: 4% !important; }
-.sut2-nav__btn { font-size: 14px; padding: 8px 14px; }
-.sut2-hero__cta-group { flex-wrap: nowrap !important; justify-content: center !important; gap: 10px; width: 100%; }
-.sut2-hero__cta { padding: 10px 14px !important; font-size: 14px !important; flex: 1; white-space: nowrap; }
-.back-btn { font-size: 0.9rem; padding: 0.4rem 0.8rem; display: block; width: 90%; margin: 0 auto; position: relative; margin-top: auto; margin-bottom: 20px; }
-.clinic-card h3 {
+  .sut2-left-column {
+    height: 380px !important;
+  }
+  .sut2-promo-static-card {
+    width: 260px !important;
+    height: 380px !important;
+    padding: 30px 20px !important;
+  }
+  .sut2-3d-main-content {
+    height: 380px !important;
+  }
+  .sut2-stacked-item,
+  .sut2-stacked-item.active,
+  .sut2-stacked-item.exit,
+  .sut2-stacked-item.hidden,
+  .sut2-stacked-item.waiting,
+  .sut2-stacked-item.visible {
+    width: 260px !important;
+    height: 380px !important;
+  }
+  /* ปรับ band บน mobile */
+  .sut2-card__band {
+    height: 120px;
+  }
+  .sut2-card__illust-inline img {
+    height: 85px;
+    width: 85px;
+  }
+  .sut2-card__title {
+    font-size: 0.95rem;
+    min-height: 2.75rem;
+  }
+  .sut2-card__desc {
+    font-size: 0.82rem;
+    min-height: 3.9rem;
+  }
+  .sut2-step-glass {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(30, 41, 59, 0.95);
+    border-color: rgba(255, 255, 255, 0.05);
+    box-shadow: none;
+  }
+  .sut2-hero__title {
+    font-size: 30px !important;
+    line-height: 1.35;
+  }
+  .sut2-hero__highlight {
+    font-size: 20px !important;
+  }
+  .sut2-hero__subtitle {
+    font-size: 15px !important;
+    line-height: 1.6;
+    margin: 0 auto 30px auto !important;
+  }
+  .sut2-nav__logo {
+    margin-left: -6px;
+  }
+  .sut2-nav__logo img {
+    height: 100px !important;
+  }
+  .sut2-nav__menu-btn {
+    font-size: 24px;
+    color: white;
+  }
+  .sut2-nav--scrolled .sut2-nav__menu-btn {
+    color: #1e293b;
+  }
+  .sut2-nav__actions {
+    top: 90% !important;
+    right: 4% !important;
+  }
+  .sut2-nav__btn {
+    font-size: 14px;
+    padding: 8px 14px;
+  }
+  .sut2-hero__cta-group {
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    gap: 10px;
+    width: 100%;
+  }
+  .sut2-hero__cta {
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    flex: 1;
+    white-space: nowrap;
+  }
+  .back-btn {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+    display: block;
+    width: 90%;
+    margin: 0 auto;
+    position: relative;
+    margin-top: auto;
+    margin-bottom: 20px;
+  }
+  .clinic-card h3 {
     font-size: 1rem;
     line-height: 1.3;
     text-align: center;
@@ -259,6 +1151,7 @@ to { opacity: 1; transform: translateY(0); }
     text-overflow: ellipsis;
     width: 90%;
   }
+<<<<<<< Updated upstream
  }
  .sut2-floating-help-btn {
     bottom: 24px;
@@ -272,3 +1165,19 @@ to { opacity: 1; transform: translateY(0); }
     height: 22px;
   }
 
+=======
+}
+/* =========================================
+   11. ANIMATIONS
+========================================= */
+@keyframes sut2FadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+>>>>>>> Stashed changes

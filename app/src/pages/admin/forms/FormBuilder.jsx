@@ -156,7 +156,9 @@ const FormBuilder = () => {
   const [clinics, setClinics] = useState([]);
 
   useEffect(() => {
-    getActiveClinics().then(res => setClinics(res.data.data || [])).catch(console.error);
+    getActiveClinics()
+      .then((res) => setClinics(res.data.data || []))
+      .catch(console.error);
   }, []);
 
   const [isScheduled, setIsScheduled] = useState(false);
@@ -581,16 +583,16 @@ const FormBuilder = () => {
     // 🟢 1. เช็คว่าเป็นการ "สร้างฟอร์มใหม่" หรือไม่ (!id)
     if (!id) {
       const result = await Swal.fire({
-        title: 'บันทึกแบบฟอร์ม',
-        text: 'คุณต้องการเปิดใช้งาน (เผยแพร่) ฟอร์มนี้ทันที หรือเก็บไว้เป็นแบบร่างก่อน?',
-        icon: 'question',
+        title: "บันทึกแบบฟอร์ม",
+        text: "คุณต้องการเปิดใช้งาน (เผยแพร่) ฟอร์มนี้ทันที หรือเก็บไว้เป็นแบบร่างก่อน?",
+        icon: "question",
         showCancelButton: true,
         showDenyButton: true,
-        confirmButtonText: 'เผยแพร่ทันที',
-        denyButtonText: 'เก็บเป็นแบบร่าง',
-        cancelButtonText: 'ยกเลิก',
-        confirmButtonColor: '#1967d2', // สีน้ำเงิน
-        denyButtonColor: '#f59e0b',  // สีส้ม
+        confirmButtonText: "เผยแพร่ทันที",
+        denyButtonText: "เก็บเป็นแบบร่าง",
+        cancelButtonText: "ยกเลิก",
+        confirmButtonColor: "#1967d2", // สีน้ำเงิน
+        denyButtonColor: "#f59e0b", // สีส้ม
       });
 
       // ถ้ากดปุ่ม "ยกเลิก" ให้หยุดการเซฟทันที
@@ -630,7 +632,7 @@ const FormBuilder = () => {
           ? formatDateTimeForMySQL(publishEndDate)
           : null,
     };
-    
+
     try {
       if (id) {
         await updateFormInDb(id, formData);
@@ -640,19 +642,23 @@ const FormBuilder = () => {
         await saveFormToDb(formData);
         lastSavedState.current = currentState;
         setIsSaving(false);
-        
+
         // 🟢 3. แสดงแจ้งเตือนเมื่อสร้างฟอร์มเสร็จ แล้วค่อยพากลับหน้าแรก
         Swal.fire({
-          icon: 'success',
-          title: 'บันทึกข้อมูลสำเร็จ!',
+          icon: "success",
+          title: "บันทึกข้อมูลสำเร็จ!",
           showConfirmButton: false,
-          timer: 1500
+          timer: 1500,
         }).then(() => {
           navigate("/admin/forms");
         });
       }
     } catch (error) {
-      Swal.fire('เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง', 'error');
+      Swal.fire(
+        "เกิดข้อผิดพลาด",
+        "ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง",
+        "error",
+      );
       setIsSaving(false);
     }
   };
@@ -676,7 +682,7 @@ const FormBuilder = () => {
     window.__formPreviewData = previewData;
     try {
       localStorage.setItem("formPreviewData", JSON.stringify(previewData));
-    } catch (e) { }
+    } catch (e) {}
 
     // 🟢 เปลี่ยนพาธให้ไปเรียกหน้า FormView แต่ส่ง ID ไปเป็นคำว่า 'preview' แทน
     window.open("/assessment/preview", "_blank");
@@ -713,6 +719,7 @@ const FormBuilder = () => {
         questions.map((q) =>
           q.id === qId
             ? {
+<<<<<<< Updated upstream
               ...q,
               options: [...q.options, `ตัวเลือก ${q.options.length + 1}`],
               optionScores: [...(q.optionScores || []), 0],
@@ -723,6 +730,17 @@ const FormBuilder = () => {
                 false,
               ],
             }
+=======
+                ...q,
+                options: [...q.options, `ตัวเลือก ${q.options.length + 1}`],
+                optionScores: [...(q.optionScores || []), 0],
+                optionImages: [...(q.optionImages || []), null],
+                optionHasInput: [
+                  ...(q.optionHasInput || Array(q.options.length).fill(false)),
+                  false,
+                ],
+              }
+>>>>>>> Stashed changes
             : q,
         ),
       ),
@@ -732,9 +750,9 @@ const FormBuilder = () => {
         questions.map((q) =>
           q.id === qId
             ? {
-              ...q,
-              options: q.options.map((o, i) => (i === optIdx ? val : o)),
-            }
+                ...q,
+                options: q.options.map((o, i) => (i === optIdx ? val : o)),
+              }
             : q,
         ),
       ),
@@ -762,11 +780,11 @@ const FormBuilder = () => {
         questions.map((q) =>
           q.id === qId
             ? {
-              ...q,
-              optionScores: (q.optionScores || []).map((s, i) =>
-                i === optIdx ? val : s,
-              ),
-            }
+                ...q,
+                optionScores: (q.optionScores || []).map((s, i) =>
+                  i === optIdx ? val : s,
+                ),
+              }
             : q,
         ),
       ),
@@ -776,6 +794,7 @@ const FormBuilder = () => {
         questions.map((q) =>
           q.id === qId && q.options.length > 1
             ? {
+<<<<<<< Updated upstream
               ...q,
               options: q.options.filter((_, i) => i !== optIdx),
               optionScores: (q.optionScores || []).filter(
@@ -791,6 +810,20 @@ const FormBuilder = () => {
                 (_, i) => i !== optIdx,
               ),
             }
+=======
+                ...q,
+                options: q.options.filter((_, i) => i !== optIdx),
+                optionScores: (q.optionScores || []).filter(
+                  (_, i) => i !== optIdx,
+                ),
+                optionImages: (q.optionImages || []).filter(
+                  (_, i) => i !== optIdx,
+                ),
+                optionHasInput: (q.optionHasInput || []).filter(
+                  (_, i) => i !== optIdx,
+                ),
+              }
+>>>>>>> Stashed changes
             : q,
         ),
       ),
@@ -814,15 +847,15 @@ const FormBuilder = () => {
         questions.map((q) =>
           q.id === qId
             ? {
-              ...q,
-              [field]: [
-                ...q[field],
-                `${field === "rows" ? "แถวที่" : "คอลัมน์ที่"} ${q[field].length + 1}`,
-              ],
-              ...(field === "cols"
-                ? { colScores: [...(q.colScores || []), 0] }
-                : {}),
-            }
+                ...q,
+                [field]: [
+                  ...q[field],
+                  `${field === "rows" ? "แถวที่" : "คอลัมน์ที่"} ${q[field].length + 1}`,
+                ],
+                ...(field === "cols"
+                  ? { colScores: [...(q.colScores || []), 0] }
+                  : {}),
+              }
             : q,
         ),
       ),
@@ -839,11 +872,11 @@ const FormBuilder = () => {
         questions.map((q) =>
           q.id === qId
             ? {
-              ...q,
-              colScores: (q.colScores || Array(q.cols.length).fill(0)).map(
-                (s, i) => (i === idx ? val : s),
-              ),
-            }
+                ...q,
+                colScores: (q.colScores || Array(q.cols.length).fill(0)).map(
+                  (s, i) => (i === idx ? val : s),
+                ),
+              }
             : q,
         ),
       ),
@@ -856,11 +889,11 @@ const FormBuilder = () => {
         questions.map((q) =>
           q.id === qId
             ? {
-              ...q,
-              rowScores: (q.rowScores || []).map((s, i) =>
-                i === index ? value : s,
-              ),
-            }
+                ...q,
+                rowScores: (q.rowScores || []).map((s, i) =>
+                  i === index ? value : s,
+                ),
+              }
             : q,
         ),
       ),
@@ -883,16 +916,16 @@ const FormBuilder = () => {
         questions.map((q) =>
           q.id === qId && q[field].length > 1
             ? {
-              ...q,
-              [field]: q[field].filter((_, i) => i !== idx),
-              ...(field === "cols"
-                ? {
-                  colScores: (q.colScores || []).filter(
-                    (_, i) => i !== idx,
-                  ),
-                }
-                : {}),
-            }
+                ...q,
+                [field]: q[field].filter((_, i) => i !== idx),
+                ...(field === "cols"
+                  ? {
+                      colScores: (q.colScores || []).filter(
+                        (_, i) => i !== idx,
+                      ),
+                    }
+                  : {}),
+              }
             : q,
         ),
       ),
@@ -919,15 +952,15 @@ const FormBuilder = () => {
         questions.map((q) =>
           q.id === groupId
             ? {
-              ...q,
-              subQuestions: [
-                ...(q.subQuestions || []),
-                {
-                  ...newQ,
-                  optionHasInput: Array(newQ.options.length).fill(false),
-                },
-              ],
-            }
+                ...q,
+                subQuestions: [
+                  ...(q.subQuestions || []),
+                  {
+                    ...newQ,
+                    optionHasInput: Array(newQ.options.length).fill(false),
+                  },
+                ],
+              }
             : q,
         ),
       ),
@@ -949,11 +982,11 @@ const FormBuilder = () => {
         questions.map((q) =>
           q.id === groupId
             ? {
-              ...q,
-              subQuestions: (q.subQuestions || []).filter(
-                (sq) => sq.id !== subId,
-              ),
-            }
+                ...q,
+                subQuestions: (q.subQuestions || []).filter(
+                  (sq) => sq.id !== subId,
+                ),
+              }
             : q,
         ),
       ),
@@ -1117,7 +1150,7 @@ const FormBuilder = () => {
         className="sfb-admin-layout"
         style={{ backgroundColor: "var(--bg-color)" }}
       >
-{isLoading ? (
+        {isLoading ? (
           <main
             className="sfb-builder-container"
             style={{
@@ -1202,8 +1235,9 @@ const FormBuilder = () => {
                     }}
                   >
                     {(() => {
-                      if (!clinicType || clinicType === "general") return "ทั่วไป";
-                      const c = clinics.find(x => x.slug === clinicType);
+                      if (!clinicType || clinicType === "general")
+                        return "ทั่วไป";
+                      const c = clinics.find((x) => x.slug === clinicType);
                       if (c) return c.name;
                       if (clinicType === "teenager") return "คลินิกวัยรุ่น";
                       if (clinicType === "behavior") return "คลินิกปLSM";
@@ -1399,7 +1433,7 @@ const FormBuilder = () => {
                         SECTION_COLORS[(secNum - 1) % SECTION_COLORS.length];
                       const badgeBorder =
                         SECTION_BORDER_COLORS[
-                        (secNum - 1) % SECTION_BORDER_COLORS.length
+                          (secNum - 1) % SECTION_BORDER_COLORS.length
                         ];
                       return (
                         <div

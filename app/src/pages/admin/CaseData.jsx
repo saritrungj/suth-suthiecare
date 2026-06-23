@@ -1,63 +1,125 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import CaseTable from "../../components/case/CaseTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
+<<<<<<< Updated upstream
 import ExportExcelModal from "../../components/case/ExportExcelModal.jsx";
 import { getForms, getFormById, getFormResponses, createCase, getActiveClinics } from "../../services/api";
+=======
+import ExportExcelModal from "../../components/case/ExportExcelModal";
+import {
+  getForms,
+  getFormById,
+  getFormResponses,
+  createCase,
+  getActiveClinics,
+} from "../../services/api";
+>>>>>>> Stashed changes
 import "./CaseData.css";
 import { useLocation } from "react-router-dom";
-import { FiFolder, FiUsers, FiList, FiSettings, FiSearch, FiChevronDown, FiLayers, FiActivity, FiCalendar, FiDownload, FiPlus, FiX } from 'react-icons/fi';
+import {
+  FiFolder,
+  FiUsers,
+  FiList,
+  FiSettings,
+  FiSearch,
+  FiChevronDown,
+  FiLayers,
+  FiActivity,
+  FiCalendar,
+  FiDownload,
+  FiPlus,
+  FiX,
+} from "react-icons/fi";
 import Swal from "sweetalert2";
 
 const FACULTIES = [
-  "(1) สำนักวิชาวิทยาศาสตร์", "(2) สำนักวิชาเทคโนโลยีสังคม", "(3) สำนักวิชาเทคโนโลยีการเกษตร",
-  "(4) สำนักวิชาวิศวกรรมศาสตร์", "(5) สำนักวิชาแพทยศาสตร์", "(6) สำนักวิชาพยาบาลศาสตร์",
-  "(7) สำนักวิชาทันตแพทยศาสตร์", "(8) สำนักวิชาสาธารณสุขศาสตร์", "(9) สำนักวิชาศาสตร์และศิลป์ดิจิทัล", "อื่นๆ"
+  "(1) สำนักวิชาวิทยาศาสตร์",
+  "(2) สำนักวิชาเทคโนโลยีสังคม",
+  "(3) สำนักวิชาเทคโนโลยีการเกษตร",
+  "(4) สำนักวิชาวิศวกรรมศาสตร์",
+  "(5) สำนักวิชาแพทยศาสตร์",
+  "(6) สำนักวิชาพยาบาลศาสตร์",
+  "(7) สำนักวิชาทันตแพทยศาสตร์",
+  "(8) สำนักวิชาสาธารณสุขศาสตร์",
+  "(9) สำนักวิชาศาสตร์และศิลป์ดิจิทัล",
+  "อื่นๆ",
 ];
 
-const CLINIC_COLORS = ['#e0f2fe', '#dcfce7', '#fce7f3', '#fef3c7', '#e0e7ff', '#f3e8ff'];
-const CLINIC_TEXT_COLORS = ['#0284c7', '#166534', '#be185d', '#d97706', '#4338ca', '#7e22ce'];
-const CLINIC_BORDER_COLORS = ['#7dd3fc', '#86efac', '#f9a8d4', '#fcd34d', '#a5b4fc', '#d8b4fe'];
+const CLINIC_COLORS = [
+  "#e0f2fe",
+  "#dcfce7",
+  "#fce7f3",
+  "#fef3c7",
+  "#e0e7ff",
+  "#f3e8ff",
+];
+const CLINIC_TEXT_COLORS = [
+  "#0284c7",
+  "#166534",
+  "#be185d",
+  "#d97706",
+  "#4338ca",
+  "#7e22ce",
+];
+const CLINIC_BORDER_COLORS = [
+  "#7dd3fc",
+  "#86efac",
+  "#f9a8d4",
+  "#fcd34d",
+  "#a5b4fc",
+  "#d8b4fe",
+];
 
 function getClinicConfig(slug, clinicsList = []) {
-  if (slug === 'general') return { id: 'general', text: 'ทั่วไป', color: '#475569', bg: '#f1f5f9', border: '#cbd5e1' };
-  const clinic = clinicsList.find(c => c.slug === slug);
-  if (!clinic) return { id: slug, text: slug || '-', color: '#475569', bg: '#f1f5f9', border: '#cbd5e1' };
-  
-  const index = clinicsList.findIndex(c => c.slug === slug);
+  if (slug === "general")
+    return {
+      id: "general",
+      text: "ทั่วไป",
+      color: "#475569",
+      bg: "#f1f5f9",
+      border: "#cbd5e1",
+    };
+  const clinic = clinicsList.find((c) => c.slug === slug);
+  if (!clinic)
+    return {
+      id: slug,
+      text: slug || "-",
+      color: "#475569",
+      bg: "#f1f5f9",
+      border: "#cbd5e1",
+    };
+
+  const index = clinicsList.findIndex((c) => c.slug === slug);
   const colorIndex = index % CLINIC_COLORS.length;
   return {
     id: slug,
     text: clinic.name,
     bg: CLINIC_COLORS[colorIndex],
     color: CLINIC_TEXT_COLORS[colorIndex],
-    border: CLINIC_BORDER_COLORS[colorIndex]
+    border: CLINIC_BORDER_COLORS[colorIndex],
   };
 }
 
 const caseRiskColors = {
-  "น้ำหนักน้อย / ผอม": { bg: '#d0f0fd', color: '#0c4a6e' },
-  "ปกติ (สุขภาพดี)": { bg: '#ecfdf5', color: '#065f46' },
-  "ท้วม / โรคอ้วนระดับ 1": { bg: '#fef9c3', color: '#713f12' },
-  "อ้วน / โรคอ้วนระดับ 2": { bg: '#fff7ed', color: '#7c2d12' },
-  "อ้วนมาก / โรคอ้วนระดับ 3": { bg: '#fef2f2', color: '#7f1d1d' },
-  "ปกติ / ไม่มีอาการซึมเศร้า": { bg: '#ecfdf5', color: '#065f46' },
-  "มีอาการซึมเศร้าระดับน้อย": { bg: '#fef9c3', color: '#713f12' },
-  "มีอาการซึมเศร้าระดับปานกลาง": { bg: '#fff7ed', color: '#7c2d12' },
-  "มีอาการซึมเศร้าระดับรุนแรง": { bg: '#fef2f2', color: '#7f1d1d' }
+  "น้ำหนักน้อย / ผอม": { bg: "#d0f0fd", color: "#0c4a6e" },
+  "ปกติ (สุขภาพดี)": { bg: "#ecfdf5", color: "#065f46" },
+  "ท้วม / โรคอ้วนระดับ 1": { bg: "#fef9c3", color: "#713f12" },
+  "อ้วน / โรคอ้วนระดับ 2": { bg: "#fff7ed", color: "#7c2d12" },
+  "อ้วนมาก / โรคอ้วนระดับ 3": { bg: "#fef2f2", color: "#7f1d1d" },
+  "ปกติ / ไม่มีอาการซึมเศร้า": { bg: "#ecfdf5", color: "#065f46" },
+  มีอาการซึมเศร้าระดับน้อย: { bg: "#fef9c3", color: "#713f12" },
+  มีอาการซึมเศร้าระดับปานกลาง: { bg: "#fff7ed", color: "#7c2d12" },
+  มีอาการซึมเศร้าระดับรุนแรง: { bg: "#fef2f2", color: "#7f1d1d" },
 };
 
 const CLINIC_RISK_OPTIONS = {
-  general: [
-    "ต่ำ",
-    "ปานกลาง",
-    "สูง"
-  ],
+  general: ["ต่ำ", "ปานกลาง", "สูง"],
 
   teenager: [
     "ปกติ / ไม่มีอาการซึมเศร้า",
     "มีอาการซึมเศร้าระดับน้อย",
     "มีอาการซึมเศร้าระดับปานกลาง",
-    "มีอาการซึมเศร้าระดับรุนแรง"
+    "มีอาการซึมเศร้าระดับรุนแรง",
   ],
 
   behavior: [
@@ -65,32 +127,40 @@ const CLINIC_RISK_OPTIONS = {
     "ปกติ (สุขภาพดี)",
     "ท้วม / โรคอ้วนระดับ 1",
     "อ้วน / โรคอ้วนระดับ 2",
-    "อ้วนมาก / โรคอ้วนระดับ 3"
+    "อ้วนมาก / โรคอ้วนระดับ 3",
   ],
 
-  sti: [
-    "ต่ำ",
-    "ปานกลาง",
-    "สูง"
-  ]
+  sti: ["ต่ำ", "ปานกลาง", "สูง"],
 };
 
 function getRiskLevel(summary_data) {
   const scoreResults = summary_data?.score_results || [];
   if (scoreResults.length === 0) return "ต่ำ";
 
-  const isHigh = scoreResults.some(s => {
-    const c = s.color?.toLowerCase() || '';
-    return c.includes('d93025') || c.includes('e53935') || c.includes('f44336') ||
-      c.includes('ef4444') || c.includes('dc2626') || c.includes('ff0000') || c.includes('red') ||
-      (s.label && s.label.includes('สูง'));
+  const isHigh = scoreResults.some((s) => {
+    const c = s.color?.toLowerCase() || "";
+    return (
+      c.includes("d93025") ||
+      c.includes("e53935") ||
+      c.includes("f44336") ||
+      c.includes("ef4444") ||
+      c.includes("dc2626") ||
+      c.includes("ff0000") ||
+      c.includes("red") ||
+      (s.label && s.label.includes("สูง"))
+    );
   });
 
-  const isMedium = scoreResults.some(s => {
-    const c = s.color?.toLowerCase() || '';
-    return c.includes('fbbc04') || c.includes('ff9800') || c.includes('f59e0b') ||
-      c.includes('orange') || c.includes('yellow') ||
-      (s.label && s.label.includes('ปานกลาง'));
+  const isMedium = scoreResults.some((s) => {
+    const c = s.color?.toLowerCase() || "";
+    return (
+      c.includes("fbbc04") ||
+      c.includes("ff9800") ||
+      c.includes("f59e0b") ||
+      c.includes("orange") ||
+      c.includes("yellow") ||
+      (s.label && s.label.includes("ปานกลาง"))
+    );
   });
 
   if (isHigh) return "สูง";
@@ -99,7 +169,15 @@ function getRiskLevel(summary_data) {
 }
 
 // 🟢 คอมโพเนนต์ Custom Dropdown
-const CustomDropdown = ({ icon: Icon, value, options, onChange, styleClass, iconClass, textClass }) => {
+const CustomDropdown = ({
+  icon: Icon,
+  value,
+  options,
+  onChange,
+  styleClass,
+  iconClass,
+  textClass,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
 
@@ -111,26 +189,32 @@ const CustomDropdown = ({ icon: Icon, value, options, onChange, styleClass, icon
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const selectedOption = options.find((opt) => String(opt.value) === String(value));
-  const displayLabel = selectedOption ? selectedOption.label : (options[0]?.label || "โปรดเลือก...");
+  const selectedOption = options.find(
+    (opt) => String(opt.value) === String(value),
+  );
+  const displayLabel = selectedOption
+    ? selectedOption.label
+    : options[0]?.label || "โปรดเลือก...";
 
   return (
     <div
-      className={`scd-custom-select ${styleClass || ''}`}
+      className={`scd-custom-select ${styleClass || ""}`}
       ref={ref}
       style={{ zIndex: isOpen ? 999 : 1 }}
       onClick={() => setIsOpen(!isOpen)}
     >
-      <Icon className={`scd-filter-icon ${iconClass || ''}`} />
-      <span className={`scd-select-value ${textClass || ''}`}>{displayLabel}</span>
-      <FiChevronDown className={`scd-dropdown-icon ${isOpen ? 'open' : ''}`} />
+      <Icon className={`scd-filter-icon ${iconClass || ""}`} />
+      <span className={`scd-select-value ${textClass || ""}`}>
+        {displayLabel}
+      </span>
+      <FiChevronDown className={`scd-dropdown-icon ${isOpen ? "open" : ""}`} />
 
       {isOpen && (
         <div className="scd-select-menu">
           {options.map((opt) => (
             <div
               key={opt.value}
-              className={`scd-select-option ${String(value) === String(opt.value) ? 'selected' : ''}`}
+              className={`scd-select-option ${String(value) === String(opt.value) ? "selected" : ""}`}
               onClick={() => onChange(opt.value)}
             >
               {opt.label}
@@ -143,7 +227,6 @@ const CustomDropdown = ({ icon: Icon, value, options, onChange, styleClass, icon
 };
 
 function CreateCaseModal({ onClose, onSave, clinics = [] }) {
-
   const [formData, setFormData] = useState({
     prefix: "",
     citizenId: "",
@@ -155,54 +238,48 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
     visitType: "walkin",
     status: "รอติดต่อ (รอดำเนินการ)",
 
-    note: ""
+    note: "",
   });
 
   const handleChange = (field, value) => {
-
     // ถ้าเปลี่ยนคลินิก → reset risk ตามคลินิกใหม่
     if (field === "clinicType") {
+      const firstRisk = CLINIC_RISK_OPTIONS[value]?.[0] || "ต่ำ";
 
-      const firstRisk =
-        CLINIC_RISK_OPTIONS[value]?.[0] || "ต่ำ";
-
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         clinicType: value,
-        riskLevel: firstRisk
+        riskLevel: firstRisk,
       }));
 
       return;
     }
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleSubmit = () => {
-
     const now = new Date().toISOString();
 
     const clinicText =
       getClinicConfig(formData.clinicType, clinics)?.text || "-";
 
     const allAnswers = {
-      "เลขบัตรประชาชน": formData.citizenId || "-",
-      "คำนำหน้า": formData.prefix || "-",
+      เลขบัตรประชาชน: formData.citizenId || "-",
+      คำนำหน้า: formData.prefix || "-",
       "ชื่อ - นามสกุล": formData.name || "-",
-      "เบอร์โทร": formData.phone || "-",
-      "สำนักวิชา": formData.faculty || "-",
-      "คลินิก": clinicText,
-      "ระดับความเสี่ยง": formData.riskLevel || "-",
-      "สถานะเคส": formData.status || "-",
-      "หมายเหตุ": formData.note || "-"
+      เบอร์โทร: formData.phone || "-",
+      สำนักวิชา: formData.faculty || "-",
+      คลินิก: clinicText,
+      ระดับความเสี่ยง: formData.riskLevel || "-",
+      สถานะเคส: formData.status || "-",
+      หมายเหตุ: formData.note || "-",
     };
 
     const newCase = {
-
-
       master_case_id: null,
 
       submitted_at: now,
@@ -243,13 +320,11 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
         score_results: [
           {
             label: formData.riskLevel,
-            bg:
-              caseRiskColors[formData.riskLevel]?.bg || "#e5e7eb",
-            color:
-              caseRiskColors[formData.riskLevel]?.color || "#374151"
-          }
-        ]
-      }
+            bg: caseRiskColors[formData.riskLevel]?.bg || "#e5e7eb",
+            color: caseRiskColors[formData.riskLevel]?.color || "#374151",
+          },
+        ],
+      },
     };
 
     onSave(newCase);
@@ -258,32 +333,21 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
   return (
     <div className="scd-modal-overlay">
       <div className="scd-create-case-modal">
-
         <div className="scd-create-case-header">
           <div>
             <h2>เพิ่มเคส Walk-in</h2>
             <p>กรณีผู้รับบริการไม่ได้ตอบแบบสอบถาม</p>
           </div>
 
-          <button
-            className="scd-close-btn"
-            onClick={onClose}
-          />
-            
-        
+          <button className="scd-close-btn" onClick={onClose} />
         </div>
 
         <div className="scd-create-case-body">
-
           {/* SECTION 1 */}
           <div className="scd-form-section">
-
-            <div className="scd-section-title">
-              ข้อมูลผู้รับบริการ
-            </div>
+            <div className="scd-section-title">ข้อมูลผู้รับบริการ</div>
 
             <div className="scd-form-grid">
-
               <div className="scd-form-group">
                 <label>เลขบัตรประชาชน</label>
 
@@ -341,7 +405,7 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
                 >
                   <option value="">เลือกสำนักวิชา</option>
 
-                  {FACULTIES.map(f => (
+                  {FACULTIES.map((f) => (
                     <option key={f} value={f}>
                       {f}
                     </option>
@@ -356,8 +420,10 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
                   value={formData.clinicType}
                   onChange={(e) => handleChange("clinicType", e.target.value)}
                 >
-                  {clinics.map(c => (
-                    <option key={c.slug} value={c.slug}>{c.name}</option>
+                  {clinics.map((c) => (
+                    <option key={c.slug} value={c.slug}>
+                      {c.name}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -369,11 +435,13 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
                   value={formData.riskLevel}
                   onChange={(e) => handleChange("riskLevel", e.target.value)}
                 >
-                  {(CLINIC_RISK_OPTIONS[formData.clinicType] || []).map(risk => (
-                    <option key={risk} value={risk}>
-                      {risk}
-                    </option>
-                  ))}
+                  {(CLINIC_RISK_OPTIONS[formData.clinicType] || []).map(
+                    (risk) => (
+                      <option key={risk} value={risk}>
+                        {risk}
+                      </option>
+                    ),
+                  )}
                 </select>
               </div>
 
@@ -384,29 +452,30 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
                   value={formData.status}
                   onChange={(e) => handleChange("status", e.target.value)}
                 >
-                  <option value="รอติดต่อ (รอดำเนินการ)">รอติดต่อ (รอดำเนินการ)</option>
+                  <option value="รอติดต่อ (รอดำเนินการ)">
+                    รอติดต่อ (รอดำเนินการ)
+                  </option>
                   <option value="นัดหมายสำเร็จ">นัดหมายสำเร็จ</option>
-                  <option value="ติดต่อไม่ได้ / ไม่รับสาย">ติดต่อไม่ได้ / ไม่รับสาย</option>
+                  <option value="ติดต่อไม่ได้ / ไม่รับสาย">
+                    ติดต่อไม่ได้ / ไม่รับสาย
+                  </option>
                   <option value="ขอเลื่อนนัด">ขอเลื่อนนัด</option>
-                  <option value="อยู่ระหว่างติดตามต่อเนื่อง">อยู่ระหว่างติดตามต่อเนื่อง</option>
+                  <option value="อยู่ระหว่างติดตามต่อเนื่อง">
+                    อยู่ระหว่างติดตามต่อเนื่อง
+                  </option>
                   <option value="ปฏิเสธบริการ">ปฏิเสธบริการ</option>
                   <option value="ส่งต่อผู้เชี่ยวชาญ">ส่งต่อผู้เชี่ยวชาญ</option>
                   <option value="ปิดเคสเรียบร้อย">ปิดเคสเรียบร้อย</option>
                 </select>
               </div>
-
             </div>
           </div>
 
           {/* SECTION 2 */}
           <div className="scd-form-section">
-
-            <div className="scd-section-title">
-              รายละเอียดเพิ่มเติม
-            </div>
+            <div className="scd-section-title">รายละเอียดเพิ่มเติม</div>
 
             <div className="scd-form-group scd-full-width">
-
               <label>หมายเหตุ</label>
 
               <textarea
@@ -415,31 +484,19 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
                 value={formData.note}
                 onChange={(e) => handleChange("note", e.target.value)}
               />
-
             </div>
-
           </div>
-
         </div>
 
         <div className="scd-create-case-footer">
-
-          <button
-            className="scd-cancel-btn"
-            onClick={onClose}
-          >
+          <button className="scd-cancel-btn" onClick={onClose}>
             ยกเลิก
           </button>
 
-          <button
-            className="scd-save-btn"
-            onClick={handleSubmit}
-          >
+          <button className="scd-save-btn" onClick={handleSubmit}>
             บันทึกเคส
           </button>
-
         </div>
-
       </div>
     </div>
   );
@@ -456,7 +513,6 @@ export default function CaseData() {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isCreateCaseModalOpen, setIsCreateCaseModalOpen] = useState(false);
 
-
   const [forms, setForms] = useState([]);
   const [clinics, setClinics] = useState([]);
   const [selectedFormId, setSelectedFormId] = useState(initialFormId);
@@ -469,9 +525,9 @@ export default function CaseData() {
   const [showColMenu, setShowColMenu] = useState(false);
   const colMenuRef = useRef(null);
 
-  const [clinicFilter, setClinicFilter] = useState('all');
-  const [formStatusFilter, setFormStatusFilter] = useState('published');
-  const [tableViewMode, setTableViewMode] = useState('master');
+  const [clinicFilter, setClinicFilter] = useState("all");
+  const [formStatusFilter, setFormStatusFilter] = useState("published");
+  const [tableViewMode, setTableViewMode] = useState("master");
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -491,26 +547,28 @@ export default function CaseData() {
       try {
         const [clinicRes, formsRes] = await Promise.all([
           getActiveClinics().catch(() => ({ data: { data: [] } })),
-          getForms("latest").catch(() => ({ data: [] }))
+          getForms("latest").catch(() => ({ data: [] })),
         ]);
-        
+
         setClinics(clinicRes.data.data || []);
         const fetchedForms = formsRes.data || [];
         setForms(fetchedForms);
 
         if (initialFormId) {
-          const targetForm = fetchedForms.find(f => f.id === initialFormId);
+          const targetForm = fetchedForms.find((f) => f.id === initialFormId);
           if (targetForm) {
-            setClinicFilter(targetForm.clinic_type || 'general');
-            if (targetForm.status !== 'published') setFormStatusFilter('draft');
+            setClinicFilter(targetForm.clinic_type || "general");
+            if (targetForm.status !== "published") setFormStatusFilter("draft");
           }
         } else if (fetchedForms.length > 0) {
-          const publishedForms = fetchedForms.filter(f => f.status === 'published');
+          const publishedForms = fetchedForms.filter(
+            (f) => f.status === "published",
+          );
           if (publishedForms.length > 0) {
             setSelectedFormId(publishedForms[0].id);
           } else {
             setSelectedFormId(fetchedForms[0].id);
-            setFormStatusFilter('all');
+            setFormStatusFilter("all");
           }
         }
       } finally {
@@ -522,16 +580,21 @@ export default function CaseData() {
 
   const filteredFormsList = useMemo(() => {
     let list = forms;
-    if (clinicFilter !== 'all') list = list.filter(f => (f.clinic_type || 'general') === clinicFilter);
-    if (formStatusFilter === 'published') list = list.filter(f => f.status === 'published');
-    else if (formStatusFilter === 'draft') list = list.filter(f => f.status !== 'published');
+    if (clinicFilter !== "all")
+      list = list.filter((f) => (f.clinic_type || "general") === clinicFilter);
+    if (formStatusFilter === "published")
+      list = list.filter((f) => f.status === "published");
+    else if (formStatusFilter === "draft")
+      list = list.filter((f) => f.status !== "published");
     return list;
   }, [forms, clinicFilter, formStatusFilter]);
 
   useEffect(() => {
     if (forms.length === 0) return;
     if (filteredFormsList.length > 0) {
-      const isValid = filteredFormsList.some(f => String(f.id) === String(selectedFormId));
+      const isValid = filteredFormsList.some(
+        (f) => String(f.id) === String(selectedFormId),
+      );
       if (!isValid) setSelectedFormId(filteredFormsList[0].id);
     } else {
       setSelectedFormId("");
@@ -553,39 +616,42 @@ export default function CaseData() {
       try {
         const [formRes, responseRes] = await Promise.all([
           getFormById(selectedFormId),
-          getFormResponses(selectedFormId)
+          getFormResponses(selectedFormId),
         ]);
 
         let formDetails = formRes.data;
-        if (typeof formDetails.questions === 'string') {
+        if (typeof formDetails.questions === "string") {
           formDetails.questions = JSON.parse(formDetails.questions);
         }
         setCurrentFormDetails(formDetails);
 
-        const realQuestions = formDetails.questions.filter(q => q.type !== 'section' && q.type !== 'description');
-        const savedColumns = localStorage.getItem(`visibleColumns_${selectedFormId}`);
+        const realQuestions = formDetails.questions.filter(
+          (q) => q.type !== "section" && q.type !== "description",
+        );
+        const savedColumns = localStorage.getItem(
+          `visibleColumns_${selectedFormId}`,
+        );
 
         if (savedColumns) {
           setVisibleColumns(JSON.parse(savedColumns));
         } else {
-          const defaultVisible = realQuestions.slice(0, 5).map(q => q.id);
+          const defaultVisible = realQuestions.slice(0, 5).map((q) => q.id);
           setVisibleColumns(defaultVisible);
         }
 
-        const parsedResponses = responseRes.data.map(r => ({
+        const parsedResponses = responseRes.data.map((r) => ({
           ...r,
           case_source: r.case_source || "assessment_form",
           summary_data:
-            typeof r.summary_data === 'string'
+            typeof r.summary_data === "string"
               ? JSON.parse(r.summary_data)
-              : (r.summary_data || {})
+              : r.summary_data || {},
         }));
         setResponses(parsedResponses);
         setRisk("");
-
       } catch (err) {
-
-        setCurrentFormDetails(null); setResponses([]);
+        setCurrentFormDetails(null);
+        setResponses([]);
       } finally {
         setIsLoading(false);
       }
@@ -596,11 +662,13 @@ export default function CaseData() {
   const hasScoring = useMemo(() => {
     if (!currentFormDetails?.questions) return false;
     let scored = false;
-    currentFormDetails.questions.forEach(q => {
-      if (q.isScored || (q.scoringRules && q.scoringRules.length > 0)) scored = true;
-      if (q.type === 'group' && Array.isArray(q.subQuestions)) {
-        q.subQuestions.forEach(sq => {
-          if (sq.isScored || (sq.scoringRules && sq.scoringRules.length > 0)) scored = true;
+    currentFormDetails.questions.forEach((q) => {
+      if (q.isScored || (q.scoringRules && q.scoringRules.length > 0))
+        scored = true;
+      if (q.type === "group" && Array.isArray(q.subQuestions)) {
+        q.subQuestions.forEach((sq) => {
+          if (sq.isScored || (sq.scoringRules && sq.scoringRules.length > 0))
+            scored = true;
         });
       }
     });
@@ -609,15 +677,17 @@ export default function CaseData() {
 
   const filteredData = useMemo(() => {
     let baseData = responses;
-    if (tableViewMode === 'master') {
+    if (tableViewMode === "master") {
       const uniqueCases = new Map();
-      responses.forEach(res => {
+      responses.forEach((res) => {
         const key = res.master_case_id || res.identity_value || `res_${res.id}`;
         if (!uniqueCases.has(key)) {
           uniqueCases.set(key, res);
         } else {
           const existingRes = uniqueCases.get(key);
-          const existingDate = new Date(existingRes.submitted_at || existingRes.createdAt || 0);
+          const existingDate = new Date(
+            existingRes.submitted_at || existingRes.createdAt || 0,
+          );
           const newDate = new Date(res.submitted_at || res.createdAt || 0);
           if (newDate > existingDate) {
             uniqueCases.set(key, res);
@@ -627,26 +697,30 @@ export default function CaseData() {
       baseData = Array.from(uniqueCases.values());
     }
 
-    const mappedData = baseData.map(res => {
+    const mappedData = baseData.map((res) => {
       const summary = res.summary_data || {};
       const realRisk = getRiskLevel(summary);
       return {
         ...res,
         risk_level: realRisk,
-        overall_risk: res.overall_risk || summary.overall_risk || realRisk
+        overall_risk: res.overall_risk || summary.overall_risk || realRisk,
       };
     });
 
-    return mappedData.filter(res => {
+    return mappedData.filter((res) => {
       const summary = res.summary_data || {};
-      const caseIdStr = `CASE-${String(res.id).padStart(4, '0')}`;
+      const caseIdStr = `CASE-${String(res.id).padStart(4, "0")}`;
       const name = summary.display_name || "-";
       const resFaculty = summary.display_faculty || "-";
 
       let currentRisk = res.risk_level;
-      if (tableViewMode === 'master') currentRisk = res.overall_risk;
+      if (tableViewMode === "master") currentRisk = res.overall_risk;
 
-      const matchSearch = search === "" || caseIdStr.toLowerCase().includes(search.toLowerCase()) || name.toLowerCase().includes(search.toLowerCase()) || (res.identity_value && res.identity_value.includes(search));
+      const matchSearch =
+        search === "" ||
+        caseIdStr.toLowerCase().includes(search.toLowerCase()) ||
+        name.toLowerCase().includes(search.toLowerCase()) ||
+        (res.identity_value && res.identity_value.includes(search));
       const matchFaculty = faculty === "" || resFaculty.includes(faculty);
       const matchRisk = risk === "" || !hasScoring || currentRisk === risk;
 
@@ -671,19 +745,38 @@ export default function CaseData() {
       }
       return matchSearch && matchFaculty && matchRisk && matchDate;
     });
-  }, [responses, search, faculty, risk, tableViewMode, hasScoring, startDate, endDate]);
+  }, [
+    responses,
+    search,
+    faculty,
+    risk,
+    tableViewMode,
+    hasScoring,
+    startDate,
+    endDate,
+  ]);
 
   const toggleColumn = (qId) => {
-    setVisibleColumns(prev => {
-      const newVisible = prev.includes(qId) ? prev.filter(id => id !== qId) : [...prev, qId];
-      if (selectedFormId) localStorage.setItem(`visibleColumns_${selectedFormId}`, JSON.stringify(newVisible));
+    setVisibleColumns((prev) => {
+      const newVisible = prev.includes(qId)
+        ? prev.filter((id) => id !== qId)
+        : [...prev, qId];
+      if (selectedFormId)
+        localStorage.setItem(
+          `visibleColumns_${selectedFormId}`,
+          JSON.stringify(newVisible),
+        );
       return newVisible;
     });
   };
 
-  const allDynamicQuestions = (currentFormDetails?.questions || []).filter(q => q.type !== 'section' && q.type !== 'description');
-  const selectedFormObj = forms.find(f => f.id === selectedFormId);
-  const cInfo = selectedFormObj ? getClinicConfig(selectedFormObj.clinic_type || 'general', clinics) : null;
+  const allDynamicQuestions = (currentFormDetails?.questions || []).filter(
+    (q) => q.type !== "section" && q.type !== "description",
+  );
+  const selectedFormObj = forms.find((f) => f.id === selectedFormId);
+  const cInfo = selectedFormObj
+    ? getClinicConfig(selectedFormObj.clinic_type || "general", clinics)
+    : null;
 
   const displayThaiDate = (dateString) => {
     if (!dateString) return "";
@@ -693,36 +786,57 @@ export default function CaseData() {
 
   return (
     <div className="scd-admin-wrapper">
-<main className="scd-main-content">
+      <main className="scd-main-content">
         <div className="scd-risk-container">
-
           <div className="scd-header-flex">
             <div className="scd-title-group">
               <div className="scd-title-meta">
                 <FiList size={16} />
                 <span>ระบบจัดการข้อมูลและติดตามเคสผู้รับบริการ</span>
                 {cInfo && (
-                  <span className="scd-title-badge" style={{ backgroundColor: cInfo.bg, color: cInfo.color, border: `1px solid ${cInfo.border}` }}>
+                  <span
+                    className="scd-title-badge"
+                    style={{
+                      backgroundColor: cInfo.bg,
+                      color: cInfo.color,
+                      border: `1px solid ${cInfo.border}`,
+                    }}
+                  >
                     {cInfo.text}
                   </span>
                 )}
               </div>
-              <h2 className="scd-main-title" title={currentFormDetails?.title || (isInitialSetup ? "กำลังโหลด..." : filteredFormsList.length === 0 ? "ไม่มีข้อมูลแบบฟอร์ม" : "กำลังโหลด...")}>
-                {currentFormDetails?.title || (isInitialSetup ? "กำลังโหลด..." : filteredFormsList.length === 0 ? "ไม่มีข้อมูลแบบฟอร์ม" : "กำลังโหลด...")}
+              <h2
+                className="scd-main-title"
+                title={
+                  currentFormDetails?.title ||
+                  (isInitialSetup
+                    ? "กำลังโหลด..."
+                    : filteredFormsList.length === 0
+                      ? "ไม่มีข้อมูลแบบฟอร์ม"
+                      : "กำลังโหลด...")
+                }
+              >
+                {currentFormDetails?.title ||
+                  (isInitialSetup
+                    ? "กำลังโหลด..."
+                    : filteredFormsList.length === 0
+                      ? "ไม่มีข้อมูลแบบฟอร์ม"
+                      : "กำลังโหลด...")}
               </h2>
             </div>
 
             <div className="scd-header-actions">
               <div className="scd-view-mode-group">
                 <button
-                  onClick={() => setTableViewMode('master')}
-                  className={`scd-view-mode-btn ${tableViewMode === 'master' ? 'active-master' : ''}`}
+                  onClick={() => setTableViewMode("master")}
+                  className={`scd-view-mode-btn ${tableViewMode === "master" ? "active-master" : ""}`}
                 >
                   <FiUsers size={16} /> ภาพรวมเคสผู้ป่วย
                 </button>
                 <button
-                  onClick={() => setTableViewMode('form')}
-                  className={`scd-view-mode-btn ${tableViewMode === 'form' ? 'active-form' : ''}`}
+                  onClick={() => setTableViewMode("form")}
+                  className={`scd-view-mode-btn ${tableViewMode === "form" ? "active-form" : ""}`}
                 >
                   <FiList size={16} /> คำตอบแบบฟอร์ม
                 </button>
@@ -738,10 +852,8 @@ export default function CaseData() {
             </div>
           </div>
 
-
           {/* ✅ FILTER BAR (จัดเรียงลำดับตาม User Flow) */}
           <div className="scd-filter-bar">
-
             {/* 1. ค้นหา */}
             <div className="scd-search-group scd-filter-search">
               <FiSearch className="scd-filter-icon" />
@@ -759,11 +871,14 @@ export default function CaseData() {
               value={selectedFormId}
               onChange={setSelectedFormId}
               options={
-                isInitialSetup 
-                  ? [{ value: '', label: 'กำลังโหลดแบบฟอร์ม...' }]
+                isInitialSetup
+                  ? [{ value: "", label: "กำลังโหลดแบบฟอร์ม..." }]
                   : filteredFormsList.length > 0
-                    ? filteredFormsList.map(f => ({ value: f.id, label: f.title }))
-                    : [{ value: '', label: '-- ไม่มีแบบฟอร์ม --' }]
+                    ? filteredFormsList.map((f) => ({
+                        value: f.id,
+                        label: f.title,
+                      }))
+                    : [{ value: "", label: "-- ไม่มีแบบฟอร์ม --" }]
               }
               styleClass="scd-select-form scd-filter-form"
               textClass="scd-text-form"
@@ -774,13 +889,41 @@ export default function CaseData() {
               <div className={`scd-date-container`}>
                 <FiCalendar className="scd-date-main-icon" />
                 <div className="scd-date-field">
-                  <input type="text" className="scd-date-text-display" placeholder="วัน/เดือน/ปี" value={displayThaiDate(startDate)} readOnly />
-                  <input type="date" className="scd-date-native-hidden" value={startDate} onChange={(e) => setStartDate(e.target.value)} onClick={(e) => e.target.showPicker && e.target.showPicker()} />
+                  <input
+                    type="text"
+                    className="scd-date-text-display"
+                    placeholder="วัน/เดือน/ปี"
+                    value={displayThaiDate(startDate)}
+                    readOnly
+                  />
+                  <input
+                    type="date"
+                    className="scd-date-native-hidden"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    onClick={(e) =>
+                      e.target.showPicker && e.target.showPicker()
+                    }
+                  />
                 </div>
                 <span className="scd-date-separator">ถึง</span>
                 <div className="scd-date-field">
-                  <input type="text" className="scd-date-text-display" placeholder="วัน/เดือน/ปี" value={displayThaiDate(endDate)} readOnly />
-                  <input type="date" className="scd-date-native-hidden" value={endDate} onChange={(e) => setEndDate(e.target.value)} onClick={(e) => e.target.showPicker && e.target.showPicker()} />
+                  <input
+                    type="text"
+                    className="scd-date-text-display"
+                    placeholder="วัน/เดือน/ปี"
+                    value={displayThaiDate(endDate)}
+                    readOnly
+                  />
+                  <input
+                    type="date"
+                    className="scd-date-native-hidden"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    onClick={(e) =>
+                      e.target.showPicker && e.target.showPicker()
+                    }
+                  />
                 </div>
               </div>
             </div>
@@ -791,12 +934,12 @@ export default function CaseData() {
               value={clinicFilter}
               onChange={setClinicFilter}
               options={[
-                { value: 'all', label: 'ทุกคลินิก' },
-                { value: 'general', label: 'ทั่วไป' },
-                ...clinics.map(c => ({
+                { value: "all", label: "ทุกคลินิก" },
+                { value: "general", label: "ทั่วไป" },
+                ...clinics.map((c) => ({
                   value: c.slug,
-                  label: c.name
-                }))
+                  label: c.name,
+                })),
               ]}
               styleClass="scd-filter-clinic"
             />
@@ -807,8 +950,8 @@ export default function CaseData() {
               value={faculty}
               onChange={setFaculty}
               options={[
-                { value: '', label: 'ทุกสำนักวิชา' },
-                ...FACULTIES.map(f => ({ value: f, label: f }))
+                { value: "", label: "ทุกสำนักวิชา" },
+                ...FACULTIES.map((f) => ({ value: f, label: f })),
               ]}
               styleClass="scd-filter-faculty"
             />
@@ -820,10 +963,10 @@ export default function CaseData() {
                 value={risk}
                 onChange={setRisk}
                 options={[
-                  { value: '', label: 'ทุกระดับความเสี่ยง' },
-                  { value: 'ต่ำ', label: 'เสี่ยงต่ำ (สีเขียว)' },
-                  { value: 'ปานกลาง', label: 'เสี่ยงปานกลาง (สีเหลือง)' },
-                  { value: 'สูง', label: 'เสี่ยงสูง (สีแดง)' }
+                  { value: "", label: "ทุกระดับความเสี่ยง" },
+                  { value: "ต่ำ", label: "เสี่ยงต่ำ (สีเขียว)" },
+                  { value: "ปานกลาง", label: "เสี่ยงปานกลาง (สีเหลือง)" },
+                  { value: "สูง", label: "เสี่ยงสูง (สีแดง)" },
                 ]}
                 styleClass="scd-filter-risk"
               />
@@ -836,9 +979,9 @@ export default function CaseData() {
                 value={formStatusFilter}
                 onChange={setFormStatusFilter}
                 options={[
-                  { value: 'published', label: '✓ ฟอร์มที่เผยแพร่แล้ว' },
-                  { value: 'draft', label: '✎ ฟอร์มฉบับร่าง/ซ่อนอยู่' },
-                  { value: 'all', label: '☰ สถานะฟอร์มทั้งหมด' }
+                  { value: "published", label: "✓ ฟอร์มที่เผยแพร่แล้ว" },
+                  { value: "draft", label: "✎ ฟอร์มฉบับร่าง/ซ่อนอยู่" },
+                  { value: "all", label: "☰ สถานะฟอร์มทั้งหมด" },
                 ]}
                 styleClass="scd-select-status scd-filter-status"
                 iconClass="scd-icon-status"
@@ -852,26 +995,47 @@ export default function CaseData() {
                 <FiPlus />
                 เพิ่มเคส
               </button>
-
             </div>
 
             {/* 8. เลือกคอลัมน์ (โชว์เฉพาะตอนดูแบบฟอร์ม) */}
-            {tableViewMode === 'form' && (
-              <div className="scd-col-selector-wrapper scd-filter-columns" ref={colMenuRef}>
-                <button className="scd-custom-select scd-col-select-btn" onClick={() => setShowColMenu(!showColMenu)}>
+            {tableViewMode === "form" && (
+              <div
+                className="scd-col-selector-wrapper scd-filter-columns"
+                ref={colMenuRef}
+              >
+                <button
+                  className="scd-custom-select scd-col-select-btn"
+                  onClick={() => setShowColMenu(!showColMenu)}
+                >
                   <FiSettings className="scd-filter-icon" />
-                  <span className="scd-select-value">เลือกคอลัมน์ ({visibleColumns.length})</span>
+                  <span className="scd-select-value">
+                    เลือกคอลัมน์ ({visibleColumns.length})
+                  </span>
                   <FiChevronDown className="scd-dropdown-icon" />
                 </button>
                 {showColMenu && (
                   <div className="scd-col-dropdown-menu">
-                    <div className="scd-col-menu-header">เลือกคำถามที่ต้องการแสดง</div>
+                    <div className="scd-col-menu-header">
+                      เลือกคำถามที่ต้องการแสดง
+                    </div>
                     <div className="scd-col-menu-list">
-                      {allDynamicQuestions.map(q => {
-                        const cleanTitle = q.title.replace(/<[^>]+>/g, "").replace(/&nbsp;/gi, " ").replace(/\s+/g, " ").trim();
+                      {allDynamicQuestions.map((q) => {
+                        const cleanTitle = q.title
+                          .replace(/<[^>]+>/g, "")
+                          .replace(/&nbsp;/gi, " ")
+                          .replace(/\s+/g, " ")
+                          .trim();
                         return (
-                          <label key={q.id} className="scd-col-menu-item" title={cleanTitle}>
-                            <input type="checkbox" checked={visibleColumns.includes(q.id)} onChange={() => toggleColumn(q.id)} />
+                          <label
+                            key={q.id}
+                            className="scd-col-menu-item"
+                            title={cleanTitle}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={visibleColumns.includes(q.id)}
+                              onChange={() => toggleColumn(q.id)}
+                            />
                             <span className="scd-col-text">{cleanTitle}</span>
                           </label>
                         );
@@ -881,7 +1045,6 @@ export default function CaseData() {
                 )}
               </div>
             )}
-
           </div>
 
           <CaseTable
@@ -899,15 +1062,22 @@ export default function CaseData() {
               data={selectedCase}
               onClose={() => setSelectedCase(null)}
               onCaseUpdated={(updatedCase) => {
-                setResponses(prev => prev.map(r => {
-                  if (r.id === updatedCase.id || (r.master_case_id && updatedCase.master_case_id && r.master_case_id === updatedCase.master_case_id)) {
-                    return { ...r, ...updatedCase };
-                  }
-                  return r;
-                }));
+                setResponses((prev) =>
+                  prev.map((r) => {
+                    if (
+                      r.id === updatedCase.id ||
+                      (r.master_case_id &&
+                        updatedCase.master_case_id &&
+                        r.master_case_id === updatedCase.master_case_id)
+                    ) {
+                      return { ...r, ...updatedCase };
+                    }
+                    return r;
+                  }),
+                );
               }}
               onCaseDeleted={(deletedId) => {
-                setResponses(prev => prev.filter(r => r.id !== deletedId));
+                setResponses((prev) => prev.filter((r) => r.id !== deletedId));
                 setSelectedCase(null);
               }}
             />
@@ -918,13 +1088,12 @@ export default function CaseData() {
               onClose={() => setIsCreateCaseModalOpen(false)}
               onSave={async (newCase) => {
                 try {
-          
                   const customRawAnswers = {
                     "ชื่อ - นามสกุล": newCase.name || "",
-                    "เบอร์โทร": newCase.phone || "",
-                    "เลขบัตรประชาชน": newCase.citizenId || "",
-                    "คำนำหน้า": newCase.prefix || "",
-                    "สำนักวิชา": newCase.faculty || ""
+                    เบอร์โทร: newCase.phone || "",
+                    เลขบัตรประชาชน: newCase.citizenId || "",
+                    คำนำหน้า: newCase.prefix || "",
+                    สำนักวิชา: newCase.faculty || "",
                   };
                   const caseWithFormId = {
                     ...newCase,
@@ -934,19 +1103,24 @@ export default function CaseData() {
                       display_phone: newCase.phone || "",
                       display_faculty: newCase.faculty || "",
                       note: newCase.note || "",
-                      raw_answers: customRawAnswers 
-                    }
+                      raw_answers: customRawAnswers,
+                    },
                   };
                   await createCase(caseWithFormId);
                   if (selectedFormId) {
                     const responseRes = await getFormResponses(selectedFormId);
-                    const responseData = responseRes.data ? responseRes.data : responseRes;
+                    const responseData = responseRes.data
+                      ? responseRes.data
+                      : responseRes;
 
                     if (Array.isArray(responseData)) {
-                      const parsedResponses = responseData.map(r => ({
+                      const parsedResponses = responseData.map((r) => ({
                         ...r,
                         case_source: r.case_source || "assessment_form",
-                        summary_data: typeof r.summary_data === 'string' ? JSON.parse(r.summary_data) : (r.summary_data || {})
+                        summary_data:
+                          typeof r.summary_data === "string"
+                            ? JSON.parse(r.summary_data)
+                            : r.summary_data || {},
                       }));
                       setResponses(parsedResponses);
                     }
@@ -958,7 +1132,7 @@ export default function CaseData() {
                     icon: "success",
                     title: "สำเร็จ",
                     text: "บันทึกเคสเรียบร้อยแล้ว",
-                    confirmButtonColor: "#ADFF2F"
+                    confirmButtonColor: "#ADFF2F",
                   });
                 } catch (err) {
                   console.error(err);
@@ -966,7 +1140,7 @@ export default function CaseData() {
                     icon: "error",
                     title: "เกิดข้อผิดพลาด",
                     text: "ไม่สามารถบันทึกเคสได้",
-                    confirmButtonColor: "#F47932"
+                    confirmButtonColor: "#F47932",
                   });
                 }
               }}
@@ -982,7 +1156,6 @@ export default function CaseData() {
               formTitle={currentFormDetails?.title}
             />
           )}
-
         </div>
       </main>
     </div>

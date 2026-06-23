@@ -14,7 +14,6 @@ const COLORS = {
 };
 
 export default function PHQChart({ risk, score }) {
-
   const data = [
     { name: "ข้อ1", value: 2 },
     { name: "ข้อ2", value: 3 },
@@ -33,9 +32,7 @@ export default function PHQChart({ risk, score }) {
 
       <div className="score-box">
         <strong>{score}</strong>/27
-        <span className={`risk-badge ${risk}`}>
-          เสี่ยง{risk}
-        </span>
+        <span className={`risk-badge ${risk}`}>เสี่ยง{risk}</span>
       </div>
 
       <ResponsiveContainer width="100%" height={220}>
@@ -43,7 +40,7 @@ export default function PHQChart({ risk, score }) {
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip />
-          <Bar dataKey="value" fill={COLORS[risk]} radius={[6,6,0,0]} />
+          <Bar dataKey="value" fill={COLORS[risk]} radius={[6, 6, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

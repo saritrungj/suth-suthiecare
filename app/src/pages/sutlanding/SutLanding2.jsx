@@ -1,27 +1,54 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+<<<<<<< Updated upstream
 import { FiClock, FiLogIn, FiChevronLeft, FiChevronRight, FiCheckCircle, FiShield, FiHeart, FiPhoneCall, FiArrowLeft, FiHelpCircle } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher.jsx";
+=======
+import {
+  FiClock,
+  FiLogIn,
+  FiChevronLeft,
+  FiChevronRight,
+  FiCheckCircle,
+  FiShield,
+  FiHeart,
+  FiPhoneCall,
+  FiArrowLeft,
+} from "react-icons/fi";
+>>>>>>> Stashed changes
 import "./SutLanding2.css";
 
 import logo from "../../assets/logoSUTH.png";
 import bgHealth from "../../assets/bg-health.jpg";
 import bgClinic from "../../assets/bg-new.jpg";
 import { formCache } from "../../services/cache";
+<<<<<<< Updated upstream
 import api, { getForms, getBanners, getActiveClinics } from "../../services/api";
 import { translateTextSmart } from "../../utils/translator";
+=======
+import api, {
+  getForms,
+  getBanners,
+  getActiveClinics,
+} from "../../services/api";
+>>>>>>> Stashed changes
 
 const SLIDE_INTERVAL = 6000;
 const CARD_THEMES = ["sut2-card--blue", "sut2-card--pink", "sut2-card--green"];
 
 function stripHtml(html) {
   if (!html) return "";
-  return html.replace(/<br\s*\/?>/gi, " ").replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/\s+/g, " ").trim();
+  return html
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/\s+/g, " ")
+    .trim();
 }
-
-
 
 // ✅ FormCard ที่แก้ไขแล้ว
 function FormCard({ form, themeClass, count, isLoaded }) {
@@ -53,9 +80,15 @@ function FormCard({ form, themeClass, count, isLoaded }) {
       tabIndex={0}
     >
       {/* ===== Band ด้านบน ===== */}
-      <div className={`sut2-card__band ${displayImage ? "sut2-card__band--has-img" : ""}`}>
+      <div
+        className={`sut2-card__band ${displayImage ? "sut2-card__band--has-img" : ""}`}
+      >
         {displayImage && (
-          <img className="sut2-card__band-img" src={displayImage} alt={form.title} />
+          <img
+            className="sut2-card__band-img"
+            src={displayImage}
+            alt={form.title}
+          />
         )}
       </div>
 
@@ -71,7 +104,12 @@ function FormCard({ form, themeClass, count, isLoaded }) {
           <span className="sut2-card__count-text">{t('form_card.loading')}</span>
         ) : (
           <span className="sut2-card__count-text">
+<<<<<<< Updated upstream
             {t('form_card.participants', { count: Number(count).toLocaleString() })}
+=======
+            ผู้เข้ารับการประเมิน{" "}
+            <strong>{Number(count).toLocaleString()}</strong> คน
+>>>>>>> Stashed changes
           </span>
         )}
       </div>
@@ -106,9 +144,9 @@ export default function SutLanding2() {
   const scrollContainerRef = useRef(null);
 
   useEffect(() => {
-    const handleResize = () => { };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const handleResize = () => {};
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -129,6 +167,7 @@ export default function SutLanding2() {
 
   useEffect(() => {
     // Load Clinics
+<<<<<<< Updated upstream
     getActiveClinics().then(res => {
       const sorted = (res.data.data || []).sort(
         (a, b) => (a.sort_order ?? 9999) - (b.sort_order ?? 9999)
@@ -139,43 +178,71 @@ export default function SutLanding2() {
       console.error("Failed to load clinics", err);
       setLoadingClinics(false);
     });
+=======
+    getActiveClinics()
+      .then((res) => {
+        const sorted = (res.data.data || []).sort(
+          (a, b) => (a.sort_order ?? 9999) - (b.sort_order ?? 9999),
+        );
+        setClinics(sorted);
+        setLoadingClinics(false);
+      })
+      .catch((err) => {
+        console.error("Failed to load clinics", err);
+        setLoadingClinics(false);
+      });
+>>>>>>> Stashed changes
 
     // Load Banners
-    getBanners().then(res => setSlides(res.data.map(b => ({ image: b.image, alt: b.filename, link: b.link }))));
+    getBanners().then((res) =>
+      setSlides(
+        res.data.map((b) => ({
+          image: b.image,
+          alt: b.filename,
+          link: b.link,
+        })),
+      ),
+    );
 
     // Load Forms
-    const cachedForms = formCache.get('forms');
+    const cachedForms = formCache.get("forms");
     if (cachedForms) {
       setForms(cachedForms);
       setLoading(false);
       return;
     }
 
-    getForms("lastOpened").then(res => {
-      const activeForms = res.data.filter(f => {
-        if (!f.status || f.status !== 'published') return false;
-        const now = new Date();
-        const start = f.publish_start_date ? new Date(f.publish_start_date) : null;
-        const end = f.publish_end_date ? new Date(f.publish_end_date) : null;
-        if (start && now < start) return false;
-        if (end && now > end) return false;
-        return true;
+    getForms("lastOpened")
+      .then((res) => {
+        const activeForms = res.data.filter((f) => {
+          if (!f.status || f.status !== "published") return false;
+          const now = new Date();
+          const start = f.publish_start_date
+            ? new Date(f.publish_start_date)
+            : null;
+          const end = f.publish_end_date ? new Date(f.publish_end_date) : null;
+          if (start && now < start) return false;
+          if (end && now > end) return false;
+          return true;
+        });
+        const reversed = [...activeForms].reverse();
+        setForms(reversed);
+        formCache.set("forms", reversed);
+        setLoading(false);
+      })
+      .catch(() => {
+        setForms([]);
+        setLoading(false);
       });
-      const reversed = [...activeForms].reverse();
-      setForms(reversed);
-      formCache.set('forms', reversed);
-      setLoading(false);
-    }).catch(() => {
-      setForms([]);
-      setLoading(false);
-    });
   }, []);
 
-  const filteredForms = useMemo(() =>
-    selectedClinic
-      ? forms.filter(f => (f.clinic_type || "general") === selectedClinic)
-      : []
-    , [selectedClinic, forms]);
+  const filteredForms = useMemo(
+    () =>
+      selectedClinic
+        ? forms.filter((f) => (f.clinic_type || "general") === selectedClinic)
+        : [],
+    [selectedClinic, forms],
+  );
 
   useEffect(() => {
     if (activeIdx >= filteredForms.length && filteredForms.length > 0) {
@@ -188,7 +255,7 @@ export default function SutLanding2() {
     if (scrollContainerRef.current) {
       setTimeout(() => {
         if (scrollContainerRef.current) {
-          scrollContainerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+          scrollContainerRef.current.scrollTo({ left: 0, behavior: "smooth" });
         }
       }, 50);
     }
@@ -197,38 +264,47 @@ export default function SutLanding2() {
   const handleNextForm = useCallback(() => {
     const maxLength = !selectedClinic ? clinics.length : filteredForms.length;
     if (activeIdx < maxLength - 1) {
-      setActiveIdx(prev => prev + 1);
+      setActiveIdx((prev) => prev + 1);
       if (scrollContainerRef.current) {
         const cardWidth = window.innerWidth <= 768 ? 280 : 340;
-        scrollContainerRef.current.scrollBy({ left: cardWidth, behavior: 'smooth' });
+        scrollContainerRef.current.scrollBy({
+          left: cardWidth,
+          behavior: "smooth",
+        });
       }
     }
   }, [activeIdx, filteredForms.length, selectedClinic, clinics.length]);
 
   const handlePrevForm = useCallback(() => {
     if (activeIdx > 0) {
-      setActiveIdx(prev => prev - 1);
+      setActiveIdx((prev) => prev - 1);
       if (scrollContainerRef.current) {
         const cardWidth = window.innerWidth <= 768 ? 280 : 340;
-        scrollContainerRef.current.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+        scrollContainerRef.current.scrollBy({
+          left: -cardWidth,
+          behavior: "smooth",
+        });
       }
     }
   }, [activeIdx]);
 
   useEffect(() => {
     if (!slides.length) return;
-    const t = setInterval(() => setCurrentSlide(c => (c + 1) % slides.length), SLIDE_INTERVAL);
+    const t = setInterval(
+      () => setCurrentSlide((c) => (c + 1) % slides.length),
+      SLIDE_INTERVAL,
+    );
     return () => clearInterval(t);
   }, [slides]);
 
   const fetchAllCounts = useCallback(async (formList) => {
     if (!formList.length) return;
     try {
-      const response = await api.post('/counts', {
-        formIds: formList.map(f => f.id)
+      const response = await api.post("/counts", {
+        formIds: formList.map((f) => f.id),
       });
       setCounts(response.data.data);
-    } catch (err) { }
+    } catch (err) {}
   }, []);
 
   const [isInViewport, setIsInViewport] = useState(false);
@@ -244,90 +320,169 @@ export default function SutLanding2() {
     const observer = new IntersectionObserver(([entry]) => {
       setIsInViewport(entry.isIntersecting);
     });
-    const section = document.querySelector('.sut2-3d-section');
+    const section = document.querySelector(".sut2-3d-section");
     if (section) observer.observe(section);
     return () => observer.disconnect();
   }, []);
 
   return (
     <div className="sut2-page">
-
       {/* NAVBAR */}
       <nav className={`sut2-nav ${isScrolled ? "sut2-nav--scrolled" : ""}`}>
         <div className="sut2-nav__logo">
           <img src={logo} alt="SUTH Logo" />
         </div>
-        <div className="sut2-nav__menu-btn" onClick={() => setMenuOpen(!menuOpen)}>☰</div>
+        <div
+          className="sut2-nav__menu-btn"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          ☰
+        </div>
         <div className={`sut2-nav__actions ${menuOpen ? "sut2-open" : ""}`}>
+<<<<<<< Updated upstream
           <LanguageSwitcher darkText={isScrolled || menuOpen} />
           <button className="sut2-nav__btn sut2-nav__btn--history" onClick={() => navigate("/history")}>
             <FiClock /> <span>{t('nav.history')}</span>
           </button>
           <button className="sut2-nav__btn sut2-nav__btn--login" onClick={() => navigate("/admin/dashboard")}>
             <FiLogIn /> <span>{t('nav.staff')}</span>
+=======
+          <button
+            className="sut2-nav__btn sut2-nav__btn--history"
+            onClick={() => navigate("/history")}
+          >
+            <FiClock /> <span>ตรวจสอบประวัติ</span>
+          </button>
+          <button
+            className="sut2-nav__btn sut2-nav__btn--login"
+            onClick={() => navigate("/admin/dashboard")}
+          >
+            <FiLogIn /> <span>สำหรับเจ้าหน้าที่</span>
+>>>>>>> Stashed changes
           </button>
         </div>
       </nav>
 
       <div className="sut2-main-wrapper">
-
         {/* ================= 1. HERO SPLIT SECTION ================= */}
         <section className="sut2-hero">
           <div
             className="sut2-hero__bg"
             style={{
               backgroundImage: `url(${bgHealth})`,
-              transform: `translateY(${scrollY * 0.4}px)`
+              transform: `translateY(${scrollY * 0.4}px)`,
             }}
           />
           <div className="sut2-hero__overlay"></div>
 
           <div className="sut2-hero__content">
-            <div className="sut2-hero__text-box" style={{ transform: `translateY(${scrollY * -0.15}px)` }}>
+            <div
+              className="sut2-hero__text-box"
+              style={{ transform: `translateY(${scrollY * -0.15}px)` }}
+            >
               <h1 className="sut2-hero__title">
+<<<<<<< Updated upstream
                 {t('sutlanding.title')}<br />
                 <span className="sut2-hero__highlight">{t('sutlanding.subtitle_highlight')}</span>
               </h1>
               <p className="sut2-hero__subtitle">
                 {t('sutlanding.description')}
+=======
+                แบบลงทะเบียน
+                <br />
+                <span className="sut2-hero__highlight">
+                  ขอเข้ารับคำปรึกษาปัญหาสุขภาพ
+                </span>
+              </h1>
+              <p className="sut2-hero__subtitle">
+                ศูนย์รวมการลงทะเบียนขอรับคำปรึกษาทางคลินิก
+                <br />
+                โรงพยาบาลมหาวิทยาลัยเทคโนโลยีสุรนารี
+>>>>>>> Stashed changes
               </p>
               <div className="sut2-hero__cta-group">
                 <button
                   className="sut2-hero__cta"
+<<<<<<< Updated upstream
                   onClick={() => window.scrollTo({ top: window.innerHeight * 0.9, behavior: "smooth" })}>{t('sutlanding.btn_start')}
                 </button>
                 <button
                   className="sut2-hero__cta sut2-hero__cta--secondary"
                   onClick={() => document.getElementById("steps")?.scrollIntoView({ behavior: "smooth" })}>{t('sutlanding.btn_steps')}
+=======
+                  onClick={() =>
+                    window.scrollTo({
+                      top: window.innerHeight * 0.9,
+                      behavior: "smooth",
+                    })
+                  }
+                >
+                  เริ่มต้นรับบริการ
+                </button>
+                <button
+                  className="sut2-hero__cta sut2-hero__cta--secondary"
+                  onClick={() =>
+                    document
+                      .getElementById("steps")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
+                  ขั้นตอนการรับบริการ
+>>>>>>> Stashed changes
                 </button>
               </div>
             </div>
 
             {/* ===== Banner ==== */}
-            <div className="sut2-hero__banner-box" style={{ transform: `translateY(${scrollY * 0.1}px)` }}>
+            <div
+              className="sut2-hero__banner-box"
+              style={{ transform: `translateY(${scrollY * 0.1}px)` }}
+            >
               {slides.length > 0 ? (
                 <div className="sut2-banner-slider">
-                  {slides.map((slide, i) => (
+                  {slides.map((slide, i) =>
                     slide.link ? (
                       <a
                         href={slide.link}
                         target="_blank"
                         rel="noopener noreferrer"
                         key={i}
+<<<<<<< Updated upstream
                         className={`sut2-banner-slide ${i === currentSlide ? 'active' : ''}`}
                         style={{ display: i === currentSlide ? 'block' : 'none' }}
+=======
+                        className={`sut2-banner-slide ${i === currentSlide ? "active" : ""}`}
+                        style={{
+                          display: i === currentSlide ? "block" : "none",
+                        }}
+>>>>>>> Stashed changes
                       >
-                        <img src={slide.image} alt={slide.alt || 'banner'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img
+                          src={slide.image}
+                          alt={slide.alt || "banner"}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
                       </a>
                     ) : (
                       <img
-                        key={i} src={slide.image} alt={slide.alt || 'banner'}
-                        className={`sut2-banner-slide ${i === currentSlide ? 'active' : ''}`}
+                        key={i}
+                        src={slide.image}
+                        alt={slide.alt || "banner"}
+                        className={`sut2-banner-slide ${i === currentSlide ? "active" : ""}`}
                       />
-                    )))}
+                    ),
+                  )}
                   <div className="sut2-banner-dots">
                     {slides.map((_, i) => (
-                      <button key={i} className={`sut2-banner-dot ${i === currentSlide ? 'active' : ''}`} onClick={() => setCurrentSlide(i)} />
+                      <button
+                        key={i}
+                        className={`sut2-banner-dot ${i === currentSlide ? "active" : ""}`}
+                        onClick={() => setCurrentSlide(i)}
+                      />
                     ))}
                   </div>
                 </div>
@@ -344,12 +499,12 @@ export default function SutLanding2() {
         {/* ================= 2. STACKED SLIDER SECTION ================= */}
         <section className="sut2-3d-section">
           <div className="sut2-3d-layout-container" ref={scrollContainerRef}>
-
             {/* ด้านซ้าย: Static Promo Card */}
             <div className="sut2-left-column">
-              <div className={`sut2-promo-static-card ${isFlipped ? "promo-flip" : ""}`}>
+              <div
+                className={`sut2-promo-static-card ${isFlipped ? "promo-flip" : ""}`}
+              >
                 <div className="promo-inner">
-
                   {/* ด้านหน้า */}
                   <div className="promo-front">
                     <div className="sut2-promo-content">
@@ -361,8 +516,15 @@ export default function SutLanding2() {
                   {/* ด้านหลัง (ตอน flip) */}
                   <div className="promo-back">
                     <div className="sut2-promo-content">
+<<<<<<< Updated upstream
                       <h2 className="sut2-promo-title">{t('sutlanding.assessment_form')}</h2>
                       <p className="sut2-promo-desc">{t('sutlanding.assessment_form_desc')}</p>
+=======
+                      <h2 className="sut2-promo-title">แบบประเมิน</h2>
+                      <p className="sut2-promo-desc">
+                        เลือกแบบประเมินที่ต้องการ
+                      </p>
+>>>>>>> Stashed changes
                       {selectedClinic && (
                         <button
                           className="back-btn"
@@ -373,7 +535,14 @@ export default function SutLanding2() {
                             setIsFlipped(false);
                           }}
                         >
+<<<<<<< Updated upstream
                           <FiArrowLeft style={{ fontSize: '18px', flexShrink: 0 }} /> <span>{t('sutlanding.btn_back')}</span>
+=======
+                          <FiArrowLeft
+                            style={{ fontSize: "18px", flexShrink: 0 }}
+                          />{" "}
+                          <span>ย้อนกลับ</span>
+>>>>>>> Stashed changes
                         </button>
                       )}
                     </div>
@@ -394,12 +563,14 @@ export default function SutLanding2() {
                 </div>
               </div>
 
-              <div className={`sut2-dots-wrapper-left ${!selectedClinic ? 'show' : ''}`}>
+              <div
+                className={`sut2-dots-wrapper-left ${!selectedClinic ? "show" : ""}`}
+              >
                 <div className="sut2-3d-dots">
                   {(!selectedClinic ? clinics : filteredForms).map((_, i) => (
                     <span
                       key={i}
-                      className={`sut2-3d-dot ${activeIdx === i ? 'active' : ''}`}
+                      className={`sut2-3d-dot ${activeIdx === i ? "active" : ""}`}
                       onClick={() => setActiveIdx(i)}
                     />
                   ))}
@@ -409,23 +580,61 @@ export default function SutLanding2() {
 
             {/* ด้านขวา */}
             <div className="sut2-3d-main-content">
-              <div className={`sut2-stacked-viewport ${selectedClinic ? "is-form-mode" : ""} ${animationStage === "flip" ? "show-forms" : ""}`}>
-                <div className="sut2-stacked-list" key={selectedClinic ? "forms" : "clinics"}>
+              <div
+                className={`sut2-stacked-viewport ${selectedClinic ? "is-form-mode" : ""} ${animationStage === "flip" ? "show-forms" : ""}`}
+              >
+                <div
+                  className="sut2-stacked-list"
+                  key={selectedClinic ? "forms" : "clinics"}
+                >
                   {loading || loadingClinics ? (
+<<<<<<< Updated upstream
                     <p style={{ textAlign: 'center', width: '100%', color: 'white' }}>{t('sutlanding.loading')}</p>
                   ) : !selectedClinic ? (
                     clinics.length === 0 ? (
                       <p style={{ textAlign: 'center', width: '100%', color: 'white' }}>{t('sutlanding.no_clinic')}</p>
+=======
+                    <p
+                      style={{
+                        textAlign: "center",
+                        width: "100%",
+                        color: "white",
+                      }}
+                    >
+                      กำลังโหลดข้อมูล...
+                    </p>
+                  ) : !selectedClinic ? (
+                    clinics.length === 0 ? (
+                      <p
+                        style={{
+                          textAlign: "center",
+                          width: "100%",
+                          color: "white",
+                        }}
+                      >
+                        ไม่พบข้อมูลคลินิก
+                      </p>
+>>>>>>> Stashed changes
                     ) : (
                       clinics.map((clinic, index) => {
                         const offset = index - activeIdx;
-                        let statusClass = offset === 0 ? "active" : offset < 0 ? "exit" : offset < 3 ? "visible" : "hidden";
+                        let statusClass =
+                          offset === 0
+                            ? "active"
+                            : offset < 0
+                              ? "exit"
+                              : offset < 3
+                                ? "visible"
+                                : "hidden";
 
                         return (
                           <div
                             key={clinic.slug}
                             className={`sut2-stacked-item ${statusClass}`}
-                            style={{ '--display-index': offset, zIndex: clinics.length - index }}
+                            style={{
+                              "--display-index": offset,
+                              zIndex: clinics.length - index,
+                            }}
                             onClick={() => {
                               if (animatingClinic) return;
                               setAnimatingClinic(clinic.slug);
@@ -445,32 +654,67 @@ export default function SutLanding2() {
                             }}
                           >
                             <div
-                              className={`clinic-card ${animatingClinic === clinic.slug && animationStage === "flying" ? 'clinic-fly' : ''}`}
-                              style={{ backgroundImage: `url(${clinic.bg || bgClinic})` }}
+                              className={`clinic-card ${animatingClinic === clinic.slug && animationStage === "flying" ? "clinic-fly" : ""}`}
+                              style={{
+                                backgroundImage: `url(${clinic.bg || bgClinic})`,
+                              }}
                             >
+<<<<<<< Updated upstream
                               {(clinic.show_icon === 1 || clinic.show_icon === undefined) && clinic.image && (
                                 <div className="clinic-icon">
                                   <img src={clinic.image} alt={clinic.name} />
                                 </div>
                               )}
                               <h3>{i18n.language === 'en' && clinic.name_en ? clinic.name_en : clinic.name}</h3>
+=======
+                              {(clinic.show_icon === 1 ||
+                                clinic.show_icon === undefined) &&
+                                clinic.image && (
+                                  <div className="clinic-icon">
+                                    <img src={clinic.image} alt={clinic.name} />
+                                  </div>
+                                )}
+                              <h3>{clinic.name}</h3>
+>>>>>>> Stashed changes
                             </div>
                           </div>
                         );
                       })
                     )
                   ) : filteredForms.length === 0 ? (
+<<<<<<< Updated upstream
                     <p style={{ textAlign: 'center', width: '100%', color: 'white' }}>{t('sutlanding.no_form_in_clinic')}</p>
+=======
+                    <p
+                      style={{
+                        textAlign: "center",
+                        width: "100%",
+                        color: "white",
+                      }}
+                    >
+                      ไม่มีแบบประเมินในคลินิกนี้
+                    </p>
+>>>>>>> Stashed changes
                   ) : (
                     filteredForms.map((form, index) => {
                       const offset = index - activeIdx;
-                      let statusClass = offset === 0 ? "active" : offset < 0 ? "exit" : offset < 3 ? "visible" : "hidden";
+                      let statusClass =
+                        offset === 0
+                          ? "active"
+                          : offset < 0
+                            ? "exit"
+                            : offset < 3
+                              ? "visible"
+                              : "hidden";
 
                       return (
                         <div
                           key={form.id}
                           className={`sut2-stacked-item ${statusClass}`}
-                          style={{ '--display-index': offset, zIndex: filteredForms.length - index }}
+                          style={{
+                            "--display-index": offset,
+                            zIndex: filteredForms.length - index,
+                          }}
                         >
                           <FormCard
                             form={form}
@@ -487,8 +731,20 @@ export default function SutLanding2() {
 
               {selectedClinic && (
                 <div className="sut2-compact-controls">
-                  <button className="sut2-control-btn" onClick={handlePrevForm} disabled={activeIdx === 0}><FiChevronLeft /></button>
-                  <button className="sut2-control-btn" onClick={handleNextForm} disabled={activeIdx >= filteredForms.length - 1}><FiChevronRight /></button>
+                  <button
+                    className="sut2-control-btn"
+                    onClick={handlePrevForm}
+                    disabled={activeIdx === 0}
+                  >
+                    <FiChevronLeft />
+                  </button>
+                  <button
+                    className="sut2-control-btn"
+                    onClick={handleNextForm}
+                    disabled={activeIdx >= filteredForms.length - 1}
+                  >
+                    <FiChevronRight />
+                  </button>
                 </div>
               )}
             </div>
@@ -501,7 +757,7 @@ export default function SutLanding2() {
             className="sut2-steps__bg"
             style={{
               backgroundImage: `url(${bgClinic})`,
-              transform: `translateY(${(scrollY - window.innerHeight) * 0.25}px)`
+              transform: `translateY(${(scrollY - window.innerHeight) * 0.25}px)`,
             }}
           />
           <div className="sut2-steps-overlay"></div>
@@ -510,6 +766,7 @@ export default function SutLanding2() {
             <h2 className="sut2-steps-title">{t('sutlanding.steps_title')}</h2>
             <div className="sut2-steps-grid">
               <div className="sut2-step-glass">
+<<<<<<< Updated upstream
                 <div className="sut2-step-icon"><FiCheckCircle /></div>
                 <h3>{t('sutlanding.step1_title')}</h3>
                 <p>{t('sutlanding.step1_desc')}</p>
@@ -528,35 +785,65 @@ export default function SutLanding2() {
                 <div className="sut2-step-icon"><FiPhoneCall /></div>
                 <h3>{t('sutlanding.step4_title')}</h3>
                 <p>{t('sutlanding.step4_desc')}</p>
+=======
+                <div className="sut2-step-icon">
+                  <FiCheckCircle />
+                </div>
+                <h3>1. เลือกแบบประเมิน</h3>
+                <p>ค้นหาแบบฟอร์มที่ตรงกับอาการของคุณจากเมนูด้านบน</p>
+              </div>
+              <div className="sut2-step-glass">
+                <div className="sut2-step-icon">
+                  <FiShield />
+                </div>
+                <h3>2. กรอกข้อมูล</h3>
+                <p>ตอบคำถามตามความเป็นจริง ข้อมูลของคุณจะถูกเก็บเป็นความลับ</p>
+              </div>
+              <div className="sut2-step-glass">
+                <div className="sut2-step-icon">
+                  <FiHeart />
+                </div>
+                <h3>3. ผลลัพธ์การประเมิน</h3>
+                <p>
+                  ระบบจะวิเคราะห์ข้อมูลของคุณและแสดงผลการประเมินพร้อมคำแนะนำเบื้องต้น
+                </p>
+              </div>
+              <div className="sut2-step-glass">
+                <div className="sut2-step-icon">
+                  <FiPhoneCall />
+                </div>
+                <h3>4. รอเจ้าหน้าที่ติดต่อกลับ</h3>
+                <p>
+                  ทีมงานจะตรวจสอบข้อมูลของคุณและติดต่อกลับเพื่อให้คำแนะนำเพิ่มเติมโดยเร็วที่สุด
+                </p>
+>>>>>>> Stashed changes
               </div>
             </div>
 
-            <div style={{ textAlign: 'center', marginTop: '45px' }}>
+            <div style={{ textAlign: "center", marginTop: "45px" }}>
               <a
                 href={`${process.env.PUBLIC_URL}/docs/user_manual.pdf`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  color: '#ffffff',
-                  textDecoration: 'underline',
-                  fontSize: '15px',
-                  fontWeight: '500',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
+                  color: "#ffffff",
+                  textDecoration: "underline",
+                  fontSize: "15px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
                   opacity: 0.9,
-                  transition: 'opacity 0.2s'
+                  transition: "opacity 0.2s",
                 }}
-                onMouseOver={(e) => e.target.style.opacity = 1}
-                onMouseOut={(e) => e.target.style.opacity = 0.9}
+                onMouseOver={(e) => (e.target.style.opacity = 1)}
+                onMouseOut={(e) => (e.target.style.opacity = 0.9)}
               >
                 {t('sutlanding.download_manual')}
               </a>
             </div>
-
           </div>
         </section>
-
       </div>
 
       {/* ================= 4. REVEAL FOOTER ================= */}
@@ -564,6 +851,7 @@ export default function SutLanding2() {
         <div className="sut2-footer-content">
           <div className="sut2-footer-col">
             <img src={logo} alt="SUTH Logo" className="sut2-footer-logo" />
+<<<<<<< Updated upstream
             <p>{t('sutlanding.footer_desc')}</p>
           </div>
           <div className="sut2-footer-col">
@@ -588,6 +876,31 @@ export default function SutLanding2() {
         <FiHelpCircle />
       </button>
 
+=======
+            <p>
+              ศูนย์รวมการลงทะเบียนขอรับคำปรึกษาทางคลินิก
+              โรงพยาบาลมหาวิทยาลัยเทคโนโลยีสุรนารี
+            </p>
+          </div>
+          <div className="sut2-footer-col">
+            <h4>ติดต่อเรา</h4>
+            <p>
+              111 ถ.มหาวิทยาลัย ต.สุรนารี
+              <br />
+              อ.เมือง จ.นครราชสีมา 30000
+            </p>
+            <p>โทรศัพท์: 044-376555</p>
+            <p>เว็บไซต์: www.suth.go.th</p>
+          </div>
+        </div>
+        <div className="sut2-footer-bottom">
+          <p>
+            © {new Date().getFullYear()} โรงพยาบาลมหาวิทยาลัยเทคโนโลยีสุรนารี
+            สงวนลิขสิทธิ์
+          </p>
+        </div>
+      </footer>
+>>>>>>> Stashed changes
     </div>
   );
 }

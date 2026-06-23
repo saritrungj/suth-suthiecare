@@ -3,7 +3,7 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0, 0, 0, 0.35);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,7 +16,7 @@
   width: 720px;
   max-height: 85vh;
   overflow-y: auto;
-  background: #FFF1EB;
+  background: #fff1eb;
   border-radius: 12px;
   padding: 26px;
 }
@@ -60,15 +60,15 @@
 
   background: #ffffff;
   border-radius: 12px;
-  border: 2px solid #FFF1EB;
+  border: 2px solid #fff1eb;
 
-  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
   transition: 0.25s;
 }
 
 .appointment-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 26px rgba(0,0,0,0.08);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.08);
 }
 
 /* ================= NUMBER ================= */
@@ -78,7 +78,7 @@
   height: 78px;
   border-radius: 50%;
 
-  background: #9FE3F2; /* ฟ้าสดใสขึ้น */
+  background: #9fe3f2; /* ฟ้าสดใสขึ้น */
 
   display: flex;
   justify-content: center;
@@ -130,7 +130,7 @@
   font-size: 28px;
   margin: 0 auto 6px;
 
-  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
 }
 
 .status-text {
@@ -142,32 +142,32 @@
 
 /* 🔴 URGENT */
 .appointment-card.urgent .status-icon {
-  background: #FFE5E5;
-  color: #FF4D4F;
+  background: #ffe5e5;
+  color: #ff4d4f;
 }
 
 .appointment-card.urgent .status-text {
-  color: #FF4D4F;
+  color: #ff4d4f;
 }
 
 /* 🟡 WARNING */
 .appointment-card.warning .status-icon {
-  background: #FFF4D6;
-  color: #E6B800;
+  background: #fff4d6;
+  color: #e6b800;
 }
 
 .appointment-card.warning .status-text {
-  color: #E6B800;
+  color: #e6b800;
 }
 
 /* 🟢 NORMAL */
 .appointment-card.normal .status-icon {
-  background: #E6F7EE;
-  color: #2FBF71;
+  background: #e6f7ee;
+  color: #2fbf71;
 }
 
 .appointment-card.normal .status-text {
-  color: #2FBF71;
+  color: #2fbf71;
 }
 
 /* ================= EDIT BUTTON ================= */

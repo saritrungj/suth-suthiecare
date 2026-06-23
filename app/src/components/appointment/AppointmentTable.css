@@ -3,215 +3,241 @@
 ============================================================ */
 
 .aptt-wrapper-card {
-    background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    overflow: hidden;
-    margin-top: 20px;
-    width: 100%;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin-top: 20px;
+  width: 100%;
 }
 
 /* 🟢 เปิดให้เลื่อนซ้าย-ขวาบนมือถือได้อย่างอิสระ */
 .aptt-scroll-container {
-    width: 100%;
-    overflow-x: auto !important;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch; /* ให้เลื่อนบนมือถือลื่นขึ้น */
+  width: 100%;
+  overflow-x: auto !important;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch; /* ให้เลื่อนบนมือถือลื่นขึ้น */
 }
 
 /* 🟢 บังคับความกว้างขั้นต่ำ ป้องกันคอลัมน์บีบกันจนเละบนจอมือถือ */
 .aptt-main-table {
-    font-family: Sarabun;
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    table-layout: auto; 
-    min-width: 1300px; 
+  font-family: Sarabun;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: auto;
+  min-width: 1300px;
 }
 
 /* หัวตาราง (Header) */
 .aptt-main-table th {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    padding: 18px 16px;
-    background: #F47932;
-    color: #ffffff;
-    font-weight: 600;
-    font-size: 14.5px;
-    white-space: nowrap;
-    text-align: center;
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 18px 16px;
+  background: #f47932;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14.5px;
+  white-space: nowrap;
+  text-align: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.aptt-main-table th:first-child { border-top-left-radius: 20px; }
-.aptt-main-table th:last-child { border-top-right-radius: 20px; border-right: none; }
+.aptt-main-table th:first-child {
+  border-top-left-radius: 20px;
+}
+.aptt-main-table th:last-child {
+  border-top-right-radius: 20px;
+  border-right: none;
+}
 
 /* เนื้อหาตาราง */
 .aptt-main-table td {
-    padding: 18px 16px;
-    color: #4b5563;
-    font-size: 14px;
-    border-bottom: 1px solid #ececec; 
-    border-right: 1px solid #fcfcfc; 
-    vertical-align: middle;
-    text-align: center;
+  padding: 18px 16px;
+  color: #4b5563;
+  font-size: 14px;
+  border-bottom: 1px solid #ececec;
+  border-right: 1px solid #fcfcfc;
+  vertical-align: middle;
+  text-align: center;
 }
 
-.aptt-main-table td:last-child { border-right: none; }
+.aptt-main-table td:last-child {
+  border-right: none;
+}
 
 /* ================= จัดการความกว้างและสไตล์เฉพาะคอลัมน์ ================= */
-.aptt-col-name { 
-    min-width: 200px; 
-    text-align: left !important; 
+.aptt-col-name {
+  min-width: 200px;
+  text-align: left !important;
 }
 
 .aptt-col-service {
-    min-width: 160px;
-    font-weight: 700;
+  min-width: 160px;
+  font-weight: 700;
 }
 
-.aptt-col-note { 
-    min-width: 250px; 
-    max-width: 350px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: left !important;
+.aptt-col-note {
+  min-width: 250px;
+  max-width: 350px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left !important;
 }
 
 .aptt-col-date {
-    min-width: 160px;
-    font-weight: 600;
+  min-width: 160px;
+  font-weight: 600;
 }
 
 /* ================= สไตล์ปุ่มและป้ายกำกับ (นำมารวมไว้ในนี้ให้ไม่พึ่งพาไฟล์อื่น) ================= */
 .aptt-name-btn {
-    background: transparent;
-    border: none;
-    color: #1967d2;
-    font-size: 14.5px;
-    font-weight: 600;
-    font-family: inherit;
-    text-decoration: underline;
-    cursor: pointer;
-    padding: 0;
-    transition: color 0.2s;
+  background: transparent;
+  border: none;
+  color: #1967d2;
+  font-size: 14.5px;
+  font-weight: 600;
+  font-family: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
 }
 .aptt-name-btn:hover {
-    color: #11468f;
+  color: #11468f;
 }
 
 .aptt-status-tag {
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 12.5px;
-    font-weight: bold;
-    display: inline-block;
-    white-space: nowrap;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12.5px;
+  font-weight: bold;
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .aptt-risk-tag {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12.5px;
-    font-weight: 700;
-    display: inline-block;
-    white-space: nowrap;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 700;
+  display: inline-block;
+  white-space: nowrap;
 }
-.aptt-risk-high { background: #fee2e2; color: #b91c1c; }
-.aptt-risk-medium { background: #fef3c7; color: #b45309; }
-.aptt-risk-low { background: #dcfce7; color: #15803d; }
+.aptt-risk-high {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.aptt-risk-medium {
+  background: #fef3c7;
+  color: #b45309;
+}
+.aptt-risk-low {
+  background: #dcfce7;
+  color: #15803d;
+}
 
 /* ================= Hover Effect & Scrollbar ================= */
 .aptt-main-table tr:hover td {
-    background: #fff2eb;
-    transition: background-color 0.2s;
+  background: #fff2eb;
+  transition: background-color 0.2s;
 }
 
 .aptt-scroll-container::-webkit-scrollbar {
-    height: 12px;
+  height: 12px;
 }
 .aptt-scroll-container::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 10px;
-    margin: 0 10px; /* ไม่ให้ scrollbar ชิดขอบซ้ายขวาเกินไป */
+  background: #f1f5f9;
+  border-radius: 10px;
+  margin: 0 10px; /* ไม่ให้ scrollbar ชิดขอบซ้ายขวาเกินไป */
 }
 .aptt-scroll-container::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
-    border-radius: 10px;
-    border: 3px solid #f1f5f9;
-    background-clip: content-box;
+  background-color: #cbd5e1;
+  border-radius: 10px;
+  border: 3px solid #f1f5f9;
+  background-clip: content-box;
 }
 
 /* ================= Skeleton ================= */
 .aptt-skeleton-box {
-    height: 20px;
-    background: #e3e3e3;
-    border-radius: 4px;
-    animation: aptt-pulse 1.3s infinite;
+  height: 20px;
+  background: #e3e3e3;
+  border-radius: 4px;
+  animation: aptt-pulse 1.3s infinite;
 }
 @keyframes aptt-pulse {
-    0% { opacity: .5; }
-    50% { opacity: 1; }
-    100% { opacity: .5; }
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.5;
+  }
 }
 
 /* 🟢 ทำให้คอลัมน์ "จัดการคิว" ติดหนึบอยู่ขวาสุด (Sticky Right) */
 .aptt-col-action {
-    position: sticky !important;
-    right: 0;
-    background: #ffffff; /* ป้องกันเนื้อหาอื่นทะลุมาให้เห็น */
-    z-index: 5;
-    border-left: 1px solid #e2e8f0;
-    box-shadow: -4px 0px 10px rgba(0,0,0,0.04); /* เพิ่มเงาด้านซ้ายให้ดูมีมิติลอยอยู่ */
-    text-align: center;
+  position: sticky !important;
+  right: 0;
+  background: #ffffff; /* ป้องกันเนื้อหาอื่นทะลุมาให้เห็น */
+  z-index: 5;
+  border-left: 1px solid #e2e8f0;
+  box-shadow: -4px 0px 10px rgba(0, 0, 0, 0.04); /* เพิ่มเงาด้านซ้ายให้ดูมีมิติลอยอยู่ */
+  text-align: center;
 }
 
 /* หัวตารางของจัดการคิว (ต้องลอยอยู่บนสุด) */
 .aptt-main-table th.aptt-col-action {
-    z-index: 15 !important; /* ต้องอยู่เหนือ Header ปกติและเซลล์ปกติ */
+  z-index: 15 !important; /* ต้องอยู่เหนือ Header ปกติและเซลล์ปกติ */
 }
 
 /* ทำให้สีพื้นหลังเปลี่ยนตามเวลามีการ Hover แถว (ป้องกันสีขาวโดด) */
 .aptt-main-table tr:hover td.aptt-col-action {
-    background: #fff2eb !important;
+  background: #fff2eb !important;
 }
 
 /* 🟢 ป้องกันไม่ให้รหัส Case ID โดนบีบจนขึ้นบรรทัดใหม่ */
 /* 🟢 ป้องกันไม่ให้รหัส Case ID โดนบีบ และกำหนดความกว้างขั้นต่ำให้พอดีกับคำว่า MC-0000 */
 .aptt-col-case {
-    white-space: nowrap;
-    min-width: 90px; /* เพิ่มความกว้างขั้นต่ำให้เพียงพอ */
-    text-align: center; /* (ไม่บังคับ) จัดให้อยู่กึ่งกลางให้ดูสวยงามขึ้น */
+  white-space: nowrap;
+  min-width: 90px; /* เพิ่มความกว้างขั้นต่ำให้เพียงพอ */
+  text-align: center; /* (ไม่บังคับ) จัดให้อยู่กึ่งกลางให้ดูสวยงามขึ้น */
 }
 
 .aptt-col-phone {
-    white-space: nowrap;
-    min-width: 120px; /* เพิ่มความกว้างขั้นต่ำให้พอดีกับเบอร์โทร */
-    text-align: center; /* จัดให้อยู่กึ่งกลาง */
+  white-space: nowrap;
+  min-width: 120px; /* เพิ่มความกว้างขั้นต่ำให้พอดีกับเบอร์โทร */
+  text-align: center; /* จัดให้อยู่กึ่งกลาง */
 }
 /* ================= Loading State (CaseData Style) ================= */
 .aptt-empty-state {
-    padding: 60px 20px !important;
-    text-align: center;
-    color: #f47932;
-    font-weight: 600;
-    font-size: 15px;
-    background: #ffffff;
+  padding: 60px 20px !important;
+  text-align: center;
+  color: #f47932;
+  font-weight: 600;
+  font-size: 15px;
+  background: #ffffff;
 }
 
 .aptt-spinner {
-    width: 44px;
-    height: 44px;
-    border: 4px solid #ffe6d5;
-    border-top: 4px solid #f47932;
-    border-radius: 50%;
-    animation: tableSpin 1s linear infinite;
-    margin: 0 auto 16px auto;
+  width: 44px;
+  height: 44px;
+  border: 4px solid #ffe6d5;
+  border-top: 4px solid #f47932;
+  border-radius: 50%;
+  animation: tableSpin 1s linear infinite;
+  margin: 0 auto 16px auto;
 }
 
-@keyframes tableSpin { 
-    0% { transform: rotate(0deg); } 
-    100% { transform: rotate(360deg); } 
+@keyframes tableSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

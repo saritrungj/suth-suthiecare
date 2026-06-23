@@ -1,151 +1,151 @@
 /* ================= MODAL ================= */
 
-.form-modal{
-  width:720px;
-  background:#ffffff;
-  border-radius:24px;
-  overflow:hidden;
+.form-modal {
+  width: 720px;
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
 }
 
 /* ================= HEADER ================= */
 
-.modal-header{
-  padding:24px;
-  background:#ffffff;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  border-bottom:1px solid #eee;
+.modal-header {
+  padding: 24px;
+  background: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
 }
 
-.close-btn{
-  border:none;
-  background:none;
-  font-size:22px;
-  cursor:pointer;
+.close-btn {
+  border: none;
+  background: none;
+  font-size: 22px;
+  cursor: pointer;
 }
 
 /* ================= BODY ================= */
 
-.form-body{
-  background:#FFF1EB;
-  padding:28px;
-  display:flex;
-  flex-direction:column;
-  gap:22px;
+.form-body {
+  background: #fff1eb;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
 }
 
 /* ================= ROW ================= */
 
-.form-row{
-  display:flex;
-  align-items:center;
-  gap:18px;
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
 }
 
-label{
-  font-size:20px;
-  min-width:180px;
+label {
+  font-size: 20px;
+  min-width: 180px;
 }
 
 /* ================= INPUT ================= */
 
 input,
-select{
-  border:none;
-  background:#d9d9d9;
-  border-radius:14px;
-  padding:14px;
-  font-size:18px;
+select {
+  border: none;
+  background: #d9d9d9;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 18px;
 }
 
-.short-input{
-  width:160px;
-  text-align:center;
+.short-input {
+  width: 160px;
+  text-align: center;
 }
 
-.date-input{
-  width:260px;
+.date-input {
+  width: 260px;
 }
 
 /* ================= SERVICE TAG ================= */
 
-.service-tags{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
+.service-tags {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.tag{
-  border:none;
-  background:#000;
-  color:white;
-  padding:10px 16px;
-  border-radius:14px;
-  cursor:pointer;
-  opacity:.6;
+.tag {
+  border: none;
+  background: #000;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 14px;
+  cursor: pointer;
+  opacity: 0.6;
 }
 
-.tag.active{
-  opacity:1;
+.tag.active {
+  opacity: 1;
 }
 
 /* ================= RISK ================= */
 
-.risk-group{
-  display:flex;
-  gap:16px;
+.risk-group {
+  display: flex;
+  gap: 16px;
 }
 
-.risk{
-  border:none;
-  padding:12px 24px;
-  border-radius:16px;
-  font-size:18px;
-  cursor:pointer;
-  opacity:.5;
+.risk {
+  border: none;
+  padding: 12px 24px;
+  border-radius: 16px;
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0.5;
 }
 
 /* urgent */
-.risk.urgent.active{
-  background:#ff6b6b;
-  color:white;
-  opacity:1;
+.risk.urgent.active {
+  background: #ff6b6b;
+  color: white;
+  opacity: 1;
 }
 
 /* warning */
-.risk.warning.active{
-  background:#f2cd6b;
-  color:white;
-  opacity:1;
+.risk.warning.active {
+  background: #f2cd6b;
+  color: white;
+  opacity: 1;
 }
 
 /* normal */
-.risk.normal.active{
-  background:#8fd19e;
-  color:white;
-  opacity:1;
+.risk.normal.active {
+  background: #8fd19e;
+  color: white;
+  opacity: 1;
 }
 
 /* ================= ACTION ================= */
 
-.form-actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:14px;
-  padding:20px;
-  background:#ffffff;
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  padding: 20px;
+  background: #ffffff;
 }
 
-.form-actions button{
-  padding:12px 22px;
-  border-radius:12px;
-  border:none;
-  cursor:pointer;
+.form-actions button {
+  padding: 12px 22px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
 }
 
-.save{
-  background:#356768;
-  color:white;
-  font-weight:600;
+.save {
+  background: #356768;
+  color: white;
+  font-weight: 600;
 }

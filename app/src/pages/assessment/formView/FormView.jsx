@@ -8,10 +8,7 @@ import {
   FiArrowUp,
   FiInfo,
 } from "react-icons/fi";
-import {
-  getFormById,
-  decodeSecureToken,
-} from "../../../services/api";
+import { getFormById, decodeSecureToken } from "../../../services/api";
 import Swal from "sweetalert2";
 import "../../admin/forms/styles/FormPreview.css";
 import LanguageSwitcher from "../../../components/LanguageSwitcher.jsx";
@@ -165,20 +162,20 @@ const FormView = () => {
             setupFormStructure(JSON.parse(storedData), activeIdentity);
           } else {
             Swal.fire({
-              icon: 'error',
-              title: 'ไม่พบข้อมูล',
-              text: 'ไม่พบข้อมูลแบบร่างสำหรับการแสดงตัวอย่าง',
-              confirmButtonColor: 'var(--theme-color)'
+              icon: "error",
+              title: "ไม่พบข้อมูล",
+              text: "ไม่พบข้อมูลแบบร่างสำหรับการแสดงตัวอย่าง",
+              confirmButtonColor: "var(--theme-color)",
             }).then(() => {
               navigate(-1);
             });
           }
         } catch (e) {
           Swal.fire({
-            icon: 'warning',
-            title: 'ข้อมูลผิดพลาด',
-            text: 'ข้อมูลแบบร่างมีความเสียหาย ไม่สามารถแสดงตัวอย่างได้',
-            confirmButtonColor: '#f59e0b'
+            icon: "warning",
+            title: "ข้อมูลผิดพลาด",
+            text: "ข้อมูลแบบร่างมีความเสียหาย ไม่สามารถแสดงตัวอย่างได้",
+            confirmButtonColor: "#f59e0b",
           }).then(() => {
             navigate(-1);
           });
@@ -211,10 +208,10 @@ const FormView = () => {
         setupFormStructure(response.data, activeIdentity);
       } catch (error) {
         Swal.fire({
-          icon: 'error',
-          title: 'ข้อผิดพลาด',
-          text: 'ไม่พบแบบฟอร์มนี้ หรือเกิดข้อผิดพลาด',
-          confirmButtonColor: 'var(--theme-color)'
+          icon: "error",
+          title: "ข้อผิดพลาด",
+          text: "ไม่พบแบบฟอร์มนี้ หรือเกิดข้อผิดพลาด",
+          confirmButtonColor: "var(--theme-color)",
         }).then(() => {
           navigate("/");
         });
@@ -318,8 +315,7 @@ const FormView = () => {
           if (!firstErrorId) firstErrorId = q.id;
           isValid = false;
         } else if (ans && ans.length === 17 && consents[q.id] === undefined) {
-          newErrors[q.id] =
-            "กรุณากดรับทราบในการเก็บข้อมูล (ด้านล่างฟอร์ม)";
+          newErrors[q.id] = "กรุณากดรับทราบในการเก็บข้อมูล (ด้านล่างฟอร์ม)";
           if (!firstErrorId) firstErrorId = q.id;
           isValid = false;
         }
@@ -633,8 +629,8 @@ const FormView = () => {
       const hasBooking = formData?.questions?.some(q => q.type === 'booking' || (q.type === 'group' && q.subQuestions?.some(sq => sq.type === 'booking')));
 
       // 🟢 นำ Payload ทั้งหมดส่งไปหน้า AssessmentResult โดยที่ยังไม่ต้องยิง API บันทึกข้อมูล
-      navigate("/assessment-result", { 
-        state: { 
+      navigate("/assessment-result", {
+        state: {
           results: scoreResultsArray,
           formId: id,
           hasBooking: hasBooking,
@@ -642,17 +638,16 @@ const FormView = () => {
             answers: mergedAnswers,
             questionTitles: qTitles,
             identityValue: idValue,
-            summaryData: sumData
-          }
-        } 
+            summaryData: sumData,
+          },
+        },
       });
-
     } catch (error) {
       Swal.fire({
-        icon: 'error',
-        title: 'ข้อผิดพลาด',
-        text: 'เกิดข้อผิดพลาดในการประมวลผลข้อมูล กรุณาลองใหม่อีกครั้ง',
-        confirmButtonColor: 'var(--theme-color)'
+        icon: "error",
+        title: "ข้อผิดพลาด",
+        text: "เกิดข้อผิดพลาดในการประมวลผลข้อมูล กรุณาลองใหม่อีกครั้ง",
+        confirmButtonColor: "var(--theme-color)",
       });
     }
   };
@@ -718,6 +713,7 @@ const FormView = () => {
         </div>
       )}
 
+<<<<<<< Updated upstream
    {!isPreviewMode && (
   <>
     <button
@@ -732,6 +728,17 @@ const FormView = () => {
     </div>
   </>
 )}
+=======
+      {!isPreviewMode && (
+        <button
+          className="form-view-back-btn"
+          onClick={() => navigate(-1)}
+          title="ย้อนกลับ"
+        >
+          <FiArrowLeft />
+        </button>
+      )}
+>>>>>>> Stashed changes
 
       {bannerType !== "none" && (
         <div
@@ -832,22 +839,44 @@ const FormView = () => {
             (q) => (answers[q.id] || "").length === 17,
           ) &&
             !verifiedIdentity && (
-              <div className="preview-sec pdpa-friendly-wrapper" >
+              <div className="preview-sec pdpa-friendly-wrapper">
                 <div className="pdpa-header">
                   <FiInfo /> {t('form_view.pdpa_title')}
                 </div>
                 <p className="pdpa-desc">
+<<<<<<< Updated upstream
                   {t('form_view.pdpa_desc')}
                   <span style={{ fontSize: '12px', color: '#9aa0a6', fontStyle: 'italic' }}> {t('form_view.pdpa_secret')} </span>
+=======
+                  ระบบจำเป็นต้องใช้เลขบัตรประชาชนของคุณ
+                  เพื่อใช้ในการบันทึกและแสดงประวัติการประเมินย้อนหลัง
+                  เพื่อให้คุณสามารถติดตามผลการดูแลตัวเองได้อย่างต่อเนื่อง
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      color: "#9aa0a6",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {" "}
+                    (ข้อมูลนี้จะถูกเก็บรักษาเป็นความลับ){" "}
+                  </span>
+>>>>>>> Stashed changes
                 </p>
                 {nationalIdQuestions
                   .filter((q) => (answers[q.id] || "").length === 17)
                   .map((q) => (
-                    <div key={q.id} className="pdpa-options" style={{ marginTop: '16px' }}>
-                      <label className={`pdpa-status-card ${consents[q.id] === true ? "active" : ""}`}>
+                    <div
+                      key={q.id}
+                      className="pdpa-options"
+                      style={{ marginTop: "16px" }}
+                    >
+                      <label
+                        className={`pdpa-status-card ${consents[q.id] === true ? "active" : ""}`}
+                      >
                         <input
                           type="checkbox"
-                          style={{ display: 'none' }}
+                          style={{ display: "none" }}
                           name={`pdpa_${q.id}`}
                           checked={consents[q.id] === true}
                           onChange={() => handleConsent(q.id, true)}
@@ -855,7 +884,13 @@ const FormView = () => {
                         <div className="pdpa-check-circle">
                           {consents[q.id] === true && <FiCheck />}
                         </div>
+<<<<<<< Updated upstream
                         <span style={{ fontWeight: '600', fontSize: '15px' }}>{t('form_view.pdpa_ack')}</span>
+=======
+                        <span style={{ fontWeight: "600", fontSize: "15px" }}>
+                          รับทราบ
+                        </span>
+>>>>>>> Stashed changes
                       </label>
                     </div>
                   ))}
@@ -869,6 +904,7 @@ const FormView = () => {
               onClick={() => {
                 // 🟢 เปลี่ยน confirm เป็น SweetAlert2
                 Swal.fire({
+<<<<<<< Updated upstream
                   title: t('form_view.clear_form_confirm_title'),
                   text: t('form_view.clear_form_confirm_desc'),
                   icon: 'warning',
@@ -877,6 +913,16 @@ const FormView = () => {
                   cancelButtonColor: '#64748b',
                   confirmButtonText: t('form_view.clear_form_yes'),
                   cancelButtonText: t('form_view.clear_form_cancel')
+=======
+                  title: "ยืนยันการล้างคำตอบ?",
+                  text: "ต้องการล้างคำตอบทั้งหมดหรือไม่? ข้อมูลที่คุณกรอกไว้จะหายไป",
+                  icon: "warning",
+                  showCancelButton: true,
+                  confirmButtonColor: "#d93025",
+                  cancelButtonColor: "#64748b",
+                  confirmButtonText: "ใช่, ล้างข้อมูล",
+                  cancelButtonText: "ยกเลิก",
+>>>>>>> Stashed changes
                 }).then((result) => {
                   if (result.isConfirmed) {
                     const retainedAnswers = {};

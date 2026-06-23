@@ -7,14 +7,14 @@ class FormCache {
   set(key, value) {
     this.cache.set(key, {
       value,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 
   get(key) {
     const item = this.cache.get(key);
     if (!item) return null;
-    
+
     // ✅ ตรวจสอบ expiry
     if (Date.now() - item.timestamp > this.TTL) {
       this.cache.delete(key);

@@ -1,13 +1,28 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { FaBold, FaItalic, FaUnderline, FaListOl, FaListUl, FaEraser } from 'react-icons/fa';
+import React, { useState, useRef, useEffect } from "react";
+import {
+  FaBold,
+  FaItalic,
+  FaUnderline,
+  FaListOl,
+  FaListUl,
+  FaEraser,
+} from "react-icons/fa";
 
-const RichTextInput = ({ value, onChange, placeholder, className, tagName = 'div', showLists = false, style }) => {
+const RichTextInput = ({
+  value,
+  onChange,
+  placeholder,
+  className,
+  tagName = "div",
+  showLists = false,
+  style,
+}) => {
   const elementRef = useRef(null);
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     if (elementRef.current && elementRef.current.innerHTML !== value) {
-      elementRef.current.innerHTML = value || '';
+      elementRef.current.innerHTML = value || "";
     }
   }, [value]);
 
@@ -17,9 +32,9 @@ const RichTextInput = ({ value, onChange, placeholder, className, tagName = 'div
   const handleBlur = (e) => {
     let val = e.currentTarget.innerHTML;
     // ลบ <span> และ <font> ที่ Extension ชอบแอบใส่มา (ทะลุทุกการเว้นบรรทัด)
-    val = val.replace(/<span[\s\S]*?>/gi, '').replace(/<\/span>/gi, '');
-    val = val.replace(/<font[\s\S]*?>/gi, '').replace(/<\/font>/gi, '');
-    
+    val = val.replace(/<span[\s\S]*?>/gi, "").replace(/<\/span>/gi, "");
+    val = val.replace(/<font[\s\S]*?>/gi, "").replace(/<\/font>/gi, "");
+
     onChange(val);
     setIsFocused(false);
   };
@@ -32,7 +47,7 @@ const RichTextInput = ({ value, onChange, placeholder, className, tagName = 'div
 
   const Tag = tagName;
   return (
-    <div className={`sfb-rich-text-wrapper ${isFocused ? 'sfb-focused' : ''}`}>
+    <div className={`sfb-rich-text-wrapper ${isFocused ? "sfb-focused" : ""}`}>
       <Tag
         ref={elementRef}
         contentEditable
@@ -46,18 +61,45 @@ const RichTextInput = ({ value, onChange, placeholder, className, tagName = 'div
       />
       {isFocused && (
         <div className="sfb-inline-format-toolbar">
-          <button onMouseDown={(e) => handleFormat(e, 'bold')} title="ตัวหนา"><FaBold /></button>
-          <button onMouseDown={(e) => handleFormat(e, 'italic')} title="ตัวเอียง"><FaItalic /></button>
-          <button onMouseDown={(e) => handleFormat(e, 'underline')} title="ขีดเส้นใต้"><FaUnderline /></button>
+          <button onMouseDown={(e) => handleFormat(e, "bold")} title="ตัวหนา">
+            <FaBold />
+          </button>
+          <button
+            onMouseDown={(e) => handleFormat(e, "italic")}
+            title="ตัวเอียง"
+          >
+            <FaItalic />
+          </button>
+          <button
+            onMouseDown={(e) => handleFormat(e, "underline")}
+            title="ขีดเส้นใต้"
+          >
+            <FaUnderline />
+          </button>
           {showLists && (
             <>
               <div className="sfb-toolbar-divider"></div>
-              <button onMouseDown={(e) => handleFormat(e, 'insertOrderedList')} title="รายการแบบตัวเลข"><FaListOl /></button>
-              <button onMouseDown={(e) => handleFormat(e, 'insertUnorderedList')} title="รายการแบบจุด"><FaListUl /></button>
+              <button
+                onMouseDown={(e) => handleFormat(e, "insertOrderedList")}
+                title="รายการแบบตัวเลข"
+              >
+                <FaListOl />
+              </button>
+              <button
+                onMouseDown={(e) => handleFormat(e, "insertUnorderedList")}
+                title="รายการแบบจุด"
+              >
+                <FaListUl />
+              </button>
             </>
           )}
           <div className="sfb-toolbar-divider"></div>
-          <button onMouseDown={(e) => handleFormat(e, 'removeFormat')} title="ล้างรูปแบบ"><FaEraser /></button>
+          <button
+            onMouseDown={(e) => handleFormat(e, "removeFormat")}
+            title="ล้างรูปแบบ"
+          >
+            <FaEraser />
+          </button>
         </div>
       )}
     </div>

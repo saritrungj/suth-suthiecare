@@ -5,26 +5,21 @@ export default function AppointmentFormModal({
   user,
   appointment,
   onClose,
-  onSave
+  onSave,
 }) {
+  const [services, setServices] = useState([
+    "ตรวจสุขภาพ",
+    "กายภาพบำบัด",
+    "ให้คำปรึกษา",
+    "ติดตามอาการ",
+  ]);
 
- const [services, setServices] = useState([
-  "ตรวจสุขภาพ",
-  "กายภาพบำบัด",
-  "ให้คำปรึกษา",
-  "ติดตามอาการ"
-]);
+  const [risk, setRisk] = useState(appointment?.status || "warning");
 
-  const [risk, setRisk] = useState(
-    appointment?.status || "warning"
-  );
-
-  const [appointmentNo, setAppointmentNo] = useState(
-    appointment?.id || ""
-  );
+  const [appointmentNo, setAppointmentNo] = useState(appointment?.id || "");
 
   const [selectedServices, setSelectedServices] = useState(
-    appointment?.service ? [appointment.service] : []
+    appointment?.service ? [appointment.service] : [],
   );
 
   const [date, setDate] = useState("");
@@ -59,22 +54,20 @@ export default function AppointmentFormModal({
   }, [appointment]);
 
   const toggleService = (s) => {
-    setSelectedServices((prev) =>
-      prev.includes(s)
-        ? prev.filter(x => x !== s)
-        : [s] // เลือกได้ 1 อย่าง
+    setSelectedServices(
+      (prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [s]), // เลือกได้ 1 อย่าง
     );
   };
   const addService = () => {
-  if (!newService.trim()) return;
+    if (!newService.trim()) return;
 
-  setServices(prev => [...prev, newService]);
-  setNewService("");
-};
+    setServices((prev) => [...prev, newService]);
+    setNewService("");
+  };
 
-const removeService = (service) => {
-  setServices(prev => prev.filter(s => s !== service));
-};
+  const removeService = (service) => {
+    setServices((prev) => prev.filter((s) => s !== service));
+  };
 
   const handleSave = () => {
     const payload = {
@@ -83,7 +76,7 @@ const removeService = (service) => {
       date,
       staff,
       note,
-      status: risk
+      status: risk,
     };
 
     onSave(payload);
@@ -93,12 +86,9 @@ const removeService = (service) => {
   return (
     <div className="modal-overlay">
       <div className="form-modal">
-
         <div className="modal-header">
           <div>
-            <h3>
-              {appointment ? "แก้ไขนัดหมาย" : "เพิ่มนัดหมาย"}
-            </h3>
+            <h3>{appointment ? "แก้ไขนัดหมาย" : "เพิ่มนัดหมาย"}</h3>
             <p>Case ID: {user?.caseId}</p>
           </div>
 
@@ -108,7 +98,6 @@ const removeService = (service) => {
         </div>
 
         <div className="form-body">
-
           <div className="form-row">
             <label>นัดหมายครั้งที่:</label>
 
@@ -116,7 +105,7 @@ const removeService = (service) => {
               className="short-input"
               list="appointment-list"
               value={appointmentNo}
-              onChange={(e)=>setAppointmentNo(e.target.value)}
+              onChange={(e) => setAppointmentNo(e.target.value)}
               placeholder="เลือกหรือพิมพ์"
             />
 
@@ -133,12 +122,12 @@ const removeService = (service) => {
             type="datetime-local"
             className="date-input"
             value={date}
-            onChange={(e)=>setDate(e.target.value)}
+            onChange={(e) => setDate(e.target.value)}
           />
 
           <input
             value={staff}
-            onChange={(e)=>setStaff(e.target.value)}
+            onChange={(e) => setStaff(e.target.value)}
             placeholder="เจ้าหน้าที่"
           />
 
@@ -150,9 +139,7 @@ const removeService = (service) => {
                 <button
                   key={s}
                   className={
-                    selectedServices.includes(s)
-                      ? "tag active"
-                      : "tag"
+                    selectedServices.includes(s) ? "tag active" : "tag"
                   }
                   onClick={() => toggleService(s)}
                   type="button"
@@ -165,57 +152,48 @@ const removeService = (service) => {
 
           <div className="form-section">
             <label>ความเสี่ยง</label>
-            
 
             <div className="risk-group">
-
               <button
                 type="button"
-                className={`risk urgent ${risk==="urgent"?"active":""}`}
-                onClick={()=>setRisk("urgent")}
+                className={`risk urgent ${risk === "urgent" ? "active" : ""}`}
+                onClick={() => setRisk("urgent")}
               >
                 เร่งด่วน
               </button>
 
               <button
                 type="button"
-                className={`risk warning ${risk==="warning"?"active":""}`}
-                onClick={()=>setRisk("warning")}
+                className={`risk warning ${risk === "warning" ? "active" : ""}`}
+                onClick={() => setRisk("warning")}
               >
                 เฝ้าระวัง
               </button>
 
               <button
                 type="button"
-                className={`risk normal ${risk==="normal"?"active":""}`}
-                onClick={()=>setRisk("normal")}
+                className={`risk normal ${risk === "normal" ? "active" : ""}`}
+                onClick={() => setRisk("normal")}
               >
                 ปกติ
               </button>
-
             </div>
           </div>
 
           <input
             value={note}
-            onChange={(e)=>setNote(e.target.value)}
+            onChange={(e) => setNote(e.target.value)}
             placeholder="xxxx"
           />
-
         </div>
 
         <div className="form-actions">
           <button onClick={onClose}>ยกเลิก</button>
 
-          <button
-            type="button"
-            className="save"
-            onClick={handleSave}
-          >
+          <button type="button" className="save" onClick={handleSave}>
             บันทึกการนัดหมาย
           </button>
         </div>
-
       </div>
     </div>
   );

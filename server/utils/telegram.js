@@ -1,6 +1,6 @@
 // utils/telegram.js
 const axios = require("axios");
-require('dotenv').config();
+require("dotenv").config();
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
@@ -14,13 +14,13 @@ async function sendTelegramAlert(message, replyMarkup = null) {
     console.error("❌ ไม่มี Token หรือ Chat ID กรุณาเช็ค .env");
     return;
   }
-  
+
   try {
     // 🟢 สร้างก้อนข้อมูลเตรียมส่งไป
     const payload = {
-      chat_id: TELEGRAM_CHAT_ID,  
+      chat_id: TELEGRAM_CHAT_ID,
       text: message,
-      parse_mode: "HTML"
+      parse_mode: "HTML",
     };
 
     // 🟢 ถ้ามีการแนบปุ่มมาด้วย ให้ยัดใส่ payload
@@ -30,7 +30,7 @@ async function sendTelegramAlert(message, replyMarkup = null) {
 
     const result = await axios.post(
       `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
-      payload
+      payload,
     );
     console.log("✅ Telegram sent successfully");
   } catch (err) {

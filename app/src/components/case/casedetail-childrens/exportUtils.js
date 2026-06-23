@@ -1,29 +1,51 @@
 // src/components/case/casedetail-childrens/exportUtils.js
-//โค้ดสร้างรายงาน PDF 
-
+//โค้ดสร้างรายงาน PDF
 
 // 1. ฟังก์ชันทำความสะอาด HTML
-export const stripHtml = (html) => html ? String(html).replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim() : '';
+export const stripHtml = (html) =>
+  html
+    ? String(html)
+        .replace(/<[^>]+>/g, "")
+        .replace(/&nbsp;/g, " ")
+        .trim()
+    : "";
 
 // 2. ฟังก์ชันจัดรูปแบบคำตอบ
 export const formatAnswer = (ans) => {
-  if (!ans) return '-';
-  if (Array.isArray(ans)) return ans.map(stripHtml).join(', ');
-  if (typeof ans === 'object') return Object.entries(ans).map(([k, v]) => `${stripHtml(k)}: ${Array.isArray(v) ? v.map(stripHtml).join(', ') : stripHtml(v)}`).join(' | ');
+  if (!ans) return "-";
+  if (Array.isArray(ans)) return ans.map(stripHtml).join(", ");
+  if (typeof ans === "object")
+    return Object.entries(ans)
+      .map(
+        ([k, v]) =>
+          `${stripHtml(k)}: ${Array.isArray(v) ? v.map(stripHtml).join(", ") : stripHtml(v)}`,
+      )
+      .join(" | ");
   return stripHtml(String(ans));
 };
 
 // 3. ฟังก์ชันสร้างข้อความสำหรับคัดลอก (Copy)
-export const generateCopyText = ({ selections, viewedResponse, leftPanelRawAnswers, leftPanelScoreResults, riskLevel, staffNote, status, currentStaff }) => {
-  let text = `📌 [รายงานเคส] ${viewedResponse?.form_title || ''}\n--------------------------------\n`;
+export const generateCopyText = ({
+  selections,
+  viewedResponse,
+  leftPanelRawAnswers,
+  leftPanelScoreResults,
+  riskLevel,
+  staffNote,
+  status,
+  currentStaff,
+}) => {
+  let text = `📌 [รายงานเคส] ${viewedResponse?.form_title || ""}\n--------------------------------\n`;
   if (selections.selectedQuestions.length > 0) {
-    selections.selectedQuestions.forEach((q, idx) => { 
-      text += `${idx + 1}. ${stripHtml(q)}\n   => ${formatAnswer(leftPanelRawAnswers[q])}\n`; 
+    selections.selectedQuestions.forEach((q, idx) => {
+      text += `${idx + 1}. ${stripHtml(q)}\n   => ${formatAnswer(leftPanelRawAnswers[q])}\n`;
     });
   }
   if (selections.includeScores && leftPanelScoreResults.length > 0) {
     text += `\n[ผลประเมิน]\n• ความเสี่ยงรวม: ${viewedResponse?.risk_level || riskLevel}\n`;
-    leftPanelScoreResults.forEach(s => { text += `• ${s.title}: ${s.score} (${s.label})\n`; });
+    leftPanelScoreResults.forEach((s) => {
+      text += `• ${s.title}: ${s.score} (${s.label})\n`;
+    });
   }
   if (selections.includeNote && staffNote && staffNote.trim() !== "") {
     text += `\n[บันทึกเพิ่มเติม]\n${staffNote.trim()}\n`;
@@ -33,7 +55,21 @@ export const generateCopyText = ({ selections, viewedResponse, leftPanelRawAnswe
 };
 
 // 4. ฟังก์ชันสร้างและเปิดหน้าต่าง PDF
-export const executeExportPDF = ({ displayName, viewedResponse, data, leftPanelSummary, leftPanelRawAnswers, leftPanelScoreResults, riskLevel, status, currentStaff, submittedDate, showToast, setShowExportMenu, setShowExportCopySubmenu }) => {
+export const executeExportPDF = ({
+  displayName,
+  viewedResponse,
+  data,
+  leftPanelSummary,
+  leftPanelRawAnswers,
+  leftPanelScoreResults,
+  riskLevel,
+  status,
+  currentStaff,
+  submittedDate,
+  showToast,
+  setShowExportMenu,
+  setShowExportCopySubmenu,
+}) => {
   const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -59,30 +95,42 @@ export const executeExportPDF = ({ displayName, viewedResponse, data, leftPanelS
       </style>
     </head>
     <body>
-      <h2>📌 รายงานเคส — ${viewedResponse?.form_title || ''}</h2>
+      <h2>📌 รายงานเคส — ${viewedResponse?.form_title || ""}</h2>
       <div class="meta">
-        Response ID: RE-${String(data?.id || '0').padStart(4, '0')} &nbsp;|&nbsp;
+        Response ID: RE-${String(data?.id || "0").padStart(4, "0")} &nbsp;|&nbsp;
         ผู้ป่วย: ${leftPanelSummary.display_name || displayName} &nbsp;|&nbsp;
         วันที่: ${submittedDate} น.
       </div>
 
       <div class="section-title">📝 ข้อมูลแบบประเมิน</div>
-      ${Object.keys(leftPanelRawAnswers).map((q, i) => `
+      ${Object.keys(leftPanelRawAnswers)
+        .map(
+          (q, i) => `
         <div class="qa-block">
           <div class="qa-question">${i + 1}. ${stripHtml(q)}</div>
           <div class="qa-answer">➤ ${formatAnswer(leftPanelRawAnswers[q])}</div>
         </div>
-      `).join('')}
+      `,
+        )
+        .join("")}
 
-      ${leftPanelScoreResults.length > 0 ? `
+      ${
+        leftPanelScoreResults.length > 0
+          ? `
         <div class="section-title">📊 ผลการประเมิน</div>
         <div class="score-block">
           <div class="risk-overall">ความเสี่ยงรวม: ${riskLevel}</div>
-          ${leftPanelScoreResults.map(s => `
+          ${leftPanelScoreResults
+            .map(
+              (s) => `
             <div class="score-row">• ${s.title}: <b>${s.score}</b> คะแนน (${s.label})</div>
-          `).join('')}
+          `,
+            )
+            .join("")}
         </div>
-      ` : ''}
+      `
+          : ""
+      }
 
       <div class="footer">
         สถานะเคส: ${status} &nbsp;|&nbsp; ส่งออกโดย: ${currentStaff} &nbsp;|&nbsp; วันที่ส่งออก: ${new Date().toLocaleString("th-TH")} น.
@@ -91,7 +139,7 @@ export const executeExportPDF = ({ displayName, viewedResponse, data, leftPanelS
     </html>
   `;
 
-  const printWindow = window.open('', '_blank', 'width=800,height=900');
+  const printWindow = window.open("", "_blank", "width=800,height=900");
   printWindow.document.write(htmlContent);
   printWindow.document.close();
   printWindow.focus();

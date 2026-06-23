@@ -3,8 +3,6 @@ import TeenClinicForm from "./teen/TeenClinicForm";
 import STDClinicForm from "./std/STDClinicForm";
 import LSMClinicForm from "./lsm/LSMClinicForm";
 
-
-
 function Assessment() {
   const { type } = useParams();
 

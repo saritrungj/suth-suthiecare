@@ -3,7 +3,7 @@ import Cropper from "react-easy-crop";
 import { FiPlus, FiArrowLeft } from "react-icons/fi";
 import "./AddBannerModal.css";
 
-// ฟังก์ชันครอปรูปภาพ 
+// ฟังก์ชันครอปรูปภาพ
 const getCroppedImg = async (imageSrc, pixelCrop) => {
   return new Promise((resolve, reject) => {
     const image = new Image();
@@ -26,7 +26,7 @@ const getCroppedImg = async (imageSrc, pixelCrop) => {
           0,
           0,
           pixelCrop.width,
-          pixelCrop.height
+          pixelCrop.height,
         );
 
         //  สร้าง Canvas หลัก เพื่อ "ย่อ/ขยาย" ให้เป็น 1024x768 px
@@ -49,7 +49,7 @@ const getCroppedImg = async (imageSrc, pixelCrop) => {
           0,
           0,
           1024,
-          768
+          768,
         );
 
         // แปลงเป็นไฟล์ JPG และบีบอัดคุณภาพ 80% (0.8)
@@ -97,7 +97,6 @@ export default function AddBannerModal({ onClose, onSave }) {
       setCroppedImage(cropped);
       setIsCropping(false);
     } catch (e) {
-
       alert("เกิดข้อผิดพลาดในการประมวลผลรูปภาพ กรุณาลองใหม่อีกครั้ง");
     }
   };
@@ -105,7 +104,9 @@ export default function AddBannerModal({ onClose, onSave }) {
   const handleSave = () => {
     if (!croppedImage) return alert("กรุณาเลือกและตัดรูปภาพก่อน");
 
-    const finalFilename = filename ? filename.replace(/\.[^/.]+$/, ".jpg") : `banner_${Date.now()}.jpg`;
+    const finalFilename = filename
+      ? filename.replace(/\.[^/.]+$/, ".jpg")
+      : `banner_${Date.now()}.jpg`;
     onSave({ image: croppedImage, filename: finalFilename, link: link });
     onClose();
   };
@@ -120,10 +121,13 @@ export default function AddBannerModal({ onClose, onSave }) {
               ? "เลื่อนกรอบเพื่อจัดตำแหน่งรูปภาพ (ขนาด 1024 x 768px)"
               : !croppedImage
                 ? "คลิกเพื่อเลือกภาพแบนเนอร์"
-                : "ระบุรายละเอียดแบนเนอร์"
-            }
+                : "ระบุรายละเอียดแบนเนอร์"}
           </p>
-          <button className="abm-close-btn-custom" onClick={onClose} aria-label="Close">
+          <button
+            className="abm-close-btn-custom"
+            onClick={onClose}
+            aria-label="Close"
+          >
             <span className="close-cross"></span>
           </button>
         </div>
@@ -131,7 +135,16 @@ export default function AddBannerModal({ onClose, onSave }) {
         <div className="abm-body">
           {isCropping ? (
             <div className="abm-crop-section">
-              <div style={{ position: "relative", width: "100%", height: "350px", background: "#1e293b", borderRadius: '12px', overflow: 'hidden' }}>
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  height: "350px",
+                  background: "#1e293b",
+                  borderRadius: "12px",
+                  overflow: "hidden",
+                }}
+              >
                 <Cropper
                   image={image}
                   crop={crop}
@@ -142,9 +155,19 @@ export default function AddBannerModal({ onClose, onSave }) {
                   onZoomChange={setZoom}
                 />
               </div>
-              <div style={{ marginTop: '15px' }}>
-                <label className="abm-label">ซูม: {Math.round(zoom * 100)}%</label>
-                <input type="range" min="1" max="3" step="0.1" value={zoom} onChange={(e) => setZoom(e.target.value)} style={{ width: '100%' }} />
+              <div style={{ marginTop: "15px" }}>
+                <label className="abm-label">
+                  ซูม: {Math.round(zoom * 100)}%
+                </label>
+                <input
+                  type="range"
+                  min="1"
+                  max="3"
+                  step="0.1"
+                  value={zoom}
+                  onChange={(e) => setZoom(e.target.value)}
+                  style={{ width: "100%" }}
+                />
               </div>
             </div>
           ) : (
@@ -153,27 +176,43 @@ export default function AddBannerModal({ onClose, onSave }) {
                 <label className="abm-upload-area">
                   <FiPlus size={40} />
                   <span>คลิกเพื่อเลือกรูปภาพ</span>
-                  <input type="file" accept="image/*" onChange={handleFileChange} hidden />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    hidden
+                  />
                 </label>
               ) : (
                 <>
-                  <div style={{ marginBottom: '20px' }}>
-                    <label className="abm-label" style={{ marginBottom: '8px' }}>ภาพแบนเนอร์ที่พร้อมใช้งาน</label>
+                  <div style={{ marginBottom: "20px" }}>
+                    <label
+                      className="abm-label"
+                      style={{ marginBottom: "8px" }}
+                    >
+                      ภาพแบนเนอร์ที่พร้อมใช้งาน
+                    </label>
                     <img
                       src={croppedImage}
                       alt="cropped"
                       style={{
-                        width: '420px',
-                        height: '315px',
-                        objectFit: 'cover',
-                        borderRadius: '12px',
-                        border: '2px solid #2563eb',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                        display: 'block',
-                        marginBottom: '12px'
+                        width: "420px",
+                        height: "315px",
+                        objectFit: "cover",
+                        borderRadius: "12px",
+                        border: "2px solid #2563eb",
+                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                        display: "block",
+                        marginBottom: "12px",
                       }}
                     />
-                    <button onClick={() => setIsCropping(true)} className="abm-btn-outline-sm" style={{ marginTop: 0 }}>ตัดใหม่</button>
+                    <button
+                      onClick={() => setIsCropping(true)}
+                      className="abm-btn-outline-sm"
+                      style={{ marginTop: 0 }}
+                    >
+                      ตัดใหม่
+                    </button>
                   </div>
                   <div className="abm-input-group">
                     <label className="abm-label">ชื่อแบนเนอร์:</label>
@@ -186,7 +225,9 @@ export default function AddBannerModal({ onClose, onSave }) {
                     />
                   </div>
                   <div className="abm-input-group">
-                    <label className="abm-label">ลิงก์ปลายทางเมื่อคลิกแบนเนอร์ (ถ้ามี):</label>
+                    <label className="abm-label">
+                      ลิงก์ปลายทางเมื่อคลิกแบนเนอร์ (ถ้ามี):
+                    </label>
                     <input
                       type="url"
                       className="abm-input"
@@ -209,21 +250,31 @@ export default function AddBannerModal({ onClose, onSave }) {
                 setImage(null);
                 setIsCropping(false);
               }}
-              style={{ 
-                marginRight: 'auto',
-                display: 'inline-flex',    
-                alignItems: 'center',      
-                gap: '6px'                 
+              style={{
+                marginRight: "auto",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
               }}
             >
-              <FiArrowLeft size={16} /> ย้อนกลับ 
+              <FiArrowLeft size={16} /> ย้อนกลับ
             </button>
           )}
-          <button className="abm-btn-cancel" onClick={onClose}>ยกเลิก</button>
+          <button className="abm-btn-cancel" onClick={onClose}>
+            ยกเลิก
+          </button>
           {isCropping ? (
-            <button className="abm-btn-save" onClick={handleConfirmCrop}>ยืนยันการตัดรูป</button>
+            <button className="abm-btn-save" onClick={handleConfirmCrop}>
+              ยืนยันการตัดรูป
+            </button>
           ) : (
-            <button className="abm-btn-save" onClick={handleSave} disabled={!croppedImage}>บันทึกแบนเนอร์</button>
+            <button
+              className="abm-btn-save"
+              onClick={handleSave}
+              disabled={!croppedImage}
+            >
+              บันทึกแบนเนอร์
+            </button>
           )}
         </div>
       </div>

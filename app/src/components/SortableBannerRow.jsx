@@ -11,15 +11,15 @@ export default function SortableBannerRow({ banner, onDelete, onEdit }) {
     setNodeRef,
     transform,
     transition,
-    isDragging
+    isDragging,
   } = useSortable({ id: banner.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    zIndex: isDragging ? 10 : 1, 
+    zIndex: isDragging ? 10 : 1,
     position: "relative",
-    backgroundColor: isDragging ? "#fffaf7" : "white", 
+    backgroundColor: isDragging ? "#fffaf7" : "white",
     opacity: isDragging ? 0.8 : 1,
     cursor: isDragging ? "grabbing" : "default",
   };
@@ -34,28 +34,26 @@ export default function SortableBannerRow({ banner, onDelete, onEdit }) {
           {...listeners}
           title="ลากเพื่อเรียงลำดับ"
         >
-          <FaGripVertical /> 
+          <FaGripVertical />
         </span>
 
-        <img
-          src={banner.image}
-          alt="banner"
-          className="banner-thumb"
-        />
+        <img src={banner.image} alt="banner" className="banner-thumb" />
       </td>
 
-      <td className="file-cell">
-        {banner.filename}
-      </td>
+      <td className="file-cell">{banner.filename}</td>
 
       <td className="bn-action-cell">
-          <button className="bn-edit-btn" onClick={onEdit} title="แก้ไข">
-            <FaEdit />
-          </button>
+        <button className="bn-edit-btn" onClick={onEdit} title="แก้ไข">
+          <FaEdit />
+        </button>
 
-          <button className="bn-delete-btn" onClick={() => onDelete(banner.id)} title="ลบ" >
-            <FaTrash />
-          </button>
+        <button
+          className="bn-delete-btn"
+          onClick={() => onDelete(banner.id)}
+          title="ลบ"
+        >
+          <FaTrash />
+        </button>
       </td>
     </tr>
   );

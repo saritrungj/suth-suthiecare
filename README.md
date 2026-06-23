@@ -2,12 +2,14 @@
 
 > Comprehensive clinic data management and health assessment system.
 > Developed with a Client-Server architecture separating Frontend and Backend.
+
 ---
 
 ## 💻 Tech Stack
 
 ### Frontend — `app/`
 
+<<<<<<< Updated upstream
 | Category | Technology |
 |---|---|
 | **Framework** | React 19 (Create React App) |
@@ -23,34 +25,53 @@
 | **API / Real-time** | Axios, Socket.io Client |
 | **CAPTCHA** | CloudFlare Captcha |
 | **Testing** | Jest, React Testing Library |
+=======
+| Category            | Technology                                     |
+| ------------------- | ---------------------------------------------- |
+| **Framework**       | React 19 (Create React App)                    |
+| **Routing**         | React Router DOM v7                            |
+| **Animation**       | Framer Motion                                  |
+| **UI Components**   | SweetAlert2, React Icons, FontAwesome          |
+| **Data Viz**        | Recharts                                       |
+| **Calendar**        | FullCalendar, React Datepicker, React Calendar |
+| **Drag & Drop**     | dnd-kit (core, sortable, modifiers)            |
+| **Image Crop**      | React Easy Crop                                |
+| **Color Picker**    | React Color                                    |
+| **Export**          | ExcelJS, FileSaver                             |
+| **API / Real-time** | Axios, Socket.io Client                        |
+| **CAPTCHA**         | hCaptcha                                       |
+| **Testing**         | Jest, React Testing Library                    |
+>>>>>>> Stashed changes
 
 ### Backend — `server/`
 
-| Category | Technology |
-|---|---|
-| **Runtime** | Node.js |
-| **Framework** | Express.js 5 |
-| **Database** | MySQL (mysql2 — connection pool) |
-| **Caching** | Redis (ioredis), Node-Cache |
-| **Real-time** | Socket.io |
-| **Auth** | JWT (jsonwebtoken), Bcrypt.js |
-| **Encryption** | AES-256-GCM (crypto), HMAC-SHA256, CryptoJS |
-| **Security** | CORS, Express Rate Limit, Helmet-style trust proxy |
-| **Notification** | Telegram Bot API |
-| **HTTP Client** | Axios |
-| **Compression** | compression |
+| Category         | Technology                                         |
+| ---------------- | -------------------------------------------------- |
+| **Runtime**      | Node.js                                            |
+| **Framework**    | Express.js 5                                       |
+| **Database**     | MySQL (mysql2 — connection pool)                   |
+| **Caching**      | Redis (ioredis), Node-Cache                        |
+| **Real-time**    | Socket.io                                          |
+| **Auth**         | JWT (jsonwebtoken), Bcrypt.js                      |
+| **Encryption**   | AES-256-GCM (crypto), HMAC-SHA256, CryptoJS        |
+| **Security**     | CORS, Express Rate Limit, Helmet-style trust proxy |
+| **Notification** | Telegram Bot API                                   |
+| **HTTP Client**  | Axios                                              |
+| **Compression**  | compression                                        |
 
 ---
 
 ## 🛠 Key Features
 
 ### 🌐 Public
+
 - **Landing Page** — The main page of the system with clinic information and banners.
 - **Online Assessment** — Fill out health assessments via securely encrypted links.
 - **Assessment Results** — View results after completing an assessment.
 - **History Search** — Search and review your own assessment history.
 
 ### 🔒 Admin (Login Required)
+
 - **Dashboard** — Overview statistics dashboard with customizable graph widgets (Recharts).
 - **Form Management** — Create/edit/duplicate assessments with a Drag & Drop Form Builder.
 - **Case Management** — Continuous patient case tracking system, record keeping, PHQ graphs, Excel Export.
@@ -64,6 +85,7 @@
 - **Data Entry Templates** — Create/edit templates for data entry by clinic type.
 
 ### 🔐 Security System
+
 - **Data Encryption** — Personal data is encrypted with AES-256-GCM along with HMAC for searching.
 - **Data Masking** — System for masking names, phone numbers, and Thai National ID numbers.
 - **Thai Data Validation** — Validation for 13-digit Thai National ID and Thai phone numbers.
@@ -148,17 +170,17 @@ npm start
 
 ## 🗂️ API Routes
 
-| Prefix | Route File | Description |
-|---|---|---|
-| `/api` | `authRoutes.js` | Login, Token verification |
-| `/api` | `formRoutes.js` | Form CRUD, Submit answers, View results |
-| `/api` | `caseRoutes.js` | Case management, Appointments, History recording |
-| `/api` | `userRoutes.js` | User CRUD |
-| `/api` | `roleRoutes.js` | Role & Permissions CRUD |
-| `/api` | `bannerRoutes.js` | Banner CRUD |
-| `/api` | `dashboardRoutes.js` | Statistics, Graphs, Dashboard settings |
-| `/api/clinics` | `clinicRoutes.js` | Clinic CRUD |
-| `/api/staffs` | `staffRoutes.js` | Staff CRUD |
+| Prefix         | Route File           | Description                                      |
+| -------------- | -------------------- | ------------------------------------------------ |
+| `/api`         | `authRoutes.js`      | Login, Token verification                        |
+| `/api`         | `formRoutes.js`      | Form CRUD, Submit answers, View results          |
+| `/api`         | `caseRoutes.js`      | Case management, Appointments, History recording |
+| `/api`         | `userRoutes.js`      | User CRUD                                        |
+| `/api`         | `roleRoutes.js`      | Role & Permissions CRUD                          |
+| `/api`         | `bannerRoutes.js`    | Banner CRUD                                      |
+| `/api`         | `dashboardRoutes.js` | Statistics, Graphs, Dashboard settings           |
+| `/api/clinics` | `clinicRoutes.js`    | Clinic CRUD                                      |
+| `/api/staffs`  | `staffRoutes.js`     | Staff CRUD                                       |
 
 ---
 

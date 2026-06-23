@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logoSUTH.png";
-import { FiArrowLeft } from "react-icons/fi"; 
-import "./Navbar.css"; 
+import { FiArrowLeft } from "react-icons/fi";
+import "./Navbar.css";
 
-export default function Navbar({ 
-  showLogin = false, 
-  showBack = false, 
-  backText = "กลับ", 
-  onBack 
+export default function Navbar({
+  showLogin = false,
+  showBack = false,
+  backText = "กลับ",
+  onBack,
 }) {
   const navigate = useNavigate();
 
@@ -26,8 +26,8 @@ export default function Navbar({
       {/* RIGHT BUTTONS */}
       <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
         {showBack && (
-          <button 
-            className="main-nav__back" 
+          <button
+            className="main-nav__back"
             onClick={onBack ? onBack : () => navigate(-1)}
           >
             <FiArrowLeft size={16} /> {backText}
