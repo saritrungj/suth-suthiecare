@@ -34,8 +34,13 @@ export default function Login() {
   const turnstileRef = useRef(null);
   const widgetIdRef = useRef(null); // เก็บ ID ของ Widget ที่สร้างขึ้นเพื่อใช้ Reset
 
+  // 🟢 ปิด Turnstile บน local ได้โดยตั้ง REACT_APP_DISABLE_TURNSTILE=true ใน .env
+  const turnstileDisabled = process.env.REACT_APP_DISABLE_TURNSTILE === "true";
+
   /* ── โหลด Cloudflare Turnstile script และ render widget ── */
   useEffect(() => {
+    if (turnstileDisabled) return; // ข้ามการโหลด widget ทั้งหมดบน local
+
     const renderWidget = () => {
       // เช็คว่ามี script แล้ว, มีกล่อง container แล้ว และยังไม่ได้ render widget เดิมซ้ำ
       if (
@@ -78,7 +83,7 @@ export default function Login() {
         } catch (e) {}
       }
     };
-  }, []);
+  }, [turnstileDisabled]);
 
   /* ── Submit ── */
   const handleSubmit = async (e) => {
@@ -89,7 +94,7 @@ export default function Login() {
       return;
     }
 
-    if (!turnstileToken) {
+    if (!turnstileDisabled && !turnstileToken) {
       setError("กรุณายืนยันว่าคุณไม่ใช่บอท");
       return;
     }
@@ -267,10 +272,12 @@ export default function Login() {
               )}
             </div>
 
-            {/* ✅ Cloudflare Turnstile */}
-            <div className="turnstile-wrap">
-              <div ref={turnstileRef} />
-            </div>
+            {/* ✅ Cloudflare Turnstile (ซ่อนบน local เมื่อ REACT_APP_DISABLE_TURNSTILE=true) */}
+            {!turnstileDisabled && (
+              <div className="turnstile-wrap">
+                <div ref={turnstileRef} />
+              </div>
+            )}
 
             {/* ── Login Button ── */}
             <button

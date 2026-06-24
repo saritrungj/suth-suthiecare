@@ -1,6 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { FiClock, FiLogIn, FiChevronLeft, FiChevronRight, FiCheckCircle, FiShield, FiHeart, FiPhoneCall, FiArrowLeft, FiHelpCircle } from "react-icons/fi";
+import {
+  FiClock,
+  FiLogIn,
+  FiChevronLeft,
+  FiChevronRight,
+  FiCheckCircle,
+  FiShield,
+  FiHeart,
+  FiPhoneCall,
+  FiArrowLeft,
+  FiHelpCircle,
+} from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher.jsx";
 import "./SutLanding2.css";
@@ -9,7 +20,11 @@ import logo from "../../assets/logoSUTH.png";
 import bgHealth from "../../assets/bg-health.jpg";
 import bgClinic from "../../assets/bg-new.jpg";
 import { formCache } from "../../services/cache";
-import api, { getForms, getBanners, getActiveClinics } from "../../services/api";
+import api, {
+  getForms,
+  getBanners,
+  getActiveClinics,
+} from "../../services/api";
 import { translateTextSmart } from "../../utils/translator";
 
 const SLIDE_INTERVAL = 6000;
@@ -34,14 +49,18 @@ function FormCard({ form, themeClass, count, isLoaded }) {
   const { t, i18n } = useTranslation();
   const displayImage = form.image;
 
-  const [displayTitle, setDisplayTitle] = useState(form.title || t('form_card.no_title'));
-  const [displayDesc, setDisplayDesc] = useState(stripHtml(form.description || t('form_card.default_desc')));
+  const [displayTitle, setDisplayTitle] = useState(
+    form.title || t("form_card.no_title"),
+  );
+  const [displayDesc, setDisplayDesc] = useState(
+    stripHtml(form.description || t("form_card.default_desc")),
+  );
 
   useEffect(() => {
-    const title = form.title || t('form_card.no_title');
-    const desc = stripHtml(form.description || t('form_card.default_desc'));
+    const title = form.title || t("form_card.no_title");
+    const desc = stripHtml(form.description || t("form_card.default_desc"));
 
-    if (i18n.language === 'en') {
+    if (i18n.language === "en") {
       translateTextSmart(title).then(setDisplayTitle);
       translateTextSmart(desc).then(setDisplayDesc);
     } else {
@@ -79,10 +98,14 @@ function FormCard({ form, themeClass, count, isLoaded }) {
       {/* ===== Count ด้านล่าง ===== */}
       <div className="sut2-card__count">
         {!isLoaded ? (
-          <span className="sut2-card__count-text">{t('form_card.loading')}</span>
+          <span className="sut2-card__count-text">
+            {t("form_card.loading")}
+          </span>
         ) : (
           <span className="sut2-card__count-text">
-            {t('form_card.participants', { count: Number(count).toLocaleString() })}
+            {t("form_card.participants", {
+              count: Number(count).toLocaleString(),
+            })}
           </span>
         )}
       </div>
@@ -140,16 +163,18 @@ export default function SutLanding2() {
 
   useEffect(() => {
     // Load Clinics
-    getActiveClinics().then(res => {
-      const sorted = (res.data.data || []).sort(
-        (a, b) => (a.sort_order ?? 9999) - (b.sort_order ?? 9999)
-      );
-      setClinics(sorted);
-      setLoadingClinics(false);
-    }).catch(err => {
-      console.error("Failed to load clinics", err);
-      setLoadingClinics(false);
-    });
+    getActiveClinics()
+      .then((res) => {
+        const sorted = (res.data.data || []).sort(
+          (a, b) => (a.sort_order ?? 9999) - (b.sort_order ?? 9999),
+        );
+        setClinics(sorted);
+        setLoadingClinics(false);
+      })
+      .catch((err) => {
+        console.error("Failed to load clinics", err);
+        setLoadingClinics(false);
+      });
 
     // Load Banners
     getBanners().then((res) =>
@@ -298,11 +323,17 @@ export default function SutLanding2() {
         </div>
         <div className={`sut2-nav__actions ${menuOpen ? "sut2-open" : ""}`}>
           <LanguageSwitcher darkText={isScrolled || menuOpen} />
-          <button className="sut2-nav__btn sut2-nav__btn--history" onClick={() => navigate("/history")}>
-            <FiClock /> <span>{t('nav.history')}</span>
+          <button
+            className="sut2-nav__btn sut2-nav__btn--history"
+            onClick={() => navigate("/history")}
+          >
+            <FiClock /> <span>{t("nav.history")}</span>
           </button>
-          <button className="sut2-nav__btn sut2-nav__btn--login" onClick={() => navigate("/admin/dashboard")}>
-            <FiLogIn /> <span>{t('nav.staff')}</span>
+          <button
+            className="sut2-nav__btn sut2-nav__btn--login"
+            onClick={() => navigate("/admin/dashboard")}
+          >
+            <FiLogIn /> <span>{t("nav.staff")}</span>
           </button>
         </div>
       </nav>
@@ -325,20 +356,36 @@ export default function SutLanding2() {
               style={{ transform: `translateY(${scrollY * -0.15}px)` }}
             >
               <h1 className="sut2-hero__title">
-                {t('sutlanding.title')}<br />
-                <span className="sut2-hero__highlight">{t('sutlanding.subtitle_highlight')}</span>
+                {t("sutlanding.title")}
+                <br />
+                <span className="sut2-hero__highlight">
+                  {t("sutlanding.subtitle_highlight")}
+                </span>
               </h1>
               <p className="sut2-hero__subtitle">
-                {t('sutlanding.description')}
+                {t("sutlanding.description")}
               </p>
               <div className="sut2-hero__cta-group">
                 <button
                   className="sut2-hero__cta"
-                  onClick={() => window.scrollTo({ top: window.innerHeight * 0.9, behavior: "smooth" })}>{t('sutlanding.btn_start')}
+                  onClick={() =>
+                    window.scrollTo({
+                      top: window.innerHeight * 0.9,
+                      behavior: "smooth",
+                    })
+                  }
+                >
+                  {t("sutlanding.btn_start")}
                 </button>
                 <button
                   className="sut2-hero__cta sut2-hero__cta--secondary"
-                  onClick={() => document.getElementById("steps")?.scrollIntoView({ behavior: "smooth" })}>{t('sutlanding.btn_steps')}
+                  onClick={() =>
+                    document
+                      .getElementById("steps")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
+                  {t("sutlanding.btn_steps")}
                 </button>
               </div>
             </div>
@@ -357,8 +404,10 @@ export default function SutLanding2() {
                         target="_blank"
                         rel="noopener noreferrer"
                         key={i}
-                        className={`sut2-banner-slide ${i === currentSlide ? 'active' : ''}`}
-                        style={{ display: i === currentSlide ? 'block' : 'none' }}
+                        className={`sut2-banner-slide ${i === currentSlide ? "active" : ""}`}
+                        style={{
+                          display: i === currentSlide ? "block" : "none",
+                        }}
                       >
                         <img
                           src={slide.image}
@@ -411,16 +460,24 @@ export default function SutLanding2() {
                   {/* ด้านหน้า */}
                   <div className="promo-front">
                     <div className="sut2-promo-content">
-                      <h2 className="sut2-promo-title">{t('sutlanding.select_clinic')}</h2>
-                      <p className="sut2-promo-desc">{t('sutlanding.select_clinic_desc')}</p>
+                      <h2 className="sut2-promo-title">
+                        {t("sutlanding.select_clinic")}
+                      </h2>
+                      <p className="sut2-promo-desc">
+                        {t("sutlanding.select_clinic_desc")}
+                      </p>
                     </div>
                   </div>
 
                   {/* ด้านหลัง (ตอน flip) */}
                   <div className="promo-back">
                     <div className="sut2-promo-content">
-                      <h2 className="sut2-promo-title">{t('sutlanding.assessment_form')}</h2>
-                      <p className="sut2-promo-desc">{t('sutlanding.assessment_form_desc')}</p>
+                      <h2 className="sut2-promo-title">
+                        {t("sutlanding.assessment_form")}
+                      </h2>
+                      <p className="sut2-promo-desc">
+                        {t("sutlanding.assessment_form_desc")}
+                      </p>
                       {selectedClinic && (
                         <button
                           className="back-btn"
@@ -431,7 +488,10 @@ export default function SutLanding2() {
                             setIsFlipped(false);
                           }}
                         >
-                          <FiArrowLeft style={{ fontSize: '18px', flexShrink: 0 }} /> <span>{t('sutlanding.btn_back')}</span>
+                          <FiArrowLeft
+                            style={{ fontSize: "18px", flexShrink: 0 }}
+                          />{" "}
+                          <span>{t("sutlanding.btn_back")}</span>
                         </button>
                       )}
                     </div>
@@ -477,10 +537,26 @@ export default function SutLanding2() {
                   key={selectedClinic ? "forms" : "clinics"}
                 >
                   {loading || loadingClinics ? (
-                    <p style={{ textAlign: 'center', width: '100%', color: 'white' }}>{t('sutlanding.loading')}</p>
+                    <p
+                      style={{
+                        textAlign: "center",
+                        width: "100%",
+                        color: "white",
+                      }}
+                    >
+                      {t("sutlanding.loading")}
+                    </p>
                   ) : !selectedClinic ? (
                     clinics.length === 0 ? (
-                      <p style={{ textAlign: 'center', width: '100%', color: 'white' }}>{t('sutlanding.no_clinic')}</p>
+                      <p
+                        style={{
+                          textAlign: "center",
+                          width: "100%",
+                          color: "white",
+                        }}
+                      >
+                        {t("sutlanding.no_clinic")}
+                      </p>
                     ) : (
                       clinics.map((clinic, index) => {
                         const offset = index - activeIdx;
@@ -525,19 +601,33 @@ export default function SutLanding2() {
                                 backgroundImage: `url(${clinic.bg || bgClinic})`,
                               }}
                             >
-                              {(clinic.show_icon === 1 || clinic.show_icon === undefined) && clinic.image && (
-                                <div className="clinic-icon">
-                                  <img src={clinic.image} alt={clinic.name} />
-                                </div>
-                              )}
-                              <h3>{i18n.language === 'en' && clinic.name_en ? clinic.name_en : clinic.name}</h3>
+                              {(clinic.show_icon === 1 ||
+                                clinic.show_icon === undefined) &&
+                                clinic.image && (
+                                  <div className="clinic-icon">
+                                    <img src={clinic.image} alt={clinic.name} />
+                                  </div>
+                                )}
+                              <h3>
+                                {i18n.language === "en" && clinic.name_en
+                                  ? clinic.name_en
+                                  : clinic.name}
+                              </h3>
                             </div>
                           </div>
                         );
                       })
                     )
                   ) : filteredForms.length === 0 ? (
-                    <p style={{ textAlign: 'center', width: '100%', color: 'white' }}>{t('sutlanding.no_form_in_clinic')}</p>
+                    <p
+                      style={{
+                        textAlign: "center",
+                        width: "100%",
+                        color: "white",
+                      }}
+                    >
+                      {t("sutlanding.no_form_in_clinic")}
+                    </p>
                   ) : (
                     filteredForms.map((form, index) => {
                       const offset = index - activeIdx;
@@ -606,27 +696,35 @@ export default function SutLanding2() {
           <div className="sut2-steps-overlay"></div>
 
           <div className="sut2-steps-content">
-            <h2 className="sut2-steps-title">{t('sutlanding.steps_title')}</h2>
+            <h2 className="sut2-steps-title">{t("sutlanding.steps_title")}</h2>
             <div className="sut2-steps-grid">
               <div className="sut2-step-glass">
-                <div className="sut2-step-icon"><FiCheckCircle /></div>
-                <h3>{t('sutlanding.step1_title')}</h3>
-                <p>{t('sutlanding.step1_desc')}</p>
+                <div className="sut2-step-icon">
+                  <FiCheckCircle />
+                </div>
+                <h3>{t("sutlanding.step1_title")}</h3>
+                <p>{t("sutlanding.step1_desc")}</p>
               </div>
               <div className="sut2-step-glass">
-                <div className="sut2-step-icon"><FiShield /></div>
-                <h3>{t('sutlanding.step2_title')}</h3>
-                <p>{t('sutlanding.step2_desc')}</p>
+                <div className="sut2-step-icon">
+                  <FiShield />
+                </div>
+                <h3>{t("sutlanding.step2_title")}</h3>
+                <p>{t("sutlanding.step2_desc")}</p>
               </div>
               <div className="sut2-step-glass">
-                <div className="sut2-step-icon"><FiHeart /></div>
-                <h3>{t('sutlanding.step3_title')}</h3>
-                <p>{t('sutlanding.step3_desc')}</p>
+                <div className="sut2-step-icon">
+                  <FiHeart />
+                </div>
+                <h3>{t("sutlanding.step3_title")}</h3>
+                <p>{t("sutlanding.step3_desc")}</p>
               </div>
               <div className="sut2-step-glass">
-                <div className="sut2-step-icon"><FiPhoneCall /></div>
-                <h3>{t('sutlanding.step4_title')}</h3>
-                <p>{t('sutlanding.step4_desc')}</p>
+                <div className="sut2-step-icon">
+                  <FiPhoneCall />
+                </div>
+                <h3>{t("sutlanding.step4_title")}</h3>
+                <p>{t("sutlanding.step4_desc")}</p>
               </div>
             </div>
 
@@ -649,7 +747,7 @@ export default function SutLanding2() {
                 onMouseOver={(e) => (e.target.style.opacity = 1)}
                 onMouseOut={(e) => (e.target.style.opacity = 0.9)}
               >
-                {t('sutlanding.download_manual')}
+                {t("sutlanding.download_manual")}
               </a>
             </div>
           </div>
@@ -661,19 +759,23 @@ export default function SutLanding2() {
         <div className="sut2-footer-content">
           <div className="sut2-footer-col">
             <img src={logo} alt="SUTH Logo" className="sut2-footer-logo" />
-            <p>{t('sutlanding.footer_desc')}</p>
+            <p>{t("sutlanding.footer_desc")}</p>
           </div>
           <div className="sut2-footer-col">
-            <h4>{t('sutlanding.contact_us')}</h4>
-            <p>{t('sutlanding.pcu')}</p>
-            <p>{t('sutlanding.address_1')}<br />{t('sutlanding.address_2')}</p>
-            <p>{t('sutlanding.tel1')}</p>
-            <p>{t('sutlanding.tel2')}</p>
-            <p>{t('sutlanding.website')}</p>
+            <h4>{t("sutlanding.contact_us")}</h4>
+            <p>{t("sutlanding.pcu")}</p>
+            <p>
+              {t("sutlanding.address_1")}
+              <br />
+              {t("sutlanding.address_2")}
+            </p>
+            <p>{t("sutlanding.tel1")}</p>
+            <p>{t("sutlanding.tel2")}</p>
+            <p>{t("sutlanding.website")}</p>
           </div>
         </div>
         <div className="sut2-footer-bottom">
-          <p>{t('sutlanding.copyright', { year: new Date().getFullYear() })}</p>
+          <p>{t("sutlanding.copyright", { year: new Date().getFullYear() })}</p>
         </div>
       </footer>
 
@@ -684,7 +786,6 @@ export default function SutLanding2() {
       >
         <FiHelpCircle />
       </button>
-
     </div>
   );
 }

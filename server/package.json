@@ -1,4 +1,11 @@
 {
+  "name": "suthiecare-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
   "dependencies": {
     "axios": "^1.13.6",
     "bcryptjs": "^3.0.3",

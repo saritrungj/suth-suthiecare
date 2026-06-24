@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { FiSearch, FiEye, FiEyeOff } from 'react-icons/fi';
-import axios from 'axios';
-import Navbar from '../../../components/Navbar';
-import './HistorySearch.css';
-import bgImage from '../../../assets/bg-new.jpg';
+import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { FiSearch, FiEye, FiEyeOff } from "react-icons/fi";
+import axios from "axios";
+import Navbar from "../../../components/Navbar";
+import "./HistorySearch.css";
+import bgImage from "../../../assets/bg-new.jpg";
 
 const API_BASE = (
   process.env.REACT_APP_API_URL || "http://localhost:5000"
@@ -26,7 +26,7 @@ export default function HistorySearch() {
     const clean = identity.replace(/\D/g, "");
 
     if (clean.length !== 13) {
-      setError(t('history.search.err_incomplete'));
+      setError(t("history.search.err_incomplete"));
       return;
     }
 
@@ -48,9 +48,9 @@ export default function HistorySearch() {
       setLoading(false);
       // 🔴 ถ้าไม่พบข้อมูล (404) หรือเกิดข้อผิดพลาดอื่น ให้แจ้งเตือนที่หน้านี้เลย
       if (err.response?.status === 404) {
-        setError(t('history.search.err_not_found'));
+        setError(t("history.search.err_not_found"));
       } else {
-        setError(t('history.search.err_connection'));
+        setError(t("history.search.err_connection"));
       }
     }
   };
@@ -68,8 +68,8 @@ export default function HistorySearch() {
     >
       <Navbar
         showBack={true}
-        backText={t('history.search.back')}
-        onBack={() => navigate('/')}
+        backText={t("history.search.back")}
+        onBack={() => navigate("/")}
       />
 
       <main className="history-container ">
@@ -77,8 +77,8 @@ export default function HistorySearch() {
           <div className="history-icon-wrapper">
             <FiSearch className="history-main-icon" />
           </div>
-          <h2 className="history-title">{t('history.search.title')}</h2>
-          <p className="history-desc">{t('history.search.desc')}</p>
+          <h2 className="history-title">{t("history.search.title")}</h2>
+          <p className="history-desc">{t("history.search.desc")}</p>
 
           <form onSubmit={handleSearch} className="history-form">
             <div className="history-input-wrap">
@@ -91,8 +91,8 @@ export default function HistorySearch() {
                   setIdentity(e.target.value.replace(/\D/g, "").slice(0, 13));
                   setError("");
                 }}
-                placeholder={t('history.search.placeholder')}
-                className={`history-input ${error ? 'error' : ''}`}
+                placeholder={t("history.search.placeholder")}
+                className={`history-input ${error ? "error" : ""}`}
                 autoComplete="off"
               />
               <button
@@ -120,10 +120,10 @@ export default function HistorySearch() {
               {loading ? (
                 <div className="btn-loading-content">
                   <span className="btn-spinner"></span>
-                  <span>{t('history.search.btn_searching')}</span>
+                  <span>{t("history.search.btn_searching")}</span>
                 </div>
               ) : (
-                t('history.search.btn_search')
+                t("history.search.btn_search")
               )}
             </button>
           </form>

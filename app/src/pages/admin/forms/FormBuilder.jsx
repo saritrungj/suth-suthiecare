@@ -719,16 +719,19 @@ const FormBuilder = () => {
         questions.map((q) =>
           q.id === qId
             ? {
-              ...q,
-              options: [...q.options, `ตัวเลือก ${q.options.length + 1}`],
-              optionScores: [...(q.optionScores || []), 0],
-              optionLimits: [...(q.optionLimits || Array(q.options.length).fill(null)), null],
-              optionImages: [...(q.optionImages || []), null],
-              optionHasInput: [
-                ...(q.optionHasInput || Array(q.options.length).fill(false)),
-                false,
-              ],
-            }
+                ...q,
+                options: [...q.options, `ตัวเลือก ${q.options.length + 1}`],
+                optionScores: [...(q.optionScores || []), 0],
+                optionLimits: [
+                  ...(q.optionLimits || Array(q.options.length).fill(null)),
+                  null,
+                ],
+                optionImages: [...(q.optionImages || []), null],
+                optionHasInput: [
+                  ...(q.optionHasInput || Array(q.options.length).fill(false)),
+                  false,
+                ],
+              }
             : q,
         ),
       ),
@@ -746,20 +749,20 @@ const FormBuilder = () => {
       ),
     updateDisplayAs: (qId, val) =>
       setQuestions(
-        questions.map((q) =>
-          q.id === qId ? { ...q, displayAs: val } : q,
-        ),
+        questions.map((q) => (q.id === qId ? { ...q, displayAs: val } : q)),
       ),
     updateOptionLimit: (qId, optIdx, val) =>
       setQuestions(
         questions.map((q) =>
           q.id === qId
             ? {
-              ...q,
-              optionLimits: (q.optionLimits || Array(q.options.length).fill(null)).map((l, i) =>
-                i === optIdx ? (val === '' ? null : parseInt(val)) : l
-              ),
-            }
+                ...q,
+                optionLimits: (
+                  q.optionLimits || Array(q.options.length).fill(null)
+                ).map((l, i) =>
+                  i === optIdx ? (val === "" ? null : parseInt(val)) : l,
+                ),
+              }
             : q,
         ),
       ),
@@ -782,21 +785,21 @@ const FormBuilder = () => {
         questions.map((q) =>
           q.id === qId && q.options.length > 1
             ? {
-              ...q,
-              options: q.options.filter((_, i) => i !== optIdx),
-              optionScores: (q.optionScores || []).filter(
-                (_, i) => i !== optIdx,
-              ),
-              optionLimits: (q.optionLimits || []).filter(
-                (_, i) => i !== optIdx,
-              ),
-              optionImages: (q.optionImages || []).filter(
-                (_, i) => i !== optIdx,
-              ),
-              optionHasInput: (q.optionHasInput || []).filter(
-                (_, i) => i !== optIdx,
-              ),
-            }
+                ...q,
+                options: q.options.filter((_, i) => i !== optIdx),
+                optionScores: (q.optionScores || []).filter(
+                  (_, i) => i !== optIdx,
+                ),
+                optionLimits: (q.optionLimits || []).filter(
+                  (_, i) => i !== optIdx,
+                ),
+                optionImages: (q.optionImages || []).filter(
+                  (_, i) => i !== optIdx,
+                ),
+                optionHasInput: (q.optionHasInput || []).filter(
+                  (_, i) => i !== optIdx,
+                ),
+              }
             : q,
         ),
       ),

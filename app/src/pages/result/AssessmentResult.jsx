@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiCheckCircle, FiActivity, FiInfo, FiCheck, FiSend, FiClock } from "react-icons/fi";
+import {
+  FiCheckCircle,
+  FiActivity,
+  FiInfo,
+  FiCheck,
+  FiSend,
+  FiClock,
+} from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import { translateTextSmart } from "../../utils/translator";
 import LanguageSwitcher from "../../components/LanguageSwitcher.jsx";
@@ -34,10 +41,12 @@ const isColorTooBright = (hex) => {
 const getLevelConfig = (result, t) => {
   if (!result) {
     return {
-      title: t ? t('assessment_result.score') : "ผลการประเมิน",
+      title: t ? t("assessment_result.score") : "ผลการประเมิน",
       score: 0,
-      label: t ? t('assessment_result.send_success') : "บันทึกสำเร็จ",
-      advice: [t ? t('assessment_result.advice') : "ไม่มีคำแนะนำเพิ่มเติมในขณะนี้"],
+      label: t ? t("assessment_result.send_success") : "บันทึกสำเร็จ",
+      advice: [
+        t ? t("assessment_result.advice") : "ไม่มีคำแนะนำเพิ่มเติมในขณะนี้",
+      ],
       color: "#2d7d81",
       textColor: "#2d7d81",
       rgb: "45, 125, 129",
@@ -81,7 +90,11 @@ const getLevelConfig = (result, t) => {
     title: result.title || "ผลการประเมิน",
     score: result.score,
     label: result.label || "ประเมินเสร็จสิ้น",
-    advice: result.advice ? (Array.isArray(result.advice) ? result.advice : result.advice.split('\n')) : [t ? t('assessment_result.advice') : "ไม่มีคำแนะนำเพิ่มเติมในขณะนี้"],
+    advice: result.advice
+      ? Array.isArray(result.advice)
+        ? result.advice
+        : result.advice.split("\n")
+      : [t ? t("assessment_result.advice") : "ไม่มีคำแนะนำเพิ่มเติมในขณะนี้"],
     color: hexCriteriaColor,
     textColor: readableTextColor,
     rgb: rgbColor.join(", "),
@@ -112,22 +125,32 @@ export default function AssessmentResult() {
     let isMounted = true;
     const translateResults = async () => {
       if (results.length === 0) return;
-      if (i18n.language !== 'en') {
+      if (i18n.language !== "en") {
         if (isMounted) setTranslatedResults(results);
         return;
       }
-      
-      const trs = await Promise.all(results.map(async (res) => {
-        const tTitle = res.title ? await translateTextSmart(res.title) : res.title;
-        const tLabel = res.label ? await translateTextSmart(res.label) : res.label;
-        const tAdvice = res.advice ? await translateTextSmart(res.advice) : res.advice;
-        return { ...res, title: tTitle, label: tLabel, advice: tAdvice };
-      }));
-      
+
+      const trs = await Promise.all(
+        results.map(async (res) => {
+          const tTitle = res.title
+            ? await translateTextSmart(res.title)
+            : res.title;
+          const tLabel = res.label
+            ? await translateTextSmart(res.label)
+            : res.label;
+          const tAdvice = res.advice
+            ? await translateTextSmart(res.advice)
+            : res.advice;
+          return { ...res, title: tTitle, label: tLabel, advice: tAdvice };
+        }),
+      );
+
       if (isMounted) setTranslatedResults(trs);
     };
     translateResults();
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, [results, i18n.language]);
 
   useEffect(() => {
@@ -141,31 +164,35 @@ export default function AssessmentResult() {
   // 🟢 ฟังก์ชันจัดการการยิง API
   const handleSendToStaff = () => {
     if (!formId || !payload) {
-      Swal.fire(t('assessment_result.error_title'), t('assessment_result.error_desc'), 'error');
+      Swal.fire(
+        t("assessment_result.error_title"),
+        t("assessment_result.error_desc"),
+        "error",
+      );
       return;
     }
 
     Swal.fire({
-      title: t('assessment_result.consent_title'),
-      html: t('assessment_result.consent_html'),
-      icon: 'question',
+      title: t("assessment_result.consent_title"),
+      html: t("assessment_result.consent_html"),
+      icon: "question",
       showCloseButton: true,
       showCancelButton: true,
-      confirmButtonColor: '#3b82f6',
-      cancelButtonColor: '#ef4444',
-      confirmButtonText: t('assessment_result.agree'),
-      cancelButtonText: t('assessment_result.decline'),
-      width: '500px',
-      padding: '2.5em',
-      background: '#ffffff',
-      borderRadius: '20px'
+      confirmButtonColor: "#3b82f6",
+      cancelButtonColor: "#ef4444",
+      confirmButtonText: t("assessment_result.agree"),
+      cancelButtonText: t("assessment_result.decline"),
+      width: "500px",
+      padding: "2.5em",
+      background: "#ffffff",
+      borderRadius: "20px",
     }).then(async (result) => {
       if (result.isConfirmed) {
         setIsSubmitting(true);
 
         Swal.fire({
-          title: t('assessment_result.sending'),
-          text: t('assessment_result.please_wait'),
+          title: t("assessment_result.sending"),
+          text: t("assessment_result.please_wait"),
           allowOutsideClick: false,
           didOpen: () => {
             Swal.showLoading();
@@ -176,18 +203,18 @@ export default function AssessmentResult() {
           await submitFormAnswers(formId, payload);
           setIsSaved(true);
           Swal.fire({
-            icon: 'success',
-            title: t('assessment_result.send_success'),
-            text: t('assessment_result.send_success_desc'),
-            confirmButtonColor: '#10b981'
+            icon: "success",
+            title: t("assessment_result.send_success"),
+            text: t("assessment_result.send_success_desc"),
+            confirmButtonColor: "#10b981",
           });
         } catch (error) {
           console.error("Submit Error:", error);
           Swal.fire({
-            icon: 'error',
-            title: t('assessment_result.send_error'),
-            text: t('assessment_result.send_error_desc'),
-            confirmButtonColor: '#ef4444'
+            icon: "error",
+            title: t("assessment_result.send_error"),
+            text: t("assessment_result.send_error_desc"),
+            confirmButtonColor: "#ef4444",
           });
         } finally {
           setIsSubmitting(false);
@@ -206,11 +233,11 @@ export default function AssessmentResult() {
   const handleOpenEvaluation = () => {
     if (hasEvaluated) {
       Swal.fire({
-        title: t('assessment_result.eval_thanks_title'),
-        text: t('assessment_result.eval_thanks_desc'),
-        icon: 'success',
-        confirmButtonText: t('assessment_result.ok'),
-        confirmButtonColor: '#7c3aed'
+        title: t("assessment_result.eval_thanks_title"),
+        text: t("assessment_result.eval_thanks_desc"),
+        icon: "success",
+        confirmButtonText: t("assessment_result.ok"),
+        confirmButtonColor: "#7c3aed",
       });
       return;
     }
@@ -228,8 +255,8 @@ export default function AssessmentResult() {
           .join("")}
       </div>
       <div class="evaluation-labels-wrap">
-        <span>${t('assessment_result.eval_min')}</span>
-        <span>${t('assessment_result.eval_max')}</span>
+        <span>${t("assessment_result.eval_min")}</span>
+        <span>${t("assessment_result.eval_max")}</span>
       </div>
     `;
 
@@ -242,16 +269,16 @@ export default function AssessmentResult() {
 
     const renderSUS = () => {
       const questions = [
-        t('assessment_result.eval_sus1'),
-        t('assessment_result.eval_sus2'),
-        t('assessment_result.eval_sus3'),
-        t('assessment_result.eval_sus4'),
-        t('assessment_result.eval_sus5'),
-        t('assessment_result.eval_sus6'),
-        t('assessment_result.eval_sus7'),
-        t('assessment_result.eval_sus8'),
-        t('assessment_result.eval_sus9'),
-        t('assessment_result.eval_sus10')
+        t("assessment_result.eval_sus1"),
+        t("assessment_result.eval_sus2"),
+        t("assessment_result.eval_sus3"),
+        t("assessment_result.eval_sus4"),
+        t("assessment_result.eval_sus5"),
+        t("assessment_result.eval_sus6"),
+        t("assessment_result.eval_sus7"),
+        t("assessment_result.eval_sus8"),
+        t("assessment_result.eval_sus9"),
+        t("assessment_result.eval_sus10"),
       ];
 
       return questions
@@ -267,35 +294,35 @@ export default function AssessmentResult() {
     };
 
     Swal.fire({
-      title: t('assessment_result.eval_modal_title'),
-      width: window.innerWidth < 768 ? '95%' : 700,
+      title: t("assessment_result.eval_modal_title"),
+      width: window.innerWidth < 768 ? "95%" : 700,
       showCloseButton: true,
       closeButtonHtml: "✕",
       html: `
         <div style="text-align:left; max-height:450px; overflow:auto overflow-x:hidden;">
          
         <div style="background:#fff; border-radius:12px; padding:20px; margin-bottom:15px; border-top:6px solid #7c3aed; box-shadow:0 4px 12px rgba(0,0,0,0.06)">
-            <h3 style="margin-bottom:15px"> ${t('assessment_result.eval_part1')}</h3>
-            ${renderQuestionBox(1, t('assessment_result.eval_q1'), "q1")}
-            ${renderQuestionBox(2, t('assessment_result.eval_q2'), "q2")}
-            ${renderQuestionBox(3, t('assessment_result.eval_q3'), "q3")}
-            ${renderQuestionBox(4, t('assessment_result.eval_q4'), "q4")}
-            ${renderQuestionBox(5, t('assessment_result.eval_q5'), "q5")}
+            <h3 style="margin-bottom:15px"> ${t("assessment_result.eval_part1")}</h3>
+            ${renderQuestionBox(1, t("assessment_result.eval_q1"), "q1")}
+            ${renderQuestionBox(2, t("assessment_result.eval_q2"), "q2")}
+            ${renderQuestionBox(3, t("assessment_result.eval_q3"), "q3")}
+            ${renderQuestionBox(4, t("assessment_result.eval_q4"), "q4")}
+            ${renderQuestionBox(5, t("assessment_result.eval_q5"), "q5")}
           </div>
 
           <div style="background:#fff; border-radius:12px; padding:20px; border-top:6px solid #6366f1; box-shadow:0 4px 12px rgba(0,0,0,0.06)">
-            <h3 style="margin-bottom:15px"> ${t('assessment_result.eval_part2')}</h3>
+            <h3 style="margin-bottom:15px"> ${t("assessment_result.eval_part2")}</h3>
             ${renderSUS()}
           </div>
 
           <div style="margin-top:20px; background:#fff; border-radius:12px; padding:20px; border-top:6px solid #10b981; box-shadow:0 4px 12px rgba(0,0,0,0.06)">
-            <p><b> ${t('assessment_result.eval_comment')}</b></p>
-            <textarea id="comment" class="swal2-textarea" placeholder="${t('assessment_result.eval_placeholder')}" style="height:80px; width: 250px; font-size:14px; padding:10px; margin-right:10px; border-radius:10px; box-sizing: border-box;"></textarea>
+            <p><b> ${t("assessment_result.eval_comment")}</b></p>
+            <textarea id="comment" class="swal2-textarea" placeholder="${t("assessment_result.eval_placeholder")}" style="height:80px; width: 250px; font-size:14px; padding:10px; margin-right:10px; border-radius:10px; box-sizing: border-box;"></textarea>
           </div>
         </div>
       `,
-      confirmButtonText: t('assessment_result.eval_submit'),
-      confirmButtonColor: '#7c3aed',
+      confirmButtonText: t("assessment_result.eval_submit"),
+      confirmButtonColor: "#7c3aed",
       preConfirm: () => {
         const getRadio = (name) => {
           const el = document.querySelector(`input[name="${name}"]:checked`);
@@ -304,8 +331,15 @@ export default function AssessmentResult() {
         // 1. ตรวจสอบส่วนที่ 1: ความพึงพอใจ (q1 - q5)
         for (let i = 1; i <= 5; i++) {
           if (!getRadio(`q${i}`)) {
-            Swal.showValidationMessage(i18n.language === 'en' ? `Please complete part 1 question ${i}` : `กรุณาตอบส่วนที่ 1 ข้อที่ ${i} ให้ครบถ้วน`);
-            document.getElementsByName(`q${i}`)[0]?.closest('div')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            Swal.showValidationMessage(
+              i18n.language === "en"
+                ? `Please complete part 1 question ${i}`
+                : `กรุณาตอบส่วนที่ 1 ข้อที่ ${i} ให้ครบถ้วน`,
+            );
+            document
+              .getElementsByName(`q${i}`)[0]
+              ?.closest("div")
+              ?.scrollIntoView({ behavior: "smooth", block: "center" });
             return false;
           }
         }
@@ -315,8 +349,15 @@ export default function AssessmentResult() {
         for (let i = 1; i <= 10; i++) {
           const val = getRadio(`sus${i}`);
           if (!val) {
-            Swal.showValidationMessage(i18n.language === 'en' ? `Please complete part 2 (SUS) question ${i}` : `กรุณาตอบส่วนที่ 2 (SUS) ข้อที่ ${i} ให้ครบถ้วน`);
-            document.getElementsByName(`sus${i}`)[0]?.closest('div')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            Swal.showValidationMessage(
+              i18n.language === "en"
+                ? `Please complete part 2 (SUS) question ${i}`
+                : `กรุณาตอบส่วนที่ 2 (SUS) ข้อที่ ${i} ให้ครบถ้วน`,
+            );
+            document
+              .getElementsByName(`sus${i}`)[0]
+              ?.closest("div")
+              ?.scrollIntoView({ behavior: "smooth", block: "center" });
             return false;
           }
           susAnswers.push(Number(val));
@@ -370,7 +411,7 @@ export default function AssessmentResult() {
 
         try {
           Swal.fire({
-            title: t('assessment_result.saving'),
+            title: t("assessment_result.saving"),
             allowOutsideClick: false,
             didOpen: () => {
               Swal.showLoading();
@@ -385,15 +426,19 @@ export default function AssessmentResult() {
           setHasEvaluated(true);
 
           Swal.fire({
-            icon: 'success',
-            title: t('assessment_result.eval_success_title'),
+            icon: "success",
+            title: t("assessment_result.eval_success_title"),
             html: `
-              <p>${t('assessment_result.eval_success_desc')}</p>
+              <p>${t("assessment_result.eval_success_desc")}</p>
             `,
             confirmButtonColor: "#10b981",
           });
         } catch (error) {
-          Swal.fire(t('assessment_result.error_title'), t('assessment_result.send_error_desc'), "error");
+          Swal.fire(
+            t("assessment_result.error_title"),
+            t("assessment_result.send_error_desc"),
+            "error",
+          );
         }
       }
     });
@@ -406,10 +451,13 @@ export default function AssessmentResult() {
         <div className="ar-nav__logo-wrap">
           <img src={logoSUTH} alt="SUTH Healthcare" className="ar-nav__logo" />
         </div>
-        <div className="ar-nav__actions" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+        <div
+          className="ar-nav__actions"
+          style={{ display: "flex", alignItems: "center", gap: "15px" }}
+        >
           <LanguageSwitcher darkText={true} />
           <button className="ar-btn-close" onClick={() => navigate("/")}>
-            {t('assessment_result.close_window')}
+            {t("assessment_result.close_window")}
           </button>
         </div>
       </nav>
@@ -435,72 +483,72 @@ export default function AssessmentResult() {
             )}
           </div>
           <h2 className="ar-hero-title">
-            {isSaved ? t('assessment_result.hero_saved_title') : t('assessment_result.hero_done_title')}
-          </h2>
-          <p className="ar-hero-subtitle" style={{ color: '#475569' }}>
             {isSaved
-              ? t('assessment_result.hero_saved_desc')
-              : results.length > 0 
-                ? <span dangerouslySetInnerHTML={{ __html: t('assessment_result.hero_done_desc1') }} />
-                : <span dangerouslySetInnerHTML={{ __html: t('assessment_result.hero_done_desc2') }} />
-            }
+              ? t("assessment_result.hero_saved_title")
+              : t("assessment_result.hero_done_title")}
+          </h2>
+          <p className="ar-hero-subtitle" style={{ color: "#475569" }}>
+            {isSaved ? (
+              t("assessment_result.hero_saved_desc")
+            ) : results.length > 0 ? (
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: t("assessment_result.hero_done_desc1"),
+                }}
+              />
+            ) : (
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: t("assessment_result.hero_done_desc2"),
+                }}
+              />
+            )}
           </p>
         </div>
 
         {/* ✅ แสดงการ์ดผลการประเมิน */}
-        {translatedResults.length > 0 && translatedResults.map((res, index) => {
-          const level = getLevelConfig(res, t);
-          return (
-            <div
-              key={index}
-              className="ar-result-card"
-              style={{
-                "--card-color": level.color,
-                animationDelay: `${index * 0.15}s`
-              }}
-            >
-              {/* CARD HEAD */}
-              <div className="ar-result-card__head">
-                <div style={{ flex: 1, paddingRight: '16px' }}>
-                  <div className="ar-level-badge" style={{ color: level.textColor }}>
-                    <FiActivity size={24} /> <span>{level.label}</span>
-                  </div>
+        {translatedResults.length > 0 &&
+          translatedResults.map((res, index) => {
+            const level = getLevelConfig(res, t);
+            return (
+              <div
+                key={index}
+                className="ar-result-card"
+                style={{
+                  "--card-color": level.color,
+                  animationDelay: `${index * 0.15}s`,
+                }}
+              >
+                {/* CARD HEAD */}
+                <div className="ar-result-card__head">
+                  <div style={{ flex: 1, paddingRight: "16px" }}>
+                    <div
+                      className="ar-level-badge"
+                      style={{ color: level.textColor }}
+                    >
+                      <FiActivity size={24} /> <span>{level.label}</span>
+                    </div>
 
-                <div className="ar-score-wrapper" style={{ backgroundColor: level.colorBg, borderColor: level.colorBorder }}>
-                  <span className="ar-score__label" style={{ color: '#64748b' }}>{t('assessment_result.score')}</span>
-                  <span className="ar-score__val" style={{ color: level.textColor }}>
-                    {level.score}
-                  </span>
-                </div>
-              </div>
-
-              {/* CARD BODY */}
-              <div className="ar-result-card__body">
-
-                {/* ADVICE */}
-                <div className="ar-advice-box" style={{ backgroundColor: level.colorBg, borderColor: level.colorBorder }}>
-                  <h3 className="ar-advice-box__title" style={{ color: level.textColor }}>
-                    <FiInfo size={18} /> {t('assessment_result.advice')}
-                  </h3>
-
-                  <ul className="ar-advice__list">
-                    {level.advice.map((a, i) => (
-                      <li key={i}>{a}</li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* VISUAL */}
-                <div
-                  className="ar-visual"
-                  style={{
-                    "--grad": level.colorBanner,
-                    "--border": level.colorBorder,
-                    "--accent": level.color,
-                  }}
-                >
-                  <div className="ar-visual__frame" style={{ background: `radial-gradient(circle at 50% 50%, rgba(${level.rgb}, 0.25), transparent 70%)` }}>
-                    <img src={level.visualImage} alt={level.label} />
+                    <div
+                      className="ar-score-wrapper"
+                      style={{
+                        backgroundColor: level.colorBg,
+                        borderColor: level.colorBorder,
+                      }}
+                    >
+                      <span
+                        className="ar-score__label"
+                        style={{ color: "#64748b" }}
+                      >
+                        {t("assessment_result.score")}
+                      </span>
+                      <span
+                        className="ar-score__val"
+                        style={{ color: level.textColor }}
+                      >
+                        {level.score}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -518,7 +566,7 @@ export default function AssessmentResult() {
                       className="ar-advice-box__title"
                       style={{ color: level.textColor }}
                     >
-                      <FiInfo size={18} /> คำแนะนำเบื้องต้น
+                      <FiInfo size={18} /> {t("assessment_result.advice")}
                     </h3>
 
                     <ul className="ar-advice__list">
@@ -553,9 +601,25 @@ export default function AssessmentResult() {
 
         {/* 🟢 ACTIONS BUTTONS ควบคุมการแสดงผลตาม State */}
         {hasBooking && !isSaved && (
-          <div style={{ color: '#d32f2f', fontSize: '14px', background: '#ffebee', padding: '12px 16px', borderRadius: '12px', margin: '0 auto 20px auto', maxWidth: '600px', textAlign: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-            <FiInfo style={{ transform: 'translateY(2px)', marginRight: '6px' }} size={16} />
-            <b>หมายเหตุ:</b> การเลือกโควต้าจะยังไม่สมบูรณ์จนกว่าคุณจะกด <b>"ส่งข้อมูลให้เจ้าหน้าที่"</b> กรุณากดส่งข้อมูลเพื่อยืนยันสิทธิ์
+          <div
+            style={{
+              color: "#d32f2f",
+              fontSize: "14px",
+              background: "#ffebee",
+              padding: "12px 16px",
+              borderRadius: "12px",
+              margin: "0 auto 20px auto",
+              maxWidth: "600px",
+              textAlign: "center",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
+            }}
+          >
+            <FiInfo
+              style={{ transform: "translateY(2px)", marginRight: "6px" }}
+              size={16}
+            />
+            <b>หมายเหตุ:</b> การเลือกโควต้าจะยังไม่สมบูรณ์จนกว่าคุณจะกด{" "}
+            <b>"ส่งข้อมูลให้เจ้าหน้าที่"</b> กรุณากดส่งข้อมูลเพื่อยืนยันสิทธิ์
           </div>
         )}
         <div className="ar-actions">
@@ -565,7 +629,7 @@ export default function AssessmentResult() {
             onClick={() => navigate("/")}
             disabled={isSubmitting}
           >
-            {t('assessment_result.back_home')}
+            {t("assessment_result.back_home")}
           </button>
 
           {/* ปุ่มส่งข้อมูลให้เจ้าหน้าที่ (แสดงตอนยังไม่ส่ง) */}
@@ -582,7 +646,10 @@ export default function AssessmentResult() {
               onClick={handleSendToStaff}
               disabled={isSubmitting}
             >
-              <FiSend /> {isSubmitting ? t('assessment_result.btn_sending') : t('assessment_result.btn_send')}
+              <FiSend />{" "}
+              {isSubmitting
+                ? t("assessment_result.btn_sending")
+                : t("assessment_result.btn_send")}
             </button>
           )}
 
@@ -601,7 +668,7 @@ export default function AssessmentResult() {
               }}
               onClick={() => navigate("/history")}
             >
-              <FiClock /> {t('assessment_result.btn_history')}
+              <FiClock /> {t("assessment_result.btn_history")}
             </button>
           )}
 
@@ -617,7 +684,7 @@ export default function AssessmentResult() {
             }}
             onClick={handleOpenEvaluation}
           >
-            {t('assessment_result.btn_eval')}
+            {t("assessment_result.btn_eval")}
           </button>
         </div>
       </div>

@@ -22,7 +22,7 @@ export default function CaseLeftPanel({
   formQuestions = [],
   selectedStaff,
   staffOptions,
-  fullAnswers = {}
+  fullAnswers = {},
 }) {
   const foundStaff = staffOptions.find((s) => s.id === Number(selectedStaff));
 
@@ -53,8 +53,10 @@ export default function CaseLeftPanel({
         qDef = q;
         break;
       }
-      if (q.type === 'group' && q.subQuestions) {
-        const sub = q.subQuestions.find(sq => stripHtml(sq.title) === stripHtml(qTitle));
+      if (q.type === "group" && q.subQuestions) {
+        const sub = q.subQuestions.find(
+          (sq) => stripHtml(sq.title) === stripHtml(qTitle),
+        );
         if (sub) {
           qDef = sub;
           break;
@@ -62,41 +64,92 @@ export default function CaseLeftPanel({
       }
     }
 
-    if (qDef && qDef.type === 'file_upload') {
+    if (qDef && qDef.type === "file_upload") {
       const fullAns = fullAnswers[qDef.id];
-      console.log('File Upload Debug:', { qTitle, qDefId: qDef.id, fullAns, fullAnswers });
-      
+      console.log("File Upload Debug:", {
+        qTitle,
+        qDefId: qDef.id,
+        fullAns,
+        fullAnswers,
+      });
+
       if (fullAns && fullAns.data) {
-        if (fullAns.type.startsWith('image/')) {
+        if (fullAns.type.startsWith("image/")) {
           return (
-            <div style={{ marginTop: '10px' }}>
-              <img src={fullAns.data} alt="uploaded" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', cursor: 'pointer', objectFit: 'cover', border: '1px solid #e2e8f0' }} onClick={() => {
-                import('sweetalert2').then(Swal => {
-                  Swal.default.fire({
-                    imageUrl: fullAns.data,
-                    imageAlt: fullAns.name,
-                    showConfirmButton: false,
-                    showCloseButton: true,
-                    width: 'auto',
-                    padding: '1em',
-                    background: 'transparent',
-                    backdrop: 'rgba(0,0,0,0.8)'
+            <div style={{ marginTop: "10px" }}>
+              <img
+                src={fullAns.data}
+                alt="uploaded"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "200px",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  objectFit: "cover",
+                  border: "1px solid #e2e8f0",
+                }}
+                onClick={() => {
+                  import("sweetalert2").then((Swal) => {
+                    Swal.default.fire({
+                      imageUrl: fullAns.data,
+                      imageAlt: fullAns.name,
+                      showConfirmButton: false,
+                      showCloseButton: true,
+                      width: "auto",
+                      padding: "1em",
+                      background: "transparent",
+                      backdrop: "rgba(0,0,0,0.8)",
+                    });
                   });
-                });
-              }} />
-              <div style={{ marginTop: '8px' }}>
-                <a href={fullAns.data} download={fullAns.name} style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '6px 12px', background: '#3b82f6', color: '#fff', borderRadius: '4px', textDecoration: 'none', fontSize: '13px', fontWeight: '500' }}>
+                }}
+              />
+              <div style={{ marginTop: "8px" }}>
+                <a
+                  href={fullAns.data}
+                  download={fullAns.name}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    padding: "6px 12px",
+                    background: "#3b82f6",
+                    color: "#fff",
+                    borderRadius: "4px",
+                    textDecoration: "none",
+                    fontSize: "13px",
+                    fontWeight: "500",
+                  }}
+                >
                   <FaFileAlt /> บันทึกภาพ
                 </a>
               </div>
             </div>
           );
-        } else if (fullAns.type.startsWith('audio/')) {
+        } else if (fullAns.type.startsWith("audio/")) {
           return (
-            <div style={{ marginTop: '10px' }}>
-              <audio controls src={fullAns.data} style={{ width: '100%', maxWidth: '300px' }} />
-              <div style={{ marginTop: '8px' }}>
-                <a href={fullAns.data} download={fullAns.name} style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '6px 12px', background: '#10b981', color: '#fff', borderRadius: '4px', textDecoration: 'none', fontSize: '13px', fontWeight: '500' }}>
+            <div style={{ marginTop: "10px" }}>
+              <audio
+                controls
+                src={fullAns.data}
+                style={{ width: "100%", maxWidth: "300px" }}
+              />
+              <div style={{ marginTop: "8px" }}>
+                <a
+                  href={fullAns.data}
+                  download={fullAns.name}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    padding: "6px 12px",
+                    background: "#10b981",
+                    color: "#fff",
+                    borderRadius: "4px",
+                    textDecoration: "none",
+                    fontSize: "13px",
+                    fontWeight: "500",
+                  }}
+                >
                   <FaFileAlt /> ดาวน์โหลดเสียง
                 </a>
               </div>
@@ -106,18 +159,28 @@ export default function CaseLeftPanel({
       } else {
         // Fallback: If it's a file upload but data is missing in fullAnswers
         return (
-          <div style={{ marginTop: '10px', padding: '10px', border: '1px dashed #cbd5e1', borderRadius: '8px', background: '#f8fafc' }}>
-            <FaFileAlt style={{ marginRight: '6px', color: '#64748b' }} /> 
+          <div
+            style={{
+              marginTop: "10px",
+              padding: "10px",
+              border: "1px dashed #cbd5e1",
+              borderRadius: "8px",
+              background: "#f8fafc",
+            }}
+          >
+            <FaFileAlt style={{ marginRight: "6px", color: "#64748b" }} />
             {formatAnswer(ans)}
             <br />
-            <small style={{ color: '#ef4444' }}>*ไม่สามารถดึงข้อมูล Base64 ได้</small>
+            <small style={{ color: "#ef4444" }}>
+              *ไม่สามารถดึงข้อมูล Base64 ได้
+            </small>
           </div>
         );
       }
     }
 
     // ถ้าคำตอบเป็น Object (เช่น ข้อมูลตาราง) ให้วาดเป็น Table แทน Text
-    if (typeof ans === 'object' && !Array.isArray(ans)) {
+    if (typeof ans === "object" && !Array.isArray(ans)) {
       return (
         <div className="cdm-table-container">
           <table className="cdm-table">

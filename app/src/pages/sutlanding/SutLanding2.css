@@ -843,17 +843,91 @@
 /* =========================================
    8. HOW IT WORKS
 ========================================= */
-.sut2-steps-section { position: relative; padding: 150px 5%; overflow: hidden; transform: translateZ(0); z-index: 1; }
-.sut2-steps__bg { position: absolute; top: -30%; left: 0; width: 100%; height: 160%; background-position: center; background-size: cover; z-index: 0; will-change: transform; transform: translateZ(0); }
-.sut2-steps-overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.85); z-index: 1; transform: translateZ(0); }
-.sut2-steps-content { font-family: 'Noto Sans Thai', sans-serif; position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; }
-.sut2-steps-title { text-align: center; color: white; font-size: 2.5rem; margin-bottom: 60px; }
-.sut2-steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 50px; }
-.sut2-step-glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 40px 30px; text-align: center; color: white; transition: box-shadow 0.3s, transform 0.3s, background 0.3s; will-change: transform; }
-.sut2-step-glass:hover { transform: translateY(-8px); background: rgba(255, 255, 255, 0.15); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-.sut2-step-icon { width: 80px; height: 80px; border-radius: 50%; background: rgba(244, 121, 50, 0.2); color: #f47932; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 24px auto; }
-.sut2-step-glass h3 { font-size: 1.2rem; margin-bottom: 16px; }
-.sut2-step-glass p { font-size: 1.05rem; color: #cbd5e1; line-height: 1.6; }
+.sut2-steps-section {
+  position: relative;
+  padding: 150px 5%;
+  overflow: hidden;
+  transform: translateZ(0);
+  z-index: 1;
+}
+.sut2-steps__bg {
+  position: absolute;
+  top: -30%;
+  left: 0;
+  width: 100%;
+  height: 160%;
+  background-position: center;
+  background-size: cover;
+  z-index: 0;
+  will-change: transform;
+  transform: translateZ(0);
+}
+.sut2-steps-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  z-index: 1;
+  transform: translateZ(0);
+}
+.sut2-steps-content {
+  font-family: "Noto Sans Thai", sans-serif;
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.sut2-steps-title {
+  text-align: center;
+  color: white;
+  font-size: 2.5rem;
+  margin-bottom: 60px;
+}
+.sut2-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 50px;
+}
+.sut2-step-glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 40px 30px;
+  text-align: center;
+  color: white;
+  transition:
+    box-shadow 0.3s,
+    transform 0.3s,
+    background 0.3s;
+  will-change: transform;
+}
+.sut2-step-glass:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+.sut2-step-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(244, 121, 50, 0.2);
+  color: #f47932;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 24px auto;
+}
+.sut2-step-glass h3 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+}
+.sut2-step-glass p {
+  font-size: 1.05rem;
+  color: #cbd5e1;
+  line-height: 1.6;
+}
 
 .sut2-floating-help-btn {
   position: fixed;
@@ -861,7 +935,7 @@
   right: 30px;
   width: 56px;
   height: 56px;
-  background-color: #e1c929; 
+  background-color: #e1c929;
   color: #ffffff;
   border: none;
   border-radius: 50%;
@@ -869,7 +943,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 9999; 
+  z-index: 9999;
   box-shadow: 0 4px 20px rgba(244, 121, 50, 0.4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -894,17 +968,29 @@
   animation: slideLeft 0.5s linear forwards;
 }
 @keyframes slideLeft {
- from { transform: translateX(0); opacity: 1; }
-to { transform: translateX(-600px); opacity: 0; }
- }
- 
- /* =========================================
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-600px);
+    opacity: 0;
+  }
+}
+
+/* =========================================
    11. ANIMATIONS
 ========================================= */
 @keyframes sut2FadeInUp {
- from { opacity: 0; transform: translateY(40px); }
-to { opacity: 1; transform: translateY(0); }
- }
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 /* =========================================
    10. RESPONSIVE
@@ -1051,15 +1137,15 @@ to { opacity: 1; transform: translateY(0); }
     text-overflow: ellipsis;
     width: 90%;
   }
- }
- .sut2-floating-help-btn {
-    bottom: 24px;
-    right: 24px;
-    width: 50px;
-    height: 50px;
-    box-shadow: 0 4px 15px rgba(244, 121, 50, 0.3);
-  }
-  .sut2-floating-help-btn svg {
-    width: 22px;
-    height: 22px;
-  }
+}
+.sut2-floating-help-btn {
+  bottom: 24px;
+  right: 24px;
+  width: 50px;
+  height: 50px;
+  box-shadow: 0 4px 15px rgba(244, 121, 50, 0.3);
+}
+.sut2-floating-help-btn svg {
+  width: 22px;
+  height: 22px;
+}

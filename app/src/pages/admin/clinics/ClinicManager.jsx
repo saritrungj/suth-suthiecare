@@ -1,9 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { getAllClinics, createClinic, updateClinic, deleteClinic, reorderClinics} from '../../../services/api';
-import { FaPlus, FaEdit, FaTrash, FaImage, FaCheckCircle, FaTimesCircle, FaGripVertical } from 'react-icons/fa';
-import './ClinicManager.css';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
+import React, { useState, useEffect, useRef } from "react";
+import {
+  getAllClinics,
+  createClinic,
+  updateClinic,
+  deleteClinic,
+  reorderClinics,
+} from "../../../services/api";
+import {
+  FaPlus,
+  FaEdit,
+  FaTrash,
+  FaImage,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaGripVertical,
+} from "react-icons/fa";
+import "./ClinicManager.css";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 // dnd-kit imports
 import {
@@ -151,8 +165,14 @@ function ClinicManagerContent() {
   const [editingClinic, setEditingClinic] = useState(null);
 
   const [formData, setFormData] = useState({
-    slug: '', name: '', name_en: '', description: '',
-    image: '', bg: '', is_active: 1, show_icon: 1
+    slug: "",
+    name: "",
+    name_en: "",
+    description: "",
+    image: "",
+    bg: "",
+    is_active: 1,
+    show_icon: 1,
   });
 
   const logoInputRef = useRef(null);
@@ -232,13 +252,27 @@ function ClinicManagerContent() {
     if (clinic) {
       setEditingClinic(clinic);
       setFormData({
-        slug: clinic.slug || '', name: clinic.name || '', name_en: clinic.name_en || '',
-        description: clinic.description || '', image: clinic.image || '',
-        bg: clinic.bg || '', is_active: clinic.is_active ?? 1, show_icon: clinic.show_icon ?? 1
+        slug: clinic.slug || "",
+        name: clinic.name || "",
+        name_en: clinic.name_en || "",
+        description: clinic.description || "",
+        image: clinic.image || "",
+        bg: clinic.bg || "",
+        is_active: clinic.is_active ?? 1,
+        show_icon: clinic.show_icon ?? 1,
       });
     } else {
       setEditingClinic(null);
-      setFormData({ slug: '', name: '', name_en: '', description: '', image: '', bg: '', is_active: 1, show_icon: 1 });
+      setFormData({
+        slug: "",
+        name: "",
+        name_en: "",
+        description: "",
+        image: "",
+        bg: "",
+        is_active: 1,
+        show_icon: 1,
+      });
     }
     setIsModalOpen(true);
   };
@@ -393,7 +427,7 @@ function ClinicManagerContent() {
       }
     }
   };
-  
+
   return (
     <div className="cm-admin-page">
       <main className="cm-main">
@@ -498,12 +532,27 @@ function ClinicManagerContent() {
                   </small>
                 </div>
                 <div className="cm-form-group">
-                  <label>ชื่อคลินิก (ภาษาไทย) <span className="cm-required">*</span></label>
-                  <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="เช่น คลินิกวัยรุ่น" required />
+                  <label>
+                    ชื่อคลินิก (ภาษาไทย) <span className="cm-required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="เช่น คลินิกวัยรุ่น"
+                    required
+                  />
                 </div>
                 <div className="cm-form-group">
                   <label>ชื่อคลินิก (English)</label>
-                  <input type="text" name="name_en" value={formData.name_en} onChange={handleChange} placeholder="e.g. Teenager Clinic" />
+                  <input
+                    type="text"
+                    name="name_en"
+                    value={formData.name_en}
+                    onChange={handleChange}
+                    placeholder="e.g. Teenager Clinic"
+                  />
                 </div>
                 <div className="cm-form-group">
                   <label>รายละเอียด</label>

@@ -715,5 +715,5 @@ input:checked + .cm-slider:before {
   transition: all 0.2s ease-in-out;
 }
 .cm-col-help-center input:checked + .cm-slider {
-  background-color: #F47932;
+  background-color: #f47932;
 }

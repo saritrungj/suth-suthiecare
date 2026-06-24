@@ -9,21 +9,21 @@
 
 ### Frontend — `app/`
 
-| Category | Technology |
-|---|---|
-| **Framework** | React 19 (Create React App) |
-| **Routing** | React Router DOM v7 |
-| **Animation** | Framer Motion |
-| **UI Components** | SweetAlert2, React Icons, FontAwesome |
-| **Data Viz** | Recharts |
-| **Calendar** | FullCalendar, React Datepicker, React Calendar |
-| **Drag & Drop** | dnd-kit (core, sortable, modifiers) |
-| **Image Crop** | React Easy Crop |
-| **Color Picker** | React Color |
-| **Export** | ExcelJS, FileSaver |
-| **API / Real-time** | Axios, Socket.io Client |
-| **CAPTCHA** | CloudFlare Captcha |
-| **Testing** | Jest, React Testing Library |
+| Category            | Technology                                     |
+| ------------------- | ---------------------------------------------- |
+| **Framework**       | React 19 (Create React App)                    |
+| **Routing**         | React Router DOM v7                            |
+| **Animation**       | Framer Motion                                  |
+| **UI Components**   | SweetAlert2, React Icons, FontAwesome          |
+| **Data Viz**        | Recharts                                       |
+| **Calendar**        | FullCalendar, React Datepicker, React Calendar |
+| **Drag & Drop**     | dnd-kit (core, sortable, modifiers)            |
+| **Image Crop**      | React Easy Crop                                |
+| **Color Picker**    | React Color                                    |
+| **Export**          | ExcelJS, FileSaver                             |
+| **API / Real-time** | Axios, Socket.io Client                        |
+| **CAPTCHA**         | CloudFlare Captcha                             |
+| **Testing**         | Jest, React Testing Library                    |
 
 ### Backend — `server/`
 

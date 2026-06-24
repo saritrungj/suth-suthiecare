@@ -1,9 +1,9 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import LanguageDetector from "i18next-browser-languagedetector";
 
-import thTranslations from './locales/th.json';
-import enTranslations from './locales/en.json';
+import thTranslations from "./locales/th.json";
+import enTranslations from "./locales/en.json";
 
 i18n
   .use(LanguageDetector)
@@ -11,17 +11,17 @@ i18n
   .init({
     resources: {
       th: {
-        translation: thTranslations
+        translation: thTranslations,
       },
       en: {
-        translation: enTranslations
-      }
+        translation: enTranslations,
+      },
     },
-    fallbackLng: 'th',
+    fallbackLng: "th",
     debug: false,
     interpolation: {
-      escapeValue: false // not needed for react as it escapes by default
-    }
+      escapeValue: false, // not needed for react as it escapes by default
+    },
   });
 
 export default i18n;

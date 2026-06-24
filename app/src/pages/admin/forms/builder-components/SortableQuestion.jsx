@@ -2,30 +2,69 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
-  FaEllipsisV, FaGripHorizontal, FaGripVertical, FaImage, FaTimes, 
-  FaChartBar, FaPlus, FaClone, FaTrashAlt, FaIdCard, FaUser, 
-  FaPhoneAlt, FaBuilding, FaClipboardList,
-  FaMinus, FaAlignLeft, FaRegCircle, FaRegCheckSquare, 
-  FaCaretSquareDown, FaThList, FaTh, FaChevronDown,
-  FaCalendarAlt, FaWeight, FaTrophy, FaCog, FaBriefcase, FaYoutube, FaFileAlt
-} from 'react-icons/fa';
-import RichTextInput from './RichTextInput';
+  FaEllipsisV,
+  FaGripHorizontal,
+  FaGripVertical,
+  FaImage,
+  FaTimes,
+  FaChartBar,
+  FaPlus,
+  FaClone,
+  FaTrashAlt,
+  FaIdCard,
+  FaUser,
+  FaPhoneAlt,
+  FaBuilding,
+  FaClipboardList,
+  FaMinus,
+  FaAlignLeft,
+  FaRegCircle,
+  FaRegCheckSquare,
+  FaCaretSquareDown,
+  FaThList,
+  FaTh,
+  FaChevronDown,
+  FaCalendarAlt,
+  FaWeight,
+  FaTrophy,
+  FaCog,
+  FaBriefcase,
+  FaYoutube,
+  FaFileAlt,
+} from "react-icons/fa";
+import RichTextInput from "./RichTextInput";
 
 // 🟢 โครงสร้างข้อมูลประเภทคำถามพร้อม Icon
 const QUESTION_TYPES = [
   {
     group: "คำถามทั่วไป",
     options: [
-      { value: 'short_text', label: 'คำตอบสั้นๆ', icon: <FaMinus /> },
-      { value: 'paragraph', label: 'ย่อหน้า', icon: <FaAlignLeft /> },
-      { value: 'multiple_choice', label: 'หลายตัวเลือก', icon: <FaRegCircle /> },
-      { value: 'checkboxes', label: 'ช่องทำเครื่องหมาย', icon: <FaRegCheckSquare /> },
-      { value: 'dropdown', label: 'เลื่อนลง', icon: <FaCaretSquareDown /> },
-      { value: 'file_upload', label: 'อัปโหลดไฟล์ (รูปภาพ/เสียง)', icon: <FaFileAlt /> },
-      { value: 'booking', label: 'ตัวเลือกแบบกำหนดจำนวน', icon: <FaClipboardList /> },
-      { value: 'date', label: 'วันที่', icon: <FaCalendarAlt /> },
-      { value: 'video', label: 'วิดีโอ (YouTube)', icon: <FaYoutube /> },
-    ]
+      { value: "short_text", label: "คำตอบสั้นๆ", icon: <FaMinus /> },
+      { value: "paragraph", label: "ย่อหน้า", icon: <FaAlignLeft /> },
+      {
+        value: "multiple_choice",
+        label: "หลายตัวเลือก",
+        icon: <FaRegCircle />,
+      },
+      {
+        value: "checkboxes",
+        label: "ช่องทำเครื่องหมาย",
+        icon: <FaRegCheckSquare />,
+      },
+      { value: "dropdown", label: "เลื่อนลง", icon: <FaCaretSquareDown /> },
+      {
+        value: "file_upload",
+        label: "อัปโหลดไฟล์ (รูปภาพ/เสียง)",
+        icon: <FaFileAlt />,
+      },
+      {
+        value: "booking",
+        label: "ตัวเลือกแบบกำหนดจำนวน",
+        icon: <FaClipboardList />,
+      },
+      { value: "date", label: "วันที่", icon: <FaCalendarAlt /> },
+      { value: "video", label: "วิดีโอ (YouTube)", icon: <FaYoutube /> },
+    ],
   },
   {
     group: "โครงสร้างและคะแนน",
@@ -256,9 +295,35 @@ const SortableQuestion = ({
     }
   };
 
-  const isProfileField = ['national_id', 'full_name', 'phone_number', 'faculty', 'main_issue', 'bmi'].includes(q.type) || q.isUserStatus;
-  const isScoreableType = ['multiple_choice', 'checkboxes', 'dropdown', 'grid_multiple', 'grid_checkbox', 'bmi', 'group'].includes(q.type);
-  const isEditableConfigurable = !['section', 'description', 'video', 'booking', 'bmi', 'grid_multiple', 'grid_checkbox', 'group', 'file_upload'].includes(q.type);
+  const isProfileField =
+    [
+      "national_id",
+      "full_name",
+      "phone_number",
+      "faculty",
+      "main_issue",
+      "bmi",
+    ].includes(q.type) || q.isUserStatus;
+  const isScoreableType = [
+    "multiple_choice",
+    "checkboxes",
+    "dropdown",
+    "grid_multiple",
+    "grid_checkbox",
+    "bmi",
+    "group",
+  ].includes(q.type);
+  const isEditableConfigurable = ![
+    "section",
+    "description",
+    "video",
+    "booking",
+    "bmi",
+    "grid_multiple",
+    "grid_checkbox",
+    "group",
+    "file_upload",
+  ].includes(q.type);
 
   if (q.type === "section") {
     return (
@@ -597,9 +662,15 @@ const SortableQuestion = ({
         </button>
         <span className="sfb-footer-divider" aria-hidden="true" />
 
-        {q.type !== 'video' && (
+        {q.type !== "video" && (
           <label className="sfb-required-toggle">
-            <input type="checkbox" checked={!!q.required} onChange={(e) => updateRequired && updateRequired(q.id, e.target.checked)} />
+            <input
+              type="checkbox"
+              checked={!!q.required}
+              onChange={(e) =>
+                updateRequired && updateRequired(q.id, e.target.checked)
+              }
+            />
             <span>จำเป็นต้องตอบ</span>
           </label>
         )}

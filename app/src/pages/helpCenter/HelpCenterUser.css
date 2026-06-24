@@ -1,5 +1,5 @@
 .hc-user-page {
-  font-family: 'Sarabun', sans-serif;
+  font-family: "Sarabun", sans-serif;
   background-color: #ffffff;
   min-height: 100vh;
   color: #334155;
@@ -11,14 +11,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 300px; 
+  min-height: 300px;
   width: 100%;
   gap: 16px;
 }
 .hc-user-loading-spinner {
   width: 45px;
   height: 45px;
-  border: 4px solid #f1f5f9; 
+  border: 4px solid #f1f5f9;
   border-top: 4px solid #f47932;
   border-radius: 50%;
   animation: hcUserSpin 1s linear infinite;
@@ -32,8 +32,12 @@
 }
 
 @keyframes hcUserSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .hc-user-container {
@@ -57,27 +61,38 @@
   width: 100%;
 }
 
-.hc-user-logo img { height: 60px; }
+.hc-user-logo img {
+  height: 60px;
+}
 
 .hc-user-back {
-  background: none; border: none;
-  color: #64748b; font-weight: 600;
-  cursor: pointer; display: flex; align-items: center; gap: 8px;
+  background: none;
+  border: none;
+  color: #64748b;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ==========================================================================
    🎯 HERO SECTION: ปรับโทนเข้มทึบลุ่มลึก ถอดแบบจากหน้าเว็บหลัก มทส.
    ========================================================================== */
 .hc-user-hero {
-  background-image: 
-    linear-gradient(135deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.75) 100%),
-    url('../../assets/bg-health.jpg');
-    
+  background-image:
+    linear-gradient(
+      135deg,
+      rgba(30, 41, 59, 0.85) 0%,
+      rgba(15, 23, 42, 0.75) 100%
+    ),
+    url("../../assets/bg-health.jpg");
+
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  
-  padding: 100px 0 110px 0; 
+
+  padding: 100px 0 110px 0;
   text-align: center;
   border-radius: 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -90,40 +105,39 @@
   display: none;
 }
 
-.hc-user-hero h1 { 
-  font-size: 38px; 
-  font-weight: 800; 
-  margin-bottom: 16px; 
-  color: #F47932;; 
+.hc-user-hero h1 {
+  font-size: 38px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: #f47932;
   letter-spacing: -0.5px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.hc-user-hero p { 
-  font-size: 16.5px; 
-  color: rgba(255, 255, 255, 0.9); 
-  max-width: 650px; 
+.hc-user-hero p {
+  font-size: 16.5px;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 650px;
   margin: 0 auto 40px;
   line-height: 1.6;
   font-weight: 400;
 }
-
 
 /* ==========================================================================
    🎯 SEARCH INPUT & DROPDOWN (Google Layout Style - เวอร์ชันมินิมอลสีเทา)
    ========================================================================== */
 .hc-user-search-wrapper {
   background: #ffffff;
-  max-width: 620px; 
+  max-width: 620px;
   margin: 0 auto;
-  border-radius: 14px; 
+  border-radius: 14px;
   display: flex;
   align-items: center;
   padding: 4px 20px;
   border: 1.5px solid #cbd5e1;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
   position: relative;
-  z-index: 100; 
+  z-index: 100;
   transition: border-color 0.15s ease;
 }
 
@@ -142,11 +156,11 @@
 }
 
 .hc-user-search-wrapper input {
-  border: none; 
-  outline: none; 
+  border: none;
+  outline: none;
   flex: 1;
-  padding: 12px 10px; 
-  font-size: 15.5px; 
+  padding: 12px 10px;
+  font-size: 15.5px;
   color: #0f172a;
   background: transparent;
 }
@@ -157,10 +171,10 @@
   left: 0;
   width: 100%;
   background: #ffffff;
-  border: 1.5px solid #94a3b8; 
-  border-top: none; 
+  border: 1.5px solid #94a3b8;
+  border-top: none;
   border-radius: 0 0 14px 14px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06); 
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
   z-index: 99;
   max-height: 280px;
   overflow-y: auto;
@@ -189,10 +203,10 @@
 }
 
 .hc-suggestion-clinic-tag {
-  color: #475569; 
+  color: #475569;
   font-weight: 700;
   font-size: 11px;
-  background: #f1f5f9; 
+  background: #f1f5f9;
   padding: 2px 8px;
   border-radius: 6px;
   white-space: nowrap;
@@ -216,15 +230,17 @@
   font-size: 14.5px;
 }
 
-.search-icon { 
-  color: #f47932; 
+.search-icon {
+  color: #f47932;
   font-size: 20px;
 }
 
 /* SECTION HEADER */
-.hc-user-section { margin-top: 50px; }
+.hc-user-section {
+  margin-top: 50px;
+}
 .hc-section-header {
-  margin: 0 !important; 
+  margin: 0 !important;
   display: flex;
   align-items: flex-start;
   gap: 12px;
@@ -234,56 +250,56 @@
   flex-direction: column;
   gap: 6px;
 }
-.hc-header-title { 
+.hc-header-title {
   display: flex;
   align-items: center;
   margin: 0;
 }
-.hc-header-title h2 { 
-  font-size: 24px; 
-  font-weight: 800; 
+.hc-header-title h2 {
+  font-size: 24px;
+  font-weight: 800;
   color: #1e293b;
-  margin: 0; 
+  margin: 0;
   line-height: 1.2;
 }
 .hc-header-icon {
-  font-size: 24px;   
-  color: #F47932; 
+  font-size: 24px;
+  color: #f47932;
   stroke-width: 2.5;
-  margin-top: 2px; 
-  background: none !important; 
-  border: none !important;    
-  padding: 0 !important;      
+  margin-top: 2px;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
   width: auto !important;
   height: auto !important;
 }
 
-.hc-section-header { 
+.hc-section-header {
   margin-top: 60px;
-  margin-bottom: 30px; 
+  margin-bottom: 30px;
   display: flex;
-  align-items: flex-start; 
-  gap: 12px; 
+  align-items: flex-start;
+  gap: 12px;
 }
-.hc-section-header p { 
-  color: #64748b; 
-  margin: 0; 
+.hc-section-header p {
+  color: #64748b;
+  margin: 0;
   font-size: 15px;
-  line-height: 1.4; 
+  line-height: 1.4;
 }
 
 .hc-section-header-row {
   display: flex;
   justify-content: space-between;
-  align-items: center; 
+  align-items: center;
   margin-top: 50px;
   margin-bottom: 25px;
   width: 100%;
 }
 .hc-link-more {
   background: none;
-  border: 1px solid #cbd5e1; 
-  color: #1e40af; 
+  border: 1px solid #cbd5e1;
+  color: #1e40af;
   font-weight: 700;
   font-size: 16px;
   cursor: pointer;
@@ -296,8 +312,8 @@
   transition: all 0.2s ease;
 }
 .hc-link-more:hover {
-  background-color: #eff6ff; 
-  color: #1d4ed8; 
+  background-color: #eff6ff;
+  color: #1d4ed8;
   border-color: #3b82f6;
 }
 .hc-slider-wrapper {
@@ -324,8 +340,14 @@
 }
 
 @keyframes fadeInGrid {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .hc-user-clinic-grid-scroll {
@@ -346,77 +368,89 @@
 
 /* 🟢 โครงสร้างการ์ดหลักแบบ Grid */
 .hc-user-clinic-card {
-  background: #ffffff !important; 
-  border-radius: 20px !important; 
-  border: 1px solid #e2e8f0 !important; 
-  padding: 28px 24px !important; 
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.03), 0 2px 4px rgba(0, 0, 0, 0.01) !important;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease !important;
+  background: #ffffff !important;
+  border-radius: 20px !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 28px 24px !important;
+  box-shadow:
+    0 10px 25px rgba(15, 23, 42, 0.03),
+    0 2px 4px rgba(0, 0, 0, 0.01) !important;
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: space-between !important;
-  min-height: 200px !important; 
+  min-height: 200px !important;
   box-sizing: border-box !important;
   position: relative !important;
 }
 
 /* 🟢 โครงสร้างการ์ดในโหมดสไลด์แนวนอน */
 .hc-user-clinic-card-scroll {
-  flex: 0 0 350px !important; 
+  flex: 0 0 350px !important;
   background: #ffffff !important;
   border-radius: 20px !important;
   border: 1px solid #e2e8f0 !important;
   padding: 28px 24px !important;
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.03), 0 2px 4px rgba(0, 0, 0, 0.01) !important;
+  box-shadow:
+    0 10px 25px rgba(15, 23, 42, 0.03),
+    0 2px 4px rgba(0, 0, 0, 0.01) !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: space-between !important;
-  min-height: 200px !important; 
+  min-height: 200px !important;
   box-sizing: border-box !important;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease !important;
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease !important;
 }
 
 .hc-user-clinic-card:hover,
 .hc-user-clinic-card-scroll:hover {
-  transform: translateY(-6px) !important; 
-  border-color: #fed7aa !important; 
-  box-shadow: 0 20px 35px rgba(244, 121, 50, 0.07), 0 4px 12px rgba(0, 0, 0, 0.02) !important; 
+  transform: translateY(-6px) !important;
+  border-color: #fed7aa !important;
+  box-shadow:
+    0 20px 35px rgba(244, 121, 50, 0.07),
+    0 4px 12px rgba(0, 0, 0, 0.02) !important;
 }
 
 .hc-card-main-content {
   display: flex !important;
   flex-direction: row !important;
-  align-items: center !important; 
+  align-items: center !important;
   gap: 18px !important;
   width: 100% !important;
 }
 
 .hc-card-visual-container {
   position: relative !important;
-  width: 76px !important;        
-  height: 76px !important;       
-  flex-shrink: 0 !important;    
+  width: 76px !important;
+  height: 76px !important;
+  flex-shrink: 0 !important;
 }
 
 /* 🟢 ปรับปรุงกรอบโลโก้เป็นวงกลมขอบชนขอบเนียนกริบ พร้อม Soft Shadow ดันรูป */
 .hc-card-logo-circle {
-  width: 76px !important;    
-  height: 76px !important;       
+  width: 76px !important;
+  height: 76px !important;
   background: #ffffff !important;
-  border-radius: 50% !important; 
+  border-radius: 50% !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06) !important; 
-  border: 1px solid #f1f5f9 !important; 
-  overflow: hidden !important;   
-  padding: 0 !important;   
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06) !important;
+  border: 1px solid #f1f5f9 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
 }
 
 .hc-card-logo-circle img {
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover !important;  
+  object-fit: cover !important;
 }
 
 .hc-card-text-container {
@@ -424,12 +458,12 @@
 }
 
 .hc-card-text-container h3 {
-  font-size: 19px !important; 
+  font-size: 19px !important;
   font-weight: 800 !important;
   line-height: 1.4 !important;
   text-align: left !important;
   margin: 0 !important;
-  color: #0f172a !important; 
+  color: #0f172a !important;
   display: -webkit-box !important;
   -webkit-line-clamp: 2 !important;
   -webkit-box-orient: vertical !important;
@@ -439,27 +473,27 @@
 
 /* 🟢 ปุ่มกดแคปซูลสีส้มพาสเทลด้านล่างการ์ด */
 .hc-btn-view-clinic {
-  background: rgba(244, 121, 50, 0.05) !important; 
+  background: rgba(244, 121, 50, 0.05) !important;
   border: 1px solid rgba(244, 121, 50, 0.1) !important;
-  color: #f47932 !important; 
+  color: #f47932 !important;
   font-weight: 700 !important;
   font-size: 13.5px !important;
   padding: 6px 14px !important;
-  border-radius: 12px !important; 
+  border-radius: 12px !important;
   cursor: pointer !important;
   display: inline-flex !important;
   align-items: center !important;
   gap: 5px !important;
-  margin-top: 18px !important;   
-  margin-left: auto !important;  
+  margin-top: 18px !important;
+  margin-left: auto !important;
   transition: all 0.2s ease !important;
 }
 
 .hc-btn-view-clinic:hover {
-  background: #f47932 !important; 
-  color: #ffffff !important; 
+  background: #f47932 !important;
+  color: #ffffff !important;
   border-color: #f47932 !important;
-  transform: translateY(-1px) !important; 
+  transform: translateY(-1px) !important;
 }
 
 /* ปุ่มลูกศรควบคุม Slider */
@@ -483,8 +517,8 @@
 }
 
 .hc-slider-arrow:hover {
-  background-color: #f8fafc; 
-  color: #0f172a; 
+  background-color: #f8fafc;
+  color: #0f172a;
   border-color: #cbd5e1;
   box-shadow: 0 6px 16px rgba(15, 23, 42, 0.1);
 }
@@ -494,74 +528,97 @@
   background-color: #f1f5f9;
 }
 
-.arrow-left { left: -22px; }
-.arrow-right { right: -22px; }
+.arrow-left {
+  left: -22px;
+}
+.arrow-right {
+  right: -22px;
+}
 
 /* -----FAQ LIST ------*/
 .hc-user-faq-list {
-  margin-top: 25px; 
+  margin-top: 25px;
   display: flex;
   flex-direction: column;
-  gap: 16px; 
+  gap: 16px;
 }
 
 .hc-faq-item {
-  border: 1px solid #f1f5f9; 
+  border: 1px solid #f1f5f9;
   border-radius: 12px;
-  background: #ffffff; 
+  background: #ffffff;
   overflow: hidden;
 }
 
 .hc-faq-question {
-  padding: 20px 25px; 
-  display: flex; 
+  padding: 20px 25px;
+  display: flex;
   justify-content: space-between;
-  align-items: center; 
-  cursor: pointer; 
+  align-items: center;
+  cursor: pointer;
   font-weight: 600;
   transition: background 0.2s;
 }
 
-.hc-faq-question:hover { background: #f8fafc; }
+.hc-faq-question:hover {
+  background: #f8fafc;
+}
 
-.hc-faq-item.open .hc-faq-question { color: #f47932; }
-.hc-faq-item.open svg { transform: rotate(180deg); }
+.hc-faq-item.open .hc-faq-question {
+  color: #f47932;
+}
+.hc-faq-item.open svg {
+  transform: rotate(180deg);
+}
 
 .hc-faq-answer {
-  padding: 0 25px 20px; 
-  color: #64748b; 
+  padding: 0 25px 20px;
+  color: #64748b;
   line-height: 1.8;
-  border-top: 1px solid #f8fafc; 
+  border-top: 1px solid #f8fafc;
   padding-top: 20px;
 }
 
 /* CONTACT CTA */
 .hc-user-contact-box {
-  background: #fff7ed; 
+  background: #fff7ed;
   border: 1px dashed #f47932;
-  border-radius: 24px; 
-  padding: 30px; 
+  border-radius: 24px;
+  padding: 30px;
   margin: 80px 0;
-  display: flex; 
-  justify-content: space-between; 
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 
-.hc-contact-info { display: flex; align-items: center; gap: 20px; }
-.hc-contact-info img { width: 80px; }
-.hc-contact-text h3 { font-size: 20px; font-weight: 800; margin-bottom: 5px; }
-.hc-contact-text p { color: #64748b; font-size: 15px; }
+.hc-contact-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.hc-contact-info img {
+  width: 80px;
+}
+.hc-contact-text h3 {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+.hc-contact-text p {
+  color: #64748b;
+  font-size: 15px;
+}
 
 .hc-btn-contact-live {
-  background: #f47932; 
-  color: white; 
+  background: #f47932;
+  color: white;
   border: none;
-  padding: 15px 30px; 
-  border-radius: 50px; 
+  padding: 15px 30px;
+  border-radius: 50px;
   font-weight: 700;
-  display: flex; 
-  align-items: center; 
-  gap: 10px; 
+  display: flex;
+  align-items: center;
+  gap: 10px;
   cursor: pointer;
   box-shadow: 0 8px 15px rgba(244, 121, 50, 0.2);
 }
@@ -572,12 +629,12 @@
   .hc-user-hero {
     padding: 60px 0 80px 0 !important;
   }
-  
-  .hc-user-hero h1 { 
+
+  .hc-user-hero h1 {
     font-size: 26px !important;
     line-height: 1.3 !important;
   }
-  
+
   .hc-user-hero p {
     font-size: 14px !important;
     margin-bottom: 25px !important;
@@ -589,7 +646,7 @@
     margin: 0 10px !important;
     padding: 2px 14px !important;
   }
-  
+
   .hc-user-search-wrapper input {
     font-size: 14px !important;
     padding: 10px 6px !important;
@@ -602,7 +659,7 @@
 
   .hc-section-header-row {
     display: flex !important;
-    flex-direction: column !important; 
+    flex-direction: column !important;
     align-items: flex-start !important;
     gap: 0 !important;
     margin-top: 35px !important;
@@ -612,9 +669,9 @@
 
   .hc-section-header {
     display: flex !important;
-    flex-direction: row !important; 
-    align-items: flex-start !important; 
-    gap: 8px !important; 
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
     width: 100% !important;
     margin: 0 !important;
   }
@@ -622,7 +679,7 @@
   /* ไอคอนสี่เหลี่ยมส้ม */
   .hc-header-icon {
     margin-top: 4px !important;
-    flex-shrink: 0 !important; 
+    flex-shrink: 0 !important;
     font-size: 20px !important;
   }
 
@@ -635,7 +692,7 @@
   }
 
   .hc-header-title h2 {
-    font-size: 18px !important; 
+    font-size: 18px !important;
     margin: 0 !important;
     line-height: 1.3 !important;
     color: #1e293b !important;
@@ -649,12 +706,12 @@
   }
 
   .hc-link-more {
-    align-self: flex-start !important; 
-    margin-top: 14px !important; 
+    align-self: flex-start !important;
+    margin-top: 14px !important;
     font-size: 13px !important;
     padding: 6px 14px !important;
     border-radius: 20px !important;
-    white-space: nowrap !important;    
+    white-space: nowrap !important;
     display: inline-flex !important;
     align-items: center !important;
   }
@@ -662,40 +719,40 @@
   /* 🎯 4. ระบบการ์ดสไลด์และกล่องควบคุมบนมือถือ */
   .hc-user-clinic-grid-scroll {
     justify-content: flex-start !important;
-    overflow-x: auto !important; 
+    overflow-x: auto !important;
     display: flex !important;
     gap: 16px !important;
-    padding: 10px 16px 20px 16px !important; 
+    padding: 10px 16px 20px 16px !important;
     width: auto !important;
-    margin: 0 -20px !important; 
-    scroll-snap-type: x mandatory !important; 
+    margin: 0 -20px !important;
+    scroll-snap-type: x mandatory !important;
     -webkit-overflow-scrolling: touch !important;
   }
 
   .hc-user-clinic-card-scroll {
-    flex: 0 0 80% !important; 
+    flex: 0 0 80% !important;
     min-height: auto !important;
     padding: 20px !important;
-    scroll-snap-align: center !important; 
+    scroll-snap-align: center !important;
   }
 
   /* 🟢 ปุ่มลูกศรเลื่อนซ้าย-ขวาสำหรับหน้าจอมือถือ */
   .hc-slider-arrow {
-    display: flex !important; 
-    width: 36px !important;   
+    display: flex !important;
+    width: 36px !important;
     height: 36px !important;
-    background: rgba(255, 255, 255, 0.95) !important; 
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important; 
+    background: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
   }
 
   .hc-slider-arrow.left {
-    left: 5px !important; 
+    left: 5px !important;
   }
 
   .hc-slider-arrow.right {
-    right: 5px !important; 
+    right: 5px !important;
   }
-  
+
   .hc-slider-arrow svg {
     width: 16px !important;
     height: 16px !important;
@@ -737,9 +794,8 @@
 
 /* เพิ่มเติมสำหรับหน้าจอสมาร์ตโฟนขนาดเล็กพิเศษ (จอกว้างน้อยกว่า 480px) */
 @media (max-width: 480px) {
-  
   .hc-header-title h2 {
-    font-size: 16px !important; 
+    font-size: 16px !important;
   }
 
   .hc-user-clinic-card-scroll {

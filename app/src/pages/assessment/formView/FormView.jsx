@@ -55,19 +55,25 @@ const FormView = () => {
     const translateStep = async () => {
       const stepData = groupedSteps[currentStep];
       if (!stepData) return;
-      
-      if (i18n.language !== 'en') {
+
+      if (i18n.language !== "en") {
         if (isMounted) setTranslatedStep(null);
         return;
       }
-      
-      const tTitle = stepData.title ? await translateTextSmart(stepData.title) : '';
-      const tDesc = stepData.desc ? await translateTextSmart(stepData.desc) : '';
-      
+
+      const tTitle = stepData.title
+        ? await translateTextSmart(stepData.title)
+        : "";
+      const tDesc = stepData.desc
+        ? await translateTextSmart(stepData.desc)
+        : "";
+
       if (isMounted) setTranslatedStep({ title: tTitle, desc: tDesc });
     };
     translateStep();
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, [groupedSteps, currentStep, i18n.language]);
 
   useEffect(() => {
@@ -458,7 +464,9 @@ const FormView = () => {
             calcBmi = Number((w / Math.pow(hCm / 100, 2)).toFixed(2));
           textVal = `น้ำหนัก ${w} กก., ส่วนสูง ${hCm} ซม. (BMI: ${calcBmi})`;
         } else if (q.type === "file_upload") {
-          textVal = mergedAnswers[q.id] ? `ไฟล์: ${mergedAnswers[q.id].name}` : "";
+          textVal = mergedAnswers[q.id]
+            ? `ไฟล์: ${mergedAnswers[q.id].name}`
+            : "";
         } else {
           const currentMergedAns = mergedAnswers[q.id];
           textVal = Array.isArray(currentMergedAns)
@@ -608,7 +616,9 @@ const FormView = () => {
           }
           rawAnswersToSave[qTitle] = formattedGrid;
         } else if (qDef && qDef.type === "file_upload") {
-          rawAnswersToSave[qTitle] = mergedAnswers[key] ? `ไฟล์: ${mergedAnswers[key].name}` : "-";
+          rawAnswersToSave[qTitle] = mergedAnswers[key]
+            ? `ไฟล์: ${mergedAnswers[key].name}`
+            : "-";
         } else {
           rawAnswersToSave[qTitle] = Array.isArray(mergedAnswers[key])
             ? mergedAnswers[key].join(", ")
@@ -626,7 +636,12 @@ const FormView = () => {
         consent_given: consentGiven,
       };
 
-      const hasBooking = formData?.questions?.some(q => q.type === 'booking' || (q.type === 'group' && q.subQuestions?.some(sq => sq.type === 'booking')));
+      const hasBooking = formData?.questions?.some(
+        (q) =>
+          q.type === "booking" ||
+          (q.type === "group" &&
+            q.subQuestions?.some((sq) => sq.type === "booking")),
+      );
 
       // 🟢 นำ Payload ทั้งหมดส่งไปหน้า AssessmentResult โดยที่ยังไม่ต้องยิง API บันทึกข้อมูล
       navigate("/assessment-result", {
@@ -713,20 +728,27 @@ const FormView = () => {
         </div>
       )}
 
-   {!isPreviewMode && (
-  <>
-    <button
-      className="form-view-back-btn"
-      onClick={() => navigate(-1)}
-      title="ย้อนกลับ"
-    >
-      <FiArrowLeft />
-    </button>
-    <div style={{ position: 'fixed', top: '15px', right: '15px', zIndex: 1000 }}>
-      <LanguageSwitcher darkText={true} />
-    </div>
-  </>
-)}
+      {!isPreviewMode && (
+        <>
+          <button
+            className="form-view-back-btn"
+            onClick={() => navigate(-1)}
+            title="ย้อนกลับ"
+          >
+            <FiArrowLeft />
+          </button>
+          <div
+            style={{
+              position: "fixed",
+              top: "15px",
+              right: "15px",
+              zIndex: 1000,
+            }}
+          >
+            <LanguageSwitcher darkText={true} />
+          </div>
+        </>
+      )}
 
       {bannerType !== "none" && (
         <div
@@ -794,14 +816,21 @@ const FormView = () => {
             <h2
               className="preview-step-intro__title"
               dangerouslySetInnerHTML={{
-                __html: translatedStep?.title || stepData?.title || "ส่วนที่ไม่มีชื่อ",
+                __html:
+                  translatedStep?.title ||
+                  stepData?.title ||
+                  "ส่วนที่ไม่มีชื่อ",
               }}
             />
             {(translatedStep?.desc || stepData?.desc) && (
-              <p dangerouslySetInnerHTML={{ __html: translatedStep?.desc || stepData.desc }} />
+              <p
+                dangerouslySetInnerHTML={{
+                  __html: translatedStep?.desc || stepData.desc,
+                }}
+              />
             )}
             <p className="req" style={{ marginTop: "10px" }}>
-              * {t('form_view.req_asterisk')}
+              * {t("form_view.req_asterisk")}
             </p>
           </div>
 
@@ -829,11 +858,20 @@ const FormView = () => {
             !verifiedIdentity && (
               <div className="preview-sec pdpa-friendly-wrapper">
                 <div className="pdpa-header">
-                  <FiInfo /> {t('form_view.pdpa_title')}
+                  <FiInfo /> {t("form_view.pdpa_title")}
                 </div>
                 <p className="pdpa-desc">
-                  {t('form_view.pdpa_desc')}
-                  <span style={{ fontSize: '12px', color: '#9aa0a6', fontStyle: 'italic' }}> {t('form_view.pdpa_secret')} </span>
+                  {t("form_view.pdpa_desc")}
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      color: "#9aa0a6",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {" "}
+                    {t("form_view.pdpa_secret")}{" "}
+                  </span>
                 </p>
                 {nationalIdQuestions
                   .filter((q) => (answers[q.id] || "").length === 17)
@@ -856,7 +894,9 @@ const FormView = () => {
                         <div className="pdpa-check-circle">
                           {consents[q.id] === true && <FiCheck />}
                         </div>
-                        <span style={{ fontWeight: '600', fontSize: '15px' }}>{t('form_view.pdpa_ack')}</span>
+                        <span style={{ fontWeight: "600", fontSize: "15px" }}>
+                          {t("form_view.pdpa_ack")}
+                        </span>
                       </label>
                     </div>
                   ))}
@@ -870,14 +910,14 @@ const FormView = () => {
               onClick={() => {
                 // 🟢 เปลี่ยน confirm เป็น SweetAlert2
                 Swal.fire({
-                  title: t('form_view.clear_form_confirm_title'),
-                  text: t('form_view.clear_form_confirm_desc'),
-                  icon: 'warning',
+                  title: t("form_view.clear_form_confirm_title"),
+                  text: t("form_view.clear_form_confirm_desc"),
+                  icon: "warning",
                   showCancelButton: true,
-                  confirmButtonColor: '#d93025',
-                  cancelButtonColor: '#64748b',
-                  confirmButtonText: t('form_view.clear_form_yes'),
-                  cancelButtonText: t('form_view.clear_form_cancel')
+                  confirmButtonColor: "#d93025",
+                  cancelButtonColor: "#64748b",
+                  confirmButtonText: t("form_view.clear_form_yes"),
+                  cancelButtonText: t("form_view.clear_form_cancel"),
                 }).then((result) => {
                   if (result.isConfirmed) {
                     const retainedAnswers = {};
@@ -898,7 +938,7 @@ const FormView = () => {
                 });
               }}
             >
-              <FiTrash2 /> {t('form_view.clear_form')}
+              <FiTrash2 /> {t("form_view.clear_form")}
             </button>
 
             <div className="preview-actions-nav">
@@ -911,7 +951,8 @@ const FormView = () => {
                     setCurrentStep((s) => s - 1);
                   }}
                 >
-                  <FiArrowLeft style={{ marginRight: "6px" }} /> {t('form_view.btn_prev')}
+                  <FiArrowLeft style={{ marginRight: "6px" }} />{" "}
+                  {t("form_view.btn_prev")}
                 </button>
               )}
               {currentStep < groupedSteps.length - 1 ? (
@@ -925,7 +966,8 @@ const FormView = () => {
                     }
                   }}
                 >
-                  {t('form_view.btn_next')} <FiArrowRight style={{ marginLeft: "6px" }} />
+                  {t("form_view.btn_next")}{" "}
+                  <FiArrowRight style={{ marginLeft: "6px" }} />
                 </button>
               ) : (
                 <button
@@ -933,7 +975,8 @@ const FormView = () => {
                   className="preview-btn preview-btn--primary"
                   onClick={handleFinalSubmit}
                 >
-                  <FiCheck style={{ marginRight: "6px" }} /> {t('form_view.btn_submit')}
+                  <FiCheck style={{ marginRight: "6px" }} />{" "}
+                  {t("form_view.btn_submit")}
                 </button>
               )}
             </div>
@@ -966,7 +1009,7 @@ const FormView = () => {
             zIndex: 999,
             transition: "transform 0.2s, box-shadow 0.2s",
           }}
-          title={t('form_view.scroll_top')}
+          title={t("form_view.scroll_top")}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = "translateY(-3px)";
             e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.25)";

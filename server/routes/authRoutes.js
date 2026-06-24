@@ -43,22 +43,25 @@ router.post("/login", loginLimiter, async (req, res) => {
   try {
     const { username, password, turnstileToken } = req.body;
 
-    // 1. ✅ ตรวจ Turnstile
-    if (!turnstileToken) {
-      return res.status(400).json({
-        success: false,
-        message: "กรุณายืนยันว่าคุณไม่ใช่บอท",
-      });
-    }
+    // 1. ✅ ตรวจ Turnstile (ข้ามได้บน local โดยตั้ง DISABLE_TURNSTILE=true ใน .env)
+    const turnstileDisabled = process.env.DISABLE_TURNSTILE === "true";
+    if (!turnstileDisabled) {
+      if (!turnstileToken) {
+        return res.status(400).json({
+          success: false,
+          message: "กรุณายืนยันว่าคุณไม่ใช่บอท",
+        });
+      }
 
-    const remoteip = req.headers["cf-connecting-ip"] || req.ip;
-    const captchaOk = await verifyTurnstile(turnstileToken, remoteip);
+      const remoteip = req.headers["cf-connecting-ip"] || req.ip;
+      const captchaOk = await verifyTurnstile(turnstileToken, remoteip);
 
-    if (!captchaOk) {
-      return res.status(400).json({
-        success: false,
-        message: "การยืนยันตัวตนล้มเหลว กรุณาลองใหม่",
-      });
+      if (!captchaOk) {
+        return res.status(400).json({
+          success: false,
+          message: "การยืนยันตัวตนล้มเหลว กรุณาลองใหม่",
+        });
+      }
     }
 
     // 2. ตรวจว่ากรอกครบ

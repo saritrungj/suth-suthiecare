@@ -21,11 +21,29 @@ import { createPortal } from "react-dom";
 import Swal from "sweetalert2";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import {
-  getCaseLogs, addCaseLog, saveAppointment,
-  getServices, createService, updateService, deleteService, getCaseAppointments, deleteCase,
-  getStatusOptions, createStatusOption, deactivateStatusOption,
-  getFormById, getNoteTemplates, getForms, getMasterCasesById, closeMasterCase, updateClinicalData, generateSecureToken, getStaffs,
-  createStaff, deleteStaff, getCaseAnswers
+  getCaseLogs,
+  addCaseLog,
+  saveAppointment,
+  getServices,
+  createService,
+  updateService,
+  deleteService,
+  getCaseAppointments,
+  deleteCase,
+  getStatusOptions,
+  createStatusOption,
+  deactivateStatusOption,
+  getFormById,
+  getNoteTemplates,
+  getForms,
+  getMasterCasesById,
+  closeMasterCase,
+  updateClinicalData,
+  generateSecureToken,
+  getStaffs,
+  createStaff,
+  deleteStaff,
+  getCaseAnswers,
 } from "../../services/api";
 
 import {
@@ -228,13 +246,15 @@ export default function CaseDetailModal({
 
   useEffect(() => {
     if (viewingResponseId) {
-      getCaseAnswers(viewingResponseId).then(res => {
-        const mapped = {};
-        res.data.forEach(ans => {
-          mapped[ans.question_id] = ans.answer_value;
-        });
-        setFullAnswersMap(mapped);
-      }).catch(err => console.error("Failed to fetch full answers", err));
+      getCaseAnswers(viewingResponseId)
+        .then((res) => {
+          const mapped = {};
+          res.data.forEach((ans) => {
+            mapped[ans.question_id] = ans.answer_value;
+          });
+          setFullAnswersMap(mapped);
+        })
+        .catch((err) => console.error("Failed to fetch full answers", err));
     }
   }, [viewingResponseId]);
 
@@ -1319,7 +1339,7 @@ export default function CaseDetailModal({
                     stripHtml={stripHtml}
                     formatAnswer={formatAnswer}
                     formQuestions={formQuestions}
-                    selectedStaff={selectedStaff}  
+                    selectedStaff={selectedStaff}
                     staffOptions={staffOptions}
                     fullAnswers={fullAnswersMap}
                   />
