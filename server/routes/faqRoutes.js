@@ -2,45 +2,6 @@ const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
 
-const getFaqDbErrorMessage = (error) => {
-  if (
-    error.code === "ER_NO_DEFAULT_FOR_FIELD" &&
-    error.message?.includes("'id'")
-  ) {
-    return "โครงสร้างตาราง faqs ยังไม่ถูกต้อง: คอลัมน์ id ต้องเป็น AUTO_INCREMENT";
-  }
-  if (error.code === "ER_NO_REFERENCED_ROW_2") {
-    return "ข้อมูล clinic_id หรือ category_id ไม่ตรงกับข้อมูลในตาราง clinics/faq_categories";
-  }
-  return error.message;
-};
-
-const validateFaqRelations = async (clinicId, categoryId) => {
-  if (!clinicId) {
-    return "กรุณาเลือกคลินิกหลัก";
-  }
-
-  const [clinics] = await db.query(
-    "SELECT id FROM clinics WHERE id = ? LIMIT 1",
-    [clinicId],
-  );
-  if (clinics.length === 0) {
-    return `ไม่พบคลินิก id=${clinicId} ในตาราง clinics`;
-  }
-
-  if (categoryId) {
-    const [categories] = await db.query(
-      "SELECT id FROM faq_categories WHERE id = ? AND clinic_id = ? LIMIT 1",
-      [categoryId, clinicId],
-    );
-    if (categories.length === 0) {
-      return `ไม่พบหมวดหมู่ id=${categoryId} ที่อยู่ภายใต้คลินิก id=${clinicId}`;
-    }
-  }
-
-  return null;
-};
-
 // ==========================================
 // SECTION 1: จัดการหมวดหมู่คำถาม (FAQ Categories)
 // ==========================================
@@ -104,12 +65,7 @@ router.delete("/categories/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const query = `DELETE FROM faq_categories WHERE id = ?`;
-    const [result] = await db.query(query, [id]);
-    if (result.affectedRows === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: `ไม่พบ FAQ id=${id}` });
-    }
+    await db.query(query, [id]);
     res.json({ success: true, message: "ลบหมวดหมู่ย่อยสำเร็จ" });
   } catch (error) {
     res.status(500).json({
@@ -191,20 +147,6 @@ router.post("/faqs", async (req, res) => {
     const finalStatus = status || "published";
     const finalDisplayOrder = parseInt(display_order) || 0;
 
-    if (!finalQuestion || !finalAnswer) {
-      return res
-        .status(400)
-        .json({ success: false, message: "กรุณากรอกคำถามและคำตอบให้ครบถ้วน" });
-    }
-
-    const relationError = await validateFaqRelations(
-      finalClinicId,
-      finalCategoryId,
-    );
-    if (relationError) {
-      return res.status(400).json({ success: false, message: relationError });
-    }
-
     const query = `
             INSERT INTO faqs (category_id, clinic_id, question, answer, is_homepage, status, display_order) 
             VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -248,52 +190,26 @@ router.put("/faqs/:id", async (req, res) => {
   try {
     const finalCategoryId = parseInt(category_id) || null;
     const finalClinicId = parseInt(clinic_id) || null;
-    const finalQuestion = question ? question.trim() : "";
-    const finalAnswer = answer ? answer.trim() : "";
-    const finalDisplayOrder = parseInt(display_order) || 0;
-    const finalIsHomepage = is_homepage === 1 || is_homepage === true ? 1 : 0;
-    const finalStatus = status || "published";
-
-    if (!finalQuestion || !finalAnswer) {
-      return res
-        .status(400)
-        .json({ success: false, message: "กรุณากรอกคำถามและคำตอบให้ครบถ้วน" });
-    }
-
-    const relationError = await validateFaqRelations(
-      finalClinicId,
-      finalCategoryId,
-    );
-    if (relationError) {
-      return res.status(400).json({ success: false, message: relationError });
-    }
 
     const query = `
             UPDATE faqs 
             SET category_id = ?, clinic_id = ?, question = ?, answer = ?, is_homepage = ?, status = ?, display_order = ? 
             WHERE id = ?
         `;
-    const [result] = await db.query(query, [
+    await db.query(query, [
       finalCategoryId,
       finalClinicId,
-      finalQuestion,
-      finalAnswer,
-      finalIsHomepage,
-      finalStatus,
-      finalDisplayOrder,
+      question,
+      answer,
+      is_homepage ? 1 : 0,
+      status,
+      display_order,
       id,
     ]);
-    if (result.affectedRows === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: `ไม่พบ FAQ id=${id}` });
-    }
     res.json({ success: true, message: "อัปเดตข้อมูลข้อคำถามสำเร็จ" });
   } catch (error) {
     console.error("Error in PUT /faqs:", error);
-    res
-      .status(500)
-      .json({ success: false, message: getFaqDbErrorMessage(error) });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 
@@ -302,17 +218,10 @@ router.delete("/faqs/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const query = `DELETE FROM faqs WHERE id = ?`;
-    const [result] = await db.query(query, [id]);
-    if (result.affectedRows === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: `ไม่พบ FAQ id=${id}` });
-    }
+    await db.query(query, [id]);
     res.json({ success: true, message: "ลบข้อคำถามออกจากระบบแล้ว" });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: getFaqDbErrorMessage(error) });
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 

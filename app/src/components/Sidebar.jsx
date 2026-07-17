@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Sidebar.css";
 import logo from "../assets/logoSUTH.png";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, useNavigate, useLocation, Link } from "react-router-dom";
 import {
   FiChevronLeft,
   FiChevronDown,
@@ -11,7 +11,7 @@ import {
   FiBook,
 } from "react-icons/fi";
 import { getRolePermissions } from "../services/api";
-import { FaQuestionCircle } from "react-icons/fa";
+import { FaHospital, FaQuestionCircle } from "react-icons/fa";
 
 // 🟢 Import SweetAlert2
 import Swal from "sweetalert2";
@@ -218,7 +218,7 @@ const rawMenuItems = [
   },
   // 🟢 เพิ่มคู่มือการใช้งานตรงนี้ พร้อมกำหนด isExternal เป็น true
   {
-    href: `${process.env.PUBLIC_URL}/docs/admin_manual.pdf`,
+    href: "/docs/admin_manual.pdf",
     icon: <FiBook size={22} />,
     label: "คู่มือการใช้งาน",
     key: "manual",

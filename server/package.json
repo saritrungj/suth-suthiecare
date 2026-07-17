@@ -1,10 +1,14 @@
 {
-  "name": "suthiecare-server",
+  "name": "suthiecare-api",
   "version": "1.0.0",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "node --watch index.js"
+    "pm2:start": "pm2 start ecosystem.config.js --env production",
+    "pm2:reload": "pm2 reload ecosystem.config.js --env production",
+    "pm2:stop": "pm2 stop suthiecare-api",
+    "pm2:logs": "pm2 logs suthiecare-api"
   },
   "dependencies": {
     "axios": "^1.13.6",

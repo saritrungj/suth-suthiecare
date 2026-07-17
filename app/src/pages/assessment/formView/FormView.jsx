@@ -8,7 +8,11 @@ import {
   FiArrowUp,
   FiInfo,
 } from "react-icons/fi";
-import { getFormById, decodeSecureToken } from "../../../services/api";
+import {
+  getFormById,
+  decodeSecureToken,
+  submitFormAnswers,
+} from "../../../services/api";
 import Swal from "sweetalert2";
 import "../../admin/forms/styles/FormPreview.css";
 import LanguageSwitcher from "../../../components/LanguageSwitcher.jsx";
@@ -49,6 +53,7 @@ const FormView = () => {
   const [verifiedIdentity, setVerifiedIdentity] = useState("");
   const [isVerifyingToken, setIsVerifyingToken] = useState(false);
   const [translatedStep, setTranslatedStep] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -643,18 +648,62 @@ const FormView = () => {
             q.subQuestions?.some((sq) => sq.type === "booking")),
       );
 
-      // 🟢 นำ Payload ทั้งหมดส่งไปหน้า AssessmentResult โดยที่ยังไม่ต้องยิง API บันทึกข้อมูล
+      const payload = {
+        answers: mergedAnswers,
+        questionTitles: qTitles,
+        identityValue: idValue,
+        summaryData: sumData,
+      };
+
+      const confirmResult = await Swal.fire({
+        title: t("assessment_result.consent_title"),
+        html: t("assessment_result.consent_html"),
+        icon: "question",
+        showCloseButton: true,
+        showCancelButton: true,
+        confirmButtonColor: "#3b82f6",
+        cancelButtonColor: "#ef4444",
+        confirmButtonText: t("assessment_result.agree"),
+        cancelButtonText: t("assessment_result.decline"),
+        width: "500px",
+        padding: "2.5em",
+        background: "#ffffff",
+        borderRadius: "20px",
+      });
+
+      if (!confirmResult.isConfirmed) return;
+
+      setIsSubmitting(true);
+      Swal.fire({
+        title: t("assessment_result.sending"),
+        text: t("assessment_result.please_wait"),
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      try {
+        await submitFormAnswers(id, payload);
+      } catch (submitError) {
+        setIsSubmitting(false);
+        Swal.fire({
+          icon: "error",
+          title: t("assessment_result.send_error"),
+          text: t("assessment_result.send_error_desc"),
+          confirmButtonColor: "#ef4444",
+        });
+        return;
+      }
+      setIsSubmitting(false);
+
       navigate("/assessment-result", {
         state: {
           results: scoreResultsArray,
           formId: id,
           hasBooking: hasBooking,
-          payload: {
-            answers: mergedAnswers,
-            questionTitles: qTitles,
-            identityValue: idValue,
-            summaryData: sumData,
-          },
+          isSaved: true,
+          payload,
         },
       });
     } catch (error) {
@@ -974,9 +1023,12 @@ const FormView = () => {
                   type="button"
                   className="preview-btn preview-btn--primary"
                   onClick={handleFinalSubmit}
+                  disabled={isSubmitting}
                 >
                   <FiCheck style={{ marginRight: "6px" }} />{" "}
-                  {t("form_view.btn_submit")}
+                  {isSubmitting
+                    ? t("assessment_result.sending")
+                    : t("form_view.btn_submit")}
                 </button>
               )}
             </div>

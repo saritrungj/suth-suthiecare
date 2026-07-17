@@ -563,14 +563,14 @@ export default function HistoryResult() {
 
   const allNames = [
     ...new Set(
-      data
+      translatedData
         .map((d) => stripHtml(d.summary_data?.display_name))
         .filter((n) => n && n !== "-"),
     ),
   ];
   const allPhones = [
     ...new Set(
-      data
+      translatedData
         .map((d) =>
           stripHtml(
             d.summary_data?.phone ||
@@ -662,6 +662,7 @@ export default function HistoryResult() {
           color: score.color,
           clinicColor: cInfo.color,
           clinicName: cInfo.text,
+          clinicId: cInfo.id,
           weight: weightVal,
           height: heightVal,
         };
@@ -1712,10 +1713,7 @@ export default function HistoryResult() {
                                                   origQuestionLabel
                                                 ] = newVal;
                                               }
-                                              return {
-                                                ...item,
-                                                summary_data: sd,
-                                              };
+                                              return item;
                                             }
                                             return item;
                                           }),

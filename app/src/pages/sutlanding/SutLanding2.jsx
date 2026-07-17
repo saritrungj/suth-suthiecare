@@ -730,7 +730,7 @@ export default function SutLanding2() {
 
             <div style={{ textAlign: "center", marginTop: "45px" }}>
               <a
-                href={`${process.env.PUBLIC_URL}/docs/user_manual.pdf`}
+                href="/docs/user_manual.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{

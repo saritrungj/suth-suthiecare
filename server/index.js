@@ -3,7 +3,15 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-require("dotenv").config();
+const path = require("path");
+const dotenv = require("dotenv");
+
+const envFile = process.env.NODE_ENV === "production" ? ".env" : ".env.local";
+const envPath = path.resolve(__dirname, envFile);
+const envResult = dotenv.config({ path: envPath });
+if (envResult.error && envFile !== ".env") {
+  dotenv.config({ path: path.resolve(__dirname, ".env") });
+}
 
 // 🟢 1. นำเข้า Utils (ถ้ายังมีใช้อยู่)
 const { sendTelegramAlert } = require("./utils/telegram");

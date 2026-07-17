@@ -462,9 +462,7 @@ export default function HelpCenterManager() {
       fetchFaqs();
     } catch (err) {
       console.error(err);
-      const message =
-        err.response?.data?.message || "ไม่สามารถบันทึกข้อมูลคำถามได้";
-      MySwal.fire("ข้อผิดพลาด", message, "error");
+      MySwal.fire("ข้อผิดพลาด", "ไม่สามารถบันทึกข้อมูลคำถามได้", "error");
     }
   };
 
@@ -490,8 +488,7 @@ export default function HelpCenterManager() {
         });
         fetchFaqs();
       } catch (err) {
-        const message = err.response?.data?.message || "ไม่สามารถลบข้อมูลได้";
-        MySwal.fire("ข้อผิดพลาด", message, "error");
+        MySwal.fire("ข้อผิดพลาด", "ไม่สามารถลบข้อมูลได้", "error");
       }
     }
   };

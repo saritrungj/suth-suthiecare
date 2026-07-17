@@ -8,7 +8,7 @@ import "./HistorySearch.css";
 import bgImage from "../../../assets/bg-new.jpg";
 
 const API_BASE = (
-  process.env.REACT_APP_API_URL || "http://localhost:5000"
+  import.meta.env.VITE_API_URL || "http://localhost:5000"
 ).replace(/\/api$/, "");
 
 export default function HistorySearch() {

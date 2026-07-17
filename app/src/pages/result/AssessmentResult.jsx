@@ -5,7 +5,6 @@ import {
   FiActivity,
   FiInfo,
   FiCheck,
-  FiSend,
   FiClock,
 } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
@@ -18,7 +17,7 @@ import logoSUTH from "../../assets/logoSUTH.png";
 import "./AssessmentResult.css";
 
 // 🟢 1. แก้บัค: นำเข้า api ให้ถูกต้อง
-import api, { submitFormAnswers } from "../../services/api";
+import api from "../../services/api";
 import Swal from "sweetalert2";
 
 // 🟢 ฟังก์ชันผู้ช่วย: แปลงสี HEX เป็น RGB
@@ -113,12 +112,9 @@ export default function AssessmentResult() {
   // 🟢 รับ Payload ที่ถูกส่งมาจาก FormView
   const results = location.state?.results || [];
   const formId = location.state?.formId;
-  const payload = location.state?.payload;
-  const hasBooking = location.state?.hasBooking;
 
-  // 🟢 State ควบคุมสถานะการส่งข้อมูล
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  // 🟢 ข้อมูลถูกส่งให้เจ้าหน้าที่เรียบร้อยแล้วตั้งแต่หน้าฟอร์ม
+  const [isSaved] = useState(Boolean(location.state?.isSaved));
   const [translatedResults, setTranslatedResults] = useState([]);
 
   useEffect(() => {
@@ -160,68 +156,6 @@ export default function AssessmentResult() {
       navigate("/");
     }
   }, [navigate, formId]);
-
-  // 🟢 ฟังก์ชันจัดการการยิง API
-  const handleSendToStaff = () => {
-    if (!formId || !payload) {
-      Swal.fire(
-        t("assessment_result.error_title"),
-        t("assessment_result.error_desc"),
-        "error",
-      );
-      return;
-    }
-
-    Swal.fire({
-      title: t("assessment_result.consent_title"),
-      html: t("assessment_result.consent_html"),
-      icon: "question",
-      showCloseButton: true,
-      showCancelButton: true,
-      confirmButtonColor: "#3b82f6",
-      cancelButtonColor: "#ef4444",
-      confirmButtonText: t("assessment_result.agree"),
-      cancelButtonText: t("assessment_result.decline"),
-      width: "500px",
-      padding: "2.5em",
-      background: "#ffffff",
-      borderRadius: "20px",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        setIsSubmitting(true);
-
-        Swal.fire({
-          title: t("assessment_result.sending"),
-          text: t("assessment_result.please_wait"),
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          },
-        });
-
-        try {
-          await submitFormAnswers(formId, payload);
-          setIsSaved(true);
-          Swal.fire({
-            icon: "success",
-            title: t("assessment_result.send_success"),
-            text: t("assessment_result.send_success_desc"),
-            confirmButtonColor: "#10b981",
-          });
-        } catch (error) {
-          console.error("Submit Error:", error);
-          Swal.fire({
-            icon: "error",
-            title: t("assessment_result.send_error"),
-            text: t("assessment_result.send_error_desc"),
-            confirmButtonColor: "#ef4444",
-          });
-        } finally {
-          setIsSubmitting(false);
-        }
-      }
-    });
-  };
 
   const [hasEvaluated, setHasEvaluated] = useState(false);
   useEffect(() => {
@@ -550,48 +484,92 @@ export default function AssessmentResult() {
                       </span>
                     </div>
                   </div>
-                </div>
 
-                {/* CARD BODY */}
-                <div className="ar-result-card__body">
-                  {/* ADVICE */}
-                  <div
-                    className="ar-advice-box"
-                    style={{
-                      backgroundColor: level.colorBg,
-                      borderColor: level.colorBorder,
-                    }}
-                  >
-                    <h3
-                      className="ar-advice-box__title"
-                      style={{ color: level.textColor }}
-                    >
-                      <FiInfo size={18} /> {t("assessment_result.advice")}
-                    </h3>
-
-                    <ul className="ar-advice__list">
-                      {level.advice.map((a, i) => (
-                        <li key={i}>{a}</li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* VISUAL */}
-                  <div
-                    className="ar-visual"
-                    style={{
-                      "--grad": level.colorBanner,
-                      "--border": level.colorBorder,
-                      "--accent": level.color,
-                    }}
-                  >
+                  {/* CARD BODY */}
+                  <div className="ar-result-card__body">
+                    {/* ADVICE */}
                     <div
-                      className="ar-visual__frame"
+                      className="ar-advice-box"
                       style={{
-                        background: `radial-gradient(circle at 50% 50%, rgba(${level.rgb}, 0.25), transparent 70%)`,
+                        backgroundColor: level.colorBg,
+                        borderColor: level.colorBorder,
                       }}
                     >
-                      <img src={level.visualImage} alt={level.label} />
+                      <h3
+                        className="ar-advice-box__title"
+                        style={{ color: level.textColor }}
+                      >
+                        <FiInfo size={18} /> {t("assessment_result.advice")}
+                      </h3>
+
+                      <ul className="ar-advice__list">
+                        {level.advice.map((a, i) => (
+                          <li key={i}>{a}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* VISUAL */}
+                    <div
+                      className="ar-visual"
+                      style={{
+                        "--grad": level.colorBanner,
+                        "--border": level.colorBorder,
+                        "--accent": level.color,
+                      }}
+                    >
+                      <div
+                        className="ar-visual__frame"
+                        style={{
+                          background: `radial-gradient(circle at 50% 50%, rgba(${level.rgb}, 0.25), transparent 70%)`,
+                        }}
+                      >
+                        <img src={level.visualImage} alt={level.label} />
+                      </div>
+                    </div>
+
+                    {/* CARD BODY */}
+                    <div className="ar-result-card__body">
+                      {/* ADVICE */}
+                      <div
+                        className="ar-advice-box"
+                        style={{
+                          backgroundColor: level.colorBg,
+                          borderColor: level.colorBorder,
+                        }}
+                      >
+                        <h3
+                          className="ar-advice-box__title"
+                          style={{ color: level.textColor }}
+                        >
+                          <FiInfo size={18} /> คำแนะนำเบื้องต้น
+                        </h3>
+
+                        <ul className="ar-advice__list">
+                          {level.advice.map((a, i) => (
+                            <li key={i}>{a}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* VISUAL */}
+                      <div
+                        className="ar-visual"
+                        style={{
+                          "--grad": level.colorBanner,
+                          "--border": level.colorBorder,
+                          "--accent": level.color,
+                        }}
+                      >
+                        <div
+                          className="ar-visual__frame"
+                          style={{
+                            background: `radial-gradient(circle at 50% 50%, rgba(${level.rgb}, 0.25), transparent 70%)`,
+                          }}
+                        >
+                          <img src={level.visualImage} alt={level.label} />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -600,58 +578,14 @@ export default function AssessmentResult() {
           })}
 
         {/* 🟢 ACTIONS BUTTONS ควบคุมการแสดงผลตาม State */}
-        {hasBooking && !isSaved && (
-          <div
-            style={{
-              color: "#d32f2f",
-              fontSize: "14px",
-              background: "#ffebee",
-              padding: "12px 16px",
-              borderRadius: "12px",
-              margin: "0 auto 20px auto",
-              maxWidth: "600px",
-              textAlign: "center",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
-            }}
-          >
-            <FiInfo
-              style={{ transform: "translateY(2px)", marginRight: "6px" }}
-              size={16}
-            />
-            <b>หมายเหตุ:</b> การเลือกโควต้าจะยังไม่สมบูรณ์จนกว่าคุณจะกด{" "}
-            <b>"ส่งข้อมูลให้เจ้าหน้าที่"</b> กรุณากดส่งข้อมูลเพื่อยืนยันสิทธิ์
-          </div>
-        )}
         <div className="ar-actions">
           {/* ปุ่มกลับหน้าหลัก (แสดงตลอด) */}
           <button
             className="ar-btn ar-btn--ghost"
             onClick={() => navigate("/")}
-            disabled={isSubmitting}
           >
             {t("assessment_result.back_home")}
           </button>
-
-          {/* ปุ่มส่งข้อมูลให้เจ้าหน้าที่ (แสดงตอนยังไม่ส่ง) */}
-          {!isSaved && (
-            <button
-              className="ar-btn"
-              style={{
-                background: "#3b82f6",
-                display: "flex",
-                gap: "8px",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              onClick={handleSendToStaff}
-              disabled={isSubmitting}
-            >
-              <FiSend />{" "}
-              {isSubmitting
-                ? t("assessment_result.btn_sending")
-                : t("assessment_result.btn_send")}
-            </button>
-          )}
 
           {/* ปุ่มตรวจสอบประวัติ (แสดงหลังจากส่งสำเร็จแล้ว) */}
           {isSaved && (

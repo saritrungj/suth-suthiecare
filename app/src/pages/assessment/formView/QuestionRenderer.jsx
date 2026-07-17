@@ -296,45 +296,16 @@ const QuestionRenderer = ({
           />
         )}
 
-        {(q.type === "paragraph" || q.type === "main_issue") && (
-          <textarea
-            className={`preview-input ${hasError ? "preview-input--error" : ""}`}
-            placeholder="คำตอบของคุณ"
-            rows="4"
-            value={ans || ""}
-            onChange={(e) => handleAnswer(q.id, e.target.value)}
-          ></textarea>
-        )}
-
-        {q.type === "phone_number" && (
-          <input
-            type="tel"
-            className={`preview-input ${hasError ? "preview-input--error" : ""}`}
-            placeholder="0xx-xxx-xxxx"
-            value={ans || ""}
-            onChange={(e) =>
-              handleAnswer(q.id, formatPhoneNumber(e.target.value))
-            }
-            maxLength={12}
-          />
-        )}
-
-        {q.type === "date" && (
-          <input
-            type="date"
-            className={`preview-input ${hasError ? "preview-input--error" : ""}`}
-            value={ans || ""}
-            onChange={(e) => handleAnswer(q.id, e.target.value)}
-          />
-        )}
-
-        {(q.type === "short_text" || q.type === "full_name") && (
+        {q.type === "national_id" && (
           <input
             type="text"
+            inputMode="numeric"
             className={`preview-input ${hasError ? "preview-input--error" : ""}`}
-            placeholder="คำตอบของคุณ"
+            placeholder="0-0000-00000-00-0"
             value={ans || ""}
-            onChange={(e) => handleAnswer(q.id, e.target.value)}
+            onChange={(e) => handleAnswer(q.id, formatThaiID(e.target.value))}
+            maxLength={17}
+            readOnly={!!verifiedIdentity}
           />
         )}
 
