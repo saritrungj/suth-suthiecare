@@ -1,14 +1,22 @@
 # Database dumps — may contain real patient data, never commit
 *.sql
+!server/migrations/
+!server/migrations/patient_auth.sql
 
 # Environment / secrets
 .env
 .env.*
 !.env.example
+!app/.env.production
+!app/.env.production.example
 
 # Dependencies
 node_modules/
 .worktrees/
+backup/
+**/build/
+.deploy/
+*.lnk
 
 # Logs
 *.log
@@ -19,7 +27,19 @@ yarn-error.log*
 # OS
 .DS_Store
 Thumbs.db
+/.freebuff
+*.yml
+*.example
+*.production
+/app/e2e-audit
+/app/e2e
 DEPLOY.md
-.github/workflows/deploy.yml
-scripts/deploy-iis-pm2.ps1
+CONTEXT.md
+/docs
+PATIENT_ACCOUNT_IDENTITY_PLAN.md
+PATIENT_HISTORY_AUTH_PLAN.md
+*.yaml
+QUALITY_AUDIT.md
+REMEDIATION_PLAN.md
+/scripts
 web.config

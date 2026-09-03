@@ -153,6 +153,8 @@ const FormBuilder = () => {
   const [formStatus, setFormStatus] = useState("draft");
   const [clinicType, setClinicType] = useState("general");
   const [formType, setFormType] = useState("Registration");
+  const [loginEnforcement, setLoginEnforcement] = useState("none");
+  const [resultDisplayMode, setResultDisplayMode] = useState("realtime");
   const [clinics, setClinics] = useState([]);
 
   useEffect(() => {
@@ -219,6 +221,8 @@ const FormBuilder = () => {
           setFormStatus(data.status || "draft");
           setClinicType(data.clinic_type || "general");
           setFormType(data.form_type || "Registration");
+          setLoginEnforcement(data.login_enforcement || "none");
+          setResultDisplayMode(data.result_display_mode || "realtime");
 
           if (data.publish_start_date || data.publish_end_date) {
             setIsScheduled(true);
@@ -280,6 +284,8 @@ const FormBuilder = () => {
       formStatus,
       clinicType,
       formType,
+      loginEnforcement,
+      resultDisplayMode,
       publishStartDate,
       publishEndDate,
       isScheduled,
@@ -299,6 +305,8 @@ const FormBuilder = () => {
       formStatus,
       clinicType,
       formType,
+      loginEnforcement,
+      resultDisplayMode,
       publishStartDate,
       publishEndDate,
       isScheduled,
@@ -359,6 +367,8 @@ const FormBuilder = () => {
     setFormStatus(previous.formStatus);
     setClinicType(previous.clinicType);
     setFormType(previous.formType);
+    setLoginEnforcement(previous.loginEnforcement);
+    setResultDisplayMode(previous.resultDisplayMode);
     setPublishStartDate(previous.publishStartDate);
     setPublishEndDate(previous.publishEndDate);
     setIsScheduled(previous.isScheduled);
@@ -385,6 +395,8 @@ const FormBuilder = () => {
     setFormStatus(next.formStatus);
     setClinicType(next.clinicType);
     setFormType(next.formType);
+    setLoginEnforcement(next.loginEnforcement);
+    setResultDisplayMode(next.resultDisplayMode);
     setPublishStartDate(next.publishStartDate);
     setPublishEndDate(next.publishEndDate);
     setIsScheduled(next.isScheduled);
@@ -540,12 +552,19 @@ const FormBuilder = () => {
     setActiveQuestionId(newItems[0].id);
   };
 
-  const removeSection = (sectionId) => {
-    if (
-      window.confirm(
-        "คุณต้องการลบส่วนนี้ และคำถามทั้งหมดที่อยู่ในส่วนนี้ใช่หรือไม่?",
-      )
-    ) {
+  const removeSection = async (sectionId) => {
+    const result = await Swal.fire({
+      title: "ลบส่วนและคำถามทั้งหมด?",
+      text: "คำถามทั้งหมดที่อยู่ในส่วนนี้จะถูกนำออกจากแบบฟอร์ม",
+      icon: "warning",
+      showCancelButton: true,
+      reverseButtons: true,
+      confirmButtonText: "ลบส่วน",
+      cancelButtonText: "ยกเลิก",
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#64748b",
+    });
+    if (result.isConfirmed) {
       const secIndex = questions.findIndex((q) => q.id === sectionId);
       if (secIndex === -1) return;
       let endIndex = secIndex + 1;
@@ -623,6 +642,8 @@ const FormBuilder = () => {
       status: finalStatus, // 🟢 2. ใช้ค่า finalStatus ที่ได้จากการเลือกใน Pop-up
       clinic_type: clinicType,
       form_type: formType,
+      login_enforcement: loginEnforcement,
+      result_display_mode: resultDisplayMode,
       publish_start_date:
         isScheduled && publishStartDate
           ? formatDateTimeForMySQL(publishStartDate)
@@ -637,6 +658,12 @@ const FormBuilder = () => {
       if (id) {
         await updateFormInDb(id, formData);
         setIsSaving(false);
+        await Swal.fire({
+          icon: "success",
+          title: "แก้ไขฟอร์มเรียบร้อยแล้ว",
+          showConfirmButton: false,
+          timer: 1500,
+        });
         navigate("/admin/forms");
       } else {
         await saveFormToDb(formData);
@@ -688,16 +715,19 @@ const FormBuilder = () => {
     window.open("/assessment/preview", "_blank");
   };
 
-  const handleCopyQuestions = () => {
+  const handleCopyQuestions = async () => {
     try {
       const dataToCopy = JSON.stringify(questions, null, 2);
-      navigator.clipboard.writeText(dataToCopy).then(() => {
-        alert(
-          "คัดลอกข้อมูลคำถาม (JSON) เรียบร้อยแล้ว! สามารถนำไปวางให้ AI วิเคราะห์ได้เลยครับ",
-        );
+      await navigator.clipboard.writeText(dataToCopy);
+      await Swal.fire({
+        icon: "success",
+        title: "คัดลอกข้อมูลคำถามแล้ว",
+        text: "สามารถนำข้อมูล JSON ไปวางเพื่อวิเคราะห์ต่อได้",
+        showConfirmButton: false,
+        timer: 1800,
       });
     } catch (error) {
-      alert("เกิดข้อผิดพลาดในการคัดลอกข้อมูล");
+      await Swal.fire("คัดลอกข้อมูลไม่สำเร็จ", "เบราว์เซอร์ไม่อนุญาตให้เข้าถึงคลิปบอร์ด", "error");
     }
   };
 
@@ -1162,17 +1192,26 @@ const FormBuilder = () => {
               <div className="sfb-header-left">
                 <button
                   className="sfb-btn-back"
-                  onClick={() => {
+                  onClick={async () => {
                     const hasChanged =
                       JSON.stringify(currentState) !==
                       JSON.stringify(lastSavedState.current);
-                    if (
-                      !hasChanged ||
-                      window.confirm(
-                        "คุณมีข้อมูลที่ยังไม่ได้บันทึก ต้องการย้อนกลับโดยไม่บันทึกหรือไม่?",
-                      )
-                    )
+                    if (!hasChanged) {
                       navigate("/admin/forms");
+                      return;
+                    }
+                    const result = await Swal.fire({
+                      title: "ออกโดยไม่บันทึก?",
+                      text: "ข้อมูลที่แก้ไขล่าสุดจะหายไป",
+                      icon: "warning",
+                      showCancelButton: true,
+                      reverseButtons: true,
+                      confirmButtonText: "ออกโดยไม่บันทึก",
+                      cancelButtonText: "กลับไปแก้ไข",
+                      confirmButtonColor: "#dc2626",
+                      cancelButtonColor: "#64748b",
+                    });
+                    if (result.isConfirmed) navigate("/admin/forms");
                   }}
                 >
                   <FaArrowLeft />
@@ -1566,6 +1605,10 @@ const FormBuilder = () => {
         setPublishStartDate={setPublishStartDate}
         publishEndDate={publishEndDate}
         setPublishEndDate={setPublishEndDate}
+        loginEnforcement={loginEnforcement}
+        setLoginEnforcement={setLoginEnforcement}
+        resultDisplayMode={resultDisplayMode}
+        setResultDisplayMode={setResultDisplayMode}
       />
 
       <ThemeSidebar

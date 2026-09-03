@@ -1,82 +1,202 @@
 .main-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  min-height: 4.5rem;
+  padding: 0.625rem clamp(1rem, 3vw, 2.25rem);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 70px;
-  padding: 0 24px;
-  background: white;
-  border-bottom: 1px solid #e2e8f0;
-  position: sticky;
-  top: 0;
-  z-index: 999;
-  font-family: "Noto Sans Thai", sans-serif;
+  gap: 1rem;
+  border-bottom: 1px solid #d8e0e7;
+  background: #fbfcfd;
+  color: #1f2f3f;
+  font-family: "Sarabun", "Noto Sans Thai", system-ui, sans-serif;
 }
 
-.main-nav__logo {
-  height: 130px;
-  margin-top: 20px;
-  cursor: pointer;
-  transition: transform 0.2s;
+.main-nav__brand {
+  min-width: 0;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: inherit;
+  text-align: left;
 }
 
-.main-nav__logo:hover {
-  transform: scale(1.02);
+.main-nav__brand:hover .main-nav__brand-copy strong {
+  color: #a9430b;
+}
+
+.main-nav__logo-frame {
+  position: relative;
+  width: 5rem;
+  height: 3.25rem;
+  flex: 0 0 5rem;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
 }
 
 .main-nav__logo-img {
-  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7.25rem;
+  height: 7.25rem;
+  max-width: none;
+  flex: 0 0 7.25rem;
   object-fit: contain;
+  transform: translate(-50%, -50%);
 }
 
-/* 🟢 ดีไซน์ปุ่ม Back ให้เรียบหรู */
-.main-nav__back {
-  border: 1px solid #e2e8f0;
-  background: white;
-  padding: 8px 16px;
-  border-radius: 12px;
+.main-nav__brand-copy {
+  min-width: 0;
+  display: grid;
+  gap: 0.0625rem;
+  line-height: 1.25;
+}
+
+.main-nav__brand-copy strong {
+  color: #1f2f3f;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  transition: color 180ms ease-out;
+}
+
+.main-nav__brand-copy small {
+  overflow: hidden;
+  color: #5c6f80;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.main-nav__actions {
+  min-width: 0;
+  margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #64748b;
-  font-size: 14px;
-  font-weight: 600;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.main-nav__actions > button {
+  margin-left: 0 !important;
+}
+
+.main-nav__back {
+  min-height: 2.75rem;
+  padding: 0.625rem 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid #bcc8d3;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  color: #41566a;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1;
   cursor: pointer;
-  transition: all 0.2s;
-  font-family: inherit;
+  transition: border-color 180ms ease-out, background-color 180ms ease-out, color 180ms ease-out;
 }
 
 .main-nav__back:hover {
-  background: #f8fafc;
-  color: #1e293b;
-  border-color: #cbd5e1;
+  border-color: #a9430b;
+  background: #fff7f1;
+  color: #8d3809;
 }
-/* =========================================
-   🟢 ปรับแต่ง Navbar สำหรับมือถือ (768px ลงไป)
-========================================= */
-@media screen and (max-width: 768px) {
+
+.main-nav__brand:focus-visible,
+.main-nav__back:focus-visible {
+  outline: 3px solid rgba(244, 121, 50, 0.34);
+  outline-offset: 2px;
+}
+
+@media screen and (max-width: 900px) {
   .main-nav {
-    padding: 0 16px !important;
-    justify-content: space-between !important;
-    height: 70px !important;
+    min-height: 4rem;
+    padding: 0.375rem 1rem;
   }
 
-  /* 2. จัดการโลโก้ให้ชิดซ้ายสุด */
-  .main-nav__logo {
-    height: 100px !important;
-    margin-top: 15px !important;
-    margin-left: -15px !important;
+  .main-nav__brand-copy small {
+    display: none;
   }
 
-  /* 3. จัดกลุ่มปุ่มฝั่งขวาให้ชิดขอบขวา */
-  .main-nav > div:last-child {
-    margin-left: auto !important;
-    gap: 8px !important;
+  .main-nav__logo-frame {
+    width: 4.25rem;
+    height: 3.25rem;
+    flex-basis: 4.25rem;
+  }
+
+  .main-nav__logo-img {
+    width: 6.75rem;
+    height: 6.75rem;
+    flex-basis: 6.75rem;
+  }
+
+  .main-nav__actions {
+    gap: 0.375rem;
   }
 
   .main-nav__back {
-    padding: 6px 12px !important;
-    font-size: 13px !important;
-    border-radius: 10px !important;
-    white-space: nowrap !important;
+    min-width: 2.75rem;
+    padding: 0.625rem;
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .main-nav__brand-copy,
+  .main-nav__back span,
+  .main-nav__actions .patient-account-copy {
+    display: none;
+  }
+
+  .main-nav__brand {
+    gap: 0;
+  }
+
+  .main-nav__logo-frame {
+    width: 3.75rem;
+    height: 3rem;
+    flex-basis: 3.75rem;
+  }
+
+  .main-nav__logo-img {
+    width: 6.25rem;
+    height: 6.25rem;
+    flex-basis: 6.25rem;
+  }
+
+  .main-nav__actions .patient-account-trigger {
+    padding-right: 0.4375rem;
+  }
+
+  .main-nav__actions .patient-account-dropdown {
+    position: fixed;
+    top: 4.125rem;
+    right: 0.75rem;
+    width: min(15rem, calc(100vw - 1.5rem));
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .main-nav {
+    padding-inline: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .main-nav__brand-copy strong,
+  .main-nav__back {
+    transition-duration: 0.01ms;
   }
 }

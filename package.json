@@ -1,0 +1,39 @@
+{
+  "name": "suth-suthiecare",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.21.0",
+  "engines": {
+    "node": ">=20.19.0",
+    "pnpm": ">=11.0.0"
+  },
+  "workspaces": [
+    "app",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently --kill-others-on-fail --names server,app \"pnpm dev:server\" \"pnpm dev:app\"",
+    "dev:server": "cross-env NODE_ENV=development pnpm --filter suthiecare-api dev",
+    "dev:app": "pnpm --filter suthie dev",
+    "build": "pnpm --recursive run build",
+    "test": "pnpm --recursive run test",
+    "test:e2e": "pnpm --filter suthie test:e2e",
+    "audit:a11y": "pnpm --filter suthie audit:a11y",
+    "check:local:mysql": "pnpm --filter suthiecare-api check:local:mysql",
+    "verify": "pnpm test && pnpm build && pnpm test:e2e && pnpm audit:a11y",
+    "preview:production": "pnpm build && concurrently --kill-others-on-fail --names server,preview \"cross-env NODE_ENV=development HOST=127.0.0.1 pnpm --filter suthiecare-api start\" \"pnpm --filter suthie preview --host 127.0.0.1\"",
+    "package:production": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-production.ps1",
+    "deploy:production": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/deploy-iis-pm2.ps1",
+    "pm2:start": "pm2 start ecosystem.config.cjs --env production",
+    "pm2:restart": "pm2 restart ecosystem.config.cjs --env production --update-env",
+    "pm2:stop": "pm2 stop suthiecare",
+    "pm2:logs": "pm2 logs suthiecare"
+  },
+  "dependencies": {
+    "pm2": "^7.0.3"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0"
+  }
+}

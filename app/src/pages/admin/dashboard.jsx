@@ -33,6 +33,9 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
+import { getCurrentMonthDateRange, isCaseInDateRange, normaliseDateRange, parseCaseDate } from "../../utils/caseDateFilter";
+import { usePermissions } from "../../permissions/PermissionsProvider";
+import { showErrorAlert, showSuccessToast } from "../../utils/alerts";
 import "./dashboard.css";
 import AddChartModal from "../../components/AddChartModal";
 import {
@@ -201,6 +204,7 @@ const CustomDropdown = ({
 };
 
 export default function Dashboard() {
+  const { activeOrganization } = usePermissions();
   const navigate = useNavigate();
   const [cases, setCases] = useState([]);
   const [clinics, setClinics] = useState([]);
@@ -234,8 +238,11 @@ export default function Dashboard() {
   const [visibleColumns, setVisibleColumns] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCase, setSelectedCase] = useState(null);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [initialDateRange] = useState(getCurrentMonthDateRange);
+  const [startDate, setStartDate] = useState(initialDateRange.startDate);
+  const [endDate, setEndDate] = useState(initialDateRange.endDate);
+  const hasDateRange = Boolean(startDate || endDate);
+  const newCaseLabel = hasDateRange ? "เคสใหม่ในช่วงที่เลือก" : "เคสใหม่วันนี้";
   // 🟢 1. เพิ่ม State นี้เพื่อกั้นการโหลดข้อมูลก่อนเวลาอันควร
   const [isInitialSetup, setIsInitialSetup] = useState(true);
   const charts = useMemo(
@@ -261,7 +268,7 @@ export default function Dashboard() {
     const fetchMasterCaseStats = async () => {
       setIsStatsLoading(true);
       try {
-        const res = await getMasterCaseStats(selectedClinic, selectedFormId);
+        const res = await getMasterCaseStats(selectedClinic, selectedFormId, startDate, endDate);
         if (res.data && typeof res.data === "object" && !res.data.error) {
           setMasterCaseStats((prev) => ({ ...prev, ...res.data }));
         }
@@ -271,10 +278,13 @@ export default function Dashboard() {
       }
     };
     fetchMasterCaseStats();
-  }, [selectedClinic, selectedFormId, statsRefetchTrigger, isInitialSetup]); // 🟢 3.3 เพิ่ม isInitialSetup เป็น dependency
+  }, [selectedClinic, selectedFormId, startDate, endDate, statsRefetchTrigger, isInitialSetup, activeOrganization]); // 🟢 3.3 เพิ่ม isInitialSetup เป็น dependency
 
   useEffect(() => {
     const loadInitialData = async () => {
+      setIsInitialSetup(true);
+      setCases([]);
+      setCurrentFormDetails(null);
       try {
         const [formRes, settingsRes, clinicRes] = await Promise.all([
           getForms("latest"),
@@ -310,7 +320,7 @@ export default function Dashboard() {
       }
     };
     loadInitialData();
-  }, []);
+  }, [activeOrganization]);
 
   useEffect(() => {
     if (filteredForms.length > 0) {
@@ -363,7 +373,7 @@ export default function Dashboard() {
       } catch (err) {}
     };
     refetchCharts();
-  }, [startDate, endDate, selectedFormId, charts]);
+  }, [startDate, endDate, selectedFormId, charts, activeOrganization]);
 
   useEffect(() => {
     if (!selectedFormId) {
@@ -389,13 +399,13 @@ export default function Dashboard() {
       }
     };
     fetchFormDetails();
-  }, [selectedFormId]);
+  }, [selectedFormId, activeOrganization]);
 
   useEffect(() => {
     const fetchRecentCasesForClinic = async () => {
       setIsLoading(true);
       try {
-        const res = await getRecentCases(selectedClinic);
+        const res = await getRecentCases(selectedClinic, startDate, endDate);
         setCases(res.data);
       } catch (err) {
         setCases([]);
@@ -404,34 +414,23 @@ export default function Dashboard() {
       }
     };
     fetchRecentCasesForClinic();
-  }, [selectedClinic]);
+  }, [selectedClinic, startDate, endDate, activeOrganization]);
 
   const handleFormChange = useCallback(
     async (newFormId) => {
       setSelectedFormId(newFormId);
-      await saveDashboardSettings({ formId: newFormId, charts: chartsByForm });
+      try {
+        await saveDashboardSettings({ formId: newFormId, charts: chartsByForm });
+        await showSuccessToast("บันทึกฟอร์มที่ใช้ในแดชบอร์ดแล้ว");
+      } catch (error) {
+        await showErrorAlert({ error, title: "บันทึกการตั้งค่าแดชบอร์ดไม่สำเร็จ" });
+      }
     },
     [chartsByForm],
   );
 
   const filteredData = useMemo(() => {
-    if (!startDate && !endDate) return cases;
-    return cases.filter((item) => {
-      const dateString = item.submitted_at || item.appointment;
-      if (!dateString) return false;
-      const itemDate = new Date(dateString);
-      if (startDate) {
-        const start = new Date(startDate);
-        start.setHours(0, 0, 0, 0);
-        if (itemDate < start) return false;
-      }
-      if (endDate) {
-        const end = new Date(endDate);
-        end.setHours(23, 59, 59, 999);
-        if (itemDate > end) return false;
-      }
-      return true;
-    });
+    return cases.filter((item) => isCaseInDateRange(item, startDate, endDate));
   }, [cases, startDate, endDate]);
 
   const removeChart = useCallback((id) => setChartToDelete(id), []);
@@ -442,12 +441,18 @@ export default function Dashboard() {
       ...chartsByForm,
       [selectedFormId]: updatedCharts,
     };
-    setChartsByForm(updatedChartsByForm);
-    setChartToDelete(null);
-    await saveDashboardSettings({
-      formId: selectedFormId,
-      charts: updatedChartsByForm,
-    });
+    try {
+      setChartsByForm(updatedChartsByForm);
+      setChartToDelete(null);
+      await saveDashboardSettings({
+        formId: selectedFormId,
+        charts: updatedChartsByForm,
+      });
+      await showSuccessToast("ลบกราฟออกจากแดชบอร์ดแล้ว");
+    } catch (error) {
+      setChartsByForm(chartsByForm);
+      await showErrorAlert({ error, title: "ลบกราฟไม่สำเร็จ" });
+    }
   }, [charts, chartToDelete, chartsByForm, selectedFormId]);
 
   const handleSaveChart = useCallback(
@@ -480,7 +485,10 @@ export default function Dashboard() {
           formId: selectedFormId,
           charts: updatedChartsByForm,
         });
-      } catch (err) {}
+        await showSuccessToast("เพิ่มกราฟในแดชบอร์ดแล้ว");
+      } catch (error) {
+        await showErrorAlert({ error, title: "เพิ่มกราฟไม่สำเร็จ" });
+      }
     },
     [chartsByForm, selectedFormId, startDate, endDate],
   );
@@ -496,11 +504,17 @@ export default function Dashboard() {
         ...chartsByForm,
         [selectedFormId]: updatedCharts,
       };
-      setChartsByForm(updatedChartsByForm);
-      await saveDashboardSettings({
-        formId: selectedFormId,
-        charts: updatedChartsByForm,
-      });
+      try {
+        setChartsByForm(updatedChartsByForm);
+        await saveDashboardSettings({
+          formId: selectedFormId,
+          charts: updatedChartsByForm,
+        });
+        await showSuccessToast("บันทึกลำดับกราฟแล้ว");
+      } catch (error) {
+        setChartsByForm(chartsByForm);
+        await showErrorAlert({ error, title: "บันทึกลำดับกราฟไม่สำเร็จ" });
+      }
     },
     [charts, chartsByForm, selectedFormId],
   );
@@ -515,12 +529,25 @@ export default function Dashboard() {
 
   const displayThaiDate = (dateString) => {
     if (!dateString) return "";
-    const date = new Date(dateString);
+    const date = parseCaseDate(dateString);
+    if (!date) return "";
     return date.toLocaleDateString("th-TH", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
     });
+  };
+
+  const handleStartDateChange = (nextStartDate) => {
+    const [safeStartDate, safeEndDate] = normaliseDateRange(nextStartDate, endDate);
+    setStartDate(safeStartDate);
+    setEndDate(safeEndDate);
+  };
+
+  const handleEndDateChange = (nextEndDate) => {
+    const [safeStartDate, safeEndDate] = normaliseDateRange(startDate, nextEndDate);
+    setStartDate(safeStartDate);
+    setEndDate(safeEndDate);
   };
 
   return (
@@ -605,7 +632,7 @@ export default function Dashboard() {
                   <input
                     type="date"
                     value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
+                    onChange={(e) => handleStartDateChange(e.target.value)}
                     onClick={(e) =>
                       e.target.showPicker && e.target.showPicker()
                     }
@@ -638,8 +665,8 @@ export default function Dashboard() {
                   <input
                     type="date"
                     value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    min={startDate}
+                    onChange={(e) => handleEndDateChange(e.target.value)}
+                    min={startDate || undefined}
                     onClick={(e) =>
                       e.target.showPicker && e.target.showPicker()
                     }
@@ -700,7 +727,7 @@ export default function Dashboard() {
                   <StatBoxModern
                     isLoading={isStatsLoading}
                     icon={FiActivity}
-                    label="เคสใหม่วันนี้"
+                    label={newCaseLabel}
                     value={(masterCaseStats?.newToday || 0)
                       .toString()
                       .padStart(2, "0")}
@@ -843,7 +870,7 @@ export default function Dashboard() {
                 <StatBoxModern
                   isLoading={isStatsLoading}
                   icon={FiActivity}
-                  label="เคสใหม่วันนี้"
+                  label={newCaseLabel}
                   value={(masterCaseStats?.newToday || 0)
                     .toString()
                     .padStart(2, "0")}
@@ -882,7 +909,7 @@ export default function Dashboard() {
                 <StatBoxModern
                   isLoading={isStatsLoading}
                   icon={FiActivity}
-                  label="เคสใหม่วันนี้"
+                  label={newCaseLabel}
                   value={(masterCaseStats?.newToday || 0)
                     .toString()
                     .padStart(2, "0")}

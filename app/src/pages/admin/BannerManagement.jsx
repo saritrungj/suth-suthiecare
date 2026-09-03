@@ -24,6 +24,7 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import Swal from "sweetalert2";
+import { showErrorAlert, showInfoAlert, showSuccessAlert, showSuccessToast } from "../../utils/alerts";
 
 export default function BannerManagement() {
   const [showModal, setShowModal] = useState(false);
@@ -48,17 +49,22 @@ export default function BannerManagement() {
     }
   };
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = async (event) => {
     const { active, over } = event;
     if (!over) return;
     if (active.id !== over.id) {
-      setBanners((items) => {
-        const oldIndex = items.findIndex((i) => i.id === active.id);
-        const newIndex = items.findIndex((i) => i.id === over.id);
-        const newItems = arrayMove(items, oldIndex, newIndex);
-        reorderBanners(newItems);
-        return newItems;
-      });
+      const previousItems = banners;
+      const oldIndex = banners.findIndex((i) => i.id === active.id);
+      const newIndex = banners.findIndex((i) => i.id === over.id);
+      const newItems = arrayMove(banners, oldIndex, newIndex);
+      setBanners(newItems);
+      try {
+        await reorderBanners(newItems);
+        await showSuccessToast("บันทึกลำดับแบนเนอร์แล้ว");
+      } catch (error) {
+        setBanners(previousItems);
+        await showErrorAlert({ error, title: "บันทึกลำดับแบนเนอร์ไม่สำเร็จ" });
+      }
     }
   };
 
@@ -107,8 +113,9 @@ export default function BannerManagement() {
       });
       setEditingBanner(null);
       await loadBanners();
+      await showSuccessAlert({ title: "แก้ไขแบนเนอร์เรียบร้อยแล้ว" });
     } catch (err) {
-      alert("อัปเดตแบนเนอร์ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง");
+      await showErrorAlert({ error: err, title: "แก้ไขแบนเนอร์ไม่สำเร็จ" });
     }
   };
 
@@ -129,9 +136,10 @@ export default function BannerManagement() {
             className="bm-add-btn"
             onClick={() => {
               if (isLimitReached) {
-                alert(
-                  "คุณมีแบนเนอร์ครบ 5 รูปแล้ว กรุณาลบแบนเนอร์เก่าออกก่อนเพิ่มรูปใหม่",
-                );
+                showInfoAlert({
+                  title: "เพิ่มแบนเนอร์ไม่ได้",
+                  text: "คุณมีแบนเนอร์ครบ 5 รูปแล้ว กรุณาลบแบนเนอร์เก่าออกก่อนเพิ่มรูปใหม่",
+                });
                 return;
               }
               setShowModal(true);
@@ -279,9 +287,14 @@ export default function BannerManagement() {
         <AddBannerModal
           onClose={() => setShowModal(false)}
           onSave={async (banner) => {
-            await createBanner(banner);
-            loadBanners();
-            setShowModal(false);
+            try {
+              await createBanner(banner);
+              await loadBanners();
+              setShowModal(false);
+              await showSuccessAlert({ title: "เพิ่มแบนเนอร์เรียบร้อยแล้ว" });
+            } catch (error) {
+              await showErrorAlert({ error, title: "เพิ่มแบนเนอร์ไม่สำเร็จ" });
+            }
           }}
         />
       )}

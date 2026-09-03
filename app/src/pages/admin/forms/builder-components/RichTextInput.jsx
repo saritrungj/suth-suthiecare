@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import DOMPurify from "dompurify";
 import {
   FaBold,
   FaItalic,
@@ -19,14 +20,20 @@ const RichTextInput = ({
 }) => {
   const elementRef = useRef(null);
   const [isFocused, setIsFocused] = useState(false);
+  const sanitize = (html) =>
+    DOMPurify.sanitize(String(html || ""), {
+      ALLOWED_TAGS: ["p", "br", "strong", "b", "em", "i", "u", "s", "ol", "ul", "li"],
+      ALLOWED_ATTR: [],
+    });
 
   useEffect(() => {
-    if (elementRef.current && elementRef.current.innerHTML !== value) {
-      elementRef.current.innerHTML = value || "";
+    const safeValue = sanitize(value);
+    if (elementRef.current && elementRef.current.innerHTML !== safeValue) {
+      elementRef.current.innerHTML = safeValue;
     }
   }, [value]);
 
-  const handleInput = (e) => onChange(e.currentTarget.innerHTML);
+  const handleInput = (e) => onChange(sanitize(e.currentTarget.innerHTML));
 
   // 🟢 เพิ่มตัวล้างขยะดักไว้ตรงนี้ ทำงานทันทีที่คลิกเมาส์ออกจากช่องพิมพ์ (Blur)
   const handleBlur = (e) => {
@@ -35,14 +42,14 @@ const RichTextInput = ({
     val = val.replace(/<span[\s\S]*?>/gi, "").replace(/<\/span>/gi, "");
     val = val.replace(/<font[\s\S]*?>/gi, "").replace(/<\/font>/gi, "");
 
-    onChange(val);
+    onChange(sanitize(val));
     setIsFocused(false);
   };
 
   const handleFormat = (e, command) => {
     e.preventDefault();
     document.execCommand(command, false, null);
-    if (elementRef.current) onChange(elementRef.current.innerHTML);
+    if (elementRef.current) onChange(sanitize(elementRef.current.innerHTML));
   };
 
   const Tag = tagName;

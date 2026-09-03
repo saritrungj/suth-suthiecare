@@ -5,7 +5,10 @@ import {
   updateClinic,
   deleteClinic,
   reorderClinics,
+  getOrganizations,
 } from "../../../services/api";
+import { usePermissions } from "../../../permissions/PermissionsProvider";
+import { getActiveOrganizationLabel } from "../../../permissions/organizationContext";
 import {
   FaPlus,
   FaEdit,
@@ -120,6 +123,11 @@ function SortableRow({ clinic, onEdit, onDelete }) {
         <span className="cm-slug">{clinic.slug}</span>
       </td>
       <td className="cm-col-name cm-name">{clinic.name}</td>
+      <td className="cm-col-organization">
+        <span className="cm-organization-tag" title={clinic.organization_code || "ยังไม่ระบุหน่วยงาน"}>
+          {clinic.organization_name || "โรงพยาบาลมหาวิทยาลัยเทคโนโลยีสุรนารี"}
+        </span>
+      </td>
       <td className="cm-col-status">
         {clinic.is_active ? (
           <span className="cm-status active">
@@ -157,12 +165,19 @@ function SortableRow({ clinic, onEdit, onDelete }) {
 // ClinicManagerContent — Main Component
 // ============================================================
 function ClinicManagerContent() {
+  const { authorization, activeOrganization } = usePermissions();
+  const isSystemAdmin = Boolean(authorization?.is_system_admin);
   const [clinics, setClinics] = useState([]);
+  const [organizations, setOrganizations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isReordering, setIsReordering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClinic, setEditingClinic] = useState(null);
+  const activeOrganizationLabel = getActiveOrganizationLabel(
+    authorization,
+    activeOrganization,
+  );
 
   const [formData, setFormData] = useState({
     slug: "",
@@ -173,6 +188,7 @@ function ClinicManagerContent() {
     bg: "",
     is_active: 1,
     show_icon: 1,
+    organization_id: "",
   });
 
   const logoInputRef = useRef(null);
@@ -204,9 +220,12 @@ function ClinicManagerContent() {
     }
   };
 
+  useEffect(() => { fetchClinics(); }, [activeOrganization]);
+
   useEffect(() => {
-    fetchClinics();
-  }, []);
+    if (!isSystemAdmin) return;
+    getOrganizations().then(({ data }) => setOrganizations(data.filter((item) => item.status === "active"))).catch(() => setOrganizations([]));
+  }, [isSystemAdmin]);
 
   // ============ Drag End Handler ============
   const handleDragEnd = async (event) => {
@@ -260,6 +279,7 @@ function ClinicManagerContent() {
         bg: clinic.bg || "",
         is_active: clinic.is_active ?? 1,
         show_icon: clinic.show_icon ?? 1,
+        organization_id: clinic.organization_id ? String(clinic.organization_id) : "",
       });
     } else {
       setEditingClinic(null);
@@ -272,6 +292,7 @@ function ClinicManagerContent() {
         bg: "",
         is_active: 1,
         show_icon: 1,
+        organization_id: typeof activeOrganization === "string" && /^\d+$/.test(activeOrganization) ? activeOrganization : "",
       });
     }
     setIsModalOpen(true);
@@ -436,8 +457,9 @@ function ClinicManagerContent() {
             <h1>จัดการคลินิก</h1>
             {/* hint text */}
             <p className="cm-header-hint">
-              ลากแถวเพื่อเรียงลำดับคลินิก — ลำดับจะแสดงผลบนหน้าเว็บทันที
+              จัดการคลินิกของหน่วยงานที่เลือก และเรียงลำดับเพื่อแสดงผลบนหน้าเว็บ
             </p>
+            <p className="cm-context-indicator"><span>ขอบเขตข้อมูล</span>{activeOrganizationLabel}</p>
           </div>
           <button className="cm-btn-add" onClick={() => handleOpenModal()}>
             <FaPlus /> เพิ่มคลินิกใหม่
@@ -468,6 +490,7 @@ function ClinicManagerContent() {
                     <th className="cm-col-logo">โลโก้</th>
                     <th className="cm-col-slug">รหัสอ้างอิง (Slug)</th>
                     <th className="cm-col-name">ชื่อคลินิก</th>
+                    <th className="cm-col-organization">หน่วยงานเจ้าของ</th>
                     <th className="cm-col-status">สถานะ</th>
                     <th className="cm-col-actions">จัดการ</th>
                   </tr>
@@ -488,7 +511,7 @@ function ClinicManagerContent() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="6" className="cm-empty">
+                        <td colSpan="7" className="cm-empty">
                           ไม่พบข้อมูลคลินิก
                         </td>
                       </tr>
@@ -513,6 +536,16 @@ function ClinicManagerContent() {
               </button>
               <h2>{editingClinic ? "แก้ไขคลินิก" : "เพิ่มคลินิกใหม่"}</h2>
               <form onSubmit={handleSubmit}>
+                {isSystemAdmin && (
+                  <div className="cm-form-group cm-organization-field">
+                    <label>หน่วยงานเจ้าของ <span className="cm-required">*</span></label>
+                    <select name="organization_id" value={formData.organization_id} onChange={handleChange} required>
+                      <option value="">เลือกหน่วยงาน</option>
+                      {organizations.map((organization) => <option key={organization.id} value={organization.id}>{organization.name} ({organization.code})</option>)}
+                    </select>
+                    <small>ฟอร์มและข้อมูลคลินิกจะแสดงเฉพาะในขอบเขตหน่วยงานนี้</small>
+                  </div>
+                )}
                 <div className="cm-form-group">
                   <label>
                     รหัสอ้างอิง (Slug) <span className="cm-required">*</span>

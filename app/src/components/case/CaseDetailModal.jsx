@@ -539,7 +539,7 @@ export default function CaseDetailModal({
       setStatus(currentName);
       showToast("เพิ่มสถานะใหม่เรียบร้อย");
     } catch (err) {
-      alert("เพิ่มสถานะไม่สำเร็จ");
+      await Swal.fire({ icon: "error", title: "เพิ่มสถานะไม่สำเร็จ", text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง", confirmButtonColor: "#f47932" });
     }
   };
 
@@ -579,7 +579,7 @@ export default function CaseDetailModal({
       setNewServiceName("");
       showToast("เพิ่มบริการสำเร็จ");
     } catch (err) {
-      alert("ไม่สามารถเพิ่มบริการได้");
+      await Swal.fire({ icon: "error", title: "เพิ่มบริการไม่สำเร็จ", text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง", confirmButtonColor: "#f47932" });
     }
   };
 
@@ -595,7 +595,7 @@ export default function CaseDetailModal({
       setEditingServiceId(null);
       showToast("แก้ไขบริการสำเร็จ");
     } catch (err) {
-      alert("ไม่สามารถแก้ไขบริการได้");
+      await Swal.fire({ icon: "error", title: "แก้ไขบริการไม่สำเร็จ", text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง", confirmButtonColor: "#f47932" });
     }
   };
 
@@ -636,7 +636,7 @@ export default function CaseDetailModal({
         if (onCaseDeleted) onCaseDeleted(data.id);
       }, 800);
     } catch (err) {
-      alert("ไม่สามารถลบเคสได้");
+      await Swal.fire({ icon: "error", title: "ลบเคสไม่สำเร็จ", text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง", confirmButtonColor: "#f47932" });
       setIsDeleting(false);
     }
   };

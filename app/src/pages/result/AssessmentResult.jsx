@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   FiCheckCircle,
@@ -15,6 +15,7 @@ import riskMedium from "../../assets/02.png";
 import riskHigh from "../../assets/03.png";
 import logoSUTH from "../../assets/logoSUTH.png";
 import "./AssessmentResult.css";
+import { buildAssessmentResultSections } from "./assessmentResultUtils";
 
 // 🟢 1. แก้บัค: นำเข้า api ให้ถูกต้อง
 import api from "../../services/api";
@@ -116,6 +117,10 @@ export default function AssessmentResult() {
   // 🟢 ข้อมูลถูกส่งให้เจ้าหน้าที่เรียบร้อยแล้วตั้งแต่หน้าฟอร์ม
   const [isSaved] = useState(Boolean(location.state?.isSaved));
   const [translatedResults, setTranslatedResults] = useState([]);
+  const displayResults = useMemo(
+    () => buildAssessmentResultSections(translatedResults),
+    [translatedResults],
+  );
 
   useEffect(() => {
     let isMounted = true;
@@ -441,13 +446,25 @@ export default function AssessmentResult() {
         </div>
 
         {/* ✅ แสดงการ์ดผลการประเมิน */}
-        {translatedResults.length > 0 &&
-          translatedResults.map((res, index) => {
-            const level = getLevelConfig(res, t);
+        {displayResults.length > 0 &&
+          displayResults.map((res, index) => {
+            const isTotal = res.displayKind === "total";
+            const totalResult = isTotal
+              ? {
+                  ...res,
+                  title: t("assessment_result.total_score"),
+                  label: t("assessment_result.total_score"),
+                  advice: t("assessment_result.total_score_advice", {
+                    count: res.partCount,
+                  }),
+                  color: "#2563eb",
+                }
+              : res;
+            const level = getLevelConfig(totalResult, t);
             return (
               <div
-                key={index}
-                className="ar-result-card"
+                key={res.id || res.question_id || index}
+                className={`ar-result-card ${isTotal ? "ar-result-card--total" : ""}`}
                 style={{
                   "--card-color": level.color,
                   animationDelay: `${index * 0.15}s`,
@@ -462,6 +479,20 @@ export default function AssessmentResult() {
                     >
                       <FiActivity size={24} /> <span>{level.label}</span>
                     </div>
+                    <p className="ar-card-title">
+                      {isTotal
+                        ? t("assessment_result.total_score_summary", {
+                            count: res.partCount,
+                          })
+                        : res.title ||
+                          t("assessment_result.score_section", {
+                            index:
+                              index +
+                              (displayResults[0]?.displayKind === "total"
+                                ? 0
+                                : 1),
+                          })}
+                    </p>
 
                     <div
                       className="ar-score-wrapper"
@@ -484,92 +515,46 @@ export default function AssessmentResult() {
                       </span>
                     </div>
                   </div>
+                </div>
 
-                  {/* CARD BODY */}
-                  <div className="ar-result-card__body">
-                    {/* ADVICE */}
+                {/* CARD BODY */}
+                <div className="ar-result-card__body">
+                  <div
+                    className="ar-advice-box"
+                    style={{
+                      backgroundColor: level.colorBg,
+                      borderColor: level.colorBorder,
+                    }}
+                  >
+                    <h3
+                      className="ar-advice-box__title"
+                      style={{ color: level.textColor }}
+                    >
+                      <FiInfo size={18} /> {t("assessment_result.advice")}
+                    </h3>
+
+                    <ul className="ar-advice__list">
+                      {level.advice.map((a, i) => (
+                        <li key={i}>{a}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div
+                    className="ar-visual"
+                    style={{
+                      "--grad": level.colorBanner,
+                      "--border": level.colorBorder,
+                      "--accent": level.color,
+                    }}
+                  >
                     <div
-                      className="ar-advice-box"
+                      className="ar-visual__frame"
                       style={{
-                        backgroundColor: level.colorBg,
-                        borderColor: level.colorBorder,
+                        background: `radial-gradient(circle at 50% 50%, rgba(${level.rgb}, 0.25), transparent 70%)`,
                       }}
                     >
-                      <h3
-                        className="ar-advice-box__title"
-                        style={{ color: level.textColor }}
-                      >
-                        <FiInfo size={18} /> {t("assessment_result.advice")}
-                      </h3>
-
-                      <ul className="ar-advice__list">
-                        {level.advice.map((a, i) => (
-                          <li key={i}>{a}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* VISUAL */}
-                    <div
-                      className="ar-visual"
-                      style={{
-                        "--grad": level.colorBanner,
-                        "--border": level.colorBorder,
-                        "--accent": level.color,
-                      }}
-                    >
-                      <div
-                        className="ar-visual__frame"
-                        style={{
-                          background: `radial-gradient(circle at 50% 50%, rgba(${level.rgb}, 0.25), transparent 70%)`,
-                        }}
-                      >
-                        <img src={level.visualImage} alt={level.label} />
-                      </div>
-                    </div>
-
-                    {/* CARD BODY */}
-                    <div className="ar-result-card__body">
-                      {/* ADVICE */}
-                      <div
-                        className="ar-advice-box"
-                        style={{
-                          backgroundColor: level.colorBg,
-                          borderColor: level.colorBorder,
-                        }}
-                      >
-                        <h3
-                          className="ar-advice-box__title"
-                          style={{ color: level.textColor }}
-                        >
-                          <FiInfo size={18} /> คำแนะนำเบื้องต้น
-                        </h3>
-
-                        <ul className="ar-advice__list">
-                          {level.advice.map((a, i) => (
-                            <li key={i}>{a}</li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      {/* VISUAL */}
-                      <div
-                        className="ar-visual"
-                        style={{
-                          "--grad": level.colorBanner,
-                          "--border": level.colorBorder,
-                          "--accent": level.color,
-                        }}
-                      >
-                        <div
-                          className="ar-visual__frame"
-                          style={{
-                            background: `radial-gradient(circle at 50% 50%, rgba(${level.rgb}, 0.25), transparent 70%)`,
-                          }}
-                        >
-                          <img src={level.visualImage} alt={level.label} />
-                        </div>
-                      </div>
+                      <img src={level.visualImage} alt={level.label} />
                     </div>
                   </div>
                 </div>

@@ -14,6 +14,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { getFormQuestions, getChartData } from "../services/api";
+import { showInfoAlert } from "../utils/alerts";
 
 // ฟังก์ชันสร้างเส้นชี้และ Label เปอร์เซ็นต์
 const renderCustomizedLabel = ({
@@ -272,7 +273,7 @@ const AddChartModal = ({ isOpen, onClose, onSave, formId }) => {
 
   const handleSave = () => {
     if (!chartName || !selectedQuestion || !chartType) {
-      alert("กรุณากรอกข้อมูลให้ครบ");
+      showInfoAlert({ title: "ข้อมูลยังไม่ครบ", text: "กรุณาระบุชื่อกราฟ คำถาม และประเภทกราฟก่อนบันทึก" });
       return;
     }
 

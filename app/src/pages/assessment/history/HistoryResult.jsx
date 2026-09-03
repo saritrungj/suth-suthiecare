@@ -5,10 +5,10 @@ import "./HistoryResult.css";
 import Navbar from "../../../components/Navbar";
 
 import {
-  getMasterCaseByIdentity,
-  getCaseLogs,
-  updateHistoryResponse,
-  getCaseAnswers,
+  getPatientHistory,
+  getPatientCaseLogs,
+  updatePatientHistoryResponse,
+  getPatientCaseAnswers,
   getFormById,
 } from "../../../services/api";
 
@@ -32,7 +32,8 @@ import {
 import { FaChartBar } from "react-icons/fa";
 
 import { translateTextSmart } from "../../../utils/translator";
-import LanguageSwitcher from "../../../components/LanguageSwitcher.jsx";
+import { getPatientSession } from "../../../utils/patientSession";
+import { showErrorAlert } from "../../../utils/alerts";
 
 import {
   CLINIC_INFO,
@@ -40,6 +41,7 @@ import {
   formatDate,
   getRiskInfo,
   formatAnswerValue,
+  isDisplayableTableAnswer,
 } from "./historyUtils";
 import {
   HeroEditableField,
@@ -183,10 +185,11 @@ export default function HistoryResult() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const { identity, records } = location.state || {};
 
   const [data, setData] = useState([]);
   const [masterCases, setMasterCases] = useState([]);
+  const [patientProfile, setPatientProfile] = useState(null);
+  const [identityMasked, setIdentityMasked] = useState("ยืนยันตัวตนแล้ว");
 
   const [showId, setShowId] = useState(false);
   const [expanded, setExpanded] = useState(null);
@@ -423,25 +426,22 @@ export default function HistoryResult() {
   }, []);
 
   useEffect(() => {
-    if (!identity) {
-      navigate("/history");
-      return;
-    }
-
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await getMasterCaseByIdentity(identity);
+        const res = await getPatientHistory();
 
         const fetchedResponses = res.data.responses || [];
         const mCases = res.data.masterCases || [];
 
         setData(fetchedResponses);
         setMasterCases(mCases);
+        setPatientProfile(res.data.profile || getPatientSession().user || null);
+        setIdentityMasked(res.data.identity_masked || "ยืนยันตัวตนแล้ว");
 
         if (fetchedResponses && fetchedResponses.length > 0) {
           const logPromises = fetchedResponses.map((c) =>
-            getCaseLogs(c.id, "response")
+            getPatientCaseLogs(c.id)
               .then((r) =>
                 r.data.map((l) => ({
                   ...l,
@@ -460,34 +460,30 @@ export default function HistoryResult() {
           setCaseLogs(allLogs);
         }
       } catch (err) {
-        if (Array.isArray(records) && records.length) setData(records);
+        if (err.response?.status === 404) { setData([]); setMasterCases([]); setPatientProfile(null); }
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [identity, navigate, records]);
+  }, []);
 
   const showToast = (msg, type = "success") => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 3000);
   };
 
-  const maskedId = identity
-    ? identity.slice(0, -4).replace(/\d/g, "●") + identity.slice(-4)
-    : "";
+  const maskedId = identityMasked;
 
   const handleHeroSave = async (field, value) => {
     if (!data.length) return;
     const targetId = data[0].id;
     try {
-      const res = await updateHistoryResponse(targetId, { field, value });
+      const res = await updatePatientHistoryResponse(targetId, { field, value });
       handleFieldSave(targetId, field, value, res.data?.updated_at);
     } catch (err) {
-      alert(
-        `${t("history.result.save_error")} ${err?.response?.data?.message || err?.message}`,
-      );
+      await showErrorAlert({ error: err, title: t("history.result.save_error") });
     }
   };
 
@@ -519,7 +515,7 @@ export default function HistoryResult() {
     if (formAnswers[id]) return;
 
     try {
-      const res = await getCaseAnswers(id);
+      const res = await getPatientCaseAnswers(id);
       setFormAnswers((prev) => ({ ...prev, [id]: res.data }));
     } catch {
       const raw = record.summary_data?.raw_answers || {};
@@ -561,16 +557,21 @@ export default function HistoryResult() {
       </div>
     );
 
+  // Personal data is never machine-translated; only UI/form content may change language.
+  const profileSourceData = data;
+  const clinicSourceData = translatedData.length > 0 ? translatedData : data;
+  const sessionUser = getPatientSession().user;
+
   const allNames = [
     ...new Set(
-      translatedData
+      profileSourceData
         .map((d) => stripHtml(d.summary_data?.display_name))
         .filter((n) => n && n !== "-"),
     ),
   ];
   const allPhones = [
     ...new Set(
-      translatedData
+      profileSourceData
         .map((d) =>
           stripHtml(
             d.summary_data?.phone ||
@@ -582,14 +583,26 @@ export default function HistoryResult() {
     ),
   ];
 
-  const latestName = allNames[0] || "-";
-  const pastNames = allNames.slice(1);
-  const latestPhone = allPhones[0] || "-";
-  const pastPhones = allPhones.slice(1);
+  const accountName =
+    stripHtml(patientProfile?.display_name) ||
+    [patientProfile?.first_name, patientProfile?.last_name]
+      .map(stripHtml)
+      .filter(Boolean)
+      .join(" ") ||
+    [sessionUser?.first_name, sessionUser?.last_name]
+      .map(stripHtml)
+      .filter(Boolean)
+      .join(" ") ||
+    stripHtml(patientProfile?.username || sessionUser?.username);
+  const latestName = accountName || allNames[0] || "-";
+  const pastNames = allNames.filter((name) => name !== latestName);
+  const accountPhone = stripHtml(patientProfile?.phone || sessionUser?.phone);
+  const latestPhone = accountPhone || allPhones[0] || "-";
+  const pastPhones = allPhones.filter((phone) => phone !== latestPhone);
 
   const visitedClinics = [
     ...new Set(
-      translatedData.map((d) => d.clinicType || d.clinic_type || "general"),
+      clinicSourceData.map((d) => d.clinicType || d.clinic_type || "general"),
     ),
   ];
 
@@ -698,16 +711,12 @@ export default function HistoryResult() {
     <div className="hr-page">
       {toast && <Toast msg={toast.msg} type={toast.type} />}
 
-      <div
-        style={{ position: "fixed", top: "70px", right: "15px", zIndex: 1000 }}
-      >
-        <LanguageSwitcher darkText={true} />
-      </div>
-
       <Navbar
         showBack={true}
+        showPatientAccount={true}
+        showLanguage={true}
         backText={t("history.result.back")}
-        onBack={() => navigate("/history")}
+        onBack={() => navigate("/")}
       />
 
       <div className="hr-layout">
@@ -743,7 +752,7 @@ export default function HistoryResult() {
                 <div className="hr-id-pill">
                   <FiUser size={12} color="rgba(255,255,255,0.8)" />
                   <span className="hr-id-value">
-                    {showId ? identity : maskedId}
+                    {showId ? "เลขบัตรได้รับการยืนยันแล้ว" : maskedId}
                   </span>
                   <button
                     className="hr-id-toggle"
@@ -836,7 +845,7 @@ export default function HistoryResult() {
                             navigate("/", {
                               state: {
                                 targetClinic: c.id,
-                                prefillIdentity: identity,
+                                 prefillIdentity: undefined,
                               },
                             })
                           }
@@ -964,7 +973,7 @@ export default function HistoryResult() {
 
                       navigate("/clinic-detail", {
                         state: {
-                          identity,
+                          identityMasked,
                           masterCase: mc,
                           clinicType: actualClinicType,
 
@@ -1032,7 +1041,7 @@ export default function HistoryResult() {
 
                           navigate("/clinic-detail", {
                             state: {
-                              identity,
+                              identityMasked,
                               masterCase: mc,
                               clinicType: actualClinicType,
 
@@ -1669,18 +1678,6 @@ export default function HistoryResult() {
                                       answerValue={ans.answer_value}
                                       type="text"
                                       onSave={async (qid, newVal) => {
-                                        try {
-                                          await updateHistoryResponse(
-                                            record.id,
-                                            {
-                                              field: "custom_answer",
-                                              question_title: origQuestionLabel,
-                                              value: newVal,
-                                              question_id: qid,
-                                            },
-                                          );
-                                        } catch (err) {}
-
                                         setFormAnswers((prev) => {
                                           const updated = (
                                             prev[record.id] || []
@@ -1749,14 +1746,9 @@ export default function HistoryResult() {
                                   stripHtml(questionLabel),
                               );
 
-                              let isTableData = false;
-                              if (
-                                ans.answer_value &&
-                                typeof ans.answer_value === "object" &&
-                                !Array.isArray(ans.answer_value)
-                              ) {
-                                isTableData = true;
-                              }
+                              const isTableData = isDisplayableTableAnswer(
+                                ans.answer_value,
+                              );
 
                               const isIdCard = [
                                 "บัตรประชาชน",

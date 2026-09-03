@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import {
   FiEye,
   FiEyeOff,
@@ -13,14 +12,10 @@ import {
 import { FaWeight, FaRuler } from "react-icons/fa";
 
 // ดึงการตั้งค่าจากไฟล์ Utils ที่เราเพิ่งสร้าง
-import {
-  API_BASE,
-  axiosConfig,
-  formatAnswerValue,
-  stripHtml,
-  formatDate,
-} from "../historyUtils";
+import { formatAnswerValue, stripHtml, formatDate } from "../historyUtils";
+import { updatePatientHistoryAnswer, updatePatientHistoryResponse } from "../../../../services/api";
 import { useTranslation } from "react-i18next";
+import { showErrorAlert, showSuccessToast } from "../../../../utils/alerts";
 
 const IconMap = {
   user: FiUser,
@@ -77,16 +72,13 @@ export function EditableAnswerField({
     if (!val.trim()) return;
     setSaving(true);
     try {
-      await axios.patch(
-        `${API_BASE}/api/history/answer/${responseId}/${questionId}`,
-        { value: val.trim() },
-        axiosConfig,
-      );
+      await updatePatientHistoryAnswer(responseId, questionId, val.trim());
       setSavedVal(val.trim());
       onSave && onSave(questionId, val.trim());
       setEditing(false);
+      await showSuccessToast("บันทึกคำตอบเรียบร้อยแล้ว");
     } catch (err) {
-      alert(`บันทึกไม่สำเร็จ: ${err?.response?.data?.message || err?.message}`);
+      await showErrorAlert({ error: err, title: "บันทึกคำตอบไม่สำเร็จ" });
     } finally {
       setSaving(false);
     }
@@ -169,15 +161,12 @@ export function EditableField({
     if (!val.trim()) return;
     setSaving(true);
     try {
-      const res = await axios.patch(
-        `${API_BASE}/api/history/response/${responseId}`,
-        { field, value: val.trim() },
-        axiosConfig,
-      );
+      const res = await updatePatientHistoryResponse(responseId, { field, value: val.trim() });
       onSave && onSave(field, val.trim(), res.data?.updated_at);
       setEditing(false);
+      await showSuccessToast("บันทึกข้อมูลเรียบร้อยแล้ว");
     } catch (err) {
-      alert(`บันทึกไม่สำเร็จ: ${err?.response?.data?.message || err?.message}`);
+      await showErrorAlert({ error: err, title: "บันทึกข้อมูลไม่สำเร็จ" });
     } finally {
       setSaving(false);
     }

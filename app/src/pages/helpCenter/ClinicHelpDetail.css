@@ -63,6 +63,10 @@
   overflow: hidden;
 }
 
+.hc-clinic-detail-hero button:hover {
+  background-color: #d85f1b !important;
+}
+
 .hc-clinic-hero-inner {
   display: flex;
   flex-direction: row;

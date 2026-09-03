@@ -231,6 +231,8 @@
 }
 
 /* Footer */
+.adm-membership-section{margin-top:20px;padding:16px;background:#f4f8f6;border:1px solid #d7e5df;border-radius:12px}.adm-membership-heading{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}.adm-membership-heading h4{margin:0;color:#24483e;font-size:15px}.adm-membership-heading p{margin:3px 0 0;color:#587269;font-size:12px;line-height:1.45}.adm-membership-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid #dce8e2}.adm-org-check{display:flex;align-items:center;gap:8px;font-weight:600;color:#26483f}.adm-org-check input{width:18px;height:18px;accent-color:#1e5b4e}@media(max-width:560px){.adm-membership-row{align-items:flex-start;flex-direction:column}.adm-membership-row .adm-select{width:100%}}
+
 .adm-footer {
   padding: 24px 32px;
   background: #f8fafc;

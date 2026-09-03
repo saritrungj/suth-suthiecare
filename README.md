@@ -82,7 +82,8 @@
 
 ### Prerequisites
 
-- **Node.js** >= 18
+- **Node.js** >= 20.19
+- **pnpm** >= 11
 - **MySQL** (Pre-created database)
 - **Redis** (Optional but recommended for caching)
 
@@ -93,60 +94,33 @@ git clone (github URL)
 cd suth-suthiecare
 ```
 
-### 2. Backend Setup
+### 2. Workspace Setup
 
 ```bash
-cd server
-npm install
+pnpm install --frozen-lockfile
+cp app/.env.example app/.env.local
+cp server/.env.example server/.env.local
 ```
 
-Create a `.env` file in the `server/` directory:
+Update `server/.env.local` with the local database and security values. The
+frontend uses the same-origin `/api` path and Vite proxies it to port `5000`.
 
-```env
-# Database
-DB_HOST=localhost
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-DB_NAME=your_db_name
-
-# Encryption
-AES_KEY=your_64_char_hex_key_here
-AES_SEARCH_KEY=your_search_key_min_32_chars
-
-# Telegram Notification
-TELEGRAM_BOT_TOKEN=your_bot_token
-TELEGRAM_CHAT_ID=your_chat_id
-
-# Server
-PORT=5000
-```
-
-Start the server:
+Start the frontend and backend together:
 
 ```bash
-node index.js
-# 🚀 Server started on port 5000
+pnpm dev
+# Frontend: http://localhost:3001
+# Backend:  http://localhost:5000
 ```
 
-### 3. Frontend Setup
+Run the complete verification suite or preview the production build locally:
 
 ```bash
-cd app
-npm install
+pnpm verify
+pnpm preview:production
 ```
 
-Create a `.env` file in the `app/` directory:
-
-```env
-REACT_APP_API_URL=http://localhost:5000/api
-```
-
-Start the app:
-
-```bash
-npm start
-# Open browser at http://localhost:3000
-```
+See [DEPLOY.md](DEPLOY.md) for production packaging, IIS, PM2, and CI/CD.
 
 ---
 

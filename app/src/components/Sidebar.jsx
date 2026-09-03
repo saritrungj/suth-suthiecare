@@ -2,16 +2,15 @@ import React, { useState, useEffect, useRef } from "react";
 import "./Sidebar.css";
 import logo from "../assets/logoSUTH.png";
 import { NavLink, useNavigate, useLocation, Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  FiChevronLeft,
-  FiChevronDown,
-  FiLogOut,
-  FiCircle,
-  FiX,
-  FiBook,
-} from "react-icons/fi";
-import { getRolePermissions } from "../services/api";
-import { FaHospital, FaQuestionCircle } from "react-icons/fa";
+  faArrowRightFromBracket, faBars, faBookOpen, faBuilding, faCalendarDays,
+  faChevronDown, faChevronLeft, faCircle, faFilePen, faFolderOpen,
+  faGaugeHigh, faImages, faQuestionCircle, faTriangleExclamation,
+  faUserShield, faUsers, faUsersGear, faXmark,
+} from "@fortawesome/free-solid-svg-icons";
+import { usePermissions } from "../permissions/PermissionsProvider";
+import { getSelectableOrganizations } from "../permissions/organizationContext";
 
 // 🟢 Import SweetAlert2
 import Swal from "sweetalert2";
@@ -164,83 +163,108 @@ const rawMenuItems = [
   { type: "header", label: "หน้าหลัก", key: "header-overview" },
   {
     href: "/admin/dashboard",
-    icon: <DashboardIcon />,
+    icon: <FontAwesomeIcon icon={faGaugeHigh} fixedWidth />,
     label: "แดชบอร์ด",
     key: "dashboard",
+    module: "Dashboard",
   },
 
   // 🔵 หมวดทั่วไป
   { type: "header", label: "ทั่วไป", key: "header-management" },
   {
     href: "/admin/cases",
-    icon: <CaseIcon />,
+    icon: <FontAwesomeIcon icon={faFolderOpen} fixedWidth />,
     label: "ข้อมูลเคส",
     key: "cases",
+    module: "Case Management",
   },
   {
     href: "/admin/risk-cases",
-    icon: <RiskIcon />,
+    icon: <FontAwesomeIcon icon={faTriangleExclamation} fixedWidth />,
     label: "เคสเสี่ยง",
     key: "risk-cases",
+    module: "Case Management",
   },
   {
     href: "/admin/schedule",
-    icon: <CalendarIcon />,
+    icon: <FontAwesomeIcon icon={faCalendarDays} fixedWidth />,
     label: "ตารางนัดหมาย",
     key: "schedule",
+    module: "Appointments",
   },
 
   // 🟠 หมวดจัดการระบบ
   { type: "header", label: "การจัดการ", key: "header-setup" },
   {
     href: "/admin/forms",
-    icon: <FormIcon />,
+    icon: <FontAwesomeIcon icon={faFilePen} fixedWidth />,
     label: "จัดการฟอร์ม",
     key: "forms",
+    module: "Form Management",
   },
   {
     href: "/admin/clinics",
-    icon: <ClinicIcon />,
+    icon: <FontAwesomeIcon icon={faBuilding} fixedWidth />,
     label: "จัดการคลินิก",
     key: "clinics",
+    module: "Clinic Management",
+  },
+  {
+    href: "/admin/organizations",
+    icon: <FontAwesomeIcon icon={faBuilding} fixedWidth />,
+    label: "จัดการหน่วยงาน",
+    key: "organizations",
+    module: "organizations.manage",
   },
   {
     href: "/admin/help-center",
-    icon: <FaQuestionCircle size={22} />,
+    icon: <FontAwesomeIcon icon={faQuestionCircle} fixedWidth />,
     label: "จัดการศูนย์ช่วยเหลือ",
     key: "help-center",
+    module: "Help Center Management",
   },
   {
     href: "/admin/banner",
-    icon: <ContentIcon />,
+    icon: <FontAwesomeIcon icon={faImages} fixedWidth />,
     label: "จัดการภาพแบนเนอร์",
     key: "banner",
+    module: "Content Management",
   },
   // 🟢 เพิ่มคู่มือการใช้งานตรงนี้ พร้อมกำหนด isExternal เป็น true
   {
     href: "/docs/admin_manual.pdf",
-    icon: <FiBook size={22} />,
+    icon: <FontAwesomeIcon icon={faBookOpen} fixedWidth />,
     label: "คู่มือการใช้งาน",
     key: "manual",
     isExternal: true,
   },
   {
     href: "/admin/users",
-    icon: <UsersIcon />,
+    icon: <FontAwesomeIcon icon={faUsersGear} fixedWidth />,
     label: "จัดการผู้ใช้งาน",
     key: "users",
+    module: "User Management",
     children: [
       {
         href: "/admin/users",
-        icon: <FiCircle size={8} />,
-        label: "ผู้ใช้งานทั้งหมด",
+        icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />,
+        label: "ผู้ดูแลระบบและเจ้าหน้าที่",
         key: "users-list",
+        module: "User Management",
+      },
+      {
+        href: "/admin/members",
+        icon: <FontAwesomeIcon icon={faUsers} fixedWidth />,
+        label: "ผู้มารับบริการ",
+        key: "patient-members",
+        module: "User Management",
       },
       {
         href: "/admin/roles",
-        icon: <FiCircle size={8} />,
+        icon: <FontAwesomeIcon icon={faCircle} fixedWidth />,
         label: "บทบาทและสิทธิ์",
         key: "roles",
+        module: "Roles & Permissions",
       },
     ],
   },
@@ -276,38 +300,17 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  const currentUserStr =
-    sessionStorage.getItem("suth_user") || localStorage.getItem("suth_user");
-  const currentUser = currentUserStr ? JSON.parse(currentUserStr) : null;
-  const currentRoleId = currentUser ? Number(currentUser.role_id) : 3;
-
-  const [allowedRolesPage, setAllowedRolesPage] = useState(currentRoleId === 1);
-
-  useEffect(() => {
-    if (currentRoleId !== 1) {
-      getRolePermissions(currentRoleId)
-        .then((res) => {
-          const hasAccess = res.data.some(
-            (p) =>
-              p.module === "Roles & Permissions" &&
-              (p.can_view || p.can_manage || p.can_full),
-          );
-          setAllowedRolesPage(hasAccess);
-        })
-        .catch(() => {});
-    }
-  }, [currentRoleId]);
+  const { can, authorization, activeOrganization, setActiveOrganization } = usePermissions();
+  const selectableOrganizations = getSelectableOrganizations(authorization);
 
   const menuItems = rawMenuItems
     .map((item) => {
       if (item.children) {
-        const filteredChildren = item.children.filter((child) => {
-          if (child.key === "roles" && !allowedRolesPage) return false;
-          return true;
-        });
+        const filteredChildren = item.children.filter((child) => !child.module || can(child.module));
         if (filteredChildren.length === 0) return null;
         return { ...item, children: filteredChildren };
       }
+      if (item.module && !can(item.module)) return null;
       return item;
     })
     .filter(Boolean);
@@ -330,8 +333,9 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
 
   useEffect(() => {
     if (window.innerWidth <= 768 && menuRef.current) {
-      setTimeout(() => {
+      const scrollTimer = window.setTimeout(() => {
         const container = menuRef.current;
+        if (!container) return;
         const activeEl = container.querySelector(".active");
 
         if (activeEl) {
@@ -346,7 +350,9 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
           });
         }
       }, 100);
+      return () => window.clearTimeout(scrollTimer);
     }
+    return undefined;
   }, [location.pathname, activeKey]);
 
   // 🟢 จำตำแหน่งการ Scroll (แนวตั้ง) ของ Sidebar
@@ -410,20 +416,7 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
           onClick={() => setIsMobileOpen(true)}
           aria-label="Open Menu"
         >
-          <svg
-            width="26"
-            height="26"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#e36414"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
+          <FontAwesomeIcon icon={faBars} size="lg" />
         </button>
         <img src={logo} alt="SUTH Logo" className="mobile-header-logo" />
       </div>
@@ -442,7 +435,7 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
           onClick={() => setIsMobileOpen(false)}
           aria-label="Close Menu"
         >
-          <FiX size={26} />
+          <FontAwesomeIcon icon={faXmark} size="lg" />
         </button>
 
         <div className="top">
@@ -460,8 +453,8 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
             }}
             aria-label="Toggle sidebar"
           >
-            <FiChevronLeft
-              size={22}
+            <FontAwesomeIcon
+              icon={faChevronLeft}
               color="#c94e07"
               style={{
                 transform: collapsed ? "rotate(180deg)" : "rotate(0deg)",
@@ -470,6 +463,20 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
             />
           </button>
         </div>
+
+        {!collapsed && authorization && (
+          <div className="organization-switcher">
+            <label htmlFor="active-organization">หน่วยงานที่กำลังใช้งาน</label>
+            <select id="active-organization" value={activeOrganization || ""} onChange={(event) => setActiveOrganization(event.target.value)}>
+              {authorization.is_system_admin && <option value="all">ทุกหน่วยงาน</option>}
+              {selectableOrganizations.map((organization) => (
+                <option key={organization.id} value={organization.id}>
+                  {organization.name}{organization.roleName ? ` · ${organization.roleName}` : ""}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <nav className="menu" ref={menuRef}>
           {menuItems.map((item, index) => {
@@ -508,7 +515,7 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
                     <span className="icon">{item.icon}</span>
                     <span className="label">{item.label}</span>
                     <span className="arrow">
-                      {isOpen ? <FiChevronDown /> : <FiChevronLeft />}
+                      <FontAwesomeIcon icon={isOpen ? faChevronDown : faChevronLeft} fixedWidth />
                     </span>
                   </button>
 
@@ -583,7 +590,7 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
             data-label="ออกจากระบบ"
           >
             <span className="icon">
-              <FiLogOut />
+              <FontAwesomeIcon icon={faArrowRightFromBracket} fixedWidth />
             </span>
             <span className="label">ออกจากระบบ</span>
           </button>

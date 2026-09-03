@@ -1,0 +1,40 @@
+{
+  "name": "suthiecare-api",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch index.js",
+    "start": "node index.js",
+    "build": "node --check index.js",
+    "pm2:start": "pnpm --dir .. pm2:start",
+    "pm2:reload": "pnpm --dir .. pm2:restart",
+    "pm2:stop": "pnpm --dir .. pm2:stop",
+    "pm2:logs": "pnpm --dir .. pm2:logs",
+    "check:local:mysql": "node scripts/check-local-mysql.js",
+    "backfill:patient-account-identity": "node scripts/backfillPatientAccountIdentity.js",
+    "migrate:patient-account-identity": "node scripts/migratePatientAccountIdentity.js",
+    "migrate:user-name-storage": "node scripts/migrateUserNameStorage.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "axios": "^1.13.6",
+    "bcryptjs": "^3.0.3",
+    "compression": "^1.8.1",
+    "cors": "^2.8.6",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.3.1",
+    "helmet": "^8.2.0",
+    "ioredis": "^5.10.1",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.18.2",
+    "node-cache": "^5.1.2",
+    "react-turnstile": "^1.1.5",
+    "redis": "^5.12.1",
+    "sanitize-html": "^2.17.6",
+    "sharp": "^0.35.3",
+    "socket.io": "^4.8.3"
+  }
+}

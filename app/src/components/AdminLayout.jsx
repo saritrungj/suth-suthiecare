@@ -1,8 +1,10 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import { usePermissions } from "../permissions/PermissionsProvider";
 
 const AdminLayout = () => {
+  const { activeOrganization } = usePermissions();
   return (
     <div
       style={{
@@ -23,7 +25,7 @@ const AdminLayout = () => {
           overflow: "hidden",
         }}
       >
-        <Outlet />
+        <Outlet key={activeOrganization || "authorization-loading"} />
       </div>
     </div>
   );

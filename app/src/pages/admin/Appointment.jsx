@@ -8,10 +8,9 @@ import interactionPlugin from "@fullcalendar/interaction";
 import thLocale from "@fullcalendar/core/locales/th";
 
 import {
-  getFormResponses,
   getServices,
   getForms,
-  getCaseAppointments,
+  getAppointments,
   updateAppointmentStatus,
   getActiveClinics,
 } from "../../services/api";
@@ -24,6 +23,9 @@ import {
   FiChevronDown,
   FiSearch,
 } from "react-icons/fi";
+import { bangkokDateKey, formatBangkokDate, getCurrentMonthDateRange } from "../../utils/caseDateFilter";
+import { usePermissions } from "../../permissions/PermissionsProvider";
+import { showErrorAlert, showSuccessToast } from "../../utils/alerts";
 import "./Appointment.css";
 
 const CustomDropdown = ({
@@ -120,6 +122,7 @@ function getRiskLevel(summary_data) {
 }
 
 export default function Appointment() {
+  const { activeOrganization } = usePermissions();
   /* ================= STATE ================= */
   const [calendarMode, setCalendarMode] = useState(false);
 
@@ -127,8 +130,9 @@ export default function Appointment() {
   const [filterService, setFilterService] = useState("");
   const [filterRisk, setFilterRisk] = useState("");
 
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [initialDateRange] = useState(getCurrentMonthDateRange);
+  const [startDate, setStartDate] = useState(initialDateRange.startDate);
+  const [endDate, setEndDate] = useState(initialDateRange.endDate);
 
   const [isInitialSetup, setIsInitialSetup] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
@@ -146,59 +150,41 @@ export default function Appointment() {
   });
 
   const [forms, setForms] = useState([]);
-  const [selectedFormId, setSelectedFormId] = useState("");
+  const [selectedFormId, setSelectedFormId] = useState("all");
   const [selectedClinic, setSelectedClinic] = useState("");
   const [formStatusFilter, setFormStatusFilter] = useState("published");
 
   /* ================= DATA FETCHING ================= */
-  const fetchAppointments = useCallback(async (formId) => {
-    if (!formId) return;
-
+  const fetchAppointments = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res = await getFormResponses(formId);
+      const res = await getAppointments({ startDate, endDate, limit: "all" });
+      setAppointments(
+        res.data.map((appointment) => {
+          const summary =
+            typeof appointment.summary_data === "string"
+              ? JSON.parse(appointment.summary_data)
+              : appointment.summary_data || {};
+          const realRisk = getRiskLevel(summary);
 
-      const appointmentPromises = res.data.map((caseData) =>
-        getCaseAppointments(caseData.id)
-          .then((apptRes) => {
-            const summary =
-              typeof caseData.summary_data === "string"
-                ? JSON.parse(caseData.summary_data)
-                : caseData.summary_data || {};
-
-            const realRisk = getRiskLevel(summary);
-            const overallRisk =
-              caseData.overall_risk || summary.overall_risk || realRisk;
-
-            return apptRes.data.map((appt) => ({
-              ...appt,
-              appointment_id: appt.id,
-              appt_status: appt.status,
-              case_id: caseData.id,
-              master_case_id: caseData.master_case_id,
-              form_id: caseData.form_id || formId,
-              form_title: caseData.form_title,
-              identity_value: caseData.identity_value,
-              risk_level: realRisk,
-              overall_risk: overallRisk,
-              status: caseData.status,
-              submitted_at: caseData.submitted_at,
-              summary_data: summary,
-            }));
-          })
-          .catch(() => []),
+          return {
+            ...appointment,
+            appointment_id: appointment.appointment_id || appointment.id,
+            appt_status: appointment.appt_status || appointment.status,
+            status: appointment.case_status || appointment.status,
+            risk_level: realRisk,
+            overall_risk:
+              appointment.overall_risk || summary.overall_risk || realRisk,
+            summary_data: summary,
+          };
+        }),
       );
-
-      const appointmentsData = await Promise.all(appointmentPromises);
-      const allAppointments = appointmentsData.flat();
-
-      setAppointments(allAppointments);
     } catch (error) {
       setAppointments([]);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [startDate, endDate]);
 
   const filteredForms = useMemo(() => {
     let list = forms;
@@ -217,25 +203,20 @@ export default function Appointment() {
   useEffect(() => {
     if (forms.length === 0) return;
     if (filteredForms.length > 0) {
+      if (selectedFormId === "all") return;
       const isValid = filteredForms.some(
         (f) => String(f.id) === String(selectedFormId),
       );
       if (!isValid) setSelectedFormId(filteredForms[0].id);
     } else {
-      setSelectedFormId("");
-      setAppointments([]);
+      setSelectedFormId("all");
     }
   }, [forms.length, filteredForms, selectedFormId]);
 
   useEffect(() => {
     if (isInitialSetup) return;
-    if (!selectedFormId) {
-      setIsLoading(false);
-      setAppointments([]);
-      return;
-    }
-    fetchAppointments(selectedFormId);
-  }, [selectedFormId, fetchAppointments, isInitialSetup]);
+    fetchAppointments();
+  }, [fetchAppointments, isInitialSetup, activeOrganization]);
 
   const fetchServices = async () => {
     const res = await getServices();
@@ -254,6 +235,8 @@ export default function Appointment() {
 
   useEffect(() => {
     const loadInitial = async () => {
+      setIsInitialSetup(true);
+      setAppointments([]);
       await Promise.all([
         fetchServices().catch(() => {}),
         fetchForms().catch(() => {}),
@@ -262,7 +245,7 @@ export default function Appointment() {
       setIsInitialSetup(false);
     };
     loadInitial();
-  }, []);
+  }, [activeOrganization]);
 
   /* ================= FILTER LOGIC ================= */
   const filteredAppointments = useMemo(() => {
@@ -310,23 +293,34 @@ export default function Appointment() {
       const matchService =
         filterService === "" || String(a.service_id) === filterService;
       const matchRisk = filterRisk === "" || riskLevel === filterRisk;
+      const matchForm =
+        selectedFormId === "all" ||
+        String(a.form_id) === String(selectedFormId);
+      const matchClinic =
+        selectedClinic === "" || a.clinic_type === selectedClinic;
+      const matchFormStatus =
+        formStatusFilter === "all" ||
+        (formStatusFilter === "published"
+          ? !a.form_id || a.form_status === "published"
+          : a.form_status !== "published");
 
-      let matchDate = true;
-      if (a.appointment_date) {
-        const apptDate = new Date(a.appointment_date);
-        if (startDate) {
-          const start = new Date(startDate);
-          start.setHours(0, 0, 0, 0);
-          if (apptDate < start) matchDate = false;
-        }
-        if (endDate) {
-          const end = new Date(endDate);
-          end.setHours(23, 59, 59, 999);
-          if (apptDate > end) matchDate = false;
-        }
-      }
+      const appointmentDateKey = a.appointment_date
+        ? bangkokDateKey(a.appointment_date)
+        : "";
+      const matchDate =
+        !appointmentDateKey ||
+        ((!startDate || appointmentDateKey >= startDate) &&
+          (!endDate || appointmentDateKey <= endDate));
 
-      return matchSearch && matchService && matchRisk && matchDate;
+      return (
+        matchSearch &&
+        matchService &&
+        matchRisk &&
+        matchForm &&
+        matchClinic &&
+        matchFormStatus &&
+        matchDate
+      );
     });
   }, [
     appointments,
@@ -336,6 +330,9 @@ export default function Appointment() {
     startDate,
     endDate,
     servicesList,
+    selectedFormId,
+    selectedClinic,
+    formStatusFilter,
   ]);
 
   /* ================= HANDLERS ================= */
@@ -381,16 +378,16 @@ export default function Appointment() {
           return a;
         }),
       );
+      await showSuccessToast("อัปเดตสถานะนัดหมายเรียบร้อยแล้ว");
     } catch (err) {
-      alert("เกิดข้อผิดพลาดในการอัปเดตสถานะคิว");
+      await showErrorAlert({ error: err, title: "อัปเดตสถานะนัดหมายไม่สำเร็จ" });
     }
   };
 
   // ฟังก์ชันแปลงรูปแบบ YYYY-MM-DD ให้เป็น วว/ดด/ปปปป (พ.ศ.)
   const displayThaiDate = (dateString) => {
     if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("th-TH", {
+    return formatBangkokDate(dateString, "th-TH", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -446,10 +443,13 @@ export default function Appointment() {
                 isInitialSetup
                   ? [{ value: "", label: "กำลังโหลดแบบฟอร์ม..." }]
                   : filteredForms.length > 0
-                    ? filteredForms.map((f) => ({
+                    ? [
+                        { value: "all", label: "ทุกแบบฟอร์ม" },
+                        ...filteredForms.map((f) => ({
                         value: f.id,
                         label: f.title,
-                      }))
+                        })),
+                      ]
                     : [{ value: "", label: "-- ไม่มีแบบฟอร์ม --" }]
               }
               style={{ flex: "1 1 300px" }} /* บังคับยืดสุดขอบ */
@@ -898,10 +898,10 @@ export default function Appointment() {
           data={selectedCase}
           onClose={() => setSelectedCase(null)}
           onCaseUpdated={() => {
-            fetchAppointments(selectedFormId);
+            fetchAppointments();
           }}
           onCaseDeleted={() => {
-            fetchAppointments(selectedFormId);
+            fetchAppointments();
             setSelectedCase(null);
           }}
         />

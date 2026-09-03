@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import Cropper from "react-easy-crop";
 import { FiPlus, FiArrowLeft } from "react-icons/fi";
 import "./AddBannerModal.css";
+import { showErrorAlert, showInfoAlert } from "../utils/alerts";
 
 // ฟังก์ชันครอปรูปภาพ
 const getCroppedImg = async (imageSrc, pixelCrop) => {
@@ -97,18 +98,17 @@ export default function AddBannerModal({ onClose, onSave }) {
       setCroppedImage(cropped);
       setIsCropping(false);
     } catch (e) {
-      alert("เกิดข้อผิดพลาดในการประมวลผลรูปภาพ กรุณาลองใหม่อีกครั้ง");
+      await showErrorAlert({ error: e, title: "ประมวลผลรูปภาพไม่สำเร็จ" });
     }
   };
 
-  const handleSave = () => {
-    if (!croppedImage) return alert("กรุณาเลือกและตัดรูปภาพก่อน");
+  const handleSave = async () => {
+    if (!croppedImage) return showInfoAlert({ title: "ยังไม่ได้เตรียมรูปภาพ", text: "กรุณาเลือกและตัดรูปภาพก่อนบันทึก" });
 
     const finalFilename = filename
       ? filename.replace(/\.[^/.]+$/, ".jpg")
       : `banner_${Date.now()}.jpg`;
-    onSave({ image: croppedImage, filename: finalFilename, link: link });
-    onClose();
+    await onSave({ image: croppedImage, filename: finalFilename, link: link });
   };
 
   return (

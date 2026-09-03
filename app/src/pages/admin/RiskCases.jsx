@@ -8,6 +8,8 @@ import {
   getFormResponses,
   getActiveClinics,
 } from "../../services/api";
+import { getCurrentMonthDateRange, isCaseInDateRange, normaliseDateRange } from "../../utils/caseDateFilter";
+import { usePermissions } from "../../permissions/PermissionsProvider";
 import {
   FiFolder,
   FiSettings,
@@ -183,6 +185,7 @@ const CustomDropdown = ({
 };
 
 export default function RiskCases() {
+  const { activeOrganization } = usePermissions();
   const [search, setSearch] = useState("");
   const [faculty, setFaculty] = useState("");
   const [selectedCase, setSelectedCase] = useState(null);
@@ -200,8 +203,9 @@ export default function RiskCases() {
   const [clinicFilter, setClinicFilter] = useState("all");
   const [formStatusFilter, setFormStatusFilter] = useState("published");
 
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [initialDateRange] = useState(getCurrentMonthDateRange);
+  const [startDate, setStartDate] = useState(initialDateRange.startDate);
+  const [endDate, setEndDate] = useState(initialDateRange.endDate);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -214,6 +218,9 @@ export default function RiskCases() {
 
   useEffect(() => {
     const fetchInitialData = async () => {
+      setIsInitialSetup(true);
+      setResponses([]);
+      setCurrentFormDetails(null);
       try {
         const [clinicRes, formsRes] = await Promise.all([
           getActiveClinics().catch(() => ({ data: { data: [] } })),
@@ -239,7 +246,7 @@ export default function RiskCases() {
       }
     };
     fetchInitialData();
-  }, []);
+  }, [activeOrganization]);
 
   const filteredFormsList = useMemo(() => {
     let list = forms;
@@ -291,17 +298,18 @@ export default function RiskCases() {
         }
         setCurrentFormDetails(formDetails);
 
-        const allResponsesPromises = forms.map((f) => getFormResponses(f.id));
-        const allResResults = await Promise.all(allResponsesPromises);
-        const allParsedResponses = allResResults.flatMap((responseRes) =>
-          responseRes.data.map((r) => ({
-            ...r,
-            summary_data:
-              typeof r.summary_data === "string"
-                ? JSON.parse(r.summary_data)
-                : r.summary_data || {},
-          })),
-        );
+        const responseRes = await getFormResponses(targetFormId, {
+          startDate,
+          endDate,
+          limit: "all",
+        });
+        const allParsedResponses = responseRes.data.map((r) => ({
+          ...r,
+          summary_data:
+            typeof r.summary_data === "string"
+              ? JSON.parse(r.summary_data)
+              : r.summary_data || {},
+        }));
         setResponses(allParsedResponses);
 
         const realQuestions = formDetails.questions.filter(
@@ -316,7 +324,7 @@ export default function RiskCases() {
     };
 
     fetchAllData();
-  }, [selectedFormId, forms]);
+  }, [selectedFormId, forms, startDate, endDate]);
 
   const filteredData = useMemo(() => {
     const mappedData = responses.map((res) => {
@@ -348,24 +356,7 @@ export default function RiskCases() {
         (res.identity_value && res.identity_value.includes(search));
       const matchFaculty = faculty === "" || resFaculty.includes(faculty);
 
-      let matchDate = true;
-      if (res.submitted_at) {
-        const submitDate = new Date(res.submitted_at);
-        submitDate.setHours(0, 0, 0, 0);
-
-        if (startDate) {
-          const start = new Date(startDate);
-          start.setHours(0, 0, 0, 0);
-          if (submitDate < start) matchDate = false;
-        }
-        if (endDate) {
-          const end = new Date(endDate);
-          end.setHours(23, 59, 59, 999);
-          if (submitDate > end) matchDate = false;
-        }
-      } else if (startDate || endDate) {
-        matchDate = false;
-      }
+      const matchDate = isCaseInDateRange(res, startDate, endDate);
       return matchSearch && matchFaculty && matchDate;
     });
   }, [responses, search, faculty, selectedFormId, startDate, endDate]);
@@ -391,6 +382,18 @@ export default function RiskCases() {
     if (!dateString) return "";
     const [year, month, day] = dateString.split("-");
     return `${day}/${month}/${parseInt(year) + 543}`;
+  };
+
+  const handleStartDateChange = (nextStartDate) => {
+    const [safeStartDate, safeEndDate] = normaliseDateRange(nextStartDate, endDate);
+    setStartDate(safeStartDate);
+    setEndDate(safeEndDate);
+  };
+
+  const handleEndDateChange = (nextEndDate) => {
+    const [safeStartDate, safeEndDate] = normaliseDateRange(startDate, nextEndDate);
+    setStartDate(safeStartDate);
+    setEndDate(safeEndDate);
   };
 
   return (
@@ -484,7 +487,7 @@ export default function RiskCases() {
                     type="date"
                     className="rc-date-native-hidden"
                     value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
+                    onChange={(e) => handleStartDateChange(e.target.value)}
                     onClick={(e) =>
                       e.target.showPicker && e.target.showPicker()
                     }
@@ -506,7 +509,8 @@ export default function RiskCases() {
                     type="date"
                     className="rc-date-native-hidden"
                     value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
+                    onChange={(e) => handleEndDateChange(e.target.value)}
+                    min={startDate || undefined}
                     onClick={(e) =>
                       e.target.showPicker && e.target.showPicker()
                     }

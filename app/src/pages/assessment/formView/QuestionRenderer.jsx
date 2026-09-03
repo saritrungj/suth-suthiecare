@@ -152,8 +152,9 @@ const QuestionRenderer = ({
             className="clear-question-btn"
             onClick={() => handleClearQuestionAnswer(q.id)}
             title="ล้างคำตอบข้อนี้"
+            aria-label="ล้างคำตอบข้อนี้"
           >
-            <FiRefreshCw /> ล้างคำตอบ
+            <FiRefreshCw /> <span>ล้างคำตอบ</span>
           </button>
         )}
       </div>

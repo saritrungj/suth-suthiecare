@@ -50,27 +50,71 @@
 ========================================================= */
 .fm-admin-layout {
   display: flex;
-  min-height: 100vh;
-  background-color: #ffffff;
+  min-height: 100%;
+  background-color: #f8fafc;
+  font-family: "Noto Sans Thai", sans-serif;
 }
 
 .fm-main-content {
   flex: 1;
-  padding: 40px;
+  padding: 30px 40px;
+  background-color: #f8fafc;
   /* 🟢 ป้องกันการล้นจอ */
   max-width: 100%;
   overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.fm-content-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 25px 35px;
+  margin-bottom: 30px;
+  background: #ffffff;
+  border-left: 6px solid #f47932;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.fm-header-info {
+  min-width: 0;
 }
 
 .fm-content-header h2 {
   font-family: "Noto Sans Thai", sans-serif;
-  font-size: 32px;
+  font-size: 26px;
+  font-weight: 800;
+  margin: 0 0 6px;
+  color: #f47932;
+}
+
+.fm-header-hint {
+  margin: 0;
+  color: #64748b;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.fm-context-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  color: #0f4c5c;
+  font-family: "Noto Sans Thai", sans-serif;
+  font-size: 13px;
   font-weight: 700;
-  margin-bottom: 24px;
-  color: #f47b20;
-  /* 🟢 Animation */
-  opacity: 0;
-  animation: fmFadeInDown 0.5s ease-out forwards;
+}
+.fm-context-indicator span {
+  padding: 3px 8px;
+  color: #fff7ed;
+  background: #c2410c;
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: .01em;
 }
 
 /* =========================================================
@@ -82,8 +126,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  background: transparent;
-  margin-bottom: 30px;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #f1f1f1;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  margin-bottom: 24px;
   flex-wrap: wrap;
 }
 
@@ -280,6 +328,40 @@
    RESPONSIVE สำหรับ Action Tools
 ========================================================= */
 @media (max-width: 768px) {
+  .fm-main-content {
+    padding: 16px;
+  }
+
+  .fm-content-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 15px;
+  }
+
+  .fm-content-header h2 {
+    font-size: 20px;
+  }
+
+  .fm-header-hint {
+    font-size: 13px;
+  }
+
+  .fm-content-header .fm-btn-add-form {
+    width: 100%;
+  }
+
+  .fm-action-bar {
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .fm-search-group {
+    min-width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+  }
+
   .fm-action-tools {
     flex-wrap: wrap;
     justify-content: space-between;
@@ -429,6 +511,12 @@
   font-size: 13px;
   color: #5f6368;
   margin: 0;
+}
+
+.fm-organization-tag {
+  display: inline-flex; max-width: 100%; margin-top: 6px; padding: 3px 8px;
+  overflow: hidden; color: #155e75; background: #ecfeff; border: 1px solid #a5f3fc;
+  border-radius: 999px; font-size: 11px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap;
 }
 
 /* ปุ่ม 3 จุด */
@@ -804,7 +892,7 @@
 
 @media (max-width: 1024px) {
   .fm-main-content {
-    padding: 30px 20px;
+    padding: 30px 40px;
   }
   .fm-search-group input {
     width: 250px;
@@ -820,7 +908,7 @@
   }
 
   .fm-main-content {
-    padding: 20px 15px;
+    padding: 16px;
   }
 
   .fm-action-bar {

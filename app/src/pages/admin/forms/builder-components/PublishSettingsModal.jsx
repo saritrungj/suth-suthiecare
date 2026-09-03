@@ -23,6 +23,10 @@ const PublishSettingsModal = ({
   setPublishStartDate,
   publishEndDate,
   setPublishEndDate,
+  loginEnforcement,
+  setLoginEnforcement,
+  resultDisplayMode,
+  setResultDisplayMode,
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [clinics, setClinics] = useState([]);
@@ -375,6 +379,211 @@ const PublishSettingsModal = ({
                 </div>
               </div>
             )}
+          </div>
+          {/* 5. การเข้าถึงแบบประเมิน */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+              marginTop: "4px",
+            }}
+          >
+            <label
+              style={{
+                fontWeight: "bold",
+                fontSize: "14.5px",
+                color: "#0f172a",
+              }}
+            >
+              การเข้าถึงแบบประเมิน
+            </label>
+            {[
+              {
+                value: "none",
+                label: "เปิดให้เข้าถึงได้เลย",
+                desc: "ไม่ต้องเข้าสู่ระบบ ผู้ใช้ทำแบบประเมินได้ทันที",
+                color: "#16a34a",
+                bgColor: "#dcfce7",
+              },
+              {
+                value: "optional",
+                label: "แนะนำให้เข้าสู่ระบบ",
+                desc: "แสดงข้อความแจ้งให้เข้าสู่ระบบ แต่ยังสามารถทดลองทำได้",
+                color: "#d97706",
+                bgColor: "#fef3c7",
+              },
+              {
+                value: "strict",
+                label: "บังคับเข้าสู่ระบบ",
+                desc: "ต้องเข้าสู่ระบบก่อนจึงจะดูและทำแบบประเมินได้",
+                color: "#dc2626",
+                bgColor: "#fee2e2",
+              },
+            ].map((opt) => (
+              <div
+                key={opt.value}
+                onClick={() => setLoginEnforcement(opt.value)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  cursor: "pointer",
+                  padding: "10px 12px",
+                  borderRadius: "8px",
+                  border: `2px solid ${loginEnforcement === opt.value ? opt.color : "#cbd5e1"}`,
+                  background: loginEnforcement === opt.value ? opt.bgColor : "white",
+                  transition: "all 0.2s",
+                }}
+              >
+                <div
+                  style={{
+                    width: "18px",
+                    height: "18px",
+                    borderRadius: "50%",
+                    border: `2px solid ${loginEnforcement === opt.value ? opt.color : "#94a3b8"}`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  {loginEnforcement === opt.value && (
+                    <div
+                      style={{
+                        width: "10px",
+                        height: "10px",
+                        borderRadius: "50%",
+                        background: opt.color,
+                      }}
+                    />
+                  )}
+                </div>
+                <div>
+                  <div
+                    style={{
+                      fontWeight: "600",
+                      fontSize: "14px",
+                      color: "#0f172a",
+                    }}
+                  >
+                    {opt.label}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "#64748b",
+                      marginTop: "2px",
+                    }}
+                  >
+                    {opt.desc}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* 6. โหมดการแสดงผลลัพธ์ */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+              background: "#f8fafc",
+              padding: "16px",
+              borderRadius: "8px",
+              border: "1px solid #e2e8f0",
+            }}
+          >
+            <label
+              style={{
+                fontWeight: "bold",
+                fontSize: "14.5px",
+                color: "#0f172a",
+              }}
+            >
+              โหมดการแสดงผลลัพธ์แบบประเมิน
+            </label>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div
+                onClick={() => setResultDisplayMode("realtime")}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  cursor: "pointer",
+                  padding: "10px 12px",
+                  borderRadius: "8px",
+                  border: `2px solid ${resultDisplayMode === "realtime" ? "#1967d2" : "#cbd5e1"}`,
+                  background: resultDisplayMode === "realtime" ? "#eff6ff" : "white",
+                  transition: "all 0.2s",
+                }}
+              >
+                <div
+                  style={{
+                    width: "16px",
+                    height: "16px",
+                    borderRadius: "50%",
+                    border: `2px solid ${resultDisplayMode === "realtime" ? "#1967d2" : "#94a3b8"}`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  {resultDisplayMode === "realtime" && (
+                    <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#1967d2" }} />
+                  )}
+                </div>
+                <div>
+                  <div style={{ fontWeight: "600", fontSize: "14px", color: "#0f172a" }}>
+                    แสดงผลแบบเรียลไทม์
+                  </div>
+                  <div style={{ fontSize: "12px", color: "#64748b", marginTop: "2px" }}>
+                    ผลลัพธ์และคะแนนมีการอัปเดตทันทีขณะกรอกแบบฟอร์ม
+                  </div>
+                </div>
+              </div>
+              <div
+                onClick={() => setResultDisplayMode("on_submit")}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  cursor: "pointer",
+                  padding: "10px 12px",
+                  borderRadius: "8px",
+                  border: `2px solid ${resultDisplayMode === "on_submit" ? "#1967d2" : "#cbd5e1"}`,
+                  background: resultDisplayMode === "on_submit" ? "#eff6ff" : "white",
+                  transition: "all 0.2s",
+                }}
+              >
+                <div
+                  style={{
+                    width: "16px",
+                    height: "16px",
+                    borderRadius: "50%",
+                    border: `2px solid ${resultDisplayMode === "on_submit" ? "#1967d2" : "#94a3b8"}`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexShrink: 0,
+                  }}
+                >
+                  {resultDisplayMode === "on_submit" && (
+                    <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#1967d2" }} />
+                  )}
+                </div>
+                <div>
+                  <div style={{ fontWeight: "600", fontSize: "14px", color: "#0f172a" }}>
+                    แสดงผลหลังส่งแบบประเมิน
+                  </div>
+                  <div style={{ fontSize: "12px", color: "#64748b", marginTop: "2px" }}>
+                    ซ่อนผลลัพธ์ระหว่างกรอก แสดงเฉพาะหลังส่งแบบฟอร์มสำเร็จ
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

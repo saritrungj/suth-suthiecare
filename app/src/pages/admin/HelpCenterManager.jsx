@@ -29,22 +29,9 @@ import {
 import "./HelpCenterManager.css";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
-import ReactQuill from "react-quill-new";
-import "react-quill-new/dist/quill.snow.css";
+import RichTextInput from "./forms/builder-components/RichTextInput";
 
 const MySwal = withReactContent(Swal);
-
-const quillModules = {
-  toolbar: [
-    ["bold", "italic", "underline", "strike"],
-    [{ color: [] }, { background: [] }],
-    [{ script: "sub" }, { script: "super" }],
-    [{ header: [1, 2, 3, false] }],
-    [{ list: "ordered" }, { list: "bullet" }],
-    [{ align: [] }],
-    ["link", "image"],
-  ],
-};
 
 export default function HelpCenterManager() {
   const [faqs, setFaqs] = useState([]);
@@ -306,6 +293,7 @@ export default function HelpCenterManager() {
       }
       fetchCategoriesForForm(catSelectedClinic);
       fetchFaqs();
+      MySwal.fire({ icon: "success", title: "บันทึกลำดับหมวดหมู่แล้ว", toast: true, position: "top-end", timer: 1500, showConfirmButton: false });
     } catch (err) {
       console.error(err);
       MySwal.fire("ข้อผิดพลาด", "ไม่สามารถบันทึกลำดับหมวดหมู่ได้", "error");
@@ -577,6 +565,7 @@ export default function HelpCenterManager() {
         }
       }
       fetchFaqs();
+      MySwal.fire({ icon: "success", title: "บันทึกลำดับคำถามแล้ว", toast: true, position: "top-end", timer: 1500, showConfirmButton: false });
     } catch (err) {
       MySwal.fire(
         "ข้อผิดพลาด",
@@ -1335,14 +1324,14 @@ export default function HelpCenterManager() {
                       border: "1px solid #cbd5e1",
                     }}
                   >
-                    <ReactQuill
-                      theme="snow"
-                      modules={quillModules}
+                    <RichTextInput
+                      showLists
                       placeholder="พิมพ์เนื้อหาคำตอบ"
                       value={faqForm.answer}
                       onChange={(content) =>
                         setFaqForm({ ...faqForm, answer: content })
                       }
+                      style={{ minHeight: "180px", padding: "14px" }}
                     />
                   </div>
                 </div>

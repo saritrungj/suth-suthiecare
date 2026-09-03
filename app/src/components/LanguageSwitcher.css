@@ -1,0 +1,47 @@
+.language-switcher {
+  min-height: 2.75rem;
+  min-width: 4.25rem;
+  padding: 0.625rem 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 2.5rem;
+  background: rgba(15, 34, 52, 0.88);
+  color: #ffffff;
+  font-family: "Sarabun", "Noto Sans Thai", system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 180ms ease-out, border-color 180ms ease-out, color 180ms ease-out;
+}
+
+.language-switcher:hover {
+  border-color: #ffb17f;
+  background: #213b55;
+}
+
+.language-switcher--dark {
+  border-color: #c9d5de;
+  background: #f7fafb;
+  color: #29465b;
+}
+
+.language-switcher--dark:hover {
+  border-color: #e98248;
+  background: #fff0e8;
+  color: #7e310c;
+}
+
+.language-switcher:focus-visible {
+  outline: 3px solid rgba(244, 121, 50, 0.4);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .language-switcher {
+    transition-duration: 0.01ms;
+  }
+}

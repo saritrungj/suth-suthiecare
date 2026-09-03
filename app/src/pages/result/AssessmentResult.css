@@ -142,6 +142,11 @@ body {
   animation: arFadeInUp 0.5s ease-out forwards;
 }
 
+.ar-result-card--total {
+  border-color: #bfdbfe;
+  background: #f8fbff;
+}
+
 .ar-result-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);

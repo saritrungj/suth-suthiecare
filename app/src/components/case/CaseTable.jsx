@@ -241,7 +241,7 @@ export default function CaseTable({
               const patientName =
                 summary.display_name && summary.display_name !== "-"
                   ? stripHtml(summary.display_name)
-                  : "ไม่ระบุชื่อผู้ป่วย";
+                  : row.submitted_by?.display_name || "ไม่ระบุชื่อผู้ป่วย";
 
               return (
                 <tr key={row.id}>
@@ -260,13 +260,6 @@ export default function CaseTable({
                     >
                       {patientName}
                     </button>
-                    {summary.display_faculty &&
-                      summary.display_faculty !== "-" &&
-                      viewMode === "master" && (
-                        <div className="faculty-desc">
-                          {stripHtml(summary.display_faculty)}
-                        </div>
-                      )}
                   </td>
 
                   {viewMode === "master" ? (

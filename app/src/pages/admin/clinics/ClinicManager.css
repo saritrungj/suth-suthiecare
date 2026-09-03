@@ -65,6 +65,24 @@
   font-weight: 500;
 }
 
+.cm-context-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 0 !important;
+  color: #0f4c5c !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+.cm-context-indicator span {
+  padding: 3px 8px;
+  color: #fff7ed;
+  background: #c2410c;
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: .01em;
+}
+
 /* ============================================================
    BUTTONS 
    ============================================================ */
@@ -172,6 +190,12 @@
 }
 .cm-col-name {
   min-width: 250px;
+}
+.cm-col-organization { min-width: 260px; white-space: normal; }
+.cm-organization-tag {
+  display: inline; padding: 4px 9px;
+  color: #155e75; background: #ecfeff; border: 1px solid #a5f3fc;
+  border-radius: 999px; font-size: 12px; font-weight: 700; line-height: 1.75; white-space: normal; overflow-wrap: anywhere;
 }
 .cm-col-status {
   width: 160px;
@@ -343,6 +367,13 @@
   color: #0f172a;
   font-weight: 800;
 }
+.cm-organization-field {
+  padding: 14px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+}
+.cm-organization-field select { background: #fff; }
 .cm-close-btn-custom {
   position: absolute;
   top: 20px;

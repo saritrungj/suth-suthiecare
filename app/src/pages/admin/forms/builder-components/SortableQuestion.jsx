@@ -87,7 +87,6 @@ const QUESTION_TYPES = [
     options: [
       { value: "full_name", label: "ชื่อ-นามสกุล", icon: <FaUser /> },
       { value: "phone_number", label: "เบอร์โทรศัพท์", icon: <FaPhoneAlt /> },
-      { value: "national_id", label: "เลขบัตรประชาชน", icon: <FaIdCard /> },
       { value: "faculty", label: "สำนักวิชา / หน่วยงาน", icon: <FaBuilding /> },
       { value: "user_status", label: "สถานะ / อาชีพ", icon: <FaBriefcase /> },
       {

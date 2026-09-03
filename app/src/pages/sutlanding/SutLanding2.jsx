@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
-  FiClock,
-  FiLogIn,
   FiChevronLeft,
   FiChevronRight,
   FiCheckCircle,
@@ -11,14 +9,20 @@ import {
   FiPhoneCall,
   FiArrowLeft,
   FiHelpCircle,
+  FiMenu,
+  FiX,
+  FiExternalLink,
 } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher.jsx";
+import PatientAccountMenu from "../../components/PatientAccountMenu.jsx";
 import "./SutLanding2.css";
 
 import logo from "../../assets/logoSUTH.png";
 import bgHealth from "../../assets/bg-health.jpg";
 import bgClinic from "../../assets/bg-new.jpg";
+import siteVitalcare from "../../assets/vitalcare.png";
+import siteAct from "../../assets/act.suth.png";
 import { formCache } from "../../services/cache";
 import api, {
   getForms,
@@ -29,6 +33,7 @@ import { translateTextSmart } from "../../utils/translator";
 
 const SLIDE_INTERVAL = 6000;
 const CARD_THEMES = ["sut2-card--blue", "sut2-card--pink", "sut2-card--green"];
+const PROJECT_START_YEAR = 2026;
 
 function stripHtml(html) {
   if (!html) return "";
@@ -55,6 +60,9 @@ function FormCard({ form, themeClass, count, isLoaded }) {
   const [displayDesc, setDisplayDesc] = useState(
     stripHtml(form.description || t("form_card.default_desc")),
   );
+  const participantCount = Number(count).toLocaleString();
+  const participantText = t("form_card.participants", { count: participantCount });
+  const participantCountPosition = participantText.indexOf(participantCount);
 
   useEffect(() => {
     const title = form.title || t("form_card.no_title");
@@ -73,8 +81,15 @@ function FormCard({ form, themeClass, count, isLoaded }) {
     <article
       className={`sut2-card ${themeClass}`}
       onClick={() => navigate(`/assessment/${form.id}`)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          navigate(`/assessment/${form.id}`);
+        }
+      }}
       role="button"
       tabIndex={0}
+      aria-label={displayTitle}
     >
       {/* ===== Band ด้านบน ===== */}
       <div
@@ -85,6 +100,8 @@ function FormCard({ form, themeClass, count, isLoaded }) {
             className="sut2-card__band-img"
             src={displayImage}
             alt={form.title}
+            loading="lazy"
+            decoding="async"
           />
         )}
       </div>
@@ -103,9 +120,15 @@ function FormCard({ form, themeClass, count, isLoaded }) {
           </span>
         ) : (
           <span className="sut2-card__count-text">
-            {t("form_card.participants", {
-              count: Number(count).toLocaleString(),
-            })}
+            {participantCountPosition >= 0 ? (
+              <>
+                {participantText.slice(0, participantCountPosition)}
+                <strong>{participantCount}</strong>
+                {participantText.slice(participantCountPosition + participantCount.length)}
+              </>
+            ) : (
+              participantText
+            )}
           </span>
         )}
       </div>
@@ -119,6 +142,12 @@ export default function SutLanding2() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const [appVersion, setAppVersion] = useState("");
+  const currentYear = new Date().getFullYear();
+  const copyrightYears =
+    currentYear > PROJECT_START_YEAR
+      ? `${PROJECT_START_YEAR}–${currentYear}`
+      : `${PROJECT_START_YEAR}`;
 
   const [slides, setSlides] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -138,11 +167,159 @@ export default function SutLanding2() {
 
   const pollRef = useRef(null);
   const scrollContainerRef = useRef(null);
+  const dragStateRef = useRef({
+    pointerId: null,
+    startX: 0,
+    startScrollLeft: 0,
+    lastX: 0,
+    lastTime: 0,
+    velocity: 0,
+    hasMoved: false,
+    momentumFrame: null,
+  });
+  const suppressClickRef = useRef(false);
+
+  const stopScrollerMomentum = useCallback((container = scrollContainerRef.current) => {
+    if (dragStateRef.current.momentumFrame) {
+      window.cancelAnimationFrame(dragStateRef.current.momentumFrame);
+      dragStateRef.current.momentumFrame = null;
+    }
+    container?.classList.remove("sut2-is-dragging");
+  }, []);
+
+  const startScrollerMomentum = useCallback((container, initialVelocity) => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion || Math.abs(initialVelocity) < 0.08) {
+      container.classList.remove("sut2-is-dragging");
+      return;
+    }
+
+    let velocity = initialVelocity;
+    let previousTime = performance.now();
+    const animate = (time) => {
+      const elapsed = Math.min(time - previousTime, 32);
+      previousTime = time;
+
+      const maxScroll = container.scrollWidth - container.clientWidth;
+      const nextScroll = Math.max(
+        0,
+        Math.min(maxScroll, container.scrollLeft + velocity * elapsed),
+      );
+      const reachedEdge = nextScroll === 0 || nextScroll === maxScroll;
+      container.scrollLeft = nextScroll;
+      velocity *= Math.pow(0.9, elapsed / 16);
+
+      if (!reachedEdge && Math.abs(velocity) > 0.02) {
+        dragStateRef.current.momentumFrame = window.requestAnimationFrame(animate);
+      } else {
+        dragStateRef.current.momentumFrame = null;
+        container.classList.remove("sut2-is-dragging");
+      }
+    };
+
+    dragStateRef.current.momentumFrame = window.requestAnimationFrame(animate);
+  }, []);
+
+  const handleScrollerPointerDown = useCallback((event) => {
+    if (!event.isPrimary || (event.pointerType === "mouse" && event.button !== 0)) {
+      return;
+    }
+
+    const container = event.currentTarget;
+    stopScrollerMomentum(container);
+    dragStateRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startScrollLeft: container.scrollLeft,
+      lastX: event.clientX,
+      lastTime: performance.now(),
+      velocity: 0,
+      hasMoved: false,
+      momentumFrame: null,
+    };
+  }, [stopScrollerMomentum]);
+
+  const handleScrollerPointerMove = useCallback((event) => {
+    const dragState = dragStateRef.current;
+    if (dragState.pointerId !== event.pointerId) return;
+
+    const distance = event.clientX - dragState.startX;
+    if (!dragState.hasMoved && Math.abs(distance) < 6) return;
+
+    if (!dragState.hasMoved) {
+      dragState.hasMoved = true;
+      event.currentTarget.setPointerCapture(event.pointerId);
+      event.currentTarget.classList.add("sut2-is-dragging");
+    }
+
+    event.preventDefault();
+    const now = performance.now();
+    const elapsed = Math.max(now - dragState.lastTime, 1);
+    const scrollDelta = dragState.lastX - event.clientX;
+    dragState.velocity = dragState.velocity * 0.75 + (scrollDelta / elapsed) * 0.25;
+    dragState.lastX = event.clientX;
+    dragState.lastTime = now;
+    event.currentTarget.scrollLeft = dragState.startScrollLeft - distance;
+  }, []);
+
+  const finishScrollerDrag = useCallback((event) => {
+    const dragState = dragStateRef.current;
+    if (dragState.pointerId !== event.pointerId) return;
+    const hasMoved = dragState.hasMoved;
+    const releaseVelocity = dragState.velocity;
+
+    if (hasMoved) {
+      suppressClickRef.current = true;
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+      window.setTimeout(() => {
+        suppressClickRef.current = false;
+      }, 0);
+    }
+
+    dragStateRef.current = {
+      pointerId: null,
+      startX: 0,
+      startScrollLeft: 0,
+      lastX: 0,
+      lastTime: 0,
+      velocity: 0,
+      hasMoved: false,
+      momentumFrame: null,
+    };
+
+    if (hasMoved) {
+      startScrollerMomentum(event.currentTarget, releaseVelocity);
+    }
+  }, [startScrollerMomentum]);
+
+  const preventClickAfterDrag = useCallback((event) => {
+    if (!suppressClickRef.current) return;
+    event.preventDefault();
+    event.stopPropagation();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {};
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      stopScrollerMomentum();
+    };
+  }, [stopScrollerMomentum]);
+
+  useEffect(() => {
+    let isActive = true;
+    fetch("/version.json", { cache: "no-store" })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        if (isActive && data?.version) setAppVersion(data.version);
+      })
+      .catch(() => {});
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -315,26 +492,29 @@ export default function SutLanding2() {
         <div className="sut2-nav__logo">
           <img src={logo} alt="SUTH Logo" />
         </div>
-        <div
+        <button
+          type="button"
           className="sut2-nav__menu-btn"
+          aria-label={menuOpen ? "ปิดเมนู" : "เปิดเมนู"}
+          aria-expanded={menuOpen}
+          aria-controls="sut2-nav-actions"
           onClick={() => setMenuOpen(!menuOpen)}
         >
-          ☰
-        </div>
-        <div className={`sut2-nav__actions ${menuOpen ? "sut2-open" : ""}`}>
-          <LanguageSwitcher darkText={isScrolled || menuOpen} />
-          <button
-            className="sut2-nav__btn sut2-nav__btn--history"
-            onClick={() => navigate("/history")}
-          >
-            <FiClock /> <span>{t("nav.history")}</span>
-          </button>
-          <button
-            className="sut2-nav__btn sut2-nav__btn--login"
-            onClick={() => navigate("/admin/dashboard")}
-          >
-            <FiLogIn /> <span>{t("nav.staff")}</span>
-          </button>
+          {menuOpen ? <FiX aria-hidden="true" /> : <FiMenu aria-hidden="true" />}
+        </button>
+        <div
+          id="sut2-nav-actions"
+          className={`sut2-nav__actions ${menuOpen ? "sut2-open" : ""}`}
+        >
+          <LanguageSwitcher
+            className="sut2-nav__language"
+            darkText={isScrolled || menuOpen}
+          />
+          <PatientAccountMenu
+            onDark={!isScrolled && !menuOpen}
+            onNavigate={() => setMenuOpen(false)}
+            stackOnMobile
+          />
         </div>
       </nav>
 
@@ -450,7 +630,32 @@ export default function SutLanding2() {
 
         {/* ================= 2. STACKED SLIDER SECTION ================= */}
         <section className="sut2-3d-section">
-          <div className="sut2-3d-layout-container" ref={scrollContainerRef}>
+          {selectedClinic && (
+            <p
+              id="sut2-form-guidance"
+              className="sut2-clinic-guidance"
+              role="note"
+              aria-label={t("sutlanding.form_guidance_title")}
+            >
+              <span>{t("sutlanding.form_guidance_mouse")}</span>
+              <span>{t("sutlanding.form_guidance_touch")}</span>
+            </p>
+          )}
+          <div
+            className="sut2-3d-layout-container"
+            ref={scrollContainerRef}
+            tabIndex={0}
+            role="region"
+            aria-label="รายการคลินิกและแบบประเมิน"
+            aria-describedby={
+              selectedClinic ? "sut2-form-guidance" : undefined
+            }
+            onPointerDown={handleScrollerPointerDown}
+            onPointerMove={handleScrollerPointerMove}
+            onPointerUp={finishScrollerDrag}
+            onPointerCancel={finishScrollerDrag}
+            onClickCapture={preventClickAfterDrag}
+          >
             {/* ด้านซ้าย: Static Promo Card */}
             <div className="sut2-left-column">
               <div
@@ -752,30 +957,101 @@ export default function SutLanding2() {
             </div>
           </div>
         </section>
+
+        {/* ================= 4. OUR OTHER WEBSITES ================= */}
+        <section className="sut2-sites-section" aria-labelledby="sut2-sites-title">
+          <div className="sut2-sites-content">
+            <h2 id="sut2-sites-title" className="sut2-sites-title">
+              {t("sutlanding.sites_title")}
+            </h2>
+            <div className="sut2-sites-grid">
+              <a
+                href="https://vitalcare.suth.go.th"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sut2-site-card"
+              >
+                {/* Banner image: vitalcare.suth.go.th screenshot (imported from /assets/vitalcare.png) */}
+                <img
+                  className="sut2-site-banner"
+                  src={siteVitalcare}
+                  alt="SUTH Vitalcare"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="sut2-site-body">
+                  <h3 className="sut2-site-name">
+                    {t("sutlanding.sites_vitalcare_name")}
+                  </h3>
+                  <p className="sut2-site-desc">
+                    {t("sutlanding.sites_vitalcare_desc")}
+                  </p>
+                  <span className="sut2-site-link">
+                    {t("sutlanding.sites_visit")}
+                    <FiExternalLink aria-hidden="true" />
+                  </span>
+                </div>
+              </a>
+
+              <a
+                href="https://act.suth.go.th/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sut2-site-card"
+              >
+                {/* Banner image: act.suth.go.th screenshot (imported from /assets/act.suth.png) */}
+                <img
+                  className="sut2-site-banner"
+                  src={siteAct}
+                  alt="Vaccine Registration"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="sut2-site-body">
+                  <h3 className="sut2-site-name">
+                    {t("sutlanding.sites_act_name")}
+                  </h3>
+                  <p className="sut2-site-desc">
+                    {t("sutlanding.sites_act_desc")}
+                  </p>
+                  <span className="sut2-site-link">
+                    {t("sutlanding.sites_visit")}
+                    <FiExternalLink aria-hidden="true" />
+                  </span>
+                </div>
+              </a>
+            </div>
+          </div>
+        </section>
       </div>
 
       {/* ================= 4. REVEAL FOOTER ================= */}
       <footer className="sut2-footer">
         <div className="sut2-footer-content">
-          <div className="sut2-footer-col">
+          <section className="sut2-footer-col sut2-footer-brand">
             <img src={logo} alt="SUTH Logo" className="sut2-footer-logo" />
             <p>{t("sutlanding.footer_desc")}</p>
-          </div>
-          <div className="sut2-footer-col">
-            <h4>{t("sutlanding.contact_us")}</h4>
-            <p>{t("sutlanding.pcu")}</p>
-            <p>
+          </section>
+          <section className="sut2-footer-col sut2-footer-contact" aria-labelledby="sut2-footer-contact-title">
+            <h2 id="sut2-footer-contact-title">{t("sutlanding.contact_us")}</h2>
+            <p className="sut2-footer-organization">{t("sutlanding.pcu")}</p>
+            <address>
               {t("sutlanding.address_1")}
               <br />
               {t("sutlanding.address_2")}
-            </p>
-            <p>{t("sutlanding.tel1")}</p>
-            <p>{t("sutlanding.tel2")}</p>
-            <p>{t("sutlanding.website")}</p>
-          </div>
+            </address>
+            <div className="sut2-footer-links">
+              <a href="tel:+6644376555">{t("sutlanding.tel1")}</a>
+              <a href="tel:+6644376555">{t("sutlanding.tel2")}</a>
+              <a href="https://www.suth.go.th" target="_blank" rel="noreferrer">
+                {t("sutlanding.website")}
+              </a>
+            </div>
+          </section>
         </div>
         <div className="sut2-footer-bottom">
-          <p>{t("sutlanding.copyright", { year: new Date().getFullYear() })}</p>
+          <p>{t("sutlanding.copyright", { year: copyrightYears })}</p>
+          {appVersion && <span className="sut2-footer-version">v{appVersion}</span>}
         </div>
       </footer>
 

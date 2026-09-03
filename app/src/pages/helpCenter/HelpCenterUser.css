@@ -623,6 +623,10 @@
   box-shadow: 0 8px 15px rgba(244, 121, 50, 0.2);
 }
 
+.hc-btn-contact-live:hover {
+  background: #d85f1b;
+}
+
 /* MOBILE RESPONSIVE */
 @media (max-width: 768px) {
   /* 🎯 1. ส่วนแบนเนอร์ด้านบน */

@@ -26,6 +26,8 @@ import {
   FiX,
 } from "react-icons/fi";
 import Swal from "sweetalert2";
+import { getCurrentMonthDateRange, isCaseInDateRange, normaliseDateRange } from "../../utils/caseDateFilter";
+import { usePermissions } from "../../permissions/PermissionsProvider";
 
 const FACULTIES = [
   "(1) สำนักวิชาวิทยาศาสตร์",
@@ -498,6 +500,7 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
 }
 
 export default function CaseData() {
+  const { activeOrganization } = usePermissions();
   const location = useLocation();
   const initialFormId = location.state?.defaultFormId || "";
 
@@ -524,8 +527,9 @@ export default function CaseData() {
   const [formStatusFilter, setFormStatusFilter] = useState("published");
   const [tableViewMode, setTableViewMode] = useState("master");
 
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [initialDateRange] = useState(getCurrentMonthDateRange);
+  const [startDate, setStartDate] = useState(initialDateRange.startDate);
+  const [endDate, setEndDate] = useState(initialDateRange.endDate);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -539,6 +543,9 @@ export default function CaseData() {
 
   useEffect(() => {
     const fetchInitialData = async () => {
+      setIsInitialSetup(true);
+      setResponses([]);
+      setCurrentFormDetails(null);
       try {
         const [clinicRes, formsRes] = await Promise.all([
           getActiveClinics().catch(() => ({ data: { data: [] } })),
@@ -571,7 +578,7 @@ export default function CaseData() {
       }
     };
     fetchInitialData();
-  }, [initialFormId]);
+  }, [initialFormId, activeOrganization]);
 
   const filteredFormsList = useMemo(() => {
     let list = forms;
@@ -611,7 +618,11 @@ export default function CaseData() {
       try {
         const [formRes, responseRes] = await Promise.all([
           getFormById(selectedFormId),
-          getFormResponses(selectedFormId),
+          getFormResponses(selectedFormId, {
+            startDate,
+            endDate,
+            limit: "all",
+          }),
         ]);
 
         let formDetails = formRes.data;
@@ -652,7 +663,7 @@ export default function CaseData() {
       }
     };
     fetchFormAndResponses();
-  }, [selectedFormId]);
+  }, [selectedFormId, startDate, endDate]);
 
   const hasScoring = useMemo(() => {
     if (!currentFormDetails?.questions) return false;
@@ -715,29 +726,13 @@ export default function CaseData() {
         search === "" ||
         caseIdStr.toLowerCase().includes(search.toLowerCase()) ||
         name.toLowerCase().includes(search.toLowerCase()) ||
+        String(res.submitted_by?.username || "").toLowerCase().includes(search.toLowerCase()) ||
+        String(res.submitted_by?.account_id || "").includes(search) ||
         (res.identity_value && res.identity_value.includes(search));
       const matchFaculty = faculty === "" || resFaculty.includes(faculty);
       const matchRisk = risk === "" || !hasScoring || currentRisk === risk;
 
-      let matchDate = true;
-      if (res.submitted_at) {
-        const submitDate = new Date(res.submitted_at);
-        submitDate.setHours(0, 0, 0, 0);
-
-        if (startDate) {
-          const start = new Date(startDate);
-          start.setHours(0, 0, 0, 0);
-          if (submitDate < start) matchDate = false;
-        }
-
-        if (endDate) {
-          const end = new Date(endDate);
-          end.setHours(23, 59, 59, 999);
-          if (submitDate > end) matchDate = false;
-        }
-      } else if (startDate || endDate) {
-        matchDate = false;
-      }
+      const matchDate = isCaseInDateRange(res, startDate, endDate);
       return matchSearch && matchFaculty && matchRisk && matchDate;
     });
   }, [
@@ -777,6 +772,18 @@ export default function CaseData() {
     if (!dateString) return "";
     const [year, month, day] = dateString.split("-");
     return `${day}/${month}/${parseInt(year) + 543}`;
+  };
+
+  const handleStartDateChange = (nextStartDate) => {
+    const [safeStartDate, safeEndDate] = normaliseDateRange(nextStartDate, endDate);
+    setStartDate(safeStartDate);
+    setEndDate(safeEndDate);
+  };
+
+  const handleEndDateChange = (nextEndDate) => {
+    const [safeStartDate, safeEndDate] = normaliseDateRange(startDate, nextEndDate);
+    setStartDate(safeStartDate);
+    setEndDate(safeEndDate);
   };
 
   return (
@@ -895,7 +902,7 @@ export default function CaseData() {
                     type="date"
                     className="scd-date-native-hidden"
                     value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
+                    onChange={(e) => handleStartDateChange(e.target.value)}
                     onClick={(e) =>
                       e.target.showPicker && e.target.showPicker()
                     }
@@ -914,7 +921,8 @@ export default function CaseData() {
                     type="date"
                     className="scd-date-native-hidden"
                     value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
+                    onChange={(e) => handleEndDateChange(e.target.value)}
+                    min={startDate || undefined}
                     onClick={(e) =>
                       e.target.showPicker && e.target.showPicker()
                     }
@@ -1103,7 +1111,11 @@ export default function CaseData() {
                   };
                   await createCase(caseWithFormId);
                   if (selectedFormId) {
-                    const responseRes = await getFormResponses(selectedFormId);
+                    const responseRes = await getFormResponses(selectedFormId, {
+                      startDate,
+                      endDate,
+                      limit: "all",
+                    });
                     const responseData = responseRes.data
                       ? responseRes.data
                       : responseRes;

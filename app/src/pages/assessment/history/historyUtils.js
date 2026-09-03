@@ -1,6 +1,6 @@
 // ตัวแปรการตั้งค่า API
 export const API_BASE = (
-  import.meta.env.VITE_API_URL || "http://localhost:5000"
+  import.meta.env?.VITE_API_URL || "/api"
 ).replace(/\/api$/, "");
 
 export const axiosConfig = {
@@ -110,12 +110,22 @@ export const formatAnswerValue = (raw) => {
   if (Array.isArray(val))
     return val.map((v) => stripHtml(String(v))).join(", ");
   if (typeof val === "object" && val !== null) {
-    return Object.entries(val)
+    const entries = Object.entries(val);
+    if (entries.length === 0) return "-";
+    return entries
       .map(([k, v]) => `${stripHtml(String(k))}: ${stripHtml(String(v))}`)
       .join("  |  ");
   }
   return stripHtml(String(val));
 };
+
+export const isDisplayableTableAnswer = (value) =>
+  Boolean(
+    value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      Object.keys(value).length > 0,
+  );
 
 // เช็คประเภทคำถาม
 const PHONE_KEYWORDS = ["เบอร์", "โทรศัพท์", "phone", "tel", "mobile"];

@@ -1,287 +1,261 @@
-@import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Prompt:wght@600;700;800&display=swap");
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* ── PAGE — Full Background (ทั้ง Desktop และ Mobile) ── */
-.login-page {
-  padding-top: 70px;
-  height: 100vh;
-  width: 100vw;
-  background: url("../../assets/login-image.png") no-repeat center center;
+.staff-login-page {
+  --staff-civic-navy: #183149;
+  --staff-civic-navy-deep: #102638;
+  --staff-civic-blue: #38566e;
+  --staff-civic-paper: #f3f5f3;
+  --staff-civic-line: rgba(24, 49, 73, 0.075);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: var(--staff-civic-paper);
+  background-image:
+    linear-gradient(rgba(243, 246, 244, 0.78), rgba(231, 237, 234, 0.86)),
+    url("../../assets/login-image.png");
   background-size: cover;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-/* ── 1. เพิ่มสไตล์ Header ด้านบน ── */
-.login-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 70px;
-  background: #ffffff; /* พื้นหลังขาวตามรูป */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 40px;
-  z-index: 100;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* เงาจางๆ ให้ดูสะอาดตา */
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-.header-logo img {
-  height: 100px; /* ขนาดโลโก้พอดีคำ */
-  width: auto;
-}
-/* ซ่อน Panel เดิมออกถาวร */
-.login-left {
-  display: none !important;
-}
-.login-left__illust img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 40px;
-  /* 🟢 เพิ่ม CSS Filter ตรงนี้ */
-  filter: brightness(0.8) saturate(0.6); /* ปรับความสว่างเหลือ 80% และความสดของสีเหลือ 60% */
-  transition: filter 0.3s ease; /* เพิ่ม Transition เพื่อให้ดูนุ่มนวลเวลาโหลด */
+.staff-login-page .patient-auth-home {
+  z-index: 2;
+  border: 1px solid rgba(24, 49, 73, 0.12);
+  background: rgba(243, 245, 243, 0.88);
+  color: var(--staff-civic-navy);
+  backdrop-filter: blur(8px);
 }
 
-.login-right {
-  width: 100%;
-  max-width: 480px;
-  background: transparent !important;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  z-index: 10;
+.staff-login-page .patient-auth-home:hover {
+  border-color: rgba(169, 67, 11, 0.24);
+  background: #f8faf8;
+}
+
+.staff-login-page .patient-login-shell {
   position: relative;
-}
-
-/* ── Glassmorphism Card (สวยเหมือน Desktop) ── */
-.login-right-card {
-  font-family: "Noto Sans Thai", sans-serif;
-  position: relative;
-  margin-top: 50px;
-  padding: 50px 35px;
-  padding-top: 90px !important;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.45) !important;
-  backdrop-filter: blur(25px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(25px) saturate(180%) !important;
-  border-radius: 35px !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  position: relative;
-  animation: fadeSlideUpCard 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* ── LOGO ── */
-.login-logo-img {
-  width: 180px;
-  height: auto;
-  display: block;
-}
-.login-logo-float {
-  width: 150px;
-  height: 150px;
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  z-index: 10;
-  background: #ffffff;
-  padding: 12px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  animation: fadeSlideUpLogo 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-/* ── FORM & INPUTS ── */
-.login-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.login-input-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.login-input-icon {
-  position: absolute;
-  left: 18px;
-  color: #b0b0b0;
-  z-index: 5;
-}
-
-.login-input {
-  width: 100%;
-  padding: 14px 44px 14px 48px;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  border-radius: 50px;
-  font-size: 15px;
-  color: #333;
-  background: #ffffff !important;
-  outline: none;
-  transition: all 0.2s;
-}
-
-.login-password-toggle {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  cursor: pointer;
-  display: flex;
-  z-index: 5;
-}
-/* ── ERROR MESSAGE STYLE ── */
-.login-error {
-  background: rgba(254, 226, 226, 0.8);
-  color: #dc2626;
-  font-size: 13px;
-  font-weight: 500;
-  padding: 10px 16px;
+  grid-template-columns: minmax(350px, 0.86fr) minmax(430px, 1.14fr);
+  min-height: 632px;
+  border: 1px solid rgba(24, 49, 73, 0.15);
   border-radius: 12px;
-  border: 1px solid rgba(220, 38, 38, 0.2);
-  margin-top: 10px;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  box-shadow:
+    0 2px 4px rgba(16, 38, 56, 0.04),
+    0 24px 60px rgba(16, 38, 56, 0.1);
 }
 
-/* ── CHECKBOX & BUTTONS ── */
-.login-btn {
-  width: 100%;
-  padding: 14px;
-  background: #f97316;
-  color: #fff;
-  font-family: "Noto Sans Thai", sans-serif !important;
-  font-size: 17px;
-  font-weight: 700;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  box-shadow: 0 5px 15px rgba(249, 115, 22, 0.3);
+.staff-login-intro {
+  padding: clamp(46px, 5vw, 64px) clamp(34px, 4vw, 54px);
+  background-color: var(--staff-civic-navy-deep);
+  background-image:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.035), transparent 44%),
+    repeating-linear-gradient(
+      115deg,
+      transparent 0 44px,
+      rgba(255, 255, 255, 0.025) 45px 46px
+    );
 }
 
-.login-back {
-  background: none;
-  border: none;
-  color: #666;
-  font-size: 13.5px;
-  cursor: pointer;
-  margin-top: 10px;
-  font-family: "Noto Sans Thai", sans-serif !important;
-  transition: color 0.2s;
-}
-.login-back:hover {
-  color: #f97316;
+.staff-login-page .patient-login-logo {
+  width: 142px;
+  height: 72px;
+  margin: -12px 0 clamp(32px, 5vh, 54px) -13px;
+  opacity: 0.96;
 }
 
-/* ── TURNSTILE ── */
-.turnstile-wrap {
-  display: flex !important;
-  justify-content: center !important;
-  width: 100% !important;
-  min-height: 70px;
-  margin: 5px 0;
+.staff-login-page .patient-login-kicker {
+  margin-bottom: 14px;
+  color: #ffc39e;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-/* ── RESPONSIVE: ปรับขนาด Card ให้พอดีหน้าจอมือถือ ── */
-@media (max-width: 768px) {
-  .login-right {
-    padding-top: 50px;
-    padding-bottom: 30px;
+.staff-login-page .patient-login-intro h2 {
+  max-width: 13ch;
+  font-size: clamp(1.9rem, 3.1vw, 2.55rem);
+  line-height: 1.28;
+}
+
+.staff-login-page .patient-login-intro-copy > p:last-child {
+  max-width: 42ch;
+  margin-top: 20px;
+  color: #cbd7df;
+  line-height: 1.72;
+}
+
+.staff-login-page .patient-login-benefits {
+  gap: 0;
+  padding-top: clamp(38px, 6vh, 64px);
+}
+
+.staff-login-page .patient-login-benefit {
+  min-height: 58px;
+  grid-template-columns: 22px minmax(0, 1fr);
+  gap: 14px;
+  border-top: 1px solid rgba(220, 231, 238, 0.13);
+  color: #dbe5eb;
+}
+
+.staff-login-page .patient-login-benefit:last-child {
+  border-bottom: 1px solid rgba(220, 231, 238, 0.13);
+}
+
+.staff-login-page .patient-login-benefit svg {
+  color: #ffad7b;
+  font-size: 18px;
+}
+
+.staff-login-page .patient-login-form-panel {
+  width: min(100%, 550px);
+  padding: clamp(44px, 6vw, 72px);
+}
+
+.staff-login-page .patient-login-heading {
+  gap: 16px;
+  margin-bottom: 38px;
+}
+
+.staff-login-page .patient-login-heading-icon {
+  border: 1px solid #f4d4c1;
+  border-radius: 10px;
+  background: #fff7f1;
+}
+
+.staff-login-page .patient-login-heading h1 {
+  color: var(--staff-civic-navy-deep);
+  font-size: clamp(1.55rem, 2.2vw, 1.85rem);
+}
+
+.staff-login-page .patient-login-heading p {
+  max-width: 41ch;
+  margin-top: 9px;
+}
+
+.staff-login-page .patient-login-form {
+  gap: 22px;
+}
+
+.staff-login-page .patient-auth-field {
+  gap: 9px;
+}
+
+.staff-login-page .patient-auth-field input {
+  border-color: #afbdc7;
+  border-radius: 8px;
+  background: #fbfcfb;
+}
+
+.staff-login-page .patient-auth-button {
+  border-radius: 8px;
+  box-shadow: 0 7px 18px rgba(169, 67, 11, 0.16);
+}
+
+.staff-login-page .patient-password-help a,
+.staff-login-page .patient-password-help button {
+  color: #8f390b;
+}
+
+.staff-login-page .patient-password-help a:hover,
+.staff-login-page .patient-password-help button:hover {
+  color: #692906;
+}
+
+.staff-login-note {
+  max-width: 48ch;
+  margin: 30px auto 0;
+  padding-top: 22px;
+  border-top: 1px solid #d8e0e7;
+  color: #667789;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  text-align: center;
+  text-wrap: pretty;
+}
+
+@media (max-width: 899px) {
+  .staff-login-page {
+    background-size: cover;
   }
-  .login-right-card {
-    padding: 30px 20px;
-    margin-top: 40px;
-    padding-top: 55px !important;
-    border-radius: 30px !important;
+
+  .staff-login-page .patient-login-shell {
+    min-height: 0;
   }
-  .login-logo-float {
-    width: 110px !important;
-    height: 110px !important;
-    top: 25px !important;
-    left: 50%;
-    transform: translateX(-50%) !important;
-    position: absolute !important;
-    z-index: 20 !important;
-    background: #ffffff;
-    padding: 15px !important;
-    border-radius: 50%;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    animation: fadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+
+  .staff-login-intro {
+    padding: 32px clamp(26px, 6vw, 40px);
   }
-  .login-logo-img {
-    width: 160px !important;
-    height: auto;
+
+  .staff-login-page .patient-login-logo {
+    margin-bottom: 17px;
   }
-  .turnstile-wrap {
-    transform: scale(0.85);
-    margin: 0;
+
+  .staff-login-page .patient-login-intro h2 {
+    max-width: 22ch;
+    font-size: clamp(1.45rem, 4vw, 1.72rem);
   }
-  .ac-item__remove {
-    width: 32px;
-    height: 32px;
-    font-size: 12px;
-    background: rgba(0, 0, 0, 0.08);
+
+  .staff-login-page .patient-login-form-panel {
+    padding: 40px clamp(28px, 7vw, 48px) 44px;
   }
 }
 
-@keyframes fadeSlideUp {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(20px);
+@media (max-width: 480px) {
+  .staff-login-page {
+    background-color: #edf1f0;
+    background-image:
+      linear-gradient(rgba(243, 246, 244, 0.82), rgba(231, 237, 234, 0.9)),
+      url("../../assets/login-image.png");
+    background-size: cover;
+    background-position: center;
   }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+
+  .staff-login-page .patient-login-shell {
+    border: 1px solid rgba(24, 49, 73, 0.13);
+    border-radius: 10px;
+    box-shadow: 0 16px 40px rgba(16, 38, 56, 0.09);
   }
-}
-/* 🟢 สำหรับ Card (กึ่งกลางหน้าจอปกติ) */
-@keyframes fadeSlideUpCard {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+
+  .staff-login-intro {
+    padding: 24px 22px 26px;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .staff-login-page .patient-login-logo {
+    width: 118px;
+    height: 54px;
+    margin: -8px 0 12px -10px;
+  }
+
+  .staff-login-page .patient-login-kicker {
+    margin-bottom: 8px;
+    font-size: 0.76rem;
+  }
+
+  .staff-login-page .patient-login-intro h2 {
+    font-size: 1.26rem;
+  }
+
+  .staff-login-page .patient-login-form-panel {
+    padding: 30px 20px 32px;
+  }
+
+  .staff-login-page .patient-login-heading {
+    gap: 13px;
+    margin-bottom: 28px;
+  }
+
+  .staff-login-page .patient-login-heading h1 {
+    font-size: 1.38rem;
+  }
+
+  .staff-login-page .patient-login-form {
+    gap: 19px;
+  }
+
+  .staff-login-note {
+    margin-top: 24px;
+    padding-top: 19px;
   }
 }
 
-/* 🟢 สำหรับโลโก้ (กึ่งกลางด้วย translateX -50%) */
-@keyframes fadeSlideUpLogo {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
+@media (prefers-reduced-motion: reduce) {
+  .staff-login-page .patient-auth-home {
+    backdrop-filter: none;
   }
 }

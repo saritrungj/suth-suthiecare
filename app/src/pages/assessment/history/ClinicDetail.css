@@ -30,6 +30,11 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+.clinic-back-btn:hover {
+  background: #f47932;
+  color: #ffffff;
+}
+
 /* HERO */
 
 .clinic-hero {
@@ -382,6 +387,11 @@
   font-weight: 600;
 
   cursor: pointer;
+}
+
+.timeline-btn:hover {
+  background: #f47932;
+  color: #ffffff;
 }
 
 .empty-timeline {

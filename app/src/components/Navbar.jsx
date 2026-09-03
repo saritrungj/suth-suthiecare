@@ -1,11 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logoSUTH.png";
 import { FiArrowLeft } from "react-icons/fi";
+import PatientAccountMenu from "./PatientAccountMenu";
+import LanguageSwitcher from "./LanguageSwitcher";
 import "./Navbar.css";
 
 export default function Navbar({
   showLogin = false,
   showBack = false,
+  showPatientAccount = false,
+  showLanguage = false,
   backText = "กลับ",
   onBack,
 }) {
@@ -13,24 +17,31 @@ export default function Navbar({
 
   return (
     <nav className="main-nav">
-      {/* LOGO */}
-      <div className="main-nav__logo" onClick={() => navigate("/")}>
-        <img
-          src={logo}
-          alt="SUTH Logo"
-          className="main-nav__logo-img"
-          style={{ cursor: "pointer", height: "100%" }}
-        />
-      </div>
+      <button
+        type="button"
+        className="main-nav__brand"
+        onClick={() => navigate("/")}
+        aria-label="ไปหน้าแรก"
+      >
+        <span className="main-nav__logo-frame" aria-hidden="true">
+          <img src={logo} alt="" className="main-nav__logo-img" />
+        </span>
+        <span className="main-nav__brand-copy">
+          <strong>ระบบขอรับบริการ</strong>
+          <small>โรงพยาบาลมหาวิทยาลัยเทคโนโลยีสุรนารี</small>
+        </span>
+      </button>
 
       {/* RIGHT BUTTONS */}
-      <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+      <div className="main-nav__actions">
+        {showLanguage && <LanguageSwitcher darkText />}
         {showBack && (
           <button
             className="main-nav__back"
             onClick={onBack ? onBack : () => navigate(-1)}
+            aria-label={backText}
           >
-            <FiArrowLeft size={16} /> {backText}
+            <FiArrowLeft size={16} /> <span>{backText}</span>
           </button>
         )}
 
@@ -42,6 +53,7 @@ export default function Navbar({
             เข้าสู่ระบบ →
           </button>
         )}
+        {showPatientAccount && <PatientAccountMenu />}
       </div>
     </nav>
   );

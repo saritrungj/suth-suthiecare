@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./styles/FormPreview.css";
+import { showSuccessAlert } from "../../../utils/alerts";
 
 // 🟢 ฟังก์ชันจัดฟอร์แมตเลขบัตร (x-xxxx-xxxxx-xx-x)
 const formatThaiID = (value) => {
@@ -693,9 +694,10 @@ const FormPreview = () => {
                 className="preview-btn preview-btn--primary"
                 onClick={() => {
                   if (validateStep()) {
-                    alert(
-                      "นี่คือโหมดแสดงตัวอย่าง (Preview) - ข้อมูลครบถ้วนพร้อมส่ง!",
-                    );
+                    showSuccessAlert({
+                      title: "ข้อมูลครบถ้วนพร้อมส่ง",
+                      text: "นี่คือโหมดแสดงตัวอย่าง ข้อมูลจะไม่ถูกบันทึกจริง",
+                    });
                   }
                 }}
               >

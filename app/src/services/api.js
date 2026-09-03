@@ -1,7 +1,10 @@
 import axios from "axios";
+import { clearPatientSession } from "../utils/patientSession";
+
+const apiBaseUrl = import.meta.env.VITE_API_URL || "/api";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: apiBaseUrl,
   headers: {
     "Bypass-Tunnel-Reminder": "true",
     "ngrok-skip-browser-warning": "69420",
@@ -9,23 +12,85 @@ const api = axios.create({
   },
 });
 
+const resolveApiAssetUrl = (value) => {
+  if (!value || !value.startsWith("/api/")) return value;
+  const apiBase = String(import.meta.env.VITE_API_URL || "/api").replace(
+    /\/$/,
+    "",
+  );
+  return `${apiBase.replace(/\/api$/, "")}${value}`;
+};
+
 // ── Users ──
 export const getUsers = () => api.get("/users");
+export const getPatientMembers = (params) => api.get("/patient-members", { params });
+export const getPatientMember = (id) => api.get(`/patient-members/${id}`);
+export const updatePatientMember = (id, data) => api.put(`/patient-members/${id}`, data);
+export const deletePatientMember = (id) => api.delete(`/patient-members/${id}`);
+export const getUserFull = (id) => api.get(`/users/${id}/full`);
 export const createUser = (data) => api.post("/users", data);
 export const updateUser = (id, data) => api.put(`/users/${id}`, data);
 export const deleteUser = (id) => api.delete(`/users/${id}`);
 
 // ── Auth ──
 export const loginApi = (credentials) => api.post("/login", credentials);
+export const getAuthorization = () => api.get("/me/authorization");
+export const getOrganizations = () => api.get("/organizations");
+export const createOrganization = (data) => api.post("/organizations", data);
+export const updateOrganization = (id, data) => api.put(`/organizations/${id}`, data);
+export const getOrganizationMembers = (id) => api.get(`/organizations/${id}/members`);
+export const createOrganizationMember = (id, data) => api.post(`/organizations/${id}/members`, data);
+export const updateOrganizationMember = (id, membershipId, data) => api.put(`/organizations/${id}/members/${membershipId}`, data);
+
+const patientApi = axios.create({
+  baseURL: apiBaseUrl,
+  headers: { "ngrok-skip-browser-warning": "true" },
+});
+
+patientApi.interceptors.request.use((config) => {
+  const token = sessionStorage.getItem("patient_token");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+patientApi.interceptors.response.use(
+  (res) => res,
+  (error) => {
+    if (error.response?.status === 401) {
+      clearPatientSession();
+      if (window.location.pathname.startsWith("/history")) {
+        window.location.href = `/account/login?returnTo=${encodeURIComponent(window.location.pathname)}`;
+      }
+    }
+    return Promise.reject(error);
+  },
+);
+
+export const patientLoginApi = (credentials) => patientApi.post("/patient-auth/login", credentials);
+export const patientRegisterApi = (data) => patientApi.post("/patient-auth/register", data);
+export const patientLogoutApi = () => patientApi.post("/patient-auth/logout");
+export const getPatientMe = () => patientApi.get("/patient/me");
+export const getPatientHistory = () => patientApi.get("/patient/history");
+export const getPatientCaseLogs = (id) => patientApi.get(`/patient/history/responses/${id}/logs`);
+export const getPatientCaseAnswers = (id) => patientApi.get(`/patient/history/responses/${id}/answers`);
+export const updatePatientHistoryResponse = (id, data) => patientApi.patch(`/patient/history/responses/${id}`, data);
+export const updatePatientHistoryAnswer = (responseId, questionId, value) => patientApi.patch(`/patient/history/responses/${responseId}/answers/${questionId}`, { value });
 
 // ── Dashboard ──
 export const getDashboardSummary = () => api.get("/dashboard/summary");
-export const getRecentCases = (clinic) =>
-  api.get("/dashboard/recent", { params: { clinic } });
+export const getRecentCases = (clinic, startDate, endDate) =>
+  api.get("/dashboard/recent", { params: { clinic, startDate, endDate } });
 
 // ── Forms ──
 export const saveFormToDb = (formData) => api.post("/save-form", formData);
-export const getForms = (sortParam) => api.get(`/forms?sort=${sortParam}`);
+export const getForms = async (sortParam) => {
+  const response = await api.get("/forms", { params: { sort: sortParam } });
+  response.data = response.data.map((form) => ({
+    ...form,
+    image: resolveApiAssetUrl(form.image),
+  }));
+  return response;
+};
 export const getFormById = (id) => api.get(`/forms/${id}`);
 export const updateFormInDb = (id, formData) =>
   api.put(`/forms/${id}`, formData);
@@ -57,11 +122,11 @@ export const renameFormInDb = (id, newTitle) =>
 
 // ── Form Submissions ──
 export const submitFormAnswers = (formId, data) =>
-  api.post(`/forms/${formId}/submit`, data);
+  patientApi.post(`/forms/${formId}/submit`, data);
 export const getFormSubmissionCount = (formId) =>
   api.get(`/forms/${formId}/submission-count`); // ✅ แก้แล้ว ลบ /api ออก
-export const getFormResponses = (formId) =>
-  api.get(`/forms/${formId}/responses`);
+export const getFormResponses = (formId, params) =>
+  api.get(`/forms/${formId}/responses`, { params });
 export const updateFormStatus = (id, statusData) =>
   api.patch(`/forms/${id}/status`, statusData);
 export const updateFormClinicType = (id, data) =>
@@ -93,7 +158,7 @@ export const deleteService = (id) => api.delete(`/services/${id}`);
 export const getRisks = () => api.get("/risks");
 
 //--- appointments ---//
-export const getAppointments = () => api.get("/appointments");
+export const getAppointments = (params) => api.get("/appointments", { params });
 export const saveAppointment = (apptData) =>
   api.post("/appointments", apptData);
 export const getCaseAppointments = (caseId, target = "response") =>
@@ -147,8 +212,10 @@ export const getFormQuestions = (formId) =>
   api.get(`/forms/${formId}/questions`);
 
 // - Dashboard Charts - //
-export const getMasterCaseStats = (clinic, formId) =>
-  api.get("/admin/master-cases/stats", { params: { clinic, form_id: formId } });
+export const getMasterCaseStats = (clinic, formId, startDate, endDate) =>
+  api.get("/admin/master-cases/stats", {
+    params: { clinic, form_id: formId, startDate, endDate },
+  });
 export const getChartData = (formId, questionId, startDate, endDate) => {
   return api.get(`/charts/${formId}/${questionId}`, {
     params: { startDate, endDate },
@@ -194,13 +261,19 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers["Authorization"] = `Bearer ${token}`;
   }
+  const userRaw = sessionStorage.getItem("suth_user") || localStorage.getItem("suth_user");
+  try {
+    const user = userRaw ? JSON.parse(userRaw) : null;
+    const organization = user?.id ? localStorage.getItem(`suth_active_organization_${user.id}`) : null;
+    if (organization) config.headers["X-Organization-Id"] = organization;
+  } catch { /* invalid session is handled by the response interceptor */ }
   return config;
 });
 
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401 || err.response?.status === 403) {
+    if (err.response?.status === 401) {
       sessionStorage.removeItem("suth_user");
       sessionStorage.removeItem("suth_token");
       localStorage.removeItem("suth_user");

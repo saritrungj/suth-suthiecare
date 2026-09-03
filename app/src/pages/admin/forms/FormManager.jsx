@@ -11,6 +11,9 @@ import {
   getActiveClinics,
 } from "../../../services/api";
 import "./styles/FormManager.css";
+import { usePermissions } from "../../../permissions/PermissionsProvider";
+import { confirmAlert } from "../../../utils/alerts";
+import { getActiveOrganizationLabel } from "../../../permissions/organizationContext";
 
 import {
   FaFolderOpen,
@@ -30,6 +33,7 @@ import {
   FaClinicMedical,
   FaExternalLinkAlt,
   FaTrashAlt,
+  FaLock,
   FaExclamationTriangle,
 } from "react-icons/fa";
 
@@ -95,6 +99,7 @@ const CustomDropdown = ({
 };
 
 const FormManager = () => {
+  const { activeOrganization, authorization } = usePermissions();
   const [forms, setForms] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState("grid");
@@ -125,6 +130,10 @@ const FormManager = () => {
 
   // 🟢 เพิ่ม State สำหรับคลินิก
   const [clinics, setClinics] = useState([]);
+  const activeOrganizationLabel = getActiveOrganizationLabel(
+    authorization,
+    activeOrganization,
+  );
   const clinicColors = [
     "#e0f2fe",
     "#dcfce7",
@@ -186,7 +195,7 @@ const FormManager = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [sortBy]);
+  }, [sortBy, activeOrganization]);
 
   useEffect(() => {
     fetchForms();
@@ -260,7 +269,7 @@ const FormManager = () => {
         </span>,
       );
     } catch (error) {
-      alert("ไม่สามารถอัปโหลดภาพได้ กรุณาลองใหม่อีกครั้ง");
+      showToast(<span style={{ display: "flex", alignItems: "center", gap: "8px" }}><FaTimesCircle /> ไม่สามารถอัปโหลดภาพได้ กรุณาลองใหม่อีกครั้ง</span>);
     } finally {
       setPreviewImage(null);
       setSelectedFormForImage(null);
@@ -271,11 +280,13 @@ const FormManager = () => {
   const handleDeleteForm = async (e, formId) => {
     e.stopPropagation();
     setOpenMenuId(null);
-    if (
-      window.confirm(
-        "คุณต้องการลบฟอร์มนี้ใช่หรือไม่? (การกระทำนี้ไม่สามารถย้อนกลับได้)",
-      )
-    ) {
+    const confirmed = await confirmAlert({
+      title: "ลบฟอร์ม?",
+      text: "การลบฟอร์มไม่สามารถย้อนกลับได้",
+      confirmText: "ลบฟอร์ม",
+      danger: true,
+    });
+    if (confirmed) {
       try {
         await deleteFormInDb(formId);
         setForms(forms.filter((f) => f.id !== formId));
@@ -285,7 +296,7 @@ const FormManager = () => {
           </span>,
         );
       } catch (error) {
-        alert("ไม่สามารถลบฟอร์มได้ กรุณาลองใหม่อีกครั้ง");
+        showToast(<span style={{ display: "flex", alignItems: "center", gap: "8px" }}><FaTimesCircle /> ไม่สามารถลบฟอร์มได้ กรุณาลองใหม่อีกครั้ง</span>);
       }
     }
   };
@@ -313,7 +324,7 @@ const FormManager = () => {
         </span>,
       );
     } catch (error) {
-      alert("ไม่สามารถเปลี่ยนชื่อได้ กรุณาลองใหม่อีกครั้ง");
+      showToast(<span style={{ display: "flex", alignItems: "center", gap: "8px" }}><FaTimesCircle /> ไม่สามารถเปลี่ยนชื่อได้ กรุณาลองใหม่อีกครั้ง</span>);
     }
   };
 
@@ -346,7 +357,7 @@ const FormManager = () => {
         </span>,
       );
     } catch (error) {
-      alert("ไม่สามารถเปลี่ยนประเภทคลินิกได้ กรุณาลองใหม่อีกครั้ง");
+      showToast(<span style={{ display: "flex", alignItems: "center", gap: "8px" }}><FaTimesCircle /> ไม่สามารถเปลี่ยนประเภทคลินิกได้ กรุณาลองใหม่อีกครั้ง</span>);
     }
   };
 
@@ -402,7 +413,7 @@ const FormManager = () => {
         </span>,
       );
     } catch (error) {
-      alert("ไม่สามารถทำสำเนาฟอร์มได้ กรุณาลองใหม่อีกครั้ง");
+      showToast(<span style={{ display: "flex", alignItems: "center", gap: "8px" }}><FaTimesCircle /> ไม่สามารถทำสำเนาฟอร์มได้ กรุณาลองใหม่อีกครั้ง</span>);
     }
   };
 
@@ -410,9 +421,22 @@ const FormManager = () => {
     <div className="fm-admin-layout">
       <main className="fm-main-content">
         <header className="fm-content-header">
-          <h2>จัดการฟอร์ม</h2>
+          <div className="fm-header-info">
+            <h2>จัดการฟอร์ม</h2>
+            <p className="fm-header-hint">
+              สร้าง แก้ไข และจัดการสถานะของแบบประเมินในแต่ละคลินิกบริการ
+            </p>
+            <p className="fm-context-indicator"><span>ขอบเขตข้อมูล</span>{activeOrganizationLabel}</p>
+          </div>
+          <button
+            className="fm-btn-add-form"
+            onClick={() => navigate("/admin/forms/create")}
+          >
+            + สร้างฟอร์ม
+          </button>
+        </header>
 
-          <div className="fm-action-bar">
+        <div className="fm-action-bar">
             {/* 🟢 ช่องค้นหาดีไซน์ใหม่ */}
             <div className="fm-search-group">
               <FaSearch
@@ -480,16 +504,8 @@ const FormManager = () => {
                 </label>
               </div>
 
-              {/* ปุ่มสร้าง */}
-              <button
-                className="fm-btn-add-form"
-                onClick={() => navigate("/admin/forms/create")}
-              >
-                + สร้างฟอร์ม
-              </button>
             </div>
-          </div>
-        </header>
+        </div>
 
         {isLoading ? (
           <div className="fm-loading-state">
@@ -572,33 +588,84 @@ const FormManager = () => {
                         position: "absolute",
                         top: "10px",
                         right: "10px",
-                        background:
-                          currentStatus === "published" ? "#dcfce7" : "#fff3e0",
-                        color:
-                          currentStatus === "published" ? "#166534" : "#e65100",
-                        padding: "4px 10px",
-                        borderRadius: "12px",
-                        fontSize: "11px",
-                        fontWeight: "bold",
-                        zIndex: 2,
-                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
                         display: "flex",
                         alignItems: "center",
-                        gap: "4px",
+                        gap: "6px",
+                        zIndex: 2,
                       }}
                     >
-                      {currentStatus === "published" ? (
-                        <>
-                          <FaCheckCircle /> เผยแพร่แล้ว
-                        </>
-                      ) : (
-                        <>
-                          <FaFileAlt /> ฉบับร่าง
-                        </>
+                      {form.login_enforcement === "strict" && (
+                        <div
+                          title="ต้องเข้าสู่ระบบก่อนทำแบบประเมิน"
+                          style={{
+                            background: "#fef3c7",
+                            color: "#92400e",
+                            padding: "4px 10px",
+                            borderRadius: "12px",
+                            fontSize: "11px",
+                            fontWeight: "bold",
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px",
+                          }}
+                        >
+                          <FaLock /> ต้องเข้าสู่ระบบ
+                        </div>
                       )}
+                      {form.login_enforcement === "optional" && (
+                        <div
+                          title="แนะนำให้เข้าสู่ระบบ"
+                          style={{
+                            background: "#dcfce7",
+                            color: "#166534",
+                            padding: "4px 10px",
+                            borderRadius: "12px",
+                            fontSize: "11px",
+                            fontWeight: "bold",
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "4px",
+                          }}
+                        >
+                          <FaLock /> แนะนำเข้าสู่ระบบ
+                        </div>
+                      )}
+                      <div
+                        style={{
+                          background:
+                            currentStatus === "published" ? "#dcfce7" : "#fff3e0",
+                          color:
+                            currentStatus === "published" ? "#166534" : "#e65100",
+                          padding: "4px 10px",
+                          borderRadius: "12px",
+                          fontSize: "11px",
+                          fontWeight: "bold",
+                          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
+                        {currentStatus === "published" ? (
+                          <>
+                            <FaCheckCircle /> เผยแพร่แล้ว
+                          </>
+                        ) : (
+                          <>
+                            <FaFileAlt /> ฉบับร่าง
+                          </>
+                        )}
+                      </div>
                     </div>
                     {form.image ? (
-                      <img src={form.image} alt="Form Cover" />
+                      <img
+                        src={form.image}
+                        alt="Form Cover"
+                        loading="lazy"
+                        decoding="async"
+                      />
                     ) : (
                       <div className="fm-img-placeholder" />
                     )}
@@ -609,6 +676,9 @@ const FormManager = () => {
                     <p className="fm-last-opened">
                       แก้ไขล่าสุด {form.lastOpenedDate || "วว/ดด/ปป"}
                     </p>
+                    <span className="fm-organization-tag" title={form.organization_code || "ยังไม่ระบุหน่วยงาน"}>
+                      {form.organization_name || "โรงพยาบาลมหาวิทยาลัยเทคโนโลยีสุรนารี"}
+                    </span>
 
                     <button
                       className="fm-card-menu-btn"

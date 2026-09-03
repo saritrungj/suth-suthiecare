@@ -1,5 +1,6 @@
 import "./AppointmentTable.css";
 import { FiCalendar } from "react-icons/fi";
+import { formatBangkokDate } from "../../utils/caseDateFilter";
 
 export default function AppointmentTable({
   appointments = [],
@@ -128,8 +129,7 @@ export default function AppointmentTable({
 
               let dateStr = "-";
               if (a.appointment_date) {
-                const d = new Date(a.appointment_date);
-                dateStr = d.toLocaleDateString("th-TH", {
+                dateStr = formatBangkokDate(a.appointment_date, "th-TH", {
                   day: "numeric",
                   month: "short",
                   year: "2-digit",

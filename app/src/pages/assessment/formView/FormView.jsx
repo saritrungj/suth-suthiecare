@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   FiArrowLeft,
@@ -7,12 +7,14 @@ import {
   FiCheck,
   FiArrowUp,
   FiInfo,
+  FiShield,
 } from "react-icons/fi";
 import {
   getFormById,
   decodeSecureToken,
   submitFormAnswers,
 } from "../../../services/api";
+import { clearPatientSession } from "../../../utils/patientSession";
 import Swal from "sweetalert2";
 import "../../admin/forms/styles/FormPreview.css";
 import LanguageSwitcher from "../../../components/LanguageSwitcher.jsx";
@@ -21,12 +23,21 @@ import LanguageSwitcher from "../../../components/LanguageSwitcher.jsx";
 import {
   formatThaiID,
   validateThaiID,
+  withoutNationalIdQuestions,
   getQuestionTitles,
-  calculateQuestionScore,
+  buildScoreResults,
+  canGuestSubmit,
+  countScoredTargets,
+  normalizeLoginEnforcement,
+  normalizeResultDisplayMode,
+  shouldShowRealtimeResults,
 } from "./formUtils";
 import QuestionRenderer from "./QuestionRenderer";
+import InteractiveResultPanel from "./InteractiveResultPanel";
 import { useTranslation } from "react-i18next";
 import { translateTextSmart } from "../../../utils/translator";
+
+const ASSESSMENT_DRAFT_TTL = 4 * 60 * 60 * 1000;
 
 const FormView = () => {
   const { id } = useParams();
@@ -41,6 +52,8 @@ const FormView = () => {
   const isPreviewMode = id === "preview";
 
   const [formData, setFormData] = useState(null);
+  const [loginEnforcement, setLoginEnforcement] = useState("none");
+  const [resultDisplayMode, setResultDisplayMode] = useState("realtime");
   const [groupedSteps, setGroupedSteps] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -54,6 +67,112 @@ const FormView = () => {
   const [isVerifyingToken, setIsVerifyingToken] = useState(false);
   const [translatedStep, setTranslatedStep] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [draftRestored, setDraftRestored] = useState(false);
+  const guestPromptFormRef = useRef(null);
+
+  const patientToken = sessionStorage.getItem("patient_token");
+  const draftKey = `assessment_draft_${id}`;
+
+  const saveAssessmentDraft = () => {
+    try {
+      sessionStorage.setItem(
+        draftKey,
+        JSON.stringify({
+          answers,
+          consents,
+          optionInputValues,
+          currentStep,
+          savedAt: Date.now(),
+        }),
+      );
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const continueToPatientAuth = async (mode = "login") => {
+    if (!saveAssessmentDraft()) {
+      await Swal.fire({
+        icon: "error",
+        title: t("form_view.draft_save_error_title"),
+        text: t("form_view.draft_save_error_desc"),
+        confirmButtonColor: "#f47932",
+      });
+      return;
+    }
+    const returnTo = `${location.pathname}${location.search}`;
+    const authPath = mode === "register" ? "/account/register" : "/account/login";
+    navigate(`${authPath}?returnTo=${encodeURIComponent(returnTo)}`);
+  };
+
+  const continueToPatientLogin = () => continueToPatientAuth("login");
+  const continueToPatientRegister = () => continueToPatientAuth("register");
+
+  // Authentication enforcement: strict → hard redirect, optional → modal,
+  // none → no prompt at all.
+  useEffect(() => {
+    if (
+      !formData ||
+      isPreviewMode ||
+      patientToken ||
+      guestPromptFormRef.current === id
+    ) {
+      return;
+    }
+
+    // 'strict': redirect immediately — no guest access allowed
+    if (loginEnforcement === "strict") {
+      const returnTo = `${location.pathname}${location.search}`;
+      navigate(
+        `/account/login?returnTo=${encodeURIComponent(returnTo)}`,
+        { replace: true },
+      );
+      return;
+    }
+
+    // 'none': no prompt, fully public
+    if (loginEnforcement === "none") return;
+
+    // 'optional': show the auth modal with "Try it first" option
+    guestPromptFormRef.current = id;
+    let isActive = true;
+
+    const showAuthPrompt = async () => {
+      const result = await Swal.fire({
+        icon: "info",
+        title: "คุณยังไม่ได้เข้าสู่ระบบ",
+        html: '<div style="text-align:left;line-height:1.6">คุณสามารถทดลองทำแบบประเมินและดูผลเบื้องต้นได้ แต่คำตอบจะยังไม่ถูกส่งถึงเจ้าหน้าที่</div>',
+        showDenyButton: true,
+        showCancelButton: true,
+        allowOutsideClick: false,
+        confirmButtonText: t("form_view.guest_prompt_login"),
+        denyButtonText: t("form_view.guest_prompt_register"),
+        cancelButtonText: "ทดลองประเมินก่อน",
+        buttonsStyling: false,
+        customClass: {
+          popup: "assessment-auth-dialog",
+          actions: "assessment-auth-dialog__actions",
+          confirmButton:
+            "assessment-auth-dialog__button assessment-auth-dialog__button--primary",
+          denyButton:
+            "assessment-auth-dialog__button assessment-auth-dialog__button--secondary",
+          cancelButton:
+            "assessment-auth-dialog__button assessment-auth-dialog__button--tertiary",
+        },
+      });
+
+      if (!isActive) return;
+      if (result.isConfirmed) await continueToPatientLogin();
+      if (result.isDenied) await continueToPatientRegister();
+      // isDismissed = "ทดลองประเมินก่อน" → continue as guest, do nothing
+    };
+
+    showAuthPrompt();
+    return () => {
+      isActive = false;
+    };
+  }, [formData, id, isPreviewMode, patientToken, loginEnforcement, location.pathname, location.search, navigate, t]);
 
   useEffect(() => {
     let isMounted = true;
@@ -97,6 +216,8 @@ const FormView = () => {
         if (typeof data.questions === "string")
           data.questions = JSON.parse(data.questions);
 
+        data.questions = withoutNationalIdQuestions(data.questions || []);
+
         if (data.questions && Array.isArray(data.questions)) {
           data.questions.forEach((q, qIdx) => {
             if (!q.id) q.id = `q_${qIdx}`;
@@ -115,6 +236,8 @@ const FormView = () => {
         }
 
         setFormData(data);
+        setLoginEnforcement(normalizeLoginEnforcement(data.login_enforcement));
+        setResultDisplayMode(normalizeResultDisplayMode(data.result_display_mode));
 
         const steps = [];
         let currentGroup = {
@@ -142,6 +265,35 @@ const FormView = () => {
         }
         steps.push(currentGroup);
         setGroupedSteps(steps);
+
+        try {
+          const storedDraft = JSON.parse(sessionStorage.getItem(draftKey));
+          if (
+            storedDraft &&
+            Date.now() - Number(storedDraft.savedAt || 0) < ASSESSMENT_DRAFT_TTL
+          ) {
+            setAnswers((previous) => ({
+              ...previous,
+              ...(storedDraft.answers || {}),
+            }));
+            setConsents((previous) => ({
+              ...previous,
+              ...(storedDraft.consents || {}),
+            }));
+            setOptionInputValues(storedDraft.optionInputValues || {});
+            setCurrentStep(
+              Math.min(
+                Math.max(0, Number(storedDraft.currentStep) || 0),
+                Math.max(0, steps.length - 1),
+              ),
+            );
+            setDraftRestored(true);
+          } else if (storedDraft) {
+            sessionStorage.removeItem(draftKey);
+          }
+        } catch {
+          sessionStorage.removeItem(draftKey);
+        }
 
         if (identity) {
           const newAnswers = {};
@@ -401,15 +553,40 @@ const FormView = () => {
       return;
     }
 
+    if (!patientToken && !canGuestSubmit(loginEnforcement)) {
+      const loginResult = await Swal.fire({
+        icon: "info",
+        title: t("form_view.login_required_title"),
+        text: t("form_view.login_required_desc"),
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: t("form_view.login_to_submit"),
+        denyButtonText: t("form_view.register_to_submit"),
+        cancelButtonText: t("form_view.review_answers"),
+        buttonsStyling: false,
+        customClass: {
+          popup: "assessment-auth-dialog",
+          actions: "assessment-auth-dialog__actions",
+          confirmButton:
+            "assessment-auth-dialog__button assessment-auth-dialog__button--primary",
+          denyButton:
+            "assessment-auth-dialog__button assessment-auth-dialog__button--secondary",
+          cancelButton:
+            "assessment-auth-dialog__button assessment-auth-dialog__button--tertiary",
+        },
+      });
+      if (loginResult.isConfirmed) await continueToPatientLogin();
+      if (loginResult.isDenied) await continueToPatientRegister();
+      return;
+    }
+
     try {
       const qTitles = getQuestionTitles(groupedSteps);
-      let idValue = "-";
-      let consentGiven = false;
       const roleName = [],
         roleFaculty = [],
         roleIssue = [],
         rolePhone = [],
-        scoreResultsArray = [];
+        scoreResultsArray = buildScoreResults(formData.questions, answers);
 
       const flatQuestions = [];
       formData.questions.forEach((q) => {
@@ -447,19 +624,6 @@ const FormView = () => {
           mergedAnswers[q.id] = mergedArr;
         }
 
-        if (q.isIdentity || q.type === "national_id") {
-          if (q.type === "national_id") {
-            if (consents[q.id] === true) {
-              idValue = rawAns.replace(/-/g, "");
-              consentGiven = true;
-            } else {
-              idValue = "Anonymous";
-            }
-          } else {
-            idValue = rawAns;
-          }
-        }
-
         let textVal = "";
         if (q.type === "bmi") {
           const w = parseFloat(rawAns.weight) || 0;
@@ -488,106 +652,6 @@ const FormView = () => {
         if (q.type === "main_issue" || q.systemRole === "issue")
           roleIssue.push(textVal);
         if (q.type === "phone_number") rolePhone.push(textVal);
-      });
-
-      formData.questions.forEach((q) => {
-        if (q.type === "group") {
-          if (q.isScored) {
-            let groupTotalScore = 0;
-            let groupHasAnswer = false;
-
-            (q.subQuestions || []).forEach((sq) => {
-              const ans = answers[sq.id];
-              if (ans !== undefined && ans !== null && ans !== "") {
-                groupHasAnswer = true;
-                groupTotalScore += calculateQuestionScore(sq, ans);
-              }
-            });
-
-            if (groupHasAnswer) {
-              let matchedLabel = "ประเมินผลเสร็จสิ้น",
-                matchedColor = "#1967d2",
-                matchedAdvice = "";
-              if (q.scoringRules && q.scoringRules.length > 0) {
-                const rule = q.scoringRules.find(
-                  (r) => groupTotalScore >= r.min && groupTotalScore <= r.max,
-                );
-                if (rule) {
-                  matchedLabel = rule.label || matchedLabel;
-                  matchedColor = rule.color || matchedColor;
-                  matchedAdvice = rule.advice || matchedAdvice;
-                }
-              }
-              scoreResultsArray.push({
-                question_id: q.id,
-                title: q.title ? q.title.replace(/<[^>]+>/g, "") : "กลุ่มคำถาม",
-                score: groupTotalScore,
-                label: matchedLabel,
-                color: matchedColor,
-                advice: matchedAdvice,
-              });
-            }
-          } else {
-            (q.subQuestions || []).forEach((sq) => {
-              const ans = answers[sq.id];
-              if (
-                ans !== undefined &&
-                ans !== null &&
-                ans !== "" &&
-                sq.isScored
-              ) {
-                const totalScore = calculateQuestionScore(sq, ans);
-                let matchedLabel = "ประเมินผลเสร็จสิ้น",
-                  matchedColor = "#1967d2",
-                  matchedAdvice = "";
-                if (sq.scoringRules && sq.scoringRules.length > 0) {
-                  const rule = sq.scoringRules.find(
-                    (r) => totalScore >= r.min && totalScore <= r.max,
-                  );
-                  if (rule) {
-                    matchedLabel = rule.label || matchedLabel;
-                    matchedColor = rule.color || matchedColor;
-                    matchedAdvice = rule.advice || matchedAdvice;
-                  }
-                }
-                scoreResultsArray.push({
-                  question_id: sq.id,
-                  title: sq.title ? sq.title.replace(/<[^>]+>/g, "") : "คำถาม",
-                  score: totalScore,
-                  label: matchedLabel,
-                  color: matchedColor,
-                  advice: matchedAdvice,
-                });
-              }
-            });
-          }
-        } else {
-          const ans = answers[q.id];
-          if (ans !== undefined && ans !== null && ans !== "" && q.isScored) {
-            const totalScore = calculateQuestionScore(q, ans);
-            let matchedLabel = "ประเมินผลเสร็จสิ้น",
-              matchedColor = "#1967d2",
-              matchedAdvice = "";
-            if (q.scoringRules && q.scoringRules.length > 0) {
-              const rule = q.scoringRules.find(
-                (r) => totalScore >= r.min && totalScore <= r.max,
-              );
-              if (rule) {
-                matchedLabel = rule.label || matchedLabel;
-                matchedColor = rule.color || matchedColor;
-                matchedAdvice = rule.advice || matchedAdvice;
-              }
-            }
-            scoreResultsArray.push({
-              question_id: q.id,
-              title: q.title ? q.title.replace(/<[^>]+>/g, "") : "คำถาม",
-              score: totalScore,
-              label: matchedLabel,
-              color: matchedColor,
-              advice: matchedAdvice,
-            });
-          }
-        }
       });
 
       const rawAnswersToSave = {};
@@ -638,7 +702,7 @@ const FormView = () => {
         main_issue: roleIssue.length > 0 ? roleIssue.join(", ") : "-",
         score_results: scoreResultsArray,
         raw_answers: rawAnswersToSave,
-        consent_given: consentGiven,
+        consent_given: false,
       };
 
       const hasBooking = formData?.questions?.some(
@@ -651,7 +715,6 @@ const FormView = () => {
       const payload = {
         answers: mergedAnswers,
         questionTitles: qTitles,
-        identityValue: idValue,
         summaryData: sumData,
       };
 
@@ -668,7 +731,9 @@ const FormView = () => {
         width: "500px",
         padding: "2.5em",
         background: "#ffffff",
-        borderRadius: "20px",
+        customClass: {
+          popup: "assessment-consent-dialog",
+        },
       });
 
       if (!confirmResult.isConfirmed) return;
@@ -687,6 +752,12 @@ const FormView = () => {
         await submitFormAnswers(id, payload);
       } catch (submitError) {
         setIsSubmitting(false);
+        if (submitError.response?.status === 401) {
+          Swal.close();
+          clearPatientSession();
+          await continueToPatientLogin();
+          return;
+        }
         Swal.fire({
           icon: "error",
           title: t("assessment_result.send_error"),
@@ -696,6 +767,16 @@ const FormView = () => {
         return;
       }
       setIsSubmitting(false);
+      sessionStorage.removeItem(draftKey);
+
+      await Swal.fire({
+        icon: "success",
+        title: t("assessment_result.send_success"),
+        text: t("assessment_result.send_success_desc"),
+        timer: 1800,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
 
       navigate("/assessment-result", {
         state: {
@@ -703,6 +784,7 @@ const FormView = () => {
           formId: id,
           hasBooking: hasBooking,
           isSaved: true,
+          resultDisplayMode: normalizeResultDisplayMode(resultDisplayMode),
           payload,
         },
       });
@@ -717,6 +799,16 @@ const FormView = () => {
   };
 
   const theme = formData?.theme || {};
+  const interactiveResults = useMemo(
+    () => buildScoreResults(formData?.questions || [], answers),
+    [formData?.questions, answers],
+  );
+  const totalScoredTargets = useMemo(
+    () => countScoredTargets(formData?.questions || []),
+    [formData?.questions],
+  );
+  const hasInteractiveResults =
+    totalScoredTargets > 0 && shouldShowRealtimeResults(resultDisplayMode);
   const bannerType = theme.bannerType || "none";
   const bannerBgColor = theme.bannerBgColor || "#4285f4";
   const headerImage = theme.headerImage || null;
@@ -748,7 +840,7 @@ const FormView = () => {
 
   return (
     <div
-      className="preview-page"
+      className="preview-page form-view-page"
       style={{
         "--theme-color": theme.color || "#673ab7",
         "--bg-color": theme.bg || "#f0f2f5",
@@ -797,6 +889,29 @@ const FormView = () => {
             <LanguageSwitcher darkText={true} />
           </div>
         </>
+      )}
+
+      {!isPreviewMode && patientToken && (
+        <aside
+          className="preview-auth-notice is-authenticated"
+          aria-live="polite"
+        >
+          <div className="preview-auth-notice__inner">
+            <span className="preview-auth-notice__icon" aria-hidden="true">
+              <FiShield />
+            </span>
+            <div className="preview-auth-notice__copy">
+              <strong>
+                {t("form_view.login_notice_ready")}
+              </strong>
+              <span>
+                {draftRestored
+                  ? t("form_view.draft_restored")
+                  : t("form_view.login_notice_ready_desc")}
+              </span>
+            </div>
+          </div>
+        </aside>
       )}
 
       {bannerType !== "none" && (
@@ -859,7 +974,12 @@ const FormView = () => {
         </div>
       )}
 
-      <div className="preview-container">
+      <div
+        className={`preview-container ${hasInteractiveResults ? "preview-container--interactive" : ""}`}
+      >
+        <div
+          className={`form-view-workspace ${hasInteractiveResults ? "form-view-workspace--interactive" : ""}`}
+        >
         <form className="preview-form" onSubmit={(e) => e.preventDefault()}>
           <div className="preview-step-intro">
             <h2
@@ -900,6 +1020,15 @@ const FormView = () => {
               handleGridAnswer={handleGridAnswer}
             />
           ))}
+
+          {hasInteractiveResults && (
+            <InteractiveResultPanel
+              className="assessment-live-results--mobile"
+              results={interactiveResults}
+              totalTargets={totalScoredTargets}
+              isAuthenticated={Boolean(patientToken)}
+            />
+          )}
 
           {nationalIdQuestions.some(
             (q) => (answers[q.id] || "").length === 17,
@@ -1034,6 +1163,15 @@ const FormView = () => {
             </div>
           </div>
         </form>
+        {hasInteractiveResults && (
+          <InteractiveResultPanel
+            className="assessment-live-results--desktop"
+            results={interactiveResults}
+            totalTargets={totalScoredTargets}
+            isAuthenticated={Boolean(patientToken)}
+          />
+        )}
+        </div>
       </div>
 
       {showScrollTop && (
