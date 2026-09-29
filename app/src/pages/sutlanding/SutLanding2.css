@@ -143,7 +143,9 @@
   min-height: 4.5rem;
   padding: 0.5rem 5%;
   z-index: 100;
-  transition: background-color 180ms ease-out, box-shadow 180ms ease-out;
+  transition:
+    background-color 180ms ease-out,
+    box-shadow 180ms ease-out;
   transform: translateZ(0);
 }
 .sut2-nav--scrolled {
@@ -224,7 +226,7 @@
 .sut2-nav__btn--staff:hover {
   border-color: #f47932;
   background: #f47932;
-  color: #32180a;
+  color: #ffffff;
 }
 .sut2-nav--scrolled .sut2-nav__btn--staff {
   border-color: #d6dee5;
@@ -1127,11 +1129,31 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to bottom, rgba(15, 23, 42, 0.8) 0%, rgba(15, 23, 42, 0) 26%),
-    linear-gradient(to top, rgba(248, 250, 252, 0.9) 0%, rgba(248, 250, 252, 0) 26%),
-    radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.18) 0%, transparent 45%),
-    radial-gradient(circle at 85% 80%, rgba(255, 255, 255, 0.14) 0%, transparent 45%),
-    radial-gradient(circle at 70% 10%, rgba(3, 143, 159, 0.35) 0%, transparent 50%);
+    linear-gradient(
+      to bottom,
+      rgba(15, 23, 42, 0.8) 0%,
+      rgba(15, 23, 42, 0) 26%
+    ),
+    linear-gradient(
+      to top,
+      rgba(248, 250, 252, 0.9) 0%,
+      rgba(248, 250, 252, 0) 26%
+    ),
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(255, 255, 255, 0.18) 0%,
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(255, 255, 255, 0.14) 0%,
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 70% 10%,
+      rgba(3, 143, 159, 0.35) 0%,
+      transparent 50%
+    );
   pointer-events: none;
   z-index: 0;
 }

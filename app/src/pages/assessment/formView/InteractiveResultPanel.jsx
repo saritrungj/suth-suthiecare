@@ -80,7 +80,11 @@ export default function InteractiveResultPanel({
       <footer
         className={`assessment-live-results__session ${isAuthenticated ? "is-authenticated" : ""}`}
       >
-        {isAuthenticated ? <FiCheckCircle aria-hidden="true" /> : <FiLock aria-hidden="true" />}
+        {isAuthenticated ? (
+          <FiCheckCircle aria-hidden="true" />
+        ) : (
+          <FiLock aria-hidden="true" />
+        )}
         <span>
           {t(
             isAuthenticated

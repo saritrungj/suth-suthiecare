@@ -1,0 +1,410 @@
+/* Shared filter-bar layout: compact, calm, and easy to scan. */
+:root {
+  --suth-filter-surface: #fffaf7;
+  --suth-filter-border: #eadfd8;
+  --suth-filter-ink: #263a4d;
+  --suth-filter-muted: #718096;
+  --suth-filter-focus: #f47932;
+  --suth-filter-control-height: 44px;
+  --suth-filter-gap: 12px;
+}
+
+:is(
+  .filter-bar,
+  .scd-filter-bar,
+  .sum-filter-bar,
+  .dashboard-filters,
+  .apt-filter-section,
+  .hc-filter-panel,
+  .fm-action-bar
+) {
+  display: flex;
+  align-items: center;
+  gap: var(--suth-filter-gap);
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 1.25rem;
+  padding: 12px;
+  border: 1px solid var(--suth-filter-border);
+  border-radius: 14px;
+  background: var(--suth-filter-surface);
+  overflow: visible;
+}
+
+:is(
+    .filter-bar,
+    .scd-filter-bar,
+    .sum-filter-bar,
+    .dashboard-filters,
+    .apt-filter-section,
+    .hc-filter-panel,
+    .fm-action-bar
+  )
+  > * {
+  min-width: 0;
+  flex: 0 1 190px;
+}
+
+/* The visible row contains only high-frequency filters; secondary filters live in FilterDropdown. */
+@media (min-width: 761px) {
+  :is(
+    .filter-bar,
+    .scd-filter-bar,
+    .sum-filter-bar,
+    .dashboard-filters,
+    .apt-filter-section,
+    .hc-filter-panel,
+    .fm-action-bar
+  ) {
+    flex-wrap: nowrap;
+  }
+
+  :is(
+      .filter-bar,
+      .scd-filter-bar,
+      .sum-filter-bar,
+      .dashboard-filters,
+      .apt-filter-section,
+      .hc-filter-panel,
+      .fm-action-bar
+    )
+    > * {
+    flex: 0 0 clamp(160px, 16vw, 230px);
+  }
+
+  :is(
+      .filter-bar,
+      .scd-filter-bar,
+      .sum-filter-bar,
+      .dashboard-filters,
+      .apt-filter-section,
+      .hc-filter-panel,
+      .fm-action-bar
+    )
+    > :is(.rc-search-group, .scd-search-group, .sum-search-group) {
+    flex-basis: clamp(240px, 25vw, 360px);
+  }
+
+  :is(
+      .filter-bar,
+      .scd-filter-bar,
+      .sum-filter-bar,
+      .dashboard-filters,
+      .apt-filter-section,
+      .hc-filter-panel,
+      .fm-action-bar
+    )
+    > :is(.rc-date-range-container, .rc-date-container) {
+    flex-basis: clamp(280px, 30vw, 380px);
+  }
+}
+
+:is(
+  .rc-search-group,
+  .scd-search-group,
+  .sum-search-group,
+  .apt-search-group,
+  .fm-search-group,
+  .db-search-group,
+  .rc-custom-select,
+  .scd-custom-select,
+  .sum-native-filter select,
+  .apt-custom-select,
+  .fm-custom-select,
+  .db-custom-select,
+  .apt-date-wrapper,
+  .fm-date-wrapper,
+  .db-date-range-premium,
+  .rc-date-container
+) {
+  min-height: var(--suth-filter-control-height);
+  border-color: #d7c9c0;
+  border-radius: 10px;
+  color: var(--suth-filter-ink);
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+:is(.rc-search-group, .scd-search-group, .sum-search-group) {
+  flex: 1 1 18rem;
+}
+
+:is(.apt-search-group, .fm-search-group, .db-search-group) {
+  flex: 1 1 18rem;
+}
+
+:is(.rc-search-group, .scd-search-group, .sum-search-group):focus-within,
+:is(.rc-custom-select, .scd-custom-select):focus-visible,
+:is(.sum-native-filter select, .rc-date-container):focus-within {
+  border-color: var(--suth-filter-focus) !important;
+  box-shadow: 0 0 0 3px rgba(244, 121, 50, 0.16) !important;
+}
+
+:is(.rc-search-group, .scd-search-group, .sum-search-group) input {
+  min-width: 0;
+  color: var(--suth-filter-ink);
+}
+
+:is(.apt-search-group, .fm-search-group, .db-search-group) input {
+  min-width: 0;
+  color: var(--suth-filter-ink);
+}
+
+:is(
+  .rc-filter-icon,
+  .scd-filter-icon,
+  .sum-filter-icon,
+  .rc-dropdown-icon,
+  .scd-dropdown-icon,
+  .apt-filter-icon,
+  .fm-filter-icon,
+  .db-filter-icon,
+  .apt-dropdown-icon,
+  .fm-dropdown-icon,
+  .db-dropdown-icon
+) {
+  color: var(--suth-filter-muted);
+}
+
+:is(.rc-select-value, .scd-select-value) {
+  color: var(--suth-filter-ink);
+}
+
+:is(
+  .rc-custom-select,
+  .scd-custom-select,
+  .apt-custom-select,
+  .fm-custom-select,
+  .db-custom-select
+):hover,
+:is(.sum-native-filter select):hover {
+  border-color: #d5a98f;
+  background: #fffdfb;
+}
+
+@media (max-width: 760px) {
+  :is(
+    .filter-bar,
+    .scd-filter-bar,
+    .sum-filter-bar,
+    .dashboard-filters,
+    .apt-filter-section,
+    .hc-filter-panel,
+    .fm-action-bar
+  ) {
+    align-items: stretch;
+    overflow: visible;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  :is(
+      .filter-bar,
+      .scd-filter-bar,
+      .sum-filter-bar,
+      .dashboard-filters,
+      .apt-filter-section,
+      .hc-filter-panel,
+      .fm-action-bar
+    )
+    > *,
+  :is(.rc-search-group, .scd-search-group, .sum-search-group) {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+}
+
+.filter-more {
+  position: relative;
+  flex: 0 0 auto !important;
+}
+
+.filter-more__trigger {
+  min-height: var(--suth-filter-control-height);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  border: 1px solid #d7c9c0;
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--suth-filter-ink);
+  cursor: pointer;
+  font: 700 0.9rem inherit;
+  list-style: none;
+  white-space: nowrap;
+  transition:
+    border-color 180ms ease-out,
+    background-color 180ms ease-out,
+    box-shadow 180ms ease-out;
+}
+
+.filter-more__trigger::-webkit-details-marker {
+  display: none;
+}
+.filter-more__trigger:hover {
+  border-color: #d5a98f;
+  background: #fffdfb;
+}
+.filter-more__trigger:focus-visible {
+  outline: 3px solid rgba(244, 121, 50, 0.24);
+  outline-offset: 2px;
+}
+.filter-more[open] .filter-more__trigger {
+  border-color: var(--suth-filter-focus);
+  background: #fff7f2;
+  box-shadow: 0 0 0 3px rgba(244, 121, 50, 0.12);
+}
+.filter-more__icon {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  background: #ffeadc;
+  color: #b94c10;
+}
+.filter-more__icon svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.2;
+}
+.filter-more__label {
+  line-height: 1;
+}
+.filter-more__chevron {
+  width: 16px;
+  height: 16px;
+  margin-left: 2px;
+  color: var(--suth-filter-muted);
+  transition: transform 180ms ease-out;
+}
+.filter-more[open] .filter-more__chevron {
+  transform: rotate(180deg);
+}
+.filter-more__trigger strong {
+  min-width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #f47932;
+  color: #ffffff;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+.filter-more__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 1100;
+  width: min(23rem, calc(100vw - 2rem));
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--suth-filter-border);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(38, 58, 77, 0.14);
+}
+.filter-more__menu > * {
+  width: 100%;
+  min-width: 0;
+}
+.filter-more__menu
+  :is(
+    .rc-custom-select,
+    .scd-custom-select,
+    .apt-custom-select,
+    .fm-custom-select,
+    .db-custom-select
+  ) {
+  width: 100%;
+}
+.filter-more__menu .hc-form-group {
+  display: grid;
+  gap: 6px;
+}
+.filter-more__menu .hc-form-group label {
+  margin: 0 !important;
+  color: #526578 !important;
+  font-weight: 700;
+}
+
+/* Keep progressive-disclosure controls grouped at the far right on every desktop filter bar. */
+@media (min-width: 761px) {
+  :is(
+      .filter-bar,
+      .scd-filter-bar,
+      .sum-filter-bar,
+      .dashboard-filters,
+      .apt-filter-section,
+      .hc-filter-panel,
+      .fm-action-bar
+    )
+    > .filter-more {
+    order: 10;
+    margin-left: auto;
+  }
+
+  :is(
+      .filter-bar,
+      .scd-filter-bar,
+      .sum-filter-bar,
+      .dashboard-filters,
+      .apt-filter-section,
+      .hc-filter-panel,
+      .fm-action-bar
+    )
+    > .filter-more
+    ~ .filter-more {
+    margin-left: 0;
+  }
+}
+
+/* Help Center: the search field owns the left side, while the compact filter control shares its baseline at right. */
+@media (min-width: 1024px) {
+  .hc-filter-panel {
+    align-items: flex-end;
+  }
+
+  .hc-filter-panel > .hc-form-group {
+    flex: 1 1 min(100%, 34rem) !important;
+    min-width: 0;
+  }
+
+  .hc-filter-panel > .filter-more {
+    align-self: flex-end;
+    flex: 0 0 auto !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .filter-more {
+    width: 100%;
+  }
+  :is(
+      .filter-bar,
+      .scd-filter-bar,
+      .sum-filter-bar,
+      .dashboard-filters,
+      .apt-filter-section,
+      .hc-filter-panel,
+      .fm-action-bar
+    )
+    > .filter-more {
+    order: initial;
+    margin-left: 0;
+  }
+  .filter-more__trigger {
+    width: 100%;
+    justify-content: center;
+  }
+  .filter-more__menu {
+    left: 0;
+    right: auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}

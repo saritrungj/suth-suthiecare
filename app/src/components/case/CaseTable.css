@@ -19,19 +19,28 @@
   padding: 80px 20px;
   text-align: center;
   background: #ffffff;
-  border: 2px dashed #e2e8f0;
   color: #64748b;
   min-height: 350px;
 }
+.empty-state-box {
+  padding: 72px 20px;
+}
+.empty-state-box h3 {
+  margin: 0 0 4px;
+  color: #64748b;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+}
 .empty-state-box p {
-  font-size: 16px;
+  font-size: 15px;
   margin: 0;
   color: #94a3b8;
 }
 .empty-icon {
-  font-size: 48px;
-  color: #cbd5e1;
-  margin-bottom: 16px;
+  font-size: 44px;
+  color: #cbd8e6;
+  margin-bottom: 14px;
 }
 .spinner-container {
   display: flex;

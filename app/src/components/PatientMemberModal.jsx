@@ -6,6 +6,7 @@ const initialForm = {
   first_name: "",
   last_name: "",
   phone: "",
+  email: "",
   status: "active",
   password: "",
 };
@@ -48,6 +49,7 @@ export default function PatientMemberModal({ member, onClose, onSave }) {
         first_name: form.first_name.trim(),
         last_name: form.last_name.trim(),
         phone: form.phone.trim(),
+        email: form.email.trim(),
         status: form.status,
         password: form.password,
       });
@@ -61,9 +63,12 @@ export default function PatientMemberModal({ member, onClose, onSave }) {
   };
 
   return (
-    <div className="sum-modal-backdrop" onMouseDown={(event) => {
-      if (event.target === event.currentTarget && !saving) onClose();
-    }}>
+    <div
+      className="sum-modal-backdrop"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget && !saving) onClose();
+      }}
+    >
       <section
         className="sum-member-modal"
         role="dialog"
@@ -75,13 +80,22 @@ export default function PatientMemberModal({ member, onClose, onSave }) {
             <h2 id="sum-member-modal-title">แก้ไขข้อมูลผู้มารับบริการ</h2>
             <p>ปรับข้อมูลบัญชี สถานะ หรือกำหนดรหัสผ่านใหม่</p>
           </div>
-          <button type="button" onClick={onClose} disabled={saving} aria-label="ปิดหน้าต่าง">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={saving}
+            aria-label="ปิดหน้าต่าง"
+          >
             <FiX aria-hidden="true" />
           </button>
         </header>
 
         <form onSubmit={submit} aria-busy={saving}>
-          {error && <div className="sum-member-modal__error" role="alert">{error}</div>}
+          {error && (
+            <div className="sum-member-modal__error" role="alert">
+              {error}
+            </div>
+          )}
 
           <div className="sum-member-form-grid">
             <label className="sum-member-field sum-member-field--wide">
@@ -100,15 +114,27 @@ export default function PatientMemberModal({ member, onClose, onSave }) {
 
             <label className="sum-member-field">
               <span>ชื่อ</span>
-              <input value={form.first_name} onChange={update("first_name")} maxLength={100} required />
+              <input
+                value={form.first_name}
+                onChange={update("first_name")}
+                maxLength={100}
+                required
+              />
             </label>
             <label className="sum-member-field">
               <span>นามสกุล</span>
-              <input value={form.last_name} onChange={update("last_name")} maxLength={100} required />
+              <input
+                value={form.last_name}
+                onChange={update("last_name")}
+                maxLength={100}
+                required
+              />
             </label>
 
             <label className="sum-member-field">
-              <span>หมายเลขโทรศัพท์ <em>(ไม่บังคับ)</em></span>
+              <span>
+                หมายเลขโทรศัพท์ <em>(ไม่บังคับ)</em>
+              </span>
               <input
                 value={form.phone}
                 onChange={updateDigits("phone", 10)}
@@ -117,6 +143,20 @@ export default function PatientMemberModal({ member, onClose, onSave }) {
                 placeholder="08xxxxxxxx"
               />
               <small>กรอกหมายเลขโทรศัพท์มือถือ 10 หลัก เช่น 0812345678</small>
+            </label>
+            <label className="sum-member-field">
+              <span>อีเมล</span>
+              <input
+                type="email"
+                value={form.email}
+                onChange={update("email")}
+                maxLength={254}
+                autoComplete="email"
+                required
+              />
+              <small>
+                เมื่อเปลี่ยนอีเมล เจ้าหน้าที่จะยืนยันอีเมลให้อัตโนมัติ
+              </small>
             </label>
             <label className="sum-member-field">
               <span>สถานะบัญชี</span>
@@ -129,7 +169,10 @@ export default function PatientMemberModal({ member, onClose, onSave }) {
             </label>
 
             <label className="sum-member-field sum-member-field--wide">
-              <span><FiKey aria-hidden="true" /> รหัสผ่านใหม่ <em>(เว้นว่างหากไม่เปลี่ยน)</em></span>
+              <span>
+                <FiKey aria-hidden="true" /> รหัสผ่านใหม่{" "}
+                <em>(เว้นว่างหากไม่เปลี่ยน)</em>
+              </span>
               <div className="sum-member-password">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -154,9 +197,17 @@ export default function PatientMemberModal({ member, onClose, onSave }) {
           </div>
 
           <footer className="sum-member-modal__footer">
-            <button className="sum-member-cancel" type="button" onClick={onClose} disabled={saving}>ยกเลิก</button>
+            <button
+              className="sum-member-cancel"
+              type="button"
+              onClick={onClose}
+              disabled={saving}
+            >
+              ยกเลิก
+            </button>
             <button className="sum-member-save" type="submit" disabled={saving}>
-              <FiSave aria-hidden="true" /> {saving ? "กำลังบันทึก..." : "บันทึกการเปลี่ยนแปลง"}
+              <FiSave aria-hidden="true" />{" "}
+              {saving ? "กำลังบันทึก..." : "บันทึกการเปลี่ยนแปลง"}
             </button>
           </footer>
         </form>

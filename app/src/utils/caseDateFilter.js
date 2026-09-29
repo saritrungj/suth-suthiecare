@@ -1,5 +1,6 @@
 const DATE_ONLY = /^(\d{4})-(\d{2})-(\d{2})$/;
-const MYSQL_DATETIME = /^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})(?::(\d{2}))?$/;
+const MYSQL_DATETIME =
+  /^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2})(?::(\d{2}))?$/;
 export const BANGKOK_TIME_ZONE = "Asia/Bangkok";
 
 const bangkokParts = (date) => {
@@ -13,12 +14,19 @@ const bangkokParts = (date) => {
   return { year: value("year"), month: value("month"), day: value("day") };
 };
 
-const bangkokDateFromParts = (year, month, day, hour = 0, minute = 0, second = 0) =>
-  new Date(Date.UTC(year, month - 1, day, hour - 7, minute, second));
+const bangkokDateFromParts = (
+  year,
+  month,
+  day,
+  hour = 0,
+  minute = 0,
+  second = 0,
+) => new Date(Date.UTC(year, month - 1, day, hour - 7, minute, second));
 
 // Date inputs and MySQL DATETIME values represent Bangkok calendar values.
 export function parseCaseDate(value) {
-  if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+  if (value instanceof Date)
+    return Number.isNaN(value.getTime()) ? null : value;
   if (!value) return null;
   const text = String(value).trim();
   const dateOnly = text.match(DATE_ONLY);
@@ -32,8 +40,12 @@ export function parseCaseDate(value) {
   const mysqlDateTime = text.match(MYSQL_DATETIME);
   if (mysqlDateTime) {
     return bangkokDateFromParts(
-      Number(mysqlDateTime[1]), Number(mysqlDateTime[2]), Number(mysqlDateTime[3]),
-      Number(mysqlDateTime[4]), Number(mysqlDateTime[5]), Number(mysqlDateTime[6] || 0),
+      Number(mysqlDateTime[1]),
+      Number(mysqlDateTime[2]),
+      Number(mysqlDateTime[3]),
+      Number(mysqlDateTime[4]),
+      Number(mysqlDateTime[5]),
+      Number(mysqlDateTime[6] || 0),
     );
   }
   const parsed = new Date(text);
@@ -66,7 +78,14 @@ export function getCurrentMonthDateRange(referenceDate = new Date()) {
 }
 
 export function caseRecordDate(record) {
-  return parseCaseDate(record?.submitted_at || record?.updated_at || record?.createdAt || record?.created_at || record?.appointment_date || record?.appointment);
+  return parseCaseDate(
+    record?.submitted_at ||
+      record?.updated_at ||
+      record?.createdAt ||
+      record?.created_at ||
+      record?.appointment_date ||
+      record?.appointment,
+  );
 }
 
 export function isCaseInDateRange(record, startDate, endDate) {
@@ -77,5 +96,7 @@ export function isCaseInDateRange(record, startDate, endDate) {
 }
 
 export function normaliseDateRange(startDate, endDate) {
-  return startDate && endDate && startDate > endDate ? [endDate, startDate] : [startDate, endDate];
+  return startDate && endDate && startDate > endDate
+    ? [endDate, startDate]
+    : [startDate, endDate];
 }

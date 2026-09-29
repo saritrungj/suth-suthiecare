@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   createUser,
   deletePatientMember,
@@ -17,6 +23,7 @@ import {
 } from "../../services/api";
 import AddAdminModal from "../../components/AddAdminModal";
 import PatientMemberModal from "../../components/PatientMemberModal";
+import FilterDropdown from "../../components/FilterDropdown";
 import { usePermissions } from "../../permissions/PermissionsProvider";
 import {
   FiAlertCircle,
@@ -63,7 +70,10 @@ function formatDate(value) {
   }).format(date);
 }
 
-export default function UserManagement({ initialTab = "staff", standalone = false }) {
+export default function UserManagement({
+  initialTab = "staff",
+  standalone = false,
+}) {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [users, setUsers] = useState([]);
   const [members, setMembers] = useState([]);
@@ -97,10 +107,12 @@ export default function UserManagement({ initialTab = "staff", standalone = fals
 
   useEffect(() => {
     if (!isSystemAdmin) return;
-    Promise.all([getOrganizations(), getRoles()]).then(([organizationResponse, roleResponse]) => {
-      setOrganizations(organizationResponse.data || []);
-      setRoles(roleResponse.data || []);
-    }).catch(() => setLoadError("ไม่สามารถโหลดข้อมูลหน่วยงานและบทบาทได้"));
+    Promise.all([getOrganizations(), getRoles()])
+      .then(([organizationResponse, roleResponse]) => {
+        setOrganizations(organizationResponse.data || []);
+        setRoles(roleResponse.data || []);
+      })
+      .catch(() => setLoadError("ไม่สามารถโหลดข้อมูลหน่วยงานและบทบาทได้"));
   }, [isSystemAdmin]);
 
   useEffect(() => {
@@ -198,7 +210,9 @@ export default function UserManagement({ initialTab = "staff", standalone = fals
       const matchesSearch =
         !term ||
         [user.name, user.email, user.username].some((value) =>
-          String(value || "").toLowerCase().includes(term),
+          String(value || "")
+            .toLowerCase()
+            .includes(term),
         );
       const matchesRole = !roleFilter || String(user.role_id) === roleFilter;
       const matchesStatus = !statusFilter || user.status === statusFilter;
@@ -230,20 +244,65 @@ export default function UserManagement({ initialTab = "staff", standalone = fals
   };
 
   const syncMemberships = async (userId, memberships, existing = []) => {
-    const wanted = new Map((memberships || []).map((membership) => [Number(membership.organization_id), membership]));
-    await Promise.all((existing || []).map((membership) => {
-      const desired = wanted.get(Number(membership.organization_id));
-      return updateOrganizationMember(membership.organization_id, membership.id, desired ? { role_id: desired.role_id, status: desired.status || "active", is_primary: desired.is_primary } : { role_id: membership.role_id, status: "inactive", is_primary: false });
-    }));
-    const existingOrganizations = new Set((existing || []).map((membership) => Number(membership.organization_id)));
-    await Promise.all([...wanted.values()].filter((membership) => !existingOrganizations.has(Number(membership.organization_id))).map((membership) => createOrganizationMember(membership.organization_id, { user_id: userId, role_id: membership.role_id, is_primary: membership.is_primary })));
+    const wanted = new Map(
+      (memberships || []).map((membership) => [
+        Number(membership.organization_id),
+        membership,
+      ]),
+    );
+    await Promise.all(
+      (existing || []).map((membership) => {
+        const desired = wanted.get(Number(membership.organization_id));
+        return updateOrganizationMember(
+          membership.organization_id,
+          membership.id,
+          desired
+            ? {
+                role_id: desired.role_id,
+                status: desired.status || "active",
+                is_primary: desired.is_primary,
+              }
+            : {
+                role_id: membership.role_id,
+                status: "inactive",
+                is_primary: false,
+              },
+        );
+      }),
+    );
+    const existingOrganizations = new Set(
+      (existing || []).map((membership) => Number(membership.organization_id)),
+    );
+    await Promise.all(
+      [...wanted.values()]
+        .filter(
+          (membership) =>
+            !existingOrganizations.has(Number(membership.organization_id)),
+        )
+        .map((membership) =>
+          createOrganizationMember(membership.organization_id, {
+            user_id: userId,
+            role_id: membership.role_id,
+            is_primary: membership.is_primary,
+          }),
+        ),
+    );
   };
 
   const handleSaveUser = async (data) => {
     try {
       const { memberships, ...account } = data;
-      if (editingUser) { await updateUser(editingUser.id, account); await syncMemberships(editingUser.id, memberships, editingUser.memberships); }
-      else { const response = await createUser(account); await syncMemberships(response.data.id, memberships); }
+      if (editingUser) {
+        await updateUser(editingUser.id, account);
+        await syncMemberships(
+          editingUser.id,
+          memberships,
+          editingUser.memberships,
+        );
+      } else {
+        const response = await createUser(account);
+        await syncMemberships(response.data.id, memberships);
+      }
       setShowModal(false);
       setEditingUser(null);
       await fetchStaffUsers();
@@ -344,7 +403,9 @@ export default function UserManagement({ initialTab = "staff", standalone = fals
     } catch (error) {
       await MySwal.fire({
         title: "ไม่สามารถบันทึกข้อมูลได้",
-        text: error.response?.data?.message || "กรุณาตรวจสอบข้อมูลแล้วลองใหม่อีกครั้ง",
+        text:
+          error.response?.data?.message ||
+          "กรุณาตรวจสอบข้อมูลแล้วลองใหม่อีกครั้ง",
         icon: "error",
         confirmButtonColor: "#f47932",
       });
@@ -428,29 +489,31 @@ export default function UserManagement({ initialTab = "staff", standalone = fals
 
         {!standalone && (
           <nav className="sum-user-tabs" aria-label="ประเภทผู้ใช้งาน">
-          <button
-            className={activeTab === "staff" ? "active" : ""}
-            onClick={() => switchTab("staff")}
-            aria-current={activeTab === "staff" ? "page" : undefined}
-          >
-            <FiShield aria-hidden="true" />
-            <span>เจ้าหน้าที่</span>
-            <strong>{users.length}</strong>
-          </button>
-          <button
-            className={activeTab === "members" ? "active" : ""}
-            onClick={() => switchTab("members")}
-            aria-current={activeTab === "members" ? "page" : undefined}
-          >
-            <FiUsers aria-hidden="true" />
-            <span>ผู้มารับบริการ</span>
-            <strong>{memberPagination.total}</strong>
-          </button>
+            <button
+              className={activeTab === "staff" ? "active" : ""}
+              onClick={() => switchTab("staff")}
+              aria-current={activeTab === "staff" ? "page" : undefined}
+            >
+              <FiShield aria-hidden="true" />
+              <span>เจ้าหน้าที่</span>
+              <strong>{users.length}</strong>
+            </button>
+            <button
+              className={activeTab === "members" ? "active" : ""}
+              onClick={() => switchTab("members")}
+              aria-current={activeTab === "members" ? "page" : undefined}
+            >
+              <FiUsers aria-hidden="true" />
+              <span>ผู้มารับบริการ</span>
+              <strong>{memberPagination.total}</strong>
+            </button>
           </nav>
         )}
 
         <section className="sum-table-card" aria-live="polite">
-          <div className={`sum-filter-bar ${activeTab === "members" ? "sum-filter-bar--members" : ""}`}>
+          <div
+            className={`sum-filter-bar ${activeTab === "members" ? "sum-filter-bar--members" : ""}`}
+          >
             <label className="sum-search-group">
               <FiSearch className="sum-filter-icon" aria-hidden="true" />
               <span className="sr-only">ค้นหาผู้ใช้งาน</span>
@@ -466,43 +529,47 @@ export default function UserManagement({ initialTab = "staff", standalone = fals
               />
             </label>
 
-            {activeTab === "staff" && (
+            <FilterDropdown
+              activeCount={[roleFilter, statusFilter].filter(Boolean).length}
+            >
+              {activeTab === "staff" && (
+                <label className="sum-native-filter">
+                  <span>ระดับสิทธิ์</span>
+                  <select
+                    value={roleFilter}
+                    onChange={(event) => setRoleFilter(event.target.value)}
+                  >
+                    <option value="">ทุกระดับ</option>
+                    <option value="1">Super Admin</option>
+                    <option value="2">Admin</option>
+                    <option value="3">Staff</option>
+                  </select>
+                </label>
+              )}
+
               <label className="sum-native-filter">
-                <span>ระดับสิทธิ์</span>
+                <span>สถานะ</span>
                 <select
-                  value={roleFilter}
-                  onChange={(event) => setRoleFilter(event.target.value)}
+                  value={statusFilter}
+                  onChange={(event) => setStatusFilter(event.target.value)}
                 >
-                  <option value="">ทุกระดับ</option>
-                  <option value="1">Super Admin</option>
-                  <option value="2">Admin</option>
-                  <option value="3">Staff</option>
+                  <option value="">ทุกสถานะ</option>
+                  {activeTab === "staff" ? (
+                    <>
+                      <option value="active">ใช้งานปกติ</option>
+                      <option value="inactive">ระงับการใช้งาน</option>
+                    </>
+                  ) : (
+                    <>
+                      <option value="active">ใช้งานปกติ</option>
+                      <option value="pending_verification">รอยืนยัน</option>
+                      <option value="locked">ถูกล็อกชั่วคราว</option>
+                      <option value="disabled">ปิดการใช้งาน</option>
+                    </>
+                  )}
                 </select>
               </label>
-            )}
-
-            <label className="sum-native-filter">
-              <span>สถานะ</span>
-              <select
-                value={statusFilter}
-                onChange={(event) => setStatusFilter(event.target.value)}
-              >
-                <option value="">ทุกสถานะ</option>
-                {activeTab === "staff" ? (
-                  <>
-                    <option value="active">ใช้งานปกติ</option>
-                    <option value="inactive">ระงับการใช้งาน</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="active">ใช้งานปกติ</option>
-                    <option value="pending_verification">รอยืนยัน</option>
-                    <option value="locked">ถูกล็อกชั่วคราว</option>
-                    <option value="disabled">ปิดการใช้งาน</option>
-                  </>
-                )}
-              </select>
-            </label>
+            </FilterDropdown>
           </div>
 
           {loadError && (
@@ -532,28 +599,52 @@ export default function UserManagement({ initialTab = "staff", standalone = fals
                   {loading ? (
                     <LoadingRows columns={6} />
                   ) : currentUsers.length === 0 ? (
-                    <EmptyRow columns={6} message="ไม่พบข้อมูลเจ้าหน้าที่" />
+                    <EmptyRow
+                      columns={6}
+                      message="ไม่พบข้อมูลเจ้าหน้าที่"
+                      hint={
+                        search || roleFilter || statusFilter
+                          ? "ลองเปลี่ยนคำค้นหาหรือตัวกรอง"
+                          : "ยังไม่มีบัญชีเจ้าหน้าที่ในระบบ"
+                      }
+                    />
                   ) : (
                     currentUsers.map((user, index) => {
-                      const isSelf = Number(currentUser?.id) === Number(user.id);
+                      const isSelf =
+                        Number(currentUser?.id) === Number(user.id);
                       const targetRole = Number(user.role_id);
-                      const canEdit =
-                        canManageUsers &&
-                        isSystemAdmin;
+                      const canEdit = canManageUsers && isSystemAdmin;
                       const canDelete =
-                        canManageUsers &&
-                        !isSelf &&
-                        isSystemAdmin;
+                        canManageUsers && !isSelf && isSystemAdmin;
                       return (
                         <tr key={user.id}>
                           <td>{staffStart + index + 1}</td>
                           <td>
                             <div className="sum-user-info-cell">
-                              <span className="sum-user-fullname">{user.name || "—"}</span>
-                              <span className="sum-user-username">@{user.username}</span>
+                              <span className="sum-user-fullname">
+                                {user.name || "—"}
+                              </span>
+                              <span className="sum-user-username">
+                                @{user.username}
+                              </span>
                             </div>
                           </td>
-                          <td className="sum-wrap-text">{user.email || "—"}</td>
+                          <td className="sum-wrap-text">
+                            <div>{user.email || "—"}</div>
+                            {user.email && (
+                              <small
+                                className={
+                                  user.email_verified_at
+                                    ? "sum-email-verified"
+                                    : "sum-email-pending"
+                                }
+                              >
+                                {user.email_verified_at
+                                  ? "ยืนยันแล้ว"
+                                  : "รอยืนยันอีเมล"}
+                              </small>
+                            )}
+                          </td>
                           <td>{roleMap[user.role_id] || "—"}</td>
                           <td>
                             <StatusBadge status={user.status} staff />
@@ -581,7 +672,9 @@ export default function UserManagement({ initialTab = "staff", standalone = fals
                                 </button>
                               )}
                               {!canEdit && !canDelete && (
-                                <span className="sum-read-only">ดูได้อย่างเดียว</span>
+                                <span className="sum-read-only">
+                                  ดูได้อย่างเดียว
+                                </span>
                               )}
                             </div>
                           </td>
@@ -608,17 +701,34 @@ export default function UserManagement({ initialTab = "staff", standalone = fals
                   {loading ? (
                     <LoadingRows columns={7} />
                   ) : members.length === 0 ? (
-                    <EmptyRow columns={7} message="ไม่พบข้อมูลผู้มารับบริการ" />
+                    <EmptyRow
+                      columns={7}
+                      message={
+                        search || statusFilter
+                          ? "ไม่พบผู้มารับบริการที่ตรงกับตัวกรอง"
+                          : "ยังไม่มีผู้มารับบริการในหน่วยงานนี้"
+                      }
+                      hint={
+                        search || statusFilter
+                          ? "ลองเปลี่ยนคำค้นหาหรือตัวกรองสถานะ"
+                          : "ผู้มารับบริการที่มีประวัติในหน่วยงานนี้จะแสดงที่นี่"
+                      }
+                    />
                   ) : (
                     members.map((member, index) => (
                       <tr key={member.id}>
                         <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                         <td>
                           <div className="sum-member-name">
-                            <span className="sum-member-icon" aria-hidden="true">
+                            <span
+                              className="sum-member-icon"
+                              aria-hidden="true"
+                            >
                               <FiUserCheck />
                             </span>
-                            <span title={member.username}>{member.username}</span>
+                            <span title={member.username}>
+                              {member.username}
+                            </span>
                           </div>
                         </td>
                         <td>{member.full_name || "—"}</td>
@@ -631,26 +741,28 @@ export default function UserManagement({ initialTab = "staff", standalone = fals
                           <div className="sum-actions-group">
                             {canManageUsers ? (
                               <>
-                              <button
-                                className="sum-edit"
-                                onClick={() => handleEditMember(member)}
-                                disabled={memberModalLoading}
-                                aria-label={`แก้ไขข้อมูล ${member.full_name || member.username}`}
-                                title="แก้ไขข้อมูลและเปลี่ยนรหัสผ่าน"
-                              >
-                                <FaEdit aria-hidden="true" />
-                              </button>
-                              <button
-                                className="sum-delete"
-                                onClick={() => handleDeleteMember(member)}
-                                aria-label={`ลบบัญชี ${member.full_name || member.username}`}
-                                title="ลบบัญชีผู้มารับบริการ"
-                              >
-                                <FaTrash aria-hidden="true" />
-                              </button>
+                                <button
+                                  className="sum-edit"
+                                  onClick={() => handleEditMember(member)}
+                                  disabled={memberModalLoading}
+                                  aria-label={`แก้ไขข้อมูล ${member.full_name || member.username}`}
+                                  title="แก้ไขข้อมูลและเปลี่ยนรหัสผ่าน"
+                                >
+                                  <FaEdit aria-hidden="true" />
+                                </button>
+                                <button
+                                  className="sum-delete"
+                                  onClick={() => handleDeleteMember(member)}
+                                  aria-label={`ลบบัญชี ${member.full_name || member.username}`}
+                                  title="ลบบัญชีผู้มารับบริการ"
+                                >
+                                  <FaTrash aria-hidden="true" />
+                                </button>
                               </>
                             ) : (
-                              <span className="sum-read-only">ดูได้อย่างเดียว</span>
+                              <span className="sum-read-only">
+                                ดูได้อย่างเดียว
+                              </span>
                             )}
                           </div>
                         </td>
@@ -668,7 +780,9 @@ export default function UserManagement({ initialTab = "staff", standalone = fals
                 <span>แสดง</span>
                 <select
                   value={itemsPerPage}
-                  onChange={(event) => setItemsPerPage(Number(event.target.value))}
+                  onChange={(event) =>
+                    setItemsPerPage(Number(event.target.value))
+                  }
                   aria-label="จำนวนรายการต่อหน้า"
                 >
                   <option value={10}>10</option>
@@ -676,12 +790,16 @@ export default function UserManagement({ initialTab = "staff", standalone = fals
                   <option value={50}>50</option>
                   <option value={100}>100</option>
                 </select>
-                <span>จากทั้งหมด {totalItems.toLocaleString("th-TH")} รายการ</span>
+                <span>
+                  จากทั้งหมด {totalItems.toLocaleString("th-TH")} รายการ
+                </span>
               </div>
               <div className="sum-pagination-controls">
                 <button
                   className="sum-page-btn"
-                  onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                  onClick={() =>
+                    setCurrentPage((page) => Math.max(1, page - 1))
+                  }
                   disabled={currentPage <= 1}
                   aria-label="หน้าก่อนหน้า"
                 >
@@ -749,13 +867,13 @@ function LoadingRows({ columns }) {
   ));
 }
 
-function EmptyRow({ columns, message }) {
+function EmptyRow({ columns, message, hint }) {
   return (
     <tr>
       <td colSpan={columns} className="sum-empty-state">
         <FiUsers aria-hidden="true" />
         <strong>{message}</strong>
-        <span>ลองเปลี่ยนคำค้นหาหรือตัวกรองสถานะ</span>
+        <span>{hint}</span>
       </td>
     </tr>
   );

@@ -15,7 +15,10 @@
   font-weight: 800;
   line-height: 1;
   cursor: pointer;
-  transition: background-color 180ms ease-out, border-color 180ms ease-out, color 180ms ease-out;
+  transition:
+    background-color 180ms ease-out,
+    border-color 180ms ease-out,
+    color 180ms ease-out;
 }
 
 .language-switcher:hover {

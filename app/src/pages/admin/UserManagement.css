@@ -54,12 +54,14 @@
   border: 0;
   border-radius: 10px;
   background: #f47932;
-  color: #32180a;
+  color: #ffffff;
   font: inherit;
   font-weight: 800;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color 180ms ease-out, transform 180ms ease-out;
+  transition:
+    background-color 180ms ease-out,
+    transform 180ms ease-out;
 }
 
 .sum-add-btn:hover:not(:disabled) {
@@ -609,7 +611,7 @@
 .sum-member-save {
   border: 0;
   background: #f47932;
-  color: #32180a;
+  color: #ffffff;
 }
 
 .sum-member-modal__footer > button:disabled,
@@ -862,6 +864,21 @@
   .sum-member-modal__footer > button {
     width: 100%;
   }
+}
+
+.sum-email-verified,
+.sum-email-pending {
+  display: inline-block;
+  margin-top: 3px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.sum-email-verified {
+  color: #16794a;
+}
+.sum-email-pending {
+  color: #a65a05;
 }
 
 @media (prefers-reduced-motion: reduce) {

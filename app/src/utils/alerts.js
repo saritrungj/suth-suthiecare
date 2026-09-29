@@ -71,7 +71,7 @@ export const confirmAlert = async ({
     confirmButtonText: confirmText,
     cancelButtonText: cancelText,
     confirmButtonColor: danger ? "#dc2626" : brandConfirmColor,
-    cancelButtonColor,
+    cancelButtonColor: cancelColor,
   });
   return result.isConfirmed;
 };

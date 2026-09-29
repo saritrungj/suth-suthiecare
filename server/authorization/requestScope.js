@@ -1,7 +1,8 @@
 // Routes whose operational data must always be constrained by the active
 // organization. Keeping this policy pure makes it regression-testable.
 function needsOrganizationContext(path, hasAuthorization = false) {
-  return path.startsWith("/cases") ||
+  return (
+    path.startsWith("/cases") ||
     path.startsWith("/master-cases") ||
     path.startsWith("/admin/master-cases") ||
     path.startsWith("/appointments") ||
@@ -16,7 +17,9 @@ function needsOrganizationContext(path, hasAuthorization = false) {
       (path.startsWith("/forms/") && !/^\/forms\/[^/]+\/submit$/.test(path)) ||
       path.startsWith("/clinics")) &&
       hasAuthorization) ||
-    /^\/forms\/[^/]+\/(responses|responses-v2|submission-count)$/.test(path);
+    (path.startsWith("/admin/help-center") && hasAuthorization) ||
+    /^\/forms\/[^/]+\/(responses|responses-v2|submission-count)$/.test(path)
+  );
 }
 
 module.exports = { needsOrganizationContext };

@@ -18,7 +18,7 @@ test("decrypts sensitive case fields without exposing identity hashes", () => {
         raw_answers: {
           "Full name": "enc:สมชาย ใจดี",
           "Phone number": "enc:0812345678",
-          "อาการที่พบ": "ปวดหัว",
+          อาการที่พบ: "ปวดหัว",
         },
       }),
     },

@@ -1,7 +1,8 @@
 // ตัวแปรการตั้งค่า API
-export const API_BASE = (
-  import.meta.env?.VITE_API_URL || "/api"
-).replace(/\/api$/, "");
+export const API_BASE = (import.meta.env?.VITE_API_URL || "/api").replace(
+  /\/api$/,
+  "",
+);
 
 export const axiosConfig = {
   headers: {
@@ -122,9 +123,9 @@ export const formatAnswerValue = (raw) => {
 export const isDisplayableTableAnswer = (value) =>
   Boolean(
     value &&
-      typeof value === "object" &&
-      !Array.isArray(value) &&
-      Object.keys(value).length > 0,
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    Object.keys(value).length > 0,
   );
 
 // เช็คประเภทคำถาม

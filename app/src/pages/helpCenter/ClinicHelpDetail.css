@@ -217,6 +217,40 @@
   flex-direction: column;
 }
 
+.hc-sidebar-empty-state {
+  display: flex;
+  min-height: 150px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 22px 16px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  color: #64748b;
+  text-align: center;
+}
+
+.hc-sidebar-empty-state svg {
+  margin-bottom: 4px;
+  color: #f47932;
+  font-size: 28px;
+}
+
+.hc-sidebar-empty-state strong,
+.hc-sidebar-empty-state span {
+  display: block;
+}
+
+.hc-sidebar-empty-state strong {
+  color: #334155;
+}
+
+.hc-sidebar-empty-state span {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 /* ── 🟢 ส่วนเสริมพิเศษ: จัดการแท็กหัวข้อโฟลเดอร์หมวดหมู่ (Category Header) ── */
 .hc-nested-menu-item {
   list-style: none;

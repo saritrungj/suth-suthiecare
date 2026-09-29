@@ -23,25 +23,63 @@ if (envFiles.length) dotenv.config({ path: envFiles, quiet: true });
 
 if (mode === "production") {
   const required = [
-    "DB_HOST", "DB_USER", "DB_PASSWORD", "DB_NAME", "JWT_SECRET",
-    "AES_KEY", "AES_SEARCH_KEY", "FRONTEND_URL", "CORS_ORIGINS",
+    "DB_HOST",
+    "DB_USER",
+    "DB_PASSWORD",
+    "DB_NAME",
+    "JWT_SECRET",
+    "AES_KEY",
+    "AES_SEARCH_KEY",
+    "FRONTEND_URL",
+    "CORS_ORIGINS",
     "TURNSTILE_SECRET_KEY",
   ];
-  const missing = required.filter((key) => !String(process.env[key] || "").trim());
+  const missing = required.filter(
+    (key) => !String(process.env[key] || "").trim(),
+  );
   if (missing.length) {
-    throw new Error(`Missing required production environment variables: ${missing.join(", ")}`);
+    throw new Error(
+      `Missing required production environment variables: ${missing.join(", ")}`,
+    );
   }
   if (process.env.DISABLE_TURNSTILE === "true") {
     throw new Error("DISABLE_TURNSTILE must never be true in production");
   }
   if (String(process.env.JWT_SECRET).length < 32) {
-    throw new Error("JWT_SECRET must contain at least 32 characters in production");
+    throw new Error(
+      "JWT_SECRET must contain at least 32 characters in production",
+    );
   }
   if (!/^[0-9a-f]{64}$/i.test(String(process.env.AES_KEY))) {
-    throw new Error("AES_KEY must contain exactly 64 hexadecimal characters in production");
+    throw new Error(
+      "AES_KEY must contain exactly 64 hexadecimal characters in production",
+    );
   }
   if (String(process.env.AES_SEARCH_KEY).length < 32) {
-    throw new Error("AES_SEARCH_KEY must contain at least 32 characters in production");
+    throw new Error(
+      "AES_SEARCH_KEY must contain at least 32 characters in production",
+    );
+  }
+  if (
+    String(process.env.STAFF_EMAIL_OTP_MODE || "enroll").toLowerCase() ===
+    "required"
+  ) {
+    const otpRequired = [
+      "RESEND_API_KEY",
+      "RESEND_FROM_EMAIL",
+      "OTP_HMAC_SECRET",
+    ];
+    const missingOtp = otpRequired.filter(
+      (key) => !String(process.env[key] || "").trim(),
+    );
+    if (missingOtp.length)
+      throw new Error(
+        `Missing OTP environment variables: ${missingOtp.join(", ")}`,
+      );
+    if (String(process.env.OTP_HMAC_SECRET).length < 32)
+      throw new Error(
+        "OTP_HMAC_SECRET must contain at least 32 characters in production",
+      );
   }
 }
 

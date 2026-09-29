@@ -13,7 +13,10 @@ const {
 
 test("trusted links only allow local and official HTTPS destinations", () => {
   assert.equal(normalizeTrustedLink("/docs/manual.pdf"), "/docs/manual.pdf");
-  assert.equal(normalizeTrustedLink("https://vitalcare.suth.go.th/path"), "https://vitalcare.suth.go.th/path");
+  assert.equal(
+    normalizeTrustedLink("https://vitalcare.suth.go.th/path"),
+    "https://vitalcare.suth.go.th/path",
+  );
   assert.equal(normalizeTrustedLink("https://evil.example/phish"), null);
   assert.equal(normalizeTrustedLink("javascript:alert(1)"), null);
   assert.equal(normalizeTrustedLink("//evil.example/phish"), null);
@@ -32,7 +35,7 @@ test("rich text strips executable HTML and untrusted backlinks", () => {
 
 test("form content removes unsafe HTML and untrusted media", () => {
   const result = sanitizeFormContent({
-    title: '<img src=x onerror=alert(1)>Title',
+    title: "<img src=x onerror=alert(1)>Title",
     headerImage: "https://evil.example/tracker.png",
     videoUrl: "https://evil.example/video",
     options: ['<b onclick="x()">Choice</b>'],

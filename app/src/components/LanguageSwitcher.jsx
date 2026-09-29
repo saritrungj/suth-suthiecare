@@ -17,7 +17,11 @@ export default function LanguageSwitcher({ darkText = false, className = "" }) {
       type="button"
       className={`language-switcher ${darkText ? "language-switcher--dark" : ""} ${className}`}
       onClick={toggleLanguage}
-      aria-label={currentLanguage === "th" ? "เปลี่ยนภาษาเป็นภาษาอังกฤษ" : "Change language to Thai"}
+      aria-label={
+        currentLanguage === "th"
+          ? "เปลี่ยนภาษาเป็นภาษาอังกฤษ"
+          : "Change language to Thai"
+      }
     >
       <FiGlobe aria-hidden="true" />
       {currentLanguage === "th" ? "EN" : "TH"}

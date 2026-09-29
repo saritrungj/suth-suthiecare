@@ -14,6 +14,7 @@ import "./styles/FormManager.css";
 import { usePermissions } from "../../../permissions/PermissionsProvider";
 import { confirmAlert } from "../../../utils/alerts";
 import { getActiveOrganizationLabel } from "../../../permissions/organizationContext";
+import FilterDropdown from "../../../components/FilterDropdown";
 
 import {
   FaFolderOpen,
@@ -269,7 +270,11 @@ const FormManager = () => {
         </span>,
       );
     } catch (error) {
-      showToast(<span style={{ display: "flex", alignItems: "center", gap: "8px" }}><FaTimesCircle /> ไม่สามารถอัปโหลดภาพได้ กรุณาลองใหม่อีกครั้ง</span>);
+      showToast(
+        <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <FaTimesCircle /> ไม่สามารถอัปโหลดภาพได้ กรุณาลองใหม่อีกครั้ง
+        </span>,
+      );
     } finally {
       setPreviewImage(null);
       setSelectedFormForImage(null);
@@ -296,7 +301,11 @@ const FormManager = () => {
           </span>,
         );
       } catch (error) {
-        showToast(<span style={{ display: "flex", alignItems: "center", gap: "8px" }}><FaTimesCircle /> ไม่สามารถลบฟอร์มได้ กรุณาลองใหม่อีกครั้ง</span>);
+        showToast(
+          <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <FaTimesCircle /> ไม่สามารถลบฟอร์มได้ กรุณาลองใหม่อีกครั้ง
+          </span>,
+        );
       }
     }
   };
@@ -324,7 +333,11 @@ const FormManager = () => {
         </span>,
       );
     } catch (error) {
-      showToast(<span style={{ display: "flex", alignItems: "center", gap: "8px" }}><FaTimesCircle /> ไม่สามารถเปลี่ยนชื่อได้ กรุณาลองใหม่อีกครั้ง</span>);
+      showToast(
+        <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <FaTimesCircle /> ไม่สามารถเปลี่ยนชื่อได้ กรุณาลองใหม่อีกครั้ง
+        </span>,
+      );
     }
   };
 
@@ -357,7 +370,11 @@ const FormManager = () => {
         </span>,
       );
     } catch (error) {
-      showToast(<span style={{ display: "flex", alignItems: "center", gap: "8px" }}><FaTimesCircle /> ไม่สามารถเปลี่ยนประเภทคลินิกได้ กรุณาลองใหม่อีกครั้ง</span>);
+      showToast(
+        <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <FaTimesCircle /> ไม่สามารถเปลี่ยนประเภทคลินิกได้ กรุณาลองใหม่อีกครั้ง
+        </span>,
+      );
     }
   };
 
@@ -413,7 +430,11 @@ const FormManager = () => {
         </span>,
       );
     } catch (error) {
-      showToast(<span style={{ display: "flex", alignItems: "center", gap: "8px" }}><FaTimesCircle /> ไม่สามารถทำสำเนาฟอร์มได้ กรุณาลองใหม่อีกครั้ง</span>);
+      showToast(
+        <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <FaTimesCircle /> ไม่สามารถทำสำเนาฟอร์มได้ กรุณาลองใหม่อีกครั้ง
+        </span>,
+      );
     }
   };
 
@@ -426,7 +447,10 @@ const FormManager = () => {
             <p className="fm-header-hint">
               สร้าง แก้ไข และจัดการสถานะของแบบประเมินในแต่ละคลินิกบริการ
             </p>
-            <p className="fm-context-indicator"><span>ขอบเขตข้อมูล</span>{activeOrganizationLabel}</p>
+            <p className="fm-context-indicator">
+              <span>ขอบเขตข้อมูล</span>
+              {activeOrganizationLabel}
+            </p>
           </div>
           <button
             className="fm-btn-add-form"
@@ -437,22 +461,28 @@ const FormManager = () => {
         </header>
 
         <div className="fm-action-bar">
-            {/* 🟢 ช่องค้นหาดีไซน์ใหม่ */}
-            <div className="fm-search-group">
-              <FaSearch
-                className="fm-filter-icon"
-                style={{ color: "#64748b" }}
-              />
-              <input
-                type="text"
-                placeholder="ค้นหาชื่อฟอร์ม..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+          {/* 🟢 ช่องค้นหาดีไซน์ใหม่ */}
+          <div className="fm-search-group">
+            <FaSearch className="fm-filter-icon" style={{ color: "#64748b" }} />
+            <input
+              type="text"
+              placeholder="ค้นหาชื่อฟอร์ม..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
 
-            {/* 🟢 กลุ่มเครื่องมือขวามือ */}
-            <div className="fm-action-tools">
+          {/* 🟢 กลุ่มเครื่องมือขวามือ */}
+          <div className="fm-action-tools">
+            <FilterDropdown
+              activeCount={
+                [
+                  clinicFilter !== "all" ? clinicFilter : "",
+                  statusFilter !== "all" ? statusFilter : "",
+                  sortBy !== "เปิดล่าสุด" ? sortBy : "",
+                ].filter(Boolean).length
+              }
+            >
               <CustomDropdown
                 icon={FaFilter}
                 value={clinicFilter}
@@ -485,26 +515,26 @@ const FormManager = () => {
                   { value: "ชื่อ", label: "เรียงตามชื่อ" },
                 ]}
               />
+            </FilterDropdown>
 
-              {/* สลับมุมมอง */}
-              <div className="fm-view-toggle">
-                <span className="fm-toggle-label">
-                  {viewMode === "grid" ? "แบบตาราง" : "แบบรายการ"}
-                </span>
+            {/* สลับมุมมอง */}
+            <div className="fm-view-toggle">
+              <span className="fm-toggle-label">
+                {viewMode === "grid" ? "แบบตาราง" : "แบบรายการ"}
+              </span>
 
-                <label className="fm-switch">
-                  <input
-                    type="checkbox"
-                    checked={viewMode === "grid"}
-                    onChange={() =>
-                      setViewMode(viewMode === "grid" ? "list" : "grid")
-                    }
-                  />
-                  <span className="fm-slider fm-round"></span>
-                </label>
-              </div>
-
+              <label className="fm-switch">
+                <input
+                  type="checkbox"
+                  checked={viewMode === "grid"}
+                  onChange={() =>
+                    setViewMode(viewMode === "grid" ? "list" : "grid")
+                  }
+                />
+                <span className="fm-slider fm-round"></span>
+              </label>
             </div>
+          </div>
         </div>
 
         {isLoading ? (
@@ -635,9 +665,13 @@ const FormManager = () => {
                       <div
                         style={{
                           background:
-                            currentStatus === "published" ? "#dcfce7" : "#fff3e0",
+                            currentStatus === "published"
+                              ? "#dcfce7"
+                              : "#fff3e0",
                           color:
-                            currentStatus === "published" ? "#166534" : "#e65100",
+                            currentStatus === "published"
+                              ? "#166534"
+                              : "#e65100",
                           padding: "4px 10px",
                           borderRadius: "12px",
                           fontSize: "11px",
@@ -676,8 +710,12 @@ const FormManager = () => {
                     <p className="fm-last-opened">
                       แก้ไขล่าสุด {form.lastOpenedDate || "วว/ดด/ปป"}
                     </p>
-                    <span className="fm-organization-tag" title={form.organization_code || "ยังไม่ระบุหน่วยงาน"}>
-                      {form.organization_name || "โรงพยาบาลมหาวิทยาลัยเทคโนโลยีสุรนารี"}
+                    <span
+                      className="fm-organization-tag"
+                      title={form.organization_code || "ยังไม่ระบุหน่วยงาน"}
+                    >
+                      {form.organization_name ||
+                        "โรงพยาบาลมหาวิทยาลัยเทคโนโลยีสุรนารี"}
                     </span>
 
                     <button
@@ -797,8 +835,14 @@ const FormManager = () => {
 
       {/* Modal ต่างๆ คงเดิม */}
       {isImageModalOpen && (
-        <div className="fm-modal-overlay">
-          <div className="fm-modal-content" style={{ maxWidth: "500px" }}>
+        <div className="fm-modal-overlay" role="presentation">
+          <div
+            className="fm-modal-content"
+            style={{ maxWidth: "500px" }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="เปลี่ยนรูปแบบประเมิน"
+          >
             <h3 style={{ marginBottom: "15px" }}>เปลี่ยนรูปภาพปก</h3>
             <div
               style={{
@@ -882,8 +926,13 @@ const FormManager = () => {
       )}
 
       {isRenameModalOpen && (
-        <div className="fm-modal-overlay">
-          <div className="fm-modal-content">
+        <div className="fm-modal-overlay" role="presentation">
+          <div
+            className="fm-modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-label="เปลี่ยนชื่อแบบประเมิน"
+          >
             <h3>เปลี่ยนชื่อฟอร์ม</h3>
             <input
               type="text"
@@ -910,8 +959,13 @@ const FormManager = () => {
       )}
 
       {isClinicModalOpen && (
-        <div className="fm-modal-overlay">
-          <div className="fm-modal-content">
+        <div className="fm-modal-overlay" role="presentation">
+          <div
+            className="fm-modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-label="เปลี่ยนคลินิกของแบบประเมิน"
+          >
             <h3>เปลี่ยนประเภทคลินิก</h3>
             <select
               className="fm-modal-input"

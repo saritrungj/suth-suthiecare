@@ -7,7 +7,7 @@ import {
   FiMessageCircle,
   FiGrid,
 } from "react-icons/fi";
-import { getActiveClinics, getFaqsAdmin } from "../../services/api";
+import { getActiveClinics, getPublicFaqs } from "../../services/api";
 import "./HelpCenterUser.css";
 import Navbar from "../../components/Navbar";
 
@@ -24,6 +24,7 @@ export default function HelpCenterUser() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isAllClinicsExpanded, setIsAllClinicsExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -54,22 +55,12 @@ export default function HelpCenterUser() {
   }, [searchQuery, allFaqs]);
 
   const fetchData = async () => {
+    setIsLoading(true);
+    setLoadError("");
     try {
-      const cachedClinics = localStorage.getItem("suth_clinics");
-      const cachedFaqs = localStorage.getItem("suth_homepage_faqs");
-      const cachedAllFaqs = localStorage.getItem("suth_all_faqs_search");
-      if (cachedClinics && cachedFaqs && cachedAllFaqs) {
-        setClinics(JSON.parse(cachedClinics));
-        setCommonFaqs(JSON.parse(cachedFaqs));
-        setAllFaqs(JSON.parse(cachedAllFaqs));
-        setIsLoading(false);
-      } else {
-        setIsLoading(true);
-      }
-
       const [resClinic, resFaqAdmin] = await Promise.all([
         getActiveClinics(),
-        getFaqsAdmin({}),
+        getPublicFaqs(),
       ]);
 
       const freshClinics = resClinic.data?.data || [];
@@ -85,22 +76,20 @@ export default function HelpCenterUser() {
       setClinics(freshClinics);
       setAllFaqs(freshAllFaqs);
       setCommonFaqs(freshHomepageFaqs);
-
-      localStorage.setItem("suth_clinics", JSON.stringify(freshClinics));
-      localStorage.setItem(
-        "suth_homepage_faqs",
-        JSON.stringify(freshHomepageFaqs),
-      );
-      localStorage.setItem(
-        "suth_all_faqs_search",
-        JSON.stringify(freshAllFaqs),
-      );
     } catch (err) {
       console.error("Error fetching user help center data:", err);
+      setClinics([]);
+      setCommonFaqs([]);
+      setAllFaqs([]);
+      setLoadError("ไม่สามารถโหลดข้อมูลศูนย์ช่วยเหลือได้");
     } finally {
       setIsLoading(false);
     }
   };
+
+  const visibleClinics = clinics.filter(
+    (clinic) => Number(clinic.show_in_help_center) === 1,
+  );
 
   // ฟังก์ชันควบคุมการเลื่อนสไลด์เมื่อคลิกปุ่มลูกศร
   const handleScroll = (direction) => {
@@ -201,6 +190,15 @@ export default function HelpCenterUser() {
             <div className="hc-user-loading-spinner"></div>
             <p>กำลังโหลดข้อมูล</p>
           </div>
+        ) : loadError ? (
+          <div className="hc-user-empty-state" role="alert">
+            <FiMessageCircle aria-hidden="true" />
+            <h2>{loadError}</h2>
+            <p>กรุณาตรวจสอบการเชื่อมต่อแล้วลองใหม่อีกครั้ง</p>
+            <button type="button" onClick={fetchData}>
+              ลองใหม่
+            </button>
+          </div>
         ) : (
           <>
             {/* ── CLINIC SELECTION ── */}
@@ -216,34 +214,81 @@ export default function HelpCenterUser() {
                     </p>
                   </div>
                 </div>
-                <button
-                  className="hc-link-more"
-                  onClick={() => setIsAllClinicsExpanded(!isAllClinicsExpanded)}
-                  type="button"
-                >
-                  {isAllClinicsExpanded ? (
-                    <>
-                      ย่อกลับ{" "}
-                      <FiChevronDown style={{ transform: "rotate(180deg)" }} />
-                    </>
-                  ) : (
-                    <>
-                      ดูทั้งหมด <FiChevronRight />
-                    </>
-                  )}
-                </button>
+                {visibleClinics.length > 0 && (
+                  <button
+                    className="hc-link-more"
+                    onClick={() =>
+                      setIsAllClinicsExpanded(!isAllClinicsExpanded)
+                    }
+                    type="button"
+                  >
+                    {isAllClinicsExpanded ? (
+                      <>
+                        ย่อกลับ{" "}
+                        <FiChevronDown
+                          style={{ transform: "rotate(180deg)" }}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        ดูทั้งหมด <FiChevronRight />
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
 
               {/* 🎯 ลอจิก Conditional Rendering สลับโครงสร้างตามสถานะการกดปุ่ม */}
-              {isAllClinicsExpanded ? (
+              {visibleClinics.length === 0 ? (
+                <div className="hc-user-empty-state hc-user-empty-state--compact">
+                  <FiGrid aria-hidden="true" />
+                  <h3>ยังไม่มีคลินิกที่เปิดแสดงในศูนย์ช่วยเหลือ</h3>
+                  <p>เมื่อหน่วยงานเปิดเผยแพร่คลินิก รายการจะแสดงที่นี่</p>
+                </div>
+              ) : isAllClinicsExpanded ? (
                 /* ร่างที่ 1: เมื่อเปิดแผ่ขยายออกทั้งหมด -> แสดงเป็น Grid แถวตั้งลงมา ไม่มีปุ่มลูกศร */
                 <div className="hc-user-clinic-grid-expanded">
-                  {clinics
-                    .filter((clinic) => clinic.show_in_help_center === 1)
-                    .map((clinic) => (
+                  {visibleClinics.map((clinic) => (
+                    <div
+                      key={clinic.id}
+                      className="hc-user-clinic-card"
+                      onClick={() =>
+                        navigate(`/help-center/clinic/${clinic.id}`)
+                      }
+                      style={{ cursor: "pointer" }}
+                    >
+                      <div className="hc-card-main-content">
+                        <div className="hc-card-visual-container">
+                          <div className="hc-card-logo-circle">
+                            <img src={clinic.image} alt={clinic.name} />
+                          </div>
+                        </div>
+                        <div className="hc-card-text-container">
+                          <h3>{clinic.name}</h3>
+                        </div>
+                      </div>
+                      <button className="hc-btn-view-clinic" type="button">
+                        ดูคำถามทั้งหมด <FiChevronRight />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                /* ร่างที่ 2: สถานะเริ่มต้นปกติ -> เป็นสไลด์แนวนอน พร้อมลูกศรลอยควบคุม */
+                <div className="hc-slider-wrapper">
+                  <button
+                    className="hc-slider-arrow arrow-left"
+                    onClick={() => handleScroll("left")}
+                    type="button"
+                  >
+                    &lt;
+                  </button>
+
+                  <div className="hc-user-clinic-grid-scroll" ref={scrollRef}>
+                    {visibleClinics.map((clinic) => (
                       <div
                         key={clinic.id}
-                        className="hc-user-clinic-card"
+                        className="hc-user-clinic-card-scroll"
                         onClick={() =>
                           navigate(`/help-center/clinic/${clinic.id}`)
                         }
@@ -264,45 +309,6 @@ export default function HelpCenterUser() {
                         </button>
                       </div>
                     ))}
-                </div>
-              ) : (
-                /* ร่างที่ 2: สถานะเริ่มต้นปกติ -> เป็นสไลด์แนวนอน พร้อมลูกศรลอยควบคุม */
-                <div className="hc-slider-wrapper">
-                  <button
-                    className="hc-slider-arrow arrow-left"
-                    onClick={() => handleScroll("left")}
-                    type="button"
-                  >
-                    &lt;
-                  </button>
-
-                  <div className="hc-user-clinic-grid-scroll" ref={scrollRef}>
-                    {clinics
-                      .filter((clinic) => clinic.show_in_help_center === 1)
-                      .map((clinic) => (
-                        <div
-                          key={clinic.id}
-                          className="hc-user-clinic-card-scroll"
-                          onClick={() =>
-                            navigate(`/help-center/clinic/${clinic.id}`)
-                          }
-                          style={{ cursor: "pointer" }}
-                        >
-                          <div className="hc-card-main-content">
-                            <div className="hc-card-visual-container">
-                              <div className="hc-card-logo-circle">
-                                <img src={clinic.image} alt={clinic.name} />
-                              </div>
-                            </div>
-                            <div className="hc-card-text-container">
-                              <h3>{clinic.name}</h3>
-                            </div>
-                          </div>
-                          <button className="hc-btn-view-clinic" type="button">
-                            ดูคำถามทั้งหมด <FiChevronRight />
-                          </button>
-                        </div>
-                      ))}
                   </div>
 
                   <button
@@ -328,36 +334,44 @@ export default function HelpCenterUser() {
               </div>
 
               <div className="hc-user-faq-list">
-                {commonFaqs.map((faq, index) => (
-                  <div key={faq.faq_id} className="hc-faq-item">
-                    <div
-                      className="hc-faq-question"
-                      onClick={() => {
-                        if (faq.clinic_id) {
-                          navigate(`/help-center/clinic/${faq.clinic_id}`, {
-                            state: { autoSelectFaqId: faq.faq_id },
-                          });
-                        } else {
-                          navigate("/help-center");
-                        }
-                      }}
-                      style={{ cursor: "pointer" }}
-                    >
+                {commonFaqs.length > 0 ? (
+                  commonFaqs.map((faq) => (
+                    <div key={faq.faq_id} className="hc-faq-item">
                       <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "4px",
+                        className="hc-faq-question"
+                        onClick={() => {
+                          if (faq.clinic_id) {
+                            navigate(`/help-center/clinic/${faq.clinic_id}`, {
+                              state: { autoSelectFaqId: faq.faq_id },
+                            });
+                          } else {
+                            navigate("/help-center");
+                          }
                         }}
+                        style={{ cursor: "pointer" }}
                       >
-                        <span style={{ fontWeight: "500" }}>
-                          {faq.question}
-                        </span>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "4px",
+                          }}
+                        >
+                          <span style={{ fontWeight: "500" }}>
+                            {faq.question}
+                          </span>
+                        </div>
+                        <FiChevronRight style={{ color: "#94a3b8" }} />
                       </div>
-                      <FiChevronRight style={{ color: "#94a3b8" }} />
                     </div>
+                  ))
+                ) : (
+                  <div className="hc-user-empty-state hc-user-empty-state--compact">
+                    <FiMessageCircle aria-hidden="true" />
+                    <h3>ยังไม่มีคำถามที่พบบ่อย</h3>
+                    <p>คำถามที่หน่วยงานเลือกแสดงหน้าแรกจะปรากฏที่นี่</p>
                   </div>
-                ))}
+                )}
               </div>
             </section>
           </>

@@ -249,9 +249,9 @@
 .cdm-btn-add-q-dotted {
   width: 100%;
   padding: 16px;
-  background: #ffffff;
-  border: 2px dashed #94a3b8;
-  color: #64748b;
+  background: #f47932;
+  border: 2px solid #f47932;
+  color: #ffffff;
   border-radius: 12px;
   cursor: pointer;
   font-size: 15px;
@@ -264,9 +264,9 @@
   gap: 8px;
 }
 .cdm-btn-add-q-dotted:hover {
-  border-color: #0ea5e9;
-  color: #0ea5e9;
-  background: #f0f9ff;
+  border-color: #ea580c;
+  color: #ffffff;
+  background: #ea580c;
   transform: scale(1.01);
 }
 .cdm-icon-btn-red-sm {

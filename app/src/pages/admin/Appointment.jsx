@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import AppointmentTable from "../../components/appointment/AppointmentTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
+import FilterDropdown from "../../components/FilterDropdown";
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -23,7 +24,11 @@ import {
   FiChevronDown,
   FiSearch,
 } from "react-icons/fi";
-import { bangkokDateKey, formatBangkokDate, getCurrentMonthDateRange } from "../../utils/caseDateFilter";
+import {
+  bangkokDateKey,
+  formatBangkokDate,
+  getCurrentMonthDateRange,
+} from "../../utils/caseDateFilter";
 import { usePermissions } from "../../permissions/PermissionsProvider";
 import { showErrorAlert, showSuccessToast } from "../../utils/alerts";
 import "./Appointment.css";
@@ -380,7 +385,10 @@ export default function Appointment() {
       );
       await showSuccessToast("อัปเดตสถานะนัดหมายเรียบร้อยแล้ว");
     } catch (err) {
-      await showErrorAlert({ error: err, title: "อัปเดตสถานะนัดหมายไม่สำเร็จ" });
+      await showErrorAlert({
+        error: err,
+        title: "อัปเดตสถานะนัดหมายไม่สำเร็จ",
+      });
     }
   };
 
@@ -420,42 +428,6 @@ export default function Appointment() {
 
           {/* filter bar */}
           <div className="apt-filter-section">
-            {/* 🟢 แถวที่ 1: สถานะ และ แบบฟอร์ม (ยืดสุดขอบ) */}
-            <CustomDropdown
-              icon={FiLayers}
-              value={formStatusFilter}
-              onChange={setFormStatusFilter}
-              options={[
-                { value: "published", label: "✓ ฟอร์มที่เผยแพร่แล้ว" },
-                { value: "draft", label: "✎ ฟอร์มฉบับร่าง/ซ่อน" },
-                { value: "all", label: "☰ สถานะฟอร์มทั้งหมด" },
-              ]}
-              style={{ borderColor: "#bfdbfe", backgroundColor: "#eff6ff" }}
-              iconStyle={{ color: "#2563eb" }}
-              textStyle={{ color: "#1e40af", fontWeight: "600" }}
-            />
-
-            <CustomDropdown
-              icon={FiLayers}
-              value={selectedFormId}
-              onChange={setSelectedFormId}
-              options={
-                isInitialSetup
-                  ? [{ value: "", label: "กำลังโหลดแบบฟอร์ม..." }]
-                  : filteredForms.length > 0
-                    ? [
-                        { value: "all", label: "ทุกแบบฟอร์ม" },
-                        ...filteredForms.map((f) => ({
-                        value: f.id,
-                        label: f.title,
-                        })),
-                      ]
-                    : [{ value: "", label: "-- ไม่มีแบบฟอร์ม --" }]
-              }
-              style={{ flex: "1 1 300px" }} /* บังคับยืดสุดขอบ */
-            />
-
-            {/* 🟢 แถวที่ 2: ค้นหา (ยืด), คลินิก, วันที่, บริการ, ความเสี่ยง */}
             <div className="apt-search-group">
               <FiSearch
                 className="apt-filter-icon"
@@ -469,119 +441,169 @@ export default function Appointment() {
               />
             </div>
 
-            <CustomDropdown
-              icon={FiLayers}
-              value={selectedClinic}
-              onChange={setSelectedClinic}
-              options={[
-                { value: "", label: "ทุกคลินิก (All)" },
-                { value: "general", label: "ทั่วไป" },
-                ...clinics.map((c) => ({ value: c.slug, label: c.name })),
-              ]}
-            />
-
-            <div className="apt-date-wrapper">
-              <FiCalendar
-                className="apt-filter-icon"
-                style={{ color: "#64748b" }}
+            <FilterDropdown
+              activeCount={
+                [
+                  formStatusFilter !== "published" ? formStatusFilter : "",
+                  selectedFormId !== "all" ? selectedFormId : "",
+                  selectedClinic,
+                  filterService,
+                  filterRisk,
+                ].filter(Boolean).length
+              }
+            >
+              {/* สถานะและแบบฟอร์ม: ใช้เมื่อจำเป็น */}
+              <CustomDropdown
+                icon={FiLayers}
+                value={formStatusFilter}
+                onChange={setFormStatusFilter}
+                options={[
+                  { value: "published", label: "✓ ฟอร์มที่เผยแพร่แล้ว" },
+                  { value: "draft", label: "✎ ฟอร์มฉบับร่าง/ซ่อน" },
+                  { value: "all", label: "☰ สถานะฟอร์มทั้งหมด" },
+                ]}
+                style={{ borderColor: "#bfdbfe", backgroundColor: "#eff6ff" }}
+                iconStyle={{ color: "#2563eb" }}
+                textStyle={{ color: "#1e40af", fontWeight: "600" }}
               />
 
-              {/* 🟢 กล่องวันที่ 1 (เริ่มต้น) */}
-              <div
-                style={{
-                  position: "relative",
-                  flex: 1,
-                  display: "flex",
-                  height: "100%",
-                }}
-              >
-                <input
-                  type="text"
-                  className="apt-date-input"
-                  placeholder="วัน/เดือน/ปี"
-                  value={displayThaiDate(startDate)}
-                  readOnly
-                  style={{ width: "100%", backgroundColor: "transparent" }}
+              <CustomDropdown
+                icon={FiLayers}
+                value={selectedFormId}
+                onChange={setSelectedFormId}
+                options={
+                  isInitialSetup
+                    ? [{ value: "", label: "กำลังโหลดแบบฟอร์ม..." }]
+                    : filteredForms.length > 0
+                      ? [
+                          { value: "all", label: "ทุกแบบฟอร์ม" },
+                          ...filteredForms.map((f) => ({
+                            value: f.id,
+                            label: f.title,
+                          })),
+                        ]
+                      : [{ value: "", label: "-- ไม่มีแบบฟอร์ม --" }]
+                }
+                style={{ flex: "1 1 300px" }} /* บังคับยืดสุดขอบ */
+              />
+              <CustomDropdown
+                icon={FiLayers}
+                value={selectedClinic}
+                onChange={setSelectedClinic}
+                options={[
+                  { value: "", label: "ทุกคลินิก (All)" },
+                  { value: "general", label: "ทั่วไป" },
+                  ...clinics.map((c) => ({ value: c.slug, label: c.name })),
+                ]}
+              />
+
+              <div className="apt-date-wrapper">
+                <FiCalendar
+                  className="apt-filter-icon"
+                  style={{ color: "#64748b" }}
                 />
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  onClick={(e) => e.target.showPicker && e.target.showPicker()}
+
+                {/* 🟢 กล่องวันที่ 1 (เริ่มต้น) */}
+                <div
                   style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
+                    position: "relative",
+                    flex: 1,
+                    display: "flex",
                     height: "100%",
-                    opacity: 0,
-                    cursor: "pointer",
-                    zIndex: 10,
                   }}
-                  title="ตั้งแต่วันที่"
-                />
+                >
+                  <input
+                    type="text"
+                    className="apt-date-input"
+                    placeholder="วัน/เดือน/ปี"
+                    value={displayThaiDate(startDate)}
+                    readOnly
+                    style={{ width: "100%", backgroundColor: "transparent" }}
+                  />
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    onClick={(e) =>
+                      e.target.showPicker && e.target.showPicker()
+                    }
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      opacity: 0,
+                      cursor: "pointer",
+                      zIndex: 10,
+                    }}
+                    title="ตั้งแต่วันที่"
+                  />
+                </div>
+
+                <span className="apt-date-separator">ถึง</span>
+
+                {/* 🟢 กล่องวันที่ 2 (สิ้นสุด) */}
+                <div
+                  style={{
+                    position: "relative",
+                    flex: 1,
+                    display: "flex",
+                    height: "100%",
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="apt-date-input"
+                    placeholder="วัน/เดือน/ปี"
+                    value={displayThaiDate(endDate)}
+                    readOnly
+                    style={{ width: "100%", backgroundColor: "transparent" }}
+                  />
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    onClick={(e) =>
+                      e.target.showPicker && e.target.showPicker()
+                    }
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      opacity: 0,
+                      cursor: "pointer",
+                      zIndex: 10,
+                    }}
+                    title="ถึงวันที่"
+                  />
+                </div>
               </div>
 
-              <span className="apt-date-separator">ถึง</span>
+              <CustomDropdown
+                icon={FiLayers}
+                value={filterService}
+                onChange={setFilterService}
+                options={[
+                  { value: "", label: "ทุกบริการ" },
+                  ...servicesList.map((s) => ({ value: s.id, label: s.name })),
+                ]}
+              />
 
-              {/* 🟢 กล่องวันที่ 2 (สิ้นสุด) */}
-              <div
-                style={{
-                  position: "relative",
-                  flex: 1,
-                  display: "flex",
-                  height: "100%",
-                }}
-              >
-                <input
-                  type="text"
-                  className="apt-date-input"
-                  placeholder="วัน/เดือน/ปี"
-                  value={displayThaiDate(endDate)}
-                  readOnly
-                  style={{ width: "100%", backgroundColor: "transparent" }}
-                />
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  onClick={(e) => e.target.showPicker && e.target.showPicker()}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    opacity: 0,
-                    cursor: "pointer",
-                    zIndex: 10,
-                  }}
-                  title="ถึงวันที่"
-                />
-              </div>
-            </div>
-
-            <CustomDropdown
-              icon={FiLayers}
-              value={filterService}
-              onChange={setFilterService}
-              options={[
-                { value: "", label: "ทุกบริการ" },
-                ...servicesList.map((s) => ({ value: s.id, label: s.name })),
-              ]}
-            />
-
-            <CustomDropdown
-              icon={FiActivity}
-              value={filterRisk}
-              onChange={setFilterRisk}
-              options={[
-                { value: "", label: "ทุกระดับความเสี่ยง" },
-                { value: "ต่ำ", label: "เสี่ยงต่ำ (สีเขียว)" },
-                { value: "ปานกลาง", label: "เสี่ยงปานกลาง (สีเหลือง)" },
-                { value: "สูง", label: "เสี่ยงสูง (สีแดง)" },
-              ]}
-            />
+              <CustomDropdown
+                icon={FiActivity}
+                value={filterRisk}
+                onChange={setFilterRisk}
+                options={[
+                  { value: "", label: "ทุกระดับความเสี่ยง" },
+                  { value: "ต่ำ", label: "เสี่ยงต่ำ (สีเขียว)" },
+                  { value: "ปานกลาง", label: "เสี่ยงปานกลาง (สีเหลือง)" },
+                  { value: "สูง", label: "เสี่ยงสูง (สีแดง)" },
+                ]}
+              />
+            </FilterDropdown>
           </div>
 
           {!calendarMode ? (

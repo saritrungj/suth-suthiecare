@@ -20,6 +20,7 @@
     "test:e2e": "pnpm --filter suthie test:e2e",
     "audit:a11y": "pnpm --filter suthie audit:a11y",
     "check:local:mysql": "pnpm --filter suthiecare-api check:local:mysql",
+    "migrate:production-baseline": "pnpm --filter suthiecare-api migrate:production-baseline",
     "verify": "pnpm test && pnpm build && pnpm test:e2e && pnpm audit:a11y",
     "preview:production": "pnpm build && concurrently --kill-others-on-fail --names server,preview \"cross-env NODE_ENV=development HOST=127.0.0.1 pnpm --filter suthiecare-api start\" \"pnpm --filter suthie preview --host 127.0.0.1\"",
     "package:production": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-production.ps1",

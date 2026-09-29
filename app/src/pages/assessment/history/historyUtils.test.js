@@ -11,4 +11,3 @@ test("empty object answers use a visible fallback instead of an empty table", ()
 test("non-empty structured answers remain table data", () => {
   assert.equal(isDisplayableTableAnswer({ 0: "ไม่มีเลย" }), true);
 });
-

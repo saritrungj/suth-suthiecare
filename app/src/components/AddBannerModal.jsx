@@ -103,7 +103,11 @@ export default function AddBannerModal({ onClose, onSave }) {
   };
 
   const handleSave = async () => {
-    if (!croppedImage) return showInfoAlert({ title: "ยังไม่ได้เตรียมรูปภาพ", text: "กรุณาเลือกและตัดรูปภาพก่อนบันทึก" });
+    if (!croppedImage)
+      return showInfoAlert({
+        title: "ยังไม่ได้เตรียมรูปภาพ",
+        text: "กรุณาเลือกและตัดรูปภาพก่อนบันทึก",
+      });
 
     const finalFilename = filename
       ? filename.replace(/\.[^/.]+$/, ".jpg")
@@ -112,8 +116,13 @@ export default function AddBannerModal({ onClose, onSave }) {
   };
 
   return (
-    <div className="abm-overlay">
-      <div className="abm-card">
+    <div className="abm-overlay" role="presentation">
+      <div
+        className="abm-card"
+        role="dialog"
+        aria-modal="true"
+        aria-label="เพิ่มแบนเนอร์ใหม่"
+      >
         <div className="abm-header">
           <h3>เพิ่มแบนเนอร์ใหม่</h3>
           <p>
@@ -126,7 +135,7 @@ export default function AddBannerModal({ onClose, onSave }) {
           <button
             className="abm-close-btn-custom"
             onClick={onClose}
-            aria-label="Close"
+            aria-label="ปิดหน้าต่าง"
           >
             <span className="close-cross"></span>
           </button>

@@ -30,14 +30,14 @@ const db = mysql.createPool({
 // A pool may create new connections at any time, so apply the MySQL session
 // timezone to each one rather than relying on the database server default.
 db.on("connection", (connection) => {
-  connection.query(
-    `SET time_zone = '${BANGKOK_MYSQL_TIME_ZONE}'`,
-    (error) => {
-      if (error) {
-        console.error("Unable to set MySQL session timezone to Bangkok:", error.message);
-      }
-    },
-  );
+  connection.query(`SET time_zone = '${BANGKOK_MYSQL_TIME_ZONE}'`, (error) => {
+    if (error) {
+      console.error(
+        "Unable to set MySQL session timezone to Bangkok:",
+        error.message,
+      );
+    }
+  });
 });
 
 module.exports = db; // ส่งออกไปให้ไฟล์อื่นใช้

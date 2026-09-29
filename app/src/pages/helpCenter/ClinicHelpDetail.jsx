@@ -8,9 +8,9 @@ import {
   FiFileText,
 } from "react-icons/fi";
 import {
-  getFaqCategories,
+  getPublicFaqCategories,
   getActiveClinics,
-  getFaqsAdmin,
+  getPublicFaqs,
 } from "../../services/api";
 import "./ClinicHelpDetail.css";
 import Navbar from "../../components/Navbar";
@@ -25,6 +25,7 @@ export default function ClinicHelpDetail() {
   const [allFaqs, setAllFaqs] = useState([]);
   const [clinicSearchQuery, setClinicSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   const [openCategoryIds, setOpenCategoryIds] = useState([]);
   const [selectedFaq, setSelectedFaq] = useState(null);
@@ -35,31 +36,18 @@ export default function ClinicHelpDetail() {
     const fetchClinicAndFaqs = async () => {
       if (!id) return;
 
-      const cachedDetailClinic = localStorage.getItem(
-        `suth_clinic_detail_${id}`,
-      );
-      const cachedDetailCats = localStorage.getItem(`suth_clinic_cats_${id}`);
-      const cachedAllFaqs = localStorage.getItem("suth_all_faqs");
-
-      if (cachedDetailClinic && cachedDetailCats && cachedAllFaqs) {
-        const parsedClinic = JSON.parse(cachedDetailClinic);
-        const parsedCats = JSON.parse(cachedDetailCats);
-        const parsedFaqs = JSON.parse(cachedAllFaqs);
-
-        setSelectedClinic(parsedClinic);
-        setClinicCategories(parsedCats);
-        setAllFaqs(parsedFaqs);
-
-        setDefaultSelection(parsedCats, parsedFaqs, parsedClinic.name);
-        setLoading(false);
-      } else {
-        setLoading(true);
-      }
+      setLoading(true);
+      setLoadError("");
+      setSelectedClinic(null);
+      setClinicCategories([]);
+      setAllFaqs([]);
+      setSelectedFaq(null);
+      setOpenCategoryIds([]);
 
       try {
         const [resClinic, resFaq] = await Promise.all([
           getActiveClinics(),
-          getFaqsAdmin(),
+          getPublicFaqs(),
         ]);
 
         const clinicList = resClinic.data?.data || [];
@@ -69,29 +57,21 @@ export default function ClinicHelpDetail() {
 
         if (currentClinic) {
           setSelectedClinic(currentClinic);
-          localStorage.setItem(
-            `suth_clinic_detail_${id}`,
-            JSON.stringify(currentClinic),
-          );
 
-          const resCat = await getFaqCategories(currentClinic.id);
+          const resCat = await getPublicFaqCategories(currentClinic.id);
           const catData = resCat.data?.data || [];
           const publishedCats = catData.filter((c) => c.status === "published");
 
           setClinicCategories(publishedCats);
-          localStorage.setItem(
-            `suth_clinic_cats_${id}`,
-            JSON.stringify(publishedCats),
-          );
 
           const freshAllFaqs = resFaq.data?.data || [];
           setAllFaqs(freshAllFaqs);
-          localStorage.setItem("suth_all_faqs", JSON.stringify(freshAllFaqs));
 
-          setDefaultSelection(publishedCats, freshAllFaqs, currentClinic.name);
+          setDefaultSelection(publishedCats, freshAllFaqs);
         }
       } catch (err) {
         console.error("Error fetching clinic and faq details:", err);
+        setLoadError("ไม่สามารถโหลดข้อมูลคำถามของคลินิกได้");
       } finally {
         setLoading(false);
       }
@@ -112,14 +92,17 @@ export default function ClinicHelpDetail() {
   }, [selectedFaq]);
 
   // ฟังก์ชันช่วยเลือกคำถามแรกมาโชว์ที่หน้าจอฝั่งขวาอัตโนมัติ
-  const setDefaultSelection = (cats, faqs, clinicName) => {
-    if (!faqs || faqs.length === 0) return;
+  const setDefaultSelection = (cats, faqs) => {
+    if (!faqs || faqs.length === 0) {
+      setSelectedFaq(null);
+      setOpenCategoryIds([]);
+      return;
+    }
 
     const clinicQuestions = faqs
       .filter(
         (faq) =>
-          faq.status === "published" &&
-          (faq.clinic_name || "").trim() === (clinicName || "").trim(),
+          faq.status === "published" && Number(faq.clinic_id) === Number(id),
       )
       .sort(
         (a, b) =>
@@ -141,7 +124,7 @@ export default function ClinicHelpDetail() {
           );
           if (matchedCat) setOpenCategoryIds([matchedCat.id]);
         }
-      } else if (!selectedFaq) {
+      } else {
         setSelectedFaq(clinicQuestions[0]);
         if (clinicQuestions[0].category_id && cats.length > 0) {
           const matchedCat = cats.find(
@@ -150,6 +133,9 @@ export default function ClinicHelpDetail() {
           if (matchedCat) setOpenCategoryIds([matchedCat.id]);
         }
       }
+    } else {
+      setSelectedFaq(null);
+      setOpenCategoryIds([]);
     }
   };
 
@@ -165,6 +151,18 @@ export default function ClinicHelpDetail() {
     navigate("/help-center");
   };
 
+  const normalizedSearch = clinicSearchQuery.trim().toLowerCase();
+  const publishedClinicFaqs = allFaqs.filter(
+    (faq) =>
+      faq.status === "published" &&
+      Number(faq.clinic_id) === Number(selectedClinic?.id),
+  );
+  const matchingFaqs = publishedClinicFaqs.filter((faq) =>
+    String(faq.question || "")
+      .toLowerCase()
+      .includes(normalizedSearch),
+  );
+
   if (loading) {
     return (
       <div className="hc-clinic-loading-container">
@@ -179,7 +177,9 @@ export default function ClinicHelpDetail() {
       <div
         style={{ textAlign: "center", padding: "100px 0", color: "#64748b" }}
       >
-        <p style={{ fontSize: "16px" }}>ไม่พบข้อมูลคลินิกที่คุณต้องการ</p>
+        <p style={{ fontSize: "16px" }}>
+          {loadError || "ไม่พบข้อมูลคลินิกที่คุณต้องการ"}
+        </p>
         <button
           onClick={handleBack}
           style={{
@@ -236,26 +236,28 @@ export default function ClinicHelpDetail() {
 
           <div className="hc-sidebar-title">เลือกคำถามที่ต้องการดู</div>
           <ul className="hc-sidebar-nested-menu">
+            {matchingFaqs.length === 0 && (
+              <li className="hc-sidebar-empty-state">
+                <FiMessageCircle aria-hidden="true" />
+                <strong>
+                  {normalizedSearch
+                    ? "ไม่พบคำถามที่ตรงกับคำค้นหา"
+                    : "ยังไม่มีคำถามที่เผยแพร่"}
+                </strong>
+                <span>
+                  {normalizedSearch
+                    ? "ลองใช้คำค้นหาอื่น หรือเคลียร์ช่องค้นหา"
+                    : "เมื่อหน่วยงานเผยแพร่คำถาม รายการจะแสดงที่นี่"}
+                </span>
+              </li>
+            )}
             {/* กลุ่มที่ 1: คำถามที่ "ไม่มีหมวดหมู่ย่อยอยู่จริงๆ" (ไม่มีทั้ง ID และไม่มีทั้งชื่อหมวดหมู่) */}
-            {allFaqs
+            {matchingFaqs
               .filter((faq) => {
-                const isMatchClinic =
-                  (faq.clinic_name || "").trim() ===
-                  (selectedClinic.name || "").trim();
                 const hasNoCategory =
                   !faq.category_id &&
                   (!faq.category_name || faq.category_name.trim() === "");
-                const isMatchSearch =
-                  clinicSearchQuery === "" ||
-                  faq.question
-                    .toLowerCase()
-                    .includes(clinicSearchQuery.toLowerCase());
-                return (
-                  faq.status === "published" &&
-                  isMatchClinic &&
-                  hasNoCategory &&
-                  isMatchSearch
-                );
+                return hasNoCategory;
               })
               .sort(
                 (a, b) =>
@@ -279,13 +281,10 @@ export default function ClinicHelpDetail() {
               ))}
 
             {/* เส้นปะคั่นแบบ Dynamic ระหว่างข้อคำถามเดี่ยว กับกลุ่มที่เป็นโฟลเดอร์หมวดหมู่ */}
-            {allFaqs.some(
+            {matchingFaqs.some(
               (f) =>
                 !f.category_id &&
-                (!f.category_name || f.category_name.trim() === "") &&
-                (f.clinic_name || "").trim() ===
-                  (selectedClinic.name || "").trim() &&
-                f.status === "published",
+                (!f.category_name || f.category_name.trim() === ""),
             ) &&
               clinicCategories.length > 0 && (
                 <hr
@@ -299,31 +298,11 @@ export default function ClinicHelpDetail() {
 
             {/* กลุ่มที่ 2: กลุ่มที่มีหมวดหมู่ย่อย (จะถูกดึงเข้ามาอยู่ในโฟลเดอร์อย่างถูกต้อง) */}
             {clinicCategories.map((cat) => {
-              const catQuestions = allFaqs
+              const catQuestions = matchingFaqs
                 .filter((faq) => {
-                  const isMatchClinic =
-                    (faq.clinic_name || "").trim() ===
-                    (selectedClinic.name || "").trim();
-
-                  // 🟢 ลอจิกแบบรัดกุม: เช็กจับคู่จาก ID หรือถ้า ID พลาด ให้เช็กจากชื่อหมวดหมู่ที่ตรงกัน
                   const isMatchCategory =
-                    (faq.category_id &&
-                      Number(faq.category_id) === Number(cat.id)) ||
-                    (faq.category_name &&
-                      faq.category_name.trim() === cat.category_name.trim());
-
-                  const isMatchSearch =
-                    clinicSearchQuery === "" ||
-                    faq.question
-                      .toLowerCase()
-                      .includes(clinicSearchQuery.toLowerCase());
-
-                  return (
-                    faq.status === "published" &&
-                    isMatchClinic &&
-                    isMatchCategory &&
-                    isMatchSearch
-                  );
+                    Number(faq.category_id) === Number(cat.id);
+                  return isMatchCategory;
                 })
                 .sort(
                   (a, b) =>
@@ -331,11 +310,10 @@ export default function ClinicHelpDetail() {
                     (parseInt(b.display_order) || 0),
                 );
 
-              if (clinicSearchQuery !== "" && catQuestions.length === 0)
-                return null;
+              if (normalizedSearch && catQuestions.length === 0) return null;
 
               const isCategoryOpen =
-                openCategoryIds.includes(cat.id) || clinicSearchQuery !== "";
+                openCategoryIds.includes(cat.id) || Boolean(normalizedSearch);
 
               return (
                 <li
@@ -398,11 +376,16 @@ export default function ClinicHelpDetail() {
           ) : (
             <div className="hc-answer-placeholder-card">
               <FiMessageCircle size={54} className="placeholder-icon" />
-              <h4>ศูนย์ช่วยเหลือ SUTHieCare</h4>
-              <p>
-                กรุณาคลิกเลือกข้อคำถามย่อยจากเมนูทางด้านซ้ายมือ <br />
-                เพื่อเปิดอ่านรายละเอียดแนวทางการช่วยเหลือและคำตอบค่ะ
-              </p>
+              <h4>
+                {publishedClinicFaqs.length > 0
+                  ? "เลือกคำถามที่ต้องการดู"
+                  : "ยังไม่มีคำถามที่เผยแพร่"}
+              </h4>
+              {publishedClinicFaqs.length > 0 ? (
+                <p>เลือกข้อคำถามจากเมนูเพื่อเปิดอ่านรายละเอียดและคำตอบ</p>
+              ) : (
+                <p>เมื่อหน่วยงานเผยแพร่คำถาม รายละเอียดจะแสดงในหน้านี้</p>
+              )}
             </div>
           )}
         </div>

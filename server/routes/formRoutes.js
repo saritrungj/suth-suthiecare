@@ -5,21 +5,33 @@ const db = require("../config/db");
 const { dispatchTelegramAlert } = require("../utils/telegram");
 // 🟢 นำเข้าระบบเข้ารหัส
 const { encrypt, decrypt } = require("../utils/encryption");
-const { resolveSubmissionOwner, resolveGuestSubmissionOwner } = require("../utils/submissionIdentity");
+const {
+  resolveSubmissionOwner,
+  resolveGuestSubmissionOwner,
+} = require("../utils/submissionIdentity");
 const { submittedBy } = require("../utils/submissionOwner");
-const { verifyToken, requirePermission } = require("../middleware/authMiddleware");
+const {
+  verifyToken,
+  requirePermission,
+} = require("../middleware/authMiddleware");
 const { organizationWhere } = require("../authorization/authorization");
-const { attachOptionalPatient } = require("../middleware/patientAuthMiddleware");
+const {
+  attachOptionalPatient,
+} = require("../middleware/patientAuthMiddleware");
 const {
   hasValidLoginEnforcement,
   hasValidResultDisplayMode,
+  isFormOpenForSubmission,
   normalizeLoginEnforcement,
   normalizeResultDisplayMode,
   requiresAuthenticatedSubmission,
 } = require("../utils/formSettings");
 const NodeCache = require("node-cache");
 const sharp = require("sharp");
-const { sanitizeFormContent, sanitizeRichText } = require("../utils/contentSecurity");
+const {
+  sanitizeFormContent,
+  sanitizeRichText,
+} = require("../utils/contentSecurity");
 const { decryptCaseResponse } = require("../utils/decryptCaseData");
 // ตั้งค่าให้จำไว้ 60 วินาที (1 นาที) เพื่อให้หน้าเว็บไม่อืด แต่แอดมินแก้ฟอร์มแล้วยังอัปเดตไวอยู่
 const formCache = new NodeCache({ stdTTL: 60 });
@@ -28,14 +40,32 @@ const coverCache = new NodeCache({ stdTTL: 3600, useClones: false });
 const safeDecrypt = (val) => decrypt(val) || val;
 
 const formScope = (req, column = "f.organization_id") =>
-  req.organizationContext === undefined ? { sql: "", params: [] } : organizationWhere(column, req);
+  req.organizationContext === undefined
+    ? { sql: "", params: [] }
+    : organizationWhere(column, req);
 
 async function requireFormScope(req, res, formId) {
-  const [rows] = await db.query("SELECT organization_id FROM forms WHERE id = ?", [formId]);
-  if (!rows.length) { res.status(404).json({ message: "ไม่พบข้อมูลฟอร์ม" }); return false; }
-  if (req.organizationContext === undefined || req.organizationContext === "all") return true;
-  const allowed = Number(rows[0].organization_id) === Number(req.organizationContext);
-  if (!allowed) { res.status(403).json({ message: "คุณไม่มีสิทธิ์เข้าถึงฟอร์มของหน่วยงานนี้" }); return false; }
+  const [rows] = await db.query(
+    "SELECT organization_id FROM forms WHERE id = ?",
+    [formId],
+  );
+  if (!rows.length) {
+    res.status(404).json({ message: "ไม่พบข้อมูลฟอร์ม" });
+    return false;
+  }
+  if (
+    req.organizationContext === undefined ||
+    req.organizationContext === "all"
+  )
+    return true;
+  const allowed =
+    Number(rows[0].organization_id) === Number(req.organizationContext);
+  if (!allowed) {
+    res
+      .status(403)
+      .json({ message: "คุณไม่มีสิทธิ์เข้าถึงฟอร์มของหน่วยงานนี้" });
+    return false;
+  }
   return true;
 }
 
@@ -43,6 +73,12 @@ async function requireFormScope(req, res, formId) {
 // This keeps a clinic's forms inside the same tenant even when a request body
 // is edited manually.
 async function organizationForClinic(req, res, clinicType) {
+  // "general" is the UI's shared/no-specific-clinic option and is not backed
+  // by a row in `clinics` — resolve it from the already-verified active
+  // organization instead of requiring a matching clinic to exist.
+  if (clinicType === "general" && typeof req.organizationContext === "number") {
+    return req.organizationContext;
+  }
   const [rows] = await db.query(
     "SELECT organization_id FROM clinics WHERE slug = ? AND organization_id IS NOT NULL LIMIT 1",
     [clinicType],
@@ -52,8 +88,13 @@ async function organizationForClinic(req, res, clinicType) {
     return null;
   }
   const organizationId = Number(rows[0].organization_id);
-  if (typeof req.organizationContext === "number" && organizationId !== Number(req.organizationContext)) {
-    res.status(403).json({ error: "คลินิกนี้ไม่ได้อยู่ในหน่วยงานที่กำลังใช้งาน" });
+  if (
+    typeof req.organizationContext === "number" &&
+    organizationId !== Number(req.organizationContext)
+  ) {
+    res
+      .status(403)
+      .json({ error: "คลินิกนี้ไม่ได้อยู่ในหน่วยงานที่กำลังใช้งาน" });
     return null;
   }
   return organizationId;
@@ -76,11 +117,19 @@ router.post("/save-form", verifyToken, async (req, res) => {
     result_display_mode,
   } = req.body;
   try {
-    if (!hasValidLoginEnforcement(login_enforcement) || !hasValidResultDisplayMode(result_display_mode)) {
-      return res.status(422).json({ error: "รูปแบบการเข้าสู่ระบบหรือการแสดงผลลัพธ์ไม่ถูกต้อง" });
+    if (
+      !hasValidLoginEnforcement(login_enforcement) ||
+      !hasValidResultDisplayMode(result_display_mode)
+    ) {
+      return res
+        .status(422)
+        .json({ error: "รูปแบบการเข้าสู่ระบบหรือการแสดงผลลัพธ์ไม่ถูกต้อง" });
     }
-    if (typeof req.organizationContext !== "number") return res.status(422).json({ error: "กรุณาเลือกหน่วยงานก่อนสร้างฟอร์ม" });
-    const organizationId = await organizationForClinic(req, res, clinic_type || "general");
+    const organizationId = await organizationForClinic(
+      req,
+      res,
+      clinic_type || "general",
+    );
     if (!organizationId) return;
     const query = `
       INSERT INTO forms 
@@ -157,7 +206,9 @@ router.get("/forms", async (req, res) => {
         publish_start_date: form.publish_start_date,
         publish_end_date: form.publish_end_date,
         login_enforcement: normalizeLoginEnforcement(form.login_enforcement),
-        result_display_mode: normalizeResultDisplayMode(form.result_display_mode),
+        result_display_mode: normalizeResultDisplayMode(
+          form.result_display_mode,
+        ),
         organization_id: form.organization_id,
         organization_name: form.organization_name,
         organization_code: form.organization_code,
@@ -195,9 +246,10 @@ router.get("/forms/:id/cover", async (req, res) => {
     // Do not turn a first-party image endpoint into an open redirect/tracker.
     if (!cover.startsWith("data:")) return res.status(404).end();
 
-    const match = /^data:(image\/(?:avif|gif|jpeg|png|webp));base64,([A-Za-z0-9+/=\s]+)$/.exec(
-      cover,
-    );
+    const match =
+      /^data:(image\/(?:avif|gif|jpeg|png|webp));base64,([A-Za-z0-9+/=\s]+)$/.exec(
+        cover,
+      );
     if (!match) return res.status(415).end();
 
     const sourceImage = Buffer.from(match[2].replace(/\s/g, ""), "base64");
@@ -287,7 +339,9 @@ router.post("/counts", async (req, res) => {
 router.get("/forms/:id", async (req, res) => {
   try {
     if (!(await requireFormScope(req, res, req.params.id))) return;
-    const [rows] = await db.query("SELECT * FROM forms WHERE id = ?", [req.params.id]);
+    const [rows] = await db.query("SELECT * FROM forms WHERE id = ?", [
+      req.params.id,
+    ]);
     if (rows.length === 0)
       return res.status(404).json({ message: "ไม่พบข้อมูลฟอร์ม" });
 
@@ -307,7 +361,9 @@ router.get("/forms/:id", async (req, res) => {
     form.description = sanitizeRichText(form.description);
     form.step_name = sanitizeRichText(form.step_name);
     const parsedQuestions =
-      typeof form.questions === "string" ? JSON.parse(form.questions) : form.questions;
+      typeof form.questions === "string"
+        ? JSON.parse(form.questions)
+        : form.questions;
     form.questions = sanitizeFormContent(parsedQuestions || []);
     form.optionUsage = optionUsage;
 
@@ -336,11 +392,20 @@ router.put("/forms/:id", verifyToken, async (req, res) => {
     result_display_mode,
   } = req.body;
   try {
-    if (!hasValidLoginEnforcement(login_enforcement) || !hasValidResultDisplayMode(result_display_mode)) {
-      return res.status(422).json({ error: "รูปแบบการเข้าสู่ระบบหรือการแสดงผลลัพธ์ไม่ถูกต้อง" });
+    if (
+      !hasValidLoginEnforcement(login_enforcement) ||
+      !hasValidResultDisplayMode(result_display_mode)
+    ) {
+      return res
+        .status(422)
+        .json({ error: "รูปแบบการเข้าสู่ระบบหรือการแสดงผลลัพธ์ไม่ถูกต้อง" });
     }
     if (!(await requireFormScope(req, res, formId))) return;
-    const organizationId = await organizationForClinic(req, res, clinic_type || "general");
+    const organizationId = await organizationForClinic(
+      req,
+      res,
+      clinic_type || "general",
+    );
     if (!organizationId) return;
     const query = `
       UPDATE forms SET title=?, description=?, step_name=?, theme=?, questions=?, status=?, clinic_type=?, form_type=?, publish_start_date=?, publish_end_date=?, login_enforcement=?, result_display_mode=?, organization_id=? WHERE id=?
@@ -463,11 +528,20 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
     // Verify the form before opening a transaction. A missing form must never
     // create a response or a Master Case.
     const [formRows] = await connection.query(
-      "SELECT title, clinic_type, form_type, organization_id, login_enforcement FROM forms WHERE id = ?",
+      "SELECT title, clinic_type, form_type, organization_id, login_enforcement, status, publish_start_date, publish_end_date FROM forms WHERE id = ?",
       [formId],
     );
-    if (!formRows[0]) return res.status(404).json({ message: "ไม่พบข้อมูลฟอร์ม" });
+    if (!formRows[0])
+      return res.status(404).json({ message: "ไม่พบข้อมูลฟอร์ม" });
     const form = formRows[0];
+    // The landing page hides unpublished forms, but the API must enforce it too:
+    // a draft or an expired form must not accept answers by direct URL.
+    if (!isFormOpenForSubmission(form)) {
+      return res.status(403).json({
+        success: false,
+        message: "แบบประเมินนี้ยังไม่เปิดรับคำตอบในขณะนี้",
+      });
+    }
     const clinicType = form.clinic_type || "general";
     const loginEnforcement = normalizeLoginEnforcement(form.login_enforcement);
     if (requiresAuthenticatedSubmission(loginEnforcement) && !req.patient) {
@@ -686,9 +760,11 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
       console.error("[Telegram ERROR]:", err);
     }
 
-    res
-      .status(201)
-      .json({ message: "บันทึกคำตอบสำเร็จ", responseId, masterCaseId: owner.masterCaseId });
+    res.status(201).json({
+      message: "บันทึกคำตอบสำเร็จ",
+      responseId,
+      masterCaseId: owner.masterCaseId,
+    });
   } catch (err) {
     await connection.rollback();
     console.error(err);
@@ -699,60 +775,67 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
 });
 
 // 11. ดึงคำตอบทั้งหมด (Dashboard ฝั่งแอดมิน - 🟢 ถอดรหัส & เพิ่ม Pagination)
-router.get("/forms/:id/responses", verifyToken, requirePermission("Case Management", "view"), async (req, res) => {
-  try {
-    const { startDate, endDate } = req.query;
-    const wantsAll = req.query.limit === "all";
-    const requestedLimit = Number.parseInt(req.query.limit, 10);
-    const limit = Number.isInteger(requestedLimit)
-      ? Math.min(Math.max(requestedLimit, 1), 500)
-      : 100;
-    const requestedOffset = Number.parseInt(req.query.offset, 10);
-    const offset = Number.isInteger(requestedOffset) && requestedOffset > 0
-      ? requestedOffset
-      : 0;
+router.get(
+  "/forms/:id/responses",
+  verifyToken,
+  requirePermission("Case Management", "view"),
+  async (req, res) => {
+    try {
+      const { startDate, endDate } = req.query;
+      const wantsAll = req.query.limit === "all";
+      const requestedLimit = Number.parseInt(req.query.limit, 10);
+      const limit = Number.isInteger(requestedLimit)
+        ? Math.min(Math.max(requestedLimit, 1), 500)
+        : 100;
+      const requestedOffset = Number.parseInt(req.query.offset, 10);
+      const offset =
+        Number.isInteger(requestedOffset) && requestedOffset > 0
+          ? requestedOffset
+          : 0;
 
-    let sql = "SELECT fr.*, pa.username AS patient_username, pa.first_name_encrypted AS patient_first_name_encrypted, pa.last_name_encrypted AS patient_last_name_encrypted FROM form_responses fr LEFT JOIN patient_accounts pa ON pa.id = fr.patient_account_id WHERE fr.form_id = ?";
-    const params = [req.params.id];
-    const scope = organizationWhere("fr.organization_id", req);
-    sql += scope.sql;
-    params.push(...scope.params);
-    if (typeof startDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(startDate)) {
-      sql += " AND DATE(fr.submitted_at) >= ?";
-      params.push(startDate);
+      let sql =
+        "SELECT fr.*, pa.username AS patient_username, pa.first_name_encrypted AS patient_first_name_encrypted, pa.last_name_encrypted AS patient_last_name_encrypted FROM form_responses fr LEFT JOIN patient_accounts pa ON pa.id = fr.patient_account_id WHERE fr.form_id = ?";
+      const params = [req.params.id];
+      const scope = organizationWhere("fr.organization_id", req);
+      sql += scope.sql;
+      params.push(...scope.params);
+      if (
+        typeof startDate === "string" &&
+        /^\d{4}-\d{2}-\d{2}$/.test(startDate)
+      ) {
+        sql += " AND DATE(fr.submitted_at) >= ?";
+        params.push(startDate);
+      }
+      if (typeof endDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(endDate)) {
+        sql += " AND DATE(fr.submitted_at) <= ?";
+        params.push(endDate);
+      }
+      sql += " ORDER BY fr.submitted_at DESC";
+      if (!wantsAll) {
+        sql += " LIMIT ? OFFSET ?";
+        params.push(limit, offset);
+      }
+
+      const [rows] = await db.query(sql, params);
+
+      const decryptedRows = await Promise.all(
+        rows.map(async (row) => {
+          const response = decryptCaseResponse(row, safeDecrypt);
+          response.submitted_by = submittedBy(response);
+          delete response.patient_username;
+          delete response.patient_first_name_encrypted;
+          delete response.patient_last_name_encrypted;
+          return response;
+        }),
+      );
+
+      res.json(decryptedRows);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "เกิดข้อผิดพลาดในการดึงข้อมูลคำตอบ" });
     }
-    if (typeof endDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(endDate)) {
-      sql += " AND DATE(fr.submitted_at) <= ?";
-      params.push(endDate);
-    }
-    sql += " ORDER BY fr.submitted_at DESC";
-    if (!wantsAll) {
-      sql += " LIMIT ? OFFSET ?";
-      params.push(limit, offset);
-    }
-
-    const [rows] = await db.query(
-      sql,
-      params,
-    );
-
-    const decryptedRows = await Promise.all(
-      rows.map(async (row) => {
-        const response = decryptCaseResponse(row, safeDecrypt);
-        response.submitted_by = submittedBy(response);
-        delete response.patient_username;
-        delete response.patient_first_name_encrypted;
-        delete response.patient_last_name_encrypted;
-        return response;
-      }),
-    );
-
-    res.json(decryptedRows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาดในการดึงข้อมูลคำตอบ" });
-  }
-});
+  },
+);
 
 // 12. โหลดคำถามของ form
 router.get("/forms/:id/questions", async (req, res) => {
@@ -778,13 +861,16 @@ router.get("/forms/:id/questions", async (req, res) => {
 router.patch("/forms/:id/clinic", verifyToken, async (req, res) => {
   try {
     if (!(await requireFormScope(req, res, req.params.id))) return;
-    const organizationId = await organizationForClinic(req, res, req.body.clinic_type);
-    if (!organizationId) return;
-    await db.query("UPDATE forms SET clinic_type = ?, organization_id = ? WHERE id = ?", [
+    const organizationId = await organizationForClinic(
+      req,
+      res,
       req.body.clinic_type,
-      organizationId,
-      req.params.id,
-    ]);
+    );
+    if (!organizationId) return;
+    await db.query(
+      "UPDATE forms SET clinic_type = ?, organization_id = ? WHERE id = ?",
+      [req.body.clinic_type, organizationId, req.params.id],
+    );
     formCache.flushAll();
     res.json({ message: "Clinic updated successfully" });
   } catch (error) {

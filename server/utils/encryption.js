@@ -44,7 +44,10 @@ function decrypt(encryptedBase64) {
   if (!encryptedBase64) return null;
   // JSON columns can be returned as objects by mysql2. They are not encrypted
   // strings and must pass through untouched.
-  if (typeof encryptedBase64 !== "string" && !Buffer.isBuffer(encryptedBase64)) {
+  if (
+    typeof encryptedBase64 !== "string" &&
+    !Buffer.isBuffer(encryptedBase64)
+  ) {
     return encryptedBase64;
   }
   try {

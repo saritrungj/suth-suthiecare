@@ -33,8 +33,18 @@ export const getActiveOrganizationLabel = (
   if (activeOrganization === "all") return "ทุกหน่วยงาน";
   return (
     getSelectableOrganizations(authorization).find(
-      (organization) =>
-        String(organization.id) === String(activeOrganization),
+      (organization) => String(organization.id) === String(activeOrganization),
     )?.name || "หน่วยงานที่เลือก"
+  );
+};
+
+export const hasActiveOrganizationMembership = (
+  authorization,
+  activeOrganization,
+) => {
+  if (authorization?.is_system_admin) return true;
+  return (authorization?.memberships || []).some(
+    (membership) =>
+      String(membership.organization?.id) === String(activeOrganization),
   );
 };

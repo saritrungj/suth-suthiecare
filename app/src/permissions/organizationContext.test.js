@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   getSelectableOrganizations,
   getActiveOrganizationLabel,
+  hasActiveOrganizationMembership,
   selectInitialOrganization,
 } from "./organizationContext.js";
 
@@ -16,7 +17,10 @@ test("system admin can select every active organization without memberships", ()
     ],
   };
 
-  assert.deepEqual(getSelectableOrganizations(authorization), authorization.organizations);
+  assert.deepEqual(
+    getSelectableOrganizations(authorization),
+    authorization.organizations,
+  );
   assert.equal(selectInitialOrganization(authorization, "22"), "22");
   assert.equal(selectInitialOrganization(authorization, null), "all");
   assert.equal(getActiveOrganizationLabel(authorization, "22"), "หน่วยงาน B");
@@ -54,4 +58,14 @@ test("regular users can select only organizations from active memberships", () =
     },
   ]);
   assert.equal(selectInitialOrganization(authorization, "99"), "3");
+});
+
+test("a member can view shared management menus only in their active organization", () => {
+  const authorization = {
+    is_system_admin: false,
+    memberships: [{ organization: { id: 3, name: "หน่วยงานสมาชิก" } }],
+  };
+
+  assert.equal(hasActiveOrganizationMembership(authorization, "3"), true);
+  assert.equal(hasActiveOrganizationMembership(authorization, "4"), false);
 });

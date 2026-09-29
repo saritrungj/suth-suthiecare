@@ -40,9 +40,12 @@ const PublishSettingsModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="sfb-modal-overlay">
+    <div className="sfb-modal-overlay" role="presentation">
       <div
         className="sfb-modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-label="ตั้งค่าการเผยแพร่แบบประเมิน"
         style={{
           position: "relative",
           maxWidth: "500px",
@@ -432,7 +435,8 @@ const PublishSettingsModal = ({
                   padding: "10px 12px",
                   borderRadius: "8px",
                   border: `2px solid ${loginEnforcement === opt.value ? opt.color : "#cbd5e1"}`,
-                  background: loginEnforcement === opt.value ? opt.bgColor : "white",
+                  background:
+                    loginEnforcement === opt.value ? opt.bgColor : "white",
                   transition: "all 0.2s",
                 }}
               >
@@ -504,7 +508,9 @@ const PublishSettingsModal = ({
             >
               โหมดการแสดงผลลัพธ์แบบประเมิน
             </label>
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+            >
               <div
                 onClick={() => setResultDisplayMode("realtime")}
                 style={{
@@ -515,7 +521,8 @@ const PublishSettingsModal = ({
                   padding: "10px 12px",
                   borderRadius: "8px",
                   border: `2px solid ${resultDisplayMode === "realtime" ? "#1967d2" : "#cbd5e1"}`,
-                  background: resultDisplayMode === "realtime" ? "#eff6ff" : "white",
+                  background:
+                    resultDisplayMode === "realtime" ? "#eff6ff" : "white",
                   transition: "all 0.2s",
                 }}
               >
@@ -532,14 +539,33 @@ const PublishSettingsModal = ({
                   }}
                 >
                   {resultDisplayMode === "realtime" && (
-                    <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#1967d2" }} />
+                    <div
+                      style={{
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "50%",
+                        background: "#1967d2",
+                      }}
+                    />
                   )}
                 </div>
                 <div>
-                  <div style={{ fontWeight: "600", fontSize: "14px", color: "#0f172a" }}>
+                  <div
+                    style={{
+                      fontWeight: "600",
+                      fontSize: "14px",
+                      color: "#0f172a",
+                    }}
+                  >
                     แสดงผลแบบเรียลไทม์
                   </div>
-                  <div style={{ fontSize: "12px", color: "#64748b", marginTop: "2px" }}>
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "#64748b",
+                      marginTop: "2px",
+                    }}
+                  >
                     ผลลัพธ์และคะแนนมีการอัปเดตทันทีขณะกรอกแบบฟอร์ม
                   </div>
                 </div>
@@ -554,7 +580,8 @@ const PublishSettingsModal = ({
                   padding: "10px 12px",
                   borderRadius: "8px",
                   border: `2px solid ${resultDisplayMode === "on_submit" ? "#1967d2" : "#cbd5e1"}`,
-                  background: resultDisplayMode === "on_submit" ? "#eff6ff" : "white",
+                  background:
+                    resultDisplayMode === "on_submit" ? "#eff6ff" : "white",
                   transition: "all 0.2s",
                 }}
               >
@@ -571,14 +598,33 @@ const PublishSettingsModal = ({
                   }}
                 >
                   {resultDisplayMode === "on_submit" && (
-                    <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#1967d2" }} />
+                    <div
+                      style={{
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "50%",
+                        background: "#1967d2",
+                      }}
+                    />
                   )}
                 </div>
                 <div>
-                  <div style={{ fontWeight: "600", fontSize: "14px", color: "#0f172a" }}>
+                  <div
+                    style={{
+                      fontWeight: "600",
+                      fontSize: "14px",
+                      color: "#0f172a",
+                    }}
+                  >
                     แสดงผลหลังส่งแบบประเมิน
                   </div>
-                  <div style={{ fontSize: "12px", color: "#64748b", marginTop: "2px" }}>
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "#64748b",
+                      marginTop: "2px",
+                    }}
+                  >
                     ซ่อนผลลัพธ์ระหว่างกรอก แสดงเฉพาะหลังส่งแบบฟอร์มสำเร็จ
                   </div>
                 </div>
@@ -589,7 +635,7 @@ const PublishSettingsModal = ({
 
         <div className="sfb-modal-footer" style={{ marginTop: "24px" }}>
           <button
-            className="sfb-btn-cancel"
+            className="sfb-btn-cancel sfb-btn-primary"
             onClick={onClose}
             style={{
               width: "100%",

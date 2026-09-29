@@ -2,12 +2,19 @@ const { decrypt } = require("./encryption");
 
 function safeDecrypt(value) {
   if (!value) return "";
-  try { return decrypt(value) || ""; } catch { return ""; }
+  try {
+    return decrypt(value) || "";
+  } catch {
+    return "";
+  }
 }
 
 function submittedBy(row) {
   if (!row?.patient_account_id) return { status: "legacy_unlinked" };
-  const displayName = [safeDecrypt(row.patient_first_name_encrypted), safeDecrypt(row.patient_last_name_encrypted)]
+  const displayName = [
+    safeDecrypt(row.patient_first_name_encrypted),
+    safeDecrypt(row.patient_last_name_encrypted),
+  ]
     .filter(Boolean)
     .join(" ");
   return {

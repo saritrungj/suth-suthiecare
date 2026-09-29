@@ -39,6 +39,9 @@ export default defineConfig(({ mode }) => {
       port: devPort,
       strictPort: true,
       open: true,
+      // Cloudflare Tunnel validates the incoming Host header. Keep this
+      // allowlist explicit instead of disabling host checks globally.
+      allowedHosts: ["transition-roman-ranking-stat.trycloudflare.com"],
       proxy,
     },
     preview: {

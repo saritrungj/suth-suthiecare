@@ -24,7 +24,12 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import Swal from "sweetalert2";
-import { showErrorAlert, showInfoAlert, showSuccessAlert, showSuccessToast } from "../../utils/alerts";
+import {
+  showErrorAlert,
+  showInfoAlert,
+  showSuccessAlert,
+  showSuccessToast,
+} from "../../utils/alerts";
 
 export default function BannerManagement() {
   const [showModal, setShowModal] = useState(false);

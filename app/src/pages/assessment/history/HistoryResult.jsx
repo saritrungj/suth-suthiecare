@@ -10,6 +10,9 @@ import {
   updatePatientHistoryResponse,
   getPatientCaseAnswers,
   getFormById,
+  updatePatientEmail,
+  verifyPatientEmailChange,
+  resendPatientEmailChange,
 } from "../../../services/api";
 
 import {
@@ -32,7 +35,10 @@ import {
 import { FaChartBar } from "react-icons/fa";
 
 import { translateTextSmart } from "../../../utils/translator";
-import { getPatientSession } from "../../../utils/patientSession";
+import {
+  getPatientSession,
+  setPatientSession,
+} from "../../../utils/patientSession";
 import { showErrorAlert } from "../../../utils/alerts";
 
 import {
@@ -201,6 +207,10 @@ export default function HistoryResult() {
   const [formQuestionsMap, setFormQuestionsMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [caseLogs, setCaseLogs] = useState([]);
+  const [emailInput, setEmailInput] = useState("");
+  const [savingEmail, setSavingEmail] = useState(false);
+  const [emailChallenge, setEmailChallenge] = useState(null);
+  const [emailOtp, setEmailOtp] = useState("");
 
   const [translatedData, setTranslatedData] = useState([]);
   const [translatedLogs, setTranslatedLogs] = useState([]);
@@ -460,7 +470,11 @@ export default function HistoryResult() {
           setCaseLogs(allLogs);
         }
       } catch (err) {
-        if (err.response?.status === 404) { setData([]); setMasterCases([]); setPatientProfile(null); }
+        if (err.response?.status === 404) {
+          setData([]);
+          setMasterCases([]);
+          setPatientProfile(null);
+        }
       } finally {
         setLoading(false);
       }
@@ -474,16 +488,99 @@ export default function HistoryResult() {
     setTimeout(() => setToast(null), 3000);
   };
 
+  const handleEmailSave = async (event) => {
+    event.preventDefault();
+    const email = String(
+      emailInput ||
+        patientProfile?.email ||
+        getPatientSession().user?.email ||
+        "",
+    ).trim();
+    if (!email || savingEmail) return;
+
+    setSavingEmail(true);
+    try {
+      const response = await updatePatientEmail(email);
+      setEmailChallenge({
+        challengeToken: response.data.challengeToken,
+        maskedEmail: response.data.maskedEmail,
+      });
+      setEmailOtp("");
+      showToast(t("history.result.email_code_sent"), "success");
+    } catch (error) {
+      await showErrorAlert({
+        error,
+        title: t("history.result.email_save_error"),
+      });
+    } finally {
+      setSavingEmail(false);
+    }
+  };
+
+  const handleEmailVerify = async (event) => {
+    event.preventDefault();
+    if (!/^\d{6}$/.test(emailOtp) || savingEmail) return;
+
+    setSavingEmail(true);
+    try {
+      const response = await verifyPatientEmailChange({
+        challengeToken: emailChallenge.challengeToken,
+        otp: emailOtp,
+      });
+      const user = response.data.user;
+      setPatientProfile((previous) => ({ ...previous, ...user }));
+      setPatientSession(getPatientSession().token, {
+        ...getPatientSession().user,
+        ...user,
+      });
+      setEmailChallenge(null);
+      setEmailOtp("");
+      setEmailInput("");
+      showToast(t("history.result.email_save_success"), "success");
+    } catch (error) {
+      await showErrorAlert({
+        error,
+        title: t("history.result.email_verify_error"),
+      });
+    } finally {
+      setSavingEmail(false);
+    }
+  };
+
+  const handleEmailResend = async () => {
+    if (!emailChallenge || savingEmail) return;
+    setSavingEmail(true);
+    try {
+      await resendPatientEmailChange({
+        challengeToken: emailChallenge.challengeToken,
+      });
+      showToast(t("history.result.email_code_sent"), "success");
+    } catch (error) {
+      await showErrorAlert({
+        error,
+        title: t("history.result.email_save_error"),
+      });
+    } finally {
+      setSavingEmail(false);
+    }
+  };
+
   const maskedId = identityMasked;
 
   const handleHeroSave = async (field, value) => {
     if (!data.length) return;
     const targetId = data[0].id;
     try {
-      const res = await updatePatientHistoryResponse(targetId, { field, value });
+      const res = await updatePatientHistoryResponse(targetId, {
+        field,
+        value,
+      });
       handleFieldSave(targetId, field, value, res.data?.updated_at);
     } catch (err) {
-      await showErrorAlert({ error: err, title: t("history.result.save_error") });
+      await showErrorAlert({
+        error: err,
+        title: t("history.result.save_error"),
+      });
     }
   };
 
@@ -561,6 +658,13 @@ export default function HistoryResult() {
   const profileSourceData = data;
   const clinicSourceData = translatedData.length > 0 ? translatedData : data;
   const sessionUser = getPatientSession().user;
+  const profileEmail = String(
+    patientProfile?.email || sessionUser?.email || "",
+  ).trim();
+  const emailVerified =
+    (patientProfile ?? sessionUser)?.email_verified === true;
+  const needsEmail = !profileEmail || !emailVerified;
+  const hasUnverifiedEmail = Boolean(profileEmail) && !emailVerified;
 
   const allNames = [
     ...new Set(
@@ -720,6 +824,111 @@ export default function HistoryResult() {
       />
 
       <div className="hr-layout">
+        {needsEmail && (
+          <section
+            className="hr-email-banner"
+            aria-labelledby="hr-email-banner-title"
+          >
+            <div className="hr-email-banner-icon" aria-hidden="true">
+              <FiAlertCircle size={22} />
+            </div>
+            <div className="hr-email-banner-content">
+              <h2 id="hr-email-banner-title">
+                {hasUnverifiedEmail
+                  ? t("history.result.email_verify_title")
+                  : t("history.result.email_banner_title")}
+              </h2>
+              {emailChallenge ? (
+                <>
+                  <p>
+                    {t("history.result.email_code_description", {
+                      email: emailChallenge.maskedEmail,
+                    })}
+                  </p>
+                  <form className="hr-email-form" onSubmit={handleEmailVerify}>
+                    <label className="sr-only" htmlFor="history-email-otp">
+                      {t("history.result.email_code_label")}
+                    </label>
+                    <input
+                      id="history-email-otp"
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      maxLength={6}
+                      value={emailOtp}
+                      onChange={(event) =>
+                        setEmailOtp(event.target.value.replace(/\D/g, ""))
+                      }
+                      placeholder={t("history.result.email_code_placeholder")}
+                      required
+                      disabled={savingEmail}
+                    />
+                    <button
+                      type="submit"
+                      disabled={savingEmail || emailOtp.length !== 6}
+                    >
+                      {savingEmail
+                        ? t("history.result.email_saving")
+                        : t("history.result.email_verify")}
+                    </button>
+                  </form>
+                  <div className="hr-email-actions">
+                    <button
+                      type="button"
+                      onClick={handleEmailResend}
+                      disabled={savingEmail}
+                    >
+                      {t("history.result.email_resend")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEmailChallenge(null);
+                        setEmailOtp("");
+                      }}
+                      disabled={savingEmail}
+                    >
+                      {t("history.result.email_change")}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p>
+                    {hasUnverifiedEmail
+                      ? t("history.result.email_verify_description", {
+                          email: profileEmail,
+                        })
+                      : t("history.result.email_banner_description")}
+                  </p>
+                  <form className="hr-email-form" onSubmit={handleEmailSave}>
+                    <label className="sr-only" htmlFor="history-email">
+                      {t("history.result.email_label")}
+                    </label>
+                    <input
+                      id="history-email"
+                      type="email"
+                      autoComplete="email"
+                      value={emailInput}
+                      onChange={(event) => setEmailInput(event.target.value)}
+                      placeholder={
+                        hasUnverifiedEmail
+                          ? profileEmail
+                          : t("history.result.email_placeholder")
+                      }
+                      required={!hasUnverifiedEmail}
+                      disabled={savingEmail}
+                    />
+                    <button type="submit" disabled={savingEmail}>
+                      {savingEmail
+                        ? t("history.result.email_saving")
+                        : t("history.result.email_send_code")}
+                    </button>
+                  </form>
+                </>
+              )}
+            </div>
+          </section>
+        )}
         {/* 🟢 ส่วนหัวแฟ้มประวัติ (Hero Profile) */}
         <div className="hr-hero">
           <div className="hr-hero-grid">
@@ -845,7 +1054,7 @@ export default function HistoryResult() {
                             navigate("/", {
                               state: {
                                 targetClinic: c.id,
-                                 prefillIdentity: undefined,
+                                prefillIdentity: undefined,
                               },
                             })
                           }
@@ -1995,11 +2204,18 @@ export default function HistoryResult() {
       {adviceModal.isOpen && (
         <div
           className="hr-modal-overlay"
+          role="presentation"
           onClick={() =>
             setAdviceModal({ isOpen: false, logs: [], clinicInfo: null })
           }
         >
-          <div className="hr-modal-card" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="hr-modal-card"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="ประวัติคำแนะนำ"
+          >
             <div className="hr-modal-header">
               <h3>
                 <FiMessageSquare color={adviceModal.clinicInfo?.color} />{" "}
@@ -2007,6 +2223,7 @@ export default function HistoryResult() {
               </h3>
               <button
                 className="hr-modal-close-btn"
+                aria-label="ปิดหน้าต่าง"
                 onClick={() =>
                   setAdviceModal({ isOpen: false, logs: [], clinicInfo: null })
                 }

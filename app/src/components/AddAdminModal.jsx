@@ -11,7 +11,8 @@ import {
 import "./AddAdminModal.css";
 
 const MAX_NAME_LENGTH = 255;
-const normaliseText = (value) => value.normalize("NFC").trim().replace(/\s+/g, " ");
+const normaliseText = (value) =>
+  value.normalize("NFC").trim().replace(/\s+/g, " ");
 const charLength = (value) => Array.from(value).length;
 
 export default function AddAdminModal({
@@ -30,7 +31,11 @@ export default function AddAdminModal({
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState(
     initialData
-      ? { ...initialData, password: "", memberships: initialData.memberships || [] }
+      ? {
+          ...initialData,
+          password: "",
+          memberships: initialData.memberships || [],
+        }
       : {
           username: "",
           password: "",
@@ -62,11 +67,19 @@ export default function AddAdminModal({
     const username = normaliseText(formData.username || "");
     const name = normaliseText(formData.name || "");
     const email = normaliseText(formData.email || "");
-    if (charLength(username) < 3 || charLength(username) > 100 || /\s/.test(username))
-      newErrors.username = "ชื่อผู้ใช้งานต้องยาว 3-100 ตัวอักษร และห้ามมีช่องว่าง";
+    if (
+      charLength(username) < 3 ||
+      charLength(username) > 100 ||
+      /\s/.test(username)
+    )
+      newErrors.username =
+        "ชื่อผู้ใช้งานต้องยาว 3-100 ตัวอักษร และห้ามมีช่องว่าง";
     if (!initialData && (!formData.password || formData.password.length < 8))
       newErrors.password = "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร";
-    if (formData.password && (formData.password.length < 8 || formData.password.length > 200))
+    if (
+      formData.password &&
+      (formData.password.length < 8 || formData.password.length > 200)
+    )
       newErrors.password = "รหัสผ่านต้องมี 8-200 ตัวอักษร";
     if (charLength(name) < 2 || charLength(name) > MAX_NAME_LENGTH)
       newErrors.name = `ชื่อ-นามสกุลต้องยาว 2-${MAX_NAME_LENGTH} ตัวอักษร`;
@@ -86,7 +99,21 @@ export default function AddAdminModal({
       email: normaliseText(formData.email),
       role_id: Number(formData.role_id),
       status: formData.status,
-      memberships: (formData.memberships || []).map(({ organization_id, role_id, status = "active", is_primary = false, id }) => ({ id, organization_id: Number(organization_id), role_id: Number(role_id), status, is_primary: Boolean(is_primary) })),
+      memberships: (formData.memberships || []).map(
+        ({
+          organization_id,
+          role_id,
+          status = "active",
+          is_primary = false,
+          id,
+        }) => ({
+          id,
+          organization_id: Number(organization_id),
+          role_id: Number(role_id),
+          status,
+          is_primary: Boolean(is_primary),
+        }),
+      ),
     };
 
     if (formData.password && formData.password.trim() !== "") {
@@ -96,8 +123,13 @@ export default function AddAdminModal({
     onSave(dataToSend);
   };
   return (
-    <div className="adm-overlay">
-      <div className="adm-card">
+    <div className="adm-overlay" role="presentation">
+      <div
+        className="adm-card"
+        role="dialog"
+        aria-modal="true"
+        aria-label={initialData ? "แก้ไขข้อมูลผู้ใช้งาน" : "เพิ่มผู้ใช้งาน"}
+      >
         <div className="adm-header">
           <div className="adm-header-title">
             <div className="adm-icon-badge">
@@ -109,6 +141,7 @@ export default function AddAdminModal({
             className="ADM-close-circle-btn"
             onClick={onClose}
             type="button"
+            aria-label="ปิดหน้าต่าง"
           >
             <span className="adm-close-icon-line"></span>
           </button>
@@ -202,7 +235,9 @@ export default function AddAdminModal({
               aria-describedby={errors.name ? "admin-name-error" : undefined}
             />
             {errors.name && (
-              <span id="admin-name-error" className="adm-error-text">{errors.name}</span>
+              <span id="admin-name-error" className="adm-error-text">
+                {errors.name}
+              </span>
             )}
           </div>
 
@@ -222,6 +257,11 @@ export default function AddAdminModal({
             />
             {errors.email && (
               <span className="adm-error-text">{errors.email}</span>
+            )}
+            {!errors.email && (
+              <small>
+                เจ้าหน้าที่ต้องยืนยันอีเมลนี้ก่อนใช้ OTP เข้าสู่ระบบ
+              </small>
             )}
           </div>
 
@@ -273,16 +313,93 @@ export default function AddAdminModal({
               </div>
             </div>
           </div>
-          <section className="adm-membership-section" aria-labelledby="membership-heading">
-            <div className="adm-membership-heading"><FiShield className="label-icon" /><div><h4 id="membership-heading">หน่วยงานและบทบาท</h4><p>เลือกหน่วยงานที่เจ้าหน้าที่เข้าถึง และกำหนดบทบาทในแต่ละหน่วยงาน</p></div></div>
-            {organizations.filter((organization) => organization.status === "active").length === 0 ? <p className="adm-no-perm-text">ยังไม่มีหน่วยงานที่เปิดใช้งาน กรุณาสร้างหน่วยงานก่อน</p> : organizations.filter((organization) => organization.status === "active").map((organization) => {
-              const membership = (formData.memberships || []).find((item) => Number(item.organization_id) === Number(organization.id));
-              const setMembership = (next) => setFormData({ ...formData, memberships: next });
-              return <div className="adm-membership-row" key={organization.id}>
-                <label className="adm-org-check"><input type="checkbox" checked={Boolean(membership)} onChange={(event) => setMembership(event.target.checked ? [...formData.memberships, { organization_id: organization.id, role_id: roles[0]?.id || "", status: "active" }] : formData.memberships.filter((item) => Number(item.organization_id) !== Number(organization.id)))} /> <span>{organization.name}</span></label>
-                {membership && <select className="adm-select" aria-label={`บทบาทของ ${organization.name}`} value={membership.role_id} onChange={(event) => setMembership(formData.memberships.map((item) => Number(item.organization_id) === Number(organization.id) ? { ...item, role_id: Number(event.target.value) } : item))}>{roles.map((role) => <option value={role.id} key={role.id}>{role.name}</option>)}</select>}
-              </div>;
-            })}
+          <section
+            className="adm-membership-section"
+            aria-labelledby="membership-heading"
+          >
+            <div className="adm-membership-heading">
+              <FiShield className="label-icon" />
+              <div>
+                <h4 id="membership-heading">หน่วยงานและบทบาท</h4>
+                <p>
+                  เลือกหน่วยงานที่เจ้าหน้าที่เข้าถึง
+                  และกำหนดบทบาทในแต่ละหน่วยงาน
+                </p>
+              </div>
+            </div>
+            {organizations.filter(
+              (organization) => organization.status === "active",
+            ).length === 0 ? (
+              <p className="adm-no-perm-text">
+                ยังไม่มีหน่วยงานที่เปิดใช้งาน กรุณาสร้างหน่วยงานก่อน
+              </p>
+            ) : (
+              organizations
+                .filter((organization) => organization.status === "active")
+                .map((organization) => {
+                  const membership = (formData.memberships || []).find(
+                    (item) =>
+                      Number(item.organization_id) === Number(organization.id),
+                  );
+                  const setMembership = (next) =>
+                    setFormData({ ...formData, memberships: next });
+                  return (
+                    <div className="adm-membership-row" key={organization.id}>
+                      <label className="adm-org-check">
+                        <input
+                          type="checkbox"
+                          checked={Boolean(membership)}
+                          onChange={(event) =>
+                            setMembership(
+                              event.target.checked
+                                ? [
+                                    ...formData.memberships,
+                                    {
+                                      organization_id: organization.id,
+                                      role_id: roles[0]?.id || "",
+                                      status: "active",
+                                    },
+                                  ]
+                                : formData.memberships.filter(
+                                    (item) =>
+                                      Number(item.organization_id) !==
+                                      Number(organization.id),
+                                  ),
+                            )
+                          }
+                        />{" "}
+                        <span>{organization.name}</span>
+                      </label>
+                      {membership && (
+                        <select
+                          className="adm-select"
+                          aria-label={`บทบาทของ ${organization.name}`}
+                          value={membership.role_id}
+                          onChange={(event) =>
+                            setMembership(
+                              formData.memberships.map((item) =>
+                                Number(item.organization_id) ===
+                                Number(organization.id)
+                                  ? {
+                                      ...item,
+                                      role_id: Number(event.target.value),
+                                    }
+                                  : item,
+                              ),
+                            )
+                          }
+                        >
+                          {roles.map((role) => (
+                            <option value={role.id} key={role.id}>
+                              {role.name}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+                  );
+                })
+            )}
           </section>
         </div>
 

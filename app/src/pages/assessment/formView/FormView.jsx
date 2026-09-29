@@ -102,7 +102,8 @@ const FormView = () => {
       return;
     }
     const returnTo = `${location.pathname}${location.search}`;
-    const authPath = mode === "register" ? "/account/register" : "/account/login";
+    const authPath =
+      mode === "register" ? "/account/register" : "/account/login";
     navigate(`${authPath}?returnTo=${encodeURIComponent(returnTo)}`);
   };
 
@@ -124,10 +125,9 @@ const FormView = () => {
     // 'strict': redirect immediately — no guest access allowed
     if (loginEnforcement === "strict") {
       const returnTo = `${location.pathname}${location.search}`;
-      navigate(
-        `/account/login?returnTo=${encodeURIComponent(returnTo)}`,
-        { replace: true },
-      );
+      navigate(`/account/login?returnTo=${encodeURIComponent(returnTo)}`, {
+        replace: true,
+      });
       return;
     }
 
@@ -172,7 +172,17 @@ const FormView = () => {
     return () => {
       isActive = false;
     };
-  }, [formData, id, isPreviewMode, patientToken, loginEnforcement, location.pathname, location.search, navigate, t]);
+  }, [
+    formData,
+    id,
+    isPreviewMode,
+    patientToken,
+    loginEnforcement,
+    location.pathname,
+    location.search,
+    navigate,
+    t,
+  ]);
 
   useEffect(() => {
     let isMounted = true;
@@ -237,7 +247,9 @@ const FormView = () => {
 
         setFormData(data);
         setLoginEnforcement(normalizeLoginEnforcement(data.login_enforcement));
-        setResultDisplayMode(normalizeResultDisplayMode(data.result_display_mode));
+        setResultDisplayMode(
+          normalizeResultDisplayMode(data.result_display_mode),
+        );
 
         const steps = [];
         let currentGroup = {
@@ -901,9 +913,7 @@ const FormView = () => {
               <FiShield />
             </span>
             <div className="preview-auth-notice__copy">
-              <strong>
-                {t("form_view.login_notice_ready")}
-              </strong>
+              <strong>{t("form_view.login_notice_ready")}</strong>
               <span>
                 {draftRestored
                   ? t("form_view.draft_restored")
@@ -980,197 +990,198 @@ const FormView = () => {
         <div
           className={`form-view-workspace ${hasInteractiveResults ? "form-view-workspace--interactive" : ""}`}
         >
-        <form className="preview-form" onSubmit={(e) => e.preventDefault()}>
-          <div className="preview-step-intro">
-            <h2
-              className="preview-step-intro__title"
-              dangerouslySetInnerHTML={{
-                __html:
-                  translatedStep?.title ||
-                  stepData?.title ||
-                  "ส่วนที่ไม่มีชื่อ",
-              }}
-            />
-            {(translatedStep?.desc || stepData?.desc) && (
-              <p
+          <form className="preview-form" onSubmit={(e) => e.preventDefault()}>
+            <div className="preview-step-intro">
+              <h2
+                className="preview-step-intro__title"
                 dangerouslySetInnerHTML={{
-                  __html: translatedStep?.desc || stepData.desc,
+                  __html:
+                    translatedStep?.title ||
+                    stepData?.title ||
+                    "ส่วนที่ไม่มีชื่อ",
                 }}
               />
+              {(translatedStep?.desc || stepData?.desc) && (
+                <p
+                  dangerouslySetInnerHTML={{
+                    __html: translatedStep?.desc || stepData.desc,
+                  }}
+                />
+              )}
+              <p className="req" style={{ marginTop: "10px" }}>
+                * {t("form_view.req_asterisk")}
+              </p>
+            </div>
+
+            {/* 🟢 เรียกใช้ QuestionRenderer ที่ถูกแยกไฟล์ออกไป */}
+            {stepData?.items.map((q, idx) => (
+              <QuestionRenderer
+                key={q.id}
+                q={q}
+                index={idx}
+                answers={answers}
+                errors={errors}
+                verifiedIdentity={verifiedIdentity}
+                optionInputValues={optionInputValues}
+                optionUsage={formData?.optionUsage}
+                handleClearQuestionAnswer={handleClearQuestionAnswer}
+                handleAnswer={handleAnswer}
+                handleOptionInputChange={handleOptionInputChange}
+                handleGridAnswer={handleGridAnswer}
+              />
+            ))}
+
+            {hasInteractiveResults && (
+              <InteractiveResultPanel
+                className="assessment-live-results--mobile"
+                results={interactiveResults}
+                totalTargets={totalScoredTargets}
+                isAuthenticated={Boolean(patientToken)}
+              />
             )}
-            <p className="req" style={{ marginTop: "10px" }}>
-              * {t("form_view.req_asterisk")}
-            </p>
-          </div>
 
-          {/* 🟢 เรียกใช้ QuestionRenderer ที่ถูกแยกไฟล์ออกไป */}
-          {stepData?.items.map((q, idx) => (
-            <QuestionRenderer
-              key={q.id}
-              q={q}
-              index={idx}
-              answers={answers}
-              errors={errors}
-              verifiedIdentity={verifiedIdentity}
-              optionInputValues={optionInputValues}
-              optionUsage={formData?.optionUsage}
-              handleClearQuestionAnswer={handleClearQuestionAnswer}
-              handleAnswer={handleAnswer}
-              handleOptionInputChange={handleOptionInputChange}
-              handleGridAnswer={handleGridAnswer}
-            />
-          ))}
+            {nationalIdQuestions.some(
+              (q) => (answers[q.id] || "").length === 17,
+            ) &&
+              !verifiedIdentity && (
+                <div className="preview-sec pdpa-friendly-wrapper">
+                  <div className="pdpa-header">
+                    <FiInfo /> {t("form_view.pdpa_title")}
+                  </div>
+                  <p className="pdpa-desc">
+                    {t("form_view.pdpa_desc")}
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "#9aa0a6",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      {" "}
+                      {t("form_view.pdpa_secret")}{" "}
+                    </span>
+                  </p>
+                  {nationalIdQuestions
+                    .filter((q) => (answers[q.id] || "").length === 17)
+                    .map((q) => (
+                      <div
+                        key={q.id}
+                        className="pdpa-options"
+                        style={{ marginTop: "16px" }}
+                      >
+                        <label
+                          className={`pdpa-status-card ${consents[q.id] === true ? "active" : ""}`}
+                        >
+                          <input
+                            type="checkbox"
+                            style={{ display: "none" }}
+                            name={`pdpa_${q.id}`}
+                            checked={consents[q.id] === true}
+                            onChange={() => handleConsent(q.id, true)}
+                          />
+                          <div className="pdpa-check-circle">
+                            {consents[q.id] === true && <FiCheck />}
+                          </div>
+                          <span style={{ fontWeight: "600", fontSize: "15px" }}>
+                            {t("form_view.pdpa_ack")}
+                          </span>
+                        </label>
+                      </div>
+                    ))}
+                </div>
+              )}
 
+            <div className="preview-actions-container">
+              <button
+                type="button"
+                className="clear-all-btn"
+                onClick={() => {
+                  // 🟢 เปลี่ยน confirm เป็น SweetAlert2
+                  Swal.fire({
+                    title: t("form_view.clear_form_confirm_title"),
+                    text: t("form_view.clear_form_confirm_desc"),
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d93025",
+                    cancelButtonColor: "#64748b",
+                    confirmButtonText: t("form_view.clear_form_yes"),
+                    cancelButtonText: t("form_view.clear_form_cancel"),
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      const retainedAnswers = {};
+                      const retainedConsents = {};
+
+                      if (verifiedIdentity) {
+                        nationalIdQuestions.forEach((q) => {
+                          retainedAnswers[q.id] =
+                            formatThaiID(verifiedIdentity);
+                          retainedConsents[q.id] = true;
+                        });
+                      }
+
+                      setAnswers(retainedAnswers);
+                      setConsents(retainedConsents);
+                      setOptionInputValues({});
+                      setErrors({});
+                    }
+                  });
+                }}
+              >
+                <FiTrash2 /> {t("form_view.clear_form")}
+              </button>
+
+              <div className="preview-actions-nav">
+                {currentStep > 0 && (
+                  <button
+                    type="button"
+                    className="preview-btn preview-btn--ghost"
+                    onClick={() => {
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                      setCurrentStep((s) => s - 1);
+                    }}
+                  >
+                    <FiArrowLeft style={{ marginRight: "6px" }} />{" "}
+                    {t("form_view.btn_prev")}
+                  </button>
+                )}
+                {currentStep < groupedSteps.length - 1 ? (
+                  <button
+                    type="button"
+                    className="preview-btn preview-btn--primary"
+                    onClick={() => {
+                      if (validateStep()) {
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                        setCurrentStep((s) => s + 1);
+                      }
+                    }}
+                  >
+                    {t("form_view.btn_next")}{" "}
+                    <FiArrowRight style={{ marginLeft: "6px" }} />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="preview-btn preview-btn--primary"
+                    onClick={handleFinalSubmit}
+                    disabled={isSubmitting}
+                  >
+                    <FiCheck style={{ marginRight: "6px" }} />{" "}
+                    {isSubmitting
+                      ? t("assessment_result.sending")
+                      : t("form_view.btn_submit")}
+                  </button>
+                )}
+              </div>
+            </div>
+          </form>
           {hasInteractiveResults && (
             <InteractiveResultPanel
-              className="assessment-live-results--mobile"
+              className="assessment-live-results--desktop"
               results={interactiveResults}
               totalTargets={totalScoredTargets}
               isAuthenticated={Boolean(patientToken)}
             />
           )}
-
-          {nationalIdQuestions.some(
-            (q) => (answers[q.id] || "").length === 17,
-          ) &&
-            !verifiedIdentity && (
-              <div className="preview-sec pdpa-friendly-wrapper">
-                <div className="pdpa-header">
-                  <FiInfo /> {t("form_view.pdpa_title")}
-                </div>
-                <p className="pdpa-desc">
-                  {t("form_view.pdpa_desc")}
-                  <span
-                    style={{
-                      fontSize: "12px",
-                      color: "#9aa0a6",
-                      fontStyle: "italic",
-                    }}
-                  >
-                    {" "}
-                    {t("form_view.pdpa_secret")}{" "}
-                  </span>
-                </p>
-                {nationalIdQuestions
-                  .filter((q) => (answers[q.id] || "").length === 17)
-                  .map((q) => (
-                    <div
-                      key={q.id}
-                      className="pdpa-options"
-                      style={{ marginTop: "16px" }}
-                    >
-                      <label
-                        className={`pdpa-status-card ${consents[q.id] === true ? "active" : ""}`}
-                      >
-                        <input
-                          type="checkbox"
-                          style={{ display: "none" }}
-                          name={`pdpa_${q.id}`}
-                          checked={consents[q.id] === true}
-                          onChange={() => handleConsent(q.id, true)}
-                        />
-                        <div className="pdpa-check-circle">
-                          {consents[q.id] === true && <FiCheck />}
-                        </div>
-                        <span style={{ fontWeight: "600", fontSize: "15px" }}>
-                          {t("form_view.pdpa_ack")}
-                        </span>
-                      </label>
-                    </div>
-                  ))}
-              </div>
-            )}
-
-          <div className="preview-actions-container">
-            <button
-              type="button"
-              className="clear-all-btn"
-              onClick={() => {
-                // 🟢 เปลี่ยน confirm เป็น SweetAlert2
-                Swal.fire({
-                  title: t("form_view.clear_form_confirm_title"),
-                  text: t("form_view.clear_form_confirm_desc"),
-                  icon: "warning",
-                  showCancelButton: true,
-                  confirmButtonColor: "#d93025",
-                  cancelButtonColor: "#64748b",
-                  confirmButtonText: t("form_view.clear_form_yes"),
-                  cancelButtonText: t("form_view.clear_form_cancel"),
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    const retainedAnswers = {};
-                    const retainedConsents = {};
-
-                    if (verifiedIdentity) {
-                      nationalIdQuestions.forEach((q) => {
-                        retainedAnswers[q.id] = formatThaiID(verifiedIdentity);
-                        retainedConsents[q.id] = true;
-                      });
-                    }
-
-                    setAnswers(retainedAnswers);
-                    setConsents(retainedConsents);
-                    setOptionInputValues({});
-                    setErrors({});
-                  }
-                });
-              }}
-            >
-              <FiTrash2 /> {t("form_view.clear_form")}
-            </button>
-
-            <div className="preview-actions-nav">
-              {currentStep > 0 && (
-                <button
-                  type="button"
-                  className="preview-btn preview-btn--ghost"
-                  onClick={() => {
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                    setCurrentStep((s) => s - 1);
-                  }}
-                >
-                  <FiArrowLeft style={{ marginRight: "6px" }} />{" "}
-                  {t("form_view.btn_prev")}
-                </button>
-              )}
-              {currentStep < groupedSteps.length - 1 ? (
-                <button
-                  type="button"
-                  className="preview-btn preview-btn--primary"
-                  onClick={() => {
-                    if (validateStep()) {
-                      window.scrollTo({ top: 0, behavior: "smooth" });
-                      setCurrentStep((s) => s + 1);
-                    }
-                  }}
-                >
-                  {t("form_view.btn_next")}{" "}
-                  <FiArrowRight style={{ marginLeft: "6px" }} />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="preview-btn preview-btn--primary"
-                  onClick={handleFinalSubmit}
-                  disabled={isSubmitting}
-                >
-                  <FiCheck style={{ marginRight: "6px" }} />{" "}
-                  {isSubmitting
-                    ? t("assessment_result.sending")
-                    : t("form_view.btn_submit")}
-                </button>
-              )}
-            </div>
-          </div>
-        </form>
-        {hasInteractiveResults && (
-          <InteractiveResultPanel
-            className="assessment-live-results--desktop"
-            results={interactiveResults}
-            totalTargets={totalScoredTargets}
-            isAuthenticated={Boolean(patientToken)}
-          />
-        )}
         </div>
       </div>
 

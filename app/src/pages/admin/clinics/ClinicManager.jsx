@@ -124,7 +124,10 @@ function SortableRow({ clinic, onEdit, onDelete }) {
       </td>
       <td className="cm-col-name cm-name">{clinic.name}</td>
       <td className="cm-col-organization">
-        <span className="cm-organization-tag" title={clinic.organization_code || "ยังไม่ระบุหน่วยงาน"}>
+        <span
+          className="cm-organization-tag"
+          title={clinic.organization_code || "ยังไม่ระบุหน่วยงาน"}
+        >
           {clinic.organization_name || "โรงพยาบาลมหาวิทยาลัยเทคโนโลยีสุรนารี"}
         </span>
       </td>
@@ -220,11 +223,17 @@ function ClinicManagerContent() {
     }
   };
 
-  useEffect(() => { fetchClinics(); }, [activeOrganization]);
+  useEffect(() => {
+    fetchClinics();
+  }, [activeOrganization]);
 
   useEffect(() => {
     if (!isSystemAdmin) return;
-    getOrganizations().then(({ data }) => setOrganizations(data.filter((item) => item.status === "active"))).catch(() => setOrganizations([]));
+    getOrganizations()
+      .then(({ data }) =>
+        setOrganizations(data.filter((item) => item.status === "active")),
+      )
+      .catch(() => setOrganizations([]));
   }, [isSystemAdmin]);
 
   // ============ Drag End Handler ============
@@ -279,7 +288,9 @@ function ClinicManagerContent() {
         bg: clinic.bg || "",
         is_active: clinic.is_active ?? 1,
         show_icon: clinic.show_icon ?? 1,
-        organization_id: clinic.organization_id ? String(clinic.organization_id) : "",
+        organization_id: clinic.organization_id
+          ? String(clinic.organization_id)
+          : "",
       });
     } else {
       setEditingClinic(null);
@@ -292,7 +303,11 @@ function ClinicManagerContent() {
         bg: "",
         is_active: 1,
         show_icon: 1,
-        organization_id: typeof activeOrganization === "string" && /^\d+$/.test(activeOrganization) ? activeOrganization : "",
+        organization_id:
+          typeof activeOrganization === "string" &&
+          /^\d+$/.test(activeOrganization)
+            ? activeOrganization
+            : "",
       });
     }
     setIsModalOpen(true);
@@ -459,7 +474,10 @@ function ClinicManagerContent() {
             <p className="cm-header-hint">
               จัดการคลินิกของหน่วยงานที่เลือก และเรียงลำดับเพื่อแสดงผลบนหน้าเว็บ
             </p>
-            <p className="cm-context-indicator"><span>ขอบเขตข้อมูล</span>{activeOrganizationLabel}</p>
+            <p className="cm-context-indicator">
+              <span>ขอบเขตข้อมูล</span>
+              {activeOrganizationLabel}
+            </p>
           </div>
           <button className="cm-btn-add" onClick={() => handleOpenModal()}>
             <FaPlus /> เพิ่มคลินิกใหม่
@@ -525,12 +543,17 @@ function ClinicManagerContent() {
 
         {/* Modal (เหมือนเดิมทุกอย่าง) */}
         {isModalOpen && (
-          <div className="cm-modal-overlay">
-            <div className="cm-modal-content">
+          <div className="cm-modal-overlay" role="presentation">
+            <div
+              className="cm-modal-content"
+              role="dialog"
+              aria-modal="true"
+              aria-label={editingClinic ? "แก้ไขคลินิก" : "เพิ่มคลินิก"}
+            >
               <button
                 className="cm-close-btn-custom"
                 onClick={handleCloseModal}
-                aria-label="Close"
+                aria-label="ปิดหน้าต่าง"
               >
                 <span className="cm-close-cross"></span>
               </button>
@@ -538,12 +561,25 @@ function ClinicManagerContent() {
               <form onSubmit={handleSubmit}>
                 {isSystemAdmin && (
                   <div className="cm-form-group cm-organization-field">
-                    <label>หน่วยงานเจ้าของ <span className="cm-required">*</span></label>
-                    <select name="organization_id" value={formData.organization_id} onChange={handleChange} required>
+                    <label>
+                      หน่วยงานเจ้าของ <span className="cm-required">*</span>
+                    </label>
+                    <select
+                      name="organization_id"
+                      value={formData.organization_id}
+                      onChange={handleChange}
+                      required
+                    >
                       <option value="">เลือกหน่วยงาน</option>
-                      {organizations.map((organization) => <option key={organization.id} value={organization.id}>{organization.name} ({organization.code})</option>)}
+                      {organizations.map((organization) => (
+                        <option key={organization.id} value={organization.id}>
+                          {organization.name} ({organization.code})
+                        </option>
+                      ))}
                     </select>
-                    <small>ฟอร์มและข้อมูลคลินิกจะแสดงเฉพาะในขอบเขตหน่วยงานนี้</small>
+                    <small>
+                      ฟอร์มและข้อมูลคลินิกจะแสดงเฉพาะในขอบเขตหน่วยงานนี้
+                    </small>
                   </div>
                 )}
                 <div className="cm-form-group">

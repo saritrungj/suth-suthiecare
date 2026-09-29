@@ -13,7 +13,10 @@ import { FaWeight, FaRuler } from "react-icons/fa";
 
 // ดึงการตั้งค่าจากไฟล์ Utils ที่เราเพิ่งสร้าง
 import { formatAnswerValue, stripHtml, formatDate } from "../historyUtils";
-import { updatePatientHistoryAnswer, updatePatientHistoryResponse } from "../../../../services/api";
+import {
+  updatePatientHistoryAnswer,
+  updatePatientHistoryResponse,
+} from "../../../../services/api";
 import { useTranslation } from "react-i18next";
 import { showErrorAlert, showSuccessToast } from "../../../../utils/alerts";
 
@@ -161,7 +164,10 @@ export function EditableField({
     if (!val.trim()) return;
     setSaving(true);
     try {
-      const res = await updatePatientHistoryResponse(responseId, { field, value: val.trim() });
+      const res = await updatePatientHistoryResponse(responseId, {
+        field,
+        value: val.trim(),
+      });
       onSave && onSave(field, val.trim(), res.data?.updated_at);
       setEditing(false);
       await showSuccessToast("บันทึกข้อมูลเรียบร้อยแล้ว");

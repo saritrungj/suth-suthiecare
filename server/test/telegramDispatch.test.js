@@ -20,4 +20,3 @@ test("telegram dispatch returns immediately while notification continues", async
   assert.equal(started, true);
   finishSend();
 });
-

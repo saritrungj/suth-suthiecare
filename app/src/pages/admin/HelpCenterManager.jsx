@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   getAllClinics,
   getFaqCategories,
@@ -30,6 +30,7 @@ import "./HelpCenterManager.css";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import RichTextInput from "./forms/builder-components/RichTextInput";
+import FilterDropdown from "../../components/FilterDropdown";
 
 const MySwal = withReactContent(Swal);
 
@@ -38,6 +39,7 @@ export default function HelpCenterManager() {
   const [clinics, setClinics] = useState([]);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   const [isClinicModalOpen, setIsClinicModalOpen] = useState(false);
   const [clinicSearchQuery, setClinicSearchQuery] = useState("");
@@ -70,12 +72,17 @@ export default function HelpCenterManager() {
   const [draggedFaqIndex, setDraggedFaqIndex] = useState(null);
   const [draggedCatIndex, setDraggedCatIndex] = useState(null);
   const [homepageFaqCount, setHomepageFaqCount] = useState(0);
+  const didInitializeFilters = useRef(false);
 
   useEffect(() => {
     fetchInitialData();
   }, []);
 
   useEffect(() => {
+    if (!didInitializeFilters.current) {
+      didInitializeFilters.current = true;
+      return;
+    }
     fetchFaqs();
   }, [filterClinic, filterStatus, searchQuery]);
 
@@ -112,19 +119,17 @@ export default function HelpCenterManager() {
             String(faq.is_homepage) === "1",
         ).length,
       );
+      setLoadError("");
     } catch (err) {
       console.error("Error fetching FAQs and homepage count:", err);
+      setLoadError("ไม่สามารถโหลดข้อมูลคำถามได้");
     }
   };
 
   const fetchInitialData = async () => {
     setIsLoading(true);
+    setLoadError("");
     try {
-      const cachedClinics = localStorage.getItem("suth_all_clinics_admin");
-      if (cachedClinics) {
-        setClinics(JSON.parse(cachedClinics));
-      }
-
       const [resClinic, resFaq] = await Promise.all([
         getAllClinics(),
         getFaqsAdmin({
@@ -138,16 +143,15 @@ export default function HelpCenterManager() {
       const faqData = resFaq.data?.data || [];
 
       setClinics(freshClinics);
-      localStorage.setItem(
-        "suth_all_clinics_admin",
-        JSON.stringify(freshClinics),
-      );
       setFaqs(faqData);
       setHomepageFaqCount(
         faqData.filter((faq) => faq.is_homepage === 1).length,
       );
     } catch (err) {
       console.error("Error loading initial data:", err);
+      setClinics([]);
+      setFaqs([]);
+      setLoadError("ไม่สามารถโหลดข้อมูลศูนย์ช่วยเหลือได้");
     } finally {
       setIsLoading(false);
     }
@@ -293,7 +297,14 @@ export default function HelpCenterManager() {
       }
       fetchCategoriesForForm(catSelectedClinic);
       fetchFaqs();
-      MySwal.fire({ icon: "success", title: "บันทึกลำดับหมวดหมู่แล้ว", toast: true, position: "top-end", timer: 1500, showConfirmButton: false });
+      MySwal.fire({
+        icon: "success",
+        title: "บันทึกลำดับหมวดหมู่แล้ว",
+        toast: true,
+        position: "top-end",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (err) {
       console.error(err);
       MySwal.fire("ข้อผิดพลาด", "ไม่สามารถบันทึกลำดับหมวดหมู่ได้", "error");
@@ -525,6 +536,14 @@ export default function HelpCenterManager() {
   const totalPages = Math.ceil(totalItems / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
   const currentFaqs = sortedFaqs.slice(startIndex, startIndex + rowsPerPage);
+  const filteredClinicSettings = clinics.filter((clinic) =>
+    String(clinic.name || "")
+      .toLowerCase()
+      .includes(clinicSearchQuery.trim().toLowerCase()),
+  );
+  const hasFaqFilters = Boolean(
+    filterClinic || filterStatus || searchQuery.trim(),
+  );
 
   const goToNextPage = () =>
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
@@ -565,7 +584,14 @@ export default function HelpCenterManager() {
         }
       }
       fetchFaqs();
-      MySwal.fire({ icon: "success", title: "บันทึกลำดับคำถามแล้ว", toast: true, position: "top-end", timer: 1500, showConfirmButton: false });
+      MySwal.fire({
+        icon: "success",
+        title: "บันทึกลำดับคำถามแล้ว",
+        toast: true,
+        position: "top-end",
+        timer: 1500,
+        showConfirmButton: false,
+      });
     } catch (err) {
       MySwal.fire(
         "ข้อผิดพลาด",
@@ -600,32 +626,63 @@ export default function HelpCenterManager() {
             <button
               className="hc-btn-outline-custom"
               onClick={handleOpenCatModal}
+              disabled={clinics.length === 0}
+              title={
+                clinics.length === 0 ? "ยังไม่มีคลินิกในหน่วยงานนี้" : undefined
+              }
             >
               <FaFolderPlus /> จัดการหมวดหมู่ย่อย
             </button>
-            <button className="hc-btn-add" onClick={() => handleOpenFaqModal()}>
+            <button
+              className="hc-btn-add"
+              onClick={() => handleOpenFaqModal()}
+              disabled={clinics.length === 0}
+              title={
+                clinics.length === 0
+                  ? "กรุณาสร้างคลินิกก่อนเพิ่มคำถาม"
+                  : undefined
+              }
+            >
               <FaPlus /> เพิ่มคำถามใหม่
             </button>
           </div>
         </header>
 
         <div className="hc-filter-panel">
-          <div className="hc-form-group" style={{ margin: 0, flex: 1.2 }}>
-            <label style={{ fontSize: "13px", color: "#64748b" }}>
-              กรองตามคลินิก
-            </label>
-            <select
-              value={filterClinic}
-              onChange={(e) => setFilterClinic(e.target.value)}
-            >
-              <option value="">เลือกคลินิกทั้งหมด</option>
-              {clinics.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <FilterDropdown
+            activeCount={[filterClinic, filterStatus].filter(Boolean).length}
+          >
+            <div className="hc-form-group" style={{ margin: 0, flex: 1.2 }}>
+              <label style={{ fontSize: "13px", color: "#64748b" }}>
+                กรองตามคลินิก
+              </label>
+              <select
+                value={filterClinic}
+                onChange={(e) => setFilterClinic(e.target.value)}
+              >
+                <option value="">เลือกคลินิกทั้งหมด</option>
+                {clinics.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="hc-form-group" style={{ margin: 0, flex: 1.2 }}>
+              <label style={{ fontSize: "13px", color: "#64748b" }}>
+                สถานะ
+              </label>
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="">สถานะทั้งหมด</option>
+                <option value="published">เผยแพร่</option>
+                <option value="draft">ร่าง</option>
+                <option value="hidden">ซ่อน</option>
+              </select>
+            </div>
+          </FilterDropdown>
 
           <div className="hc-form-group" style={{ margin: 0, flex: 3.5 }}>
             <label style={{ fontSize: "13px", color: "#64748b" }}>
@@ -653,25 +710,23 @@ export default function HelpCenterManager() {
               />
             </div>
           </div>
-
-          <div className="hc-form-group" style={{ margin: 0, flex: 1.2 }}>
-            <label style={{ fontSize: "13px", color: "#64748b" }}>สถานะ</label>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-            >
-              <option value="">สถานะทั้งหมด</option>
-              <option value="published">เผยแพร่</option>
-              <option value="draft">ร่าง</option>
-              <option value="hidden">ซ่อน</option>
-            </select>
-          </div>
         </div>
 
         {isLoading ? (
           <div className="hc-loading-state">
             <div className="hc-loading-spinner"></div>
             <p>กำลังโหลดข้อมูล</p>
+          </div>
+        ) : loadError ? (
+          <div className="hc-loading-state" role="alert">
+            <p>{loadError}</p>
+            <button
+              type="button"
+              className="hc-btn-add"
+              onClick={fetchInitialData}
+            >
+              ลองใหม่
+            </button>
           </div>
         ) : (
           <div
@@ -838,7 +893,16 @@ export default function HelpCenterManager() {
                   ) : (
                     <tr>
                       <td colSpan="8" className="hc-empty-state">
-                        ไม่พบข้อมูลคำถามในศูนย์ช่วยเหลือ
+                        <strong>
+                          {hasFaqFilters
+                            ? "ไม่พบคำถามที่ตรงกับตัวกรอง"
+                            : "ยังไม่มีคำถามในศูนย์ช่วยเหลือของหน่วยงานนี้"}
+                        </strong>
+                        <span>
+                          {hasFaqFilters
+                            ? "ลองเปลี่ยนคำค้นหา คลินิก หรือสถานะ"
+                            : "เริ่มต้นโดยเพิ่มคำถามใหม่สำหรับคลินิกในหน่วยงานนี้"}
+                        </span>
                       </td>
                     </tr>
                   )}
@@ -888,11 +952,18 @@ export default function HelpCenterManager() {
         )}
 
         {isCatModalOpen && (
-          <div className="hc-modal-overlay">
-            <div className="hc-modal-content" style={{ maxWidth: "700px" }}>
+          <div className="hc-modal-overlay" role="presentation">
+            <div
+              className="hc-modal-content"
+              style={{ maxWidth: "700px" }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="จัดการหมวดหมู่คำถามย่อย"
+            >
               <button
                 className="hc-close-btn-custom"
                 onClick={() => setIsCatModalOpen(false)}
+                aria-label="ปิดหน้าต่าง"
               >
                 <span className="hc-close-cross"></span>
               </button>
@@ -913,6 +984,11 @@ export default function HelpCenterManager() {
                   }}
                 >
                   <option value="">-- เลือกคลินิกเพื่อดูข้อมูล --</option>
+                  {clinics.length === 0 && (
+                    <option value="" disabled>
+                      ยังไม่มีคลินิกในหน่วยงานนี้
+                    </option>
+                  )}
                   {clinics.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name}
@@ -1205,11 +1281,17 @@ export default function HelpCenterManager() {
 
         {/* ── 🌟 MODAL 2 (โฉมแก้ไขใหม่): หน้าต่างกรอกฟอร์มเพิ่ม/แก้ไขข้อคำถาม Hybrid ── */}
         {isFaqModalOpen && (
-          <div className="hc-modal-overlay">
-            <div className="hc-modal-content">
+          <div className="hc-modal-overlay" role="presentation">
+            <div
+              className="hc-modal-content"
+              role="dialog"
+              aria-modal="true"
+              aria-label={editingFaq ? "แก้ไขข้อมูลคำถาม" : "เพิ่มข้อคำถามใหม่"}
+            >
               <button
                 className="hc-close-btn-custom"
                 onClick={() => setIsFaqModalOpen(false)}
+                aria-label="ปิดหน้าต่าง"
               >
                 <span className="hc-close-cross"></span>
               </button>
@@ -1404,15 +1486,18 @@ export default function HelpCenterManager() {
         )}
 
         {isClinicModalOpen && (
-          <div className="hc-modal-overlay">
+          <div className="hc-modal-overlay" role="presentation">
             <div
               className="hc-clinic-modal-content"
               style={{ position: "relative" }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="ตั้งค่าการแสดงผลคลินิกบนหน้าช่วยเหลือ"
             >
               <button
                 className="hc-close-btn-custom"
                 onClick={() => setIsClinicModalOpen(false)}
-                aria-label="Close"
+                aria-label="ปิดหน้าต่าง"
               >
                 <span className="hc-close-cross"></span>
               </button>
@@ -1464,13 +1549,8 @@ export default function HelpCenterManager() {
                     </tr>
                   </thead>
                   <tbody>
-                    {clinics
-                      .filter((c) =>
-                        c.name
-                          .toLowerCase()
-                          .includes(clinicSearchQuery.toLowerCase()),
-                      )
-                      .map((clinic) => (
+                    {filteredClinicSettings.length > 0 ? (
+                      filteredClinicSettings.map((clinic) => (
                         <tr key={clinic.id}>
                           <td>
                             <div className="hc-mini-logo-container">
@@ -1501,7 +1581,23 @@ export default function HelpCenterManager() {
                             </label>
                           </td>
                         </tr>
-                      ))}
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="3" className="hc-empty-state">
+                          <strong>
+                            {clinicSearchQuery.trim()
+                              ? "ไม่พบคลินิกที่ตรงกับคำค้นหา"
+                              : "ยังไม่มีคลินิกในหน่วยงานนี้"}
+                          </strong>
+                          <span>
+                            {clinicSearchQuery.trim()
+                              ? "ลองเปลี่ยนคำค้นหาแล้วค้นหาอีกครั้ง"
+                              : "เพิ่มคลินิกในเมนูจัดการคลินิกก่อนตั้งค่าหน้าช่วยเหลือ"}
+                          </span>
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>

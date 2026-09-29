@@ -201,7 +201,7 @@
   border-radius: 14px;
   border: none;
 
-  background: #356768;
+  background: #f47932;
   color: white;
   font-size: 17px;
   font-weight: 600;
@@ -211,5 +211,5 @@
 }
 
 .add-btn:hover {
-  background: #2c5556;
+  background: #ea580c;
 }

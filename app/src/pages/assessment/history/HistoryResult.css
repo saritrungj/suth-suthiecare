@@ -130,6 +130,119 @@
   margin: 0 auto;
   padding: 32px 20px;
 }
+.hr-email-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding: 20px;
+  color: #78350f;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  animation: hrFadeInDown 0.35s ease-out forwards;
+}
+.hr-email-banner-icon {
+  display: flex;
+  flex: 0 0 auto;
+  padding-top: 2px;
+  color: #d97706;
+}
+.hr-email-banner-content {
+  min-width: 0;
+  flex: 1;
+}
+.hr-email-banner h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+.hr-email-banner p {
+  margin: 4px 0 14px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.hr-email-form {
+  display: flex;
+  gap: 8px;
+  max-width: 520px;
+}
+.hr-email-form input {
+  min-width: 0;
+  flex: 1;
+  padding: 10px 12px;
+  color: var(--gray-900);
+  font: inherit;
+  background: white;
+  border: 1px solid #fbbf24;
+  border-radius: 9px;
+}
+.hr-email-form input:focus {
+  outline: 3px solid rgba(245, 158, 11, 0.25);
+  border-color: #d97706;
+}
+.hr-email-form button {
+  flex: 0 0 auto;
+  padding: 10px 16px;
+  color: white;
+  font: inherit;
+  font-weight: 700;
+  background: #b45309;
+  border: 0;
+  border-radius: 9px;
+  cursor: pointer;
+}
+.hr-email-form button:hover:not(:disabled) {
+  background: #92400e;
+}
+.hr-email-form button:disabled,
+.hr-email-form input:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.hr-email-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 10px;
+}
+.hr-email-actions button {
+  padding: 0;
+  color: #92400e;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.hr-email-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.hr-email-banner .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 600px) {
+  .hr-email-banner {
+    padding: 16px;
+  }
+  .hr-email-form {
+    flex-direction: column;
+  }
+  .hr-email-form button {
+    width: 100%;
+  }
+}
 /* =========================================
    HERO PROFILE
 ========================================= */

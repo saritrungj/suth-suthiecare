@@ -3,7 +3,10 @@ const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
 const { verifyToken } = require("../middleware/authMiddleware");
-const { normalizeTrustedAssetUrl, normalizeTrustedLink } = require("../utils/contentSecurity");
+const {
+  normalizeTrustedAssetUrl,
+  normalizeTrustedLink,
+} = require("../utils/contentSecurity");
 
 // 1. ดึงข้อมูลแบนเนอร์ทั้งหมดเรียงตามลำดับ (position)
 router.get("/banners", async (req, res) => {
@@ -32,10 +35,14 @@ router.post("/banners", verifyToken, async (req, res) => {
     const safeLink = link ? normalizeTrustedLink(link) : null;
     const safeImage = normalizeTrustedAssetUrl(image);
     if (!safeImage) {
-      return res.status(400).json({ message: "Banner image is not a trusted image URL or data image" });
+      return res.status(400).json({
+        message: "Banner image is not a trusted image URL or data image",
+      });
     }
     if (link && !safeLink) {
-      return res.status(400).json({ message: "Banner link is not a trusted HTTPS URL" });
+      return res
+        .status(400)
+        .json({ message: "Banner link is not a trusted HTTPS URL" });
     }
     const [max] = await db.query("SELECT MAX(position) as maxPos FROM banners");
     const position = (max[0].maxPos || 0) + 1;
@@ -56,11 +63,16 @@ router.patch("/banners/:id/image", verifyToken, async (req, res) => {
     if (!image) return res.status(400).json({ message: "ไม่มีรูปภาพ" });
     const safeImage = normalizeTrustedAssetUrl(image);
     if (!safeImage) {
-      return res.status(400).json({ message: "Banner image is not a trusted image URL or data image" });
+      return res.status(400).json({
+        message: "Banner image is not a trusted image URL or data image",
+      });
     }
-    const finalLink = link && link.trim() !== "" ? normalizeTrustedLink(link) : null;
+    const finalLink =
+      link && link.trim() !== "" ? normalizeTrustedLink(link) : null;
     if (link && link.trim() && !finalLink) {
-      return res.status(400).json({ message: "Banner link is not a trusted HTTPS URL" });
+      return res
+        .status(400)
+        .json({ message: "Banner link is not a trusted HTTPS URL" });
     }
 
     await db.query(

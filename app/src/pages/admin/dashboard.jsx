@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import CaseTable from "../../components/case/CaseTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
+import FilterDropdown from "../../components/FilterDropdown";
 import {
   getForms,
   getChartData,
@@ -33,7 +34,12 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { restrictToParentElement } from "@dnd-kit/modifiers";
-import { getCurrentMonthDateRange, isCaseInDateRange, normaliseDateRange, parseCaseDate } from "../../utils/caseDateFilter";
+import {
+  getCurrentMonthDateRange,
+  isCaseInDateRange,
+  normaliseDateRange,
+  parseCaseDate,
+} from "../../utils/caseDateFilter";
 import { usePermissions } from "../../permissions/PermissionsProvider";
 import { showErrorAlert, showSuccessToast } from "../../utils/alerts";
 import "./dashboard.css";
@@ -205,6 +211,9 @@ const CustomDropdown = ({
 
 export default function Dashboard() {
   const { activeOrganization } = usePermissions();
+  const canManageDashboardSettings = Boolean(
+    activeOrganization && activeOrganization !== "all",
+  );
   const navigate = useNavigate();
   const [cases, setCases] = useState([]);
   const [clinics, setClinics] = useState([]);
@@ -268,7 +277,12 @@ export default function Dashboard() {
     const fetchMasterCaseStats = async () => {
       setIsStatsLoading(true);
       try {
-        const res = await getMasterCaseStats(selectedClinic, selectedFormId, startDate, endDate);
+        const res = await getMasterCaseStats(
+          selectedClinic,
+          selectedFormId,
+          startDate,
+          endDate,
+        );
         if (res.data && typeof res.data === "object" && !res.data.error) {
           setMasterCaseStats((prev) => ({ ...prev, ...res.data }));
         }
@@ -278,17 +292,29 @@ export default function Dashboard() {
       }
     };
     fetchMasterCaseStats();
-  }, [selectedClinic, selectedFormId, startDate, endDate, statsRefetchTrigger, isInitialSetup, activeOrganization]); // 🟢 3.3 เพิ่ม isInitialSetup เป็น dependency
+  }, [
+    selectedClinic,
+    selectedFormId,
+    startDate,
+    endDate,
+    statsRefetchTrigger,
+    isInitialSetup,
+    activeOrganization,
+  ]); // 🟢 3.3 เพิ่ม isInitialSetup เป็น dependency
 
   useEffect(() => {
     const loadInitialData = async () => {
       setIsInitialSetup(true);
       setCases([]);
       setCurrentFormDetails(null);
+      setChartsByForm({});
       try {
+        const settingsRequest = canManageDashboardSettings
+          ? getDashboardSettings()
+          : Promise.resolve({ data: null });
         const [formRes, settingsRes, clinicRes] = await Promise.all([
           getForms("latest"),
-          getDashboardSettings(),
+          settingsRequest,
           getActiveClinics(),
         ]);
         setForms(formRes.data);
@@ -320,7 +346,7 @@ export default function Dashboard() {
       }
     };
     loadInitialData();
-  }, [activeOrganization]);
+  }, [activeOrganization, canManageDashboardSettings]);
 
   useEffect(() => {
     if (filteredForms.length > 0) {
@@ -419,23 +445,36 @@ export default function Dashboard() {
   const handleFormChange = useCallback(
     async (newFormId) => {
       setSelectedFormId(newFormId);
+      if (!canManageDashboardSettings) return;
       try {
-        await saveDashboardSettings({ formId: newFormId, charts: chartsByForm });
+        await saveDashboardSettings({
+          formId: newFormId,
+          charts: chartsByForm,
+        });
         await showSuccessToast("บันทึกฟอร์มที่ใช้ในแดชบอร์ดแล้ว");
       } catch (error) {
-        await showErrorAlert({ error, title: "บันทึกการตั้งค่าแดชบอร์ดไม่สำเร็จ" });
+        await showErrorAlert({
+          error,
+          title: "บันทึกการตั้งค่าแดชบอร์ดไม่สำเร็จ",
+        });
       }
     },
-    [chartsByForm],
+    [chartsByForm, canManageDashboardSettings],
   );
 
   const filteredData = useMemo(() => {
     return cases.filter((item) => isCaseInDateRange(item, startDate, endDate));
   }, [cases, startDate, endDate]);
 
-  const removeChart = useCallback((id) => setChartToDelete(id), []);
+  const removeChart = useCallback(
+    (id) => {
+      if (canManageDashboardSettings) setChartToDelete(id);
+    },
+    [canManageDashboardSettings],
+  );
 
   const confirmDelete = useCallback(async () => {
+    if (!canManageDashboardSettings) return;
     const updatedCharts = charts.filter((c) => c.id !== chartToDelete);
     const updatedChartsByForm = {
       ...chartsByForm,
@@ -453,10 +492,17 @@ export default function Dashboard() {
       setChartsByForm(chartsByForm);
       await showErrorAlert({ error, title: "ลบกราฟไม่สำเร็จ" });
     }
-  }, [charts, chartToDelete, chartsByForm, selectedFormId]);
+  }, [
+    charts,
+    chartToDelete,
+    chartsByForm,
+    selectedFormId,
+    canManageDashboardSettings,
+  ]);
 
   const handleSaveChart = useCallback(
     async (newChartData) => {
+      if (!canManageDashboardSettings) return;
       try {
         const res = await getChartData(
           selectedFormId,
@@ -490,11 +536,18 @@ export default function Dashboard() {
         await showErrorAlert({ error, title: "เพิ่มกราฟไม่สำเร็จ" });
       }
     },
-    [chartsByForm, selectedFormId, startDate, endDate],
+    [
+      chartsByForm,
+      selectedFormId,
+      startDate,
+      endDate,
+      canManageDashboardSettings,
+    ],
   );
 
   const handleDragEnd = useCallback(
     async (event) => {
+      if (!canManageDashboardSettings) return;
       const { active, over } = event;
       if (!over || active.id === over.id) return;
       const oldIndex = charts.findIndex((i) => i.id === active.id);
@@ -516,7 +569,7 @@ export default function Dashboard() {
         await showErrorAlert({ error, title: "บันทึกลำดับกราฟไม่สำเร็จ" });
       }
     },
-    [charts, chartsByForm, selectedFormId],
+    [charts, chartsByForm, selectedFormId, canManageDashboardSettings],
   );
 
   const clinicNameMap = {
@@ -539,13 +592,19 @@ export default function Dashboard() {
   };
 
   const handleStartDateChange = (nextStartDate) => {
-    const [safeStartDate, safeEndDate] = normaliseDateRange(nextStartDate, endDate);
+    const [safeStartDate, safeEndDate] = normaliseDateRange(
+      nextStartDate,
+      endDate,
+    );
     setStartDate(safeStartDate);
     setEndDate(safeEndDate);
   };
 
   const handleEndDateChange = (nextEndDate) => {
-    const [safeStartDate, safeEndDate] = normaliseDateRange(startDate, nextEndDate);
+    const [safeStartDate, safeEndDate] = normaliseDateRange(
+      startDate,
+      nextEndDate,
+    );
     setStartDate(safeStartDate);
     setEndDate(safeEndDate);
   };
@@ -556,40 +615,49 @@ export default function Dashboard() {
         <header className="content-header">
           <h1>แดชบอร์ด</h1>
           <div className="dashboard-filters">
-            <div className="select-wrapper status-select-wrap">
-              <span className="select-label">สถานะแบบฟอร์ม</span>
-              <CustomDropdown
-                icon={FiLayers}
-                value={formStatusFilter}
-                onChange={setFormStatusFilter}
-                options={[
-                  { value: "published", label: "✓ ฟอร์มที่เผยแพร่แล้ว" },
-                  { value: "draft", label: "✎ ฟอร์มฉบับร่าง/ซ่อน" },
-                  { value: "all", label: "☰ สถานะฟอร์มทั้งหมด" },
-                ]}
-                style={{ borderColor: "#bfdbfe", backgroundColor: "#eff6ff" }}
-                iconStyle={{ color: "#2563eb" }}
-                textStyle={{ color: "#1e40af", fontWeight: "600" }}
-              />
-            </div>
+            <FilterDropdown
+              activeCount={
+                [
+                  formStatusFilter !== "published" ? formStatusFilter : "",
+                  selectedClinic !== "all" ? selectedClinic : "",
+                ].filter(Boolean).length
+              }
+            >
+              <div className="select-wrapper status-select-wrap">
+                <span className="select-label">สถานะแบบฟอร์ม</span>
+                <CustomDropdown
+                  icon={FiLayers}
+                  value={formStatusFilter}
+                  onChange={setFormStatusFilter}
+                  options={[
+                    { value: "published", label: "✓ ฟอร์มที่เผยแพร่แล้ว" },
+                    { value: "draft", label: "✎ ฟอร์มฉบับร่าง/ซ่อน" },
+                    { value: "all", label: "☰ สถานะฟอร์มทั้งหมด" },
+                  ]}
+                  style={{ borderColor: "#bfdbfe", backgroundColor: "#eff6ff" }}
+                  iconStyle={{ color: "#2563eb" }}
+                  textStyle={{ color: "#1e40af", fontWeight: "600" }}
+                />
+              </div>
 
-            <div className="select-wrapper clinic-select-wrap">
-              <span className="select-label">ประเภทคลินิก</span>
-              <CustomDropdown
-                icon={FiLayers}
-                value={selectedClinic}
-                onChange={(val) => {
-                  setSelectedClinic(val);
-                  setIsLoading(true);
-                  setIsStatsLoading(true);
-                }}
-                options={[
-                  { value: "all", label: "ทุกคลินิก (All)" },
-                  { value: "general", label: "ทั่วไป" },
-                  ...clinics.map((c) => ({ value: c.slug, label: c.name })),
-                ]}
-              />
-            </div>
+              <div className="select-wrapper clinic-select-wrap">
+                <span className="select-label">ประเภทคลินิก</span>
+                <CustomDropdown
+                  icon={FiLayers}
+                  value={selectedClinic}
+                  onChange={(val) => {
+                    setSelectedClinic(val);
+                    setIsLoading(true);
+                    setIsStatsLoading(true);
+                  }}
+                  options={[
+                    { value: "all", label: "ทุกคลินิก (All)" },
+                    { value: "general", label: "ทั่วไป" },
+                    ...clinics.map((c) => ({ value: c.slug, label: c.name })),
+                  ]}
+                />
+              </div>
+            </FilterDropdown>
 
             <div className="select-wrapper form-select-wrap">
               <span className="select-label">แบบฟอร์มสำหรับดูกราฟ</span>
@@ -686,6 +754,13 @@ export default function Dashboard() {
             </div>
           </div>
         </header>
+
+        {!canManageDashboardSettings && (
+          <div className="db-empty-state" role="status">
+            เลือกหน่วยงานจากเมนูด้านข้างเพื่อบันทึกฟอร์มและการตั้งค่ากราฟของ
+            Dashboard
+          </div>
+        )}
 
         {isInitialSetup ? (
           <div className="db-loading-state">
@@ -940,7 +1015,16 @@ export default function Dashboard() {
             <hr className="divider" />
 
             <div className="block overflow-hidden mb-10">
-              <button className="btn-add" onClick={() => setIsModalOpen(true)}>
+              <button
+                className="btn-add"
+                onClick={() => setIsModalOpen(true)}
+                disabled={!canManageDashboardSettings}
+                title={
+                  canManageDashboardSettings
+                    ? "สร้างกราฟสรุป"
+                    : "เลือกหน่วยงานก่อนสร้างกราฟ"
+                }
+              >
                 <span>+</span> สร้างกราฟสรุปแบบประเมิน
               </button>
             </div>
@@ -1067,8 +1151,13 @@ export default function Dashboard() {
         )}
 
         {chartToDelete && (
-          <div className="modal-overlay">
-            <div className="modal-box">
+          <div className="modal-overlay" role="presentation">
+            <div
+              className="modal-box"
+              role="dialog"
+              aria-modal="true"
+              aria-label="ยืนยันการลบกราฟ"
+            >
               <h3>ยืนยันการลบกราฟ</h3>
               <p>คุณต้องการลบกราฟนี้ใช่หรือไม่?</p>
               <div className="modal-actions">

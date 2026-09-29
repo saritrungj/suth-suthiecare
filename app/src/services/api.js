@@ -5,6 +5,7 @@ const apiBaseUrl = import.meta.env.VITE_API_URL || "/api";
 
 const api = axios.create({
   baseURL: apiBaseUrl,
+  withCredentials: true,
   headers: {
     "Bypass-Tunnel-Reminder": "true",
     "ngrok-skip-browser-warning": "69420",
@@ -23,9 +24,11 @@ const resolveApiAssetUrl = (value) => {
 
 // ── Users ──
 export const getUsers = () => api.get("/users");
-export const getPatientMembers = (params) => api.get("/patient-members", { params });
+export const getPatientMembers = (params) =>
+  api.get("/patient-members", { params });
 export const getPatientMember = (id) => api.get(`/patient-members/${id}`);
-export const updatePatientMember = (id, data) => api.put(`/patient-members/${id}`, data);
+export const updatePatientMember = (id, data) =>
+  api.put(`/patient-members/${id}`, data);
 export const deletePatientMember = (id) => api.delete(`/patient-members/${id}`);
 export const getUserFull = (id) => api.get(`/users/${id}/full`);
 export const createUser = (data) => api.post("/users", data);
@@ -34,13 +37,30 @@ export const deleteUser = (id) => api.delete(`/users/${id}`);
 
 // ── Auth ──
 export const loginApi = (credentials) => api.post("/login", credentials);
+export const verifyStaffOtpApi = (data) => api.post("/login/verify-otp", data);
+export const verifyStaffEmailApi = (data) => api.post("/email/verify", data);
+export const resendStaffOtpApi = (data) => api.post("/login/resend-otp", data);
+export const requestStaffPasswordRecoveryApi = (data) =>
+  api.post("/password-recovery/request", data);
+export const verifyStaffPasswordRecoveryApi = (data) =>
+  api.post("/password-recovery/verify", data);
+export const resetStaffPasswordApi = (data) =>
+  api.post("/password-recovery/reset", data);
 export const getAuthorization = () => api.get("/me/authorization");
+export const getMyProfile = () => api.get("/me/profile");
+export const updateMyProfile = (data) => api.put("/me/profile", data);
+export const changeMyPassword = (data) => api.put("/me/password", data);
+export const changeMyEmail = (data) => api.put("/me/email", data);
 export const getOrganizations = () => api.get("/organizations");
 export const createOrganization = (data) => api.post("/organizations", data);
-export const updateOrganization = (id, data) => api.put(`/organizations/${id}`, data);
-export const getOrganizationMembers = (id) => api.get(`/organizations/${id}/members`);
-export const createOrganizationMember = (id, data) => api.post(`/organizations/${id}/members`, data);
-export const updateOrganizationMember = (id, membershipId, data) => api.put(`/organizations/${id}/members/${membershipId}`, data);
+export const updateOrganization = (id, data) =>
+  api.put(`/organizations/${id}`, data);
+export const getOrganizationMembers = (id) =>
+  api.get(`/organizations/${id}/members`);
+export const createOrganizationMember = (id, data) =>
+  api.post(`/organizations/${id}/members`, data);
+export const updateOrganizationMember = (id, membershipId, data) =>
+  api.put(`/organizations/${id}/members/${membershipId}`, data);
 
 const patientApi = axios.create({
   baseURL: apiBaseUrl,
@@ -66,15 +86,40 @@ patientApi.interceptors.response.use(
   },
 );
 
-export const patientLoginApi = (credentials) => patientApi.post("/patient-auth/login", credentials);
-export const patientRegisterApi = (data) => patientApi.post("/patient-auth/register", data);
+export const patientLoginApi = (credentials) =>
+  patientApi.post("/patient-auth/login", credentials);
+export const patientRegisterApi = (data) =>
+  patientApi.post("/patient-auth/register", data);
+export const verifyPatientEmailApi = (data) =>
+  patientApi.post("/patient-auth/email/verify", data);
+export const resendPatientEmailApi = (data) =>
+  patientApi.post("/patient-auth/email/resend", data);
+export const requestPatientPasswordRecoveryApi = (data) =>
+  patientApi.post("/patient-auth/password-recovery/request", data);
+export const verifyPatientPasswordRecoveryApi = (data) =>
+  patientApi.post("/patient-auth/password-recovery/verify", data);
+export const resetPatientPasswordApi = (data) =>
+  patientApi.post("/patient-auth/password-recovery/reset", data);
 export const patientLogoutApi = () => patientApi.post("/patient-auth/logout");
 export const getPatientMe = () => patientApi.get("/patient/me");
+export const updatePatientEmail = (email) =>
+  patientApi.patch("/patient/me/email", { email });
+export const verifyPatientEmailChange = (data) =>
+  patientApi.post("/patient/me/email/verify", data);
+export const resendPatientEmailChange = (data) =>
+  patientApi.post("/patient/me/email/resend", data);
 export const getPatientHistory = () => patientApi.get("/patient/history");
-export const getPatientCaseLogs = (id) => patientApi.get(`/patient/history/responses/${id}/logs`);
-export const getPatientCaseAnswers = (id) => patientApi.get(`/patient/history/responses/${id}/answers`);
-export const updatePatientHistoryResponse = (id, data) => patientApi.patch(`/patient/history/responses/${id}`, data);
-export const updatePatientHistoryAnswer = (responseId, questionId, value) => patientApi.patch(`/patient/history/responses/${responseId}/answers/${questionId}`, { value });
+export const getPatientCaseLogs = (id) =>
+  patientApi.get(`/patient/history/responses/${id}/logs`);
+export const getPatientCaseAnswers = (id) =>
+  patientApi.get(`/patient/history/responses/${id}/answers`);
+export const updatePatientHistoryResponse = (id, data) =>
+  patientApi.patch(`/patient/history/responses/${id}`, data);
+export const updatePatientHistoryAnswer = (responseId, questionId, value) =>
+  patientApi.patch(
+    `/patient/history/responses/${responseId}/answers/${questionId}`,
+    { value },
+  );
 
 // ── Dashboard ──
 export const getDashboardSummary = () => api.get("/dashboard/summary");
@@ -241,6 +286,9 @@ export const getSystemEvaluationsList = (page = 1, limit = 10) =>
 // ── ช่วยเหลือ ──
 export const getFaqCategories = (clinicId) =>
   api.get(`/admin/help-center/categories/${clinicId}`);
+export const getPublicFaqCategories = (clinicId) =>
+  api.get(`/admin/help-center/public/categories/${clinicId}`);
+export const getPublicFaqs = () => api.get("/admin/help-center/public/faqs");
 export const createFaqCategory = (data) =>
   api.post("/admin/help-center/categories", data);
 export const getFaqsAdmin = (params) =>
@@ -261,12 +309,17 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers["Authorization"] = `Bearer ${token}`;
   }
-  const userRaw = sessionStorage.getItem("suth_user") || localStorage.getItem("suth_user");
+  const userRaw =
+    sessionStorage.getItem("suth_user") || localStorage.getItem("suth_user");
   try {
     const user = userRaw ? JSON.parse(userRaw) : null;
-    const organization = user?.id ? localStorage.getItem(`suth_active_organization_${user.id}`) : null;
+    const organization = user?.id
+      ? localStorage.getItem(`suth_active_organization_${user.id}`)
+      : null;
     if (organization) config.headers["X-Organization-Id"] = organization;
-  } catch { /* invalid session is handled by the response interceptor */ }
+  } catch {
+    /* invalid session is handled by the response interceptor */
+  }
   return config;
 });
 

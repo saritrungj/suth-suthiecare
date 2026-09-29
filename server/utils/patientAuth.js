@@ -1,22 +1,39 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const db = require("../config/db");
-const { encrypt, decrypt, hmacHash, validateThaiId, validateThaiPhone } = require("./encryption");
+const {
+  encrypt,
+  decrypt,
+  hmacHash,
+  validateThaiId,
+  validateThaiPhone,
+} = require("./encryption");
 const { validatePersonName } = require("./patientValidation");
 const { extractExistingPhone } = require("./patientHistoryProfile");
+const {
+  isStrongPassword,
+  PASSWORD_POLICY_MESSAGE,
+} = require("./passwordPolicy");
 
-const patientJwtSecret = () => process.env.PATIENT_JWT_SECRET || process.env.JWT_SECRET;
-const normalizeUsername = (value) => String(value || "").trim().toLowerCase();
+const patientJwtSecret = () =>
+  process.env.PATIENT_JWT_SECRET || process.env.JWT_SECRET;
+const normalizeUsername = (value) =>
+  String(value || "")
+    .trim()
+    .toLowerCase();
 const normalizeId = (value) => String(value || "").replace(/\D/g, "");
 const normalizePhone = (value) => String(value || "").replace(/\D/g, "");
 
 function validateCredentials({ username, password }) {
   const normalized = normalizeUsername(username);
   if (!/^[a-z0-9][a-z0-9._-]{2,79}$/.test(normalized)) {
-    return { error: "ชื่อผู้ใช้ต้องเป็นภาษาอังกฤษ ตัวเลข จุด ขีดกลาง หรือขีดล่าง 3-80 ตัวอักษร" };
+    return {
+      error:
+        "ชื่อผู้ใช้ต้องเป็นภาษาอังกฤษ ตัวเลข จุด ขีดกลาง หรือขีดล่าง 3-80 ตัวอักษร",
+    };
   }
-  if (typeof password !== "string" || password.length < 8 || password.length > 128) {
-    return { error: "รหัสผ่านต้องมีความยาว 8-128 ตัวอักษร" };
+  if (!isStrongPassword(password)) {
+    return { error: PASSWORD_POLICY_MESSAGE };
   }
   return { username: normalized };
 }
@@ -45,7 +62,13 @@ async function audit(accountId, eventType, req, metadata = {}) {
   try {
     await db.query(
       "INSERT INTO patient_auth_audit_logs (patient_account_id, event_type, ip_address, user_agent, metadata) VALUES (?, ?, ?, ?, ?)",
-      [accountId || null, eventType, req.ip || null, String(req.get("user-agent") || "").slice(0, 255), JSON.stringify(metadata)],
+      [
+        accountId || null,
+        eventType,
+        req.ip || null,
+        String(req.get("user-agent") || "").slice(0, 255),
+        JSON.stringify(metadata),
+      ],
     );
   } catch (error) {
     console.error("Patient auth audit failed:", error.message);
@@ -54,7 +77,11 @@ async function audit(accountId, eventType, req, metadata = {}) {
 
 function signPatientToken(account) {
   return jwt.sign(
-    { sub: account.id, account_type: "patient", token_version: account.token_version },
+    {
+      sub: account.id,
+      account_type: "patient",
+      token_version: account.token_version,
+    },
     patientJwtSecret(),
     { expiresIn: process.env.PATIENT_JWT_EXPIRES || "2h" },
   );
@@ -63,11 +90,17 @@ function signPatientToken(account) {
 function publicAccount(account) {
   const safeDecrypt = (value) => {
     if (!value) return "";
-    try { return decrypt(value) || ""; } catch { return ""; }
+    try {
+      return decrypt(value) || "";
+    } catch {
+      return "";
+    }
   };
   return {
     id: account.id,
     username: account.username,
+    email: account.email || "",
+    email_verified: Boolean(account.email && account.email_verified_at),
     first_name: safeDecrypt(account.first_name_encrypted),
     last_name: safeDecrypt(account.last_name_encrypted),
     status: account.status,

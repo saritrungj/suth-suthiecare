@@ -1,4 +1,7 @@
-require("dotenv").config({ path: require("path").join(__dirname, "..", ".env"), quiet: true });
+require("dotenv").config({
+  path: require("path").join(__dirname, "..", ".env"),
+  quiet: true,
+});
 const crypto = require("crypto");
 const db = require("../config/db");
 
@@ -8,11 +11,18 @@ async function requireMigration(connection) {
   const [columns] = await connection.query(
     "SELECT TABLE_NAME, COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND ((TABLE_NAME = 'mastercases' AND COLUMN_NAME = 'patient_account_id') OR (TABLE_NAME = 'form_responses' AND COLUMN_NAME = 'patient_account_id'))",
   );
-  const found = new Set(columns.map((column) => `${column.TABLE_NAME}.${column.COLUMN_NAME}`));
-  const required = ["mastercases.patient_account_id", "form_responses.patient_account_id"];
+  const found = new Set(
+    columns.map((column) => `${column.TABLE_NAME}.${column.COLUMN_NAME}`),
+  );
+  const required = [
+    "mastercases.patient_account_id",
+    "form_responses.patient_account_id",
+  ];
   const missing = required.filter((column) => !found.has(column));
   if (missing.length) {
-    throw new Error(`Patient account identity migration has not been applied. Missing: ${missing.join(", ")}. Run: npm run migrate:patient-account-identity`);
+    throw new Error(
+      `Patient account identity migration has not been applied. Missing: ${missing.join(", ")}. Run: npm run migrate:patient-account-identity`,
+    );
   }
 }
 
@@ -23,7 +33,10 @@ async function countCandidates(connection) {
   const [caseRows] = await connection.query(
     "SELECT COUNT(*) AS total FROM mastercases mc JOIN patient_accounts pa ON BINARY mc.identity_hash = BINARY pa.identity_hash WHERE mc.patient_account_id IS NULL AND mc.identity_hash IS NOT NULL",
   );
-  return { formResponses: Number(responseRows[0]?.total || 0), masterCases: Number(caseRows[0]?.total || 0) };
+  return {
+    formResponses: Number(responseRows[0]?.total || 0),
+    masterCases: Number(caseRows[0]?.total || 0),
+  };
 }
 
 async function main() {
@@ -32,7 +45,14 @@ async function main() {
     await requireMigration(connection);
     const candidates = await countCandidates(connection);
     if (!apply) {
-      console.log(JSON.stringify({ mode: "dry-run", candidates, action: "No data was changed. Re-run with --apply after a verified backup." }));
+      console.log(
+        JSON.stringify({
+          mode: "dry-run",
+          candidates,
+          action:
+            "No data was changed. Re-run with --apply after a verified backup.",
+        }),
+      );
       return;
     }
 
@@ -55,7 +75,9 @@ async function main() {
     await connection.commit();
     console.log(JSON.stringify({ mode: "apply", runId, updated: candidates }));
   } catch (error) {
-    try { await connection.rollback(); } catch {}
+    try {
+      await connection.rollback();
+    } catch {}
     throw error;
   } finally {
     connection.release();
@@ -63,4 +85,7 @@ async function main() {
   }
 }
 
-main().catch((error) => { console.error(error.message); process.exitCode = 1; });
+main().catch((error) => {
+  console.error(error.message);
+  process.exitCode = 1;
+});

@@ -539,7 +539,12 @@ export default function CaseDetailModal({
       setStatus(currentName);
       showToast("เพิ่มสถานะใหม่เรียบร้อย");
     } catch (err) {
-      await Swal.fire({ icon: "error", title: "เพิ่มสถานะไม่สำเร็จ", text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง", confirmButtonColor: "#f47932" });
+      await Swal.fire({
+        icon: "error",
+        title: "เพิ่มสถานะไม่สำเร็จ",
+        text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง",
+        confirmButtonColor: "#f47932",
+      });
     }
   };
 
@@ -579,7 +584,12 @@ export default function CaseDetailModal({
       setNewServiceName("");
       showToast("เพิ่มบริการสำเร็จ");
     } catch (err) {
-      await Swal.fire({ icon: "error", title: "เพิ่มบริการไม่สำเร็จ", text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง", confirmButtonColor: "#f47932" });
+      await Swal.fire({
+        icon: "error",
+        title: "เพิ่มบริการไม่สำเร็จ",
+        text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง",
+        confirmButtonColor: "#f47932",
+      });
     }
   };
 
@@ -595,7 +605,12 @@ export default function CaseDetailModal({
       setEditingServiceId(null);
       showToast("แก้ไขบริการสำเร็จ");
     } catch (err) {
-      await Swal.fire({ icon: "error", title: "แก้ไขบริการไม่สำเร็จ", text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง", confirmButtonColor: "#f47932" });
+      await Swal.fire({
+        icon: "error",
+        title: "แก้ไขบริการไม่สำเร็จ",
+        text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง",
+        confirmButtonColor: "#f47932",
+      });
     }
   };
 
@@ -636,7 +651,12 @@ export default function CaseDetailModal({
         if (onCaseDeleted) onCaseDeleted(data.id);
       }, 800);
     } catch (err) {
-      await Swal.fire({ icon: "error", title: "ลบเคสไม่สำเร็จ", text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง", confirmButtonColor: "#f47932" });
+      await Swal.fire({
+        icon: "error",
+        title: "ลบเคสไม่สำเร็จ",
+        text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง",
+        confirmButtonColor: "#f47932",
+      });
       setIsDeleting(false);
     }
   };
@@ -750,8 +770,11 @@ export default function CaseDetailModal({
       const staffName = getCurrentStaff();
       const targetMasterId = masterCaseInfo?.id || null;
 
+      // isStaffChanged must be included: the log request is also what persists
+      // staff_id on the response, otherwise a staff-only change is lost.
       if (
         isStatusChanged ||
+        isStaffChanged ||
         isOverallRiskChanged ||
         hasImpression ||
         isDynamicChanged ||
@@ -1126,11 +1149,14 @@ export default function CaseDetailModal({
 
   return createPortal(
     <>
-      <div className="cdm-overlay" onClick={onClose}>
+      <div className="cdm-overlay" onClick={onClose} role="presentation">
         <div
           className="cdm-card"
           onClick={(e) => e.stopPropagation()}
           style={{ maxWidth: "1100px" }}
+          role="dialog"
+          aria-modal="true"
+          aria-label="รายละเอียดเคส"
         >
           <div className="cdm-top-actions">
             {masterCaseInfo ? (
@@ -1261,7 +1287,11 @@ export default function CaseDetailModal({
             >
               <FaTrashAlt />
             </button>
-            <button className="cdm-close-btn" onClick={onClose}>
+            <button
+              className="cdm-close-btn"
+              onClick={onClose}
+              aria-label="ปิดหน้าต่าง"
+            >
               <FaTimes />
             </button>
           </div>

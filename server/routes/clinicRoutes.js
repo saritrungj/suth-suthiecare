@@ -5,23 +5,41 @@ const { verifyToken } = require("../middleware/authMiddleware");
 const { organizationWhere } = require("../authorization/authorization");
 
 const scopedWhere = (req, column = "organization_id") =>
-  req.organizationContext === undefined ? { sql: "", params: [] } : organizationWhere(column, req);
+  req.organizationContext === undefined
+    ? { sql: "", params: [] }
+    : organizationWhere(column, req);
 
 async function clinicInScope(req, id) {
-  const [rows] = await db.query("SELECT organization_id FROM clinics WHERE id = ?", [id]);
+  const [rows] = await db.query(
+    "SELECT organization_id FROM clinics WHERE id = ?",
+    [id],
+  );
   if (!rows.length) return { status: 404, message: "Clinic not found" };
-  if (req.organizationContext === undefined || req.organizationContext === "all") return null;
-  const allowed = Number(rows[0].organization_id) === Number(req.organizationContext);
-  return allowed ? null : { status: 403, message: "คุณไม่มีสิทธิ์เข้าถึงคลินิกของหน่วยงานนี้" };
+  if (
+    req.organizationContext === undefined ||
+    req.organizationContext === "all"
+  )
+    return null;
+  const allowed =
+    Number(rows[0].organization_id) === Number(req.organizationContext);
+  return allowed
+    ? null
+    : { status: 403, message: "คุณไม่มีสิทธิ์เข้าถึงคลินิกของหน่วยงานนี้" };
 }
 
 async function organizationForNewClinic(req, requestedOrganizationId) {
   const requestedId = Number(requestedOrganizationId);
-  const organizationId = req.authorization?.isSystemAdmin && Number.isInteger(requestedId) && requestedId > 0
-    ? requestedId
-    : req.organizationContext;
+  const organizationId =
+    req.authorization?.isSystemAdmin &&
+    Number.isInteger(requestedId) &&
+    requestedId > 0
+      ? requestedId
+      : req.organizationContext;
   if (!Number.isInteger(organizationId)) return null;
-  const [rows] = await db.query("SELECT id FROM organizations WHERE id = ? AND status = 'active'", [organizationId]);
+  const [rows] = await db.query(
+    "SELECT id FROM organizations WHERE id = ? AND status = 'active'",
+    [organizationId],
+  );
   return rows.length ? organizationId : null;
 }
 
@@ -37,7 +55,11 @@ router.patch("/reorder", verifyToken, async (req, res) => {
       await conn.beginTransaction();
       for (const item of order) {
         const denied = await clinicInScope(req, item.id);
-        if (denied) { const error = new Error(denied.message); error.status = denied.status; throw error; }
+        if (denied) {
+          const error = new Error(denied.message);
+          error.status = denied.status;
+          throw error;
+        }
         await conn.query("UPDATE clinics SET sort_order = ? WHERE id = ?", [
           item.sort_order,
           item.id,
@@ -53,7 +75,9 @@ router.patch("/reorder", verifyToken, async (req, res) => {
     }
   } catch (error) {
     console.error("Error reordering clinics:", error);
-    res.status(error.status || 500).json({ error: error.status ? error.message : "Failed to reorder clinics" });
+    res.status(error.status || 500).json({
+      error: error.status ? error.message : "Failed to reorder clinics",
+    });
   }
 });
 
@@ -63,7 +87,10 @@ router.patch("/:id/toggle-help-center", verifyToken, async (req, res) => {
 
   try {
     const denied = await clinicInScope(req, id);
-    if (denied) return res.status(denied.status).json({ success: false, error: denied.message });
+    if (denied)
+      return res
+        .status(denied.status)
+        .json({ success: false, error: denied.message });
     const query = `UPDATE clinics SET show_in_help_center = ? WHERE id = ?`;
     const [result] = await db.query(query, [show_in_help_center, id]);
 
@@ -94,7 +121,8 @@ router.get("/", async (req, res) => {
   try {
     const scope = scopedWhere(req, "c.organization_id");
     const [rows] = await db.query(
-      `SELECT c.*, o.name AS organization_name, o.code AS organization_code FROM clinics c LEFT JOIN organizations o ON o.id = c.organization_id WHERE c.is_active = 1${scope.sql} ORDER BY c.sort_order ASC, c.id ASC`, scope.params,
+      `SELECT c.*, o.name AS organization_name, o.code AS organization_code FROM clinics c LEFT JOIN organizations o ON o.id = c.organization_id WHERE c.is_active = 1${scope.sql} ORDER BY c.sort_order ASC, c.id ASC`,
+      scope.params,
     );
     res.json({ data: rows });
   } catch (error) {
@@ -108,7 +136,8 @@ router.get("/all", verifyToken, async (req, res) => {
   try {
     const scope = scopedWhere(req, "c.organization_id");
     const [rows] = await db.query(
-      `SELECT c.*, o.name AS organization_name, o.code AS organization_code FROM clinics c LEFT JOIN organizations o ON o.id = c.organization_id WHERE 1=1${scope.sql} ORDER BY c.sort_order ASC, c.id ASC`, scope.params,
+      `SELECT c.*, o.name AS organization_name, o.code AS organization_code FROM clinics c LEFT JOIN organizations o ON o.id = c.organization_id WHERE 1=1${scope.sql} ORDER BY c.sort_order ASC, c.id ASC`,
+      scope.params,
     );
     res.json({ data: rows });
   } catch (error) {
@@ -136,8 +165,14 @@ router.get("/:idOrSlug", async (req, res) => {
 // ✅ INSERT ใส่ sort_order ด้วย
 router.post("/", verifyToken, async (req, res) => {
   try {
-    const organizationId = await organizationForNewClinic(req, req.body.organization_id);
-    if (!organizationId) return res.status(422).json({ error: "กรุณาเลือกหน่วยงานที่เปิดใช้งานก่อนเพิ่มคลินิก" });
+    const organizationId = await organizationForNewClinic(
+      req,
+      req.body.organization_id,
+    );
+    if (!organizationId)
+      return res
+        .status(422)
+        .json({ error: "กรุณาเลือกหน่วยงานที่เปิดใช้งานก่อนเพิ่มคลินิก" });
     const {
       slug,
       name,
@@ -183,11 +218,21 @@ router.put("/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
     const denied = await clinicInScope(req, id);
-    if (denied) return res.status(denied.status).json({ error: denied.message });
+    if (denied)
+      return res.status(denied.status).json({ error: denied.message });
     let organizationId = null;
-    if (req.authorization?.isSystemAdmin && String(req.body.organization_id || "").trim()) {
-      organizationId = await organizationForNewClinic(req, req.body.organization_id);
-      if (!organizationId) return res.status(422).json({ error: "หน่วยงานที่เลือกไม่พร้อมใช้งาน" });
+    if (
+      req.authorization?.isSystemAdmin &&
+      String(req.body.organization_id || "").trim()
+    ) {
+      organizationId = await organizationForNewClinic(
+        req,
+        req.body.organization_id,
+      );
+      if (!organizationId)
+        return res
+          .status(422)
+          .json({ error: "หน่วยงานที่เลือกไม่พร้อมใช้งาน" });
     }
     const {
       slug,
@@ -232,7 +277,8 @@ router.delete("/:id", verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
     const denied = await clinicInScope(req, id);
-    if (denied) return res.status(denied.status).json({ error: denied.message });
+    if (denied)
+      return res.status(denied.status).json({ error: denied.message });
     const [result] = await db.query("DELETE FROM clinics WHERE id = ?", [id]);
     if (result.affectedRows === 0)
       return res.status(404).json({ error: "Clinic not found" });

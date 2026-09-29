@@ -273,7 +273,10 @@ const AddChartModal = ({ isOpen, onClose, onSave, formId }) => {
 
   const handleSave = () => {
     if (!chartName || !selectedQuestion || !chartType) {
-      showInfoAlert({ title: "ข้อมูลยังไม่ครบ", text: "กรุณาระบุชื่อกราฟ คำถาม และประเภทกราฟก่อนบันทึก" });
+      showInfoAlert({
+        title: "ข้อมูลยังไม่ครบ",
+        text: "กรุณาระบุชื่อกราฟ คำถาม และประเภทกราฟก่อนบันทึก",
+      });
       return;
     }
 
@@ -292,15 +295,26 @@ const AddChartModal = ({ isOpen, onClose, onSave, formId }) => {
   };
 
   return createPortal(
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="modal-overlay" role="presentation">
+      <div
+        className="modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="add-chart-modal-title"
+      >
         {/* Header */}
         <div className="modal-header">
-          <h2 className="text-2xl font-bold text-[#2d7d81]">เพิ่มกราฟ</h2>
+          <h2
+            id="add-chart-modal-title"
+            className="text-2xl font-bold text-[#2d7d81]"
+          >
+            เพิ่มกราฟ
+          </h2>
 
           <button
             onClick={onClose}
             className="text-orange-500 hover:text-orange-600"
+            aria-label="ปิดหน้าต่าง"
           >
             <svg
               className="w-8 h-8"

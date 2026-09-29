@@ -5,8 +5,13 @@ const MoveSectionModal = ({ isOpen, onClose, sections, onMoveSection }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="sfb-modal-overlay">
-      <div className="sfb-modal-content sfb-move-section-modal">
+    <div className="sfb-modal-overlay" role="presentation">
+      <div
+        className="sfb-modal-content sfb-move-section-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="ย้ายส่วนคำถาม"
+      >
         <h3>จัดเรียงส่วนใหม่</h3>
         <div className="sfb-modal-body">
           {sections.map((sec, index) => (

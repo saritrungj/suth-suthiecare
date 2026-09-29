@@ -24,7 +24,7 @@ test("finds a legacy patient phone from assessment history", () => {
       { summary_data: JSON.stringify({ phone: "invalid" }) },
       {
         summary_data: {
-          raw_answers: { "เบอร์โทรศัพท์": "081-234-5678" },
+          raw_answers: { เบอร์โทรศัพท์: "081-234-5678" },
         },
       },
     ]),

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   FiClock,
   FiAlertCircle,
-  FiUser,
   FiActivity,
   FiList,
   FiChevronLeft,
@@ -123,12 +122,8 @@ export default function CaseTable({
 
   if (!data || data.length === 0) {
     return (
-      <div className="table-box empty-state-box">
-        {viewMode === "master" ? (
-          <FiUser className="empty-icon" />
-        ) : (
-          <FiList className="empty-icon" />
-        )}
+      <div className="table-box empty-state-box" role="status">
+        <FiList className="empty-icon" aria-hidden="true" />
         <h3>ไม่มีข้อมูลในขณะนี้</h3>
         <p>ยังไม่มีข้อมูลในคลินิกนี้ หรือในช่วงเวลาที่เลือก</p>
       </div>

@@ -22,7 +22,19 @@ const RichTextInput = ({
   const [isFocused, setIsFocused] = useState(false);
   const sanitize = (html) =>
     DOMPurify.sanitize(String(html || ""), {
-      ALLOWED_TAGS: ["p", "br", "strong", "b", "em", "i", "u", "s", "ol", "ul", "li"],
+      ALLOWED_TAGS: [
+        "p",
+        "br",
+        "strong",
+        "b",
+        "em",
+        "i",
+        "u",
+        "s",
+        "ol",
+        "ul",
+        "li",
+      ],
       ALLOWED_ATTR: [],
     });
 

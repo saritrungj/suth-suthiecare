@@ -1,7 +1,9 @@
 # Database dumps — may contain real patient data, never commit
 *.sql
+# Schema migrations contain no patient data and are required by
+# server/scripts/migrateProductionBaseline.js on every deployment.
 !server/migrations/
-!server/migrations/patient_auth.sql
+!server/migrations/*.sql
 
 # Environment / secrets
 .env
@@ -31,6 +33,11 @@ Thumbs.db
 *.yml
 *.example
 *.production
+# Later rules win: re-include the templates and workspace files a fresh clone needs.
+!.env.example
+!server/.env.example
+!app/.env.example
+!app/.env.production.example
 /app/e2e-audit
 /app/e2e
 DEPLOY.md
@@ -39,7 +46,8 @@ CONTEXT.md
 PATIENT_ACCOUNT_IDENTITY_PLAN.md
 PATIENT_HISTORY_AUTH_PLAN.md
 *.yaml
+!pnpm-workspace.yaml
+!pnpm-lock.yaml
 QUALITY_AUDIT.md
 REMEDIATION_PLAN.md
 /scripts
-web.config

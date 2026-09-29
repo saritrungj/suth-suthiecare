@@ -4,6 +4,7 @@
 process.env.TZ = "Asia/Bangkok";
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const { clientIpKeyGenerator } = require("./utils/clientIp");
@@ -26,7 +27,11 @@ const faqRoutes = require("./routes/faqRoutes"); // <-- เส้นทางจ
 const patientAuthRoutes = require("./routes/patientAuthRoutes");
 const patientRoutes = require("./routes/patientRoutes");
 const organizationRoutes = require("./routes/organizationRoutes");
-const { verifyToken, requirePermission, verifySuperAdmin } = require("./middleware/authMiddleware");
+const {
+  verifyToken,
+  requirePermission,
+  verifySuperAdmin,
+} = require("./middleware/authMiddleware");
 const { resolveContext } = require("./authorization/authorization");
 const { needsOrganizationContext } = require("./authorization/requestScope");
 const crypto = require("crypto");
@@ -84,6 +89,7 @@ app.use("/api", apiLimiter);
 
 app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ limit: "25mb", extended: true }));
+app.use(cookieParser());
 
 app.use((req, res, next) => {
   req.requestId = crypto.randomUUID();
@@ -94,29 +100,54 @@ app.use((req, res, next) => {
 // Operational data always has an explicit organization context. This sits before
 // route handlers so a guessed URL or body field cannot escape tenant scope.
 app.use("/api", (req, res, next) => {
-  if (!needsOrganizationContext(req.path, Boolean(req.headers.authorization))) return next();
+  if (!needsOrganizationContext(req.path, Boolean(req.headers.authorization)))
+    return next();
   return verifyToken(req, res, () => resolveContext(req, res, next));
 });
 
 // Permission gate for every administrative write endpoint. Individual routes still
 // validate their own payload and any stricter hierarchy rules.
 const permissionForWrite = (path) => {
-  if (/^\/forms\/[^/]+\/submit$/.test(path) || path === "/counts" || path === "/submit-system-feedback" || path.startsWith("/history/") || path === "/decode-token") return null;
-  if (path.startsWith("/forms") || path === "/save-form") return "Form Management";
+  if (
+    /^\/forms\/[^/]+\/submit$/.test(path) ||
+    path === "/counts" ||
+    path === "/submit-system-feedback" ||
+    path.startsWith("/history/") ||
+    path === "/decode-token"
+  )
+    return null;
+  if (path.startsWith("/forms") || path === "/save-form")
+    return "Form Management";
   if (path.startsWith("/clinics")) return "Clinic Management";
   if (path.startsWith("/admin/help-center")) return "Help Center Management";
   if (path.startsWith("/banners")) return "Content Management";
   if (path.startsWith("/dashboard-settings")) return "Dashboard";
   if (path.startsWith("/appointments")) return "Appointments";
-  if (path.startsWith("/cases") || path.startsWith("/master-cases") || path.startsWith("/services") || path.startsWith("/templates") || path.startsWith("/case-statuses") || path.startsWith("/status-options")) return "Case Management";
+  if (
+    path.startsWith("/cases") ||
+    path.startsWith("/master-cases") ||
+    path.startsWith("/services") ||
+    path.startsWith("/templates") ||
+    path.startsWith("/case-statuses") ||
+    path.startsWith("/status-options")
+  )
+    return "Case Management";
   return null;
 };
 
 const permissionForRead = (path) => {
-  if (/^\/forms\/[^/]+\/(?:responses|responses-v2|submission-count)$/.test(path)) return "Form Management";
+  if (
+    /^\/forms\/[^/]+\/(?:responses|responses-v2|submission-count)$/.test(path)
+  )
+    return "Form Management";
   if (/^\/forms\/[^/]+\/questions$/.test(path)) return "Form Management";
   if (path.startsWith("/evaluations/")) return "Dashboard";
-  if (path.startsWith("/dashboard") || path.startsWith("/charts/") || path === "/admin/master-cases/stats") return "Dashboard";
+  if (
+    path.startsWith("/dashboard") ||
+    path.startsWith("/charts/") ||
+    path === "/admin/master-cases/stats"
+  )
+    return "Dashboard";
   if (
     path.startsWith("/cases") ||
     path.startsWith("/master-cases") ||
@@ -126,25 +157,35 @@ const permissionForRead = (path) => {
     path.startsWith("/case-statuses") ||
     path.startsWith("/status-options") ||
     path === "/all-cases"
-  ) return "Case Management";
+  )
+    return "Case Management";
   if (path.startsWith("/staffs")) return "User Management";
   if (path === "/clinics/all") return "Clinic Management";
   return null;
 };
 
 app.use("/api", (req, res, next) => {
-  if (!['GET', 'HEAD'].includes(req.method)) return next();
+  if (!["GET", "HEAD"].includes(req.method)) return next();
   const module = permissionForRead(req.path);
   if (!module) return next();
-  return verifyToken(req, res, () => requirePermission(module, "view")(req, res, next));
+  return verifyToken(req, res, () =>
+    requirePermission(module, "view")(req, res, next),
+  );
 });
 
 app.use("/api", (req, res, next) => {
   if (["GET", "HEAD", "OPTIONS"].includes(req.method)) return next();
   const module = permissionForWrite(req.path);
   if (!module) return next();
-  const action = req.method === "POST" ? "create" : req.method === "DELETE" ? "delete" : "update";
-  return verifyToken(req, res, () => requirePermission(module, action)(req, res, next));
+  const action =
+    req.method === "POST"
+      ? "create"
+      : req.method === "DELETE"
+        ? "delete"
+        : "update";
+  return verifyToken(req, res, () =>
+    requirePermission(module, action)(req, res, next),
+  );
 });
 
 // 🟢 ตั้งค่าหน้าแรก (Root Route)
@@ -182,10 +223,10 @@ app.post(
   verifyToken,
   requirePermission("Dashboard", "manage"),
   async (req, res) => {
-  await sendTelegramAlert(
-    "🧪 <b>ทดสอบระบบ</b>\nถ้าเห็นข้อความนี้แสดงว่าเชื่อมต่อสำเร็จ ✅",
-  );
-  res.json({ message: "ส่งแล้ว ดู Terminal และ Telegram" });
+    await sendTelegramAlert(
+      "🧪 <b>ทดสอบระบบ</b>\nถ้าเห็นข้อความนี้แสดงว่าเชื่อมต่อสำเร็จ ✅",
+    );
+    res.json({ message: "ส่งแล้ว ดู Terminal และ Telegram" });
   },
 );
 
@@ -223,7 +264,9 @@ app.use((err, req, res, next) => {
 
 // 🟢 7. เริ่มต้นรันเซิร์ฟเวอร์
 const PORT = process.env.PORT || 5000;
-const HOST = process.env.HOST || (process.env.NODE_ENV === "production" ? "127.0.0.1" : "0.0.0.0");
+const HOST =
+  process.env.HOST ||
+  (process.env.NODE_ENV === "production" ? "127.0.0.1" : "0.0.0.0");
 app.listen(PORT, HOST, () => {
   console.log(`🚀 Server started on port ${PORT}`);
   console.log(`📁 Routes successfully loaded!`);

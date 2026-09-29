@@ -44,4 +44,3 @@ export function subscribePatientSession(listener) {
     window.removeEventListener("focus", listener);
   };
 }
-

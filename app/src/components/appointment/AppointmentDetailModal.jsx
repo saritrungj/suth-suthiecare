@@ -16,15 +16,24 @@ export default function AppointmentDetailModal({
 
   return (
     <>
-      <div className="modal-overlay">
-        <div className="detail-modal">
+      <div className="modal-overlay" role="presentation">
+        <div
+          className="detail-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label="รายละเอียดนัดหมาย"
+        >
           <div className="modal-header">
             <div>
               <h3>{user?.name}</h3>
               <p>Case ID: {user?.caseId}</p>
             </div>
 
-            <button className="close-btn" onClick={onClose}>
+            <button
+              className="close-btn"
+              onClick={onClose}
+              aria-label="ปิดหน้าต่าง"
+            >
               ✕
             </button>
           </div>

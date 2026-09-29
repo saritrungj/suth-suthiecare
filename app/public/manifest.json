@@ -1,31 +1,29 @@
 {
-  "short_name": "สุดที่แคร์",
-  "name": "SUTHie Care - สุดที่แคร์",
-  "description": "ศูนย์รวมบริการสุขภาพออนไลน์ เพราะเราแคร์คุณที่สุด",
+  "id": "/",
+  "short_name": "SUTH Suthiecare",
+  "name": "SUTH Suthiecare",
+  "description": "บริการสุขภาพออนไลน์จากโรงพยาบาลมหาวิทยาลัยเทคโนโลยีสุรนารี",
   "lang": "th",
   "dir": "ltr",
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "/logo192.png",
-      "type": "image/png",
+      "src": "/icons/suthiecare-192.png",
       "sizes": "192x192",
-      "purpose": "any"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "/logo512.png",
+      "src": "/icons/suthiecare-512.png",
       "type": "image/png",
       "sizes": "512x512",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ],
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "prefer_related_applications": false,
   "theme_color": "#00796b",
-  "background_color": "#ffffff"
+  "background_color": "#f7fcfa"
 }

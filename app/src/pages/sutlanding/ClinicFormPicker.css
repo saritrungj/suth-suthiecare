@@ -1,0 +1,763 @@
+/* =========================================
+   CLINIC + FORM PICKER (homepage)
+========================================= */
+.cfp {
+  --cfp-orange: #f47932;
+  --cfp-orange-2: #fb923c;
+  --cfp-orange-ink: #8d3809;
+  --cfp-orange-soft: #fff1e8;
+  --cfp-teal: #038f9f;
+  --cfp-teal-dark: #017986;
+  --cfp-teal-light: #46c6d2;
+  --cfp-surface: #162038;
+  --cfp-line: #2a3858;
+  --cfp-text: #f8fafc;
+  --cfp-muted: #b4c1d0;
+  --cfp-dim: #8494ab;
+  position: relative;
+  z-index: 20;
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 40px);
+  color: var(--cfp-text);
+  font-family: "Sarabun", "Noto Sans Thai", sans-serif;
+}
+
+/* ---------- Head ---------- */
+.cfp-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.cfp-title {
+  margin: 0;
+  font-family: "Noto Sans Thai", sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--cfp-text);
+  text-wrap: balance;
+}
+.cfp-sub {
+  margin: 4px 0 0;
+  color: var(--cfp-muted);
+  font-size: 1rem;
+}
+.cfp-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 1 380px;
+  min-width: 0;
+  height: 48px;
+  padding: 0 8px 0 14px;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 1.15rem;
+}
+.cfp-search:focus-within {
+  border-color: var(--cfp-orange);
+}
+.cfp-search input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: none;
+  background: none;
+  color: #1e293b;
+  font: inherit;
+  font-size: 1rem;
+}
+.cfp-search input::placeholder {
+  color: #94a3b8;
+}
+.cfp-search input::-webkit-search-cancel-button {
+  display: none;
+}
+.cfp-search__kbd {
+  margin-right: 6px;
+  padding: 1px 7px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  color: #64748b;
+  font-family: inherit;
+  font-size: 0.75rem;
+}
+.cfp-search__clear {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 34px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #475569;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cfp-search__clear:hover {
+  background: #e2e8f0;
+}
+
+/* ---------- Clinic tiles (portrait, like the original clinic cards) ---------- */
+.cfp-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.cfp-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  aspect-ratio: 4 / 5;
+  max-width: 100%;
+  padding: 14px 12px 16px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 20px;
+  background-color: #1e293b;
+  background-position: center 25%;
+  background-size: cover;
+  color: #ffffff;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.cfp-tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.05) 0%,
+    rgba(15, 23, 42, 0.25) 45%,
+    rgba(15, 23, 42, 0.85) 100%
+  );
+}
+.cfp-tile > * {
+  position: relative;
+}
+.cfp-tile:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
+}
+.cfp-tile:focus-visible {
+  outline: 3px solid var(--cfp-teal-light);
+  outline-offset: 3px;
+}
+.cfp-tile[aria-pressed="true"] {
+  box-shadow:
+    0 0 0 3px var(--cfp-orange),
+    0 14px 30px rgba(0, 0, 0, 0.4);
+}
+.cfp-tile__check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--cfp-orange);
+  font-size: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+.cfp-tile[aria-pressed="true"] .cfp-tile__check {
+  display: grid;
+}
+.cfp-icon {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+.cfp-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cfp-tile__icon {
+  width: 76px;
+  height: 76px;
+  margin-bottom: 10px;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.cfp-tile__name {
+  font-family: "Noto Sans Thai", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
+}
+.cfp-tile__count {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+.cfp-tile--all {
+  justify-content: center;
+  background: linear-gradient(
+    150deg,
+    var(--cfp-orange) 0%,
+    var(--cfp-orange-2) 100%
+  );
+}
+.cfp-tile--all::before {
+  background: none;
+}
+.cfp-tile__glyph {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  margin-bottom: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--cfp-orange);
+  font-size: 32px;
+}
+.cfp-tile--all .cfp-tile__name {
+  text-shadow: none;
+}
+.cfp-tile--skeleton {
+  background: linear-gradient(110deg, #1b263f 30%, #24314f 50%, #1b263f 70%);
+  background-size: 200% 100%;
+  animation: cfpShimmer 1.4s linear infinite;
+  cursor: default;
+}
+.cfp-tile--skeleton::before {
+  display: none;
+}
+@keyframes cfpShimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ---------- Toolbar ---------- */
+.cfp-sentinel {
+  height: 1px;
+  scroll-margin-top: 5rem;
+}
+/* Sticks under the fixed navbar (4.5rem) so the clinic filter stays reachable. */
+.cfp-toolbar {
+  position: sticky;
+  top: 4.5rem;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 10px 0;
+  border-top: 1px solid var(--cfp-line);
+  background: #0f172a;
+}
+.cfp-toolbar.is-stuck {
+  border-top-color: transparent;
+  /* Full-bleed backdrop that also fills the transparent navbar area above. */
+  box-shadow:
+    0 0 0 100vmax #0f172a,
+    0 12px 20px -8px rgba(0, 0, 0, 0.6);
+  clip-path: inset(-4.5rem -100vmax -24px -100vmax);
+}
+.cfp-toolbar__info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.cfp-toolbar__count {
+  margin: 0;
+  color: var(--cfp-muted);
+  font-size: 0.95rem;
+}
+.cfp-toolbar__up {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1.5px solid var(--cfp-teal-light);
+  border-radius: 99px;
+  background: none;
+  color: var(--cfp-teal-light);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cfp-toolbar__up:hover {
+  background: rgba(70, 198, 210, 0.12);
+}
+.cfp-scope {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 4px 3px 4px;
+  border-radius: 99px;
+  background: var(--cfp-orange-soft);
+  color: var(--cfp-orange-ink);
+  font-family: "Noto Sans Thai", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.cfp-scope__icon {
+  width: 26px;
+  height: 26px;
+}
+.cfp-scope__remove {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(141, 56, 9, 0.12);
+  color: var(--cfp-orange-ink);
+  cursor: pointer;
+}
+.cfp-scope__remove:hover {
+  background: rgba(141, 56, 9, 0.22);
+}
+.cfp-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.cfp-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--cfp-orange-2);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.cfp-sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--cfp-dim);
+  font-size: 0.9rem;
+}
+.cfp-sort select {
+  padding: 6px 10px;
+  border: 1px solid var(--cfp-line);
+  border-radius: 10px;
+  background: var(--cfp-surface);
+  color: var(--cfp-text);
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+/* ---------- Groups ---------- */
+.cfp-group + .cfp-group {
+  margin-top: 34px;
+}
+.cfp-group__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.cfp-group__icon {
+  width: 36px;
+  height: 36px;
+}
+.cfp-group__head h3 {
+  margin: 0;
+  font-family: "Noto Sans Thai", sans-serif;
+  font-size: 1.15rem;
+  color: var(--cfp-text);
+}
+.cfp-group__count {
+  color: var(--cfp-dim);
+  font-size: 0.9rem;
+}
+.cfp-group__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  color: var(--cfp-teal-light);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.cfp-group__more:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Form cards ---------- */
+.cfp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 16px;
+}
+.cfp-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #1e293b;
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.cfp-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
+}
+.cfp-card:focus-visible {
+  outline: 3px solid var(--cfp-teal-light);
+  outline-offset: 3px;
+}
+/* Covers are posters with text baked in: show them whole, never crop. */
+.cfp-card__media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #eef2f7;
+  flex-shrink: 0;
+}
+.cfp-card__media img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.cfp-band--blue {
+  aspect-ratio: auto;
+  height: 8px;
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+}
+.cfp-band--pink {
+  aspect-ratio: auto;
+  height: 8px;
+  background: linear-gradient(90deg, #ec4899, #db2777);
+}
+.cfp-band--green {
+  aspect-ratio: auto;
+  height: 8px;
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+.cfp-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px 12px;
+}
+.cfp-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.cfp-tag {
+  padding: 2px 10px;
+  border-radius: 99px;
+  background: var(--cfp-orange-soft);
+  color: var(--cfp-orange-ink);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+.cfp-tag--hot {
+  background: #e0f5f7;
+  color: #0e6b75;
+}
+.cfp-card__title {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  font-family: "Noto Sans Thai", sans-serif;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.45;
+  color: #1e293b;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+.cfp-card__desc {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: #64748b;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.cfp-card mark {
+  padding: 0 1px;
+  border-radius: 3px;
+  background: #fde7d6;
+  color: inherit;
+}
+.cfp-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 0.85rem;
+}
+.cfp-card__count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.cfp-card__count strong {
+  color: #1e293b;
+  font-variant-numeric: tabular-nums;
+}
+.cfp-card__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 9px;
+  background: var(--cfp-teal);
+  color: #ffffff;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.cfp-card:hover .cfp-card__go {
+  background: var(--cfp-teal-dark);
+}
+
+/* "N more in this clinic" under each preview row */
+.cfp-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px 16px;
+  border: 1.5px dashed var(--cfp-line);
+  border-radius: 12px;
+  background: none;
+  color: var(--cfp-teal-light);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cfp-more:hover {
+  border-color: var(--cfp-teal-light);
+  background: rgba(70, 198, 210, 0.08);
+}
+
+/* Paging for a single clinic or search results */
+.cfp-pager {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+  text-align: center;
+}
+.cfp-pager p {
+  margin: 0;
+  color: var(--cfp-muted);
+  font-size: 0.92rem;
+}
+.cfp-pager__bar {
+  width: min(240px, 60%);
+  height: 4px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--cfp-line);
+}
+.cfp-pager__bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--cfp-orange);
+}
+.cfp-pager__btn {
+  min-height: 46px;
+  margin-top: 4px;
+  padding: 0 28px;
+  border: 2px solid var(--cfp-orange);
+  border-radius: 12px;
+  background: none;
+  color: #ffffff;
+  font: inherit;
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cfp-pager__btn:hover {
+  background: var(--cfp-orange);
+}
+
+.cfp-empty {
+  padding: 40px 16px;
+  border: 1px dashed var(--cfp-line);
+  border-radius: 16px;
+  color: var(--cfp-muted);
+  text-align: center;
+}
+.cfp-empty h3 {
+  margin: 0 0 8px;
+  font-family: "Noto Sans Thai", sans-serif;
+  font-size: 1.05rem;
+  color: var(--cfp-text);
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 640px) {
+  .cfp-search {
+    flex-basis: 100%;
+  }
+  .cfp-search__kbd {
+    display: none;
+  }
+  .cfp-tiles {
+    display: flex;
+    gap: 12px;
+    margin-inline: -16px;
+    padding: 6px 16px 10px;
+    overflow-x: auto;
+    scroll-padding-inline: 16px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+    mask-image: linear-gradient(90deg, #000 85%, transparent);
+  }
+  .cfp-tiles::-webkit-scrollbar {
+    display: none;
+  }
+  .cfp-tile {
+    flex: 0 0 138px;
+    scroll-snap-align: start;
+  }
+  .cfp-tile__icon,
+  .cfp-tile__glyph {
+    width: 58px;
+    height: 58px;
+    font-size: 24px;
+  }
+  .cfp-tile__name {
+    font-size: 0.95rem;
+  }
+  .cfp-sort span {
+    display: none;
+  }
+  /* Keep the stuck toolbar to one slim row on phones. */
+  .cfp-toolbar.is-stuck {
+    flex-wrap: nowrap;
+    padding: 8px 0;
+  }
+  .cfp-toolbar.is-stuck .cfp-toolbar__info {
+    flex-wrap: nowrap;
+    min-width: 0;
+  }
+  .cfp-toolbar.is-stuck .cfp-toolbar__count,
+  .cfp-toolbar.is-stuck .cfp-toolbar__actions {
+    display: none;
+  }
+  .cfp-scope {
+    min-width: 0;
+    max-width: 100%;
+    white-space: nowrap;
+  }
+  .cfp-toolbar__up {
+    flex-shrink: 0;
+  }
+  .cfp-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .cfp-group__count {
+    display: none;
+  }
+  .cfp-group__more {
+    font-size: 0.85rem;
+  }
+  /* Compact row cards: thumbnail left, text right, footer across. */
+  .cfp-card {
+    display: grid;
+    grid-template-columns: 112px 1fr;
+    grid-template-rows: 1fr auto;
+  }
+  .cfp-card--no-image {
+    grid-template-columns: 8px 1fr;
+  }
+  .cfp-card__media {
+    grid-row: 1;
+    align-self: start;
+    margin: 12px 0 0 12px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .cfp-card--no-image .cfp-card__media {
+    align-self: stretch;
+    height: auto;
+    margin: 0;
+    border-radius: 0;
+  }
+  .cfp-card__body {
+    padding: 12px 12px 10px;
+    gap: 4px;
+  }
+  .cfp-card__title {
+    font-size: 0.95rem;
+  }
+  .cfp-card__desc {
+    font-size: 0.84rem;
+  }
+  .cfp-card__foot {
+    grid-column: 1 / -1;
+    padding: 8px 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cfp-tile,
+  .cfp-card {
+    transition: none;
+  }
+  .cfp-tile--skeleton {
+    animation: none;
+  }
+}

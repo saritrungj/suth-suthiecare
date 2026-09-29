@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import CaseTable from "../../components/case/CaseTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
+import FilterDropdown from "../../components/FilterDropdown";
 import ExportExcelModal from "../../components/case/ExportExcelModal.jsx";
 import {
   getForms,
@@ -26,7 +27,11 @@ import {
   FiX,
 } from "react-icons/fi";
 import Swal from "sweetalert2";
-import { getCurrentMonthDateRange, isCaseInDateRange, normaliseDateRange } from "../../utils/caseDateFilter";
+import {
+  getCurrentMonthDateRange,
+  isCaseInDateRange,
+  normaliseDateRange,
+} from "../../utils/caseDateFilter";
 import { usePermissions } from "../../permissions/PermissionsProvider";
 
 const FACULTIES = [
@@ -328,15 +333,24 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
   };
 
   return (
-    <div className="scd-modal-overlay">
-      <div className="scd-create-case-modal">
+    <div className="scd-modal-overlay" role="presentation">
+      <div
+        className="scd-create-case-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="สร้างเคสใหม่"
+      >
         <div className="scd-create-case-header">
           <div>
             <h2>เพิ่มเคส Walk-in</h2>
             <p>กรณีผู้รับบริการไม่ได้ตอบแบบสอบถาม</p>
           </div>
 
-          <button className="scd-close-btn" onClick={onClose} />
+          <button
+            className="scd-close-btn"
+            onClick={onClose}
+            aria-label="ปิดหน้าต่าง"
+          />
         </div>
 
         <div className="scd-create-case-body">
@@ -556,7 +570,12 @@ export default function CaseData() {
         const fetchedForms = formsRes.data || [];
         setForms(fetchedForms);
 
-        if (initialFormId) {
+        if (fetchedForms.length === 0) {
+          // There is no form to query, so the table must show its empty state
+          // instead of retaining the initial loading indicator.
+          setSelectedFormId("");
+          setIsLoading(false);
+        } else if (initialFormId) {
           const targetForm = fetchedForms.find((f) => f.id === initialFormId);
           if (targetForm) {
             setClinicFilter(targetForm.clinic_type || "general");
@@ -726,7 +745,9 @@ export default function CaseData() {
         search === "" ||
         caseIdStr.toLowerCase().includes(search.toLowerCase()) ||
         name.toLowerCase().includes(search.toLowerCase()) ||
-        String(res.submitted_by?.username || "").toLowerCase().includes(search.toLowerCase()) ||
+        String(res.submitted_by?.username || "")
+          .toLowerCase()
+          .includes(search.toLowerCase()) ||
         String(res.submitted_by?.account_id || "").includes(search) ||
         (res.identity_value && res.identity_value.includes(search));
       const matchFaculty = faculty === "" || resFaculty.includes(faculty);
@@ -775,13 +796,19 @@ export default function CaseData() {
   };
 
   const handleStartDateChange = (nextStartDate) => {
-    const [safeStartDate, safeEndDate] = normaliseDateRange(nextStartDate, endDate);
+    const [safeStartDate, safeEndDate] = normaliseDateRange(
+      nextStartDate,
+      endDate,
+    );
     setStartDate(safeStartDate);
     setEndDate(safeEndDate);
   };
 
   const handleEndDateChange = (nextEndDate) => {
-    const [safeStartDate, safeEndDate] = normaliseDateRange(startDate, nextEndDate);
+    const [safeStartDate, safeEndDate] = normaliseDateRange(
+      startDate,
+      nextEndDate,
+    );
     setStartDate(safeStartDate);
     setEndDate(safeEndDate);
   };
@@ -867,187 +894,198 @@ export default function CaseData() {
               />
             </div>
 
-            {/* 2. เลือกฟอร์ม */}
-            <CustomDropdown
-              icon={FiLayers}
-              value={selectedFormId}
-              onChange={setSelectedFormId}
-              options={
-                isInitialSetup
-                  ? [{ value: "", label: "กำลังโหลดแบบฟอร์ม..." }]
-                  : filteredFormsList.length > 0
-                    ? filteredFormsList.map((f) => ({
-                        value: f.id,
-                        label: f.title,
-                      }))
-                    : [{ value: "", label: "-- ไม่มีแบบฟอร์ม --" }]
+            <FilterDropdown
+              activeCount={
+                [
+                  selectedFormId,
+                  clinicFilter !== "all" ? clinicFilter : "",
+                  faculty,
+                  risk,
+                  formStatusFilter !== "published" ? formStatusFilter : "",
+                ].filter(Boolean).length
               }
-              styleClass="scd-select-form scd-filter-form"
-              textClass="scd-text-form"
-            />
-
-            {/* 3. ช่วงวันที่ */}
-            <div className="scd-date-range-container scd-filter-date">
-              <div className={`scd-date-container`}>
-                <FiCalendar className="scd-date-main-icon" />
-                <div className="scd-date-field">
-                  <input
-                    type="text"
-                    className="scd-date-text-display"
-                    placeholder="วัน/เดือน/ปี"
-                    value={displayThaiDate(startDate)}
-                    readOnly
-                  />
-                  <input
-                    type="date"
-                    className="scd-date-native-hidden"
-                    value={startDate}
-                    onChange={(e) => handleStartDateChange(e.target.value)}
-                    onClick={(e) =>
-                      e.target.showPicker && e.target.showPicker()
-                    }
-                  />
-                </div>
-                <span className="scd-date-separator">ถึง</span>
-                <div className="scd-date-field">
-                  <input
-                    type="text"
-                    className="scd-date-text-display"
-                    placeholder="วัน/เดือน/ปี"
-                    value={displayThaiDate(endDate)}
-                    readOnly
-                  />
-                  <input
-                    type="date"
-                    className="scd-date-native-hidden"
-                    value={endDate}
-                    onChange={(e) => handleEndDateChange(e.target.value)}
-                    min={startDate || undefined}
-                    onClick={(e) =>
-                      e.target.showPicker && e.target.showPicker()
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* 4. คลินิก */}
-            <CustomDropdown
-              icon={FiFolder}
-              value={clinicFilter}
-              onChange={setClinicFilter}
-              options={[
-                { value: "all", label: "ทุกคลินิก" },
-                { value: "general", label: "ทั่วไป" },
-                ...clinics.map((c) => ({
-                  value: c.slug,
-                  label: c.name,
-                })),
-              ]}
-              styleClass="scd-filter-clinic"
-            />
-
-            {/* 5. สำนักวิชา */}
-            <CustomDropdown
-              icon={FiLayers}
-              value={faculty}
-              onChange={setFaculty}
-              options={[
-                { value: "", label: "ทุกสำนักวิชา" },
-                ...FACULTIES.map((f) => ({ value: f, label: f })),
-              ]}
-              styleClass="scd-filter-faculty"
-            />
-
-            {/* 6. ระดับความเสี่ยง (โชว์เฉพาะฟอร์มที่มีคะแนน) */}
-            {hasScoring && (
-              <CustomDropdown
-                icon={FiActivity}
-                value={risk}
-                onChange={setRisk}
-                options={[
-                  { value: "", label: "ทุกระดับความเสี่ยง" },
-                  { value: "ต่ำ", label: "เสี่ยงต่ำ (สีเขียว)" },
-                  { value: "ปานกลาง", label: "เสี่ยงปานกลาง (สีเหลือง)" },
-                  { value: "สูง", label: "เสี่ยงสูง (สีแดง)" },
-                ]}
-                styleClass="scd-filter-risk"
-              />
-            )}
-
-            {/* 7. สถานะฟอร์ม */}
-            <div className="scd-form-status-group">
+            >
+              {/* 2. เลือกฟอร์ม */}
               <CustomDropdown
                 icon={FiLayers}
-                value={formStatusFilter}
-                onChange={setFormStatusFilter}
-                options={[
-                  { value: "published", label: "✓ ฟอร์มที่เผยแพร่แล้ว" },
-                  { value: "draft", label: "✎ ฟอร์มฉบับร่าง/ซ่อนอยู่" },
-                  { value: "all", label: "☰ สถานะฟอร์มทั้งหมด" },
-                ]}
-                styleClass="scd-select-status scd-filter-status"
-                iconClass="scd-icon-status"
-                textClass="scd-text-status"
+                value={selectedFormId}
+                onChange={setSelectedFormId}
+                options={
+                  isInitialSetup
+                    ? [{ value: "", label: "กำลังโหลดแบบฟอร์ม..." }]
+                    : filteredFormsList.length > 0
+                      ? filteredFormsList.map((f) => ({
+                          value: f.id,
+                          label: f.title,
+                        }))
+                      : [{ value: "", label: "-- ไม่มีแบบฟอร์ม --" }]
+                }
+                styleClass="scd-select-form scd-filter-form"
+                textClass="scd-text-form"
               />
 
-              <button
-                className="scd-add-walkin-btn"
-                onClick={() => setIsCreateCaseModalOpen(true)}
-              >
-                <FiPlus />
-                เพิ่มเคส
-              </button>
-            </div>
-
-            {/* 8. เลือกคอลัมน์ (โชว์เฉพาะตอนดูแบบฟอร์ม) */}
-            {tableViewMode === "form" && (
-              <div
-                className="scd-col-selector-wrapper scd-filter-columns"
-                ref={colMenuRef}
-              >
-                <button
-                  className="scd-custom-select scd-col-select-btn"
-                  onClick={() => setShowColMenu(!showColMenu)}
-                >
-                  <FiSettings className="scd-filter-icon" />
-                  <span className="scd-select-value">
-                    เลือกคอลัมน์ ({visibleColumns.length})
-                  </span>
-                  <FiChevronDown className="scd-dropdown-icon" />
-                </button>
-                {showColMenu && (
-                  <div className="scd-col-dropdown-menu">
-                    <div className="scd-col-menu-header">
-                      เลือกคำถามที่ต้องการแสดง
-                    </div>
-                    <div className="scd-col-menu-list">
-                      {allDynamicQuestions.map((q) => {
-                        const cleanTitle = q.title
-                          .replace(/<[^>]+>/g, "")
-                          .replace(/&nbsp;/gi, " ")
-                          .replace(/\s+/g, " ")
-                          .trim();
-                        return (
-                          <label
-                            key={q.id}
-                            className="scd-col-menu-item"
-                            title={cleanTitle}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={visibleColumns.includes(q.id)}
-                              onChange={() => toggleColumn(q.id)}
-                            />
-                            <span className="scd-col-text">{cleanTitle}</span>
-                          </label>
-                        );
-                      })}
-                    </div>
+              {/* 3. ช่วงวันที่ */}
+              <div className="scd-date-range-container scd-filter-date">
+                <div className={`scd-date-container`}>
+                  <FiCalendar className="scd-date-main-icon" />
+                  <div className="scd-date-field">
+                    <input
+                      type="text"
+                      className="scd-date-text-display"
+                      placeholder="วัน/เดือน/ปี"
+                      value={displayThaiDate(startDate)}
+                      readOnly
+                    />
+                    <input
+                      type="date"
+                      className="scd-date-native-hidden"
+                      value={startDate}
+                      onChange={(e) => handleStartDateChange(e.target.value)}
+                      onClick={(e) =>
+                        e.target.showPicker && e.target.showPicker()
+                      }
+                    />
                   </div>
-                )}
+                  <span className="scd-date-separator">ถึง</span>
+                  <div className="scd-date-field">
+                    <input
+                      type="text"
+                      className="scd-date-text-display"
+                      placeholder="วัน/เดือน/ปี"
+                      value={displayThaiDate(endDate)}
+                      readOnly
+                    />
+                    <input
+                      type="date"
+                      className="scd-date-native-hidden"
+                      value={endDate}
+                      onChange={(e) => handleEndDateChange(e.target.value)}
+                      min={startDate || undefined}
+                      onClick={(e) =>
+                        e.target.showPicker && e.target.showPicker()
+                      }
+                    />
+                  </div>
+                </div>
               </div>
-            )}
+
+              {/* 4. คลินิก */}
+              <CustomDropdown
+                icon={FiFolder}
+                value={clinicFilter}
+                onChange={setClinicFilter}
+                options={[
+                  { value: "all", label: "ทุกคลินิก" },
+                  { value: "general", label: "ทั่วไป" },
+                  ...clinics.map((c) => ({
+                    value: c.slug,
+                    label: c.name,
+                  })),
+                ]}
+                styleClass="scd-filter-clinic"
+              />
+
+              {/* 5. สำนักวิชา */}
+              <CustomDropdown
+                icon={FiLayers}
+                value={faculty}
+                onChange={setFaculty}
+                options={[
+                  { value: "", label: "ทุกสำนักวิชา" },
+                  ...FACULTIES.map((f) => ({ value: f, label: f })),
+                ]}
+                styleClass="scd-filter-faculty"
+              />
+
+              {/* 6. ระดับความเสี่ยง (โชว์เฉพาะฟอร์มที่มีคะแนน) */}
+              {hasScoring && (
+                <CustomDropdown
+                  icon={FiActivity}
+                  value={risk}
+                  onChange={setRisk}
+                  options={[
+                    { value: "", label: "ทุกระดับความเสี่ยง" },
+                    { value: "ต่ำ", label: "เสี่ยงต่ำ (สีเขียว)" },
+                    { value: "ปานกลาง", label: "เสี่ยงปานกลาง (สีเหลือง)" },
+                    { value: "สูง", label: "เสี่ยงสูง (สีแดง)" },
+                  ]}
+                  styleClass="scd-filter-risk"
+                />
+              )}
+
+              {/* 7. สถานะฟอร์ม */}
+              <div className="scd-form-status-group">
+                <CustomDropdown
+                  icon={FiLayers}
+                  value={formStatusFilter}
+                  onChange={setFormStatusFilter}
+                  options={[
+                    { value: "published", label: "✓ ฟอร์มที่เผยแพร่แล้ว" },
+                    { value: "draft", label: "✎ ฟอร์มฉบับร่าง/ซ่อนอยู่" },
+                    { value: "all", label: "☰ สถานะฟอร์มทั้งหมด" },
+                  ]}
+                  styleClass="scd-select-status scd-filter-status"
+                  iconClass="scd-icon-status"
+                  textClass="scd-text-status"
+                />
+              </div>
+
+              {/* 8. เลือกคอลัมน์ (โชว์เฉพาะตอนดูแบบฟอร์ม) */}
+              {tableViewMode === "form" && (
+                <div
+                  className="scd-col-selector-wrapper scd-filter-columns"
+                  ref={colMenuRef}
+                >
+                  <button
+                    className="scd-custom-select scd-col-select-btn"
+                    onClick={() => setShowColMenu(!showColMenu)}
+                  >
+                    <FiSettings className="scd-filter-icon" />
+                    <span className="scd-select-value">
+                      เลือกคอลัมน์ ({visibleColumns.length})
+                    </span>
+                    <FiChevronDown className="scd-dropdown-icon" />
+                  </button>
+                  {showColMenu && (
+                    <div className="scd-col-dropdown-menu">
+                      <div className="scd-col-menu-header">
+                        เลือกคำถามที่ต้องการแสดง
+                      </div>
+                      <div className="scd-col-menu-list">
+                        {allDynamicQuestions.map((q) => {
+                          const cleanTitle = q.title
+                            .replace(/<[^>]+>/g, "")
+                            .replace(/&nbsp;/gi, " ")
+                            .replace(/\s+/g, " ")
+                            .trim();
+                          return (
+                            <label
+                              key={q.id}
+                              className="scd-col-menu-item"
+                              title={cleanTitle}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={visibleColumns.includes(q.id)}
+                                onChange={() => toggleColumn(q.id)}
+                              />
+                              <span className="scd-col-text">{cleanTitle}</span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </FilterDropdown>
+            <button
+              className="scd-add-walkin-btn"
+              onClick={() => setIsCreateCaseModalOpen(true)}
+            >
+              <FiPlus />
+              เพิ่มเคส
+            </button>
           </div>
 
           <CaseTable

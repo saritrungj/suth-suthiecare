@@ -10,8 +10,18 @@ test("places the total before separately scored sections", () => {
 
   assert.deepEqual(buildAssessmentResultSections(source), [
     { id: "total-score", displayKind: "total", score: 3.5, partCount: 2 },
-    { question_id: "sleep", title: "Sleep", score: 1.5, displayKind: "section" },
-    { question_id: "stress", title: "Stress", score: 2, displayKind: "section" },
+    {
+      question_id: "sleep",
+      title: "Sleep",
+      score: 1.5,
+      displayKind: "section",
+    },
+    {
+      question_id: "stress",
+      title: "Stress",
+      score: 2,
+      displayKind: "section",
+    },
   ]);
 });
 

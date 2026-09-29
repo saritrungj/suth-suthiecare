@@ -2,13 +2,18 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import "./RiskCases.css";
 import CaseTable from "../../components/case/CaseTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
+import FilterDropdown from "../../components/FilterDropdown";
 import {
   getForms,
   getFormById,
   getFormResponses,
   getActiveClinics,
 } from "../../services/api";
-import { getCurrentMonthDateRange, isCaseInDateRange, normaliseDateRange } from "../../utils/caseDateFilter";
+import {
+  getCurrentMonthDateRange,
+  isCaseInDateRange,
+  normaliseDateRange,
+} from "../../utils/caseDateFilter";
 import { usePermissions } from "../../permissions/PermissionsProvider";
 import {
   FiFolder,
@@ -385,13 +390,19 @@ export default function RiskCases() {
   };
 
   const handleStartDateChange = (nextStartDate) => {
-    const [safeStartDate, safeEndDate] = normaliseDateRange(nextStartDate, endDate);
+    const [safeStartDate, safeEndDate] = normaliseDateRange(
+      nextStartDate,
+      endDate,
+    );
     setStartDate(safeStartDate);
     setEndDate(safeEndDate);
   };
 
   const handleEndDateChange = (nextEndDate) => {
-    const [safeStartDate, safeEndDate] = normaliseDateRange(startDate, nextEndDate);
+    const [safeStartDate, safeEndDate] = normaliseDateRange(
+      startDate,
+      nextEndDate,
+    );
     setStartDate(safeStartDate);
     setEndDate(safeEndDate);
   };
@@ -451,162 +462,176 @@ export default function RiskCases() {
               />
             </div>
 
-            {/* 2. เลือกฟอร์ม */}
-            <CustomDropdown
-              icon={FiLayers}
-              value={selectedFormId}
-              onChange={setSelectedFormId}
-              options={
-                isInitialSetup
-                  ? [{ value: "", label: "กำลังโหลดแบบฟอร์ม..." }]
-                  : filteredFormsList.length > 0
-                    ? filteredFormsList.map((f) => ({
-                        value: f.id,
-                        label: f.title,
-                      }))
-                    : [{ value: "", label: "-- ไม่มีแบบฟอร์ม --" }]
+            <FilterDropdown
+              activeCount={
+                [
+                  selectedFormId,
+                  clinicFilter !== "all" ? clinicFilter : "",
+                  faculty,
+                  formStatusFilter !== "published" ? formStatusFilter : "",
+                ].filter(Boolean).length
               }
-              style={{ borderColor: "#e53935" }}
-            />
+            >
+              {/* 2. เลือกฟอร์ม */}
+              <CustomDropdown
+                icon={FiLayers}
+                value={selectedFormId}
+                onChange={setSelectedFormId}
+                options={
+                  isInitialSetup
+                    ? [{ value: "", label: "กำลังโหลดแบบฟอร์ม..." }]
+                    : filteredFormsList.length > 0
+                      ? filteredFormsList.map((f) => ({
+                          value: f.id,
+                          label: f.title,
+                        }))
+                      : [{ value: "", label: "-- ไม่มีแบบฟอร์ม --" }]
+                }
+                style={{ borderColor: "#e53935" }}
+              />
 
-            {/* 3. ช่วงวันที่ */}
-            <div className="rc-date-range-container">
-              <div className={`rc-date-container`}>
-                <FiCalendar className="src-date-main-icon" />
+              {/* 3. ช่วงวันที่ */}
+              <div className="rc-date-range-container">
+                <div className={`rc-date-container`}>
+                  <FiCalendar className="src-date-main-icon" />
 
-                {/* กล่องวันที่เริ่มต้น */}
-                <div className="rc-date-field">
-                  <input
-                    type="text"
-                    className="rc-date-text-display"
-                    placeholder="วัน/เดือน/ปี"
-                    value={displayThaiDate(startDate)}
-                    readOnly
-                  />
-                  <input
-                    type="date"
-                    className="rc-date-native-hidden"
-                    value={startDate}
-                    onChange={(e) => handleStartDateChange(e.target.value)}
-                    onClick={(e) =>
-                      e.target.showPicker && e.target.showPicker()
-                    }
-                  />
-                </div>
+                  {/* กล่องวันที่เริ่มต้น */}
+                  <div className="rc-date-field">
+                    <input
+                      type="text"
+                      className="rc-date-text-display"
+                      placeholder="วัน/เดือน/ปี"
+                      value={displayThaiDate(startDate)}
+                      readOnly
+                    />
+                    <input
+                      type="date"
+                      className="rc-date-native-hidden"
+                      value={startDate}
+                      onChange={(e) => handleStartDateChange(e.target.value)}
+                      onClick={(e) =>
+                        e.target.showPicker && e.target.showPicker()
+                      }
+                    />
+                  </div>
 
-                <span className="rc-date-separator">ถึง</span>
+                  <span className="rc-date-separator">ถึง</span>
 
-                {/* กล่องวันที่สิ้นสุด */}
-                <div className="rc-date-field">
-                  <input
-                    type="text"
-                    className="rc-date-text-display"
-                    placeholder="วัน/เดือน/ปี"
-                    value={displayThaiDate(endDate)}
-                    readOnly
-                  />
-                  <input
-                    type="date"
-                    className="rc-date-native-hidden"
-                    value={endDate}
-                    onChange={(e) => handleEndDateChange(e.target.value)}
-                    min={startDate || undefined}
-                    onClick={(e) =>
-                      e.target.showPicker && e.target.showPicker()
-                    }
-                  />
+                  {/* กล่องวันที่สิ้นสุด */}
+                  <div className="rc-date-field">
+                    <input
+                      type="text"
+                      className="rc-date-text-display"
+                      placeholder="วัน/เดือน/ปี"
+                      value={displayThaiDate(endDate)}
+                      readOnly
+                    />
+                    <input
+                      type="date"
+                      className="rc-date-native-hidden"
+                      value={endDate}
+                      onChange={(e) => handleEndDateChange(e.target.value)}
+                      min={startDate || undefined}
+                      onClick={(e) =>
+                        e.target.showPicker && e.target.showPicker()
+                      }
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <CustomDropdown
-              icon={FiFolder}
-              value={clinicFilter}
-              onChange={setClinicFilter}
-              options={[
-                { value: "all", label: "ทุกคลินิก" },
-                { value: "general", label: "ทั่วไป" },
-                ...clinics.map((c) => ({
-                  value: c.slug,
-                  label: c.name,
-                })),
-              ]}
-            />
+              <CustomDropdown
+                icon={FiFolder}
+                value={clinicFilter}
+                onChange={setClinicFilter}
+                options={[
+                  { value: "all", label: "ทุกคลินิก" },
+                  { value: "general", label: "ทั่วไป" },
+                  ...clinics.map((c) => ({
+                    value: c.slug,
+                    label: c.name,
+                  })),
+                ]}
+              />
 
-            {/* 4. สำนักวิชา */}
-            <CustomDropdown
-              icon={FiLayers}
-              value={faculty}
-              onChange={setFaculty}
-              options={[
-                { value: "", label: "ทุกสำนักวิชา" },
-                ...FACULTIES.map((f) => ({ value: f, label: f })),
-              ]}
-            />
+              {/* 4. สำนักวิชา */}
+              <CustomDropdown
+                icon={FiLayers}
+                value={faculty}
+                onChange={setFaculty}
+                options={[
+                  { value: "", label: "ทุกสำนักวิชา" },
+                  ...FACULTIES.map((f) => ({ value: f, label: f })),
+                ]}
+              />
 
-            {/* 5. สถานะฟอร์ม */}
-            <CustomDropdown
-              icon={FiLayers}
-              value={formStatusFilter}
-              onChange={setFormStatusFilter}
-              options={[
-                { value: "published", label: "✓ ฟอร์มที่เผยแพร่แล้ว" },
-                { value: "draft", label: "✎ ฟอร์มฉบับร่าง/ซ่อนอยู่" },
-                { value: "all", label: "☰ สถานะฟอร์มทั้งหมด" },
-              ]}
-              style={{ borderColor: "#bfdbfe", backgroundColor: "#eff6ff" }}
-              iconStyle={{ color: "#2563eb" }}
-              textStyle={{ color: "#1e40af", fontWeight: "600" }}
-            />
+              {/* 5. สถานะฟอร์ม */}
+              <CustomDropdown
+                icon={FiLayers}
+                value={formStatusFilter}
+                onChange={setFormStatusFilter}
+                options={[
+                  { value: "published", label: "✓ ฟอร์มที่เผยแพร่แล้ว" },
+                  { value: "draft", label: "✎ ฟอร์มฉบับร่าง/ซ่อนอยู่" },
+                  { value: "all", label: "☰ สถานะฟอร์มทั้งหมด" },
+                ]}
+                style={{ borderColor: "#bfdbfe", backgroundColor: "#eff6ff" }}
+                iconStyle={{ color: "#2563eb" }}
+                textStyle={{ color: "#1e40af", fontWeight: "600" }}
+              />
 
-            {/* 6. เลือกคอลัมน์ */}
-            <div className="col-selector-wrapper" ref={colMenuRef}>
-              <button
-                className="rc-custom-select"
-                onClick={() => setShowColMenu(!showColMenu)}
-                style={{
-                  width: "100%",
-                  border: "1px solid #cbd5e1",
-                  background: "#ffffff",
-                }}
-              >
-                <FiSettings className="rc-filter-icon" />
-                <span className="rc-select-value" style={{ textAlign: "left" }}>
-                  เลือกคอลัมน์ ({visibleColumns.length})
-                </span>
-                <FiChevronDown className="rc-dropdown-icon" />
-              </button>
-              {showColMenu && (
-                <div className="col-dropdown-menu">
-                  <div className="col-menu-header">
-                    เลือกคำถามที่ต้องการแสดง
+              {/* 6. เลือกคอลัมน์ */}
+              <div className="col-selector-wrapper" ref={colMenuRef}>
+                <button
+                  className="rc-custom-select"
+                  onClick={() => setShowColMenu(!showColMenu)}
+                  style={{
+                    width: "100%",
+                    border: "1px solid #cbd5e1",
+                    background: "#ffffff",
+                  }}
+                >
+                  <FiSettings className="rc-filter-icon" />
+                  <span
+                    className="rc-select-value"
+                    style={{ textAlign: "left" }}
+                  >
+                    เลือกคอลัมน์ ({visibleColumns.length})
+                  </span>
+                  <FiChevronDown className="rc-dropdown-icon" />
+                </button>
+                {showColMenu && (
+                  <div className="col-dropdown-menu">
+                    <div className="col-menu-header">
+                      เลือกคำถามที่ต้องการแสดง
+                    </div>
+                    <div className="col-menu-list">
+                      {allDynamicQuestions.map((q) => {
+                        const cleanTitle = q.title
+                          .replace(/<[^>]+>/g, "")
+                          .replace(/&nbsp;/gi, " ")
+                          .replace(/\s+/g, " ")
+                          .trim();
+                        return (
+                          <label
+                            key={q.id}
+                            className="col-menu-item"
+                            title={cleanTitle}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={visibleColumns.includes(q.id)}
+                              onChange={() => toggleColumn(q.id)}
+                            />
+                            <span className="col-text">{cleanTitle}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
                   </div>
-                  <div className="col-menu-list">
-                    {allDynamicQuestions.map((q) => {
-                      const cleanTitle = q.title
-                        .replace(/<[^>]+>/g, "")
-                        .replace(/&nbsp;/gi, " ")
-                        .replace(/\s+/g, " ")
-                        .trim();
-                      return (
-                        <label
-                          key={q.id}
-                          className="col-menu-item"
-                          title={cleanTitle}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={visibleColumns.includes(q.id)}
-                            onChange={() => toggleColumn(q.id)}
-                          />
-                          <span className="col-text">{cleanTitle}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            </FilterDropdown>
           </div>
 
           {/* ✅ CaseTable */}

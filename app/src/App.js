@@ -16,6 +16,7 @@ import PatientRegister from "./pages/patient/PatientRegister";
 import SeoMetadata from "./components/SeoMetadata";
 import StatusPage from "./pages/errors/StatusPage";
 import OrganizationManagement from "./pages/admin/OrganizationManagement";
+import PwaInstallPrompt from "./components/PwaInstallPrompt";
 
 // ✅ Lazy load ทุกหน้าที่เหลือ
 const AssessmentResult = lazy(() => import("./pages/result/AssessmentResult"));
@@ -28,6 +29,7 @@ const RolesPermissions = lazy(() => import("./pages/admin/RolesPermissions"));
 const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
 const RiskCases = lazy(() => import("./pages/admin/RiskCases"));
 const BannerManagement = lazy(() => import("./pages/admin/BannerManagement"));
+const MyProfile = lazy(() => import("./pages/admin/MyProfile"));
 const FormView = lazy(() => import("./pages/assessment/formView/FormView"));
 const HistorySearch = lazy(
   () => import("./pages/assessment/history/HistorySearch"),
@@ -140,6 +142,7 @@ function App() {
     <AppErrorBoundary>
       <BrowserRouter>
         <SeoMetadata />
+        <PwaInstallPrompt />
         <Suspense
           fallback={
             <div
@@ -156,44 +159,190 @@ function App() {
           }
         >
           <Routes>
-        <Route path="/" element={<SutLanding2 />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/account/login" element={<PatientLogin />} />
-        <Route path="/account/register" element={<PatientRegister />} />
-        <Route path="/help-center" element={<HelpCenterUser />} />
-          <Route path="/help-center/clinic/:id" element={<ClinicHelpDetail />} />
-        <Route path="/403" element={<StatusPage status={403} />} />
-        <Route path="/404" element={<StatusPage status={404} />} />
-        <Route path="/500" element={<StatusPage status={500} />} />
+            <Route path="/" element={<SutLanding2 />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/account/login" element={<PatientLogin />} />
+            <Route path="/account/register" element={<PatientRegister />} />
+            <Route path="/help-center" element={<HelpCenterUser />} />
+            <Route
+              path="/help-center/clinic/:id"
+              element={<ClinicHelpDetail />}
+            />
+            <Route path="/403" element={<StatusPage status={403} />} />
+            <Route path="/404" element={<StatusPage status={404} />} />
+            <Route path="/500" element={<StatusPage status={500} />} />
 
-        <Route path="/assessment-result" element={<AssessmentResult />} />
-        <Route path="/assessment/:id" element={<FormView />} />
-        <Route path="/history" element={<PatientProtectedRoute><HistorySearch /></PatientProtectedRoute>} />
-        <Route path="/history/result" element={<PatientProtectedRoute><HistoryResult /></PatientProtectedRoute>} />
-        <Route path="/clinic-detail" element={<PatientProtectedRoute><ClinicDetail /></PatientProtectedRoute>} />
+            <Route path="/assessment-result" element={<AssessmentResult />} />
+            <Route path="/assessment/:id" element={<FormView />} />
+            <Route
+              path="/history"
+              element={
+                <PatientProtectedRoute>
+                  <HistorySearch />
+                </PatientProtectedRoute>
+              }
+            />
+            <Route
+              path="/history/result"
+              element={
+                <PatientProtectedRoute>
+                  <HistoryResult />
+                </PatientProtectedRoute>
+              }
+            />
+            <Route
+              path="/clinic-detail"
+              element={
+                <PatientProtectedRoute>
+                  <ClinicDetail />
+                </PatientProtectedRoute>
+              }
+            />
 
-        <Route
-          path="/admin"
-          element={
-              <AdminRoute><PermissionsProvider><AdminLayout /></PermissionsProvider></AdminRoute>
-          }
-        >
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<PermissionRoute module="Dashboard"><Dashboard /></PermissionRoute>} />
-          <Route path="forms" element={<PermissionRoute module="Form Management"><FormManager /></PermissionRoute>} />
-          <Route path="forms/create" element={<PermissionRoute module="Form Management"><FormBuilder /></PermissionRoute>} />
-          <Route path="forms/edit/:id" element={<PermissionRoute module="Form Management"><FormBuilder /></PermissionRoute>} />
-          <Route path="schedule" element={<PermissionRoute module="Appointments"><Appointment /></PermissionRoute>} />
-          <Route path="cases" element={<PermissionRoute module="Case Management"><CaseData /></PermissionRoute>} />
-          <Route path="roles" element={<PermissionRoute module="Roles & Permissions"><RolesPermissions /></PermissionRoute>} />
-          <Route path="users" element={<PermissionRoute module="User Management"><UserManagement initialTab="staff" standalone /></PermissionRoute>} />
-          <Route path="members" element={<PermissionRoute module="User Management"><UserManagement initialTab="members" standalone /></PermissionRoute>} />
-          <Route path="risk-cases" element={<PermissionRoute module="Case Management"><RiskCases /></PermissionRoute>} />
-          <Route path="banner" element={<PermissionRoute module="Content Management"><BannerManagement /></PermissionRoute>} />
-          <Route path="clinics" element={<PermissionRoute module="Clinic Management"><ClinicManager /></PermissionRoute>} />
-          <Route path="help-center" element={<PermissionRoute module="Help Center Management"><HelpCenterManager /></PermissionRoute>} />
-          <Route path="organizations" element={<PermissionRoute module="organizations.manage"><OrganizationManagement /></PermissionRoute>} />
-        </Route>
+            <Route
+              path="/admin"
+              element={
+                <AdminRoute>
+                  <PermissionsProvider>
+                    <AdminLayout />
+                  </PermissionsProvider>
+                </AdminRoute>
+              }
+            >
+              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route
+                path="dashboard"
+                element={
+                  <PermissionRoute module="Dashboard">
+                    <Dashboard />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="forms"
+                element={
+                  <PermissionRoute
+                    module="Form Management"
+                    allowOrganizationMember
+                  >
+                    <FormManager />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="forms/create"
+                element={
+                  <PermissionRoute
+                    module="Form Management"
+                    allowOrganizationMember
+                  >
+                    <FormBuilder />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="forms/edit/:id"
+                element={
+                  <PermissionRoute
+                    module="Form Management"
+                    allowOrganizationMember
+                  >
+                    <FormBuilder />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="schedule"
+                element={
+                  <PermissionRoute module="Appointments">
+                    <Appointment />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="cases"
+                element={
+                  <PermissionRoute module="Case Management">
+                    <CaseData />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="roles"
+                element={
+                  <PermissionRoute module="Roles & Permissions">
+                    <RolesPermissions />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="users"
+                element={
+                  <PermissionRoute module="User Management">
+                    <UserManagement initialTab="staff" standalone />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="members"
+                element={
+                  <PermissionRoute module="User Management">
+                    <UserManagement initialTab="members" standalone />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="risk-cases"
+                element={
+                  <PermissionRoute module="Case Management">
+                    <RiskCases />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="banner"
+                element={
+                  <PermissionRoute
+                    module="Content Management"
+                    allowOrganizationMember
+                  >
+                    <BannerManagement />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="clinics"
+                element={
+                  <PermissionRoute
+                    module="Clinic Management"
+                    allowOrganizationMember
+                  >
+                    <ClinicManager />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="help-center"
+                element={
+                  <PermissionRoute
+                    module="Help Center Management"
+                    allowOrganizationMember
+                  >
+                    <HelpCenterManager />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="organizations"
+                element={
+                  <PermissionRoute module="organizations.manage">
+                    <OrganizationManagement />
+                  </PermissionRoute>
+                }
+              />
+              {/* Every signed-in staff member manages their own account. */}
+              <Route path="profile" element={<MyProfile />} />
+            </Route>
             <Route path="*" element={<StatusPage status={404} />} />
           </Routes>
         </Suspense>

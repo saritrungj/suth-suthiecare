@@ -48,7 +48,12 @@ export const withoutNationalIdQuestions = (questions = []) =>
     .filter((question) => question?.type !== "national_id")
     .map((question) =>
       question?.type === "group"
-        ? { ...question, subQuestions: withoutNationalIdQuestions(question.subQuestions || []) }
+        ? {
+            ...question,
+            subQuestions: withoutNationalIdQuestions(
+              question.subQuestions || [],
+            ),
+          }
         : question,
     );
 
@@ -154,7 +159,11 @@ export const calculateQuestionScore = (q, rawAns) => {
 };
 
 const stripHtml = (value, fallback) =>
-  value ? String(value).replace(/<[^>]+>/g, "").trim() : fallback;
+  value
+    ? String(value)
+        .replace(/<[^>]+>/g, "")
+        .trim()
+    : fallback;
 
 const resolveScoreResult = (question, score, fallbackTitle) => {
   const matchedRule = (question.scoringRules || []).find(
@@ -240,7 +249,8 @@ export const countScoredTargets = (questions = []) =>
     if (question.isScored) return count + 1;
     return (
       count +
-      (question.subQuestions || []).filter((subQuestion) => subQuestion.isScored)
-        .length
+      (question.subQuestions || []).filter(
+        (subQuestion) => subQuestion.isScored,
+      ).length
     );
   }, 0);

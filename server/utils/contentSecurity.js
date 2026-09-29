@@ -9,7 +9,9 @@ const trustedHostRules = () => {
     .filter(Boolean);
   const rules = configured.length ? configured : [...DEFAULT_TRUSTED_HOSTS];
   try {
-    const frontendHost = new URL(process.env.FRONTEND_URL).hostname.toLowerCase();
+    const frontendHost = new URL(
+      process.env.FRONTEND_URL,
+    ).hostname.toLowerCase();
     if (frontendHost && !rules.includes(frontendHost)) rules.push(frontendHost);
   } catch {
     // FRONTEND_URL is validated separately at startup.
@@ -31,7 +33,8 @@ const normalizeTrustedLink = (value) => {
     const url = new URL(input);
     if (url.protocol !== "https:" || url.username || url.password) return null;
     const hostname = url.hostname.toLowerCase();
-    if (!trustedHostRules().some((rule) => hostMatches(hostname, rule))) return null;
+    if (!trustedHostRules().some((rule) => hostMatches(hostname, rule)))
+      return null;
     return url.href;
   } catch {
     return null;
@@ -41,7 +44,11 @@ const normalizeTrustedLink = (value) => {
 const normalizeTrustedAssetUrl = (value) => {
   if (typeof value !== "string") return null;
   const input = value.trim();
-  if (/^data:image\/(?:avif|gif|jpeg|png|webp);base64,[a-z0-9+/=\s]+$/i.test(input)) {
+  if (
+    /^data:image\/(?:avif|gif|jpeg|png|webp);base64,[a-z0-9+/=\s]+$/i.test(
+      input,
+    )
+  ) {
     return input;
   }
   return normalizeTrustedLink(input);
@@ -53,7 +60,9 @@ const normalizeYoutubeUrl = (value) => {
     const url = new URL(value.trim());
     const host = url.hostname.toLowerCase();
     return url.protocol === "https:" &&
-      ["youtube.com", "www.youtube.com", "youtu.be", "www.youtu.be"].includes(host)
+      ["youtube.com", "www.youtube.com", "youtu.be", "www.youtu.be"].includes(
+        host,
+      )
       ? url.href
       : null;
   } catch {
@@ -64,8 +73,23 @@ const normalizeYoutubeUrl = (value) => {
 const sanitizeRichText = (value) =>
   sanitizeHtml(String(value || ""), {
     allowedTags: [
-      "p", "br", "strong", "b", "em", "i", "u", "s", "ol", "ul", "li",
-      "h2", "h3", "h4", "blockquote", "span", "a",
+      "p",
+      "br",
+      "strong",
+      "b",
+      "em",
+      "i",
+      "u",
+      "s",
+      "ol",
+      "ul",
+      "li",
+      "h2",
+      "h3",
+      "h4",
+      "blockquote",
+      "span",
+      "a",
     ],
     allowedAttributes: { span: ["style"], a: ["href", "target", "rel"] },
     allowedStyles: {
@@ -77,15 +101,26 @@ const sanitizeRichText = (value) =>
         if (!href) return { tagName: "span", attribs: {} };
         return {
           tagName,
-          attribs: { href, target: "_blank", rel: "nofollow noopener noreferrer" },
+          attribs: {
+            href,
+            target: "_blank",
+            rel: "nofollow noopener noreferrer",
+          },
         };
       },
     },
   });
 
 const RICH_TEXT_KEYS = new Set([
-  "title", "text", "description", "desc", "label", "advice",
-  "bannerText", "stepName", "formStepName",
+  "title",
+  "text",
+  "description",
+  "desc",
+  "label",
+  "advice",
+  "bannerText",
+  "stepName",
+  "formStepName",
 ]);
 const RICH_TEXT_ARRAY_KEYS = new Set(["options", "rows", "cols"]);
 
@@ -105,11 +140,13 @@ const sanitizeFormContent = (value, key = "") => {
       ]),
     );
   }
-  if (typeof value === "string" && RICH_TEXT_KEYS.has(key)) return sanitizeRichText(value);
+  if (typeof value === "string" && RICH_TEXT_KEYS.has(key))
+    return sanitizeRichText(value);
   if (typeof value === "string" && ["image", "headerImage"].includes(key)) {
     return normalizeTrustedAssetUrl(value) || "";
   }
-  if (typeof value === "string" && key === "videoUrl") return normalizeYoutubeUrl(value) || "";
+  if (typeof value === "string" && key === "videoUrl")
+    return normalizeYoutubeUrl(value) || "";
   return value;
 };
 

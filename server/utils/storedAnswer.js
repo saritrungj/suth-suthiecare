@@ -13,9 +13,16 @@ function parseStoredAnswer(value) {
   }
 }
 
-function normalizeStoredAnswer(value, questionTitle = "", decrypt = (item) => item) {
+function normalizeStoredAnswer(
+  value,
+  questionTitle = "",
+  decrypt = (item) => item,
+) {
   const normalized = parseStoredAnswer(value);
-  if (SENSITIVE_QUESTION.test(String(questionTitle)) && typeof normalized === "string") {
+  if (
+    SENSITIVE_QUESTION.test(String(questionTitle)) &&
+    typeof normalized === "string"
+  ) {
     return decrypt(normalized);
   }
   return normalized;

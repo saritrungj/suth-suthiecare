@@ -84,15 +84,24 @@ export default function AppointmentFormModal({
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="form-modal">
+    <div className="modal-overlay" role="presentation">
+      <div
+        className="form-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-label={appointment ? "แก้ไขนัดหมาย" : "เพิ่มนัดหมาย"}
+      >
         <div className="modal-header">
           <div>
             <h3>{appointment ? "แก้ไขนัดหมาย" : "เพิ่มนัดหมาย"}</h3>
             <p>Case ID: {user?.caseId}</p>
           </div>
 
-          <button className="close-btn" onClick={onClose}>
+          <button
+            className="close-btn"
+            onClick={onClose}
+            aria-label="ปิดหน้าต่าง"
+          >
             ✕
           </button>
         </div>

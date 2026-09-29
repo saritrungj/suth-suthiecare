@@ -176,10 +176,17 @@ export default function TemplateManagerModal({
   }, []);
 
   return (
-    <div className="cdm-tpl-modal-overlay" onClick={onClose}>
+    <div
+      className="cdm-tpl-modal-overlay"
+      onClick={onClose}
+      role="presentation"
+    >
       <div
         className="cdm-tpl-modal-card cdm-tpl-popup"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="จัดการชุดคำถาม"
       >
         <div className="cdm-interactive-header">
           <h3
@@ -193,7 +200,11 @@ export default function TemplateManagerModal({
           >
             <FaCog /> จัดการชุดคำถาม
           </h3>
-          <button className="cdm-tpl-close-btn" onClick={onClose}>
+          <button
+            className="cdm-tpl-close-btn"
+            onClick={onClose}
+            aria-label="ปิดหน้าต่าง"
+          >
             <FaTimes />
           </button>
         </div>

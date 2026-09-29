@@ -24,7 +24,10 @@
   line-height: 1;
   text-align: center;
   white-space: nowrap;
-  transition: background-color 180ms ease-out, border-color 180ms ease-out, transform 180ms ease-out;
+  transition:
+    background-color 180ms ease-out,
+    border-color 180ms ease-out,
+    transform 180ms ease-out;
 }
 
 .patient-account-login > svg {

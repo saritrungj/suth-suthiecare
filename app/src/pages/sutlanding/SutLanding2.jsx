@@ -61,7 +61,9 @@ function FormCard({ form, themeClass, count, isLoaded }) {
     stripHtml(form.description || t("form_card.default_desc")),
   );
   const participantCount = Number(count).toLocaleString();
-  const participantText = t("form_card.participants", { count: participantCount });
+  const participantText = t("form_card.participants", {
+    count: participantCount,
+  });
   const participantCountPosition = participantText.indexOf(participantCount);
 
   useEffect(() => {
@@ -124,7 +126,9 @@ function FormCard({ form, themeClass, count, isLoaded }) {
               <>
                 {participantText.slice(0, participantCountPosition)}
                 <strong>{participantCount}</strong>
-                {participantText.slice(participantCountPosition + participantCount.length)}
+                {participantText.slice(
+                  participantCountPosition + participantCount.length,
+                )}
               </>
             ) : (
               participantText
@@ -179,16 +183,21 @@ export default function SutLanding2() {
   });
   const suppressClickRef = useRef(false);
 
-  const stopScrollerMomentum = useCallback((container = scrollContainerRef.current) => {
-    if (dragStateRef.current.momentumFrame) {
-      window.cancelAnimationFrame(dragStateRef.current.momentumFrame);
-      dragStateRef.current.momentumFrame = null;
-    }
-    container?.classList.remove("sut2-is-dragging");
-  }, []);
+  const stopScrollerMomentum = useCallback(
+    (container = scrollContainerRef.current) => {
+      if (dragStateRef.current.momentumFrame) {
+        window.cancelAnimationFrame(dragStateRef.current.momentumFrame);
+        dragStateRef.current.momentumFrame = null;
+      }
+      container?.classList.remove("sut2-is-dragging");
+    },
+    [],
+  );
 
   const startScrollerMomentum = useCallback((container, initialVelocity) => {
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     if (reducedMotion || Math.abs(initialVelocity) < 0.08) {
       container.classList.remove("sut2-is-dragging");
       return;
@@ -210,7 +219,8 @@ export default function SutLanding2() {
       velocity *= Math.pow(0.9, elapsed / 16);
 
       if (!reachedEdge && Math.abs(velocity) > 0.02) {
-        dragStateRef.current.momentumFrame = window.requestAnimationFrame(animate);
+        dragStateRef.current.momentumFrame =
+          window.requestAnimationFrame(animate);
       } else {
         dragStateRef.current.momentumFrame = null;
         container.classList.remove("sut2-is-dragging");
@@ -220,24 +230,30 @@ export default function SutLanding2() {
     dragStateRef.current.momentumFrame = window.requestAnimationFrame(animate);
   }, []);
 
-  const handleScrollerPointerDown = useCallback((event) => {
-    if (!event.isPrimary || (event.pointerType === "mouse" && event.button !== 0)) {
-      return;
-    }
+  const handleScrollerPointerDown = useCallback(
+    (event) => {
+      if (
+        !event.isPrimary ||
+        (event.pointerType === "mouse" && event.button !== 0)
+      ) {
+        return;
+      }
 
-    const container = event.currentTarget;
-    stopScrollerMomentum(container);
-    dragStateRef.current = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startScrollLeft: container.scrollLeft,
-      lastX: event.clientX,
-      lastTime: performance.now(),
-      velocity: 0,
-      hasMoved: false,
-      momentumFrame: null,
-    };
-  }, [stopScrollerMomentum]);
+      const container = event.currentTarget;
+      stopScrollerMomentum(container);
+      dragStateRef.current = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startScrollLeft: container.scrollLeft,
+        lastX: event.clientX,
+        lastTime: performance.now(),
+        velocity: 0,
+        hasMoved: false,
+        momentumFrame: null,
+      };
+    },
+    [stopScrollerMomentum],
+  );
 
   const handleScrollerPointerMove = useCallback((event) => {
     const dragState = dragStateRef.current;
@@ -256,43 +272,47 @@ export default function SutLanding2() {
     const now = performance.now();
     const elapsed = Math.max(now - dragState.lastTime, 1);
     const scrollDelta = dragState.lastX - event.clientX;
-    dragState.velocity = dragState.velocity * 0.75 + (scrollDelta / elapsed) * 0.25;
+    dragState.velocity =
+      dragState.velocity * 0.75 + (scrollDelta / elapsed) * 0.25;
     dragState.lastX = event.clientX;
     dragState.lastTime = now;
     event.currentTarget.scrollLeft = dragState.startScrollLeft - distance;
   }, []);
 
-  const finishScrollerDrag = useCallback((event) => {
-    const dragState = dragStateRef.current;
-    if (dragState.pointerId !== event.pointerId) return;
-    const hasMoved = dragState.hasMoved;
-    const releaseVelocity = dragState.velocity;
+  const finishScrollerDrag = useCallback(
+    (event) => {
+      const dragState = dragStateRef.current;
+      if (dragState.pointerId !== event.pointerId) return;
+      const hasMoved = dragState.hasMoved;
+      const releaseVelocity = dragState.velocity;
 
-    if (hasMoved) {
-      suppressClickRef.current = true;
-      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-        event.currentTarget.releasePointerCapture(event.pointerId);
+      if (hasMoved) {
+        suppressClickRef.current = true;
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+          event.currentTarget.releasePointerCapture(event.pointerId);
+        }
+        window.setTimeout(() => {
+          suppressClickRef.current = false;
+        }, 0);
       }
-      window.setTimeout(() => {
-        suppressClickRef.current = false;
-      }, 0);
-    }
 
-    dragStateRef.current = {
-      pointerId: null,
-      startX: 0,
-      startScrollLeft: 0,
-      lastX: 0,
-      lastTime: 0,
-      velocity: 0,
-      hasMoved: false,
-      momentumFrame: null,
-    };
+      dragStateRef.current = {
+        pointerId: null,
+        startX: 0,
+        startScrollLeft: 0,
+        lastX: 0,
+        lastTime: 0,
+        velocity: 0,
+        hasMoved: false,
+        momentumFrame: null,
+      };
 
-    if (hasMoved) {
-      startScrollerMomentum(event.currentTarget, releaseVelocity);
-    }
-  }, [startScrollerMomentum]);
+      if (hasMoved) {
+        startScrollerMomentum(event.currentTarget, releaseVelocity);
+      }
+    },
+    [startScrollerMomentum],
+  );
 
   const preventClickAfterDrag = useCallback((event) => {
     if (!suppressClickRef.current) return;
@@ -500,7 +520,11 @@ export default function SutLanding2() {
           aria-controls="sut2-nav-actions"
           onClick={() => setMenuOpen(!menuOpen)}
         >
-          {menuOpen ? <FiX aria-hidden="true" /> : <FiMenu aria-hidden="true" />}
+          {menuOpen ? (
+            <FiX aria-hidden="true" />
+          ) : (
+            <FiMenu aria-hidden="true" />
+          )}
         </button>
         <div
           id="sut2-nav-actions"
@@ -647,9 +671,7 @@ export default function SutLanding2() {
             tabIndex={0}
             role="region"
             aria-label="รายการคลินิกและแบบประเมิน"
-            aria-describedby={
-              selectedClinic ? "sut2-form-guidance" : undefined
-            }
+            aria-describedby={selectedClinic ? "sut2-form-guidance" : undefined}
             onPointerDown={handleScrollerPointerDown}
             onPointerMove={handleScrollerPointerMove}
             onPointerUp={finishScrollerDrag}
@@ -959,7 +981,10 @@ export default function SutLanding2() {
         </section>
 
         {/* ================= 4. OUR OTHER WEBSITES ================= */}
-        <section className="sut2-sites-section" aria-labelledby="sut2-sites-title">
+        <section
+          className="sut2-sites-section"
+          aria-labelledby="sut2-sites-title"
+        >
           <div className="sut2-sites-content">
             <h2 id="sut2-sites-title" className="sut2-sites-title">
               {t("sutlanding.sites_title")}
@@ -1032,7 +1057,10 @@ export default function SutLanding2() {
             <img src={logo} alt="SUTH Logo" className="sut2-footer-logo" />
             <p>{t("sutlanding.footer_desc")}</p>
           </section>
-          <section className="sut2-footer-col sut2-footer-contact" aria-labelledby="sut2-footer-contact-title">
+          <section
+            className="sut2-footer-col sut2-footer-contact"
+            aria-labelledby="sut2-footer-contact-title"
+          >
             <h2 id="sut2-footer-contact-title">{t("sutlanding.contact_us")}</h2>
             <p className="sut2-footer-organization">{t("sutlanding.pcu")}</p>
             <address>
@@ -1051,7 +1079,9 @@ export default function SutLanding2() {
         </div>
         <div className="sut2-footer-bottom">
           <p>{t("sutlanding.copyright", { year: copyrightYears })}</p>
-          {appVersion && <span className="sut2-footer-version">v{appVersion}</span>}
+          {appVersion && (
+            <span className="sut2-footer-version">v{appVersion}</span>
+          )}
         </div>
       </footer>
 

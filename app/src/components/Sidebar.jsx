@@ -4,13 +4,31 @@ import logo from "../assets/logoSUTH.png";
 import { NavLink, useNavigate, useLocation, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faArrowRightFromBracket, faBars, faBookOpen, faBuilding, faCalendarDays,
-  faChevronDown, faChevronLeft, faCircle, faFilePen, faFolderOpen,
-  faGaugeHigh, faImages, faQuestionCircle, faTriangleExclamation,
-  faUserShield, faUsers, faUsersGear, faXmark,
+  faArrowRightFromBracket,
+  faBars,
+  faBookOpen,
+  faBuilding,
+  faCalendarDays,
+  faChevronDown,
+  faChevronLeft,
+  faCircle,
+  faFilePen,
+  faFolderOpen,
+  faGaugeHigh,
+  faImages,
+  faQuestionCircle,
+  faTriangleExclamation,
+  faUserPen,
+  faUserShield,
+  faUsers,
+  faUsersGear,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { usePermissions } from "../permissions/PermissionsProvider";
-import { getSelectableOrganizations } from "../permissions/organizationContext";
+import {
+  getSelectableOrganizations,
+  hasActiveOrganizationMembership,
+} from "../permissions/organizationContext";
 
 // 🟢 Import SweetAlert2
 import Swal from "sweetalert2";
@@ -201,6 +219,7 @@ const rawMenuItems = [
     label: "จัดการฟอร์ม",
     key: "forms",
     module: "Form Management",
+    allowOrganizationMember: true,
   },
   {
     href: "/admin/clinics",
@@ -208,6 +227,7 @@ const rawMenuItems = [
     label: "จัดการคลินิก",
     key: "clinics",
     module: "Clinic Management",
+    allowOrganizationMember: true,
   },
   {
     href: "/admin/organizations",
@@ -222,6 +242,7 @@ const rawMenuItems = [
     label: "จัดการศูนย์ช่วยเหลือ",
     key: "help-center",
     module: "Help Center Management",
+    allowOrganizationMember: true,
   },
   {
     href: "/admin/banner",
@@ -229,6 +250,7 @@ const rawMenuItems = [
     label: "จัดการภาพแบนเนอร์",
     key: "banner",
     module: "Content Management",
+    allowOrganizationMember: true,
   },
   // 🟢 เพิ่มคู่มือการใช้งานตรงนี้ พร้อมกำหนด isExternal เป็น true
   {
@@ -268,6 +290,15 @@ const rawMenuItems = [
       },
     ],
   },
+
+  // 🟣 บัญชีของฉัน (ทุกคนเข้าถึงได้ ไม่ต้องมีสิทธิ์)
+  { type: "header", label: "บัญชีของฉัน", key: "header-account" },
+  {
+    href: "/admin/profile",
+    icon: <FontAwesomeIcon icon={faUserPen} fixedWidth />,
+    label: "ข้อมูลส่วนตัว",
+    key: "profile",
+  },
 ];
 
 const Sidebar = ({ activeKey = "dashboard" }) => {
@@ -300,17 +331,29 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  const { can, authorization, activeOrganization, setActiveOrganization } = usePermissions();
+  const { can, authorization, activeOrganization, setActiveOrganization } =
+    usePermissions();
   const selectableOrganizations = getSelectableOrganizations(authorization);
+  const canViewCentralManagement = hasActiveOrganizationMembership(
+    authorization,
+    activeOrganization,
+  );
 
   const menuItems = rawMenuItems
     .map((item) => {
       if (item.children) {
-        const filteredChildren = item.children.filter((child) => !child.module || can(child.module));
+        const filteredChildren = item.children.filter(
+          (child) => !child.module || can(child.module),
+        );
         if (filteredChildren.length === 0) return null;
         return { ...item, children: filteredChildren };
       }
-      if (item.module && !can(item.module)) return null;
+      if (
+        item.module &&
+        !can(item.module) &&
+        !(item.allowOrganizationMember && canViewCentralManagement)
+      )
+        return null;
       return item;
     })
     .filter(Boolean);
@@ -402,6 +445,11 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
     }).then((result) => {
       if (result.isConfirmed) {
         localStorage.removeItem("suth_user");
+        localStorage.removeItem("suth_token");
+        sessionStorage.removeItem("suth_user");
+        sessionStorage.removeItem("suth_token");
+        localStorage.setItem("SUTH_LOGOUT", Date.now().toString());
+        localStorage.removeItem("SUTH_LOGOUT");
         navigate("/login", { replace: true });
       }
     });
@@ -467,11 +515,18 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
         {!collapsed && authorization && (
           <div className="organization-switcher">
             <label htmlFor="active-organization">หน่วยงานที่กำลังใช้งาน</label>
-            <select id="active-organization" value={activeOrganization || ""} onChange={(event) => setActiveOrganization(event.target.value)}>
-              {authorization.is_system_admin && <option value="all">ทุกหน่วยงาน</option>}
+            <select
+              id="active-organization"
+              value={activeOrganization || ""}
+              onChange={(event) => setActiveOrganization(event.target.value)}
+            >
+              {authorization.is_system_admin && (
+                <option value="all">ทุกหน่วยงาน</option>
+              )}
               {selectableOrganizations.map((organization) => (
                 <option key={organization.id} value={organization.id}>
-                  {organization.name}{organization.roleName ? ` · ${organization.roleName}` : ""}
+                  {organization.name}
+                  {organization.roleName ? ` · ${organization.roleName}` : ""}
                 </option>
               ))}
             </select>
@@ -515,7 +570,10 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
                     <span className="icon">{item.icon}</span>
                     <span className="label">{item.label}</span>
                     <span className="arrow">
-                      <FontAwesomeIcon icon={isOpen ? faChevronDown : faChevronLeft} fixedWidth />
+                      <FontAwesomeIcon
+                        icon={isOpen ? faChevronDown : faChevronLeft}
+                        fixedWidth
+                      />
                     </span>
                   </button>
 

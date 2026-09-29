@@ -1,5 +1,7 @@
 function validatePersonName(value, label) {
-  const normalized = String(value || "").trim().replace(/\s+/g, " ");
+  const normalized = String(value || "")
+    .trim()
+    .replace(/\s+/g, " ");
   if (normalized.length < 1 || normalized.length > 100) {
     return { error: `${label}ต้องมีความยาว 1-100 ตัวอักษร` };
   }

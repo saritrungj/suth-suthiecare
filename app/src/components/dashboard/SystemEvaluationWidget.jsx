@@ -260,6 +260,11 @@ export default function SystemEvaluationWidget() {
       >
         {/* 🟢 คอลัมน์ที่ 1: กราฟแท่ง Likert */}
         <div
+          className="ui-modal-overlay"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setIsModalOpen(false);
+          }}
           style={{
             border: "1px solid #e2e8f0",
             borderRadius: "12px",
@@ -283,6 +288,10 @@ export default function SystemEvaluationWidget() {
             <FiBarChart2 color="#8b5cf6" /> ความพึงพอใจ 5 ด้าน
           </h3>
           <div
+            className="ui-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="system-evaluation-modal-title"
             style={{
               width: "100%",
               minWidth: 0,
@@ -357,6 +366,7 @@ export default function SystemEvaluationWidget() {
           </h3>
           <div style={{ textAlign: "center", zIndex: 2 }}>
             <div
+              className="ui-modal__header"
               style={{
                 fontSize: "38px",
                 fontWeight: "800",
@@ -547,11 +557,16 @@ export default function SystemEvaluationWidget() {
                 marginBottom: "20px",
               }}
             >
-              <h2 style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}>
+              <h2
+                id="system-evaluation-modal-title"
+                style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}
+              >
                 รายการการประเมินทั้งหมด
               </h2>
               <button
+                className="ui-modal__close"
                 onClick={() => setIsModalOpen(false)}
+                aria-label="ปิดหน้าต่าง"
                 style={{
                   background: "none",
                   border: "none",
@@ -564,7 +579,10 @@ export default function SystemEvaluationWidget() {
               </button>
             </div>
 
-            <div style={{ overflowX: "auto", flex: 1 }}>
+            <div
+              className="ui-modal__body"
+              style={{ overflowX: "auto", flex: 1 }}
+            >
               {isListLoading ? (
                 <div
                   style={{

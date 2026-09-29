@@ -23,7 +23,9 @@ test("patient session stores, publishes, and clears login state", () => {
   globalThis.CustomEvent = class CustomEvent extends Event {};
 
   let changes = 0;
-  const unsubscribe = subscribePatientSession(() => { changes += 1; });
+  const unsubscribe = subscribePatientSession(() => {
+    changes += 1;
+  });
   setPatientSession("token-1", { id: 7, username: "patient" });
   assert.deepEqual(getPatientSession(), {
     token: "token-1",
@@ -39,4 +41,3 @@ test("patient session stores, publishes, and clears login state", () => {
   delete globalThis.sessionStorage;
   delete globalThis.CustomEvent;
 });
-

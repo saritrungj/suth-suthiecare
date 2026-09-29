@@ -1,7 +1,9 @@
 function assertPatientAccountId(patientAccountId) {
   const normalized = Number(patientAccountId);
   if (!Number.isInteger(normalized) || normalized < 1) {
-    throw new Error("A valid patient account is required for a form submission");
+    throw new Error(
+      "A valid patient account is required for a form submission",
+    );
   }
   return normalized;
 }
@@ -22,9 +24,12 @@ async function resolveSubmissionOwner({
 }) {
   const accountId = assertPatientAccountId(patientAccountId);
   if (!connection || typeof connection.query !== "function") {
-    throw new Error("A database connection is required to resolve a submission owner");
+    throw new Error(
+      "A database connection is required to resolve a submission owner",
+    );
   }
-  if (!clinicType) throw new Error("A clinic type is required to resolve a submission owner");
+  if (!clinicType)
+    throw new Error("A clinic type is required to resolve a submission owner");
 
   // Lock the account row. This serialises submissions for one account across all API
   // instances and prevents two simultaneous requests creating separate open cases.
@@ -34,9 +39,18 @@ async function resolveSubmissionOwner({
   );
   if (!accountRows[0]) throw new Error("Patient account no longer exists");
 
-  let masterCase = await findOpenCaseByAccount(connection, accountId, clinicType);
+  let masterCase = await findOpenCaseByAccount(
+    connection,
+    accountId,
+    clinicType,
+  );
   if (masterCase) {
-    return { masterCaseId: masterCase.id, patientAccountId: accountId, identityHash: masterCase.identity_hash || accountIdentityHash || null, source: "account" };
+    return {
+      masterCaseId: masterCase.id,
+      patientAccountId: accountId,
+      identityHash: masterCase.identity_hash || accountIdentityHash || null,
+      source: "account",
+    };
   }
 
   // Legacy records may predate patient_account_id. Only adopt an unlinked record
@@ -52,7 +66,12 @@ async function resolveSubmissionOwner({
         "UPDATE mastercases SET patient_account_id = ? WHERE id = ? AND patient_account_id IS NULL",
         [accountId, masterCase.id],
       );
-      return { masterCaseId: masterCase.id, patientAccountId: accountId, identityHash: masterCase.identity_hash, source: "legacy-backfill" };
+      return {
+        masterCaseId: masterCase.id,
+        patientAccountId: accountId,
+        identityHash: masterCase.identity_hash,
+        source: "legacy-backfill",
+      };
     }
   }
 
@@ -60,20 +79,33 @@ async function resolveSubmissionOwner({
     "INSERT INTO mastercases (patient_account_id, identityValue, identity_hash, clinicType, status, currentStage) VALUES (?, NULL, ?, ?, 'Open', 'Registered')",
     [accountId, accountIdentityHash || null, clinicType],
   );
-  return { masterCaseId: created.insertId, patientAccountId: accountId, identityHash: accountIdentityHash || null, source: "created" };
+  return {
+    masterCaseId: created.insertId,
+    patientAccountId: accountId,
+    identityHash: accountIdentityHash || null,
+    source: "created",
+  };
 }
 
 async function resolveGuestSubmissionOwner({ connection, clinicType }) {
   if (!connection || typeof connection.query !== "function") {
-    throw new Error("A database connection is required to resolve a submission owner");
+    throw new Error(
+      "A database connection is required to resolve a submission owner",
+    );
   }
-  if (!clinicType) throw new Error("A clinic type is required to resolve a submission owner");
+  if (!clinicType)
+    throw new Error("A clinic type is required to resolve a submission owner");
 
   const [created] = await connection.query(
     "INSERT INTO mastercases (patient_account_id, identityValue, identity_hash, clinicType, status, currentStage) VALUES (NULL, NULL, NULL, ?, 'Open', 'Registered')",
     [clinicType],
   );
-  return { masterCaseId: created.insertId, patientAccountId: null, identityHash: null, source: "guest" };
+  return {
+    masterCaseId: created.insertId,
+    patientAccountId: null,
+    identityHash: null,
+    source: "guest",
+  };
 }
 
 module.exports = { resolveSubmissionOwner, resolveGuestSubmissionOwner };

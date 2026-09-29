@@ -86,24 +86,40 @@ export default function EditBannerModal({ banner, onClose, onSave }) {
       setIsCropping(false);
       setRawImage(null);
     } catch (e) {
-      await showErrorAlert({ error: e, title: "ตัดรูปภาพไม่สำเร็จ", fallback: "กรุณาลองใหม่อีกครั้งหรือใช้รูปภาพอื่น" });
+      await showErrorAlert({
+        error: e,
+        title: "ตัดรูปภาพไม่สำเร็จ",
+        fallback: "กรุณาลองใหม่อีกครั้งหรือใช้รูปภาพอื่น",
+      });
     }
   };
 
   const handleSave = async () => {
-    if (!image) return showInfoAlert({ title: "ยังไม่ได้เลือกรูปภาพ", text: "กรุณาเลือกภาพแบนเนอร์ก่อนบันทึก" });
+    if (!image)
+      return showInfoAlert({
+        title: "ยังไม่ได้เลือกรูปภาพ",
+        text: "กรุณาเลือกภาพแบนเนอร์ก่อนบันทึก",
+      });
     const finalFilename = filename.replace(/\.[^/.]+$/, ".jpg");
     await onSave({ ...banner, image, filename: finalFilename, link });
   };
 
   return (
-    <div className="ebm-premium-overlay">
+    <div className="ebm-premium-overlay" role="presentation">
       <div
         className="ebm-premium-card"
+        role="dialog"
+        aria-modal="true"
+        aria-label={isCropping ? "ปรับตำแหน่งรูปภาพใหม่" : "แก้ไขแบนเนอร์"}
         style={isCropping ? { width: "700px" } : {}}
       >
         {!isCropping && (
-          <button className="ebm-close-btn" onClick={onClose} type="button">
+          <button
+            className="ebm-close-btn"
+            onClick={onClose}
+            type="button"
+            aria-label="ปิดหน้าต่าง"
+          >
             <span className="ebm-close-icon"></span>
           </button>
         )}

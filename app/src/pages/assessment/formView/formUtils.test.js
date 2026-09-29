@@ -69,7 +69,10 @@ test("updates a scored group when its sub-question answers change", () => {
     },
   ];
 
-  assert.equal(buildScoreResults(questions, { q1: "Yes", q2: "Yes" })[0].score, 5);
+  assert.equal(
+    buildScoreResults(questions, { q1: "Yes", q2: "Yes" })[0].score,
+    5,
+  );
   assert.equal(countScoredTargets(questions), 1);
 });
 
@@ -83,10 +86,21 @@ test("removes national ID questions from legacy forms before rendering", () => {
   const questions = [
     { id: "id", type: "national_id" },
     { id: "name", type: "full_name" },
-    { id: "group", type: "group", subQuestions: [{ id: "nested-id", type: "national_id" }, { id: "phone", type: "phone_number" }] },
+    {
+      id: "group",
+      type: "group",
+      subQuestions: [
+        { id: "nested-id", type: "national_id" },
+        { id: "phone", type: "phone_number" },
+      ],
+    },
   ];
   assert.deepEqual(withoutNationalIdQuestions(questions), [
     { id: "name", type: "full_name" },
-    { id: "group", type: "group", subQuestions: [{ id: "phone", type: "phone_number" }] },
+    {
+      id: "group",
+      type: "group",
+      subQuestions: [{ id: "phone", type: "phone_number" }],
+    },
   ]);
 });

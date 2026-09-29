@@ -23,10 +23,14 @@ async function main() {
 
     const [rows] = await db.query("SHOW TABLES");
     const tableNames = new Set(rows.map((row) => Object.values(row)[0]));
-    const missingTables = requiredTables.filter((table) => !tableNames.has(table));
+    const missingTables = requiredTables.filter(
+      (table) => !tableNames.has(table),
+    );
 
     if (missingTables.length) {
-      throw new Error(`Local schema is missing required tables: ${missingTables.join(", ")}.`);
+      throw new Error(
+        `Local schema is missing required tables: ${missingTables.join(", ")}.`,
+      );
     }
 
     console.log(

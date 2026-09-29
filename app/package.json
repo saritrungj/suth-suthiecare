@@ -62,7 +62,7 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",
     "audit:a11y": "playwright test --config playwright.audit.config.mjs",
-    "test:unit": "node --test src/utils/*.test.js src/permissions/*.test.js src/pages/assessment/history/*.test.js"
+    "test:unit": "node --test src/utils/*.test.js src/permissions/*.test.js src/pages/assessment/history/*.test.js src/pages/assessment/formView/*.test.js"
   },
   "browserslist": {
     "production": [

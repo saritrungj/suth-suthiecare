@@ -7,7 +7,12 @@ export default function PatientProtectedRoute({ children }) {
   const { token, user } = getPatientSession();
   if (!token || !user) {
     const returnTo = `${location.pathname}${location.search}`;
-    return <Navigate to={`/account/login?returnTo=${encodeURIComponent(returnTo)}`} replace />;
+    return (
+      <Navigate
+        to={`/account/login?returnTo=${encodeURIComponent(returnTo)}`}
+        replace
+      />
+    );
   }
   return children;
 }

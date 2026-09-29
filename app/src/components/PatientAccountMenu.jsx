@@ -10,7 +10,11 @@ import {
 } from "../utils/patientSession";
 import "./PatientAccountMenu.css";
 
-export default function PatientAccountMenu({ onDark = false, onNavigate, stackOnMobile = false }) {
+export default function PatientAccountMenu({
+  onDark = false,
+  onNavigate,
+  stackOnMobile = false,
+}) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const rootRef = useRef(null);
@@ -18,7 +22,10 @@ export default function PatientAccountMenu({ onDark = false, onNavigate, stackOn
   const [open, setOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
-  useEffect(() => subscribePatientSession(() => setSession(getPatientSession())), []);
+  useEffect(
+    () => subscribePatientSession(() => setSession(getPatientSession())),
+    [],
+  );
 
   useEffect(() => {
     if (!session.token) return undefined;
@@ -38,7 +45,8 @@ export default function PatientAccountMenu({ onDark = false, onNavigate, stackOn
   useEffect(() => {
     if (!open) return undefined;
     const close = (event) => {
-      if (event.key === "Escape" || !rootRef.current?.contains(event.target)) setOpen(false);
+      if (event.key === "Escape" || !rootRef.current?.contains(event.target))
+        setOpen(false);
     };
     document.addEventListener("pointerdown", close);
     document.addEventListener("keydown", close);
@@ -83,12 +91,16 @@ export default function PatientAccountMenu({ onDark = false, onNavigate, stackOn
     );
   }
 
-  const displayName = [session.user.first_name, session.user.last_name]
-    .filter(Boolean)
-    .join(" ") || session.user.username;
+  const displayName =
+    [session.user.first_name, session.user.last_name]
+      .filter(Boolean)
+      .join(" ") || session.user.username;
 
   return (
-    <div className={`patient-account-menu ${open ? "is-open" : ""} ${onDark ? "is-on-dark" : ""} ${stackOnMobile ? "is-mobile-stack" : ""}`} ref={rootRef}>
+    <div
+      className={`patient-account-menu ${open ? "is-open" : ""} ${onDark ? "is-on-dark" : ""} ${stackOnMobile ? "is-mobile-stack" : ""}`}
+      ref={rootRef}
+    >
       <button
         type="button"
         className="patient-account-trigger"
@@ -98,7 +110,9 @@ export default function PatientAccountMenu({ onDark = false, onNavigate, stackOn
         aria-label={`${t("nav.patient_account", "บัญชีผู้มารับบริการ")} ${displayName}`}
       >
         <span className="patient-account-avatar" aria-hidden="true">
-          {(session.user.first_name || session.user.username || "U").charAt(0).toUpperCase()}
+          {(session.user.first_name || session.user.username || "U")
+            .charAt(0)
+            .toUpperCase()}
         </span>
         <span className="patient-account-copy">
           <small>{t("nav.patient_account", "บัญชีผู้มารับบริการ")}</small>
@@ -110,7 +124,11 @@ export default function PatientAccountMenu({ onDark = false, onNavigate, stackOn
       {open && (
         <div className="patient-account-dropdown" role="menu">
           <div className="patient-account-menu-items">
-            <button type="button" role="menuitem" onClick={() => go("/history")}>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => go("/history")}
+            >
               <FiClock aria-hidden="true" />
               {t("nav.history", "ตรวจสอบประวัติ")}
             </button>

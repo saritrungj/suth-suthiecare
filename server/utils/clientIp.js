@@ -13,7 +13,9 @@ const withoutProxyPort = (value) => {
 };
 
 const getClientIp = (req) =>
-  withoutProxyPort(req.headers["cf-connecting-ip"] || req.ip || req.socket.remoteAddress);
+  withoutProxyPort(
+    req.headers["cf-connecting-ip"] || req.ip || req.socket.remoteAddress,
+  );
 
 const clientIpKeyGenerator = (req) => ipKeyGenerator(getClientIp(req));
 

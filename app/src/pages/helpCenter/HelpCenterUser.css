@@ -31,6 +31,55 @@
   margin: 0;
 }
 
+.hc-user-empty-state {
+  display: flex;
+  min-height: 260px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px 24px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 18px;
+  background: #ffffff;
+  color: #64748b;
+  text-align: center;
+}
+
+.hc-user-empty-state--compact {
+  min-height: 150px;
+  margin-top: 20px;
+  padding: 28px 20px;
+}
+
+.hc-user-empty-state > svg {
+  font-size: 34px;
+  color: #f47932;
+}
+
+.hc-user-empty-state h2,
+.hc-user-empty-state h3,
+.hc-user-empty-state p {
+  margin: 0;
+}
+
+.hc-user-empty-state h2,
+.hc-user-empty-state h3 {
+  color: #334155;
+}
+
+.hc-user-empty-state button {
+  margin-top: 8px;
+  padding: 9px 18px;
+  border: 0;
+  border-radius: 10px;
+  background: #f47932;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 @keyframes hcUserSpin {
   0% {
     transform: rotate(0deg);

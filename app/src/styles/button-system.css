@@ -1,0 +1,74 @@
+/* Shared action-button contract: brand orange with accessible white text. */
+:root {
+  --suth-brand-orange: #f47932;
+  --suth-brand-orange-hover: #ea580c;
+}
+
+:is(
+  .bm-add-btn,
+  .cm-btn-add,
+  .sum-add-btn,
+  .btn-add,
+  .hc-btn-add,
+  .fm-btn-add-form,
+  .scd-add-walkin-btn,
+  .add-btn,
+  .srp-create-btn,
+  .org-member-add button,
+  .cdm-btn-add-q-dotted,
+  .sfb-btn-add-rule,
+  .sfb-btn-add-sub-type,
+  .sfb-btn-add-sub-opt,
+  .sut2-nav__btn--staff,
+  .preview-auth-notice button
+) {
+  background: var(--suth-brand-orange) !important;
+  border-color: var(--suth-brand-orange) !important;
+  border-style: solid !important;
+  color: #ffffff !important;
+}
+
+:is(
+    .bm-add-btn,
+    .cm-btn-add,
+    .sum-add-btn,
+    .btn-add,
+    .hc-btn-add,
+    .fm-btn-add-form,
+    .scd-add-walkin-btn,
+    .add-btn,
+    .srp-create-btn,
+    .org-member-add button,
+    .cdm-btn-add-q-dotted,
+    .sfb-btn-add-rule,
+    .sfb-btn-add-sub-type,
+    .sfb-btn-add-sub-opt,
+    .sut2-nav__btn--staff,
+    .preview-auth-notice button
+  ):hover:not(:disabled) {
+  background: var(--suth-brand-orange-hover) !important;
+  border-color: var(--suth-brand-orange-hover) !important;
+  color: #ffffff !important;
+}
+
+:is(
+    .bm-add-btn,
+    .cm-btn-add,
+    .sum-add-btn,
+    .btn-add,
+    .hc-btn-add,
+    .fm-btn-add-form,
+    .scd-add-walkin-btn,
+    .add-btn,
+    .srp-create-btn,
+    .org-member-add button,
+    .cdm-btn-add-q-dotted,
+    .sfb-btn-add-rule,
+    .sfb-btn-add-sub-type,
+    .sfb-btn-add-sub-opt,
+    .sut2-nav__btn--staff,
+    .preview-auth-notice button
+  )
+  > * {
+  color: inherit !important;
+}

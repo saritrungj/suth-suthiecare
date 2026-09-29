@@ -13,8 +13,7 @@
   --patient-text-title: 1.5rem;
   min-height: 100svh;
   padding: max(84px, calc(60px + env(safe-area-inset-top)))
-    max(16px, env(safe-area-inset-right))
-    max(24px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom))
     max(16px, env(safe-area-inset-left));
   display: flex;
   align-items: center;
@@ -42,7 +41,9 @@
   font-size: var(--patient-text-sm);
   font-weight: 700;
   text-decoration: none;
-  transition: background-color 180ms ease-out, color 180ms ease-out;
+  transition:
+    background-color 180ms ease-out,
+    color 180ms ease-out;
 }
 
 .patient-auth-home:hover {
@@ -171,7 +172,10 @@
   font-size: 0.875rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background-color 180ms ease-out, color 180ms ease-out, box-shadow 180ms ease-out;
+  transition:
+    background-color 180ms ease-out,
+    color 180ms ease-out,
+    box-shadow 180ms ease-out;
 }
 
 .patient-login-role-switcher button:hover:not(.is-active) {
@@ -246,7 +250,9 @@
   color: var(--patient-ink);
   font: inherit;
   font-size: var(--patient-text-base);
-  transition: border-color 160ms ease-out, box-shadow 160ms ease-out;
+  transition:
+    border-color 160ms ease-out,
+    box-shadow 160ms ease-out;
 }
 
 .patient-auth-field input::placeholder {
@@ -291,6 +297,48 @@
   background: transparent;
   color: #536679;
   font-size: 20px;
+}
+
+.patient-password-rules {
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+  list-style: none;
+  font-size: var(--patient-text-sm);
+  color: var(--patient-muted);
+}
+
+.patient-password-rules li {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.patient-password-rules svg {
+  flex: 0 0 auto;
+  margin-top: 3px;
+  color: #b42318;
+}
+
+.patient-password-rules li.is-met {
+  color: #1d6b3f;
+}
+
+.patient-password-rules li.is-met svg {
+  color: #1d6b3f;
+}
+
+.patient-password-rules .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .patient-password-toggle:hover {
@@ -383,7 +431,9 @@
   font-size: var(--patient-text-base);
   font-weight: 800;
   cursor: pointer;
-  transition: background-color 180ms ease-out, transform 180ms ease-out;
+  transition:
+    background-color 180ms ease-out,
+    transform 180ms ease-out;
 }
 
 .patient-auth-button:hover:not(:disabled) {
@@ -425,6 +475,27 @@
 
 .patient-auth-error svg {
   margin-top: 2px;
+}
+
+.patient-auth-notice {
+  margin: 0 0 22px;
+  padding: 12px 14px;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: start;
+  gap: 9px;
+  border: 1px solid #93c9a7;
+  border-radius: 10px;
+  background: #eff9f2;
+  color: #185c38;
+  font-size: var(--patient-text-sm);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.patient-auth-notice svg {
+  margin-top: 2px;
+  color: #14713f;
 }
 
 .patient-login-page .patient-login-register {
@@ -663,8 +734,15 @@
   background-image:
     linear-gradient(var(--patient-civic-grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--patient-civic-grid) 1px, transparent 1px),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(226, 232, 231, 0.38));
-  background-size: 48px 48px, 48px 48px, 100% 100%;
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.82),
+      rgba(226, 232, 231, 0.38)
+    );
+  background-size:
+    48px 48px,
+    48px 48px,
+    100% 100%;
 }
 
 .patient-auth-toolbar {
@@ -708,7 +786,9 @@
   font-size: 0.86rem;
   font-weight: 750;
   cursor: pointer;
-  transition: background-color 160ms ease-out, color 160ms ease-out;
+  transition:
+    background-color 160ms ease-out,
+    color 160ms ease-out;
 }
 
 .patient-language-switcher button:hover:not(.is-active) {
@@ -844,6 +924,11 @@
   grid-column: 1 / -1;
 }
 
+/* Keep side-by-side inputs aligned when one field grows (password checklist). */
+.patient-register-fields > .patient-auth-field {
+  align-content: start;
+}
+
 .patient-optional-label {
   margin-left: 7px;
   color: #6c7e8e;
@@ -872,7 +957,10 @@
 
 @media (max-width: 899px) {
   .patient-civic-auth-page {
-    background-size: 40px 40px, 40px 40px, 100% 100%;
+    background-size:
+      40px 40px,
+      40px 40px,
+      100% 100%;
   }
 
   .patient-register-page {
@@ -979,6 +1067,210 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.patient-recovery-flow {
+  display: grid;
+  gap: 22px;
+}
+
+.patient-recovery-progress {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.patient-recovery-progress span {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 7px;
+  align-items: center;
+  color: #667789;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.patient-recovery-progress b {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #aebdca;
+  border-radius: 50%;
+  font-size: 0.75rem;
+}
+
+.patient-recovery-progress .is-current,
+.patient-recovery-progress .is-complete {
+  color: var(--patient-orange-text);
+}
+
+.patient-recovery-progress .is-current b,
+.patient-recovery-progress .is-complete b {
+  border-color: var(--patient-orange);
+  background: #fff0e7;
+}
+
+.patient-recovery-heading {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
+}
+
+.patient-recovery-heading > span,
+.patient-recovery-result > svg {
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #fff0e7;
+  color: var(--patient-orange-text);
+  font-size: 20px;
+}
+
+.patient-recovery-heading h2 {
+  margin: 0;
+  color: var(--patient-ink);
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+
+.patient-recovery-heading p {
+  margin: 5px 0 0;
+  color: var(--patient-muted);
+  font-size: var(--patient-text-sm);
+  line-height: 1.55;
+}
+
+.patient-otp-inputs {
+  width: min(100%, 348px);
+  display: flex;
+  gap: clamp(6px, 1.4vw, 12px);
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.patient-otp-inputs input {
+  width: min(48px, 13vw);
+  min-height: 54px;
+  padding: 0;
+  border: 1px solid #aab9c6;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--patient-navy);
+  font:
+    700 1.35rem/1 "Sarabun",
+    "Noto Sans Thai",
+    system-ui,
+    sans-serif;
+  text-align: center;
+  transition:
+    border-color 160ms ease-out,
+    box-shadow 160ms ease-out,
+    background-color 160ms ease-out;
+}
+
+.patient-otp-inputs input:hover:not(:disabled) {
+  border-color: var(--patient-orange);
+}
+
+.patient-otp-inputs input:focus-visible {
+  outline: 0;
+  border-color: var(--patient-orange-text);
+  box-shadow: 0 0 0 3px rgba(244, 121, 50, 0.25);
+}
+
+.patient-recovery-result {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #c9d5df;
+  border-radius: 12px;
+  background: #f7fafc;
+  color: #314a5f;
+  font-size: var(--patient-text-sm);
+  line-height: 1.55;
+}
+
+.patient-recovery-result.is-success {
+  border-color: #9ec5ae;
+  background: #f2faf5;
+}
+
+.patient-recovery-result.is-success > svg {
+  background: #e2f4e9;
+  color: #206a43;
+}
+
+.patient-recovery-result p {
+  margin: 0;
+}
+
+.patient-recovery-back {
+  justify-self: start;
+}
+
+.patient-otp-flow {
+  --otp-space-tight: 8px;
+  --otp-space-group: 24px;
+  gap: var(--otp-space-group);
+}
+
+.patient-otp-flow .patient-auth-field {
+  gap: var(--otp-space-tight);
+}
+
+.patient-otp-flow .patient-auth-field-help {
+  max-width: 44ch;
+  margin: 0;
+}
+
+.patient-otp-secondary-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.patient-otp-secondary-actions .patient-auth-link {
+  flex: 0 0 auto;
+}
+
+.patient-otp-secondary-actions > span {
+  width: 1px;
+  height: 20px;
+  background: var(--patient-line);
+}
+
+@media (max-width: 480px) {
+  .patient-recovery-progress span {
+    grid-template-columns: 24px;
+    gap: 4px;
+    text-align: center;
+  }
+
+  .patient-recovery-progress {
+    justify-content: space-between;
+  }
+
+  .patient-otp-inputs input {
+    min-height: 50px;
+  }
+
+  .patient-otp-secondary-actions {
+    gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .patient-otp-inputs input {
+    transition: none;
+  }
 }
 
 @media (max-width: 480px) {

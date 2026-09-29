@@ -86,11 +86,15 @@ export default function CaseModals({
           className="cdm-sub-modal-overlay"
           style={{ zIndex: 999999 }}
           onClick={() => setShowFollowupModal(false)}
+          role="presentation"
         >
           <div
             className="cdm-sub-modal-card"
             onClick={(e) => e.stopPropagation()}
             style={{ maxWidth: "500px", width: "100%", padding: "24px" }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="ส่งแบบประเมินให้คนไข้"
           >
             <div
               style={{
@@ -121,6 +125,7 @@ export default function CaseModals({
                   borderRadius: "50%",
                 }}
                 onClick={() => setShowFollowupModal(false)}
+                aria-label="ปิดหน้าต่าง"
               >
                 <FaTimes color="#64748b" />
               </button>
@@ -330,8 +335,15 @@ export default function CaseModals({
           className="cdm-sub-modal-overlay"
           style={{ zIndex: 999999 }}
           onClick={() => setShowCloseCaseConfirm(false)}
+          role="presentation"
         >
-          <div className="cdm-sub-modal-card" style={{ textAlign: "center" }}>
+          <div
+            className="cdm-sub-modal-card"
+            style={{ textAlign: "center" }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="ยืนยันสิ้นสุดการรักษา"
+          >
             <FaArchive size={48} color="#dc2626" />
             <h3 style={{ marginTop: "16px" }}>ยืนยันสิ้นสุดการรักษา?</h3>
             <p
@@ -373,10 +385,14 @@ export default function CaseModals({
           className="cdm-sub-modal-overlay"
           style={{ zIndex: 999999 }}
           onClick={() => setShowSelectModal(false)}
+          role="presentation"
         >
           <div
             className="cdm-sub-modal-card"
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="เลือกข้อมูลคัดลอก"
           >
             <h3>เลือกข้อมูลคัดลอก</h3>
             <div className="cdm-copy-check-list">
@@ -432,8 +448,15 @@ export default function CaseModals({
           className="cdm-sub-modal-overlay"
           style={{ zIndex: 999999 }}
           onClick={() => setShowDeleteConfirm(false)}
+          role="presentation"
         >
-          <div className="cdm-sub-modal-card" style={{ textAlign: "center" }}>
+          <div
+            className="cdm-sub-modal-card"
+            style={{ textAlign: "center" }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="ยืนยันลบแบบฟอร์ม"
+          >
             <FaExclamationTriangle size={48} color="#ef4444" />
             <h3 style={{ marginTop: "16px" }}>ยืนยันลบแบบฟอร์มนี้ทิ้ง?</h3>
             <p

@@ -262,11 +262,21 @@ export default function ExportExcelModal({
   };
 
   return (
-    <div className="eem-modal-overlay" onClick={onClose}>
-      <div className="eem-modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="eem-modal-overlay" onClick={onClose} role="presentation">
+      <div
+        className="eem-modal-content"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="เลือกคำถามที่ต้องการ Export เป็น Excel"
+      >
         <div className="eem-modal-header">
           <h3>เลือกคำถามที่ต้องการ Export เป็น Excel</h3>
-          <button className="eem-close-btn" onClick={onClose}>
+          <button
+            className="eem-close-btn"
+            onClick={onClose}
+            aria-label="ปิดหน้าต่าง"
+          >
             <FiX size={20} />
           </button>
         </div>

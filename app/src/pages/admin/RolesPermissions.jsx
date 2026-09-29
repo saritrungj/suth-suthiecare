@@ -1,22 +1,256 @@
 import { useEffect, useMemo, useState } from "react";
-import { createRole, deleteRole, getRolePermissions, getRoles, saveRolePermissions } from "../../services/api";
+import {
+  createRole,
+  deleteRole,
+  getRolePermissions,
+  getRoles,
+  saveRolePermissions,
+} from "../../services/api";
 import { PERMISSION_GROUPS } from "../../permissions/permissionRegistry";
-import { confirmAlert, showErrorAlert, showSuccessAlert } from "../../utils/alerts";
+import {
+  confirmAlert,
+  showErrorAlert,
+  showSuccessAlert,
+} from "../../utils/alerts";
 import "./RolesPermissions.css";
 
-const actionLabel = { view: "ดูข้อมูล", create: "สร้าง", update: "แก้ไข", delete: "ลบ", assign: "จัดสรร", export: "ส่งออก" };
-const toneByGroup = { dashboard: "info", cases: "risk", appointments: "violet", patient_members: "teal", forms: "amber", clinics: "teal", help_center: "info", content: "amber" };
+const actionLabel = {
+  view: "ดูข้อมูล",
+  create: "สร้าง",
+  update: "แก้ไข",
+  delete: "ลบ",
+  assign: "จัดสรร",
+  export: "ส่งออก",
+};
+const toneByGroup = {
+  dashboard: "info",
+  cases: "risk",
+  appointments: "violet",
+  patient_members: "teal",
+  forms: "amber",
+  clinics: "teal",
+  help_center: "info",
+  content: "amber",
+};
 
 export default function RolesPermissions() {
-  const [roles, setRoles] = useState([]); const [selected, setSelected] = useState(null); const [permissions, setPermissions] = useState(new Set()); const [name, setName] = useState(""); const [description, setDescription] = useState(""); const [error, setError] = useState(""); const [saving, setSaving] = useState(false);
-  const allKeys = useMemo(() => PERMISSION_GROUPS.flatMap((group) => group.actions.map((action) => `${group.id}.${action}`)), []);
+  const [roles, setRoles] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [permissions, setPermissions] = useState(new Set());
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+  const allKeys = useMemo(
+    () =>
+      PERMISSION_GROUPS.flatMap((group) =>
+        group.actions.map((action) => `${group.id}.${action}`),
+      ),
+    [],
+  );
   const selectedRole = roles.find((role) => role.id === selected);
-  const load = async () => { try { const { data } = await getRoles(); setRoles(data); setSelected((current) => current || data[0]?.id || null); } catch { setError("ไม่สามารถโหลดบทบาทได้"); } };
-  useEffect(() => { load(); }, []);
-  useEffect(() => { if (!selected) return; getRolePermissions(selected).then(({ data }) => setPermissions(new Set(data))).catch(() => setPermissions(new Set())); }, [selected]);
-  const toggle = (key) => setPermissions((previous) => { const next = new Set(previous); next.has(key) ? next.delete(key) : next.add(key); return next; });
-  const save = async () => { setSaving(true); try { await saveRolePermissions(selected, { permissions: [...permissions] }); setError(""); await showSuccessAlert({ title: "บันทึกสิทธิ์เรียบร้อยแล้ว", text: `อัปเดตสิทธิ์ของ ${selectedRole?.name || "บทบาทที่เลือก"} แล้ว` }); } catch (err) { setError(err.response?.data?.message || "ไม่สามารถบันทึกสิทธิ์ได้"); await showErrorAlert({ error: err, title: "บันทึกสิทธิ์ไม่สำเร็จ" }); } finally { setSaving(false); } };
-  const add = async (event) => { event.preventDefault(); try { const { data } = await createRole({ name, description }); await saveRolePermissions(data.id, { permissions: [] }); setName(""); setDescription(""); await load(); setSelected(data.id); await showSuccessAlert({ title: "เพิ่มบทบาทเรียบร้อยแล้ว", text: `สร้างบทบาท ${data.name || name} แล้ว` }); } catch (err) { setError(err.response?.data?.message || "ไม่สามารถสร้างบทบาทได้"); await showErrorAlert({ error: err, title: "เพิ่มบทบาทไม่สำเร็จ" }); } };
-  const remove = async () => { if (!selected) return; const roleName = selectedRole?.name || "บทบาทที่เลือก"; const confirmed = await confirmAlert({ title: "ลบบทบาท?", text: `ต้องการลบบทบาท ${roleName} หรือไม่ การดำเนินการนี้ไม่สามารถย้อนกลับได้`, confirmText: "ลบบทบาท", danger: true }); if (!confirmed) return; try { await deleteRole(selected); setSelected(null); await load(); await showSuccessAlert({ title: "ลบบทบาทเรียบร้อยแล้ว", text: `ลบ ${roleName} ออกจากระบบแล้ว` }); } catch (err) { setError(err.response?.data?.message || "ไม่สามารถลบบทบาทได้"); await showErrorAlert({ error: err, title: "ลบบทบาทไม่สำเร็จ" }); } };
-  return <main className="srp-roles-permissions-page"><main className="srp-main-content-area"><header className="srp-roles-header-section"><div><h1>บทบาทและสิทธิ์หน่วยงาน</h1><p>ตั้งค่าแม่แบบสิทธิ์กลาง แล้วมอบหมายให้เจ้าหน้าที่ในแต่ละหน่วยงาน</p></div><div className="srp-header-actions"><span className="srp-permission-count" aria-live="polite"><strong>{permissions.size}</strong> จาก {allKeys.length} สิทธิ์</span><button className="srp-create-btn" onClick={save} disabled={!selected || saving}>{saving ? "กำลังบันทึก…" : "บันทึกสิทธิ์"}</button></div></header>{error && <p role="alert">{error}</p>}<div className="srp-roles-grid-layout"><aside className="srp-card srp-role-card"><div className="srp-card-heading"><div><h2>บทบาท</h2><p>เลือกบทบาทเพื่อแก้ไขสิทธิ์</p></div><span>{roles.length}</span></div><div className="srp-role-list">{roles.map((role) => <button type="button" key={role.id} className={`srp-role-item ${selected === role.id ? "srp-active" : ""}`} onClick={() => setSelected(role.id)}><span>{role.name}</span>{selected === role.id && <small>กำลังแก้ไข</small>}</button>)}</div><div className="srp-role-create"><button type="button" className="srp-delete-role" onClick={remove} disabled={!selected}>ลบบทบาทที่เลือก</button><form onSubmit={add}><label>เพิ่มบทบาทใหม่<input required value={name} onChange={(event) => setName(event.target.value)} placeholder="เช่น เจ้าหน้าที่ติดตามเคส"/></label><label>คำอธิบาย<input value={description} onChange={(event) => setDescription(event.target.value)} placeholder="อธิบายหน้าที่โดยย่อ"/></label><button>เพิ่มบทบาท</button></form></div></aside><section className="srp-card srp-permission-card"><div className="srp-card-heading"><div><h2>สิทธิ์ของ {selectedRole?.name || "—"}</h2><p>เลือกการกระทำที่บทบาทนี้ทำได้ในหน่วยงานที่ได้รับมอบหมาย</p></div></div><div className="srp-permission-groups">{PERMISSION_GROUPS.map((group) => <section className={`srp-module-block tone-${toneByGroup[group.id]}`} key={group.id}><div className="srp-module-title"><span className="srp-module-dot" aria-hidden="true"/>{group.label}</div><div className="srp-permission-row">{group.actions.map((action) => { const key = `${group.id}.${action}`; const checked = permissions.has(key); return <label key={key} className={`crm-checkbox-label ${checked ? "is-checked" : ""}`}><input type="checkbox" checked={checked} onChange={() => toggle(key)} disabled={!selected}/><span>{checked ? "✓" : ""}</span>{actionLabel[action]}</label>; })}</div></section>)}</div></section></div></main></main>;
+  const load = async () => {
+    try {
+      const { data } = await getRoles();
+      setRoles(data);
+      setSelected((current) => current || data[0]?.id || null);
+    } catch {
+      setError("ไม่สามารถโหลดบทบาทได้");
+    }
+  };
+  useEffect(() => {
+    load();
+  }, []);
+  useEffect(() => {
+    if (!selected) return;
+    getRolePermissions(selected)
+      .then(({ data }) => setPermissions(new Set(data)))
+      .catch(() => setPermissions(new Set()));
+  }, [selected]);
+  const toggle = (key) =>
+    setPermissions((previous) => {
+      const next = new Set(previous);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
+  const save = async () => {
+    setSaving(true);
+    try {
+      await saveRolePermissions(selected, { permissions: [...permissions] });
+      setError("");
+      await showSuccessAlert({
+        title: "บันทึกสิทธิ์เรียบร้อยแล้ว",
+        text: `อัปเดตสิทธิ์ของ ${selectedRole?.name || "บทบาทที่เลือก"} แล้ว`,
+      });
+    } catch (err) {
+      setError(err.response?.data?.message || "ไม่สามารถบันทึกสิทธิ์ได้");
+      await showErrorAlert({ error: err, title: "บันทึกสิทธิ์ไม่สำเร็จ" });
+    } finally {
+      setSaving(false);
+    }
+  };
+  const add = async (event) => {
+    event.preventDefault();
+    try {
+      const { data } = await createRole({ name, description });
+      await saveRolePermissions(data.id, { permissions: [] });
+      setName("");
+      setDescription("");
+      await load();
+      setSelected(data.id);
+      await showSuccessAlert({
+        title: "เพิ่มบทบาทเรียบร้อยแล้ว",
+        text: `สร้างบทบาท ${data.name || name} แล้ว`,
+      });
+    } catch (err) {
+      setError(err.response?.data?.message || "ไม่สามารถสร้างบทบาทได้");
+      await showErrorAlert({ error: err, title: "เพิ่มบทบาทไม่สำเร็จ" });
+    }
+  };
+  const remove = async () => {
+    if (!selected) return;
+    const roleName = selectedRole?.name || "บทบาทที่เลือก";
+    const confirmed = await confirmAlert({
+      title: "ลบบทบาท?",
+      text: `ต้องการลบบทบาท ${roleName} หรือไม่ การดำเนินการนี้ไม่สามารถย้อนกลับได้`,
+      confirmText: "ลบบทบาท",
+      danger: true,
+    });
+    if (!confirmed) return;
+    try {
+      await deleteRole(selected);
+      setSelected(null);
+      await load();
+      await showSuccessAlert({
+        title: "ลบบทบาทเรียบร้อยแล้ว",
+        text: `ลบ ${roleName} ออกจากระบบแล้ว`,
+      });
+    } catch (err) {
+      setError(err.response?.data?.message || "ไม่สามารถลบบทบาทได้");
+      await showErrorAlert({ error: err, title: "ลบบทบาทไม่สำเร็จ" });
+    }
+  };
+  return (
+    <main className="srp-roles-permissions-page">
+      <main className="srp-main-content-area">
+        <header className="srp-roles-header-section">
+          <div>
+            <h1>บทบาทและสิทธิ์หน่วยงาน</h1>
+            <p>
+              ตั้งค่าแม่แบบสิทธิ์กลาง แล้วมอบหมายให้เจ้าหน้าที่ในแต่ละหน่วยงาน
+            </p>
+          </div>
+          <div className="srp-header-actions">
+            <span className="srp-permission-count" aria-live="polite">
+              <strong>{permissions.size}</strong> จาก {allKeys.length} สิทธิ์
+            </span>
+            <button
+              className="srp-create-btn"
+              onClick={save}
+              disabled={!selected || saving}
+            >
+              {saving ? "กำลังบันทึก…" : "บันทึกสิทธิ์"}
+            </button>
+          </div>
+        </header>
+        {error && <p role="alert">{error}</p>}
+        <div className="srp-roles-grid-layout">
+          <aside className="srp-card srp-role-card">
+            <div className="srp-card-heading">
+              <div>
+                <h2>บทบาท</h2>
+                <p>เลือกบทบาทเพื่อแก้ไขสิทธิ์</p>
+              </div>
+              <span>{roles.length}</span>
+            </div>
+            <div className="srp-role-list">
+              {roles.map((role) => (
+                <button
+                  type="button"
+                  key={role.id}
+                  className={`srp-role-item ${selected === role.id ? "srp-active" : ""}`}
+                  onClick={() => setSelected(role.id)}
+                >
+                  <span>{role.name}</span>
+                  {selected === role.id && <small>กำลังแก้ไข</small>}
+                </button>
+              ))}
+            </div>
+            <div className="srp-role-create">
+              <button
+                type="button"
+                className="srp-delete-role"
+                onClick={remove}
+                disabled={!selected}
+              >
+                ลบบทบาทที่เลือก
+              </button>
+              <form onSubmit={add}>
+                <label>
+                  เพิ่มบทบาทใหม่
+                  <input
+                    required
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    placeholder="เช่น เจ้าหน้าที่ติดตามเคส"
+                  />
+                </label>
+                <label>
+                  คำอธิบาย
+                  <input
+                    value={description}
+                    onChange={(event) => setDescription(event.target.value)}
+                    placeholder="อธิบายหน้าที่โดยย่อ"
+                  />
+                </label>
+                <button>เพิ่มบทบาท</button>
+              </form>
+            </div>
+          </aside>
+          <section className="srp-card srp-permission-card">
+            <div className="srp-card-heading">
+              <div>
+                <h2>สิทธิ์ของ {selectedRole?.name || "—"}</h2>
+                <p>เลือกการกระทำที่บทบาทนี้ทำได้ในหน่วยงานที่ได้รับมอบหมาย</p>
+              </div>
+            </div>
+            <div className="srp-permission-groups">
+              {PERMISSION_GROUPS.map((group) => (
+                <section
+                  className={`srp-module-block tone-${toneByGroup[group.id]}`}
+                  key={group.id}
+                >
+                  <div className="srp-module-title">
+                    <span className="srp-module-dot" aria-hidden="true" />
+                    {group.label}
+                  </div>
+                  <div className="srp-permission-row">
+                    {group.actions.map((action) => {
+                      const key = `${group.id}.${action}`;
+                      const checked = permissions.has(key);
+                      return (
+                        <label
+                          key={key}
+                          className={`crm-checkbox-label ${checked ? "is-checked" : ""}`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => toggle(key)}
+                            disabled={!selected}
+                          />
+                          <span>{checked ? "✓" : ""}</span>
+                          {actionLabel[action]}
+                        </label>
+                      );
+                    })}
+                  </div>
+                </section>
+              ))}
+            </div>
+          </section>
+        </div>
+      </main>
+    </main>
+  );
 }
