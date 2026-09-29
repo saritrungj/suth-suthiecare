@@ -47,6 +47,33 @@ export const verifyStaffPasswordRecoveryApi = (data) =>
 export const resetStaffPasswordApi = (data) =>
   api.post("/password-recovery/reset", data);
 export const getAuthorization = () => api.get("/me/authorization");
+
+// ── Agency data entry ──
+export const getAgencyMasters = () => api.get("/agency-entry/masters");
+export const getAgencyMasterSchema = (id) =>
+  api.get(`/agency-entry/masters/${id}`);
+export const validateAgencyImport = (data) =>
+  api.post("/agency-entry/validate", data);
+export const createAgencyRecord = (data) =>
+  api.post("/agency-entry/records", data);
+export const importAgencyRecords = (data) =>
+  api.post("/agency-entry/imports", data);
+export const getAgencyRecords = (params) =>
+  api.get("/agency-entry/records", { params });
+export const getAgencyRecord = (id) => api.get(`/agency-entry/records/${id}`);
+export const reviewAgencyRecord = (id, data) =>
+  api.post(`/agency-entry/records/${id}/review`, data);
+export const getAgenciesAdmin = () => api.get("/agency-entry/admin/agencies");
+export const createAgency = (data) =>
+  api.post("/agency-entry/admin/agencies", data);
+export const getAgencyMastersAdmin = (id) =>
+  api.get(`/agency-entry/admin/agencies/${id}/masters`);
+export const createAgencyMaster = (id, data) =>
+  api.post(`/agency-entry/admin/agencies/${id}/masters`, data);
+export const updateAgencyCheckupMaster = (agencyId, masterId, data) =>
+  api.put(`/agency-entry/admin/agencies/${agencyId}/masters/${masterId}`, data);
+export const addAgencyMember = (id, data) =>
+  api.post(`/agency-entry/admin/agencies/${id}/members`, data);
 export const getMyProfile = () => api.get("/me/profile");
 export const updateMyProfile = (data) => api.put("/me/profile", data);
 export const changeMyPassword = (data) => api.put("/me/password", data);
@@ -317,6 +344,10 @@ api.interceptors.request.use((config) => {
       ? localStorage.getItem(`suth_active_organization_${user.id}`)
       : null;
     if (organization) config.headers["X-Organization-Id"] = organization;
+    const agency = user?.id
+      ? localStorage.getItem(`suth_active_agency_${user.id}`)
+      : null;
+    if (agency) config.headers["X-Agency-Id"] = agency;
   } catch {
     /* invalid session is handled by the response interceptor */
   }

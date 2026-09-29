@@ -91,7 +91,30 @@ async function loadAuthorization(userId) {
     );
     memberships = rows;
   }
-  return { user, isSystemAdmin, memberships };
+  let agencyMemberships = [];
+  if (await tableExists("agency_memberships")) {
+    const [rows] = await db.query(
+      `SELECT am.id, am.agency_id, am.role, am.status, a.name agency_name, a.code agency_code, a.status agency_status
+         FROM agency_memberships am JOIN agencies a ON a.id=am.agency_id WHERE am.user_id=? ORDER BY a.name`,
+      [userId],
+    );
+    agencyMemberships = rows;
+  }
+  return { user, isSystemAdmin, memberships, agencyMemberships };
+}
+
+function isAgencyAuthorization(authorization) {
+  const memberships = authorization?.agencyMemberships || [];
+  const organizationMemberships = authorization?.memberships || [];
+  return (
+    !authorization?.isSystemAdmin &&
+    memberships.length > 0 &&
+    organizationMemberships.length === 0 &&
+    memberships.every(
+      (membership) =>
+        membership.status === "active" && membership.agency_status === "active",
+    )
+  );
 }
 
 function activeOrganization(req) {
@@ -215,4 +238,5 @@ module.exports = {
   requireAction,
   organizationWhere,
   audit,
+  isAgencyAuthorization,
 };

@@ -1,6 +1,9 @@
 const jwt = require("jsonwebtoken");
 const db = require("../config/db");
-const { loadAuthorization } = require("../authorization/authorization");
+const {
+  loadAuthorization,
+  isAgencyAuthorization,
+} = require("../authorization/authorization");
 
 const roleIdOf = (user) => Number(user?.role_id);
 
@@ -58,6 +61,20 @@ const verifyToken = async (req, res, next) => {
       }
     }
     req.authorizationProfile = authorization;
+    req.user.access_mode = isAgencyAuthorization(authorization)
+      ? "agency"
+      : "admin";
+    const requestPath = String(req.originalUrl || req.path).split("?")[0];
+    const allowedAgencyPath =
+      requestPath === "/api/me/authorization" ||
+      requestPath === "/api/agency-entry" ||
+      requestPath.startsWith("/api/agency-entry/");
+    if (req.user.access_mode === "agency" && !allowedAgencyPath) {
+      return res.status(403).json({
+        success: false,
+        message: "บัญชีหน่วยงานใช้ได้เฉพาะระบบบันทึกข้อมูล",
+      });
+    }
     return next();
   } catch (err) {
     // 401 (not 403) so the client session interceptor clears the stale

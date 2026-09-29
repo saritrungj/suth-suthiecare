@@ -21,6 +21,7 @@ const actionLabel = {
   delete: "ลบ",
   assign: "จัดสรร",
   export: "ส่งออก",
+  verify: "ตรวจสอบ / ยืนยัน",
 };
 const toneByGroup = {
   dashboard: "info",
@@ -31,7 +32,15 @@ const toneByGroup = {
   clinics: "teal",
   help_center: "info",
   content: "amber",
+  agency_entries: "violet",
 };
+
+// Agency roles are kept apart from system roles and only carry agency permissions.
+function selectedRoleIsAgency(roles, selected) {
+  return (
+    roles.find((role) => role.id === selected)?.code === "agency_data_encoder"
+  );
+}
 
 export default function RolesPermissions() {
   const [roles, setRoles] = useState([]);
@@ -41,6 +50,9 @@ export default function RolesPermissions() {
   const [description, setDescription] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const agencyOnly =
+    selectedRoleIsAgency(roles, selected) ||
+    [...permissions].some((key) => key.startsWith("agency_entries."));
   const allKeys = useMemo(
     () =>
       PERMISSION_GROUPS.flatMap((group) =>
@@ -215,7 +227,9 @@ export default function RolesPermissions() {
               </div>
             </div>
             <div className="srp-permission-groups">
-              {PERMISSION_GROUPS.map((group) => (
+              {PERMISSION_GROUPS.filter(
+                (group) => !agencyOnly || group.id === "agency_entries",
+              ).map((group) => (
                 <section
                   className={`srp-module-block tone-${toneByGroup[group.id]}`}
                   key={group.id}
@@ -237,7 +251,14 @@ export default function RolesPermissions() {
                             type="checkbox"
                             checked={checked}
                             onChange={() => toggle(key)}
-                            disabled={!selected}
+                            disabled={
+                              !selected ||
+                              (group.id === "agency_entries" &&
+                                [...permissions].some(
+                                  (permission) =>
+                                    !permission.startsWith("agency_entries."),
+                                ))
+                            }
                           />
                           <span>{checked ? "✓" : ""}</span>
                           {actionLabel[action]}

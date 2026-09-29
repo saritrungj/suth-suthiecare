@@ -27,6 +27,7 @@ const faqRoutes = require("./routes/faqRoutes"); // <-- เส้นทางจ
 const patientAuthRoutes = require("./routes/patientAuthRoutes");
 const patientRoutes = require("./routes/patientRoutes");
 const organizationRoutes = require("./routes/organizationRoutes");
+const agencyEntryRoutes = require("./routes/agencyEntryRoutes");
 const {
   verifyToken,
   requirePermission,
@@ -216,6 +217,7 @@ app.use("/api", caseRoutes);
 app.use("/api/clinics", clinicRoutes);
 app.use("/api/staffs", staffRoutes);
 app.use("/api/admin/help-center", faqRoutes);
+app.use("/api/agency-entry", agencyEntryRoutes);
 
 // 🟢 6. API ทดสอบ Telegram (ป้องกันด้วย token — เฉพาะผู้ที่ล็อกอินแล้ว)
 app.post(

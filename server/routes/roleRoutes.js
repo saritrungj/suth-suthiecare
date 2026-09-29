@@ -2,6 +2,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
+const { AGENCY_PERMISSIONS } = require("../agency/permissions");
 const {
   verifyToken,
   verifySuperAdmin,
@@ -44,7 +45,15 @@ const PERMISSION_KEYS = [
   "content.create",
   "content.update",
   "content.delete",
+  "agency_entries.create",
+  "agency_entries.view",
+  "agency_entries.verify",
 ];
+
+async function isProtectedAgencyRole(id) {
+  const [rows] = await db.query("SELECT code FROM roles WHERE id=?", [id]);
+  return rows[0]?.code === "agency_data_encoder";
+}
 
 // Role templates are global administration and are never editable by an organization role.
 router.get("/roles", verifyToken, verifySuperAdmin, async (req, res) => {
@@ -92,6 +101,40 @@ router.post(
         permissions.some((permission) => !PERMISSION_KEYS.includes(permission))
       ) {
         return res.status(422).json({ message: "ข้อมูลสิทธิ์ไม่ถูกต้อง" });
+      }
+      const hasAgency = permissions.some((key) =>
+        AGENCY_PERMISSIONS.includes(key),
+      );
+      const hasOther = permissions.some(
+        (key) => !AGENCY_PERMISSIONS.includes(key),
+      );
+      const [agencyTables] = await db.query(
+        "SHOW TABLES LIKE 'agency_memberships'",
+      );
+      const [agencyAccounts] = agencyTables.length
+        ? await db.query(
+            "SELECT 1 FROM users u JOIN agency_memberships am ON am.user_id=u.id WHERE u.role_id=? LIMIT 1",
+            [roleId],
+          )
+        : [[]];
+      if (
+        hasOther &&
+        (hasAgency ||
+          agencyAccounts.length ||
+          (await isProtectedAgencyRole(roleId)))
+      )
+        return res.status(422).json({
+          message: "บทบาท Agency กำหนดได้เฉพาะสิทธิ์ในหมวด Agency เท่านั้น",
+        });
+      if (hasAgency) {
+        const [organizationRoles] = await db.query(
+          "SELECT 1 FROM organization_memberships om JOIN users u ON u.id=om.user_id WHERE om.role_id=? OR u.role_id=? LIMIT 1",
+          [roleId, roleId],
+        );
+        if (organizationRoles.length || roleId === 1)
+          return res.status(422).json({
+            message: "สร้างบทบาท Agency แยกจากบทบาทที่ใช้ในระบบหลัก",
+          });
       }
       const connection = await db.getConnection();
       try {
@@ -145,6 +188,10 @@ router.delete("/roles/:id", verifyToken, verifySuperAdmin, async (req, res) => {
   const id = Number(req.params.id);
   if (!validRoleId(id))
     return res.status(422).json({ message: "รหัสบทบาทไม่ถูกต้อง" });
+  if (await isProtectedAgencyRole(id))
+    return res
+      .status(403)
+      .json({ message: "ไม่สามารถลบบทบาทเจ้าหน้าที่หน่วยงาน" });
   const [memberships] = await db.query(
     "SELECT 1 FROM organization_memberships WHERE role_id = ? LIMIT 1",
     [id],

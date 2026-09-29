@@ -27,7 +27,11 @@ const {
 const { normalizeEmail } = require("../services/otpService");
 
 const { encrypt, decrypt, maskName } = require("../utils/encryption");
-const { organizationWhere } = require("../authorization/authorization");
+const {
+  organizationWhere,
+  permissionsForRole,
+} = require("../authorization/authorization");
+const { isAgencyOnlyRole } = require("../agency/permissions");
 
 function safeDecrypt(value) {
   try {
@@ -601,6 +605,23 @@ router.put("/users/:id", verifyToken, verifySuperAdmin, async (req, res) => {
     if (!existingRows.length)
       return res.status(404).json({ message: "ไม่พบผู้ใช้" });
     const existing = existingRows[0];
+    const [agencyTable] = await db.query(
+      "SHOW TABLES LIKE 'agency_memberships'",
+    );
+    if (agencyTable.length) {
+      const [agencyRows] = await db.query(
+        "SELECT 1 FROM agency_memberships WHERE user_id=? LIMIT 1",
+        [existing.id],
+      );
+      if (
+        agencyRows.length &&
+        (requestedRoleId === 1 ||
+          !isAgencyOnlyRole(await permissionsForRole(requestedRoleId)))
+      )
+        return res.status(422).json({
+          message: "บัญชี Agency เปลี่ยนได้เฉพาะบทบาทที่มีสิทธิ์ Agency เท่านั้น",
+        });
+    }
     const actorRoleId = Number(req.user.role_id);
     const isSelf = Number(existing.id) === Number(req.user.id);
     if (actorRoleId !== 1) {

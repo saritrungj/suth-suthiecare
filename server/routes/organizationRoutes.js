@@ -5,9 +5,51 @@ const {
   loadAuthorization,
   permissionsForRole,
   audit,
+  isAgencyAuthorization,
 } = require("../authorization/authorization");
 
+const AGENCY_ENTRY_PERMISSIONS = [
+  "agency_entries.create",
+  "agency_entries.view",
+  "agency_entries.verify",
+];
+
 const router = express.Router();
+async function isAgencyRole(roleId) {
+  const [rows] = await db.query("SELECT code FROM roles WHERE id=?", [roleId]);
+  return rows[0]?.code === "agency_data_encoder";
+}
+async function mayUseAgencyRole(userId, requestedRoleId) {
+  const [agencyTables] = await db.query(
+    "SHOW TABLES LIKE 'agency_memberships'",
+  );
+  if (agencyTables.length) {
+    const [agencyMemberships] = await db.query(
+      "SELECT 1 FROM agency_memberships WHERE user_id=? LIMIT 1",
+      [userId],
+    );
+    if (agencyMemberships.length) return false;
+  }
+  if (
+    (await permissionsForRole(requestedRoleId)).some((key) =>
+      key.startsWith("agency_entries."),
+    )
+  )
+    return false;
+  const requestedAgency = await isAgencyRole(requestedRoleId);
+  const [memberships] = await db.query(
+    "SELECT r.code FROM organization_memberships om JOIN roles r ON r.id=om.role_id WHERE om.user_id=?",
+    [userId],
+  );
+  const hasOtherRole = memberships.some(
+    (membership) =>
+      membership.code && membership.code !== "agency_data_encoder",
+  );
+  const hasAgencyRole = memberships.some(
+    (membership) => membership.code === "agency_data_encoder",
+  );
+  return requestedAgency ? !hasOtherRole : !hasAgencyRole;
+}
 const createOrganizationCode = async () => {
   for (let attempt = 0; attempt < 5; attempt += 1) {
     const code = `ORG-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
@@ -61,8 +103,36 @@ router.get("/me/authorization", verifyToken, async (req, res) => {
       );
       organizations = rows;
     }
+    // Agency is an optional, separately deployed domain. Do not make a
+    // normal staff login fail while its migration has not been applied yet.
+    let agencies = [];
+    if (authorization.isSystemAdmin) {
+      const [agencyTables] = await db.query("SHOW TABLES LIKE 'agencies'");
+      if (agencyTables.length) {
+        [agencies] = await db.query(
+          "SELECT id, code, name FROM agencies WHERE status='active' ORDER BY name",
+        );
+      }
+    }
+    const agencyPermissions = (
+      await permissionsForRole(authorization.user.role_id)
+    ).filter((key) => AGENCY_ENTRY_PERMISSIONS.includes(key));
+    const agencyMemberships = authorization.agencyMemberships
+      .filter(
+        (item) => item.status === "active" && item.agency_status === "active",
+      )
+      .map((item) => ({
+        id: item.id,
+        agency: {
+          id: item.agency_id,
+          code: item.agency_code,
+          name: item.agency_name,
+        },
+        role: item.role,
+      }));
     return res.json({
       user: authorization.user,
+      access_mode: isAgencyAuthorization(authorization) ? "agency" : "admin",
       is_system_admin: authorization.isSystemAdmin,
       system_permissions: authorization.isSystemAdmin
         ? [
@@ -76,6 +146,9 @@ router.get("/me/authorization", verifyToken, async (req, res) => {
         : [],
       memberships,
       organizations,
+      agencies,
+      agency_memberships: agencyMemberships,
+      agency_permissions: agencyPermissions,
     });
   } catch (error) {
     return res
@@ -169,6 +242,13 @@ router.post("/organizations/:id/members", async (req, res) => {
     return res
       .status(422)
       .json({ success: false, message: "ข้อมูลสมาชิกไม่ถูกต้อง" });
+  if (!(await mayUseAgencyRole(Number(user_id), Number(role_id))))
+    return res
+      .status(409)
+      .json({
+        success: false,
+        message: "บัญชีเจ้าหน้าที่หน่วยงานไม่สามารถมีบทบาทผู้ดูแลระบบร่วมกันได้",
+      });
   try {
     await db.query(
       "INSERT INTO organization_memberships (user_id, organization_id, role_id, is_primary) VALUES (?, ?, ?, ?)",
@@ -205,6 +285,24 @@ router.put("/organizations/:id/members/:membershipId", async (req, res) => {
     return res
       .status(422)
       .json({ success: false, message: "ข้อมูลสมาชิกไม่ถูกต้อง" });
+  const [membership] = await db.query(
+    "SELECT user_id FROM organization_memberships WHERE id=? AND organization_id=?",
+    [req.params.membershipId, req.params.id],
+  );
+  if (!membership[0])
+    return res.status(404).json({ success: false, message: "ไม่พบสมาชิก" });
+  // Ignore the membership being changed while checking for incompatible roles.
+  const compatible = await mayUseAgencyRole(
+    Number(membership[0].user_id),
+    Number(role_id),
+  );
+  if (!compatible)
+    return res
+      .status(409)
+      .json({
+        success: false,
+        message: "บัญชีเจ้าหน้าที่หน่วยงานไม่สามารถมีบทบาทผู้ดูแลระบบร่วมกันได้",
+      });
   const [result] = await db.query(
     "UPDATE organization_memberships SET role_id=?, status=?, is_primary=? WHERE id=? AND organization_id=?",
     [

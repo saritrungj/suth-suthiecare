@@ -25,6 +25,7 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { usePermissions } from "../permissions/PermissionsProvider";
+import StaffContextSwitcher from "./StaffContextSwitcher";
 import {
   getSelectableOrganizations,
   hasActiveOrganizationMembership,
@@ -291,6 +292,36 @@ const rawMenuItems = [
     ],
   },
 
+  { type: "header", label: "Agency", key: "header-agency" },
+  {
+    href: "/admin/agency-entry",
+    icon: <FontAwesomeIcon icon={faFilePen} fixedWidth />,
+    label: "บันทึกข้อมูล",
+    key: "agency-entry",
+    module: "agency_entries.create",
+  },
+  {
+    href: "/admin/agency-records",
+    icon: <FontAwesomeIcon icon={faFolderOpen} fixedWidth />,
+    label: "ตรวจสอบข้อมูล",
+    key: "agency-records",
+    module: "agency_entries.view",
+  },
+  {
+    href: "/admin/agencies",
+    icon: <FontAwesomeIcon icon={faBuilding} fixedWidth />,
+    label: "จัดการ Agency",
+    key: "agencies",
+    module: "organizations.manage",
+  },
+  {
+    href: "/admin/agency-checkup-forms",
+    icon: <FontAwesomeIcon icon={faFilePen} fixedWidth />,
+    label: "จัดการฟอร์ม Check up",
+    key: "agency-checkup-forms",
+    module: "organizations.manage",
+  },
+
   // 🟣 บัญชีของฉัน (ทุกคนเข้าถึงได้ ไม่ต้องมีสิทธิ์)
   { type: "header", label: "บัญชีของฉัน", key: "header-account" },
   {
@@ -298,6 +329,25 @@ const rawMenuItems = [
     icon: <FontAwesomeIcon icon={faUserPen} fixedWidth />,
     label: "ข้อมูลส่วนตัว",
     key: "profile",
+  },
+];
+
+// Agency accounts are limited to data entry; the API rejects every other page.
+const agencyMenuItems = [
+  { type: "header", label: "Agency", key: "header-agency" },
+  {
+    href: "/admin/agency-entry",
+    icon: <FontAwesomeIcon icon={faFilePen} fixedWidth />,
+    label: "บันทึกข้อมูล",
+    key: "agency-entry",
+    module: "agency_entries.create",
+  },
+  {
+    href: "/admin/agency-records",
+    icon: <FontAwesomeIcon icon={faFolderOpen} fixedWidth />,
+    label: "ตรวจสอบข้อมูล",
+    key: "agency-records",
+    module: "agency_entries.view",
   },
 ];
 
@@ -339,7 +389,13 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
     activeOrganization,
   );
 
-  const menuItems = rawMenuItems
+  const isAgencyAccount = authorization?.access_mode === "agency";
+  const isAgencyPage =
+    /^\/admin\/(agencies|agency-checkup-forms|agency-entry|agency-records)(\/|$)/.test(
+      location.pathname,
+    );
+
+  const menuItems = (isAgencyAccount ? agencyMenuItems : rawMenuItems)
     .map((item) => {
       if (item.children) {
         const filteredChildren = item.children.filter(
@@ -356,7 +412,13 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
         return null;
       return item;
     })
-    .filter(Boolean);
+    .filter(Boolean)
+    // Drop section headers left without any visible item below them.
+    .filter(
+      (item, index, items) =>
+        item.type !== "header" ||
+        (items[index + 1] && items[index + 1].type !== "header"),
+    );
 
   useEffect(() => {
     if (window.innerWidth > 768) {
@@ -512,7 +574,14 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
           </button>
         </div>
 
-        {!collapsed && authorization && (
+        {!collapsed &&
+          authorization &&
+          (isAgencyAccount ||
+            (isAgencyPage && authorization.is_system_admin)) && (
+            <StaffContextSwitcher />
+          )}
+
+        {!collapsed && authorization && !isAgencyAccount && (
           <div className="organization-switcher">
             <label htmlFor="active-organization">หน่วยงานที่กำลังใช้งาน</label>
             <select

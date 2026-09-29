@@ -1,0 +1,267 @@
+.agency-checkup-forms-page {
+  --checkup-space-xs: 8px;
+  --checkup-space-sm: 12px;
+  --checkup-space-md: 16px;
+  --checkup-space-lg: 24px;
+  --checkup-space-xl: 32px;
+  --checkup-line: #e2e8f0;
+  --checkup-muted: #64748b;
+  --checkup-ink: #344a5f;
+  width: 100%;
+}
+.agency-checkup-forms-page .checkup-forms-workspace {
+  width: 100%;
+  container-type: inline-size;
+}
+.checkup-form-context {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.75fr) minmax(300px, 1.25fr);
+  gap: var(--checkup-space-xs) clamp(24px, 4vw, 48px);
+  align-items: end;
+  padding: var(--checkup-space-lg) var(--checkup-space-xl);
+  border-bottom: 1px solid var(--checkup-line);
+  background: #f8fafc;
+}
+.checkup-form-context > span {
+  color: var(--checkup-muted);
+  font-size: 0.8rem;
+}
+.checkup-form-context > strong {
+  grid-column: 1;
+  color: #1f2f3f;
+  overflow-wrap: anywhere;
+}
+.checkup-form-context label {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: grid;
+  gap: var(--checkup-space-xs);
+  color: var(--checkup-ink);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.checkup-form-context select,
+.checkup-form-editor input,
+.checkup-form-editor select {
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  border: 1px solid #afbdc7;
+  border-radius: 8px;
+  background: #fff;
+  color: #1f2f3f;
+  font: inherit;
+}
+.checkup-form-editor {
+  padding: var(--checkup-space-xl);
+}
+.checkup-editor-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--checkup-space-lg);
+}
+.checkup-editor-heading h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  text-wrap: balance;
+}
+.checkup-editor-heading p,
+.checkup-form-hint {
+  max-width: 70ch;
+  margin: var(--checkup-space-xs) 0 0;
+  color: var(--checkup-muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.checkup-editor-heading .agency-secondary {
+  min-height: 44px;
+  white-space: nowrap;
+}
+.checkup-form-name {
+  display: grid;
+  max-width: 680px;
+  gap: var(--checkup-space-xs);
+  margin-top: var(--checkup-space-lg);
+  color: var(--checkup-ink);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+.checkup-field-list {
+  display: grid;
+  gap: var(--checkup-space-sm);
+  margin-top: var(--checkup-space-lg);
+}
+.checkup-field-columns,
+.checkup-field-row {
+  display: grid;
+  grid-template-columns: 32px minmax(220px, 1.25fr) minmax(170px, 0.8fr) minmax(
+      210px,
+      auto
+    );
+  gap: var(--checkup-space-sm);
+}
+.checkup-field-columns {
+  align-items: center;
+  padding: 0 var(--checkup-space-md);
+  color: var(--checkup-muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+.checkup-field-row {
+  align-items: end;
+  padding: var(--checkup-space-md);
+  border: 1px solid var(--checkup-line);
+  border-radius: 10px;
+  background: #fff;
+  transition:
+    border-color 160ms ease-out,
+    background-color 160ms ease-out;
+}
+.checkup-field-row:focus-within {
+  border-color: #e7a273;
+  background: #fffdfa;
+}
+.checkup-field-row label {
+  display: grid;
+  gap: var(--checkup-space-xs);
+  min-width: 0;
+  color: #526578;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.checkup-field-order {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 8px;
+  border-radius: 50%;
+  background: #f3f6f8;
+  color: #526578;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+.checkup-field-row .checkup-options {
+  grid-column: 2 / 4;
+  padding-top: var(--checkup-space-xs);
+  border-top: 1px solid var(--checkup-line);
+}
+.checkup-field-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--checkup-space-sm);
+  min-height: 44px;
+}
+.checkup-required {
+  display: inline-flex !important;
+  grid-template-columns: none !important;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: var(--checkup-space-xs) !important;
+  min-height: 44px;
+  white-space: nowrap;
+}
+.checkup-required input {
+  width: 16px !important;
+  min-height: 16px !important;
+  padding: 0 !important;
+}
+.checkup-remove {
+  min-height: 44px;
+  padding-inline: 12px;
+  border: 1px solid #f2c6c3 !important;
+  border-radius: 8px !important;
+  background: #fff5f4 !important;
+  color: #a2352b !important;
+  font: 700 0.84rem inherit !important;
+}
+.checkup-remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.checkup-form-hint {
+  padding: var(--checkup-space-md);
+  border-radius: 8px;
+  background: #f3f6f8;
+}
+.agency-checkup-forms-page input:focus-visible,
+.agency-checkup-forms-page select:focus-visible,
+.agency-checkup-forms-page button:focus-visible {
+  outline: 3px solid rgba(244, 121, 50, 0.3);
+  outline-offset: 2px;
+}
+@container (max-width: 900px) {
+  .checkup-field-columns,
+  .checkup-field-row {
+    grid-template-columns: 32px minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .checkup-field-columns span:last-child {
+    display: none;
+  }
+  .checkup-field-actions {
+    grid-column: 2 / -1;
+    justify-content: flex-start;
+  }
+  .checkup-field-row .checkup-options {
+    grid-column: 2 / -1;
+  }
+}
+@media (max-width: 700px) {
+  .checkup-form-context {
+    grid-template-columns: 1fr;
+    gap: var(--checkup-space-xs);
+    padding: 20px var(--checkup-space-md);
+  }
+  .checkup-form-context > strong,
+  .checkup-form-context label {
+    grid-column: auto;
+    grid-row: auto;
+  }
+  .checkup-form-context label {
+    margin-top: var(--checkup-space-sm);
+  }
+  .checkup-form-editor {
+    padding: var(--checkup-space-lg) var(--checkup-space-md);
+  }
+  .checkup-editor-heading {
+    align-items: stretch;
+    flex-direction: column;
+    gap: var(--checkup-space-md);
+  }
+  .checkup-editor-heading .agency-secondary {
+    width: 100%;
+  }
+  .checkup-field-columns {
+    display: none;
+  }
+  .checkup-field-row {
+    grid-template-columns: 28px minmax(0, 1fr);
+    padding: var(--checkup-space-md);
+  }
+  .checkup-field-order {
+    grid-row: 1;
+  }
+  .checkup-field-row label {
+    grid-column: 2;
+  }
+  .checkup-field-row .checkup-options {
+    grid-column: 2;
+  }
+  .checkup-field-actions {
+    grid-column: 2;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .checkup-remove {
+    min-width: 72px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .checkup-field-row {
+    transition-duration: 0.01ms;
+  }
+}

@@ -1,0 +1,3 @@
+-- Deprecated: do not run this migration.
+-- Agency is now fully independent from organizations, clinics, cases, and forms.
+-- Run 20260903_agency_isolation.sql instead.

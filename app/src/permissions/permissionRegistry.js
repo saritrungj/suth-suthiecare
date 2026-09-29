@@ -35,6 +35,11 @@ export const PERMISSION_GROUPS = [
     label: "จัดการภาพแบนเนอร์",
     actions: ["view", "create", "update", "delete"],
   },
+  {
+    id: "agency_entries",
+    label: "บันทึกข้อมูลหน่วยงาน",
+    actions: ["create", "view", "verify"],
+  },
 ];
 
 export const MODULES = PERMISSION_GROUPS.map((group) => ({
@@ -52,6 +57,7 @@ const MODULE_ACTION = {
   "Help Center Management": "help_center.view",
   "Content Management": "content.view",
   "Roles & Permissions": "roles.manage",
+  "Agency Entry": "agency_entries.view",
   "จัดการผู้ใช้ (Users)": "patient_members.view",
   จัดการผู้ใช้: "patient_members.view",
   จัดการเคส: "cases.view",
@@ -92,6 +98,7 @@ export function canAccess(
     "Clinic Management": "clinics.update",
     "Help Center Management": "help_center.update",
     "Content Management": "content.update",
+    "Agency Entry": "agency_entries.create",
   };
   const key = moduleOrPermission.includes(".")
     ? moduleOrPermission

@@ -1,0 +1,37 @@
+.staff-context-types {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 10px;
+  background: #f1f5f9;
+  border-radius: 9px;
+}
+.staff-context-types button {
+  flex: 1;
+  min-height: 36px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #475569;
+  font: inherit;
+  cursor: pointer;
+}
+.staff-context-types button[aria-pressed="true"] {
+  background: #fff0e5;
+  color: #9a3d0b;
+  font-weight: 700;
+}
+.staff-context-types button:focus-visible,
+.staff-context-create:focus-visible {
+  outline: 2px solid #f47932;
+  outline-offset: 2px;
+}
+.staff-context-create {
+  margin-top: 8px;
+  border: 0;
+  background: transparent;
+  color: #9a3d0b;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+}

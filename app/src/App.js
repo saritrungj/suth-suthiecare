@@ -8,7 +8,10 @@ import HelpCenterManager from "./pages/admin/HelpCenterManager";
 import HelpCenterUser from "./pages/helpCenter/HelpCenterUser";
 import ClinicHelpDetail from "./pages/helpCenter/ClinicHelpDetail";
 import AppErrorBoundary from "./components/AppErrorBoundary";
-import { PermissionsProvider } from "./permissions/PermissionsProvider";
+import {
+  PermissionsProvider,
+  usePermissions,
+} from "./permissions/PermissionsProvider";
 import PermissionRoute from "./permissions/PermissionRoute";
 import PatientProtectedRoute from "./permissions/PatientProtectedRoute";
 import PatientLogin from "./pages/patient/PatientLogin";
@@ -42,6 +45,13 @@ const ClinicDetail = lazy(
   () => import("./pages/assessment/history/ClinicDetail"),
 );
 
+const AgencyEntry = lazy(() => import("./pages/admin/AgencyEntry"));
+const AgencyRecords = lazy(() => import("./pages/admin/AgencyRecords"));
+const AgencyManagement = lazy(() => import("./pages/admin/AgencyManagement"));
+const AgencyCheckupForms = lazy(
+  () => import("./pages/admin/AgencyCheckupForms"),
+);
+
 const AdminRoute = ({ children }) => {
   const userStr =
     sessionStorage.getItem("suth_user") || localStorage.getItem("suth_user");
@@ -55,6 +65,31 @@ const AdminRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
   return children;
+};
+
+// Agency accounts only reach agency pages; System Admin can open them too.
+const AgencyAccessRoute = ({ children, permission }) => {
+  const { loading, authorization, can } = usePermissions();
+  if (loading) return <div role="status">กำลังตรวจสอบสิทธิ์...</div>;
+  return authorization?.is_system_admin ||
+    (authorization?.access_mode === "agency" && can(permission)) ? (
+    children
+  ) : (
+    <Navigate to="/403" replace />
+  );
+};
+
+const AdminHomeRedirect = () => {
+  const { loading, authorization, can } = usePermissions();
+  if (loading) return <div role="status">กำลังตรวจสอบสิทธิ์...</div>;
+  if (authorization?.access_mode !== "agency")
+    return <Navigate to="dashboard" replace />;
+  const target = can("agency_entries.create")
+    ? "agency-entry"
+    : can("agency_entries.view")
+      ? "agency-records"
+      : "/403";
+  return <Navigate to={target} replace />;
 };
 
 function App() {
@@ -209,7 +244,7 @@ function App() {
                 </AdminRoute>
               }
             >
-              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route index element={<AdminHomeRedirect />} />
               <Route
                 path="dashboard"
                 element={
@@ -338,6 +373,38 @@ function App() {
                   <PermissionRoute module="organizations.manage">
                     <OrganizationManagement />
                   </PermissionRoute>
+                }
+              />
+              <Route
+                path="agencies"
+                element={
+                  <PermissionRoute module="organizations.manage">
+                    <AgencyManagement />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="agency-checkup-forms"
+                element={
+                  <PermissionRoute module="organizations.manage">
+                    <AgencyCheckupForms />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="agency-entry"
+                element={
+                  <AgencyAccessRoute permission="agency_entries.create">
+                    <AgencyEntry />
+                  </AgencyAccessRoute>
+                }
+              />
+              <Route
+                path="agency-records"
+                element={
+                  <AgencyAccessRoute permission="agency_entries.view">
+                    <AgencyRecords />
+                  </AgencyAccessRoute>
                 }
               />
               {/* Every signed-in staff member manages their own account. */}

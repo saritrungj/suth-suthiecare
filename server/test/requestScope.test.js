@@ -24,3 +24,7 @@ test("help-center reads use the active organization when staff is signed in", ()
     false,
   );
 });
+
+test("agency entry endpoints do not use the system organization context", () => {
+  assert.equal(needsOrganizationContext("/agency-entry/masters", true), false);
+});

@@ -10,12 +10,18 @@ const PermissionsContext = createContext({
   authorization: null,
   activeOrganization: null,
   setActiveOrganization: () => {},
+  activeAgency: null,
+  setActiveAgency: () => {},
 });
 
 export function PermissionsProvider({ children }) {
   const [authorization, setAuthorization] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeOrganization, setActiveOrganizationState] = useState(null);
+  const [activeAgency, setActiveAgencyState] = useState(null);
+  const [authorizationVersion, setAuthorizationVersion] = useState(0);
+  const refreshAuthorization = () =>
+    setAuthorizationVersion((version) => version + 1);
   useEffect(() => {
     let alive = true;
     getAuthorization()
@@ -27,13 +33,28 @@ export function PermissionsProvider({ children }) {
         const selected = selectInitialOrganization(data, saved);
         setActiveOrganizationState(selected);
         localStorage.setItem(key, selected);
+        const agencyOptions = data.is_system_admin
+          ? data.agencies || []
+          : (data.agency_memberships || [])
+              .map((membership) => membership.agency)
+              .filter(Boolean);
+        const agencyKey = `suth_active_agency_${data.user.id}`;
+        const savedAgency = localStorage.getItem(agencyKey);
+        const selectedAgency = agencyOptions.some(
+          (agency) => String(agency.id) === String(savedAgency),
+        )
+          ? String(savedAgency)
+          : String(agencyOptions[0]?.id || "");
+        setActiveAgencyState(selectedAgency);
+        if (selectedAgency) localStorage.setItem(agencyKey, selectedAgency);
+        else localStorage.removeItem(agencyKey);
       })
       .catch(() => alive && setAuthorization(null))
       .finally(() => alive && setLoading(false));
     return () => {
       alive = false;
     };
-  }, []);
+  }, [authorizationVersion]);
   const setActiveOrganization = (value) => {
     const next = String(value);
     setActiveOrganizationState(next);
@@ -43,8 +64,18 @@ export function PermissionsProvider({ children }) {
         next,
       );
   };
+  const setActiveAgency = (value) => {
+    const next = String(value || "");
+    setActiveAgencyState(next);
+    if (!authorization?.user?.id) return;
+    const key = `suth_active_agency_${authorization.user.id}`;
+    if (next) localStorage.setItem(key, next);
+    else localStorage.removeItem(key);
+  };
   const permissions = useMemo(() => {
     if (!authorization || authorization.is_system_admin) return new Set();
+    if (authorization.access_mode === "agency")
+      return permissionMap(authorization.agency_permissions || []);
     const membership = authorization.memberships?.find(
       (item) => String(item.organization.id) === String(activeOrganization),
     );
@@ -56,6 +87,9 @@ export function PermissionsProvider({ children }) {
       authorization,
       activeOrganization,
       setActiveOrganization,
+      activeAgency,
+      setActiveAgency,
+      refreshAuthorization,
       permissions,
       can: (module, level = "view") =>
         canAccess(
@@ -65,7 +99,7 @@ export function PermissionsProvider({ children }) {
           Boolean(authorization?.is_system_admin),
         ),
     }),
-    [loading, authorization, activeOrganization, permissions],
+    [loading, authorization, activeOrganization, activeAgency, permissions],
   );
   return (
     <PermissionsContext.Provider value={value}>

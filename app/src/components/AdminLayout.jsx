@@ -1,10 +1,15 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { usePermissions } from "../permissions/PermissionsProvider";
 
 const AdminLayout = () => {
-  const { activeOrganization } = usePermissions();
+  const { activeOrganization, activeAgency } = usePermissions();
+  const { pathname } = useLocation();
+  const agencyPage =
+    /^\/admin\/(agencies|agency-checkup-forms|agency-entry|agency-records)(\/|$)/.test(
+      pathname,
+    );
   return (
     <div
       style={{
@@ -25,7 +30,13 @@ const AdminLayout = () => {
           overflow: "hidden",
         }}
       >
-        <Outlet key={activeOrganization || "authorization-loading"} />
+        <Outlet
+          key={
+            agencyPage
+              ? `agency-${activeAgency || "none"}`
+              : activeOrganization || "authorization-loading"
+          }
+        />
       </div>
     </div>
   );
