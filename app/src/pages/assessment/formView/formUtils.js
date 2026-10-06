@@ -41,8 +41,7 @@ export const formatPhoneNumber = (value) => {
   return `${val.slice(0, 3)}-${val.slice(3, 6)}-${val.slice(6, 10)}`;
 };
 
-// Account authentication, not a form answer, identifies the submitter. Keep
-// legacy forms readable while ensuring they no longer ask for national ID.
+// Removes national ID questions (including those inside groups).
 export const withoutNationalIdQuestions = (questions = []) =>
   questions
     .filter((question) => question?.type !== "national_id")
@@ -56,6 +55,81 @@ export const withoutNationalIdQuestions = (questions = []) =>
           }
         : question,
     );
+
+// A signed-in account that already holds a national ID is identified by it, so
+// the form does not ask again. Everyone else sees the question together with
+// the PDPA consent box, and the ID is only used once they consent.
+export const prepareNationalIdQuestions = (
+  questions = [],
+  { accountHasIdentity = false } = {},
+) => (accountHasIdentity ? withoutNationalIdQuestions(questions) : questions);
+
+const isEmptyAnswer = (value) =>
+  value === undefined || value === null || String(value).trim() === "";
+
+// Answers to prefill from the signed-in account: the name (and phone) fields.
+// Only empty answers are filled, so a restored draft or an edit always wins,
+// and the fields stay editable.
+export const accountPrefillAnswers = (
+  questions = [],
+  account,
+  current = {},
+) => {
+  if (!account) return {};
+  const fullName = [account.first_name, account.last_name]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+  const phone = String(account.phone || "").replace(/\D/g, "");
+  const filled = {};
+  const visit = (items) =>
+    (items || []).forEach((question) => {
+      if (!question) return;
+      if (question.type === "group") return visit(question.subQuestions);
+      if (!isEmptyAnswer(current[question.id])) return;
+      if (
+        fullName &&
+        (question.type === "full_name" || question.systemRole === "name")
+      )
+        filled[question.id] = fullName;
+      else if (phone.length === 10 && question.type === "phone_number")
+        filled[question.id] = formatPhoneNumber(phone);
+    });
+  visit(questions);
+  return filled;
+};
+
+// The national ID is sent to the server only with explicit consent. The first
+// consented, valid ID answer wins.
+export const consentedNationalId = (
+  questions = [],
+  answers = {},
+  consents = {},
+) => {
+  let identity = null;
+  const visit = (items) =>
+    (items || []).forEach((question) => {
+      if (identity || !question) return;
+      if (question.type === "group") return visit(question.subQuestions);
+      const answer = answers[question.id];
+      if (
+        question.type === "national_id" &&
+        consents[question.id] === true &&
+        answer &&
+        validateThaiID(String(answer))
+      )
+        identity = String(answer).replace(/\D/g, "");
+    });
+  visit(questions);
+  return identity;
+};
+
+// raw_answers is a readable summary; a national ID never appears in it in full.
+export const maskThaiID = (value) => {
+  const digits = String(value || "").replace(/\D/g, "");
+  if (digits.length !== 13) return digits ? "-" : "";
+  return `${digits[0]}-${digits.slice(1, 3)}xx-xxxxx-x${digits[11]}-${digits[12]}`;
+};
 
 export const getQuestionTitles = (groupedSteps) => {
   const titles = {};

@@ -1,0 +1,220 @@
+{
+  "states": [
+    {
+      "name": "students",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "student-form-errors",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 366,
+            "scrollWidth": 366
+          }
+        ]
+      }
+    },
+    {
+      "name": "student-general",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 390,
+            "scrollWidth": 390
+          }
+        ]
+      }
+    },
+    {
+      "name": "student-physical",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 390,
+            "scrollWidth": 390
+          }
+        ]
+      }
+    },
+    {
+      "name": "physical-form-errors",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 390,
+            "scrollWidth": 390
+          },
+          {
+            "width": 366,
+            "scrollWidth": 366
+          }
+        ]
+      }
+    },
+    {
+      "name": "student-mental",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 390,
+            "scrollWidth": 390
+          }
+        ]
+      }
+    },
+    {
+      "name": "school-cases",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "school-cases-filtered",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "school",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "classroom-form",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 366,
+            "scrollWidth": 366
+          }
+        ]
+      }
+    },
+    {
+      "name": "teachers",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "teacher-form",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 366,
+            "scrollWidth": 366
+          }
+        ]
+      }
+    },
+    {
+      "name": "teacher-required-alert",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 366,
+            "scrollWidth": 366
+          },
+          {
+            "width": 368,
+            "scrollWidth": 368
+          }
+        ]
+      }
+    },
+    {
+      "name": "teacher-required-error",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 366,
+            "scrollWidth": 366
+          }
+        ]
+      }
+    },
+    {
+      "name": "types",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "import",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "organization-details",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "organization-members-picker",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    }
+  ],
+  "findings": []
+}

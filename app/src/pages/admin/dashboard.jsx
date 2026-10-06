@@ -755,13 +755,6 @@ export default function Dashboard() {
           </div>
         </header>
 
-        {!canManageDashboardSettings && (
-          <div className="db-empty-state" role="status">
-            เลือกหน่วยงานจากเมนูด้านข้างเพื่อบันทึกฟอร์มและการตั้งค่ากราฟของ
-            Dashboard
-          </div>
-        )}
-
         {isInitialSetup ? (
           <div className="db-loading-state">
             <div className="db-loading-spinner"></div>

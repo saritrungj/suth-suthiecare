@@ -71,7 +71,10 @@ async function audit(accountId, eventType, req, metadata = {}) {
       ],
     );
   } catch (error) {
-    console.error("Patient auth audit failed:", error.message);
+    console.error(
+      "Patient auth audit failed:",
+      require("./safeError").safeError(error),
+    );
   }
 }
 
@@ -90,19 +93,37 @@ function signPatientToken(account) {
 function publicAccount(account) {
   const safeDecrypt = (value) => {
     if (!value) return "";
-    try {
-      return decrypt(value) || "";
-    } catch {
-      return "";
-    }
+    return decrypt(value) || "";
   };
   return {
     id: account.id,
     username: account.username,
-    email: account.email || "",
-    email_verified: Boolean(account.email && account.email_verified_at),
-    first_name: safeDecrypt(account.first_name_encrypted),
-    last_name: safeDecrypt(account.last_name_encrypted),
+    email: require("./accountEmail").decode(account, "patient_accounts"),
+    email_verified: Boolean(
+      require("./accountEmail").decode(account, "patient_accounts") &&
+      account.email_verified_at,
+    ),
+    first_name:
+      require("./privateField").readField(
+        account.first_name_encrypted,
+        "patient_accounts",
+        "first_name_encrypted",
+      ) || "",
+    last_name:
+      require("./privateField").readField(
+        account.last_name_encrypted,
+        "patient_accounts",
+        "last_name_encrypted",
+      ) || "",
+    phone:
+      require("./privateField").readField(
+        account.phone_encrypted,
+        "patient_accounts",
+        "phone_encrypted",
+      ) || "",
+    // Forms skip the national ID question when the account already has one.
+    has_national_id: Boolean(account.identity_hash),
+    must_change_password: Boolean(Number(account.must_change_password || 0)),
     status: account.status,
     verified_at: account.verified_at,
   };

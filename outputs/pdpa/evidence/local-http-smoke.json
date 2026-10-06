@@ -1,0 +1,37 @@
+[
+  {
+    "content_type": "application/json; charset=utf-8",
+    "route": "/health",
+    "status": 200
+  },
+  {
+    "content_type": "application/json; charset=utf-8",
+    "route": "/ready",
+    "status": 200
+  },
+  {
+    "content_type": "application/json; charset=utf-8",
+    "route": "/api/session/staff",
+    "status": 401
+  },
+  {
+    "content_type": "application/json; charset=utf-8",
+    "route": "/api/session/patient",
+    "status": 401
+  },
+  {
+    "content_type": "application/json; charset=utf-8",
+    "route": "/api/private-files/user_manual.pdf",
+    "status": 401
+  },
+  {
+    "content_type": "application/json; charset=utf-8",
+    "route": "/api/private-files/admin_manual.pdf",
+    "status": 401
+  },
+  {
+    "content_type": "application/json; charset=utf-8",
+    "route": "/api/private-files/unknown.pdf",
+    "status": 404
+  }
+]

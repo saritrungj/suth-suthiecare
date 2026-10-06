@@ -1,0 +1,14 @@
+[WebServer] (node:25716) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:916) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:24476) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [mobile-chromium] › e2e\school-management.spec.js:298:3 › school organization › student list opens the student health file (4.1s)
+  ok 2 [mobile-chromium] › e2e\school-management.spec.js:317:3 › school organization › the case list of a school organization is the student health view (2.7s)
+
+  2 passed (9.7s)

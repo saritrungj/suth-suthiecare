@@ -81,7 +81,10 @@ router.patch("/banners/:id/image", verifyToken, async (req, res) => {
     );
     res.json({ success: true, message: "อัปเดตแบนเนอร์สำเร็จ" });
   } catch (err) {
-    console.error("Update Banner Image Error:", err);
+    console.error(
+      "Update Banner Image Error:",
+      require("../utils/safeError").safeError(err),
+    );
     res.status(500).json({ message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
   }
 });

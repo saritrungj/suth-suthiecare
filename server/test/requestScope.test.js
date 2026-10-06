@@ -24,3 +24,8 @@ test("help-center reads use the active organization when staff is signed in", ()
     false,
   );
 });
+
+test("school module routes always run inside the active organization", () => {
+  assert.equal(needsOrganizationContext("/school/students", false), true);
+  assert.equal(needsOrganizationContext("/school/access", true), true);
+});

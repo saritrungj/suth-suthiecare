@@ -1,3 +1,8 @@
+import {
+  authSession,
+  captureAuthResponse,
+  clearAuthSession,
+} from "../utils/authSession";
 import axios from "axios";
 import { clearPatientSession } from "../utils/patientSession";
 
@@ -64,23 +69,36 @@ export const updateOrganizationMember = (id, membershipId, data) =>
 
 const patientApi = axios.create({
   baseURL: apiBaseUrl,
+  withCredentials: true,
   headers: { "ngrok-skip-browser-warning": "true" },
 });
 
 patientApi.interceptors.request.use((config) => {
-  const token = sessionStorage.getItem("patient_token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  const session = authSession("patient");
+  if (session.csrf) config.headers["X-CSRF-Token"] = session.csrf;
   return config;
 });
 
 patientApi.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    captureAuthResponse("patient", res.data);
+    return res;
+  },
   (error) => {
     if (error.response?.status === 401) {
       clearPatientSession();
       if (window.location.pathname.startsWith("/history")) {
         window.location.href = `/account/login?returnTo=${encodeURIComponent(window.location.pathname)}`;
       }
+    }
+    // Accounts created by a school import must set their own password first.
+    if (
+      error.response?.status === 403 &&
+      error.response?.data?.code === "PASSWORD_CHANGE_REQUIRED" &&
+      !window.location.pathname.startsWith("/account/change-password")
+    ) {
+      const returnTo = `${window.location.pathname}${window.location.search}`;
+      window.location.href = `/account/change-password?returnTo=${encodeURIComponent(returnTo)}`;
     }
     return Promise.reject(error);
   },
@@ -101,6 +119,8 @@ export const verifyPatientPasswordRecoveryApi = (data) =>
 export const resetPatientPasswordApi = (data) =>
   patientApi.post("/patient-auth/password-recovery/reset", data);
 export const patientLogoutApi = () => patientApi.post("/patient-auth/logout");
+export const changePatientPasswordApi = (data) =>
+  patientApi.post("/patient-auth/password/change", data);
 export const getPatientMe = () => patientApi.get("/patient/me");
 export const updatePatientEmail = (email) =>
   patientApi.patch("/patient/me/email", { email });
@@ -120,6 +140,64 @@ export const updatePatientHistoryAnswer = (responseId, questionId, value) =>
     `/patient/history/responses/${responseId}/answers/${questionId}`,
     { value },
   );
+
+// ── School (หน่วยงานประเภทโรงเรียน) ──
+export const getSchoolAccess = () => api.get("/school/access");
+export const getSchools = () => api.get("/school/schools");
+export const getSchoolGrades = (schoolId) =>
+  api.get(`/school/schools/${schoolId}/grades`);
+export const createSchoolGrade = (schoolId, data) =>
+  api.post(`/school/schools/${schoolId}/grades`, data);
+export const updateSchoolGrade = (id, data) =>
+  api.put(`/school/grades/${id}`, data);
+export const deleteSchoolGrade = (id) => api.delete(`/school/grades/${id}`);
+export const getSchoolClassrooms = (schoolId, params) =>
+  api.get(`/school/schools/${schoolId}/classrooms`, { params });
+export const createSchoolClassroom = (schoolId, data) =>
+  api.post(`/school/schools/${schoolId}/classrooms`, data);
+export const updateSchoolClassroom = (id, data) =>
+  api.put(`/school/classrooms/${id}`, data);
+export const deleteSchoolClassroom = (id) =>
+  api.delete(`/school/classrooms/${id}`);
+export const setClassroomTeachers = (id, teachers) =>
+  api.put(`/school/classrooms/${id}/teachers`, { teachers });
+export const getSchoolTypes = (kind) => api.get(`/school/${kind}`);
+export const createSchoolType = (kind, data) =>
+  api.post(`/school/${kind}`, data);
+export const updateSchoolType = (kind, id, data) =>
+  api.put(`/school/${kind}/${id}`, data);
+export const deleteSchoolType = (kind, id) =>
+  api.delete(`/school/${kind}/${id}`);
+export const getSchoolTeachers = (params) =>
+  api.get("/school/teachers", { params });
+export const getTeacherCandidates = (schoolId) =>
+  api.get("/school/teachers/candidates", { params: { school_id: schoolId } });
+export const createSchoolTeacher = (data) => api.post("/school/teachers", data);
+export const updateSchoolTeacher = (id, data) =>
+  api.put(`/school/teachers/${id}`, data);
+export const deleteSchoolTeacher = (id) => api.delete(`/school/teachers/${id}`);
+export const getSchoolStudents = (params) =>
+  api.get("/school/students", { params });
+export const getSchoolStudent = (id) => api.get(`/school/students/${id}`);
+export const createSchoolStudent = (data) => api.post("/school/students", data);
+export const updateSchoolStudent = (id, data) =>
+  api.put(`/school/students/${id}`, data);
+export const deleteSchoolStudent = (id) => api.delete(`/school/students/${id}`);
+export const resetStudentPassword = (id) =>
+  api.post(`/school/students/${id}/reset-password`);
+export const importSchoolStudents = (data) =>
+  api.post("/school/students/import", data);
+export const getStudentHealth = (id) =>
+  api.get(`/school/students/${id}/health`);
+export const updateStudentHealthProfile = (id, data) =>
+  api.put(`/school/students/${id}/health-profile`, data);
+export const createStudentPhysicalRecord = (id, data) =>
+  api.post(`/school/students/${id}/physical-records`, data);
+export const updateStudentPhysicalRecord = (id, data) =>
+  api.put(`/school/physical-records/${id}`, data);
+export const deleteStudentPhysicalRecord = (id) =>
+  api.delete(`/school/physical-records/${id}`);
+export const getSchoolCases = (params) => api.get("/school/cases", { params });
 
 // ── Dashboard ──
 export const getDashboardSummary = () => api.get("/dashboard/summary");
@@ -234,15 +312,29 @@ export const createStaff = (data) => api.post("/staffs", data);
 export const deleteStaff = (id) => api.delete(`/staffs/${id}`);
 
 // ── Secure Tokens (สำหรับเข้ารหัสลิงก์แบบประเมิน) ──
-export const generateSecureToken = (data) => api.post("/generate-token", data);
-export const decodeSecureToken = (data) => api.post("/decode-token", data);
+export const generateSecureToken = (data) =>
+  api.post("/form-invitations", data);
+export const staffLogoutApi = () => api.post("/session/staff/logout");
+export const decodeSecureToken = (data) =>
+  patientApi.post("/form-invitations/resolve", data);
 
 // ── Master Cases (ระบบจัดการเคสต่อเนื่อง) ──
 export const getMasterCasesByIdentity = (identity) =>
   api.get(`/master-cases/${identity}`);
 export const getMasterCasesById = (id) => api.get(`/master-cases/by-id/${id}`); // 🟢 เพิ่มบรรทัดนี้
+// Every assessment of the person behind a Master Case, across forms and clinics.
+export const getPersonTimeline = (masterCaseId) =>
+  api.get(`/master-cases/${masterCaseId}/person-timeline`);
 export const closeMasterCase = (id, data) =>
   api.put(`/master-cases/${id}/close`, data);
+export const getReferralDestinations = () =>
+  api.get("/case-referrals/destinations");
+export const getCaseReferrals = (params) =>
+  api.get("/case-referrals", { params });
+export const getCaseReferral = (id) => api.get(`/case-referrals/${id}`);
+export const createCaseReferral = (data) => api.post("/case-referrals", data);
+export const updateCaseReferral = (id, data) =>
+  api.post(`/case-referrals/${id}/updates`, data);
 
 //--- Template บันทึกข้อมูล LSM --//
 export const getNoteTemplates = (clinicType) =>
@@ -304,29 +396,24 @@ export const deleteFaqCategory = (id) =>
 
 // 🟢 ดึง Token สดๆ จาก Storage ทุกครั้งที่ยิง API (ชัวร์ 100% ไม่ค้าง)
 api.interceptors.request.use((config) => {
-  const token =
-    sessionStorage.getItem("suth_token") || localStorage.getItem("suth_token");
-  if (token) {
-    config.headers["Authorization"] = `Bearer ${token}`;
-  }
-  const userRaw =
-    sessionStorage.getItem("suth_user") || localStorage.getItem("suth_user");
-  try {
-    const user = userRaw ? JSON.parse(userRaw) : null;
-    const organization = user?.id
-      ? localStorage.getItem(`suth_active_organization_${user.id}`)
-      : null;
-    if (organization) config.headers["X-Organization-Id"] = organization;
-  } catch {
-    /* invalid session is handled by the response interceptor */
-  }
+  const session = authSession("staff");
+  if (session.csrf) config.headers["X-CSRF-Token"] = session.csrf;
+  const organization = session.user?.id
+    ? localStorage.getItem("suth_active_organization_" + session.user.id)
+    : null;
+  if (organization && !config.headers["X-Organization-Id"])
+    config.headers["X-Organization-Id"] = organization;
   return config;
 });
 
 api.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    captureAuthResponse("staff", res.data);
+    return res;
+  },
   (err) => {
     if (err.response?.status === 401) {
+      clearAuthSession("staff");
       sessionStorage.removeItem("suth_user");
       sessionStorage.removeItem("suth_token");
       localStorage.removeItem("suth_user");
@@ -338,3 +425,48 @@ api.interceptors.response.use(
 );
 
 export default api;
+export const getPrivacyNotice = (id) => api.get(`/forms/${id}/privacy-notice`);
+export const getOrganizationForms = (id) =>
+  api.get("/forms", { headers: { "X-Organization-Id": String(id) } });
+export const getReferralDestinationsConfig = (id) =>
+  api.get(`/organizations/${id}/referral-destinations`);
+export const setReferralDestinationsConfig = (id, destinations) =>
+  api.put(`/organizations/${id}/referral-destinations`, { destinations });
+export const getNotificationTarget = (id) =>
+  api.get(`/organizations/${id}/notification-target`);
+export const setNotificationTarget = (id, body) =>
+  api.put(`/organizations/${id}/notification-target`, body);
+export const getMemberDataPermissions = (org, id) =>
+  api.get(`/organizations/${org}/members/${id}/data-permissions`);
+export const setMemberDataPermissions = (org, id, permissions) =>
+  api.put(`/organizations/${org}/members/${id}/data-permissions`, {
+    permissions,
+  });
+export const exportCaseData = (id, format) =>
+  api.post(`/cases/${id}/export-data`, { format });
+export const exportStudentData = (ids) =>
+  api.post("/school/students/export-data", { ids });
+export const getRightsOrganizations = () =>
+  patientApi.get("/patient/privacy/organizations");
+export const getMyRightsRequests = () =>
+  patientApi.get("/patient/privacy/requests");
+export const createRightsRequest = (body) =>
+  patientApi.post("/patient/privacy/requests", body);
+export const getPdpaRequests = (org) =>
+  api.get("/pdpa/requests", { params: { organization_id: org } });
+export const updatePdpaRequest = (id, body) =>
+  api.patch(`/pdpa/requests/${id}`, body);
+export const getProcessingPurposes = (org) =>
+  api.get(`/pdpa/organizations/${org}/purposes`);
+export const setProcessingPurpose = (org, form, body) =>
+  api.put(`/pdpa/organizations/${org}/purposes/${form}`, body);
+export const getRetentionPolicies = (org) =>
+  api.get(`/pdpa/organizations/${org}/retention`);
+export const setRetentionPolicy = (org, body) =>
+  api.put(`/pdpa/organizations/${org}/retention`, body);
+export const previewRetention = (org) =>
+  api.post(`/pdpa/organizations/${org}/retention/dry-run`);
+export const getOrganizationRolePermissions = (org, role) =>
+  api.get(`/organizations/${org}/roles/${role}/permissions`);
+export const saveOrganizationRolePermissions = (org, role, body) =>
+  api.put(`/organizations/${org}/roles/${role}/permissions`, body);

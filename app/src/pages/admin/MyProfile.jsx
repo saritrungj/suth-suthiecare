@@ -1,3 +1,4 @@
+import { authSession, setAuthSession } from "../../utils/authSession";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -18,13 +19,8 @@ import "./MyProfile.css";
 
 // The session lives in sessionStorage or localStorage depending on
 // "remember me"; write back to whichever one currently holds it.
-const sessionStore = () =>
-  sessionStorage.getItem("suth_token") ? sessionStorage : localStorage;
-
-const saveSession = ({ user, token }) => {
-  const store = sessionStore();
-  if (user) store.setItem("suth_user", JSON.stringify(user));
-  if (token) store.setItem("suth_token", token);
+const saveSession = ({ user }) => {
+  if (user) setAuthSession("staff", user, authSession("staff").csrf);
 };
 
 const formatDate = (value) =>

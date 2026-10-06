@@ -1,0 +1,16 @@
+[WebServer] (node:40452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:37136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 2 tests using 1 worker
+
+(node:25936) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › e2e\organization-hierarchy.spec.js:158:1 › unit role rights are edited under the selected organization (1.5s)
+(node:3200) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [mobile-chromium] › e2e\organization-hierarchy.spec.js:158:1 › unit role rights are edited under the selected organization (2.5s)
+
+  2 passed (7.2s)

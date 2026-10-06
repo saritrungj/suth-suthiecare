@@ -25,6 +25,8 @@ const PublishSettingsModal = ({
   setPublishEndDate,
   loginEnforcement,
   setLoginEnforcement,
+  healthDomain = "",
+  setHealthDomain = () => {},
   resultDisplayMode,
   setResultDisplayMode,
 }) => {
@@ -263,6 +265,40 @@ const PublishSettingsModal = ({
                 </option>
               ))}
             </select>
+          </div>
+
+          {/* หมวดสุขภาพ: ใช้แยกผลในแฟ้มนักเรียน (สุขภาพจิต / สุขภาพกาย) */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <label
+              htmlFor="form-health-domain"
+              style={{
+                fontWeight: "bold",
+                fontSize: "14.5px",
+                color: "#0f172a",
+              }}
+            >
+              หมวดสุขภาพ
+            </label>
+            <select
+              id="form-health-domain"
+              value={healthDomain}
+              onChange={(e) => setHealthDomain(e.target.value)}
+              style={{
+                padding: "10px",
+                borderRadius: "8px",
+                border: "1px solid #cbd5e1",
+                fontSize: "14.5px",
+                outline: "none",
+              }}
+            >
+              <option value="">ไม่ระบุ</option>
+              <option value="mental">สุขภาพจิต</option>
+              <option value="physical">สุขภาพกาย</option>
+              <option value="general">สุขภาพทั่วไป</option>
+            </select>
+            <small style={{ color: "#64748b", fontSize: "12.5px" }}>
+              ใช้แยกผลแบบประเมินในแฟ้มสุขภาพนักเรียน (หน่วยงานโรงเรียน)
+            </small>
           </div>
 
           {/* 3. สถานะฟอร์ม */}

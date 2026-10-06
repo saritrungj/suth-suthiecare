@@ -1,4 +1,14 @@
 export const PERMISSION_GROUPS = [
+  {
+    id: "pii",
+    label: "ข้อมูลส่วนบุคคลเต็ม (ยังจำกัดด้วยขอบเขตสิทธิ์เดิม)",
+    actions: ["view"],
+  },
+  {
+    id: "clinical",
+    label: "ข้อมูลสุขภาพ (ยังจำกัดด้วยขอบเขตสิทธิ์เดิม)",
+    actions: ["view"],
+  },
   { id: "dashboard", label: "แดชบอร์ด", actions: ["view"] },
   {
     id: "cases",
@@ -34,6 +44,21 @@ export const PERMISSION_GROUPS = [
     id: "content",
     label: "จัดการภาพแบนเนอร์",
     actions: ["view", "create", "update", "delete"],
+  },
+  {
+    id: "school",
+    label: "โครงสร้างโรงเรียน ครู และประเภท",
+    actions: ["view", "create", "update", "delete"],
+  },
+  {
+    id: "students",
+    label: "นักเรียนและบัญชีนักเรียน",
+    actions: ["view", "create", "update", "delete", "export"],
+  },
+  {
+    id: "student_health",
+    label: "ข้อมูลสุขภาพนักเรียน",
+    actions: ["view", "update"],
   },
 ];
 

@@ -28,12 +28,12 @@ test("patient session stores, publishes, and clears login state", () => {
   });
   setPatientSession("token-1", { id: 7, username: "patient" });
   assert.deepEqual(getPatientSession(), {
-    token: "token-1",
+    authenticated: true,
     user: { id: 7, username: "patient" },
   });
 
   clearPatientSession();
-  assert.deepEqual(getPatientSession(), { token: "", user: null });
+  assert.deepEqual(getPatientSession(), { authenticated: false, user: null });
   assert.equal(changes, 2);
   unsubscribe();
 

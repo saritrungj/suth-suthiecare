@@ -1,0 +1,57 @@
+[WebServer] (node:31164) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:36776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 42 tests using 1 worker
+
+(node:7576) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › e2e\organization-hierarchy.spec.js:135:1 › system admin sees both school and hospital menus while changing unit context (2.1s)
+  ok  2 [desktop-chromium] › e2e\organization-hierarchy.spec.js:158:1 › unit role rights are edited under the selected organization (2.3s)
+  ok  3 [desktop-chromium] › e2e\organization-hierarchy.spec.js:180:1 › main organizations choose the type, sub-units inherit it, members are added by checkbox (4.2s)
+  ok  4 [desktop-chromium] › e2e\organization-hierarchy.spec.js:226:1 › system-wide settings sit in their own admin section (1.5s)
+  ok  5 [desktop-chromium] › e2e\organization-hierarchy.spec.js:256:1 › an organization member does not get the admin section (1.6s)
+  ok  6 [desktop-chromium] › e2e\pdpa-flows.spec.js:3:1 › case invitation requires the patient account and rejects another recipient (6.2s)
+  ok  7 [desktop-chromium] › e2e\pdpa-flows.spec.js:18:1 › System Admin configures explicit referral destinations in a unit with session CSRF (3.4s)
+  ok  8 [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:47:1 › new management sections follow the existing controls on desktop and mobile (5.4s)
+  ok  9 [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:69:1 › settings save independently, preserve other edits, and report the retention preview (4.0s)
+  ok 10 [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:107:1 › a failed section does not block the other settings (2.4s)
+  ok 11 [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:116:1 › patient requests retain input on failure and show readable status after retry (4.4s)
+  ok 12 [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:146:1 › privacy notice sits with the form and consent remains keyboard accessible (3.5s)
+  ok 13 [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:163:1 › patient-visible case note uses the existing case workspace controls (5.5s)
+  ok 14 [desktop-chromium] › e2e\public-flows.spec.js:9:1 › history requires patient login before loading any record (1.5s)
+  ok 15 [desktop-chromium] › e2e\public-flows.spec.js:20:1 › patient authentication keeps the selected language across login and register (2.5s)
+  ok 16 [desktop-chromium] › e2e\public-flows.spec.js:38:1 › patient login can continue to the protected history route (2.6s)
+  ok 17 [desktop-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (7.7s)
+  ok 18 [desktop-chromium] › e2e\public-flows.spec.js:101:1 › history hero shows the currently signed-in patient profile (2.3s)
+  ok 19 [desktop-chromium] › e2e\public-flows.spec.js:147:1 › homepage navbar shows the signed-in patient and can log out (3.3s)
+  ok 20 [desktop-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code (4.4s)
+  ok 21 [desktop-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit (6.0s)
+(node:35232) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  22 [mobile-chromium] › e2e\organization-hierarchy.spec.js:135:1 › system admin sees both school and hospital menus while changing unit context
+  ok 23 [mobile-chromium] › e2e\organization-hierarchy.spec.js:158:1 › unit role rights are edited under the selected organization (4.0s)
+  -  24 [mobile-chromium] › e2e\organization-hierarchy.spec.js:180:1 › main organizations choose the type, sub-units inherit it, members are added by checkbox
+  -  25 [mobile-chromium] › e2e\organization-hierarchy.spec.js:226:1 › system-wide settings sit in their own admin section
+  -  26 [mobile-chromium] › e2e\organization-hierarchy.spec.js:256:1 › an organization member does not get the admin section
+  ok 27 [mobile-chromium] › e2e\pdpa-flows.spec.js:3:1 › case invitation requires the patient account and rejects another recipient (4.6s)
+  ok 28 [mobile-chromium] › e2e\pdpa-flows.spec.js:18:1 › System Admin configures explicit referral destinations in a unit with session CSRF (3.0s)
+  ok 29 [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:47:1 › new management sections follow the existing controls on desktop and mobile (6.3s)
+  ok 30 [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:69:1 › settings save independently, preserve other edits, and report the retention preview (6.5s)
+  ok 31 [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:107:1 › a failed section does not block the other settings (3.5s)
+  ok 32 [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:116:1 › patient requests retain input on failure and show readable status after retry (5.5s)
+  ok 33 [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:146:1 › privacy notice sits with the form and consent remains keyboard accessible (5.6s)
+  ok 34 [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:163:1 › patient-visible case note uses the existing case workspace controls (7.7s)
+  ok 35 [mobile-chromium] › e2e\public-flows.spec.js:9:1 › history requires patient login before loading any record (3.1s)
+  ok 36 [mobile-chromium] › e2e\public-flows.spec.js:20:1 › patient authentication keeps the selected language across login and register (3.1s)
+  ok 37 [mobile-chromium] › e2e\public-flows.spec.js:38:1 › patient login can continue to the protected history route (3.1s)
+  ok 38 [mobile-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (12.6s)
+  ok 39 [mobile-chromium] › e2e\public-flows.spec.js:101:1 › history hero shows the currently signed-in patient profile (3.5s)
+  ok 40 [mobile-chromium] › e2e\public-flows.spec.js:147:1 › homepage navbar shows the signed-in patient and can log out (6.4s)
+  ok 41 [mobile-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code (7.1s)
+  ok 42 [mobile-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit (7.8s)
+
+  4 skipped
+  38 passed (3.0m)

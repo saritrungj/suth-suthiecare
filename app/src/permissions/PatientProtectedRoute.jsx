@@ -4,7 +4,7 @@ import { getPatientSession } from "../utils/patientSession";
 
 export default function PatientProtectedRoute({ children }) {
   const location = useLocation();
-  const { token, user } = getPatientSession();
+  const { authenticated: token, user } = getPatientSession();
   if (!token || !user) {
     const returnTo = `${location.pathname}${location.search}`;
     return (

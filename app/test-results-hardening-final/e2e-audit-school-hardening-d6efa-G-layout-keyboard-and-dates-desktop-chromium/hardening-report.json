@@ -1,0 +1,253 @@
+{
+  "states": [
+    {
+      "name": "students",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "student-form-errors",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": [
+          {
+            "width": 980,
+            "scrollWidth": 980
+          }
+        ]
+      }
+    },
+    {
+      "name": "student-general",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": [
+          {
+            "width": 560,
+            "scrollWidth": 560
+          }
+        ]
+      }
+    },
+    {
+      "name": "student-physical",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": [
+          {
+            "width": 560,
+            "scrollWidth": 787
+          }
+        ]
+      }
+    },
+    {
+      "name": "physical-form-errors",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": [
+          {
+            "width": 560,
+            "scrollWidth": 787
+          },
+          {
+            "width": 560,
+            "scrollWidth": 560
+          }
+        ]
+      }
+    },
+    {
+      "name": "student-mental",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": [
+          {
+            "width": 560,
+            "scrollWidth": 560
+          }
+        ]
+      }
+    },
+    {
+      "name": "school-cases",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "school-cases-filtered",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "school",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "classroom-form",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": [
+          {
+            "width": 560,
+            "scrollWidth": 560
+          }
+        ]
+      }
+    },
+    {
+      "name": "teachers",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "teacher-form",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": [
+          {
+            "width": 560,
+            "scrollWidth": 560
+          }
+        ]
+      }
+    },
+    {
+      "name": "teacher-required-alert",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": [
+          {
+            "width": 560,
+            "scrollWidth": 560
+          },
+          {
+            "width": 510,
+            "scrollWidth": 510
+          }
+        ]
+      }
+    },
+    {
+      "name": "teacher-required-error",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": [
+          {
+            "width": 560,
+            "scrollWidth": 560
+          }
+        ]
+      }
+    },
+    {
+      "name": "types",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "import",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "organization-details",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "organization-members-picker",
+      "violations": 0,
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": []
+      }
+    }
+  ],
+  "findings": [
+    {
+      "name": "student-physical",
+      "violations": [],
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": [
+          {
+            "width": 560,
+            "scrollWidth": 787
+          }
+        ]
+      }
+    },
+    {
+      "name": "physical-form-errors",
+      "violations": [],
+      "layout": {
+        "viewport": 1366,
+        "document": 1366,
+        "dialogs": [
+          {
+            "width": 560,
+            "scrollWidth": 787
+          },
+          {
+            "width": 560,
+            "scrollWidth": 560
+          }
+        ]
+      }
+    }
+  ]
+}

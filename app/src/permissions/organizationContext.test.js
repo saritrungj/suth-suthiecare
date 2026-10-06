@@ -5,6 +5,8 @@ import {
   getActiveOrganizationLabel,
   hasActiveOrganizationMembership,
   selectInitialOrganization,
+  groupOrganizationsByParent,
+  getActiveOrganizationType,
 } from "./organizationContext.js";
 
 test("system admin can select every active organization without memberships", () => {
@@ -34,6 +36,36 @@ test("system admin discards a stale organization context", () => {
   };
 
   assert.equal(selectInitialOrganization(authorization, "999"), "all");
+});
+
+test("only system administrators can choose all or an organization outside memberships", () => {
+  for (const roleId of [2, 3]) {
+    const authorization = {
+      is_system_admin: false,
+      user: { role_id: roleId },
+      organizations: [{ id: 99, name: "หน่วยงานที่ไม่มีสิทธิ์" }],
+      memberships: [
+        { organization: { id: 20 }, role: { id: 1, name: "SuperAdmin" } },
+      ],
+    };
+    assert.equal(selectInitialOrganization(authorization, "all"), "20");
+    assert.equal(selectInitialOrganization(authorization, "99"), "20");
+    assert.deepEqual(
+      getSelectableOrganizations(authorization).map((org) => org.id),
+      [20],
+    );
+    assert.notEqual(
+      getActiveOrganizationLabel(authorization, "all"),
+      "ทุกหน่วยงาน",
+    );
+  }
+  assert.deepEqual(
+    getSelectableOrganizations({
+      is_system_admin: "false",
+      organizations: [{ id: 99 }],
+    }),
+    [],
+  );
 });
 
 test("regular users can select only organizations from active memberships", () => {
@@ -68,4 +100,48 @@ test("a member can view shared management menus only in their active organizatio
 
   assert.equal(hasActiveOrganizationMembership(authorization, "3"), true);
   assert.equal(hasActiveOrganizationMembership(authorization, "4"), false);
+});
+
+test("groups selectable sub-units under their main organization", () => {
+  const groups = groupOrganizationsByParent([
+    { id: 9, name: "รพ.เดิม", org_type: "hospital" },
+    {
+      id: 5,
+      name: "เครือข่ายโรงเรียน",
+      org_type: "school",
+      parent_id: 1,
+      parent_name: "มทส.",
+    },
+    {
+      id: 4,
+      name: "โรงพยาบาล มทส.",
+      org_type: "hospital",
+      parent_id: 1,
+      parent_name: "มทส.",
+    },
+  ]);
+  assert.deepEqual(
+    groups.map((group) => [
+      group.parentName,
+      group.organizations.map((o) => o.id),
+    ]),
+    [
+      ["มทส.", [5, 4]],
+      [null, [9]],
+    ],
+  );
+});
+
+test("reads the active organization type, null for all", () => {
+  const authorization = {
+    is_system_admin: true,
+    organizations: [
+      { id: 4, org_type: "hospital" },
+      { id: 5, org_type: "school" },
+      { id: 6 },
+    ],
+  };
+  assert.equal(getActiveOrganizationType(authorization, "5"), "school");
+  assert.equal(getActiveOrganizationType(authorization, "6"), "hospital");
+  assert.equal(getActiveOrganizationType(authorization, "all"), null);
 });

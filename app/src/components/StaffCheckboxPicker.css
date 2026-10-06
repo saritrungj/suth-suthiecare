@@ -1,0 +1,206 @@
+/* Multi-select staff list (prefix scp-). Colors and sizes come from
+   styles/tokens.css. Each class is specific enough on its own, so no rule
+   needs !important against the page it sits in. */
+.scp {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+  font-family: var(--suth-font);
+}
+
+.scp legend {
+  margin-bottom: 6px;
+  padding: 0;
+  font-weight: 700;
+  color: var(--suth-ink-2);
+  font-size: 0.92rem;
+}
+
+.scp-toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.scp-search {
+  flex: 1 1 200px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--suth-control-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
+  color: var(--suth-muted);
+}
+
+.scp-search input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--suth-control-h);
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  color: var(--suth-ink);
+}
+
+.scp-search input::placeholder {
+  color: var(--suth-muted);
+  opacity: 1;
+}
+
+.scp-search:focus-within {
+  border-color: var(--suth-action);
+  box-shadow: 0 0 0 3px var(--suth-focus);
+}
+
+.scp-toggle-all {
+  min-height: var(--suth-button-h);
+  padding: 6px 14px;
+  border: 1px solid var(--suth-control-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease-out,
+    color 160ms ease-out;
+}
+
+.scp-toggle-all:hover:not(:disabled) {
+  border-color: var(--suth-action);
+  color: var(--suth-action-ink);
+}
+
+.scp-toggle-all:focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 2px;
+}
+
+.scp-toggle-all:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.scp-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  max-height: 280px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
+}
+
+.scp-list label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 6px 10px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.scp-list label:hover {
+  background: var(--suth-surface-2);
+}
+
+.scp-list label.is-checked {
+  background: var(--suth-tint);
+}
+
+.scp-list label:focus-within {
+  outline: 2px solid var(--suth-action);
+  outline-offset: -2px;
+}
+
+.scp-list input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--suth-action);
+  flex: none;
+}
+
+.scp-list label > span {
+  min-width: 0;
+}
+
+.scp-list strong {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--suth-ink);
+  overflow-wrap: anywhere;
+}
+
+.scp-list small {
+  display: block;
+  color: var(--suth-muted);
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.scp-empty {
+  margin: 0;
+  padding: 14px;
+  border: 1px dashed var(--suth-control-line);
+  border-radius: var(--suth-radius);
+  color: var(--suth-muted);
+  text-align: center;
+}
+
+.scp.has-error .scp-list,
+.scp.has-error .scp-empty {
+  border-color: var(--suth-danger);
+}
+
+.scp-error {
+  margin: 6px 0 0;
+  color: var(--suth-danger);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.scp-count {
+  margin: 6px 0 0;
+  color: var(--suth-muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.scp-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .scp-search input,
+  .scp-toggle-all {
+    min-height: var(--suth-control-h);
+    font-size: 1rem;
+  }
+
+  .scp-toggle-all {
+    flex: 1 1 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scp-toggle-all {
+    transition: none;
+  }
+}

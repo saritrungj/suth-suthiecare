@@ -1,0 +1,1466 @@
+[WebServer] (node:15548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:11444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 138 tests using 1 worker
+
+(node:13548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok   1 [desktop-chromium] › e2e\assessment-result.spec.js:27:1 › assessment result renders one non-overlapping body per result (2.6s)
+  ok   2 [desktop-chromium] › e2e\assessment-result.spec.js:45:1 › successful submission closes loading dialog and opens result (4.3s)
+  ok   3 [desktop-chromium] › e2e\auth.spec.js:4:1 › admin route redirects unauthenticated users to login (980ms)
+  ok   4 [desktop-chromium] › e2e\auth.spec.js:12:1 › login validates required fields and toggles password visibility (1.1s)
+  ok   5 [desktop-chromium] › e2e\auth.spec.js:28:1 › successful login uses the cookie session without storing an access token (2.1s)
+  ok   6 [desktop-chromium] › e2e\case-person-timeline.spec.js:67:3 › person history survives a later successful case request (2.6s)
+  ok   7 [desktop-chromium] › e2e\case-person-timeline.spec.js:67:3 › person history survives a later failed case request (2.8s)
+  ok   8 [desktop-chromium] › e2e\case-person-timeline.spec.js:82:1 › uses the current case history when the person timeline fails (2.3s)
+  ok   9 [desktop-chromium] › e2e\case-referrals.spec.js:71:1 › send, receive and sync only the shared status and summary across organizations (5.5s)
+  ok  10 [desktop-chromium] › e2e\case-referrals.spec.js:124:1 › a third organization cannot open the shared referral (1.7s)
+  x   11 [desktop-chromium] › e2e\dashboard-date-filter.spec.js:3:1 › dashboard applies the selected date range to statistics and recent cases (10.3s)
+(node:39180) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   12 [desktop-chromium] › e2e\organization-hierarchy.spec.js:133:1 › a school sub-unit inherits its main organization's type and shows school menus (11.4s)
+(node:5428) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   13 [desktop-chromium] › e2e\organization-hierarchy.spec.js:156:1 › main organizations choose the type, sub-units inherit it, members are added by checkbox (11.3s)
+(node:33308) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   14 [desktop-chromium] › e2e\organization-hierarchy.spec.js:202:1 › system-wide settings sit in their own admin section (11.3s)
+(node:1320) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   15 [desktop-chromium] › e2e\organization-hierarchy.spec.js:231:1 › an organization member does not get the admin section (11.3s)
+(node:43216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   16 [desktop-chromium] › e2e\password-help.spec.js:75:1 › patient password recovery walks through email, code, and new password (12.4s)
+(node:30324) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   17 [desktop-chromium] › e2e\password-help.spec.js:90:1 › staff password recovery uses the staff endpoints (12.9s)
+(node:3648) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  18 [desktop-chromium] › e2e\password-help.spec.js:101:1 › password recovery shows a neutral notice for an unknown email (1.3s)
+  ok  19 [desktop-chromium] › e2e\public-flows.spec.js:9:1 › history requires patient login before loading any record (1.6s)
+  ok  20 [desktop-chromium] › e2e\public-flows.spec.js:20:1 › patient authentication keeps the selected language across login and register (1.4s)
+  ok  21 [desktop-chromium] › e2e\public-flows.spec.js:38:1 › patient login can continue to the protected history route (1.7s)
+  ok  22 [desktop-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (5.5s)
+  ok  23 [desktop-chromium] › e2e\public-flows.spec.js:101:1 › history hero shows the currently signed-in patient profile (2.2s)
+  ok  24 [desktop-chromium] › e2e\public-flows.spec.js:147:1 › homepage navbar shows the signed-in patient and can log out (3.0s)
+  x   25 [desktop-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code (12.2s)
+(node:2964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   26 [desktop-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit (7.5s)
+(node:25284) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  27 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route / renders without a runtime exception (3.5s)
+  ok  28 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /login renders without a runtime exception (1.5s)
+  ok  29 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /help-center renders without a runtime exception (1.1s)
+  ok  30 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /history renders without a runtime exception (1.3s)
+  ok  31 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /account/login renders without a runtime exception (1.3s)
+  ok  32 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /account/register renders without a runtime exception (1.5s)
+  ok  33 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /account/change-password renders without a runtime exception (1.3s)
+  ok  34 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /__unknown__ renders without a runtime exception (1.2s)
+  ok  35 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/dashboard renders without a runtime exception (1.4s)
+  ok  36 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/forms renders without a runtime exception (1.2s)
+  ok  37 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/forms/create renders without a runtime exception (1.2s)
+  ok  38 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/schedule renders without a runtime exception (1.3s)
+  ok  39 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/cases renders without a runtime exception (1.5s)
+  ok  40 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/roles renders without a runtime exception (1.2s)
+  ok  41 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/users renders without a runtime exception (1.3s)
+  ok  42 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/members renders without a runtime exception (1.3s)
+  ok  43 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/risk-cases renders without a runtime exception (1.3s)
+  ok  44 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/banner renders without a runtime exception (1.2s)
+  ok  45 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/clinics renders without a runtime exception (1.2s)
+  ok  46 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/help-center renders without a runtime exception (1.5s)
+  ok  47 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/organizations renders without a runtime exception (1.6s)
+  ok  48 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school renders without a runtime exception (1.6s)
+  ok  49 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/students renders without a runtime exception (1.4s)
+  ok  50 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/students/import renders without a runtime exception (1.2s)
+  ok  51 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/teachers renders without a runtime exception (1.2s)
+  ok  52 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/types renders without a runtime exception (1.4s)
+  x   53 [desktop-chromium] › e2e\school-management.spec.js:248:3 › school organization › shows school menus instead of hospital-only menus (11.8s)
+(node:37456) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   54 [desktop-chromium] › e2e\school-management.spec.js:268:3 › school organization › the structure page is the sub-unit's school: grades and their rooms only (12.8s)
+(node:18584) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   55 [desktop-chromium] › e2e\school-management.spec.js:296:3 › school organization › student list opens the student health file (12.5s)
+(node:36532) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   56 [desktop-chromium] › e2e\school-management.spec.js:315:3 › school organization › the case list of a school organization is the student health view (13.0s)
+(node:11480) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   57 [desktop-chromium] › e2e\school-management.spec.js:326:3 › school organization › imports a CSV after a dry run and offers the credentials file (31.7s)
+(node:25588) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  58 [desktop-chromium] › e2e\school-management.spec.js:356:1 › a guest must accept PDPA before the national ID is sent (3.5s)
+  ok  59 [desktop-chromium] › e2e\sidebar-system-roles.spec.js:43:3 › system_admin sees only the prescribed system navigation, independent of unit role (2.9s)
+  ok  60 [desktop-chromium] › e2e\sidebar-system-roles.spec.js:43:3 › admin sees only the prescribed system navigation, independent of unit role (2.8s)
+  ok  61 [desktop-chromium] › e2e\sidebar-system-roles.spec.js:43:3 › staff sees only the prescribed system navigation, independent of unit role (2.4s)
+  ok  62 [desktop-chromium] › e2e\sidebar-system-roles.spec.js:73:1 › staff user menu follows the active unit's permissions (2.6s)
+  ok  63 [desktop-chromium] › e2e\sidebar-system-roles.spec.js:82:1 › admin cannot open main system pages by entering their URLs (5.3s)
+  x   64 [desktop-chromium] › e2e\user-permissions.spec.js:122:3 › user management data integrity › saves a long Thai full name without truncating it (31.7s)
+(node:20620) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   65 [desktop-chromium] › e2e\user-permissions.spec.js:143:3 › user management data integrity › loads the unmasked record before editing a user (31.6s)
+(node:40568) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   66 [desktop-chromium] › e2e\user-permissions.spec.js:155:3 › user management data integrity › shows patient members without exposing sensitive identity fields (12.9s)
+(node:10684) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   67 [desktop-chromium] › e2e\user-permissions.spec.js:176:3 › user management data integrity › user management page provides its own vertical scroll area (13.3s)
+(node:14908) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   68 [desktop-chromium] › e2e\user-permissions.spec.js:204:3 › user management data integrity › edits patient details and resets the password from the service-recipient menu (31.0s)
+(node:45616) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   69 [desktop-chromium] › e2e\user-permissions.spec.js:231:3 › user management data integrity › deletes a patient login only after explicit confirmation (31.0s)
+(node:45728) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  70 [mobile-chromium] › e2e\assessment-result.spec.js:27:1 › assessment result renders one non-overlapping body per result (3.2s)
+  ok  71 [mobile-chromium] › e2e\assessment-result.spec.js:45:1 › successful submission closes loading dialog and opens result (4.0s)
+  ok  72 [mobile-chromium] › e2e\auth.spec.js:4:1 › admin route redirects unauthenticated users to login (1.4s)
+  ok  73 [mobile-chromium] › e2e\auth.spec.js:12:1 › login validates required fields and toggles password visibility (1.7s)
+  ok  74 [mobile-chromium] › e2e\auth.spec.js:28:1 › successful login uses the cookie session without storing an access token (2.8s)
+  ok  75 [mobile-chromium] › e2e\case-person-timeline.spec.js:67:3 › person history survives a later successful case request (3.5s)
+  ok  76 [mobile-chromium] › e2e\case-person-timeline.spec.js:67:3 › person history survives a later failed case request (3.1s)
+  ok  77 [mobile-chromium] › e2e\case-person-timeline.spec.js:82:1 › uses the current case history when the person timeline fails (2.9s)
+  ok  78 [mobile-chromium] › e2e\case-referrals.spec.js:71:1 › send, receive and sync only the shared status and summary across organizations (8.4s)
+  ok  79 [mobile-chromium] › e2e\case-referrals.spec.js:124:1 › a third organization cannot open the shared referral (2.4s)
+  x   80 [mobile-chromium] › e2e\dashboard-date-filter.spec.js:3:1 › dashboard applies the selected date range to statistics and recent cases (10.8s)
+(node:23072) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -   81 [mobile-chromium] › e2e\organization-hierarchy.spec.js:133:1 › a school sub-unit inherits its main organization's type and shows school menus
+  -   82 [mobile-chromium] › e2e\organization-hierarchy.spec.js:156:1 › main organizations choose the type, sub-units inherit it, members are added by checkbox
+  -   83 [mobile-chromium] › e2e\organization-hierarchy.spec.js:202:1 › system-wide settings sit in their own admin section
+  -   84 [mobile-chromium] › e2e\organization-hierarchy.spec.js:231:1 › an organization member does not get the admin section
+  x   85 [mobile-chromium] › e2e\password-help.spec.js:75:1 › patient password recovery walks through email, code, and new password (12.3s)
+(node:30988) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   86 [mobile-chromium] › e2e\password-help.spec.js:90:1 › staff password recovery uses the staff endpoints (13.5s)
+(node:19856) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  87 [mobile-chromium] › e2e\password-help.spec.js:101:1 › password recovery shows a neutral notice for an unknown email (3.7s)
+  ok  88 [mobile-chromium] › e2e\public-flows.spec.js:9:1 › history requires patient login before loading any record (1.6s)
+  ok  89 [mobile-chromium] › e2e\public-flows.spec.js:20:1 › patient authentication keeps the selected language across login and register (1.2s)
+  ok  90 [mobile-chromium] › e2e\public-flows.spec.js:38:1 › patient login can continue to the protected history route (1.7s)
+  ok  91 [mobile-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (6.9s)
+  ok  92 [mobile-chromium] › e2e\public-flows.spec.js:101:1 › history hero shows the currently signed-in patient profile (2.0s)
+  ok  93 [mobile-chromium] › e2e\public-flows.spec.js:147:1 › homepage navbar shows the signed-in patient and can log out (3.2s)
+  x   94 [mobile-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code (12.2s)
+(node:20788) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   95 [mobile-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit (6.2s)
+(node:38616) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -   96 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route / renders without a runtime exception
+  -   97 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /login renders without a runtime exception
+  -   98 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /help-center renders without a runtime exception
+  -   99 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /history renders without a runtime exception
+  -  100 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /account/login renders without a runtime exception
+  -  101 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /account/register renders without a runtime exception
+  -  102 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /account/change-password renders without a runtime exception
+  -  103 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /__unknown__ renders without a runtime exception
+  -  104 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/dashboard renders without a runtime exception
+  -  105 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/forms renders without a runtime exception
+  -  106 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/forms/create renders without a runtime exception
+  -  107 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/schedule renders without a runtime exception
+  -  108 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/cases renders without a runtime exception
+  -  109 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/roles renders without a runtime exception
+  -  110 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/users renders without a runtime exception
+  -  111 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/members renders without a runtime exception
+  -  112 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/risk-cases renders without a runtime exception
+  -  113 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/banner renders without a runtime exception
+  -  114 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/clinics renders without a runtime exception
+  -  115 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/help-center renders without a runtime exception
+  -  116 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/organizations renders without a runtime exception
+  -  117 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school renders without a runtime exception
+  -  118 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/students renders without a runtime exception
+  -  119 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/students/import renders without a runtime exception
+  -  120 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/teachers renders without a runtime exception
+  -  121 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/types renders without a runtime exception
+  -  122 [mobile-chromium] › e2e\school-management.spec.js:248:3 › school organization › shows school menus instead of hospital-only menus
+  -  123 [mobile-chromium] › e2e\school-management.spec.js:268:3 › school organization › the structure page is the sub-unit's school: grades and their rooms only
+  -  124 [mobile-chromium] › e2e\school-management.spec.js:296:3 › school organization › student list opens the student health file
+  -  125 [mobile-chromium] › e2e\school-management.spec.js:315:3 › school organization › the case list of a school organization is the student health view
+  -  126 [mobile-chromium] › e2e\school-management.spec.js:326:3 › school organization › imports a CSV after a dry run and offers the credentials file
+  -  127 [mobile-chromium] › e2e\school-management.spec.js:356:1 › a guest must accept PDPA before the national ID is sent
+  ok 128 [mobile-chromium] › e2e\sidebar-system-roles.spec.js:43:3 › system_admin sees only the prescribed system navigation, independent of unit role (3.9s)
+  ok 129 [mobile-chromium] › e2e\sidebar-system-roles.spec.js:43:3 › admin sees only the prescribed system navigation, independent of unit role (2.8s)
+  ok 130 [mobile-chromium] › e2e\sidebar-system-roles.spec.js:43:3 › staff sees only the prescribed system navigation, independent of unit role (2.0s)
+  ok 131 [mobile-chromium] › e2e\sidebar-system-roles.spec.js:73:1 › staff user menu follows the active unit's permissions (2.6s)
+  ok 132 [mobile-chromium] › e2e\sidebar-system-roles.spec.js:82:1 › admin cannot open main system pages by entering their URLs (4.1s)
+  x  133 [mobile-chromium] › e2e\user-permissions.spec.js:122:3 › user management data integrity › saves a long Thai full name without truncating it (31.0s)
+(node:17448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  134 [mobile-chromium] › e2e\user-permissions.spec.js:143:3 › user management data integrity › loads the unmasked record before editing a user (31.0s)
+(node:19216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  135 [mobile-chromium] › e2e\user-permissions.spec.js:155:3 › user management data integrity › shows patient members without exposing sensitive identity fields (13.1s)
+(node:5448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  136 [mobile-chromium] › e2e\user-permissions.spec.js:176:3 › user management data integrity › user management page provides its own vertical scroll area (12.7s)
+(node:42388) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  137 [mobile-chromium] › e2e\user-permissions.spec.js:204:3 › user management data integrity › edits patient details and resets the password from the service-recipient menu (31.0s)
+(node:34836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  138 [mobile-chromium] › e2e\user-permissions.spec.js:231:3 › user management data integrity › deletes a patient login only after explicit confirmation (31.1s)
+
+
+  1) [desktop-chromium] › e2e\dashboard-date-filter.spec.js:3:1 › dashboard applies the selected date range to statistics and recent cases 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 6
+    + Received  + 1
+
+    - Array [
+    -   "07",
+    -   "02",
+    -   "01",
+    -   "03",
+    - ]
+    + Array []
+
+    Call Log:
+    - Timeout 10000ms exceeded while waiting on the predicate
+
+      94 |   await expect
+      95 |     .poll(async () => page.locator(".stat-modern-value").allTextContents())
+    > 96 |     .toEqual(["07", "02", "01", "03"]);
+         |      ^
+      97 |   await expect(page.locator('input[type="date"]').first()).toBeVisible();
+      98 |   const dateInputs = page.locator('input[type="date"]');
+      99 |   const expectedDefaultRange = await page.evaluate(() => {
+        at D:\github-clone\suth-suthiecare\app\e2e\dashboard-date-filter.spec.js:96:6
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [desktop-chromium] › e2e\organization-hierarchy.spec.js:133:1 › a school sub-unit inherits its main organization's type and shows school menus 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('aside.sidebar').getByRole('link', { name: 'นักเรียน', exact: true })
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('aside.sidebar').getByRole('link', { name: 'นักเรียน', exact: true })
+
+
+      140 |   await expect(
+      141 |     nav.getByRole("link", { name: "นักเรียน", exact: true }),
+    > 142 |   ).toBeVisible();
+          |     ^
+      143 |   await expect(nav.getByRole("link", { name: "จัดการคลินิก" })).toHaveCount(0);
+      144 |   await expect(
+      145 |     page.locator('#active-organization optgroup[label="โรงเรียน"] option'),
+        at D:\github-clone\suth-suthiecare\app\e2e\organization-hierarchy.spec.js:142:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-a-s-909e1-type-and-shows-school-menus-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-a-s-909e1-type-and-shows-school-menus-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-a-s-909e1-type-and-shows-school-menus-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-a-s-909e1-type-and-shows-school-menus-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-a-s-909e1-type-and-shows-school-menus-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [desktop-chromium] › e2e\organization-hierarchy.spec.js:156:1 › main organizations choose the type, sub-units inherit it, members are added by checkbox 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('complementary', { name: 'โครงสร้างหน่วยงาน' }).getByText('หน่วยงานหลักประเภทโรงเรียน · 1 หน่วยงานย่อย')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByRole('complementary', { name: 'โครงสร้างหน่วยงาน' }).getByText('หน่วยงานหลักประเภทโรงเรียน · 1 หน่วยงานย่อย')
+
+
+      165 |   await expect(
+      166 |     directory.getByText("หน่วยงานหลักประเภทโรงเรียน · 1 หน่วยงานย่อย"),
+    > 167 |   ).toBeVisible();
+          |     ^
+      168 |
+      169 |   // A new sub-unit under โรงเรียน shows the inherited type and sends none.
+      170 |   await directory
+        at D:\github-clone\suth-suthiecare\app\e2e\organization-hierarchy.spec.js:167:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-mai-94f41-mbers-are-added-by-checkbox-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-mai-94f41-mbers-are-added-by-checkbox-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-mai-94f41-mbers-are-added-by-checkbox-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-mai-94f41-mbers-are-added-by-checkbox-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-mai-94f41-mbers-are-added-by-checkbox-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [desktop-chromium] › e2e\organization-hierarchy.spec.js:202:1 › system-wide settings sit in their own admin section 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('aside.sidebar nav').locator('.menu-header-label').filter({ hasText: 'ผู้ดูแลระบบ' })
+    Expected substring: "ไม่ขึ้นกับหน่วยงานที่เลือก"
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" with timeout 10000ms
+      - waiting for locator('aside.sidebar nav').locator('.menu-header-label').filter({ hasText: 'ผู้ดูแลระบบ' })
+
+
+      207 |   const nav = page.locator("aside.sidebar nav");
+      208 |   const headers = nav.locator(".menu-header-label");
+    > 209 |   await expect(headers.filter({ hasText: "ผู้ดูแลระบบ" })).toContainText(
+          |                                                            ^
+      210 |     "ไม่ขึ้นกับหน่วยงานที่เลือก",
+      211 |   );
+      212 |   const labels = await nav
+        at D:\github-clone\suth-suthiecare\app\e2e\organization-hierarchy.spec.js:209:60
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-sys-8b26b--in-their-own-admin-section-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-sys-8b26b--in-their-own-admin-section-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-sys-8b26b--in-their-own-admin-section-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-sys-8b26b--in-their-own-admin-section-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-sys-8b26b--in-their-own-admin-section-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [desktop-chromium] › e2e\organization-hierarchy.spec.js:231:1 › an organization member does not get the admin section 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('aside.sidebar nav').getByRole('link', { name: 'ผู้มารับบริการ' })
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('aside.sidebar nav').getByRole('link', { name: 'ผู้มารับบริการ' })
+
+
+      265 |   await page.goto("/admin/profile");
+      266 |   const nav = page.locator("aside.sidebar nav");
+    > 267 |   await expect(nav.getByRole("link", { name: "ผู้มารับบริการ" })).toBeVisible();
+          |                                                                   ^
+      268 |   await expect(nav.getByText("ผู้ดูแลระบบ", { exact: false })).toHaveCount(0);
+      269 |   await expect(nav.getByRole("link", { name: "บทบาทและสิทธิ์" })).toHaveCount(
+      270 |     0,
+        at D:\github-clone\suth-suthiecare\app\e2e\organization-hierarchy.spec.js:267:67
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-an--87d5e-s-not-get-the-admin-section-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-an--87d5e-s-not-get-the-admin-section-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-an--87d5e-s-not-get-the-admin-section-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-an--87d5e-s-not-get-the-admin-section-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\organization-hierarchy-an--87d5e-s-not-get-the-admin-section-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [desktop-chromium] › e2e\password-help.spec.js:75:1 › patient password recovery walks through email, code, and new password 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('ตั้งรหัสผ่านใหม่เรียบร้อยแล้ว สามารถเข้าสู่ระบบได้เลย')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByText('ตั้งรหัสผ่านใหม่เรียบร้อยแล้ว สามารถเข้าสู่ระบบได้เลย')
+
+
+      66 |   await expect(
+      67 |     page.getByText("ตั้งรหัสผ่านใหม่เรียบร้อยแล้ว สามารถเข้าสู่ระบบได้เลย"),
+    > 68 |   ).toBeVisible();
+         |     ^
+      69 |   expect(received.reset).toEqual({
+      70 |     recoveryToken: "e2e-recovery-jwt",
+      71 |     password: "new-password-1",
+        at completeRecovery (D:\github-clone\suth-suthiecare\app\e2e\password-help.spec.js:68:5)
+        at D:\github-clone\suth-suthiecare\app\e2e\password-help.spec.js:87:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\password-help-patient-pass-e013f-email-code-and-new-password-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\password-help-patient-pass-e013f-email-code-and-new-password-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\password-help-patient-pass-e013f-email-code-and-new-password-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\password-help-patient-pass-e013f-email-code-and-new-password-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\password-help-patient-pass-e013f-email-code-and-new-password-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) [desktop-chromium] › e2e\password-help.spec.js:90:1 › staff password recovery uses the staff endpoints 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('ตั้งรหัสผ่านใหม่เรียบร้อยแล้ว สามารถเข้าสู่ระบบได้เลย')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByText('ตั้งรหัสผ่านใหม่เรียบร้อยแล้ว สามารถเข้าสู่ระบบได้เลย')
+
+
+      66 |   await expect(
+      67 |     page.getByText("ตั้งรหัสผ่านใหม่เรียบร้อยแล้ว สามารถเข้าสู่ระบบได้เลย"),
+    > 68 |   ).toBeVisible();
+         |     ^
+      69 |   expect(received.reset).toEqual({
+      70 |     recoveryToken: "e2e-recovery-jwt",
+      71 |     password: "new-password-1",
+        at completeRecovery (D:\github-clone\suth-suthiecare\app\e2e\password-help.spec.js:68:5)
+        at D:\github-clone\suth-suthiecare\app\e2e\password-help.spec.js:98:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\password-help-staff-passwo-e7b50-ry-uses-the-staff-endpoints-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\password-help-staff-passwo-e7b50-ry-uses-the-staff-endpoints-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\password-help-staff-passwo-e7b50-ry-uses-the-staff-endpoints-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\password-help-staff-passwo-e7b50-ry-uses-the-staff-endpoints-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\password-help-staff-passwo-e7b50-ry-uses-the-staff-endpoints-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) [desktop-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByLabel('รหัสยืนยัน')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByLabel('รหัสยืนยัน')
+
+
+      245 |
+      246 |   // The account is pending until the emailed code is entered.
+    > 247 |   await expect(page.getByLabel("รหัสยืนยัน")).toBeVisible();
+          |                                               ^
+      248 |   expect(registerPayload.email).toBe("somchay@example.test");
+      249 |   await page.getByLabel("รหัสยืนยัน").fill("123456");
+      250 |   await page.getByRole("button", { name: /ยืนยัน/ }).click();
+        at D:\github-clone\suth-suthiecare\app\e2e\public-flows.spec.js:247:47
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\public-flows-register-crea-6ba83-ates-it-with-the-email-code-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\public-flows-register-crea-6ba83-ates-it-with-the-email-code-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\public-flows-register-crea-6ba83-ates-it-with-the-email-code-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\public-flows-register-crea-6ba83-ates-it-with-the-email-code-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\public-flows-register-crea-6ba83-ates-it-with-the-email-code-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  9) [desktop-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "Bearer patient-e2e-token"
+    Received: ""
+
+      322 |   await page.getByRole("button", { name: "ยินยอม" }).click();
+      323 |   await expect(page).toHaveURL(/\/assessment-result$/);
+    > 324 |   expect(receivedAuthorization).toBe("Bearer patient-e2e-token");
+          |                                 ^
+      325 | });
+      326 |
+        at D:\github-clone\suth-suthiecare\app\e2e\public-flows.spec.js:324:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\public-flows-assessment-st-36a77-nd-requires-login-to-submit-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\public-flows-assessment-st-36a77-nd-requires-login-to-submit-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\public-flows-assessment-st-36a77-nd-requires-login-to-submit-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\public-flows-assessment-st-36a77-nd-requires-login-to-submit-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\public-flows-assessment-st-36a77-nd-requires-login-to-submit-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  10) [desktop-chromium] › e2e\school-management.spec.js:248:3 › school organization › shows school menus instead of hospital-only menus 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('aside.sidebar').getByRole('link', { name: 'นักเรียน', exact: true })
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('aside.sidebar').getByRole('link', { name: 'นักเรียน', exact: true })
+
+
+      254 |     await expect(
+      255 |       nav.getByRole("link", { name: "นักเรียน", exact: true }),
+    > 256 |     ).toBeVisible();
+          |       ^
+      257 |     await expect(
+      258 |       nav.getByRole("link", { name: "ครู", exact: true }),
+      259 |     ).toBeVisible();
+        at D:\github-clone\suth-suthiecare\app\e2e\school-management.spec.js:256:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\school-management-school-o-75075-tead-of-hospital-only-menus-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\school-management-school-o-75075-tead-of-hospital-only-menus-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\school-management-school-o-75075-tead-of-hospital-only-menus-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\school-management-school-o-75075-tead-of-hospital-only-menus-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\school-management-school-o-75075-tead-of-hospital-only-menus-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  11) [desktop-chromium] › e2e\school-management.spec.js:268:3 › school organization › the structure page is the sub-unit's school: grades and their rooms only 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'ชั้นปีและห้องเรียน' })
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByRole('heading', { name: 'ชั้นปีและห้องเรียน' })
+
+
+      274 |     await expect(
+      275 |       page.getByRole("heading", { name: "ชั้นปีและห้องเรียน" }),
+    > 276 |     ).toBeVisible();
+          |       ^
+      277 |     await expect(
+      278 |       page.getByText(/โรงเรียนทดสอบ · รหัสโรงเรียน TST01/),
+      279 |     ).toBeVisible();
+        at D:\github-clone\suth-suthiecare\app\e2e\school-management.spec.js:276:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\school-management-school-o-91bd7-grades-and-their-rooms-only-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\school-management-school-o-91bd7-grades-and-their-rooms-only-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\school-management-school-o-91bd7-grades-and-their-rooms-only-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\school-management-school-o-91bd7-grades-and-their-rooms-only-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\school-management-school-o-91bd7-grades-and-their-rooms-only-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  12) [desktop-chromium] › e2e\school-management.spec.js:296:3 › school organization › student list opens the student health file 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'รายชื่อนักเรียน' })
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByRole('heading', { name: 'รายชื่อนักเรียน' })
+
+
+      299 |     await expect(
+      300 |       page.getByRole("heading", { name: "รายชื่อนักเรียน" }),
+    > 301 |     ).toBeVisible();
+          |       ^
+      302 |     await page
+      303 |       .getByRole("button", { name: "ดูข้อมูล ด.ช. สมชาย ใจดี" })
+      304 |       .click();
+        at D:\github-clone\suth-suthiecare\app\e2e\school-management.spec.js:301:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\school-management-school-o-283da-ens-the-student-health-file-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\school-management-school-o-283da-ens-the-student-health-file-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\school-management-school-o-283da-ens-the-student-health-file-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\school-management-school-o-283da-ens-the-student-health-file-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\school-management-school-o-283da-ens-the-student-health-file-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  13) [desktop-chromium] › e2e\school-management.spec.js:315:3 › school organization › the case list of a school organization is the student health view 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'ข้อมูลสุขภาพนักเรียน' })
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByRole('heading', { name: 'ข้อมูลสุขภาพนักเรียน' })
+
+
+      320 |     await expect(
+      321 |       page.getByRole("heading", { name: "ข้อมูลสุขภาพนักเรียน" }),
+    > 322 |     ).toBeVisible();
+          |       ^
+      323 |     await expect(page.getByText("เครียดสูง")).toBeVisible();
+      324 |   });
+      325 |
+        at D:\github-clone\suth-suthiecare\app\e2e\school-management.spec.js:322:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\school-management-school-o-dd0ab--is-the-student-health-view-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\school-management-school-o-dd0ab--is-the-student-health-view-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\school-management-school-o-dd0ab--is-the-student-health-view-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\school-management-school-o-dd0ab--is-the-student-health-view-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\school-management-school-o-dd0ab--is-the-student-health-view-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  14) [desktop-chromium] › e2e\school-management.spec.js:326:3 › school organization › imports a CSV after a dry run and offers the credentials file 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.setInputFiles: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('input[type="file"]')
+
+
+      330 |     await openAsSchoolAdmin(page, received);
+      331 |     await page.goto("/admin/school/students/import");
+    > 332 |     await page.locator('input[type="file"]').setInputFiles({
+          |     ^
+      333 |       name: "students.csv",
+      334 |       mimeType: "text/csv",
+      335 |       buffer: Buffer.from(
+        at D:\github-clone\suth-suthiecare\app\e2e\school-management.spec.js:332:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\school-management-school-o-36305-offers-the-credentials-file-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\school-management-school-o-36305-offers-the-credentials-file-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\school-management-school-o-36305-offers-the-credentials-file-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\school-management-school-o-36305-offers-the-credentials-file-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\school-management-school-o-36305-offers-the-credentials-file-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  15) [desktop-chromium] › e2e\user-permissions.spec.js:122:3 › user management data integrity › saves a long Thai full name without truncating it 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'เพิ่มผู้ใช้งาน' })
+
+
+      128 |     await page.goto("/admin/users");
+      129 |
+    > 130 |     await page.getByRole("button", { name: "เพิ่มผู้ใช้งาน" }).click();
+          |                                                                ^
+      131 |     await page.getByPlaceholder("เช่น admin_01").fill("long-thai-name");
+      132 |     await page.getByPlaceholder("ตั้งรหัสผ่าน").fill("password-123");
+      133 |     await page.getByPlaceholder("กรอกชื่อ-นามสกุล").fill(fullName);
+        at D:\github-clone\suth-suthiecare\app\e2e\user-permissions.spec.js:130:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-9ba70--name-without-truncating-it-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-9ba70--name-without-truncating-it-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-9ba70--name-without-truncating-it-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-9ba70--name-without-truncating-it-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-9ba70--name-without-truncating-it-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  16) [desktop-chromium] › e2e\user-permissions.spec.js:143:3 › user management data integrity › loads the unmasked record before editing a user 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('button.sum-edit')
+
+
+      146 |     await page.goto("/admin/users");
+      147 |
+    > 148 |     await page.locator("button.sum-edit").click();
+          |                                           ^
+      149 |     await expect(page.getByPlaceholder("กรอกชื่อ-นามสกุล")).toHaveValue(
+      150 |       "นาย เจ้าหน้าที่ ชื่อจริงที่ไม่ถูกปกปิด",
+      151 |     );
+        at D:\github-clone\suth-suthiecare\app\e2e\user-permissions.spec.js:148:43
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-5a9aa-ecord-before-editing-a-user-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-5a9aa-ecord-before-editing-a-user-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-5a9aa-ecord-before-editing-a-user-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-5a9aa-ecord-before-editing-a-user-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-5a9aa-ecord-before-editing-a-user-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  17) [desktop-chromium] › e2e\user-permissions.spec.js:155:3 › user management data integrity › shows patient members without exposing sensitive identity fields 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'ผู้มารับบริการ' })
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByRole('heading', { name: 'ผู้มารับบริการ' })
+
+
+      162 |     await expect(
+      163 |       page.getByRole("heading", { name: "ผู้มารับบริการ" }),
+    > 164 |     ).toBeVisible();
+          |       ^
+      165 |     await expect(page.getByText("patient-member")).toBeVisible();
+      166 |     await expect(page.getByText("สมชาย ใจดี", { exact: true })).toBeVisible();
+      167 |     await expect(
+        at D:\github-clone\suth-suthiecare\app\e2e\user-permissions.spec.js:164:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-7bda8-g-sensitive-identity-fields-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-7bda8-g-sensitive-identity-fields-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-7bda8-g-sensitive-identity-fields-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-7bda8-g-sensitive-identity-fields-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-7bda8-g-sensitive-identity-fields-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  18) [desktop-chromium] › e2e\user-permissions.spec.js:176:3 › user management data integrity › user management page provides its own vertical scroll area 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.sum-user-wrapper')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('.sum-user-wrapper')
+
+
+      184 |
+      185 |     const pageScroller = page.locator(".sum-user-wrapper");
+    > 186 |     await expect(pageScroller).toBeVisible();
+          |                                ^
+      187 |     await expect
+      188 |       .poll(() =>
+      189 |         pageScroller.evaluate((element) => ({
+        at D:\github-clone\suth-suthiecare\app\e2e\user-permissions.spec.js:186:32
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-790a5-ts-own-vertical-scroll-area-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-790a5-ts-own-vertical-scroll-area-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-790a5-ts-own-vertical-scroll-area-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-790a5-ts-own-vertical-scroll-area-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-790a5-ts-own-vertical-scroll-area-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  19) [desktop-chromium] › e2e\user-permissions.spec.js:204:3 › user management data integrity › edits patient details and resets the password from the service-recipient menu 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'แก้ไขข้อมูล สมชาย ใจดี' })
+
+
+      209 |     await page.goto("/admin/members");
+      210 |
+    > 211 |     await page.getByRole("button", { name: "แก้ไขข้อมูล สมชาย ใจดี" }).click();
+          |                                                                        ^
+      212 |     await expect(
+      213 |       page.getByRole("heading", { name: "แก้ไขข้อมูลผู้มารับบริการ" }),
+      214 |     ).toBeVisible();
+        at D:\github-clone\suth-suthiecare\app\e2e\user-permissions.spec.js:211:72
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-85f73--the-service-recipient-menu-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-85f73--the-service-recipient-menu-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-85f73--the-service-recipient-menu-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-85f73--the-service-recipient-menu-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-85f73--the-service-recipient-menu-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  20) [desktop-chromium] › e2e\user-permissions.spec.js:231:3 › user management data integrity › deletes a patient login only after explicit confirmation 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'ลบบัญชี สมชาย ใจดี' })
+
+
+      236 |     const received = {};
+      237 |     await mockUserApi(page, received);
+    > 238 |     await page.goto("/admin/members");
+          |                                       ^
+      239 |
+      240 |     await page.getByRole("button", { name: "ลบบัญชี สมชาย ใจดี" }).click();
+      241 |     await expect(
+        at D:\github-clone\suth-suthiecare\app\e2e\user-permissions.spec.js:238:68
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-de24d-after-explicit-confirmation-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-de24d-after-explicit-confirmation-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-de24d-after-explicit-confirmation-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-de24d-after-explicit-confirmation-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-de24d-after-explicit-confirmation-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  21) [mobile-chromium] › e2e\dashboard-date-filter.spec.js:3:1 › dashboard applies the selected date range to statistics and recent cases 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 6
+    + Received  + 1
+
+    - Array [
+    -   "07",
+    -   "02",
+    -   "01",
+    -   "03",
+    - ]
+    + Array []
+
+    Call Log:
+    - Timeout 10000ms exceeded while waiting on the predicate
+
+      94 |   await expect
+      95 |     .poll(async () => page.locator(".stat-modern-value").allTextContents())
+    > 96 |     .toEqual(["07", "02", "01", "03"]);
+         |      ^
+      97 |   await expect(page.locator('input[type="date"]').first()).toBeVisible();
+      98 |   const dateInputs = page.locator('input[type="date"]');
+      99 |   const expectedDefaultRange = await page.evaluate(() => {
+        at D:\github-clone\suth-suthiecare\app\e2e\dashboard-date-filter.spec.js:96:6
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  22) [mobile-chromium] › e2e\password-help.spec.js:75:1 › patient password recovery walks through email, code, and new password 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('ตั้งรหัสผ่านใหม่เรียบร้อยแล้ว สามารถเข้าสู่ระบบได้เลย')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByText('ตั้งรหัสผ่านใหม่เรียบร้อยแล้ว สามารถเข้าสู่ระบบได้เลย')
+
+
+      66 |   await expect(
+      67 |     page.getByText("ตั้งรหัสผ่านใหม่เรียบร้อยแล้ว สามารถเข้าสู่ระบบได้เลย"),
+    > 68 |   ).toBeVisible();
+         |     ^
+      69 |   expect(received.reset).toEqual({
+      70 |     recoveryToken: "e2e-recovery-jwt",
+      71 |     password: "New-Password#123",
+        at completeRecovery (D:\github-clone\suth-suthiecare\app\e2e\password-help.spec.js:68:5)
+        at D:\github-clone\suth-suthiecare\app\e2e\password-help.spec.js:87:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\password-help-patient-pass-e013f-email-code-and-new-password-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\password-help-patient-pass-e013f-email-code-and-new-password-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\password-help-patient-pass-e013f-email-code-and-new-password-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\password-help-patient-pass-e013f-email-code-and-new-password-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\password-help-patient-pass-e013f-email-code-and-new-password-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  23) [mobile-chromium] › e2e\password-help.spec.js:90:1 › staff password recovery uses the staff endpoints 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('ตั้งรหัสผ่านใหม่เรียบร้อยแล้ว สามารถเข้าสู่ระบบได้เลย')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByText('ตั้งรหัสผ่านใหม่เรียบร้อยแล้ว สามารถเข้าสู่ระบบได้เลย')
+
+
+      66 |   await expect(
+      67 |     page.getByText("ตั้งรหัสผ่านใหม่เรียบร้อยแล้ว สามารถเข้าสู่ระบบได้เลย"),
+    > 68 |   ).toBeVisible();
+         |     ^
+      69 |   expect(received.reset).toEqual({
+      70 |     recoveryToken: "e2e-recovery-jwt",
+      71 |     password: "New-Password#123",
+        at completeRecovery (D:\github-clone\suth-suthiecare\app\e2e\password-help.spec.js:68:5)
+        at D:\github-clone\suth-suthiecare\app\e2e\password-help.spec.js:98:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\password-help-staff-passwo-e7b50-ry-uses-the-staff-endpoints-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\password-help-staff-passwo-e7b50-ry-uses-the-staff-endpoints-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\password-help-staff-passwo-e7b50-ry-uses-the-staff-endpoints-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\password-help-staff-passwo-e7b50-ry-uses-the-staff-endpoints-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\password-help-staff-passwo-e7b50-ry-uses-the-staff-endpoints-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  24) [mobile-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByLabel('รหัสยืนยัน')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByLabel('รหัสยืนยัน')
+
+
+      245 |
+      246 |   // The account is pending until the emailed code is entered.
+    > 247 |   await expect(page.getByLabel("รหัสยืนยัน")).toBeVisible();
+          |                                               ^
+      248 |   expect(registerPayload.email).toBe("somchay@example.test");
+      249 |   await page.getByLabel("รหัสยืนยัน").fill("123456");
+      250 |   await page.getByRole("button", { name: /ยืนยัน/ }).click();
+        at D:\github-clone\suth-suthiecare\app\e2e\public-flows.spec.js:247:47
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\public-flows-register-crea-6ba83-ates-it-with-the-email-code-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\public-flows-register-crea-6ba83-ates-it-with-the-email-code-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\public-flows-register-crea-6ba83-ates-it-with-the-email-code-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\public-flows-register-crea-6ba83-ates-it-with-the-email-code-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\public-flows-register-crea-6ba83-ates-it-with-the-email-code-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  25) [mobile-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "Bearer patient-e2e-token"
+    Received: ""
+
+      322 |   await page.getByRole("button", { name: "ยินยอม" }).click();
+      323 |   await expect(page).toHaveURL(/\/assessment-result$/);
+    > 324 |   expect(receivedAuthorization).toBe("");
+          |                                 ^
+      325 | });
+      326 |
+        at D:\github-clone\suth-suthiecare\app\e2e\public-flows.spec.js:324:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\public-flows-assessment-st-36a77-nd-requires-login-to-submit-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\public-flows-assessment-st-36a77-nd-requires-login-to-submit-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\public-flows-assessment-st-36a77-nd-requires-login-to-submit-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\public-flows-assessment-st-36a77-nd-requires-login-to-submit-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\public-flows-assessment-st-36a77-nd-requires-login-to-submit-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  26) [mobile-chromium] › e2e\user-permissions.spec.js:122:3 › user management data integrity › saves a long Thai full name without truncating it 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'เพิ่มผู้ใช้งาน' })
+
+
+      128 |     const fullName = `นางสาว ${"ก".repeat(220)} นามสกุลทดสอบ`;
+      129 |     await mockUserApi(page, received);
+    > 130 |     await page.goto("/admin/users");
+          |                                     ^
+      131 |
+      132 |     await page.getByRole("button", { name: "เพิ่มผู้ใช้งาน" }).click();
+      133 |     await page.getByPlaceholder("เช่น admin_01").fill("long-thai-name");
+        at D:\github-clone\suth-suthiecare\app\e2e\user-permissions.spec.js:130:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-9ba70--name-without-truncating-it-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-9ba70--name-without-truncating-it-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-9ba70--name-without-truncating-it-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-9ba70--name-without-truncating-it-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-9ba70--name-without-truncating-it-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  27) [mobile-chromium] › e2e\user-permissions.spec.js:143:3 › user management data integrity › loads the unmasked record before editing a user 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('button.sum-edit')
+
+
+      146 |     const received = {};
+      147 |     await mockUserApi(page, received);
+    > 148 |     await page.goto("/admin/users");
+          |                                     ^
+      149 |
+      150 |     await page.locator("button.sum-edit").click();
+      151 |     await expect(page.getByPlaceholder("กรอกชื่อ-นามสกุล")).toHaveValue(
+        at D:\github-clone\suth-suthiecare\app\e2e\user-permissions.spec.js:148:43
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-5a9aa-ecord-before-editing-a-user-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-5a9aa-ecord-before-editing-a-user-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-5a9aa-ecord-before-editing-a-user-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-5a9aa-ecord-before-editing-a-user-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-5a9aa-ecord-before-editing-a-user-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  28) [mobile-chromium] › e2e\user-permissions.spec.js:155:3 › user management data integrity › shows patient members without exposing sensitive identity fields 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'ผู้มารับบริการ' })
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByRole('heading', { name: 'ผู้มารับบริการ' })
+
+
+      162 |     await page.goto("/admin/members");
+      163 |
+    > 164 |     await expect(
+          |       ^
+      165 |       page.getByRole("heading", { name: "ผู้มารับบริการ" }),
+      166 |     ).toBeVisible();
+      167 |     await expect(page.getByText("patient-member")).toBeVisible();
+        at D:\github-clone\suth-suthiecare\app\e2e\user-permissions.spec.js:164:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-7bda8-g-sensitive-identity-fields-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-7bda8-g-sensitive-identity-fields-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-7bda8-g-sensitive-identity-fields-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-7bda8-g-sensitive-identity-fields-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-7bda8-g-sensitive-identity-fields-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  29) [mobile-chromium] › e2e\user-permissions.spec.js:176:3 › user management data integrity › user management page provides its own vertical scroll area 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.sum-user-wrapper')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('.sum-user-wrapper')
+
+
+      184 |     await mockUserApi(page, received);
+      185 |     await page.goto("/admin/users");
+    > 186 |
+          | ^
+      187 |     const pageScroller = page.locator(".sum-user-wrapper");
+      188 |     await expect(pageScroller).toBeVisible();
+      189 |     await expect
+        at D:\github-clone\suth-suthiecare\app\e2e\user-permissions.spec.js:186:32
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-790a5-ts-own-vertical-scroll-area-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-790a5-ts-own-vertical-scroll-area-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-790a5-ts-own-vertical-scroll-area-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-790a5-ts-own-vertical-scroll-area-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-790a5-ts-own-vertical-scroll-area-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  30) [mobile-chromium] › e2e\user-permissions.spec.js:204:3 › user management data integrity › edits patient details and resets the password from the service-recipient menu 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'แก้ไขข้อมูล สมชาย ใจดี' })
+
+
+      209 |     const received = {};
+      210 |     await mockUserApi(page, received);
+    > 211 |     await page.goto("/admin/members");
+          |                                       ^
+      212 |
+      213 |     await page.getByRole("button", { name: "แก้ไขข้อมูล สมชาย ใจดี" }).click();
+      214 |     await expect(
+        at D:\github-clone\suth-suthiecare\app\e2e\user-permissions.spec.js:211:72
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-85f73--the-service-recipient-menu-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-85f73--the-service-recipient-menu-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-85f73--the-service-recipient-menu-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-85f73--the-service-recipient-menu-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-85f73--the-service-recipient-menu-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  31) [mobile-chromium] › e2e\user-permissions.spec.js:231:3 › user management data integrity › deletes a patient login only after explicit confirmation 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: 'ลบบัญชี สมชาย ใจดี' })
+
+
+      236 |     const received = {};
+      237 |     await mockUserApi(page, received);
+    > 238 |     await page.goto("/admin/members");
+          |                                       ^
+      239 |
+      240 |     await page.getByRole("button", { name: "ลบบัญชี สมชาย ใจดี" }).click();
+      241 |     await expect(
+        at D:\github-clone\suth-suthiecare\app\e2e\user-permissions.spec.js:238:68
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-de24d-after-explicit-confirmation-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-de24d-after-explicit-confirmation-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-de24d-after-explicit-confirmation-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-de24d-after-explicit-confirmation-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-results\user-permissions-user-mana-de24d-after-explicit-confirmation-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  31 failed
+    [desktop-chromium] › e2e\dashboard-date-filter.spec.js:3:1 › dashboard applies the selected date range to statistics and recent cases 
+    [desktop-chromium] › e2e\organization-hierarchy.spec.js:133:1 › a school sub-unit inherits its main organization's type and shows school menus 
+    [desktop-chromium] › e2e\organization-hierarchy.spec.js:156:1 › main organizations choose the type, sub-units inherit it, members are added by checkbox 
+    [desktop-chromium] › e2e\organization-hierarchy.spec.js:202:1 › system-wide settings sit in their own admin section 
+    [desktop-chromium] › e2e\organization-hierarchy.spec.js:231:1 › an organization member does not get the admin section 
+    [desktop-chromium] › e2e\password-help.spec.js:75:1 › patient password recovery walks through email, code, and new password 
+    [desktop-chromium] › e2e\password-help.spec.js:90:1 › staff password recovery uses the staff endpoints 
+    [desktop-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code 
+    [desktop-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit 
+    [desktop-chromium] › e2e\school-management.spec.js:248:3 › school organization › shows school menus instead of hospital-only menus 
+    [desktop-chromium] › e2e\school-management.spec.js:268:3 › school organization › the structure page is the sub-unit's school: grades and their rooms only 
+    [desktop-chromium] › e2e\school-management.spec.js:296:3 › school organization › student list opens the student health file 
+    [desktop-chromium] › e2e\school-management.spec.js:315:3 › school organization › the case list of a school organization is the student health view 
+    [desktop-chromium] › e2e\school-management.spec.js:326:3 › school organization › imports a CSV after a dry run and offers the credentials file 
+    [desktop-chromium] › e2e\user-permissions.spec.js:122:3 › user management data integrity › saves a long Thai full name without truncating it 
+    [desktop-chromium] › e2e\user-permissions.spec.js:143:3 › user management data integrity › loads the unmasked record before editing a user 
+    [desktop-chromium] › e2e\user-permissions.spec.js:155:3 › user management data integrity › shows patient members without exposing sensitive identity fields 
+    [desktop-chromium] › e2e\user-permissions.spec.js:176:3 › user management data integrity › user management page provides its own vertical scroll area 
+    [desktop-chromium] › e2e\user-permissions.spec.js:204:3 › user management data integrity › edits patient details and resets the password from the service-recipient menu 
+    [desktop-chromium] › e2e\user-permissions.spec.js:231:3 › user management data integrity › deletes a patient login only after explicit confirmation 
+    [mobile-chromium] › e2e\dashboard-date-filter.spec.js:3:1 › dashboard applies the selected date range to statistics and recent cases 
+    [mobile-chromium] › e2e\password-help.spec.js:75:1 › patient password recovery walks through email, code, and new password 
+    [mobile-chromium] › e2e\password-help.spec.js:90:1 › staff password recovery uses the staff endpoints 
+    [mobile-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code 
+    [mobile-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit 
+    [mobile-chromium] › e2e\user-permissions.spec.js:122:3 › user management data integrity › saves a long Thai full name without truncating it 
+    [mobile-chromium] › e2e\user-permissions.spec.js:143:3 › user management data integrity › loads the unmasked record before editing a user 
+    [mobile-chromium] › e2e\user-permissions.spec.js:155:3 › user management data integrity › shows patient members without exposing sensitive identity fields 
+    [mobile-chromium] › e2e\user-permissions.spec.js:176:3 › user management data integrity › user management page provides its own vertical scroll area 
+    [mobile-chromium] › e2e\user-permissions.spec.js:204:3 › user management data integrity › edits patient details and resets the password from the service-recipient menu 
+    [mobile-chromium] › e2e\user-permissions.spec.js:231:3 › user management data integrity › deletes a patient login only after explicit confirmation 
+  36 skipped
+  71 passed (12.9m)

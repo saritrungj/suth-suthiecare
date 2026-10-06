@@ -415,6 +415,10 @@ const QuestionBody = ({
           <div className="sfb-dummy-phone-sub">
             * กล่องยินยอม PDPA จะแสดงอัตโนมัติในหน้าผู้กรอกฟอร์ม
           </div>
+          <div className="sfb-dummy-phone-sub">
+            * ผู้ที่เข้าสู่ระบบและบัญชีมีเลขบัตรแล้วจะไม่ต้องกรอกซ้ำ
+            ระบบใช้เลขบัตรรวมผลทุกแบบประเมินไว้ในแฟ้มบุคคลเดียว
+          </div>
         </div>
       </div>
     );

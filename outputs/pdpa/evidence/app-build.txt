@@ -1,0 +1,61 @@
+$ vite build
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 915 modules transformed.
+rendering chunks...
+computing gzip size...
+build/index.html                                  4.26 kB │ gzip:   1.12 kB
+build/assets/logoSUTH-C61czE0q.png               59.02 kB
+build/assets/bg-health-CF5F11bm.jpg             656.44 kB
+build/assets/login-image-auic4EU3.png         1,296.91 kB
+build/assets/02-ChbMj7n0.png                  1,306.70 kB
+build/assets/01-B43erMv6.png                  1,308.00 kB
+build/assets/03-DuAF39By.png                  1,473.24 kB
+build/assets/act.suth-qG5EZz1V.png            1,632.43 kB
+build/assets/vitalcare-FsGwXx1b.png           1,632.84 kB
+build/assets/bg-new-CxDf2QPd.jpg              5,286.88 kB
+build/assets/style-Crsn3RF1.css                 491.00 kB │ gzip:  86.97 kB
+build/assets/useMediaQuery-BewgeCiG.js            0.36 kB │ gzip:   0.24 kB
+build/assets/HistorySearch-jjjhF32s.js            0.43 kB │ gzip:   0.31 kB
+build/assets/CaseReferrals-Dqq78pHn.js            0.90 kB │ gzip:   0.45 kB
+build/assets/FileSaver.min-CisY1A-M.js            3.02 kB │ gzip:   1.47 kB
+build/assets/CaseReferralPanel-DBOaVMmw.js        5.06 kB │ gzip:   1.98 kB
+build/assets/SchoolTypes-CAn-ZQO7.js              5.75 kB │ gzip:   2.09 kB
+build/assets/RolesPermissions-FZL33xH4.js         6.12 kB │ gzip:   2.15 kB
+build/assets/ClinicDetail-DDMp9AL8.js             6.35 kB │ gzip:   2.26 kB
+build/assets/CaseTable-CWOhndGV.js                6.53 kB │ gzip:   2.45 kB
+build/assets/CaseDrawer-DRtLaBb8.js               6.87 kB │ gzip:   3.03 kB
+build/assets/MyProfile-BXs6mcmt.js                8.18 kB │ gzip:   2.41 kB
+build/assets/school-gWFtW2kY.js                   9.25 kB │ gzip:   3.73 kB
+build/assets/TeacherList-BDC0iJx0.js              9.41 kB │ gzip:   2.99 kB
+build/assets/studentImport-5SgbRtUy.js            9.49 kB │ gzip:   3.37 kB
+build/assets/SchoolCaseData-BI8wb19r.js          10.28 kB │ gzip:   3.35 kB
+build/assets/CaseReferrals-kh2uw60k.js           10.61 kB │ gzip:   3.39 kB
+build/assets/RiskCases-ayy0FhEV.js               10.64 kB │ gzip:   4.01 kB
+build/assets/StudentImport-DOGZn5jC.js           11.48 kB │ gzip:   3.69 kB
+build/assets/AdminLayout-Bx1OumGL.js             11.77 kB │ gzip:   3.80 kB
+build/assets/AssessmentResult-BsXu89A2.js        11.87 kB │ gzip:   4.16 kB
+build/assets/SchoolStructure-NrEhYV54.js         12.41 kB │ gzip:   3.71 kB
+build/assets/StudentList-Dgn4bCB2.js             15.37 kB │ gzip:   4.56 kB
+build/assets/FormManager-y5WMPicS.js             18.06 kB │ gzip:   4.96 kB
+build/assets/StudentDetailModal-CF3O3qHz.js      20.52 kB │ gzip:   5.61 kB
+build/assets/StudentHealthCharts-CzNkwTKn.js     28.70 kB │ gzip:   9.28 kB
+build/assets/CaseData-BVYd4BGC.js                28.92 kB │ gzip:   8.74 kB
+build/assets/UserManagement-fluP3PIR.js          31.57 kB │ gzip:   7.96 kB
+build/assets/FormView-CExtbbkc.js                41.04 kB │ gzip:  12.50 kB
+build/assets/BannerManagement-BMZOclqW.js        42.32 kB │ gzip:  12.12 kB
+build/assets/HistoryResult-eXVdwA5V.js           43.43 kB │ gzip:  12.91 kB
+build/assets/caseDateFilter-DJJBAe8i.js          87.51 kB │ gzip:  23.29 kB
+build/assets/FormBuilder-BemI8CZY.js             99.44 kB │ gzip:  24.21 kB
+build/assets/dashboard-C59hZcE7.js              107.13 kB │ gzip:  28.48 kB
+build/assets/index-Dx_79EXv.js                  111.18 kB │ gzip:  30.56 kB
+build/assets/Appointment-iKdokXl3.js            249.08 kB │ gzip:  75.09 kB
+build/assets/CartesianChart-CKjw4VZT.js         352.61 kB │ gzip: 104.06 kB
+build/assets/index-Brl3gPIX.js                  827.04 kB │ gzip: 244.90 kB
+build/assets/exceljs.min-A_H23_DX.js            936.99 kB │ gzip: 270.75 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 8.47s

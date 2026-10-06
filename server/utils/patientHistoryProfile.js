@@ -4,13 +4,11 @@ const normalizePhone = (value) => String(value || "").replace(/\D/g, "");
 
 function extractExistingPhone(rows = []) {
   for (const row of rows) {
-    let summary = row?.summary_data;
-    try {
-      summary =
-        typeof summary === "string" ? JSON.parse(summary) : summary || {};
-    } catch {
-      summary = {};
-    }
+    const summary = require("./decryptCaseData").decryptSummaryData(
+      row?.summary_data,
+      decrypt,
+      row.organization_id,
+    );
 
     const answers = summary.raw_answers || {};
     const candidate =

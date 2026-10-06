@@ -154,6 +154,8 @@ const FormBuilder = () => {
   const [clinicType, setClinicType] = useState("general");
   const [formType, setFormType] = useState("Registration");
   const [loginEnforcement, setLoginEnforcement] = useState("none");
+  // School module: which part of a student's health this assessment covers.
+  const [healthDomain, setHealthDomain] = useState("");
   const [resultDisplayMode, setResultDisplayMode] = useState("realtime");
   const [clinics, setClinics] = useState([]);
 
@@ -222,6 +224,7 @@ const FormBuilder = () => {
           setClinicType(data.clinic_type || "general");
           setFormType(data.form_type || "Registration");
           setLoginEnforcement(data.login_enforcement || "none");
+          setHealthDomain(data.health_domain || "");
           setResultDisplayMode(data.result_display_mode || "realtime");
 
           if (data.publish_start_date || data.publish_end_date) {
@@ -285,6 +288,7 @@ const FormBuilder = () => {
       clinicType,
       formType,
       loginEnforcement,
+      healthDomain,
       resultDisplayMode,
       publishStartDate,
       publishEndDate,
@@ -306,6 +310,7 @@ const FormBuilder = () => {
       clinicType,
       formType,
       loginEnforcement,
+      healthDomain,
       resultDisplayMode,
       publishStartDate,
       publishEndDate,
@@ -368,6 +373,7 @@ const FormBuilder = () => {
     setClinicType(previous.clinicType);
     setFormType(previous.formType);
     setLoginEnforcement(previous.loginEnforcement);
+    setHealthDomain(previous.healthDomain || "");
     setResultDisplayMode(previous.resultDisplayMode);
     setPublishStartDate(previous.publishStartDate);
     setPublishEndDate(previous.publishEndDate);
@@ -396,6 +402,7 @@ const FormBuilder = () => {
     setClinicType(next.clinicType);
     setFormType(next.formType);
     setLoginEnforcement(next.loginEnforcement);
+    setHealthDomain(next.healthDomain || "");
     setResultDisplayMode(next.resultDisplayMode);
     setPublishStartDate(next.publishStartDate);
     setPublishEndDate(next.publishEndDate);
@@ -643,6 +650,7 @@ const FormBuilder = () => {
       clinic_type: clinicType,
       form_type: formType,
       login_enforcement: loginEnforcement,
+      health_domain: healthDomain || null,
       result_display_mode: resultDisplayMode,
       publish_start_date:
         isScheduled && publishStartDate
@@ -1611,6 +1619,8 @@ const FormBuilder = () => {
         setPublishEndDate={setPublishEndDate}
         loginEnforcement={loginEnforcement}
         setLoginEnforcement={setLoginEnforcement}
+        healthDomain={healthDomain}
+        setHealthDomain={setHealthDomain}
         resultDisplayMode={resultDisplayMode}
         setResultDisplayMode={setResultDisplayMode}
       />

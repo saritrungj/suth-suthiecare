@@ -155,6 +155,7 @@ export default function CaseActionTab(props) {
       )}
 
       <div
+        id="case-step-contact"
         className="cdm-management-box"
         style={{
           opacity: masterCaseInfo?.status === "Closed" ? 0.5 : 1,
@@ -171,10 +172,17 @@ export default function CaseActionTab(props) {
         >
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div className="cdm-status-header-row">
-              <label className="cdm-form-label">ผู้รับผิดชอบ</label>
+              <label className="cdm-form-label" htmlFor="case-staff-select">
+                ผู้รับผิดชอบ
+              </label>
               <button
                 type="button"
                 className="cdm-text-btn-manage"
+                aria-label={
+                  isManagingStaff
+                    ? "ปิดการจัดการผู้รับผิดชอบ"
+                    : "จัดการรายชื่อผู้รับผิดชอบ"
+                }
                 onClick={() => setIsManagingStaff(!isManagingStaff)}
               >
                 <FaCog /> {isManagingStaff ? "ปิด" : "จัดการ"}
@@ -183,6 +191,7 @@ export default function CaseActionTab(props) {
 
             {!isManagingStaff ? (
               <select
+                id="case-staff-select"
                 className="cdm-form-input"
                 value={selectedStaff || ""}
                 onChange={(e) => {
@@ -244,10 +253,15 @@ export default function CaseActionTab(props) {
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div className="cdm-status-header-row">
-              <label className="cdm-form-label">สถานะปัจจุบัน</label>
+              <label className="cdm-form-label" htmlFor="case-status-select">
+                สถานะปัจจุบัน
+              </label>
               <button
                 type="button"
                 className="cdm-text-btn-manage"
+                aria-label={
+                  isManagingStatus ? "ปิดการจัดการสถานะ" : "จัดการรายการสถานะ"
+                }
                 onClick={() => setIsManagingStatus(!isManagingStatus)}
               >
                 <FaCog /> {isManagingStatus ? "ปิด" : "จัดการ"}
@@ -255,6 +269,7 @@ export default function CaseActionTab(props) {
             </div>
             {!isManagingStatus ? (
               <select
+                id="case-status-select"
                 className="cdm-form-input"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
@@ -794,6 +809,7 @@ export default function CaseActionTab(props) {
 
       {/* 🟢 ส่วนบันทึกการติดตาม (Redesigned) */}
       <div
+        id="case-step-note"
         className="cdm-tracking-box"
         style={{
           opacity: masterCaseInfo?.status === "Closed" ? 0.5 : 1,
@@ -816,6 +832,7 @@ export default function CaseActionTab(props) {
         {!activeTemplate && (
           <select
             className="cdm-tpl-selector"
+            aria-label="เลือกชุดคำถามหรือแบบฟอร์มติดตาม"
             onChange={(e) => {
               const selected = templates.find(
                 (t) => t.id === parseInt(e.target.value),
@@ -1018,6 +1035,21 @@ export default function CaseActionTab(props) {
         )}
 
         <div className="cdm-general-note-wrapper">
+          <label className="cdm-note-visibility">
+            <input
+              type="checkbox"
+              checked={Boolean(props.patientVisible)}
+              onChange={(event) =>
+                props.setPatientVisible(event.target.checked)
+              }
+            />
+            <span>
+              แสดงบันทึกนี้ในประวัติของผู้รับบริการ
+              <small>
+                เลือกเฉพาะบันทึกที่ตรวจแล้วและต้องการให้ผู้รับบริการอ่าน
+              </small>
+            </span>
+          </label>
           <label className="cdm-general-note-label">
             <FaPencilAlt color="#94a3b8" /> บันทึกรายละเอียดการติดตาม
             (เพิ่มเติม)
@@ -1037,6 +1069,7 @@ export default function CaseActionTab(props) {
       </div>
 
       <div
+        id="case-step-appoint"
         className="cdm-management-box"
         style={{
           opacity: masterCaseInfo?.status === "Closed" ? 0.5 : 1,

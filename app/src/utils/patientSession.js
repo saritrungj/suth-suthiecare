@@ -1,46 +1,25 @@
-const PATIENT_TOKEN_KEY = "patient_token";
-const PATIENT_USER_KEY = "patient_user";
-const PATIENT_SESSION_EVENT = "patient-session-changed";
-
-function parseUser(value) {
-  try {
-    return value ? JSON.parse(value) : null;
-  } catch {
-    return null;
-  }
-}
-
+import {
+  authSession,
+  setAuthSession,
+  clearAuthSession,
+  subscribeAuthSession,
+} from "./authSession.js";
 export function getPatientSession() {
-  if (typeof window === "undefined") return { token: "", user: null };
-  const token = sessionStorage.getItem(PATIENT_TOKEN_KEY) || "";
-  const user = parseUser(sessionStorage.getItem(PATIENT_USER_KEY));
-  if (!token || !user) return { token: "", user: null };
-  return { token, user };
+  const session = authSession("patient");
+  return { authenticated: Boolean(session.user), user: session.user };
 }
-
-function notifyPatientSession() {
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent(PATIENT_SESSION_EVENT));
-  }
+// First argument is retained for existing callers; access tokens are never stored.
+export function setPatientSession(_unused, user) {
+  setAuthSession("patient", user, authSession("patient").csrf);
 }
-
-export function setPatientSession(token, user) {
-  sessionStorage.setItem(PATIENT_TOKEN_KEY, token);
-  sessionStorage.setItem(PATIENT_USER_KEY, JSON.stringify(user));
-  notifyPatientSession();
-}
-
 export function clearPatientSession() {
-  sessionStorage.removeItem(PATIENT_TOKEN_KEY);
-  sessionStorage.removeItem(PATIENT_USER_KEY);
-  notifyPatientSession();
+  if (typeof sessionStorage !== "undefined")
+    for (let i = sessionStorage.length - 1; i >= 0; i--) {
+      const key = sessionStorage.key(i);
+      if (key?.startsWith("assessment_draft_")) sessionStorage.removeItem(key);
+    }
+  clearAuthSession("patient");
 }
-
 export function subscribePatientSession(listener) {
-  window.addEventListener(PATIENT_SESSION_EVENT, listener);
-  window.addEventListener("focus", listener);
-  return () => {
-    window.removeEventListener(PATIENT_SESSION_EVENT, listener);
-    window.removeEventListener("focus", listener);
-  };
+  return subscribeAuthSession(listener);
 }

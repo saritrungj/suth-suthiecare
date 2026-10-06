@@ -17,8 +17,25 @@ function normalizeStoredAnswer(
   value,
   questionTitle = "",
   decrypt = (item) => item,
+  organizationId,
 ) {
   const normalized = parseStoredAnswer(value);
+  const { parseEnvelope, openJson } = require("./privateData");
+  if (parseEnvelope(normalized))
+    return openJson(
+      normalized,
+      organizationId == null
+        ? undefined
+        : require("./privateData").fieldContext(
+            "form_answers",
+            "answer_value",
+            organizationId,
+          ),
+    );
+  if (process.env.PDPA_LEGACY_READ_ENABLED === "false")
+    throw Object.assign(new Error("LEGACY_PRIVATE_DATA_RETIRED"), {
+      code: "LEGACY_PRIVATE_DATA_RETIRED",
+    });
   if (
     SENSITIVE_QUESTION.test(String(questionTitle)) &&
     typeof normalized === "string"

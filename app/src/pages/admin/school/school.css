@@ -1,0 +1,1564 @@
+/* School module pages (prefix sch-). Mirrors the UserManagement look: grey
+   canvas, white cards, action orange buttons, Sarabun. Colors and sizes
+   come from styles/tokens.css. */
+.sch-wrapper {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+  background: var(--suth-canvas);
+}
+
+.sch-page {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  padding: clamp(1rem, 3vw, 2.5rem);
+  color: var(--suth-ink);
+  font-family: var(--suth-font);
+  box-sizing: border-box;
+}
+
+.sch-header {
+  max-width: 1500px;
+  margin: 0 auto 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.sch-header h1 {
+  margin: 0;
+  color: var(--suth-ink);
+  font-size: 1.5rem;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.sch-header p {
+  margin: 6px 0 0;
+  color: var(--suth-muted);
+  max-width: 68ch;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.sch-header-actions {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Buttons */
+.sch-btn,
+.sch-btn-secondary,
+.sch-btn-ghost,
+.sch-btn-danger {
+  min-height: var(--suth-button-h);
+  padding: 10px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border-radius: var(--suth-radius);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out,
+    color 160ms ease-out;
+}
+
+.sch-btn {
+  border: 1px solid var(--suth-action);
+  background: var(--suth-action);
+  color: var(--suth-on-action);
+  font-weight: 800;
+}
+
+.sch-btn:hover:not(:disabled) {
+  background: var(--suth-action-hover);
+  border-color: var(--suth-action-hover);
+}
+
+.sch-btn-secondary {
+  border: 1px solid var(--suth-control-line);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+}
+
+.sch-btn-secondary:hover:not(:disabled) {
+  border-color: var(--suth-action);
+  color: var(--suth-action-ink);
+}
+
+.sch-btn-ghost {
+  min-height: 40px;
+  padding: 6px 10px;
+  border: 0;
+  background: transparent;
+  color: var(--suth-action-ink);
+}
+
+.sch-btn-ghost:hover:not(:disabled) {
+  background: var(--suth-tint);
+}
+
+.sch-btn-danger {
+  border: 1px solid var(--suth-danger-line);
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
+}
+
+:is(.sch-btn, .sch-btn-secondary, .sch-btn-ghost, .sch-btn-danger):disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+:is(
+  .sch-btn,
+  .sch-btn-secondary,
+  .sch-btn-ghost,
+  .sch-btn-danger,
+  .sch-icon-btn,
+  .sch-page-btn,
+  .sch-name-btn,
+  .sch-tile,
+  .sch-table-wrap
+):focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 2px;
+}
+
+/* Student name opening the student file: looks like text, acts as a
+   button with a full-height hit area on touch screens. */
+.sch-name-btn {
+  min-height: 32px;
+  padding: 2px 0;
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--suth-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sch-name-btn .sch-name {
+  text-decoration: underline;
+  text-decoration-color: var(--suth-tint-line);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 160ms ease-out;
+}
+
+.sch-name-btn:hover .sch-name {
+  color: var(--suth-action-ink);
+  text-decoration-color: currentColor;
+}
+
+/* File chooser: the input stays in the tab order but out of sight; its
+   label is the visible button. */
+.sch-file-btn {
+  position: relative;
+}
+
+.sch-file-btn:focus-within {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 2px;
+}
+
+.sch-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.sch-card {
+  max-width: 1500px;
+  margin: 0 auto 1.25rem;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border-radius: var(--suth-radius-lg);
+  background: var(--suth-surface);
+  box-shadow: var(--suth-shadow-card);
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.sch-card h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+}
+
+.sch-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.sch-card-head h2 {
+  margin: 0;
+}
+
+.sch-muted {
+  color: var(--suth-muted);
+  font-size: 0.92rem;
+}
+
+/* Layout helpers used instead of inline styles */
+.sch-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.sch-stack > p {
+  margin: 0;
+}
+
+.sch-stack-top {
+  margin-top: 16px;
+}
+
+.sch-stack-bottom {
+  margin-bottom: 16px;
+}
+
+.sch-button-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sch-button-row--center {
+  justify-content: center;
+}
+
+.sch-table-note {
+  margin: 12px 0 0;
+}
+
+.sch-code {
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Filters: the bar layout comes from styles/filter-system.css */
+.sch-search-group {
+  min-width: min(100%, 260px);
+  min-height: var(--suth-control-h);
+  padding: 0 14px;
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid var(--suth-control-line);
+  box-sizing: border-box;
+}
+
+.sch-search-group:focus-within {
+  border-color: var(--suth-action);
+  box-shadow: 0 0 0 3px var(--suth-focus);
+}
+
+.sch-search-group input {
+  min-width: 0;
+  min-height: 42px;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--suth-ink);
+  font: inherit;
+  font-size: 1rem;
+}
+
+.sch-search-group input::placeholder {
+  color: var(--suth-muted);
+  opacity: 1;
+}
+
+.sch-filter-icon {
+  flex: 0 0 auto;
+  color: var(--suth-muted);
+}
+
+/* The search takes the free width; row selects stay compact so the
+   "ตัวกรองเพิ่มเติม" button fits at the end of the row. */
+.sch-filter-bar > .sch-search-group {
+  flex: 1 1 260px;
+}
+
+.sch-filter-bar > .sch-bar-select {
+  flex: 0 1 200px;
+  min-width: 140px;
+}
+
+.sch-bar-select select,
+.sch-native-filter select {
+  width: 100%;
+  min-height: var(--suth-control-h);
+  padding: 8px 12px;
+  border: 1px solid var(--suth-control-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+  font: inherit;
+  font-size: 0.95rem;
+}
+
+.sch-bar-select select:focus-visible,
+.sch-native-filter select:focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 1px;
+}
+
+.sch-bar-select select:disabled {
+  opacity: 0.6;
+}
+
+.sch-native-filter {
+  display: grid;
+  gap: 5px;
+}
+
+.sch-native-filter > span {
+  color: var(--suth-ink-2);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+/* Form fields */
+.sch-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 140px;
+  flex: 1 1 160px;
+  font-size: 0.9rem;
+  color: var(--suth-ink-2);
+  font-weight: 600;
+}
+
+.sch-field.sch-grow {
+  flex: 2 1 240px;
+}
+
+.sch-field input,
+.sch-field select,
+.sch-field textarea {
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 1px solid var(--suth-control-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+  font: inherit;
+  font-weight: 400;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.sch-field input::placeholder {
+  color: var(--suth-muted);
+  opacity: 1;
+}
+
+.sch-field input[readonly] {
+  background: var(--suth-surface-2);
+  color: var(--suth-muted);
+}
+
+.sch-field textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.sch-field input:focus-visible,
+.sch-field select:focus-visible,
+.sch-field textarea:focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 1px;
+  border-color: var(--suth-action);
+}
+
+.sch-field [aria-invalid="true"] {
+  border-color: var(--suth-danger);
+}
+
+.sch-required {
+  margin-left: 3px;
+  color: var(--suth-danger);
+  font-weight: 800;
+}
+
+.sch-required-note {
+  margin: 0;
+  color: var(--suth-muted);
+  font-size: 0.875rem;
+}
+
+.sch-field-hint {
+  color: var(--suth-muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.sch-field-error {
+  color: var(--suth-danger);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.sch-output {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  color: var(--suth-ink);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.sch-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.sch-form-grid .sch-full {
+  grid-column: 1 / -1;
+}
+
+.sch-form-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* Tables */
+.sch-table-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 6px;
+}
+
+.sch-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Page tables scroll sideways on a phone instead of squeezing columns. */
+.sch-table-wrap > .sch-table {
+  min-width: 760px;
+}
+
+.sch-table th {
+  padding: 0.875rem 1rem;
+  border-bottom: 2px solid var(--suth-line);
+  background: var(--suth-surface-2);
+  color: var(--suth-ink-2);
+  font-size: 0.875rem;
+  font-weight: 800;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.sch-table td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--suth-line-soft);
+  color: var(--suth-ink-2);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  vertical-align: middle;
+}
+
+.sch-table tbody tr:hover {
+  background: var(--suth-surface-hover);
+}
+
+.sch-table .sch-num,
+.sch-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.sch-table .sch-actions-col {
+  width: 1%;
+  text-align: center;
+}
+
+.sch-row-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: flex-end;
+  white-space: nowrap;
+}
+
+.sch-table td .sch-row-actions {
+  justify-content: center;
+}
+
+.sch-icon-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  cursor: pointer;
+  transition:
+    border-color 160ms ease-out,
+    background-color 160ms ease-out,
+    color 160ms ease-out;
+}
+
+/* A flex button may shrink its icon to nothing; keep it at its own size. */
+.sch-icon-btn svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
+.sch-icon-btn:hover:not(:disabled) {
+  border-color: var(--suth-action);
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
+}
+
+.sch-icon-btn.sch-danger:hover:not(:disabled) {
+  border-color: var(--suth-danger-line);
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
+}
+
+.sch-icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sch-name {
+  font-weight: 700;
+  color: var(--suth-ink);
+}
+
+.sch-sub {
+  display: block;
+  color: var(--suth-muted);
+  font-size: 0.82rem;
+}
+
+.sch-pagination {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid var(--suth-line);
+}
+
+.sch-pagination-info,
+.sch-pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--suth-muted);
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.sch-pagination-info select {
+  min-height: 40px;
+  padding: 5px 10px;
+  border: 1px solid var(--suth-control-line);
+  border-radius: 9px;
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+  font: inherit;
+}
+
+.sch-page-btn {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--suth-control-line);
+  border-radius: 9px;
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  cursor: pointer;
+}
+
+.sch-page-btn:hover:not(:disabled) {
+  border-color: var(--suth-action);
+  color: var(--suth-action-ink);
+}
+
+.sch-page-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+/* Badges: always as wide as their text, never stretched by the parent */
+.sch-badge {
+  display: inline-flex;
+  flex: none;
+  align-self: flex-start;
+  width: max-content;
+  max-width: 100%;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  line-height: 1.4;
+  white-space: nowrap;
+  background: var(--suth-neutral-tint);
+  color: var(--suth-ink-2);
+}
+
+.sch-badge.risk-high {
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
+}
+
+.sch-badge.risk-medium {
+  background: var(--suth-warning-tint);
+  color: var(--suth-warning);
+}
+
+.sch-badge.risk-normal {
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
+}
+
+.sch-badge.status-active {
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
+}
+
+.sch-badge.status-inactive,
+.sch-badge.status-disabled {
+  background: var(--suth-neutral-tint);
+  color: var(--suth-ink-2);
+}
+
+.sch-badge.status-pending {
+  margin-left: 6px;
+  background: var(--suth-warning-tint);
+  color: var(--suth-warning);
+}
+
+/* Empty / loading */
+.sch-empty-state {
+  max-width: 640px;
+  margin: 2rem auto;
+  padding: 2rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  text-align: center;
+  color: var(--suth-muted);
+  border: 1px dashed var(--suth-control-line);
+  border-radius: var(--suth-radius-lg);
+  background: var(--suth-surface);
+}
+
+.sch-empty-state svg {
+  color: var(--suth-muted);
+  font-size: 28px;
+}
+
+.sch-empty-state strong {
+  color: var(--suth-ink);
+  font-size: 1.05rem;
+}
+
+.sch-loading-row td {
+  height: 62px;
+}
+
+.sch-loading-row span {
+  width: 100%;
+  height: 12px;
+  display: block;
+  border-radius: 6px;
+  background: var(--suth-line-soft);
+  animation: schPulse 1.1s ease-in-out infinite alternate;
+}
+
+@keyframes schPulse {
+  to {
+    opacity: 0.45;
+  }
+}
+
+.sch-table td.sch-empty-row {
+  height: 200px;
+  text-align: center;
+}
+
+.sch-empty-row svg {
+  margin: 0 auto 10px;
+  display: block;
+  color: var(--suth-muted);
+  font-size: 28px;
+}
+
+.sch-empty-row strong,
+.sch-empty-row span {
+  display: block;
+}
+
+.sch-empty-row strong {
+  color: var(--suth-ink-2);
+}
+
+.sch-empty-row span {
+  max-width: 60ch;
+  margin: 4px auto 0;
+  color: var(--suth-muted);
+  font-size: 0.85rem;
+}
+
+.sch-error {
+  margin: 0 0 1rem;
+  padding: 10px 14px;
+  border-radius: var(--suth-radius);
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
+}
+
+.sch-stack > .sch-error,
+.sch-stack > .sch-warning {
+  margin: 0;
+}
+
+.sch-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sch-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--suth-neutral-tint);
+  font-size: 0.82rem;
+  color: var(--suth-ink-2);
+}
+
+/* Summary tiles */
+.sch-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.sch-tile {
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--suth-line);
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+  text-align: left;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+button.sch-tile {
+  cursor: pointer;
+  transition:
+    border-color 160ms ease-out,
+    background-color 160ms ease-out;
+}
+
+button.sch-tile:hover {
+  border-color: var(--suth-tint-line);
+}
+
+button.sch-tile.is-active {
+  border-color: var(--suth-accent);
+  background: var(--suth-tint);
+  box-shadow: inset 0 0 0 1px var(--suth-accent);
+}
+
+.sch-tile > span {
+  display: block;
+  color: var(--suth-muted);
+  font-size: 0.85rem;
+}
+
+.sch-tile > strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.sch-tile > .sch-tile-label {
+  font-size: 1.05rem;
+}
+
+.sch-tile > .sch-tile-meta {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sch-tile.risk-high > strong {
+  color: var(--suth-danger);
+}
+
+.sch-tile.risk-medium > strong {
+  color: var(--suth-warning);
+}
+
+.sch-tile.risk-normal > strong {
+  color: var(--suth-success);
+}
+
+.sch-tile-note {
+  margin: -4px 0 0;
+}
+
+/* School dialog content with independent classes.
+   The dialog renders at the end of <body>, outside .sch-page, so it sets
+   its own font and color. */
+.sch-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10050; /* above the mobile top bar and the case drawer */
+  display: grid;
+  place-items: center;
+}
+
+/* Independent shell avoids legacy ui-modal overrides. */
+.sch-modal {
+  width: min(100%, 980px);
+  max-height: calc(100dvh - 32px);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  box-sizing: border-box;
+  border-radius: var(--suth-radius-lg);
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+  font-family: var(--suth-font);
+  box-shadow: var(--suth-shadow-card);
+  overflow: hidden;
+}
+
+.sch-modal.sch-modal--small {
+  width: min(100%, 560px);
+}
+
+.sch-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--suth-line-soft);
+}
+
+.sch-modal-header > div {
+  min-width: 0;
+}
+.sch-modal-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.sch-modal-close {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: var(--suth-control-h);
+  height: var(--suth-control-h);
+  padding: 0;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.sch-modal-close:hover {
+  background: var(--suth-tint);
+  color: var(--suth-action);
+}
+.sch-modal-close:focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 2px;
+}
+
+.sch-modal-body {
+  min-height: 0;
+  padding: 24px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.sch-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--suth-line-soft);
+}
+
+/* Student file content */
+
+.sch-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px 20px;
+  margin: 0;
+}
+
+.sch-info-grid dt {
+  color: var(--suth-muted);
+  font-size: 0.82rem;
+}
+
+.sch-info-grid dd {
+  margin: 2px 0 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.sch-section {
+  min-width: 0;
+  flex-shrink: 0;
+  margin-bottom: 1.25rem;
+}
+
+.sch-section h3 {
+  margin: 0 0 0.6rem;
+  font-size: 1rem;
+}
+
+.sch-trend-select {
+  max-width: 320px;
+}
+
+/* Assessment history: a colored dot before the form name plus the risk
+   badge carry the level; the card itself stays neutral. */
+.sch-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sch-timeline > li {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
+}
+
+.sch-timeline-body {
+  min-width: 0;
+}
+
+.sch-timeline-body > .sch-name {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  overflow-wrap: anywhere;
+}
+
+.sch-risk-dot {
+  width: 10px;
+  height: 10px;
+  flex: none;
+  align-self: center;
+  border-radius: 50%;
+  background: var(--suth-control-line);
+}
+
+.risk-high > .sch-timeline-body .sch-risk-dot {
+  background: var(--suth-danger);
+}
+
+.risk-medium > .sch-timeline-body .sch-risk-dot {
+  background: var(--suth-warning);
+}
+
+.risk-normal > .sch-timeline-body .sch-risk-dot {
+  background: var(--suth-success);
+}
+
+.sch-timeline-body > .sch-sub {
+  margin-left: 18px;
+}
+
+.sch-score-list {
+  margin: 6px 0 0 18px;
+  padding-left: 18px;
+  color: var(--suth-ink-2);
+  font-size: 0.9rem;
+}
+
+.sch-chart {
+  width: 100%;
+  height: 240px;
+}
+
+.sch-chart-loading {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface-2);
+  color: var(--suth-muted);
+}
+
+.sch-chart-legend {
+  font-size: 0.8rem;
+  color: var(--suth-muted);
+}
+
+/* Import */
+.sch-steps {
+  max-width: 1500px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0 auto 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.sch-steps li {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--suth-neutral-tint);
+  color: var(--suth-ink-2);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.sch-steps li[aria-current="step"] {
+  background: var(--suth-action);
+  color: var(--suth-on-action);
+}
+
+.sch-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 2rem 1rem;
+  border: 2px dashed var(--suth-tint-line);
+  border-radius: var(--suth-radius-lg);
+  background: var(--suth-surface-hover);
+  text-align: center;
+  color: var(--suth-ink-2);
+}
+
+.sch-dropzone > svg {
+  color: var(--suth-accent);
+}
+
+.sch-dropzone strong {
+  overflow-wrap: anywhere;
+}
+
+.sch-dropzone.is-dragging {
+  background: var(--suth-tint);
+  border-color: var(--suth-accent);
+}
+
+.sch-progress-label {
+  margin-top: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.sch-progress {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--suth-neutral-tint);
+  overflow: hidden;
+}
+
+.sch-progress span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--suth-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 200ms ease-out;
+}
+
+.sch-check {
+  min-height: var(--suth-control-h);
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 0.92rem;
+  color: var(--suth-ink-2);
+}
+
+.sch-check input {
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  flex: none;
+  accent-color: var(--suth-action);
+}
+
+.sch-warning {
+  padding: 10px 14px;
+  border-radius: var(--suth-radius);
+  background: var(--suth-warning-tint);
+  border: 1px solid var(--suth-warning-line);
+  color: var(--suth-action-hover);
+}
+
+.sch-row-error td {
+  background: var(--suth-danger-tint);
+}
+
+.sch-errors {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--suth-danger);
+  font-size: 0.85rem;
+}
+
+/* Teachers of a classroom (SchoolStructure) */
+.sch-role-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sch-role-list > li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--suth-line-soft);
+}
+
+.sch-role-list select {
+  min-height: 42px;
+  padding: 6px 10px;
+  border: 1px solid var(--suth-control-line);
+  border-radius: 9px;
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+  font: inherit;
+}
+
+/* Case list on a phone: one card per student */
+
+@media (max-width: 760px) {
+  .sch-page {
+    padding: 18px 12px;
+  }
+
+  .sch-header {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .sch-header-actions {
+    justify-content: stretch;
+  }
+
+  .sch-header-actions > * {
+    flex: 1 1 100%;
+  }
+
+  .sch-card {
+    padding: 14px 12px;
+    border-radius: 12px;
+    box-shadow: none;
+  }
+
+  .sch-filter-bar > .sch-search-group,
+  .sch-filter-bar > .sch-bar-select {
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+
+  .sch-add-grade .sch-btn {
+    width: 100%;
+  }
+
+  .sch-pagination {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sch-pagination-info,
+  .sch-pagination-controls {
+    justify-content: space-between;
+  }
+
+  /* Touch targets: every control at least 44px tall */
+  .sch-search-group input,
+  .sch-field input,
+  .sch-field select,
+  .sch-role-list select,
+  .sch-pagination-info select,
+  .sch-btn-ghost,
+  .sch-output {
+    min-height: var(--suth-control-h);
+  }
+
+  .sch-icon-btn,
+  .sch-page-btn {
+    width: var(--suth-control-h);
+    min-width: var(--suth-control-h);
+    height: var(--suth-control-h);
+  }
+
+  .sch-modal-header,
+  .sch-modal-footer {
+    padding: 14px;
+  }
+  .sch-modal-body {
+    padding: 16px 14px;
+  }
+  .sch-field :is(input, select, textarea),
+  .sch-search-group input {
+    font-size: 1rem;
+  }
+
+  .sch-name-btn {
+    min-height: var(--suth-control-h);
+  }
+
+  /* Four risk counts stay visible and clickable on a single row. */
+  .sch-risk-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+  }
+  .sch-risk-summary > li:first-child {
+    grid-column: 1 / -1;
+  }
+  .sch-risk-summary .cw-chip {
+    border-radius: 8px;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    padding: 8px 4px;
+    flex-direction: column-reverse;
+    gap: 2px;
+    white-space: normal;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    text-align: center;
+  }
+  .sch-risk-summary > li:first-child .cw-chip {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+  .sch-risk-summary .cw-dot {
+    display: none;
+  }
+  .sch-risk-summary .cw-chip strong {
+    font-size: 1.2rem;
+  }
+  .sch-physical-summary {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+  }
+  .sch-physical-summary .sch-tile {
+    padding: 8px 4px;
+    border: 0;
+    border-radius: 0;
+    text-align: center;
+  }
+  .sch-physical-summary .sch-tile + .sch-tile {
+    border-inline-start: 1px solid var(--suth-line);
+  }
+  .sch-physical-summary .sch-tile > strong {
+    font-size: 1rem;
+    overflow-wrap: anywhere;
+  }
+  .sch-physical-summary .sch-tile > span {
+    font-size: 0.875rem;
+  }
+  .sch-health-history {
+    overflow: visible;
+  }
+  .sch-health-history > .sch-table {
+    min-width: 0;
+  }
+  .sch-health-history thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .sch-health-history tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-block: 12px;
+    border-bottom: 1px solid var(--suth-line);
+  }
+  .sch-health-history td {
+    display: block;
+    border: 0;
+    padding: 6px;
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+  .sch-health-history td::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--suth-muted);
+    font-size: 0.875rem;
+  }
+  .sch-health-history td:last-child {
+    grid-column: 1 / -1;
+  }
+  .sch-timeline > li {
+    flex-wrap: wrap;
+  }
+  .sch-timeline-body {
+    flex: 1 1 200px;
+  }
+  .sch-info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .sch-field {
+    min-width: 0;
+  }
+  .sch-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Grade levels and their rooms (SchoolStructure) */
+.sch-structure-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sch-year-field {
+  flex: 0 0 150px;
+}
+
+.sch-add-grade {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sch-add-grade .sch-field {
+  min-width: 200px;
+}
+
+.sch-grade .sch-card-head {
+  margin-bottom: 0.5rem;
+}
+
+.sch-grade-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sch-grade-empty {
+  margin: 0;
+}
+
+.sch-room-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sch-room-list li {
+  display: grid;
+  grid-template-columns:
+    minmax(90px, 120px) minmax(110px, 150px) minmax(0, 1fr)
+    auto;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--suth-line-soft);
+}
+
+.sch-room-list .sch-badge {
+  margin-left: 6px;
+}
+
+.sch-room-teachers {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .sch-year-field,
+  .sch-add-grade,
+  .sch-add-grade .sch-field {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .sch-room-list li {
+    grid-template-columns: 1fr auto;
+  }
+
+  .sch-room-list li > .sch-room-teachers,
+  .sch-room-list li > .sch-muted {
+    grid-column: 1;
+  }
+
+  .sch-room-list li > .sch-row-actions {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sch-loading-row span {
+    animation: none;
+  }
+
+  :is(
+    .sch-btn,
+    .sch-btn-secondary,
+    .sch-btn-ghost,
+    .sch-btn-danger,
+    .sch-icon-btn,
+    .sch-tile,
+    .sch-progress span,
+    .sch-name-btn .sch-name
+  ) {
+    transition: none;
+  }
+}
+
+.sch-page .sr-only,
+.sch-modal .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* School-scoped shared components retain AA colors and intrinsic badges. */
+.sch-page {
+  --suth-filter-muted: var(--suth-muted);
+}
+.sch-page .filter-more__trigger strong {
+  background: var(--suth-action);
+  color: var(--suth-on-action);
+}
+:is(.sch-page, .sch-section) .cw-risk {
+  flex: none;
+  align-self: flex-start;
+}
+.sch-classroom-summary {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sch-classroom-summary > li {
+  padding-block: 12px;
+  border-bottom: 1px solid var(--suth-line);
+}
+.sch-classroom-summary h3 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+.sch-classroom-summary dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.sch-classroom-summary dt {
+  color: var(--suth-muted);
+  font-size: 0.875rem;
+}
+.sch-classroom-summary dd {
+  margin: 4px 0 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+:is(.sch-page, .sch-modal, .org-page, .scp) ::selection {
+  background: var(--suth-tint-strong);
+  color: var(--suth-ink);
+}
+:is(.sch-page, .sch-modal, .org-page, .scp) input {
+  caret-color: var(--suth-action);
+}
+/* Alerts remain reachable above the student file and nested school dialogs. */
+body:has(:is(.sch-wrapper, .org-wrapper)) .swal2-container {
+  z-index: 11000;
+}

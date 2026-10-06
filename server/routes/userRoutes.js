@@ -1,3 +1,4 @@
+const accountEmail = require("../utils/accountEmail");
 /**
  * ============================================================
  * server/routes/userRoutes.js  —  เวอร์ชัน AES
@@ -30,20 +31,12 @@ const { encrypt, decrypt, maskName } = require("../utils/encryption");
 const { organizationWhere } = require("../authorization/authorization");
 
 function safeDecrypt(value) {
-  try {
-    return decrypt(value);
-  } catch (e) {
-    return value;
-  }
+  return decrypt(value);
 }
 
 function safePatientDecrypt(value) {
   if (!value) return "";
-  try {
-    return decrypt(value) || "";
-  } catch {
-    return "";
-  }
+  return decrypt(value) || "";
 }
 
 const patientMemberStatuses = new Set([
@@ -147,8 +140,16 @@ router.get(
           username: row.username,
           full_name:
             [
-              safePatientDecrypt(row.first_name_encrypted),
-              safePatientDecrypt(row.last_name_encrypted),
+              require("../utils/privateField").readField(
+                row.first_name_encrypted,
+                "patient_accounts",
+                "first_name_encrypted",
+              ),
+              require("../utils/privateField").readField(
+                row.last_name_encrypted,
+                "patient_accounts",
+                "last_name_encrypted",
+              ),
             ]
               .filter(Boolean)
               .join(" ") || "—",
@@ -165,7 +166,10 @@ router.get(
         },
       });
     } catch (error) {
-      console.error("Error fetching patient members:", error.message);
+      console.error(
+        "Error fetching patient members:",
+        require("../utils/safeError").safeError(error),
+      );
       return res.status(500).json({
         message: "ไม่สามารถโหลดข้อมูลสมาชิกได้ กรุณาลองใหม่",
       });
@@ -185,7 +189,7 @@ router.get(
     try {
       const [rows] = await db.query(
         `SELECT id, username, first_name_encrypted, last_name_encrypted,
-                identity_hash, phone_encrypted, email, status, verified_at, last_login_at, created_at
+                identity_hash, phone_encrypted, email, email_encrypted, status, verified_at, last_login_at, created_at
          FROM patient_accounts WHERE id = ? LIMIT 1`,
         [memberId],
       );
@@ -194,23 +198,38 @@ router.get(
       }
       const member = rows[0];
       const phone =
-        safePatientDecrypt(member.phone_encrypted) ||
+        require("../utils/privateField").readField(
+          member.phone_encrypted,
+          "patient_accounts",
+          "phone_encrypted",
+        ) ||
         (await getExistingPhone(member.identity_hash)) ||
         "";
       return res.json({
         id: member.id,
         username: member.username,
-        first_name: safePatientDecrypt(member.first_name_encrypted),
-        last_name: safePatientDecrypt(member.last_name_encrypted),
+        first_name: require("../utils/privateField").readField(
+          member.first_name_encrypted,
+          "patient_accounts",
+          "first_name_encrypted",
+        ),
+        last_name: require("../utils/privateField").readField(
+          member.last_name_encrypted,
+          "patient_accounts",
+          "last_name_encrypted",
+        ),
         phone,
-        email: member.email || "",
+        email: accountEmail.decode(member, "patient_accounts"),
         status: member.status,
         verified_at: member.verified_at,
         last_login_at: member.last_login_at,
         created_at: member.created_at,
       });
     } catch (error) {
-      console.error("Error fetching patient member:", error.message);
+      console.error(
+        "Error fetching patient member:",
+        require("../utils/safeError").safeError(error),
+      );
       return res
         .status(500)
         .json({ message: "ไม่สามารถเปิดข้อมูลผู้มารับบริการได้" });
@@ -266,13 +285,16 @@ router.put(
 
     try {
       const [existingRows] = await db.query(
-        "SELECT id, email FROM patient_accounts WHERE id = ? LIMIT 1",
+        "SELECT id, email,email_encrypted FROM patient_accounts WHERE id = ? LIMIT 1",
         [memberId],
       );
       if (!existingRows.length) {
         return res.status(404).json({ message: "ไม่พบบัญชีผู้มารับบริการ" });
       }
-      const emailChanged = normalizeEmail(existingRows[0].email) !== email;
+      const emailChanged =
+        normalizeEmail(
+          accountEmail.decode(existingRows[0], "patient_accounts"),
+        ) !== email;
 
       const fields = [
         "username = ?",
@@ -280,7 +302,9 @@ router.put(
         "last_name_encrypted = ?",
         "phone_hash = ?",
         "phone_encrypted = ?",
-        "email = ?",
+        "email = NULL",
+        "email_encrypted = ?",
+        "email_hash = ?",
         "status = ?",
         "failed_login_count = 0",
         "locked_until = NULL",
@@ -288,17 +312,34 @@ router.put(
       ];
       const values = [
         username,
-        encrypt(firstName.value),
-        encrypt(lastName.value),
+        require("../utils/privateField").writeField(
+          firstName.value,
+          "patient_accounts",
+          "first_name_encrypted",
+        ),
+        require("../utils/privateField").writeField(
+          lastName.value,
+          "patient_accounts",
+          "last_name_encrypted",
+        ),
         phone ? hmacHash(phone) : null,
-        phone ? encrypt(phone) : null,
-        email,
+        phone
+          ? require("../utils/privateField").writeField(
+              phone,
+              "patient_accounts",
+              "phone_encrypted",
+            )
+          : null,
+        accountEmail.encode(email, "patient_accounts"),
+        accountEmail.lookup(email),
         status,
       ];
       if (emailChanged) {
         fields.push(
-          "email_verified_at = NOW()",
+          "email_verified_at = NULL",
           "pending_email = NULL",
+          "pending_email_encrypted = NULL",
+          "pending_email_hash = NULL",
           "auth_version = auth_version + 1",
         );
       }
@@ -321,6 +362,14 @@ router.put(
             [memberId],
           );
         }
+        await require("../utils/pdpaAudit").requiredAudit(
+          req,
+          "patient_account.update",
+          "patient_account",
+          memberId,
+          {},
+          connection,
+        );
         await connection.commit();
       } catch (transactionError) {
         await connection.rollback();
@@ -341,9 +390,12 @@ router.put(
           .status(409)
           .json({ message: "ชื่อผู้ใช้หรืออีเมลนี้มีผู้ใช้งานแล้ว" });
       }
-      console.error("Error updating patient member:", error.message);
+      console.error(
+        "Error updating patient member:",
+        require("../utils/safeError").safeError(error),
+      );
       return res
-        .status(500)
+        .status(error.status || 500)
         .json({ message: "ไม่สามารถบันทึกข้อมูลผู้มารับบริการได้" });
     }
   },
@@ -352,6 +404,7 @@ router.put(
 router.delete(
   "/patient-members/:id",
   verifyToken,
+  verifySuperAdmin,
   requirePermission("User Management", "manage"),
   async (req, res) => {
     const memberId = Number(req.params.id);
@@ -380,6 +433,14 @@ router.delete(
       await connection.query("DELETE FROM patient_accounts WHERE id = ?", [
         memberId,
       ]);
+      await require("../utils/pdpaAudit").requiredAudit(
+        req,
+        "patient_account.delete",
+        "patient_account",
+        memberId,
+        {},
+        connection,
+      );
       await connection.commit();
       await auditPatient(null, "admin_account_deleted", req, {
         actor_user_id: req.user.id,
@@ -389,7 +450,10 @@ router.delete(
       return res.json({ message: "ลบบัญชีผู้มารับบริการเรียบร้อยแล้ว" });
     } catch (error) {
       if (connection) await connection.rollback();
-      console.error("Error deleting patient member:", error.message);
+      console.error(
+        "Error deleting patient member:",
+        require("../utils/safeError").safeError(error),
+      );
       return res
         .status(500)
         .json({ message: "ไม่สามารถลบบัญชีผู้มารับบริการได้" });
@@ -406,7 +470,7 @@ router.delete(
 router.get("/users", verifyToken, verifySuperAdmin, async (req, res) => {
   try {
     const [rows] = await db.query(
-      "SELECT id, username, name, email, email_verified_at, role_id, status, created_at FROM users ORDER BY id DESC",
+      "SELECT id, username, name, email,email_encrypted, email_verified_at, role_id, status, created_at FROM users ORDER BY id DESC",
     );
     const [membershipRows] = await db.query(
       `SELECT om.user_id, om.id, om.organization_id, om.role_id, om.status, om.is_primary,
@@ -424,19 +488,27 @@ router.get("/users", verifyToken, verifySuperAdmin, async (req, res) => {
     const data = rows.map((row) => ({
       id: row.id,
       username: row.username,
-      email: row.email,
+      email: require("../utils/privateDto").mask(
+        accountEmail.decode(row, "users"),
+        "email",
+      ),
       email_verified_at: row.email_verified_at,
       role_id: row.role_id,
       status: row.status,
       created_at: row.created_at,
       // ── ข้อมูลที่ encrypt → decrypt → mask ──
-      name: maskName(safeDecrypt(row.name)),
+      name: maskName(
+        require("../utils/privateField").readField(row.name, "users", "name"),
+      ),
       memberships: membershipsByUser[row.id] || [],
     }));
 
     res.json(data);
   } catch (err) {
-    console.error("Error fetching users:", err);
+    console.error(
+      "Error fetching users:",
+      require("../utils/safeError").safeError(err),
+    );
     res.status(500).json({ message: "Server Error" });
   }
 });
@@ -452,7 +524,7 @@ router.get(
   async (req, res) => {
     try {
       const [rows] = await db.query(
-        "SELECT id, username, name, email, email_verified_at, role_id, status, created_at FROM users WHERE id = ?",
+        "SELECT id, username, name, email,email_encrypted, email_verified_at, role_id, status, created_at FROM users WHERE id = ?",
         [req.params.id],
       );
       if (rows.length === 0)
@@ -474,21 +546,34 @@ router.get(
           .status(403)
           .json({ message: "คุณไม่มีสิทธิ์ดูข้อมูลผู้ใช้นี้" });
       }
+      await require("../utils/pdpaAudit").requiredAudit(
+        req,
+        "users.full.read",
+        "user",
+        row.id,
+      );
       res.json({
         id: row.id,
         username: row.username,
-        email: row.email,
+        email: accountEmail.decode(row, "users"),
         email_verified_at: row.email_verified_at,
         role_id: row.role_id,
         status: row.status,
         created_at: row.created_at,
         // ── decrypt ข้อมูลจริง ──
-        name: decrypt(row.name),
+        name: require("../utils/privateField").readField(
+          row.name,
+          "users",
+          "name",
+        ),
         memberships,
       });
     } catch (err) {
-      console.error("Error fetching user full:", err);
-      res.status(500).json({ message: "Server Error" });
+      console.error(
+        "Error fetching user full:",
+        require("../utils/safeError").safeError(err),
+      );
+      res.status(err.status || 500).json({ message: "Server Error" });
     }
   },
 );
@@ -522,17 +607,20 @@ router.post("/users", verifyToken, verifySuperAdmin, async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const encName = name ? encrypt(name) : null;
+    const encName = name
+      ? require("../utils/privateField").writeField(name, "users", "name")
+      : null;
 
     const [result] = await db.query(
       `INSERT INTO users
-        (username, password, name, email, role_id, status, email_verified_at, auth_version)
-       VALUES (?, ?, ?, ?, ?, ?, NULL, 0)`,
+        (username, password, name, email, email_encrypted,email_hash, role_id, status, email_verified_at, auth_version)
+       VALUES (?, ?, ?, NULL, ?, ?, ?, ?, NULL, 0)`,
       [
         username,
         hashedPassword,
         encName,
-        email,
+        accountEmail.encode(email, "users"),
+        accountEmail.lookup(email),
         requestedRoleId,
         status || "active",
       ],
@@ -548,7 +636,10 @@ router.post("/users", verifyToken, verifySuperAdmin, async (req, res) => {
       .status(201)
       .json({ id: result.insertId, message: "สร้างผู้ใช้งานสำเร็จ" });
   } catch (err) {
-    console.error("Error creating user:", err);
+    console.error(
+      "Error creating user:",
+      require("../utils/safeError").safeError(err),
+    );
 
     // 🔥 เพิ่มส่วนนี้: ดักจับ Error กรณีข้อมูลซ้ำ (ER_DUP_ENTRY)
     if (err.code === "ER_DUP_ENTRY") {
@@ -595,7 +686,7 @@ router.put("/users/:id", verifyToken, verifySuperAdmin, async (req, res) => {
     }
 
     const [existingRows] = await db.query(
-      "SELECT id, role_id, status, email FROM users WHERE id = ?",
+      "SELECT id, role_id, status, email,email_encrypted FROM users WHERE id = ?",
       [req.params.id],
     );
     if (!existingRows.length)
@@ -622,7 +713,9 @@ router.put("/users/:id", verifyToken, verifySuperAdmin, async (req, res) => {
     }
 
     // ✅ Encrypt เฉพาะตอนมีค่า
-    const encName = name ? encrypt(name) : null;
+    const encName = name
+      ? require("../utils/privateField").writeField(name, "users", "name")
+      : null;
 
     let fields = [];
     let values = [];
@@ -632,9 +725,12 @@ router.put("/users/:id", verifyToken, verifySuperAdmin, async (req, res) => {
     values.push(username);
     fields.push("name=?");
     values.push(encName);
-    fields.push("email=?");
-    values.push(email);
-    if (email !== existing.email) {
+    fields.push("email=NULL", "email_encrypted=?", "email_hash=?");
+    values.push(
+      accountEmail.encode(email, "users"),
+      accountEmail.lookup(email),
+    );
+    if (email !== accountEmail.decode(existing, "users")) {
       fields.push("email_verified_at=NULL");
       fields.push("auth_version=auth_version+1");
     }
@@ -653,6 +749,12 @@ router.put("/users/:id", verifyToken, verifySuperAdmin, async (req, res) => {
 
     values.push(req.params.id);
 
+    await require("../utils/pdpaAudit").requiredAudit(
+      req,
+      "users.permissions.update",
+      "user",
+      req.params.id,
+    );
     await db.query(`UPDATE users SET ${fields.join(", ")} WHERE id=?`, values);
     if (requestedRoleId === 1) {
       await db.query(
@@ -668,8 +770,13 @@ router.put("/users/:id", verifyToken, verifySuperAdmin, async (req, res) => {
 
     res.json({ message: "อัปเดตข้อมูลผู้ใช้สำเร็จ" });
   } catch (err) {
-    console.error("Error updating user:", err);
-    res.status(500).json({ message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
+    console.error(
+      "Error updating user:",
+      require("../utils/safeError").safeError(err),
+    );
+    res
+      .status(err.status || 500)
+      .json({ message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
   }
 });
 
@@ -709,6 +816,14 @@ router.delete("/users/:id", verifyToken, verifySuperAdmin, async (req, res) => {
         req.params.id,
       ]);
       await connection.query("DELETE FROM users WHERE id=?", [req.params.id]);
+      await require("../utils/pdpaAudit").requiredAudit(
+        req,
+        "users.permissions.delete",
+        "user",
+        req.params.id,
+        {},
+        connection,
+      );
       await connection.commit();
     } catch (error) {
       await connection.rollback();
@@ -718,7 +833,10 @@ router.delete("/users/:id", verifyToken, verifySuperAdmin, async (req, res) => {
     }
     res.json({ message: "ลบผู้ใช้สำเร็จ" });
   } catch (err) {
-    console.error("Error deleting user:", err);
+    console.error(
+      "Error deleting user:",
+      require("../utils/safeError").safeError(err),
+    );
     res.status(500).json({ message: "Server Error" });
   }
 });

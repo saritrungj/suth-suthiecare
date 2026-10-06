@@ -1,5 +1,14 @@
 {
   "sutlanding": {
+    "ai_chat_label": "Nong Peeb Hom AI Chat",
+    "ai_chat_hint": "Your AI helper, ready to care",
+    "ai_chat_greet": "Hello!",
+    "ai_chat_ask_pre": "How can",
+    "ai_chat_ask_brand": "Nong Peeb Hom",
+    "ai_chat_ask_post": "help you today?",
+    "ai_chat_aria": "Open AI live chat health assistant",
+    "scroll_top": "Back to top",
+    "help_center": "Help center",
     "title": "Registration Form",
     "subtitle_highlight": "Health Consultation",
     "description": "Registration Center for Clinical Consultation, Suranaree University of Technology Hospital",
@@ -330,6 +339,23 @@
       "password_mismatch": "The passwords do not match.",
       "turnstile_required": "Please complete the security check.",
       "generic_error": "Unable to create your account. Check your details and try again."
+    },
+    "change_password": {
+      "kicker": "Account security",
+      "intro_title": "Choose your own password",
+      "intro_description": "Accounts created by your school or our staff start with a temporary password. Set a new password that only you know before you continue.",
+      "title": "Change password",
+      "subtitle": "Enter your current password and a new one.",
+      "required_subtitle": "Account {{username}} is using a temporary password. Please set a new password to continue.",
+      "temporary_password": "Temporary password you received",
+      "current_password": "Current password",
+      "new_password": "New password",
+      "confirm_password": "Confirm new password",
+      "submit": "Save new password",
+      "submitting": "Saving...",
+      "weak": "The new password does not meet the rules below yet.",
+      "mismatch": "The new password and its confirmation do not match.",
+      "error": "Unable to change the password. Please try again."
     }
   },
   "clinic_picker": {

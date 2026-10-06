@@ -26,7 +26,7 @@ test("decrypts sensitive case fields without exposing identity hashes", () => {
   );
 
   assert.equal(response.identity_value, "1234567890123");
-  assert.equal(response.identity_hash, "one-way-hash");
+  assert.equal(response.identity_hash, undefined);
   assert.equal(response.summary_data.display_name, "สมชาย ใจดี");
   assert.equal(response.summary_data.display_phone, "0812345678");
   assert.equal(response.summary_data.raw_answers["Full name"], "สมชาย ใจดี");

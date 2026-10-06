@@ -1,0 +1,161 @@
+$ node --test test/*.test.js
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+﹣ MySQL prevents duplicate open referrals across form responses of one case (1.7602ms) # SKIP
+◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+✔ all referral routes require organization context (13.9548ms)
+✔ the public projection excludes all source identifiers and detailed answers (11.0936ms)
+✔ only the destination progresses a referral and only the pending source cancels (6.2607ms)
+✔ an unrelated organization cannot list, read or update a referral (361.0872ms)
+✔ case history includes referrals from the same master case and refuses foreign anchors (78.3387ms)
+✔ source and destination see the same status and deliberately shared note (118.4ms)
+✔ outdated versions cannot overwrite the latest status (30.6403ms)
+✔ completion needs a summary and prevents later edits (87.5588ms)
+Case referral failed: Error
+✔ an audit note failure rolls back the status update (22.554ms)
+✔ creation only shares the allowed encrypted snapshot of an owned case (42.4548ms)
+✔ foreign source cases, same destination, inactive units and deep payloads are refused (100.2141ms)
+✔ view-only staff and all-organizations context cannot perform writes (83.9112ms)
+✔ closing a referral pair stops new referrals while existing participants retain history (87.0412ms)
+✔ trusted links only allow local and official HTTPS destinations (2.7583ms)
+✔ rich text strips executable HTML and untrusted backlinks (8.1242ms)
+✔ form content removes unsafe HTML and untrusted media (2.3217ms)
+◇ injected env (26) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+✔ decrypts sensitive case fields without exposing identity hashes (46.9769ms)
+✔ only published forms inside their publish window accept submissions (9.5704ms)
+✔ only public forms accept a guest submission (0.4452ms)
+✔ form settings safely fall back for legacy or malformed values (4.3046ms)
+✔ health domain accepts mental, physical, general or nothing (0.43ms)
+◇ injected env (26) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+✔ submits a hash-linked form and names it after the account (1215.4643ms)
+✔ accepts a public form submission without a patient session (72.0742ms)
+✔ blocks unauthenticated submission when login is strict or optional (303.5074ms)
+✔ rejects a submission to a draft form even by direct URL (26.2039ms)
+✔ a guest who consents is filed under their national ID (24.7627ms)
+✔ an invalid consented national ID is rejected before anything is saved (28.5523ms)
+✔ stores an empty non-null identity when only an identity hash is available (1.3388ms)
+✔ preserves the encrypted identity when one is available (0.2711ms)
+✔ a main organization chooses the type of its sub-units (4.9651ms)
+✔ a sub-unit inherits the type of its main organization (0.6355ms)
+✔ a legacy unit without a parent keeps a type of its own (0.4392ms)
+✔ member ids must be unique positive integers (0.4897ms)
+✔ unit permissions use both organization and role with no shared/system fallback (5.5128ms)
+✔ unit permission updates isolate units, require system authority, detect conflicts and roll back audit failure (590.2575ms)
+✔ accepts passwords meeting every rule at both length bounds (1.5437ms)
+✔ rejects passwords missing a rule (0.4807ms)
+◇ injected env (26) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+✔ accepts and normalises Thai patient names (5.4862ms)
+✔ rejects empty, overly long, and unsafe patient names (1.12ms)
+✔ finds a legacy patient phone from assessment history (10.3297ms)
+✔ does not return an invalid historical phone (0.392ms)
+✔ an imported account must change its password before using the portal (20.7288ms)
+✔ the password change route itself is allowed (2.5865ms)
+✔ a normal account passes (1.6188ms)
+﹣ isolated MySQL schema, idempotent migration, JSON roundtrip and single-use race (1.4243ms) # SKIP
+◇ injected env (26) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+✔ normalizes a dashed national ID and rejects a bad checksum (6.7551ms)
+✔ an account without an ID adopts the consented national ID (5.2591ms)
+✔ the account's own ID wins over a different ID typed into the form (7.008ms)
+✔ merges a guest person into the account person with the same ID (2.5322ms)
+✔ a guest without a national ID has no person (0.4024ms)
+◇ injected env (24) from .env // tip: ⌘ override existing { override: true }
+✔ private JSON preserves all scalar and compound types with fresh IVs (19.9295ms)
+✔ wrong key, edited ciphertext, wrong owner and unknown versions fail closed (3.0684ms)
+✔ rotation reads a prior key while the active key changes (1.5509ms)
+✔ DTO hides hashes, private storage, unknown case fields and unauthorized health (46.6643ms)
+✔ context-bound field and school measurements reject copied data and retired plaintext (5.7901ms)
+◇ injected env (26) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+✔ full disclosure and exports stop when mandatory audit storage is unavailable (243.1726ms)
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+✔ case logs derive the master from the scoped response and reject forged master/foreign keys (21.6562ms)
+✔ required audit failure rolls back the complete log transaction (1.4941ms)
+✔ appointments cannot combine two otherwise accessible unrelated cases (2.3929ms)
+✔ invitation validates login, receiver, expiry, revocation, reuse and binding without consuming on open (3.5591ms)
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+✔ cached form visibility never shares draft entries with a member lacking form permission (265.5022ms)
+✔ counts cache includes owner and visibility and query verifies the response/form owner relationship (98.6219ms)
+◇ injected env (26) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+✔ expired patient cookie is cleared for guest flow while required login still rejects it (3.9569ms)
+✔ guest flow cannot bypass CSRF or origin errors by discarding the active account (4.4637ms)
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+✔ lookup aliases read only the authorized organization and never create defaults (438.1102ms)
+✔ lookup writes ignore supplied owner and foreign records stay inaccessible (171.0535ms)
+✔ private files require authentication, an explicit allowlist and a durable audit (143.9519ms)
+✔ history edits reject a foreign response and old AES link endpoints are gone (108.4779ms)
+✔ migration keeps types, is idempotent, quarantines missing owners, and does not clear by default (31.3066ms)
+✔ notice approval cannot change content or legal basis under an existing version (4.045ms)
+✔ new notice approval preserves the complete immutable version before publishing it (4.3221ms)
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+✔ no target means no fallback, minimal notification has no supplied patient details (10.5532ms)
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+(node:23104) Warning: Accessing non-existent property 'verifyChallenge' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23104) Warning: Accessing non-existent property 'resendChallenge' of module exports inside circular dependency
+Staff login failed:  Error
+✔ every production staff account needs OTP, including trusted-device cookies; provider failure has no bypass (815.0727ms)
+✔ membership denial overrides its role template without granting a wider record scope (6.2436ms)
+✔ role change removes only migrated grants and recalculates from proven new-role access (4.8647ms)
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+✔ cleanup quarantines legacy changes made after the encrypted backfill (21.6735ms)
+✔ quota aggregation decrypts scoped answers and only exposes server-defined options (8.6002ms)
+✔ lists minimize PII and full answers preserve literal envelope-looking strings (3.7049ms)
+✔ opaque session sets the right cookie, stores hashes, and returns only CSRF (53.0705ms)
+✔ production cookies are secure host-only and staff cannot bypass OTP (9.2871ms)
+✔ privacy telemetry has bounded dimensions and cannot retain supplied PII or tokens (8.6237ms)
+✔ dashboard statistic endpoint requires an active organization context (2.4334ms)
+✔ public form submission does not require an organization context (13.2031ms)
+✔ help-center reads use the active organization when staff is signed in (0.8531ms)
+✔ school module routes always run inside the active organization (0.5009ms)
+✔ reads high, medium and normal risk from score colours and labels (4.7997ms)
+✔ finds score results under either key and keeps the higher risk (4.5615ms)
+◇ injected env (26) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+✔ saves a form with the default 'general' clinic type using the active organization (2017.4668ms)
+✔ saves a form when the admin's active organization is 'all' but the clinic resolves one organization (47.3635ms)
+◇ injected env (26) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+✔ builds the username from the school code and student code (5.5727ms)
+✔ reads Thai and Gregorian birth dates and Thai gender words (5.1033ms)
+✔ prepares a valid row and generates its username (7.4193ms)
+✔ lists every problem of an invalid row (1.0186ms)
+✔ keeps a valid national ID digits-only and an explicit username (8.0587ms)
+✔ temporary passwords always satisfy the password policy (7.5859ms)
+◇ injected env (26) from .env // tip: ⌘ enable debugging { debug: true }
+✔ refuses an organization that is not a school (622.9601ms)
+✔ refuses the all-organizations context (58.5815ms)
+✔ a teacher without students.view only sees their own classrooms (85.2178ms)
+✔ staff who are neither teachers nor permitted get no students (39.0131ms)
+✔ health access follows the permission or the classroom assignment (0.9826ms)
+✔ the school sub-unit is the school: created on first use with a generated code (47.9906ms)
+✔ a room added without a name gets the next number in its grade and year (63.7376ms)
+✔ keeps MySQL-decoded scalar JSON answers instead of replacing them (20.5322ms)
+✔ decrypts sensitive scalar answers after normalizing JSON storage (0.75ms)
+✔ preserves array and object answers (2.3992ms)
+◇ injected env (26) from .env // tip: ⌘ enable debugging { debug: true }
+✔ creates a person and an account-owned Master Case for a new account (8.5958ms)
+✔ adopts an unlinked legacy Master Case with the account identity hash (3.8402ms)
+✔ a guest with a consented national ID returns to the same person's open case (9.0496ms)
+✔ a guest without a national ID stays anonymous (2.526ms)
+✔ refuses a national ID that already belongs to another account (5.7211ms)
+◇ injected env (26) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+✔ labels old records without an account as legacy and unlinked (3.8578ms)
+✔ does not expose an account as linked when its record has been deleted (0.5823ms)
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+✔ staff system role remains separate from a privileged organization role (480.876ms)
+✔ admin system role does not inherit main management authority from the unit (55.6487ms)
+✔ a modern system administrator is recognized regardless of the legacy account role (42.13ms)
+✔ unknown legacy account roles do not silently become administrators or staff (27.3543ms)
+✔ admin and staff cannot request all organizations or a foreign unit even with a privileged unit role (145.4705ms)
+✔ only a system administrator can use the all-organizations context (35.8609ms)
+◇ injected env (26) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+✔ telegram dispatch returns immediately while notification continues (19.6567ms)
+✔ accepts a long Unicode full name and normalises whitespace (1.9644ms)
+✔ rejects a full name longer than 255 Unicode characters (0.5902ms)
+✔ requires an email and a password that meet account policy (0.4469ms)
+ℹ tests 123
+ℹ suites 0
+ℹ pass 121
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 2
+ℹ todo 0
+ℹ duration_ms 4857.0698

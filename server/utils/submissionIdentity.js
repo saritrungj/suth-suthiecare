@@ -1,3 +1,5 @@
+const { resolvePerson } = require("./personIdentity");
+
 function assertPatientAccountId(patientAccountId) {
   const normalized = Number(patientAccountId);
   if (!Number.isInteger(normalized) || normalized < 1) {
@@ -8,100 +10,155 @@ function assertPatientAccountId(patientAccountId) {
   return normalized;
 }
 
-async function findOpenCaseByAccount(connection, patientAccountId, clinicType) {
+function assertConnection(connection, clinicType) {
+  if (!connection || typeof connection.query !== "function") {
+    throw new Error(
+      "A database connection is required to resolve a submission owner",
+    );
+  }
+  if (!clinicType)
+    throw new Error("A clinic type is required to resolve a submission owner");
+}
+
+async function findOpenCase(
+  connection,
+  column,
+  value,
+  clinicType,
+  organizationId,
+  extra = "",
+) {
   const [rows] = await connection.query(
-    "SELECT id, identity_hash FROM mastercases WHERE patient_account_id = ? AND clinicType = ? AND status = 'Open' ORDER BY id ASC LIMIT 1 FOR UPDATE",
-    [patientAccountId, clinicType],
+    `SELECT id, identity_hash, patient_account_id, person_id FROM mastercases WHERE ${column} = ? AND clinicType = ? AND status = 'Open' AND organization_id = ?${extra} ORDER BY id ASC LIMIT 1 FOR UPDATE`,
+    [value, clinicType, organizationId],
   );
   return rows[0] || null;
 }
 
+// Finds the open per-clinic Master Case of one person, adopting legacy cases
+// that predate person_id, or creates one. The person lookup locks the account
+// and person rows, which serialises concurrent submissions of one person.
+async function resolveCaseForPerson({
+  connection,
+  person,
+  clinicType,
+  organizationId,
+}) {
+  if (!Number.isSafeInteger(organizationId) || organizationId < 1)
+    throw Object.assign(new Error("FORM_ORGANIZATION_REQUIRED"), {
+      status: 503,
+    });
+  const { personId, patientAccountId, identityHash } = person;
+  const owner = (masterCaseId, source, caseHash) => ({
+    masterCaseId,
+    personId,
+    patientAccountId,
+    identityHash: caseHash || identityHash || null,
+    source,
+  });
+
+  const current = await findOpenCase(
+    connection,
+    "person_id",
+    personId,
+    clinicType,
+    organizationId,
+  );
+  if (current) return owner(current.id, "person", current.identity_hash);
+
+  // Legacy cases: linked to the account, or unlinked but carrying the same hash.
+  const legacy =
+    (patientAccountId &&
+      (await findOpenCase(
+        connection,
+        "patient_account_id",
+        patientAccountId,
+        clinicType,
+        organizationId,
+        " AND person_id IS NULL",
+      ))) ||
+    (identityHash &&
+      (await findOpenCase(
+        connection,
+        "identity_hash",
+        identityHash,
+        clinicType,
+        organizationId,
+        " AND person_id IS NULL AND patient_account_id IS NULL",
+      )));
+  if (legacy) {
+    await connection.query(
+      "UPDATE mastercases SET person_id = ?, patient_account_id = COALESCE(patient_account_id, ?), identity_hash = COALESCE(identity_hash, ?) WHERE id = ?",
+      [personId, patientAccountId, identityHash, legacy.id],
+    );
+    return owner(legacy.id, "legacy-backfill", legacy.identity_hash);
+  }
+
+  const [created] = await connection.query(
+    "INSERT INTO mastercases (person_id, patient_account_id, identityValue, identity_hash, clinicType, organization_id, status, currentStage) VALUES (?, ?, NULL, ?, ?, ?, 'Open', 'Registered')",
+    [
+      personId,
+      patientAccountId,
+      identityHash || null,
+      clinicType,
+      organizationId,
+    ],
+  );
+  return owner(created.insertId, "created");
+}
+
+// Logged-in submission. nationalId is only passed when the submitter consented.
 async function resolveSubmissionOwner({
   connection,
   patientAccountId,
-  accountIdentityHash = null,
+  nationalId = null,
   clinicType,
+  organizationId,
 }) {
   const accountId = assertPatientAccountId(patientAccountId);
-  if (!connection || typeof connection.query !== "function") {
-    throw new Error(
-      "A database connection is required to resolve a submission owner",
-    );
-  }
-  if (!clinicType)
-    throw new Error("A clinic type is required to resolve a submission owner");
-
-  // Lock the account row. This serialises submissions for one account across all API
-  // instances and prevents two simultaneous requests creating separate open cases.
-  const [accountRows] = await connection.query(
-    "SELECT id FROM patient_accounts WHERE id = ? FOR UPDATE",
-    [accountId],
-  );
-  if (!accountRows[0]) throw new Error("Patient account no longer exists");
-
-  let masterCase = await findOpenCaseByAccount(
+  assertConnection(connection, clinicType);
+  const person = await resolvePerson({
     connection,
-    accountId,
-    clinicType,
-  );
-  if (masterCase) {
-    return {
-      masterCaseId: masterCase.id,
-      patientAccountId: accountId,
-      identityHash: masterCase.identity_hash || accountIdentityHash || null,
-      source: "account",
-    };
-  }
-
-  // Legacy records may predate patient_account_id. Only adopt an unlinked record
-  // when its stable identity hash matches the authenticated account.
-  if (accountIdentityHash) {
-    const [legacyRows] = await connection.query(
-      "SELECT id, identity_hash FROM mastercases WHERE identity_hash = ? AND clinicType = ? AND status = 'Open' AND patient_account_id IS NULL ORDER BY id ASC LIMIT 1 FOR UPDATE",
-      [accountIdentityHash, clinicType],
-    );
-    masterCase = legacyRows[0];
-    if (masterCase) {
-      await connection.query(
-        "UPDATE mastercases SET patient_account_id = ? WHERE id = ? AND patient_account_id IS NULL",
-        [accountId, masterCase.id],
-      );
-      return {
-        masterCaseId: masterCase.id,
-        patientAccountId: accountId,
-        identityHash: masterCase.identity_hash,
-        source: "legacy-backfill",
-      };
-    }
-  }
-
-  const [created] = await connection.query(
-    "INSERT INTO mastercases (patient_account_id, identityValue, identity_hash, clinicType, status, currentStage) VALUES (?, NULL, ?, ?, 'Open', 'Registered')",
-    [accountId, accountIdentityHash || null, clinicType],
-  );
-  return {
-    masterCaseId: created.insertId,
     patientAccountId: accountId,
-    identityHash: accountIdentityHash || null,
-    source: "created",
-  };
+    nationalId,
+  });
+  return resolveCaseForPerson({
+    connection,
+    person,
+    clinicType,
+    organizationId,
+  });
 }
 
-async function resolveGuestSubmissionOwner({ connection, clinicType }) {
-  if (!connection || typeof connection.query !== "function") {
-    throw new Error(
-      "A database connection is required to resolve a submission owner",
-    );
-  }
-  if (!clinicType)
-    throw new Error("A clinic type is required to resolve a submission owner");
+// Guest submission. With a consented national ID the guest is matched to the
+// same person (and case) as earlier submissions. Without one it is anonymous.
+async function resolveGuestSubmissionOwner({
+  connection,
+  nationalId = null,
+  clinicType,
+  organizationId,
+}) {
+  if (!Number.isSafeInteger(organizationId) || organizationId < 1)
+    throw Object.assign(new Error("FORM_ORGANIZATION_REQUIRED"), {
+      status: 503,
+    });
+  assertConnection(connection, clinicType);
+  const person = await resolvePerson({ connection, nationalId });
+  if (person.personId)
+    return resolveCaseForPerson({
+      connection,
+      person,
+      clinicType,
+      organizationId,
+    });
 
   const [created] = await connection.query(
-    "INSERT INTO mastercases (patient_account_id, identityValue, identity_hash, clinicType, status, currentStage) VALUES (NULL, NULL, NULL, ?, 'Open', 'Registered')",
-    [clinicType],
+    "INSERT INTO mastercases (patient_account_id, identityValue, identity_hash, clinicType, organization_id, status, currentStage) VALUES (NULL, NULL, NULL, ?, ?, 'Open', 'Registered')",
+    [clinicType, organizationId],
   );
   return {
     masterCaseId: created.insertId,
+    personId: null,
     patientAccountId: null,
     identityHash: null,
     source: "guest",

@@ -1,0 +1,94 @@
+[WebServer] (node:44384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:41848) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+(node:33860) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › e2e\pdpa-flows.spec.js:3:1 › case invitation requires the patient account and rejects another recipient (3.7s)
+  x  2 [desktop-chromium] › e2e\pdpa-flows.spec.js:18:1 › System Admin configures explicit referral destinations in a unit with session CSRF (31.0s)
+(node:6316) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 [mobile-chromium] › e2e\pdpa-flows.spec.js:3:1 › case invitation requires the patient account and rejects another recipient (3.9s)
+  x  4 [mobile-chromium] › e2e\pdpa-flows.spec.js:18:1 › System Admin configures explicit referral destinations in a unit with session CSRF (31.0s)
+
+
+  1) [desktop-chromium] › e2e\pdpa-flows.spec.js:18:1 › System Admin configures explicit referral destinations in a unit with session CSRF 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /หน่วยงานต้นทางทดสอบ หน่วยงานย่อย/ })
+
+
+      30 |  });
+      31 |  await page.goto('/admin/organizations');
+    > 32 |  await page.getByRole('button',{name:/หน่วยงานต้นทางทดสอบ หน่วยงานย่อย/}).click();
+         |                                                                           ^
+      33 |  const settings=page.getByRole('region',{name:'การตั้งค่าความปลอดภัยและ PDPA'});
+      34 |  await settings.locator('summary').filter({hasText:'หน่วยงานปลายทางที่อนุญาตให้ส่งต่อ'}).click();
+      35 |  await settings.getByLabel('หน่วยงานปลายทางทดสอบ',{exact:true}).check();
+        at D:\github-clone\suth-suthiecare\app\e2e\pdpa-flows.spec.js:32:75
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-pdpa\pdpa-flows-System-Admin-co-c0aea-in-a-unit-with-session-CSRF-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-pdpa\pdpa-flows-System-Admin-co-c0aea-in-a-unit-with-session-CSRF-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-pdpa\pdpa-flows-System-Admin-co-c0aea-in-a-unit-with-session-CSRF-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-pdpa\pdpa-flows-System-Admin-co-c0aea-in-a-unit-with-session-CSRF-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-pdpa\pdpa-flows-System-Admin-co-c0aea-in-a-unit-with-session-CSRF-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [mobile-chromium] › e2e\pdpa-flows.spec.js:18:1 › System Admin configures explicit referral destinations in a unit with session CSRF 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('button', { name: /หน่วยงานต้นทางทดสอบ หน่วยงานย่อย/ })
+
+
+      30 |  });
+      31 |  await page.goto('/admin/organizations');
+    > 32 |  await page.getByRole('button',{name:/หน่วยงานต้นทางทดสอบ หน่วยงานย่อย/}).click();
+         |                                                                           ^
+      33 |  const settings=page.getByRole('region',{name:'การตั้งค่าความปลอดภัยและ PDPA'});
+      34 |  await settings.locator('summary').filter({hasText:'หน่วยงานปลายทางที่อนุญาตให้ส่งต่อ'}).click();
+      35 |  await settings.getByLabel('หน่วยงานปลายทางทดสอบ',{exact:true}).check();
+        at D:\github-clone\suth-suthiecare\app\e2e\pdpa-flows.spec.js:32:75
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-pdpa\pdpa-flows-System-Admin-co-c0aea-in-a-unit-with-session-CSRF-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-pdpa\pdpa-flows-System-Admin-co-c0aea-in-a-unit-with-session-CSRF-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-pdpa\pdpa-flows-System-Admin-co-c0aea-in-a-unit-with-session-CSRF-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-pdpa\pdpa-flows-System-Admin-co-c0aea-in-a-unit-with-session-CSRF-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-pdpa\pdpa-flows-System-Admin-co-c0aea-in-a-unit-with-session-CSRF-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [desktop-chromium] › e2e\pdpa-flows.spec.js:18:1 › System Admin configures explicit referral destinations in a unit with session CSRF 
+    [mobile-chromium] › e2e\pdpa-flows.spec.js:18:1 › System Admin configures explicit referral destinations in a unit with session CSRF 
+  2 passed (1.2m)

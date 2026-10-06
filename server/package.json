@@ -20,7 +20,17 @@
     "migrate:operational-organization-scope": "node scripts/migrateOperationalOrganizationScope.js",
     "migrate:all-forward": "node scripts/migrateAllForward.js",
     "migrate:user-name-storage": "node scripts/migrateUserNameStorage.js",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "migrate:school-module": "node scripts/migrateSchoolModule.js",
+    "migrate:case-referrals": "node scripts/migrateCaseReferrals.js",
+    "migrate:pdpa": "node scripts/migratePdpaSecurity.js",
+    "backfill:private-data": "node scripts/backfillPrivateData.js",
+    "check:pdpa-readiness": "node scripts/checkPdpaReadiness.js",
+    "inventory:pdpa": "node scripts/inventoryPdpa.js",
+    "configure:operational-defaults": "node scripts/configureOperationalDefaults.js",
+    "backfill:persons": "node scripts/backfillPersons.js",
+    "seed:school-demo": "node scripts/seedSchoolDemo.mjs",
+    "migrate:organization-permissions": "node scripts/migrateOrganizationPermissions.js"
   },
   "dependencies": {
     "axios": "^1.13.6",

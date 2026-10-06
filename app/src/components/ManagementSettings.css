@@ -1,0 +1,439 @@
+/* New settings use the existing SuthieCare tokens and flat management sections. */
+.management-settings {
+  min-width: 0;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--suth-line);
+  color: var(--suth-ink);
+  font-family: var(--suth-font);
+  line-height: 1.6;
+}
+.settings-heading,
+.settings-toolbar,
+.settings-actions,
+.settings-record-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.settings-heading {
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+.management-settings .settings-heading h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.5;
+}
+.settings-heading p,
+.settings-hint {
+  max-width: 70ch;
+  margin: 6px 0 0;
+  color: var(--suth-muted);
+  font-size: 0.9rem;
+}
+.settings-toolbar {
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+.settings-toolbar .settings-field {
+  flex: 1;
+  max-width: 360px;
+}
+.settings-count {
+  color: var(--suth-muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.settings-grid > .settings-wide {
+  grid-column: 1 / -1;
+}
+.settings-grid + .settings-grid {
+  margin-top: 16px;
+}
+.management-settings {
+  scroll-margin-top: 80px;
+}
+.settings-field {
+  min-width: 0;
+  display: grid;
+  gap: 7px;
+  color: var(--suth-ink-2);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.settings-field :is(input, select, textarea) {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--suth-control-h);
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--suth-control-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+  font: inherit;
+  font-weight: 400;
+  caret-color: var(--suth-action);
+}
+.settings-field textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.7;
+}
+.settings-field small {
+  color: var(--suth-muted);
+  font-weight: 400;
+}
+.settings-field :is(input, select, textarea):disabled {
+  background: var(--suth-surface-2);
+  cursor: not-allowed;
+}
+.settings-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--suth-button-h);
+  max-width: 100%;
+  padding: 10px 16px;
+  border: 1px solid var(--suth-control-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out;
+}
+.settings-button:hover:not(:disabled) {
+  background: var(--suth-surface-2);
+  border-color: var(--suth-action);
+}
+.settings-button--primary {
+  background: var(--suth-action);
+  border-color: var(--suth-action);
+  color: var(--suth-on-action);
+}
+.settings-button--primary:hover:not(:disabled) {
+  background: var(--suth-action-hover);
+  border-color: var(--suth-action-hover);
+}
+.settings-button--danger {
+  color: var(--suth-danger);
+  border-color: var(--suth-danger-line);
+}
+.settings-button--danger:hover:not(:disabled) {
+  background: var(--suth-danger-tint);
+  border-color: var(--suth-danger);
+}
+.settings-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.settings-actions {
+  justify-content: flex-end;
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 1px solid var(--suth-line-soft);
+}
+.settings-actions .settings-hint {
+  margin: 0 auto 0 0;
+}
+.settings-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  min-width: 0;
+  padding: 10px 0;
+  color: var(--suth-ink-2);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  cursor: pointer;
+}
+.settings-check input {
+  width: 18px;
+  height: 18px;
+  min-height: 18px;
+  flex: none;
+  margin: 3px 0 0;
+  accent-color: var(--suth-action);
+  cursor: inherit;
+}
+.settings-check > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.settings-check small {
+  display: block;
+  margin-top: 3px;
+  color: var(--suth-muted);
+  font-size: 0.85rem;
+}
+.settings-check:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+.settings-check--confirmation {
+  padding: 12px 14px;
+  margin-top: 16px;
+  background: var(--suth-surface-2);
+  border-radius: var(--suth-radius);
+}
+.settings-permissions {
+  margin-top: 20px;
+  border-top: 1px solid var(--suth-line);
+}
+.settings-permission-row {
+  min-width: 0;
+  margin: 0;
+  padding: 16px 0;
+  border: 0;
+  border-bottom: 1px solid var(--suth-line-soft);
+}
+.settings-permission-row legend {
+  float: left;
+  width: 100%;
+  margin: 0 0 8px;
+  padding: 0;
+  color: var(--suth-ink);
+  font-size: 0.9rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.settings-permission-options {
+  clear: both;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.settings-permission-options .settings-check {
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid var(--suth-control-line);
+  border-radius: 8px;
+}
+.settings-permission-options .settings-check:has(input:checked) {
+  color: var(--suth-action-ink);
+  background: var(--suth-tint);
+  border-color: var(--suth-tint-line);
+}
+.settings-permission-options .settings-check input {
+  margin-top: 0;
+}
+.settings-panel {
+  border-top: 1px solid var(--suth-line);
+}
+.settings-panel:last-child {
+  border-bottom: 1px solid var(--suth-line);
+}
+.settings-panel > summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 16px 0;
+  list-style: none;
+  cursor: pointer;
+}
+.settings-panel > summary::-webkit-details-marker {
+  display: none;
+}
+.settings-panel > summary:hover {
+  color: var(--suth-action-ink);
+}
+.settings-panel-icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: var(--suth-action-ink);
+}
+.settings-panel-heading {
+  flex: 1;
+  min-width: 0;
+}
+.settings-panel-heading strong {
+  display: block;
+  font-size: 0.95rem;
+}
+.settings-panel-heading small {
+  display: block;
+  margin-top: 3px;
+  color: var(--suth-muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.settings-chevron {
+  flex: none;
+  transition: transform 160ms ease-out;
+}
+.settings-panel[open] > summary .settings-chevron {
+  transform: rotate(180deg);
+}
+.settings-panel-content {
+  padding: 0 0 20px 32px;
+}
+.settings-panel-content > .settings-hint:first-child {
+  margin: 0 0 16px;
+}
+.settings-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.settings-list > li + li,
+.settings-record + .settings-record {
+  border-top: 1px solid var(--suth-line-soft);
+}
+.settings-list .settings-check {
+  padding: 14px 0;
+}
+.settings-record {
+  padding: 16px 0;
+}
+.settings-record-heading strong {
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+.settings-record small,
+.settings-record time {
+  color: var(--suth-muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+.settings-prose {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.7;
+  margin: 12px 0;
+  max-width: 70ch;
+}
+.settings-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--suth-neutral-tint);
+  color: var(--suth-ink-2);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.settings-status--submitted,
+.settings-status--under_review {
+  background: var(--suth-warning-tint);
+  color: var(--suth-warning);
+}
+.settings-status--fulfilled {
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
+}
+.settings-status--rejected {
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
+}
+.settings-feedback {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 12px 0;
+  padding: 12px 14px;
+  border-radius: var(--suth-radius);
+  background: var(--suth-neutral-tint);
+  color: var(--suth-ink-2);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.settings-feedback > svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  margin-top: 3px;
+}
+.settings-feedback--error {
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
+}
+.settings-feedback--success {
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
+}
+.settings-loading,
+.settings-empty {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 20px 0;
+  margin: 0;
+  color: var(--suth-muted);
+  font-size: 0.9rem;
+}
+.settings-loading svg,
+.settings-empty svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+}
+.settings-empty p {
+  max-width: 70ch;
+  margin: 0;
+}
+.management-settings :focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 3px;
+}
+.management-settings ::selection {
+  background: var(--suth-tint-strong);
+  color: var(--suth-ink);
+}
+@media (max-width: 600px) {
+  .settings-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .settings-toolbar {
+    align-items: stretch;
+  }
+  .settings-toolbar .settings-field {
+    max-width: none;
+    flex-basis: 100%;
+  }
+  .settings-panel-content {
+    padding-left: 0;
+  }
+  .settings-actions {
+    align-items: stretch;
+  }
+  .settings-actions .settings-button {
+    flex: 1 1 100%;
+  }
+  .settings-actions .settings-hint {
+    flex-basis: 100%;
+  }
+  .settings-permission-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .settings-record-heading {
+    align-items: flex-start;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings-button,
+  .settings-chevron {
+    transition: none;
+  }
+}

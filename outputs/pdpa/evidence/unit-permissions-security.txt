@@ -1,0 +1,10 @@
+✔ unit permissions use both organization and role with no shared/system fallback (1.5722ms)
+✔ unit permission updates isolate units, require system authority, detect conflicts and roll back audit failure (82.3517ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 304.3457

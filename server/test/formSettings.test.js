@@ -1,6 +1,8 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const {
+  hasValidHealthDomain,
+  normalizeHealthDomain,
   isFormOpenForSubmission,
   normalizeLoginEnforcement,
   normalizeResultDisplayMode,
@@ -47,4 +49,14 @@ test("only public forms accept a guest submission", () => {
 test("form settings safely fall back for legacy or malformed values", () => {
   assert.equal(normalizeLoginEnforcement("unknown"), "none");
   assert.equal(normalizeResultDisplayMode("unknown"), "realtime");
+});
+
+test("health domain accepts mental, physical, general or nothing", () => {
+  assert.equal(normalizeHealthDomain("mental"), "mental");
+  assert.equal(normalizeHealthDomain("physical"), "physical");
+  assert.equal(normalizeHealthDomain(""), null);
+  assert.equal(normalizeHealthDomain("spiritual"), null);
+  assert.equal(hasValidHealthDomain(undefined), true);
+  assert.equal(hasValidHealthDomain(""), true);
+  assert.equal(hasValidHealthDomain("spiritual"), false);
 });

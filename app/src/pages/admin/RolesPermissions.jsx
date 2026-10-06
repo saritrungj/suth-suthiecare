@@ -31,6 +31,9 @@ const toneByGroup = {
   clinics: "teal",
   help_center: "info",
   content: "amber",
+  school: "violet",
+  students: "teal",
+  student_health: "risk",
 };
 
 export default function RolesPermissions() {
@@ -135,9 +138,11 @@ export default function RolesPermissions() {
       <main className="srp-main-content-area">
         <header className="srp-roles-header-section">
           <div>
-            <h1>บทบาทและสิทธิ์หน่วยงาน</h1>
+            <h1>แม่แบบบทบาทและสิทธิ์</h1>
             <p>
-              ตั้งค่าแม่แบบสิทธิ์กลาง แล้วมอบหมายให้เจ้าหน้าที่ในแต่ละหน่วยงาน
+              ตั้งชื่อบทบาทและแม่แบบกลาง
+              สิทธิ์ที่ใช้งานจริงตั้งแยกในหน้าจัดการแต่ละหน่วยงาน
+              การแก้แม่แบบไม่เปลี่ยนสิทธิ์หน่วยงานที่ตั้งไว้แล้ว
             </p>
           </div>
           <div className="srp-header-actions">
@@ -211,7 +216,9 @@ export default function RolesPermissions() {
             <div className="srp-card-heading">
               <div>
                 <h2>สิทธิ์ของ {selectedRole?.name || "—"}</h2>
-                <p>เลือกการกระทำที่บทบาทนี้ทำได้ในหน่วยงานที่ได้รับมอบหมาย</p>
+                <p>
+                  แม่แบบนี้ไม่ให้สิทธิ์ระดับระบบและไม่เปลี่ยนชุดสิทธิ์ที่บันทึกในแต่ละหน่วยงาน
+                </p>
               </div>
             </div>
             <div className="srp-permission-groups">

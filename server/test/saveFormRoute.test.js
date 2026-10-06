@@ -58,7 +58,8 @@ test("saves a form with the default 'general' clinic type using the active organ
       message: "Form saved successfully",
       id: 55,
     });
-    assert.equal(insertedValues[12], 7);
+    assert.equal(insertedValues[12], null); // health_domain not set
+    assert.equal(insertedValues.at(-1), 7);
   } finally {
     await new Promise((resolve, reject) =>
       server.close((error) => (error ? reject(error) : resolve())),
@@ -124,7 +125,7 @@ test("saves a form when the admin's active organization is 'all' but the clinic 
     });
 
     assert.equal(response.status, 200);
-    assert.equal(insertedValues[12], 1);
+    assert.equal(insertedValues.at(-1), 1);
   } finally {
     await new Promise((resolve, reject) =>
       server.close((error) => (error ? reject(error) : resolve())),

@@ -1,0 +1,23 @@
+[WebServer] (node:29740) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:16612) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 8 tests using 1 worker
+
+(node:39048) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › e2e\organization-hierarchy.spec.js:135:1 › a school sub-unit inherits its main organization's type and shows school menus (23.0s)
+  ok 2 [desktop-chromium] › e2e\organization-hierarchy.spec.js:158:1 › main organizations choose the type, sub-units inherit it, members are added by checkbox (4.5s)
+  ok 3 [desktop-chromium] › e2e\organization-hierarchy.spec.js:204:1 › system-wide settings sit in their own admin section (1.8s)
+  ok 4 [desktop-chromium] › e2e\organization-hierarchy.spec.js:233:1 › an organization member does not get the admin section (1.8s)
+(node:42432) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  5 [mobile-chromium] › e2e\organization-hierarchy.spec.js:135:1 › a school sub-unit inherits its main organization's type and shows school menus
+  -  6 [mobile-chromium] › e2e\organization-hierarchy.spec.js:158:1 › main organizations choose the type, sub-units inherit it, members are added by checkbox
+  -  7 [mobile-chromium] › e2e\organization-hierarchy.spec.js:204:1 › system-wide settings sit in their own admin section
+  -  8 [mobile-chromium] › e2e\organization-hierarchy.spec.js:233:1 › an organization member does not get the admin section
+
+  4 skipped
+  4 passed (43.7s)

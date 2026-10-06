@@ -1,5 +1,7 @@
 const LOGIN_ENFORCEMENT_MODES = new Set(["strict", "optional", "none"]);
 const RESULT_DISPLAY_MODES = new Set(["realtime", "on_submit"]);
+// Which part of a student's health an assessment describes (school module).
+const HEALTH_DOMAINS = new Set(["mental", "physical", "general"]);
 
 const normalizeEnum = (value, validValues, fallback) =>
   validValues.has(value) ? value : fallback;
@@ -15,6 +17,16 @@ const hasValidLoginEnforcement = (value) =>
 
 const hasValidResultDisplayMode = (value) =>
   value === undefined || value === null || RESULT_DISPLAY_MODES.has(value);
+
+// null means "not set"; an unknown value is rejected rather than guessed.
+const normalizeHealthDomain = (value) =>
+  HEALTH_DOMAINS.has(value) ? value : null;
+
+const hasValidHealthDomain = (value) =>
+  value === undefined ||
+  value === null ||
+  value === "" ||
+  HEALTH_DOMAINS.has(value);
 
 const requiresAuthenticatedSubmission = (loginEnforcement) =>
   normalizeLoginEnforcement(loginEnforcement) !== "none";
@@ -33,6 +45,9 @@ const isFormOpenForSubmission = (form, now = new Date()) => {
 };
 
 module.exports = {
+  HEALTH_DOMAINS,
+  hasValidHealthDomain,
+  normalizeHealthDomain,
   hasValidLoginEnforcement,
   hasValidResultDisplayMode,
   isFormOpenForSubmission,

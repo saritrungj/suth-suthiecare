@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { RiskPill } from "../CaseDrawer";
 import {
   FaStream,
   FaChartBar,
@@ -7,6 +8,13 @@ import {
   FaFileAlt,
   FaChevronDown,
 } from "react-icons/fa";
+
+const CLINIC_LABELS = {
+  general: "ทั่วไป",
+  teenager: "คลินิกวัยรุ่น",
+  behavior: "คลินิก LSM",
+  sti: "คลินิกโรคติดต่อฯ",
+};
 
 export default function CaseLeftPanel({
   leftViewMode,
@@ -29,19 +37,6 @@ export default function CaseLeftPanel({
   // 🟢 State สำหรับควบคุมการย่อ-ขยาย (ค่าเริ่มต้นให้เปิดไว้ทั้งคู่)
   const [isScoreOpen, setIsScoreOpen] = useState(true);
   const [isAnswersOpen, setIsAnswersOpen] = useState(true);
-
-  // 🟢 Mapping ระดับความเสี่ยง → สี
-  const caseRiskColors = {
-    "น้ำหนักน้อย / ผอม": { bg: "#d0f0fd", color: "#0c4a6e" },
-    "ปกติ (สุขภาพดี)": { bg: "#ecfdf5", color: "#065f46" },
-    "ท้วม / โรคอ้วนระดับ 1": { bg: "#fef9c3", color: "#713f12" },
-    "อ้วน / โรคอ้วนระดับ 2": { bg: "#fff7ed", color: "#7c2d12" },
-    "อ้วนมาก / โรคอ้วนระดับ 3": { bg: "#fef2f2", color: "#7f1d1d" },
-    "ปกติ / ไม่มีอาการซึมเศร้า": { bg: "#ecfdf5", color: "#065f46" },
-    มีอาการซึมเศร้าระดับน้อย: { bg: "#fef9c3", color: "#713f12" },
-    มีอาการซึมเศร้าระดับปานกลาง: { bg: "#fff7ed", color: "#7c2d12" },
-    มีอาการซึมเศร้าระดับรุนแรง: { bg: "#fef2f2", color: "#7f1d1d" },
-  };
 
   // 🟢 ฟังก์ชันวาดตารางสำหรับคำตอบที่เป็น Object (เช่น Grid)
   const renderAnswerContent = (qTitle, ans) => {
@@ -259,12 +254,6 @@ export default function CaseLeftPanel({
                   const d = new Date(r.submitted_at);
                   const dateStr = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear() + 543}`;
 
-                  // กำหนดสีป้ายความเสี่ยง ใช้ mapping ของระดับความเสี่ยง
-                  const riskInfo = caseRiskColors[r.risk_level] || {
-                    bg: "#f8fafc",
-                    color: "#5f6160ff",
-                  }; // default เทา
-
                   return (
                     <div
                       key={r.id}
@@ -285,6 +274,15 @@ export default function CaseLeftPanel({
                         </div>
                         <div className="cdm-timeline-row">
                           <span className="cdm-timeline-date">{dateStr}</span>
+                          {r.master_case_id &&
+                            data.master_case_id &&
+                            r.master_case_id !== data.master_case_id && (
+                              <span className="cdm-badge-other-clinic">
+                                {CLINIC_LABELS[r.clinic_type] ||
+                                  r.clinic_type ||
+                                  "คลินิกอื่น"}
+                              </span>
+                            )}
                           {isCurrent && (
                             <span className="cdm-badge-latest">
                               รายการล่าสุด
@@ -293,15 +291,7 @@ export default function CaseLeftPanel({
                         </div>
                       </div>
                       <div style={{ textAlign: "right" }}>
-                        <span
-                          className="cdm-timeline-risk-badge"
-                          style={{
-                            background: riskInfo.bg,
-                            color: riskInfo.color,
-                          }}
-                        >
-                          {r.risk_level || "ไม่ระบุ"}
-                        </span>
+                        <RiskPill risk={r.risk_level} />
                       </div>
                     </div>
                   );
@@ -369,24 +359,16 @@ export default function CaseLeftPanel({
                 {isScoreOpen && (
                   <div className="cdm-collapse-content">
                     {scoreResults.map((s, i) => (
-                      <div
-                        key={i}
-                        className="cdm-score-card"
-                        style={{ borderLeftColor: s.color }}
-                      >
+                      <div key={i} className="cdm-score-card">
                         <div className="cdm-score-header">
                           <span className="cdm-score-title">{s.title}</span>
-                          <span
-                            className="cdm-score-value"
-                            style={{ color: s.color }}
-                          >
-                            {s.score}
-                          </span>
+                          <span className="cdm-score-value">{s.score}</span>
                         </div>
-                        <div
-                          className="cdm-score-badge"
-                          style={{ background: `${s.color}15`, color: s.color }}
-                        >
+                        <div className="cdm-score-badge">
+                          <i
+                            aria-hidden="true"
+                            style={{ backgroundColor: s.color || "#64748b" }}
+                          />
                           ระดับ: {s.label}
                         </div>
                         {s.advice && (

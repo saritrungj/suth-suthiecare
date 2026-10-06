@@ -1,0 +1,1356 @@
+{
+  "ownership": [
+    {
+      "table": "forms",
+      "total": 25,
+      "unassigned": 0
+    },
+    {
+      "table": "form_responses",
+      "total": 1029,
+      "unassigned": 0
+    },
+    {
+      "table": "mastercases",
+      "total": 669,
+      "unassigned": 0
+    },
+    {
+      "table": "staffs",
+      "total": 5,
+      "unassigned": 0
+    },
+    {
+      "table": "service_types",
+      "total": 11,
+      "unassigned": 0
+    },
+    {
+      "table": "note_templates",
+      "total": 3,
+      "unassigned": 0
+    },
+    {
+      "table": "case_statuses",
+      "total": 39,
+      "unassigned": 0
+    }
+  ],
+  "invalid_case_relationships": 0,
+  "schema": [
+    {
+      "table_name": "appointments",
+      "column_name": "id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "appointments",
+      "column_name": "case_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "appointments",
+      "column_name": "master_case_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "appointments",
+      "column_name": "service_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "appointments",
+      "column_name": "risk_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "appointments",
+      "column_name": "appointment_no",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "appointments",
+      "column_name": "appointment_date",
+      "sql_type": "datetime",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "appointments",
+      "column_name": "staff",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "appointments",
+      "column_name": "note",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "appointments",
+      "column_name": "created_at",
+      "sql_type": "timestamp",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "appointments",
+      "column_name": "status",
+      "sql_type": "varchar(20)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "appointments",
+      "column_name": "staff_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "appointments",
+      "column_name": "clinical_payload_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "id",
+      "sql_type": "bigint",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "token_hash",
+      "sql_type": "char(64)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "account_type",
+      "sql_type": "enum('staff','patient','company')",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "account_id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "purpose",
+      "sql_type": "enum('staff_login','email_verification','account_recovery','company_login')",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "destination",
+      "sql_type": "varchar(254)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "otp_hmac",
+      "sql_type": "char(64)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "generation",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "auth_version_snapshot",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "attempts",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "expires_at",
+      "sql_type": "datetime",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "resend_after",
+      "sql_type": "datetime",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "consumed_at",
+      "sql_type": "datetime",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "invalidated_at",
+      "sql_type": "datetime",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "send_status",
+      "sql_type": "enum('sending','sent','failed')",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "provider_message_id",
+      "sql_type": "varchar(255)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "created_at",
+      "sql_type": "datetime",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "auth_email_challenges",
+      "column_name": "destination_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "case_logs",
+      "column_name": "id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_logs",
+      "column_name": "response_id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_logs",
+      "column_name": "master_case_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "case_logs",
+      "column_name": "type",
+      "sql_type": "varchar(20)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_logs",
+      "column_name": "staff",
+      "sql_type": "text",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_logs",
+      "column_name": "staff_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "case_logs",
+      "column_name": "detail",
+      "sql_type": "text",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_logs",
+      "column_name": "created_at",
+      "sql_type": "timestamp",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "case_logs",
+      "column_name": "status_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "case_logs",
+      "column_name": "patient_visible",
+      "sql_type": "tinyint",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referral_updates",
+      "column_name": "id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referral_updates",
+      "column_name": "referral_id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referral_updates",
+      "column_name": "organization_id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referral_updates",
+      "column_name": "actor_name_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "case_referral_updates",
+      "column_name": "kind",
+      "sql_type": "varchar(16)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referral_updates",
+      "column_name": "status",
+      "sql_type": "varchar(24)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "case_referral_updates",
+      "column_name": "summary_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "case_referral_updates",
+      "column_name": "created_at",
+      "sql_type": "timestamp",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referrals",
+      "column_name": "id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referrals",
+      "column_name": "source_organization_id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referrals",
+      "column_name": "destination_organization_id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referrals",
+      "column_name": "source_response_id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referrals",
+      "column_name": "source_master_case_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "case_referrals",
+      "column_name": "display_name_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "case_referrals",
+      "column_name": "form_title",
+      "sql_type": "varchar(255)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "case_referrals",
+      "column_name": "reason_encrypted",
+      "sql_type": "text",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referrals",
+      "column_name": "status",
+      "sql_type": "varchar(24)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referrals",
+      "column_name": "version",
+      "sql_type": "int unsigned",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referrals",
+      "column_name": "created_by",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referrals",
+      "column_name": "created_at",
+      "sql_type": "timestamp",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referrals",
+      "column_name": "updated_at",
+      "sql_type": "timestamp",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "case_referrals",
+      "column_name": "source_case_key",
+      "sql_type": "varchar(64)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "case_referrals",
+      "column_name": "active_slot",
+      "sql_type": "tinyint",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "form_answers",
+      "column_name": "id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "form_answers",
+      "column_name": "response_id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "form_answers",
+      "column_name": "form_id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "form_answers",
+      "column_name": "question_id",
+      "sql_type": "varchar(50)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "form_answers",
+      "column_name": "question_title",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "form_answers",
+      "column_name": "answer_value",
+      "sql_type": "json",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "form_responses",
+      "column_name": "id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "form_responses",
+      "column_name": "master_case_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "form_responses",
+      "column_name": "patient_account_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "form_responses",
+      "column_name": "form_id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "form_responses",
+      "column_name": "submitted_at",
+      "sql_type": "timestamp",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "form_responses",
+      "column_name": "identity_value",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "form_responses",
+      "column_name": "identity_hash",
+      "sql_type": "varchar(64)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "form_responses",
+      "column_name": "summary_data",
+      "sql_type": "json",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "form_responses",
+      "column_name": "status",
+      "sql_type": "varchar(100)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "form_responses",
+      "column_name": "risk_level",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "form_responses",
+      "column_name": "staff_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "form_responses",
+      "column_name": "organization_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "form_responses",
+      "column_name": "person_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "mastercases",
+      "column_name": "id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "mastercases",
+      "column_name": "patient_account_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "mastercases",
+      "column_name": "identityValue",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "mastercases",
+      "column_name": "identity_hash",
+      "sql_type": "varchar(255)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "mastercases",
+      "column_name": "clinicType",
+      "sql_type": "varchar(50)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "mastercases",
+      "column_name": "status",
+      "sql_type": "varchar(50)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "mastercases",
+      "column_name": "clinical_data",
+      "sql_type": "json",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "mastercases",
+      "column_name": "overall_risk",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "mastercases",
+      "column_name": "currentStage",
+      "sql_type": "varchar(100)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "mastercases",
+      "column_name": "createdAt",
+      "sql_type": "timestamp",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "mastercases",
+      "column_name": "updatedAt",
+      "sql_type": "timestamp",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "mastercases",
+      "column_name": "assigned_staff_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "mastercases",
+      "column_name": "organization_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "mastercases",
+      "column_name": "person_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "note_templates",
+      "column_name": "id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "note_templates",
+      "column_name": "clinic_type",
+      "sql_type": "varchar(50)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "note_templates",
+      "column_name": "label",
+      "sql_type": "varchar(255)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "note_templates",
+      "column_name": "text",
+      "sql_type": "text",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "note_templates",
+      "column_name": "created_at",
+      "sql_type": "timestamp",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "note_templates",
+      "column_name": "organization_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "username",
+      "sql_type": "varchar(80)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "password_hash",
+      "sql_type": "varchar(255)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "first_name_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "last_name_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "identity_hash",
+      "sql_type": "char(64)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "phone_hash",
+      "sql_type": "char(64)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "phone_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "status",
+      "sql_type": "enum('pending_verification','active','locked','disabled')",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "verified_at",
+      "sql_type": "datetime",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "last_login_at",
+      "sql_type": "datetime",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "failed_login_count",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "locked_until",
+      "sql_type": "datetime",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "token_version",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "created_at",
+      "sql_type": "datetime",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "updated_at",
+      "sql_type": "datetime",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "email",
+      "sql_type": "varchar(254)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "email_verified_at",
+      "sql_type": "datetime",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "pending_email",
+      "sql_type": "varchar(254)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "auth_version",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "must_change_password",
+      "sql_type": "tinyint(1)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "email_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "email_hash",
+      "sql_type": "char(64)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "pending_email_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "patient_accounts",
+      "column_name": "pending_email_hash",
+      "sql_type": "char(64)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "persons",
+      "column_name": "id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "persons",
+      "column_name": "patient_account_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "persons",
+      "column_name": "identity_hash",
+      "sql_type": "varchar(64)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "persons",
+      "column_name": "identity_value_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "persons",
+      "column_name": "first_name_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "persons",
+      "column_name": "last_name_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "persons",
+      "column_name": "merged_into_person_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "persons",
+      "column_name": "created_at",
+      "sql_type": "timestamp",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "persons",
+      "column_name": "updated_at",
+      "sql_type": "timestamp",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_student_health_profiles",
+      "column_name": "student_id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_student_health_profiles",
+      "column_name": "blood_type",
+      "sql_type": "enum('A','B','AB','O','unknown')",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_student_health_profiles",
+      "column_name": "chronic_conditions_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_health_profiles",
+      "column_name": "allergies_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_health_profiles",
+      "column_name": "medications_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_health_profiles",
+      "column_name": "emergency_contact_name_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_health_profiles",
+      "column_name": "emergency_contact_phone_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_health_profiles",
+      "column_name": "notes_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_health_profiles",
+      "column_name": "updated_by",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_health_profiles",
+      "column_name": "updated_at",
+      "sql_type": "timestamp",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_student_health_profiles",
+      "column_name": "health_payload_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "student_id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "measured_at",
+      "sql_type": "date",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "weight_kg",
+      "sql_type": "decimal(5,2)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "height_cm",
+      "sql_type": "decimal(5,1)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "bmi",
+      "sql_type": "decimal(4,1)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "systolic",
+      "sql_type": "smallint",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "diastolic",
+      "sql_type": "smallint",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "pulse",
+      "sql_type": "smallint",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "vision_left",
+      "sql_type": "varchar(10)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "vision_right",
+      "sql_type": "varchar(10)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "hearing_left",
+      "sql_type": "enum('normal','abnormal','not_tested')",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "hearing_right",
+      "sql_type": "enum('normal','abnormal','not_tested')",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "note_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "recorded_by",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "created_at",
+      "sql_type": "timestamp",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "updated_at",
+      "sql_type": "timestamp",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_student_physical_records",
+      "column_name": "measurements_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "school_id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "classroom_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "student_type_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "student_code",
+      "sql_type": "varchar(32)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "prefix",
+      "sql_type": "varchar(30)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "first_name_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "last_name_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "nickname_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "gender",
+      "sql_type": "enum('male','female','other')",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "birth_date_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "person_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "patient_account_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "status",
+      "sql_type": "enum('active','graduated','transferred','inactive')",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "created_by",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "created_at",
+      "sql_type": "timestamp",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_students",
+      "column_name": "updated_at",
+      "sql_type": "timestamp",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_teachers",
+      "column_name": "id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_teachers",
+      "column_name": "school_id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_teachers",
+      "column_name": "user_id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_teachers",
+      "column_name": "teacher_type_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_teachers",
+      "column_name": "employee_code",
+      "sql_type": "varchar(50)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_teachers",
+      "column_name": "position",
+      "sql_type": "varchar(100)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_teachers",
+      "column_name": "phone_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "school_teachers",
+      "column_name": "status",
+      "sql_type": "enum('active','inactive')",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_teachers",
+      "column_name": "created_at",
+      "sql_type": "timestamp",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "school_teachers",
+      "column_name": "updated_at",
+      "sql_type": "timestamp",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "staffs",
+      "column_name": "id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "staffs",
+      "column_name": "fullname",
+      "sql_type": "text",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "staffs",
+      "column_name": "role",
+      "sql_type": "varchar(100)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "staffs",
+      "column_name": "is_active",
+      "sql_type": "tinyint(1)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "staffs",
+      "column_name": "created_at",
+      "sql_type": "timestamp",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "staffs",
+      "column_name": "organization_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "users",
+      "column_name": "id",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "users",
+      "column_name": "username",
+      "sql_type": "varchar(50)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "users",
+      "column_name": "password",
+      "sql_type": "varchar(255)",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "users",
+      "column_name": "name",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "users",
+      "column_name": "email",
+      "sql_type": "varchar(100)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "users",
+      "column_name": "role_id",
+      "sql_type": "int",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "users",
+      "column_name": "status",
+      "sql_type": "varchar(20)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "users",
+      "column_name": "role",
+      "sql_type": "varchar(20)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "users",
+      "column_name": "created_at",
+      "sql_type": "timestamp",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "users",
+      "column_name": "phone",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "users",
+      "column_name": "phone_hash",
+      "sql_type": "varchar(255)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "users",
+      "column_name": "email_verified_at",
+      "sql_type": "datetime",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "users",
+      "column_name": "pending_email",
+      "sql_type": "varchar(254)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "users",
+      "column_name": "auth_version",
+      "sql_type": "int",
+      "nullable": "NO"
+    },
+    {
+      "table_name": "users",
+      "column_name": "email_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "users",
+      "column_name": "email_hash",
+      "sql_type": "char(64)",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "users",
+      "column_name": "pending_email_encrypted",
+      "sql_type": "text",
+      "nullable": "YES"
+    },
+    {
+      "table_name": "users",
+      "column_name": "pending_email_hash",
+      "sql_type": "char(64)",
+      "nullable": "YES"
+    }
+  ],
+  "private_files": [
+    {
+      "name": "admin_manual.pdf",
+      "storage": "private",
+      "sha256": "a3330ffccf3349ef3ce3895ecd721b8eb117a9b6359b9c6ef6a502f678af0999"
+    },
+    {
+      "name": "user_manual.pdf",
+      "storage": "private",
+      "sha256": "2748e4142252f343e660d585aa6e4c8f2306cdc7f8f1ec0a67985b4a7fabf323"
+    }
+  ]
+}

@@ -1,7 +1,10 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { getAuthorization } from "../services/api";
+import { getAuthorization, getSchoolAccess } from "../services/api";
 import { canAccess, permissionMap } from "./permissionRegistry";
-import { selectInitialOrganization } from "./organizationContext";
+import {
+  getActiveOrganizationType,
+  selectInitialOrganization,
+} from "./organizationContext";
 
 const PermissionsContext = createContext({
   loading: true,
@@ -9,6 +12,9 @@ const PermissionsContext = createContext({
   permissions: new Set(),
   authorization: null,
   activeOrganization: null,
+  activeOrganizationType: null,
+  schoolAccess: null,
+  schoolAccessLoading: false,
   setActiveOrganization: () => {},
 });
 
@@ -35,7 +41,7 @@ export function PermissionsProvider({ children }) {
     };
   }, []);
   const setActiveOrganization = (value) => {
-    const next = String(value);
+    const next = selectInitialOrganization(authorization, value);
     setActiveOrganizationState(next);
     if (authorization?.user?.id)
       localStorage.setItem(
@@ -43,8 +49,49 @@ export function PermissionsProvider({ children }) {
         next,
       );
   };
+  const activeOrganizationType = getActiveOrganizationType(
+    authorization,
+    activeOrganization,
+  );
+  // School organizations also expose who is a teacher of which classrooms;
+  // menus and school pages read it from here.
+  // Remembers which organization the access belongs to, so a page never acts
+  // on a missing or stale answer while the request is in flight.
+  const [schoolAccessState, setSchoolAccessState] = useState({
+    organization: null,
+    data: null,
+  });
+  useEffect(() => {
+    if (activeOrganizationType !== "school") return undefined;
+    let alive = true;
+    getSchoolAccess()
+      .then(
+        ({ data }) =>
+          alive &&
+          setSchoolAccessState({ organization: activeOrganization, data }),
+      )
+      .catch(
+        () =>
+          alive &&
+          setSchoolAccessState({
+            organization: activeOrganization,
+            data: null,
+          }),
+      );
+    return () => {
+      alive = false;
+    };
+  }, [activeOrganizationType, activeOrganization]);
+  const schoolAccessLoading =
+    activeOrganizationType === "school" &&
+    schoolAccessState.organization !== activeOrganization;
+  const schoolAccess =
+    activeOrganizationType === "school" && !schoolAccessLoading
+      ? schoolAccessState.data
+      : null;
   const permissions = useMemo(() => {
-    if (!authorization || authorization.is_system_admin) return new Set();
+    if (!authorization || authorization.is_system_admin === true)
+      return new Set();
     const membership = authorization.memberships?.find(
       (item) => String(item.organization.id) === String(activeOrganization),
     );
@@ -55,6 +102,9 @@ export function PermissionsProvider({ children }) {
       loading,
       authorization,
       activeOrganization,
+      activeOrganizationType,
+      schoolAccess,
+      schoolAccessLoading,
       setActiveOrganization,
       permissions,
       can: (module, level = "view") =>
@@ -62,10 +112,18 @@ export function PermissionsProvider({ children }) {
           permissions,
           module,
           level,
-          Boolean(authorization?.is_system_admin),
+          authorization?.is_system_admin === true,
         ),
     }),
-    [loading, authorization, activeOrganization, permissions],
+    [
+      loading,
+      authorization,
+      activeOrganization,
+      activeOrganizationType,
+      schoolAccess,
+      schoolAccessLoading,
+      permissions,
+    ],
   );
   return (
     <PermissionsContext.Provider value={value}>

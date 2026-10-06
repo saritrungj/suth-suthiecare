@@ -33,6 +33,10 @@ if (mode === "production") {
     "FRONTEND_URL",
     "CORS_ORIGINS",
     "TURNSTILE_SECRET_KEY",
+    "SESSION_CSRF_SECRET",
+    "DB_TLS_CA_FILE",
+    "DATA_ENCRYPTION_KEYS",
+    "DATA_ENCRYPTION_ACTIVE_KEY",
   ];
   const missing = required.filter(
     (key) => !String(process.env[key] || "").trim(),
@@ -60,10 +64,7 @@ if (mode === "production") {
       "AES_SEARCH_KEY must contain at least 32 characters in production",
     );
   }
-  if (
-    String(process.env.STAFF_EMAIL_OTP_MODE || "enroll").toLowerCase() ===
-    "required"
-  ) {
+  if (mode === "production") {
     const otpRequired = [
       "RESEND_API_KEY",
       "RESEND_FROM_EMAIL",
@@ -81,6 +82,30 @@ if (mode === "production") {
         "OTP_HMAC_SECRET must contain at least 32 characters in production",
       );
   }
+  if (
+    process.env.SESSION_CSRF_SECRET.length < 32 ||
+    process.env.SESSION_CSRF_SECRET === process.env.JWT_SECRET ||
+    process.env.SESSION_CSRF_SECRET === process.env.AES_SEARCH_KEY
+  )
+    throw new Error("INDEPENDENT_SESSION_SECRET_REQUIRED");
+  const ring = require("../utils/privateData").keyring();
+  if (
+    Object.values(ring.keys).some(
+      (key) =>
+        key === process.env.AES_SEARCH_KEY ||
+        key === process.env.SESSION_CSRF_SECRET ||
+        key === process.env.JWT_SECRET,
+    )
+  )
+    throw new Error("INDEPENDENT_ENCRYPTION_KEYS_REQUIRED");
+  const front = new URL(process.env.FRONTEND_URL);
+  if (
+    front.protocol !== "https:" ||
+    process.env.CORS_ORIGINS.split(",").some(
+      (value) => value.trim() !== front.origin,
+    )
+  )
+    throw new Error("SAME_ORIGIN_HTTPS_DEPLOYMENT_REQUIRED");
 }
 
 module.exports = { mode, envFiles };

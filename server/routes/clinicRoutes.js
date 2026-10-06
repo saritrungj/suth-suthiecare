@@ -74,7 +74,10 @@ router.patch("/reorder", verifyToken, async (req, res) => {
       conn.release();
     }
   } catch (error) {
-    console.error("Error reordering clinics:", error);
+    console.error(
+      "Error reordering clinics:",
+      require("../utils/safeError").safeError(error),
+    );
     res.status(error.status || 500).json({
       error: error.status ? error.message : "Failed to reorder clinics",
     });
@@ -108,7 +111,10 @@ router.patch("/:id/toggle-help-center", verifyToken, async (req, res) => {
           : "ซ่อนการแสดงผลบนหน้าช่วยเหลือเรียบร้อยแล้ว",
     });
   } catch (error) {
-    console.error("Error toggling help center:", error);
+    console.error(
+      "Error toggling help center:",
+      require("../utils/safeError").safeError(error),
+    );
     res.status(500).json({
       success: false,
       error: "เกิดข้อผิดพลาดบนเซิร์ฟเวอร์: " + error.message,
@@ -126,7 +132,10 @@ router.get("/", async (req, res) => {
     );
     res.json({ data: rows });
   } catch (error) {
-    console.error("Error fetching clinics:", error);
+    console.error(
+      "Error fetching clinics:",
+      require("../utils/safeError").safeError(error),
+    );
     res.status(500).json({ error: "Failed to fetch clinics" });
   }
 });
@@ -141,7 +150,10 @@ router.get("/all", verifyToken, async (req, res) => {
     );
     res.json({ data: rows });
   } catch (error) {
-    console.error("Error fetching all clinics:", error);
+    console.error(
+      "Error fetching all clinics:",
+      require("../utils/safeError").safeError(error),
+    );
     res.status(500).json({ error: "Failed to fetch all clinics" });
   }
 });
@@ -157,7 +169,10 @@ router.get("/:idOrSlug", async (req, res) => {
       return res.status(404).json({ error: "Clinic not found" });
     res.json({ data: rows[0] });
   } catch (error) {
-    console.error("Error fetching clinic:", error);
+    console.error(
+      "Error fetching clinic:",
+      require("../utils/safeError").safeError(error),
+    );
     res.status(500).json({ error: "Failed to fetch clinic" });
   }
 });
@@ -209,7 +224,10 @@ router.post("/", verifyToken, async (req, res) => {
   } catch (error) {
     if (error.code === "ER_DUP_ENTRY")
       return res.status(400).json({ error: "Slug already exists" });
-    console.error("Error creating clinic:", error);
+    console.error(
+      "Error creating clinic:",
+      require("../utils/safeError").safeError(error),
+    );
     res.status(500).json({ error: "Failed to create clinic" });
   }
 });
@@ -268,7 +286,10 @@ router.put("/:id", verifyToken, async (req, res) => {
   } catch (error) {
     if (error.code === "ER_DUP_ENTRY")
       return res.status(400).json({ error: "Slug already exists" });
-    console.error("Error updating clinic:", error);
+    console.error(
+      "Error updating clinic:",
+      require("../utils/safeError").safeError(error),
+    );
     res.status(500).json({ error: "Failed to update clinic" });
   }
 });
@@ -284,7 +305,10 @@ router.delete("/:id", verifyToken, async (req, res) => {
       return res.status(404).json({ error: "Clinic not found" });
     res.json({ message: "Clinic deleted successfully" });
   } catch (error) {
-    console.error("Error deleting clinic:", error);
+    console.error(
+      "Error deleting clinic:",
+      require("../utils/safeError").safeError(error),
+    );
     res.status(500).json({ error: "Failed to delete clinic" });
   }
 });

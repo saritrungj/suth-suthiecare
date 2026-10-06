@@ -14,16 +14,28 @@ import {
   decodeSecureToken,
   submitFormAnswers,
 } from "../../../services/api";
-import { clearPatientSession } from "../../../utils/patientSession";
+import {
+  clearPatientSession,
+  getPatientSession,
+} from "../../../utils/patientSession";
 import Swal from "sweetalert2";
+import {
+  draftOwner,
+  authorizeDraftClaim,
+} from "../../../utils/assessmentDraft";
+import { getPrivacyNotice } from "../../../services/api";
 import "../../admin/forms/styles/FormPreview.css";
 import LanguageSwitcher from "../../../components/LanguageSwitcher.jsx";
+import FormPrivacyNotice from "../../../components/FormPrivacyNotice.jsx";
 
 // 🟢 นำเข้า Component และ Helper ที่แยกออกไป
 import {
   formatThaiID,
   validateThaiID,
-  withoutNationalIdQuestions,
+  prepareNationalIdQuestions,
+  accountPrefillAnswers,
+  consentedNationalId,
+  maskThaiID,
   getQuestionTitles,
   buildScoreResults,
   canGuestSubmit,
@@ -46,12 +58,20 @@ const FormView = () => {
   const queryParams = new URLSearchParams(location.search);
   const { t, i18n } = useTranslation();
 
-  const urlToken = queryParams.get("token");
-  const fallbackIdentity = queryParams.get("identity") || "";
+  const urlToken = queryParams.get("invitation");
+  const fallbackIdentity = "";
 
   const isPreviewMode = id === "preview";
 
   const [formData, setFormData] = useState(null);
+  const [privacyNotice, setPrivacyNotice] = useState(null);
+  const [processingConsent, setProcessingConsent] = useState(false);
+  useEffect(() => {
+    if (!isPreviewMode)
+      getPrivacyNotice(id)
+        .then(({ data }) => setPrivacyNotice(data))
+        .catch(() => setPrivacyNotice(null));
+  }, [id, isPreviewMode]);
   const [loginEnforcement, setLoginEnforcement] = useState("none");
   const [resultDisplayMode, setResultDisplayMode] = useState("realtime");
   const [groupedSteps, setGroupedSteps] = useState([]);
@@ -70,7 +90,7 @@ const FormView = () => {
   const [draftRestored, setDraftRestored] = useState(false);
   const guestPromptFormRef = useRef(null);
 
-  const patientToken = sessionStorage.getItem("patient_token");
+  const patientToken = getPatientSession().authenticated;
   const draftKey = `assessment_draft_${id}`;
 
   const saveAssessmentDraft = () => {
@@ -78,6 +98,7 @@ const FormView = () => {
       sessionStorage.setItem(
         draftKey,
         JSON.stringify({
+          owner: getPatientSession().user?.id || draftOwner(),
           answers,
           consents,
           optionInputValues,
@@ -102,6 +123,7 @@ const FormView = () => {
       return;
     }
     const returnTo = `${location.pathname}${location.search}`;
+    if (!getPatientSession().authenticated) authorizeDraftClaim(id);
     const authPath =
       mode === "register" ? "/account/register" : "/account/login";
     navigate(`${authPath}?returnTo=${encodeURIComponent(returnTo)}`);
@@ -226,7 +248,10 @@ const FormView = () => {
         if (typeof data.questions === "string")
           data.questions = JSON.parse(data.questions);
 
-        data.questions = withoutNationalIdQuestions(data.questions || []);
+        const accountUser = patientToken ? getPatientSession().user : null;
+        data.questions = prepareNationalIdQuestions(data.questions || [], {
+          accountHasIdentity: Boolean(accountUser?.has_national_id),
+        });
 
         if (data.questions && Array.isArray(data.questions)) {
           data.questions.forEach((q, qIdx) => {
@@ -282,6 +307,8 @@ const FormView = () => {
           const storedDraft = JSON.parse(sessionStorage.getItem(draftKey));
           if (
             storedDraft &&
+            storedDraft.owner ===
+              (getPatientSession().user?.id || draftOwner()) &&
             Date.now() - Number(storedDraft.savedAt || 0) < ASSESSMENT_DRAFT_TTL
           ) {
             setAnswers((previous) => ({
@@ -305,6 +332,15 @@ const FormView = () => {
           }
         } catch {
           sessionStorage.removeItem(draftKey);
+        }
+
+        // Signed in: fill the name (and phone) from the account. The draft and
+        // anything the person types still win, and the fields stay editable.
+        if (accountUser) {
+          setAnswers((previous) => ({
+            ...previous,
+            ...accountPrefillAnswers(data.questions, accountUser, previous),
+          }));
         }
 
         if (identity) {
@@ -360,22 +396,40 @@ const FormView = () => {
         return;
       }
 
+      if (queryParams.get("token") || queryParams.get("identity")) {
+        setLoading(false);
+        await Swal.fire({
+          icon: "error",
+          title: "ลิงก์เดิมหมดอายุ",
+          text: "กรุณาขอลิงก์เชิญใหม่จากหน่วยงาน",
+        });
+        navigate("/");
+        return;
+      }
       if (urlToken) {
+        if (!getPatientSession().authenticated) {
+          navigate(
+            "/account/login?returnTo=" +
+              encodeURIComponent(location.pathname + location.search),
+          );
+          return;
+        }
         setIsVerifyingToken(true);
         try {
-          const res = await decodeSecureToken({ token: urlToken });
-          if (res.data && res.data.identity) activeIdentity = res.data.identity;
-        } catch (err) {
-          Swal.fire({
+          await decodeSecureToken({ token: urlToken, form_id: id });
+        } catch {
+          setLoading(false);
+          await Swal.fire({
             icon: "error",
-            title: "ลิงก์ไม่ถูกต้อง",
-            text: "ลิงก์นี้ไม่สามารถใช้งานได้ หรือถูกดัดแปลง",
-            confirmButtonText: "ตกลง",
+            title: "ไม่สามารถใช้ลิงก์เชิญนี้ได้",
+            text: "ลิงก์อาจหมดอายุหรือไม่ตรงกับบัญชีของคุณ",
           });
+          navigate("/");
+          return;
+        } finally {
+          setIsVerifyingToken(false);
         }
-        setIsVerifyingToken(false);
       }
-
       setVerifiedIdentity(activeIdentity);
 
       try {
@@ -696,6 +750,8 @@ const FormView = () => {
             });
           }
           rawAnswersToSave[qTitle] = formattedGrid;
+        } else if (qDef && qDef.type === "national_id") {
+          rawAnswersToSave[qTitle] = maskThaiID(mergedAnswers[key]) || "-";
         } else if (qDef && qDef.type === "file_upload") {
           rawAnswersToSave[qTitle] = mergedAnswers[key]
             ? `ไฟล์: ${mergedAnswers[key].name}`
@@ -707,6 +763,14 @@ const FormView = () => {
         }
       }
 
+      // The ID identifies the person only with PDPA consent (see the box below
+      // the questions). Without it the submission is not linked by ID.
+      const identityValue = consentedNationalId(
+        formData.questions,
+        answers,
+        consents,
+      );
+
       const sumData = {
         display_name: roleName.length > 0 ? roleName.join(" ") : "-",
         display_phone: rolePhone.length > 0 ? rolePhone.join(", ") : "-",
@@ -714,7 +778,7 @@ const FormView = () => {
         main_issue: roleIssue.length > 0 ? roleIssue.join(", ") : "-",
         score_results: scoreResultsArray,
         raw_answers: rawAnswersToSave,
-        consent_given: false,
+        consent_given: Boolean(identityValue),
       };
 
       const hasBooking = formData?.questions?.some(
@@ -725,9 +789,14 @@ const FormView = () => {
       );
 
       const payload = {
+        processing_consent: processingConsent,
+        notice_version: privacyNotice?.notice_version,
         answers: mergedAnswers,
         questionTitles: qTitles,
         summaryData: sumData,
+        ...(identityValue
+          ? { identityValue, consent_given: true }
+          : { consent_given: false }),
       };
 
       const confirmResult = await Swal.fire({
@@ -761,13 +830,28 @@ const FormView = () => {
       });
 
       try {
-        await submitFormAnswers(id, payload);
+        await submitFormAnswers(id, {
+          ...payload,
+          ...(urlToken ? { invitation_token: urlToken } : {}),
+        });
       } catch (submitError) {
         setIsSubmitting(false);
         if (submitError.response?.status === 401) {
           Swal.close();
           clearPatientSession();
           await continueToPatientLogin();
+          return;
+        }
+        // 409: the ID belongs to another account. 422: the ID is invalid.
+        if ([409, 422].includes(submitError.response?.status)) {
+          Swal.fire({
+            icon: "warning",
+            title: t("assessment_result.send_error"),
+            text:
+              submitError.response?.data?.message ||
+              t("assessment_result.send_error_desc"),
+            confirmButtonColor: "#ef4444",
+          });
           return;
         }
         Swal.fire({
@@ -797,7 +881,8 @@ const FormView = () => {
           hasBooking: hasBooking,
           isSaved: true,
           resultDisplayMode: normalizeResultDisplayMode(resultDisplayMode),
-          payload,
+          // History state is readable later in this tab; leave the ID out.
+          payload: { ...payload, identityValue: undefined },
         },
       });
     } catch (error) {
@@ -1013,6 +1098,12 @@ const FormView = () => {
               </p>
             </div>
 
+            <FormPrivacyNotice
+              notice={privacyNotice}
+              consent={processingConsent}
+              onConsentChange={setProcessingConsent}
+              language={i18n.resolvedLanguage || i18n.language || "th"}
+            />
             {/* 🟢 เรียกใช้ QuestionRenderer ที่ถูกแยกไฟล์ออกไป */}
             {stepData?.items.map((q, idx) => (
               <QuestionRenderer

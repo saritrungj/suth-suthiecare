@@ -1,0 +1,102 @@
+[WebServer] (node:28692) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:12216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:30448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:69:1 › settings save independently, preserve other edits, and report the retention preview (3.0s)
+(node:4568) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:116:1 › patient requests retain input on failure and show readable status after retry (3.9s)
+  ok 3 [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:163:1 › patient-visible case note uses the existing case workspace controls (4.7s)
+(node:44624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  4 [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:69:1 › settings save independently, preserve other edits, and report the retention preview (4.3s)
+(node:13708) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 5 [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:116:1 › patient requests retain input on failure and show readable status after retry (4.0s)
+  ok 6 [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:163:1 › patient-visible case note uses the existing case workspace controls (6.3s)
+
+
+  1) [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:69:1 › settings save independently, preserve other edits, and report the retention preview 
+
+    Error: locator.selectOption: Error: strict mode violation: getByRole('region', { name: 'การตั้งค่าความปลอดภัยและ PDPA' }).locator('details').filter({ has: locator('summary').filter({ hasText: 'วัตถุประสงค์และประกาศ' }) }).getByLabel('ฐานการประมวลผล') resolved to 2 elements:
+        1) <select required="">…</select> aka getByLabel('ฐานการประมวลผลที่ผู้รับผิดชอบยืนยัน เลือกฐานการประมวลผลความยินยอมการดูแลรักษาสุข')
+        2) <input type="checkbox"/> aka getByRole('checkbox', { name: 'ผู้รับผิดชอบ PDPA' })
+
+    Call log:
+      - waiting for getByRole('region', { name: 'การตั้งค่าความปลอดภัยและ PDPA' }).locator('details').filter({ has: locator('summary').filter({ hasText: 'วัตถุประสงค์และประกาศ' }) }).getByLabel('ฐานการประมวลผล')
+
+
+      91 |   await purpose.getByLabel('รหัสวัตถุประสงค์').fill('demo');
+      92 |   await purpose.getByLabel('รุ่นประกาศ').fill('v1');
+    > 93 |   await purpose.getByLabel('ฐานการประมวลผล').selectOption('consent');
+         |                                              ^
+      94 |   await purpose.getByLabel('ข้อความประกาศ').fill('ประกาศสาธิตสำหรับตรวจหน้าจอ ไม่มีข้อมูลผู้รับบริการจริง');
+      95 |   await purpose.getByRole('checkbox',{name:'ผู้รับผิดชอบ PDPA'}).check();
+      96 |   await purpose.getByRole('button',{name:'บันทึกประกาศ'}).scrollIntoViewIfNeeded();
+        at D:\github-clone\suth-suthiecare\app\e2e\pdpa-settings-ui.spec.js:93:46
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-completion\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-completion\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\ui-completion\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-completion\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-desktop-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\outputs\pdpa\evidence\ui-completion\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:69:1 › settings save independently, preserve other edits, and report the retention preview 
+
+    Error: locator.selectOption: Error: strict mode violation: getByRole('region', { name: 'การตั้งค่าความปลอดภัยและ PDPA' }).locator('details').filter({ has: locator('summary').filter({ hasText: 'วัตถุประสงค์และประกาศ' }) }).getByLabel('ฐานการประมวลผล') resolved to 2 elements:
+        1) <select required="">…</select> aka getByLabel('ฐานการประมวลผลที่ผู้รับผิดชอบยืนยัน เลือกฐานการประมวลผลความยินยอมการดูแลรักษาสุข')
+        2) <input type="checkbox"/> aka getByRole('checkbox', { name: 'ผู้รับผิดชอบ PDPA' })
+
+    Call log:
+      - waiting for getByRole('region', { name: 'การตั้งค่าความปลอดภัยและ PDPA' }).locator('details').filter({ has: locator('summary').filter({ hasText: 'วัตถุประสงค์และประกาศ' }) }).getByLabel('ฐานการประมวลผล')
+
+
+      91 |   await purpose.getByLabel('รหัสวัตถุประสงค์').fill('demo');
+      92 |   await purpose.getByLabel('รุ่นประกาศ').fill('v1');
+    > 93 |   await purpose.getByLabel('ฐานการประมวลผล').selectOption('consent');
+         |                                              ^
+      94 |   await purpose.getByLabel('ข้อความประกาศ').fill('ประกาศสาธิตสำหรับตรวจหน้าจอ ไม่มีข้อมูลผู้รับบริการจริง');
+      95 |   await purpose.getByRole('checkbox',{name:'ผู้รับผิดชอบ PDPA'}).check();
+      96 |   await purpose.getByRole('button',{name:'บันทึกประกาศ'}).scrollIntoViewIfNeeded();
+        at D:\github-clone\suth-suthiecare\app\e2e\pdpa-settings-ui.spec.js:93:46
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-completion\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-completion\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\ui-completion\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-completion\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-mobile-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\outputs\pdpa\evidence\ui-completion\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:69:1 › settings save independently, preserve other edits, and report the retention preview 
+    [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:69:1 › settings save independently, preserve other edits, and report the retention preview 
+  4 passed (36.4s)

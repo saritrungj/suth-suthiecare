@@ -1,0 +1,87 @@
+[WebServer] (node:25008) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:38064) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 26 tests using 1 worker
+
+(node:31660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › e2e\dashboard-date-filter.spec.js:3:1 › dashboard applies the selected date range to statistics and recent cases (7.3s)
+  ok  2 [desktop-chromium] › e2e\organization-hierarchy.spec.js:135:1 › a school sub-unit inherits its main organization's type and shows school menus (2.3s)
+  ok  3 [desktop-chromium] › e2e\organization-hierarchy.spec.js:158:1 › main organizations choose the type, sub-units inherit it, members are added by checkbox (5.4s)
+  ok  4 [desktop-chromium] › e2e\organization-hierarchy.spec.js:204:1 › system-wide settings sit in their own admin section (2.4s)
+  x   5 [desktop-chromium] › e2e\organization-hierarchy.spec.js:233:1 › an organization member does not get the admin section (12.7s)
+(node:32968) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  6 [desktop-chromium] › e2e\public-flows.spec.js:9:1 › history requires patient login before loading any record (2.7s)
+  ok  7 [desktop-chromium] › e2e\public-flows.spec.js:20:1 › patient authentication keeps the selected language across login and register (1.9s)
+  ok  8 [desktop-chromium] › e2e\public-flows.spec.js:38:1 › patient login can continue to the protected history route (1.7s)
+  ok  9 [desktop-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (6.6s)
+  ok 10 [desktop-chromium] › e2e\public-flows.spec.js:101:1 › history hero shows the currently signed-in patient profile (2.2s)
+  ok 11 [desktop-chromium] › e2e\public-flows.spec.js:147:1 › homepage navbar shows the signed-in patient and can log out (3.2s)
+  ok 12 [desktop-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code (5.0s)
+  ok 13 [desktop-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit (6.4s)
+(node:5992) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 14 [mobile-chromium] › e2e\dashboard-date-filter.spec.js:3:1 › dashboard applies the selected date range to statistics and recent cases (5.9s)
+  -  15 [mobile-chromium] › e2e\organization-hierarchy.spec.js:135:1 › a school sub-unit inherits its main organization's type and shows school menus
+  -  16 [mobile-chromium] › e2e\organization-hierarchy.spec.js:158:1 › main organizations choose the type, sub-units inherit it, members are added by checkbox
+  -  17 [mobile-chromium] › e2e\organization-hierarchy.spec.js:204:1 › system-wide settings sit in their own admin section
+  -  18 [mobile-chromium] › e2e\organization-hierarchy.spec.js:233:1 › an organization member does not get the admin section
+  ok 19 [mobile-chromium] › e2e\public-flows.spec.js:9:1 › history requires patient login before loading any record (2.4s)
+  ok 20 [mobile-chromium] › e2e\public-flows.spec.js:20:1 › patient authentication keeps the selected language across login and register (2.1s)
+  ok 21 [mobile-chromium] › e2e\public-flows.spec.js:38:1 › patient login can continue to the protected history route (2.5s)
+  ok 22 [mobile-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (9.5s)
+  ok 23 [mobile-chromium] › e2e\public-flows.spec.js:101:1 › history hero shows the currently signed-in patient profile (2.2s)
+  ok 24 [mobile-chromium] › e2e\public-flows.spec.js:147:1 › homepage navbar shows the signed-in patient and can log out (3.5s)
+  ok 25 [mobile-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code (4.4s)
+  ok 26 [mobile-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit (6.5s)
+
+
+  1) [desktop-chromium] › e2e\organization-hierarchy.spec.js:233:1 › an organization member does not get the admin section 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('aside.sidebar nav').getByRole('link', { name: 'ผู้มารับบริการ' })
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('aside.sidebar nav').getByRole('link', { name: 'ผู้มารับบริการ' })
+
+
+      269 |   await page.goto("/admin/profile");
+      270 |   const nav = page.locator("aside.sidebar nav");
+    > 271 |   await expect(nav.getByRole("link", { name: "ผู้มารับบริการ" })).toBeVisible();
+          |                                                                   ^
+      272 |   await expect(nav.getByText("ผู้ดูแลระบบ", { exact: false })).toHaveCount(0);
+      273 |   await expect(nav.getByRole("link", { name: "บทบาทและสิทธิ์" })).toHaveCount(
+      274 |     0,
+        at D:\github-clone\suth-suthiecare\app\e2e\organization-hierarchy.spec.js:271:67
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-focused\organization-hierarchy-an--87d5e-s-not-get-the-admin-section-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-focused\organization-hierarchy-an--87d5e-s-not-get-the-admin-section-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-focused\organization-hierarchy-an--87d5e-s-not-get-the-admin-section-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-focused\organization-hierarchy-an--87d5e-s-not-get-the-admin-section-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-focused\organization-hierarchy-an--87d5e-s-not-get-the-admin-section-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [desktop-chromium] › e2e\organization-hierarchy.spec.js:233:1 › an organization member does not get the admin section 
+  4 skipped
+  21 passed (1.9m)

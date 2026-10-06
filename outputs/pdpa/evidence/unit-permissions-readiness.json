@@ -1,0 +1,27 @@
+{
+  "checks": {
+    "schema": true,
+    "production": false,
+    "same_origin": false,
+    "database_tls": false,
+    "encrypted_writer": false
+  },
+  "missing_schema": [],
+  "required_external_evidence": [
+    "network_isolation",
+    "database_least_privilege",
+    "disk_and_backup_encryption",
+    "key_restore_drill",
+    "processor_agreements",
+    "organization_policy_approval"
+  ],
+  "external_evidence_verified": {
+    "network_isolation": false,
+    "database_least_privilege": false,
+    "disk_and_backup_encryption": false,
+    "key_restore_drill": false,
+    "processor_agreements": false,
+    "organization_policy_approval": false
+  },
+  "production_ready": false
+}

@@ -5,19 +5,24 @@ import { NavLink, useNavigate, useLocation, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRightFromBracket,
+  faArrowRightArrowLeft,
   faBars,
   faBookOpen,
   faBuilding,
   faCalendarDays,
   faChevronDown,
   faChevronLeft,
-  faCircle,
+  faChalkboardUser,
   faFilePen,
   faFolderOpen,
   faGaugeHigh,
   faImages,
   faQuestionCircle,
+  faSchool,
+  faSitemap,
+  faTags,
   faTriangleExclamation,
+  faUserGraduate,
   faUserPen,
   faUserShield,
   faUsers,
@@ -25,9 +30,10 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { usePermissions } from "../permissions/PermissionsProvider";
+import { filterSidebarItems } from "../permissions/sidebarPolicy";
 import {
   getSelectableOrganizations,
-  hasActiveOrganizationMembership,
+  groupOrganizationsByParent,
 } from "../permissions/organizationContext";
 
 // 🟢 Import SweetAlert2
@@ -176,6 +182,8 @@ const ClinicIcon = () => (
   </svg>
 );
 
+const ORG_TYPE_LABELS = { hospital: "โรงพยาบาล", school: "โรงเรียน" };
+
 const rawMenuItems = [
   // 🟢 หน้าหลัก
   { type: "header", label: "หน้าหลัก", key: "header-overview" },
@@ -195,6 +203,8 @@ const rawMenuItems = [
     label: "ข้อมูลเคส",
     key: "cases",
     module: "Case Management",
+    // In a school organization the case list is the student health view.
+    schoolCheck: (access) => access?.can_view_health,
   },
   {
     href: "/admin/risk-cases",
@@ -202,6 +212,7 @@ const rawMenuItems = [
     label: "เคสเสี่ยง",
     key: "risk-cases",
     module: "Case Management",
+    schoolCheck: (access) => access?.can_view_health,
   },
   {
     href: "/admin/schedule",
@@ -209,17 +220,65 @@ const rawMenuItems = [
     label: "ตารางนัดหมาย",
     key: "schedule",
     module: "Appointments",
+    orgTypes: ["hospital"],
+  },
+  {
+    href: "/admin/referrals",
+    icon: <FontAwesomeIcon icon={faArrowRightArrowLeft} fixedWidth />,
+    label: "ส่งต่อระหว่างหน่วยงาน",
+    key: "referrals",
+    module: "Case Management",
   },
 
-  // 🟠 หมวดจัดการระบบ
-  { type: "header", label: "การจัดการ", key: "header-setup" },
+  // 🏫 หน่วยงานประเภทโรงเรียน
+  {
+    type: "header",
+    label: "โรงเรียน",
+    key: "header-school",
+    orgTypes: ["school"],
+  },
+  {
+    href: "/admin/school/students",
+    icon: <FontAwesomeIcon icon={faUserGraduate} fixedWidth />,
+    label: "นักเรียน",
+    key: "school-students",
+    orgTypes: ["school"],
+    schoolCheck: (access) => access?.can_view_students,
+  },
+  {
+    href: "/admin/school/teachers",
+    icon: <FontAwesomeIcon icon={faChalkboardUser} fixedWidth />,
+    label: "ครู",
+    key: "school-teachers",
+    orgTypes: ["school"],
+    schoolCheck: (access) => access?.can_view_school,
+  },
+  {
+    href: "/admin/school",
+    icon: <FontAwesomeIcon icon={faSchool} fixedWidth />,
+    label: "ชั้นปีและห้องเรียน",
+    key: "school-structure",
+    end: true,
+    orgTypes: ["school"],
+    schoolCheck: (access) => access?.can_view_school,
+  },
+  {
+    href: "/admin/school/types",
+    icon: <FontAwesomeIcon icon={faTags} fixedWidth />,
+    label: "ประเภทครูและนักเรียน",
+    key: "school-types",
+    orgTypes: ["school"],
+    schoolCheck: (access) => access?.can_view_school,
+  },
+
+  // 🟠 งานของหน่วยงานที่เลือกอยู่ (ข้อมูลแยกตามหน่วยงาน)
+  { type: "header", label: "จัดการหน่วยงาน", key: "header-setup" },
   {
     href: "/admin/forms",
     icon: <FontAwesomeIcon icon={faFilePen} fixedWidth />,
     label: "จัดการฟอร์ม",
     key: "forms",
     module: "Form Management",
-    allowOrganizationMember: true,
   },
   {
     href: "/admin/clinics",
@@ -227,14 +286,14 @@ const rawMenuItems = [
     label: "จัดการคลินิก",
     key: "clinics",
     module: "Clinic Management",
-    allowOrganizationMember: true,
+    orgTypes: ["hospital"],
   },
   {
-    href: "/admin/organizations",
-    icon: <FontAwesomeIcon icon={faBuilding} fixedWidth />,
-    label: "จัดการหน่วยงาน",
-    key: "organizations",
-    module: "organizations.manage",
+    href: "/admin/members",
+    icon: <FontAwesomeIcon icon={faUsers} fixedWidth />,
+    label: "ผู้มารับบริการ",
+    key: "patient-members",
+    module: "User Management",
   },
   {
     href: "/admin/help-center",
@@ -242,7 +301,37 @@ const rawMenuItems = [
     label: "จัดการศูนย์ช่วยเหลือ",
     key: "help-center",
     module: "Help Center Management",
-    allowOrganizationMember: true,
+  },
+
+  // 🛡️ ผู้ดูแลระบบ: ตั้งค่าทั้งระบบ ไม่ขึ้นกับหน่วยงานที่เลือก
+  {
+    type: "header",
+    label: "จัดการหลักของระบบ",
+    hint: "ใช้กับทั้งระบบ ไม่ขึ้นกับหน่วยงานที่เลือก",
+    key: "header-system",
+    system: true,
+  },
+  {
+    href: "/admin/organizations",
+    icon: <FontAwesomeIcon icon={faSitemap} fixedWidth />,
+    label: "หน่วยงานหลักและหน่วยงานย่อย",
+    key: "organizations",
+    module: "organizations.manage",
+    systemAdminOnly: true,
+  },
+  {
+    href: "/admin/users",
+    icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />,
+    label: "ผู้ดูแลระบบและเจ้าหน้าที่",
+    key: "users",
+    systemAdminOnly: true,
+  },
+  {
+    href: "/admin/roles",
+    icon: <FontAwesomeIcon icon={faUsersGear} fixedWidth />,
+    label: "บทบาทและสิทธิ์",
+    key: "roles",
+    systemAdminOnly: true,
   },
   {
     href: "/admin/banner",
@@ -250,45 +339,7 @@ const rawMenuItems = [
     label: "จัดการภาพแบนเนอร์",
     key: "banner",
     module: "Content Management",
-    allowOrganizationMember: true,
-  },
-  // 🟢 เพิ่มคู่มือการใช้งานตรงนี้ พร้อมกำหนด isExternal เป็น true
-  {
-    href: "/docs/admin_manual.pdf",
-    icon: <FontAwesomeIcon icon={faBookOpen} fixedWidth />,
-    label: "คู่มือการใช้งาน",
-    key: "manual",
-    isExternal: true,
-  },
-  {
-    href: "/admin/users",
-    icon: <FontAwesomeIcon icon={faUsersGear} fixedWidth />,
-    label: "จัดการผู้ใช้งาน",
-    key: "users",
-    module: "User Management",
-    children: [
-      {
-        href: "/admin/users",
-        icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />,
-        label: "ผู้ดูแลระบบและเจ้าหน้าที่",
-        key: "users-list",
-        module: "User Management",
-      },
-      {
-        href: "/admin/members",
-        icon: <FontAwesomeIcon icon={faUsers} fixedWidth />,
-        label: "ผู้มารับบริการ",
-        key: "patient-members",
-        module: "User Management",
-      },
-      {
-        href: "/admin/roles",
-        icon: <FontAwesomeIcon icon={faCircle} fixedWidth />,
-        label: "บทบาทและสิทธิ์",
-        key: "roles",
-        module: "Roles & Permissions",
-      },
-    ],
+    systemAdminOnly: true,
   },
 
   // 🟣 บัญชีของฉัน (ทุกคนเข้าถึงได้ ไม่ต้องมีสิทธิ์)
@@ -298,6 +349,14 @@ const rawMenuItems = [
     icon: <FontAwesomeIcon icon={faUserPen} fixedWidth />,
     label: "ข้อมูลส่วนตัว",
     key: "profile",
+  },
+  {
+    href: "/api/private-files/admin_manual.pdf",
+    icon: <FontAwesomeIcon icon={faBookOpen} fixedWidth />,
+    label: "คู่มือการใช้งาน",
+    key: "manual",
+    systemAdminOnly: true,
+    isExternal: true,
   },
 ];
 
@@ -331,32 +390,37 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  const { can, authorization, activeOrganization, setActiveOrganization } =
-    usePermissions();
-  const selectableOrganizations = getSelectableOrganizations(authorization);
-  const canViewCentralManagement = hasActiveOrganizationMembership(
+  const {
+    can,
     authorization,
     activeOrganization,
-  );
+    activeOrganizationType,
+    schoolAccess,
+    setActiveOrganization,
+  } = usePermissions();
+  const selectableOrganizations = getSelectableOrganizations(authorization);
 
-  const menuItems = rawMenuItems
-    .map((item) => {
-      if (item.children) {
-        const filteredChildren = item.children.filter(
-          (child) => !child.module || can(child.module),
-        );
-        if (filteredChildren.length === 0) return null;
-        return { ...item, children: filteredChildren };
-      }
-      if (
-        item.module &&
-        !can(item.module) &&
-        !(item.allowOrganizationMember && canViewCentralManagement)
-      )
-        return null;
-      return item;
-    })
-    .filter(Boolean);
+  const activeUnit = selectableOrganizations.find(
+    (organization) => String(organization.id) === String(activeOrganization),
+  );
+  // const activeOrganizationDetail = activeUnit
+  //   ? [
+  //       `หน่วยงานย่อยประเภท${ORG_TYPE_LABELS[activeUnit.org_type] || "โรงพยาบาล"}`,
+  //       activeUnit.parent_name ? `ภายใต้ ${activeUnit.parent_name}` : null,
+  //     ]
+  //       .filter(Boolean)
+  //       .join(" · ")
+  //   : activeOrganization === "all"
+  //     ? "ดูข้อมูลรวมทุกหน่วยงาน"
+  //     : "";
+  // Ordinary members see menus for their selected unit; System Admin sees all.
+  const organizationType = activeOrganizationType || "hospital";
+  const menuItems = filterSidebarItems(rawMenuItems, {
+    authorization,
+    organizationType,
+    schoolAccess,
+    can,
+  });
 
   useEffect(() => {
     if (window.innerWidth > 768) {
@@ -442,8 +506,19 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
       customClass: {
         popup: "suth-swal-popup",
       },
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
+        try {
+          await (await import("../services/api")).staffLogoutApi();
+        } catch {
+          await MySwal.fire({
+            icon: "error",
+            title: "ออกจากระบบไม่สำเร็จ",
+            text: "กรุณาลองอีกครั้งเพื่อยุติ Session บนเซิร์ฟเวอร์",
+          });
+          return;
+        }
+        (await import("../utils/authSession")).clearAuthSession("staff");
         localStorage.removeItem("suth_user");
         localStorage.removeItem("suth_token");
         sessionStorage.removeItem("suth_user");
@@ -520,15 +595,27 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
               value={activeOrganization || ""}
               onChange={(event) => setActiveOrganization(event.target.value)}
             >
-              {authorization.is_system_admin && (
+              {authorization.is_system_admin === true && (
                 <option value="all">ทุกหน่วยงาน</option>
               )}
-              {selectableOrganizations.map((organization) => (
-                <option key={organization.id} value={organization.id}>
-                  {organization.name}
-                  {organization.roleName ? ` · ${organization.roleName}` : ""}
-                </option>
-              ))}
+              {groupOrganizationsByParent(selectableOrganizations).map(
+                (group) => (
+                  <optgroup
+                    key={group.parentId || "ungrouped"}
+                    label={group.parentName || "หน่วยงานอื่น"}
+                  >
+                    {group.organizations.map((organization) => (
+                      <option key={organization.id} value={organization.id}>
+                        {organization.name} (
+                        {ORG_TYPE_LABELS[organization.org_type] || "โรงพยาบาล"})
+                        {organization.roleName
+                          ? ` · ${organization.roleName}`
+                          : ""}
+                      </option>
+                    ))}
+                  </optgroup>
+                ),
+              )}
             </select>
           </div>
         )}
@@ -537,8 +624,18 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
           {menuItems.map((item, index) => {
             if (item.type === "header") {
               return (
-                <div key={item.key} className="menu-header-label">
+                <div
+                  key={item.key}
+                  className={`menu-header-label ${item.system ? "menu-header-label--system" : ""}`}
+                  title={item.hint}
+                >
+                  {item.system && (
+                    <FontAwesomeIcon icon={faUserShield} fixedWidth />
+                  )}
                   {item.label}
+                  {item.hint && (
+                    <small className="menu-header-hint">{item.hint}</small>
+                  )}
                 </div>
               );
             }
@@ -626,6 +723,7 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
               <NavLink
                 key={item.key}
                 to={item.href}
+                end={item.end}
                 className={({ isActive }) =>
                   `menu-item ${manualActive ? (manualActive === item.key ? "active" : "") : isActive ? "active" : ""}`
                 }

@@ -7,6 +7,7 @@
  */
 
 const crypto = require("crypto");
+const privateData = require("./privateData");
 require("dotenv").config(); // 🟢 สำคัญ: โหลด .env เผื่อไว้ให้ชัวร์ว่ามีข้อมูล
 
 const ALGORITHM = "aes-256-gcm";
@@ -26,22 +27,16 @@ if (AES_SEARCH_KEY.length < 32) {
 }
 
 // ── Encrypt ───────────────────────────────────────────────
-function encrypt(text) {
+function encrypt(text, context = "legacy-field") {
   if (text === null || text === undefined || text === "") return null;
-  const iv = crypto.randomBytes(IV_LENGTH);
-  // 🟢 2. เรียกใช้กุญแจที่แปลงไว้แล้วได้เลย
-  const cipher = crypto.createCipheriv(ALGORITHM, AES_KEY_BUFFER, iv);
-  const encrypted = Buffer.concat([
-    cipher.update(String(text), "utf8"),
-    cipher.final(),
-  ]);
-  const authTag = cipher.getAuthTag();
-  return Buffer.concat([iv, authTag, encrypted]).toString("base64");
+  return privateData.sealText(text, context);
 }
 
 // ── Decrypt ───────────────────────────────────────────────
-function decrypt(encryptedBase64) {
+function decrypt(encryptedBase64, context) {
   if (!encryptedBase64) return null;
+  if (privateData.parseEnvelope(encryptedBase64))
+    return privateData.openJson(encryptedBase64, context);
   // JSON columns can be returned as objects by mysql2. They are not encrypted
   // strings and must pass through untouched.
   if (

@@ -1,5 +1,6 @@
 // config/db.js
 const mysql = require("mysql2/promise");
+const fs = require("fs");
 require("./env");
 
 // Store and exchange temporal values with MySQL as Bangkok time. Both settings
@@ -14,6 +15,14 @@ const numberFromEnv = (value, fallback) => {
 };
 
 const db = mysql.createPool({
+  ssl: process.env.DB_TLS_CA_FILE
+    ? {
+        ca: fs.readFileSync(process.env.DB_TLS_CA_FILE),
+        rejectUnauthorized: true,
+        verifyIdentity: true,
+        minVersion: "TLSv1.2",
+      }
+    : undefined,
   host: process.env.DB_HOST,
   port: numberFromEnv(process.env.DB_PORT, 3306),
   user: process.env.DB_USER,
@@ -34,7 +43,7 @@ db.on("connection", (connection) => {
     if (error) {
       console.error(
         "Unable to set MySQL session timezone to Bangkok:",
-        error.message,
+        error.code || error.name,
       );
     }
   });

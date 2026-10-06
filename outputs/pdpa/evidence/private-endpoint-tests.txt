@@ -1,0 +1,13 @@
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+✔ lookup aliases read only the authorized organization and never create defaults (213.2837ms)
+✔ lookup writes ignore supplied owner and foreign records stay inaccessible (82.1371ms)
+✔ private files require authentication, an explicit allowlist and a durable audit (61.7132ms)
+✔ history edits reject a foreign response and old AES link endpoints are gone (25.501ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1037.5566

@@ -1,3 +1,4 @@
+import { authSession } from "../../utils/authSession";
 import React, {
   useCallback,
   useEffect,
@@ -51,13 +52,7 @@ const memberStatusMap = {
 };
 
 function getStoredUser() {
-  try {
-    const value =
-      sessionStorage.getItem("suth_user") || localStorage.getItem("suth_user");
-    return value ? JSON.parse(value) : null;
-  } catch {
-    return null;
-  }
+  return authSession("staff").user;
 }
 
 function formatDate(value) {
@@ -102,6 +97,9 @@ export default function UserManagement({
   const { can: canAccess, authorization } = usePermissions();
   const isSystemAdmin = Boolean(authorization?.is_system_admin);
   const canManageUsers = isSystemAdmin;
+  const canEditPatient =
+    isSystemAdmin ||
+    (canAccess("patient_members.update") && canAccess("pii.view"));
   const [organizations, setOrganizations] = useState([]);
   const [roles, setRoles] = useState([]);
 
@@ -739,7 +737,7 @@ export default function UserManagement({
                         </td>
                         <td className="sum-actions">
                           <div className="sum-actions-group">
-                            {canManageUsers ? (
+                            {canEditPatient ? (
                               <>
                                 <button
                                   className="sum-edit"
@@ -750,14 +748,16 @@ export default function UserManagement({
                                 >
                                   <FaEdit aria-hidden="true" />
                                 </button>
-                                <button
-                                  className="sum-delete"
-                                  onClick={() => handleDeleteMember(member)}
-                                  aria-label={`ลบบัญชี ${member.full_name || member.username}`}
-                                  title="ลบบัญชีผู้มารับบริการ"
-                                >
-                                  <FaTrash aria-hidden="true" />
-                                </button>
+                                {isSystemAdmin && (
+                                  <button
+                                    className="sum-delete"
+                                    onClick={() => handleDeleteMember(member)}
+                                    aria-label={`ลบบัญชี ${member.full_name || member.username}`}
+                                    title="ลบบัญชีผู้มารับบริการ"
+                                  >
+                                    <FaTrash aria-hidden="true" />
+                                  </button>
+                                )}
                               </>
                             ) : (
                               <span className="sum-read-only">

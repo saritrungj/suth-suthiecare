@@ -1,0 +1,259 @@
+{
+  "states": [
+    {
+      "name": "students",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "student-form-errors",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 366,
+            "scrollWidth": 366
+          }
+        ]
+      }
+    },
+    {
+      "name": "student-general",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 390,
+            "scrollWidth": 390
+          }
+        ]
+      }
+    },
+    {
+      "name": "student-physical",
+      "violations": 1,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 390,
+            "scrollWidth": 390
+          }
+        ]
+      }
+    },
+    {
+      "name": "physical-form-errors",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 390,
+            "scrollWidth": 390
+          },
+          {
+            "width": 366,
+            "scrollWidth": 366
+          }
+        ]
+      }
+    },
+    {
+      "name": "student-mental",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 390,
+            "scrollWidth": 390
+          }
+        ]
+      }
+    },
+    {
+      "name": "school-cases",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "school-cases-filtered",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "school",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "classroom-form",
+      "violations": 1,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 366,
+            "scrollWidth": 366
+          }
+        ]
+      }
+    },
+    {
+      "name": "teachers",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "teacher-form",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 366,
+            "scrollWidth": 366
+          }
+        ]
+      }
+    },
+    {
+      "name": "types",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "import",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "organization-details",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    },
+    {
+      "name": "organization-members-picker",
+      "violations": 0,
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": []
+      }
+    }
+  ],
+  "findings": [
+    {
+      "name": "student-physical",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": [
+                ".recharts-tooltip-item:nth-child(1) > .recharts-tooltip-item-name"
+              ],
+              "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.75 (foreground color: #f47932, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+            },
+            {
+              "target": [
+                ".recharts-tooltip-item:nth-child(1) > .recharts-tooltip-item-value"
+              ],
+              "summary": "Fix any of the following:\n  Element has insufficient color contrast of 2.75 (foreground color: #f47932, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+            },
+            {
+              "target": [
+                ".recharts-tooltip-item:nth-child(3) > .recharts-tooltip-item-name"
+              ],
+              "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.29 (foreground color: #16a34a, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+            },
+            {
+              "target": [
+                ".recharts-tooltip-item:nth-child(3) > .recharts-tooltip-item-value"
+              ],
+              "summary": "Fix any of the following:\n  Element has insufficient color contrast of 3.29 (foreground color: #16a34a, background color: #ffffff, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1"
+            }
+          ]
+        }
+      ],
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 390,
+            "scrollWidth": 390
+          }
+        ]
+      }
+    },
+    {
+      "name": "classroom-form",
+      "violations": [
+        {
+          "id": "color-contrast",
+          "help": "Elements must meet minimum color contrast ratio thresholds",
+          "nodes": [
+            {
+              "target": ["button[form=\"classroom-form\"]"],
+              "summary": "Fix any of the following:\n  Element has insufficient color contrast of 4.33 (foreground color: #ffffff, background color: #c95626, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1"
+            }
+          ]
+        }
+      ],
+      "layout": {
+        "viewport": 390,
+        "document": 390,
+        "dialogs": [
+          {
+            "width": 366,
+            "scrollWidth": 366
+          }
+        ]
+      }
+    }
+  ]
+}

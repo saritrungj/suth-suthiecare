@@ -28,7 +28,7 @@ export default function PatientAccountMenu({
   );
 
   useEffect(() => {
-    if (!session.token) return undefined;
+    if (!session.authenticated) return undefined;
     let active = true;
     getPatientMe()
       .then((response) => {
@@ -40,7 +40,7 @@ export default function PatientAccountMenu({
     return () => {
       active = false;
     };
-  }, [session.token]);
+  }, [session.authenticated]);
 
   useEffect(() => {
     if (!open) return undefined;

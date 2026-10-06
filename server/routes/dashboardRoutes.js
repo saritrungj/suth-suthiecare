@@ -7,7 +7,10 @@ const db = require("../config/db");
 const { decrypt } = require("../utils/encryption");
 const { verifyToken } = require("../middleware/authMiddleware");
 const { organizationWhere } = require("../authorization/authorization");
-const { decryptCaseResponse } = require("../utils/decryptCaseData");
+const {
+  decryptCaseResponse,
+  decryptSummaryData,
+} = require("../utils/decryptCaseData");
 const safeDecrypt = (val) => decrypt(val) || val;
 const isDateInput = (value) =>
   typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
@@ -42,7 +45,10 @@ router.get("/dashboard/summary", verifyToken, async (req, res) => {
       pending: 0,
     });
   } catch (err) {
-    console.error("Dashboard Summary Error:", err);
+    console.error(
+      "Dashboard Summary Error:",
+      require("../utils/safeError").safeError(err),
+    );
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -57,7 +63,10 @@ router.get("/dashboard-settings/settings", verifyToken, async (req, res) => {
     );
     res.json(rows[0] || { last_selected_form_id: null, active_charts: "[]" });
   } catch (err) {
-    console.error("GET Dashboard Settings Error:", err);
+    console.error(
+      "GET Dashboard Settings Error:",
+      require("../utils/safeError").safeError(err),
+    );
     res.status(500).json({ error: "เกิดข้อผิดพลาดจากฐานข้อมูล" });
   }
 });
@@ -69,17 +78,20 @@ router.post("/dashboard-settings/settings", verifyToken, async (req, res) => {
     const { formId, charts } = req.body;
 
     const sql = `
-            INSERT INTO dashboard_settings (role_id, last_selected_form_id, active_charts) 
-            VALUES (?, ?, ?) 
-            ON DUPLICATE KEY UPDATE 
-                last_selected_form_id = VALUES(last_selected_form_id), 
+            INSERT INTO dashboard_settings (role_id, last_selected_form_id, active_charts)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+                last_selected_form_id = VALUES(last_selected_form_id),
                 active_charts = VALUES(active_charts)
         `;
 
     await db.query(sql, [role_id, formId || null, JSON.stringify(charts)]);
     res.json({ message: "บันทึกการตั้งค่า Dashboard สำเร็จ!" });
   } catch (err) {
-    console.error("POST Dashboard Settings Error:", err);
+    console.error(
+      "POST Dashboard Settings Error:",
+      require("../utils/safeError").safeError(err),
+    );
     res.status(500).json({ error: "เกิดข้อผิดพลาดในการบันทึกข้อมูล" });
   }
 });
@@ -91,7 +103,7 @@ router.get("/charts/:formId/:questionId", verifyToken, async (req, res) => {
     const { startDate, endDate } = req.query;
 
     let sql = `
-      SELECT fa.response_id, fa.answer_value, fr.summary_data
+      SELECT fa.response_id, fa.question_title, fa.answer_value, fr.summary_data, fr.organization_id
       FROM form_answers fa
       JOIN form_responses fr ON fa.response_id = fr.id
       WHERE fa.form_id = ? AND fa.question_id = ?
@@ -111,35 +123,23 @@ router.get("/charts/:formId/:questionId", verifyToken, async (req, res) => {
       // ตรวจสอบว่า summary_data มีค่ามาจริงไหม
       if (!grouped[r.response_id]) {
         // 🟢 จุดที่ 1: ถอดรหัส summary_data ก่อนเก็บลงใน Object
-        let decryptedSummary = r.summary_data;
-        if (typeof decryptedSummary === "string" && decryptedSummary !== "") {
-          try {
-            decryptedSummary = safeDecrypt(decryptedSummary);
-          } catch (e) {
-            console.error("❌ Decrypt Summary Error:", e.message);
-          }
-        }
+        const decryptedSummary = decryptSummaryData(
+          r.summary_data,
+          safeDecrypt,
+          r.organization_id,
+        );
 
         grouped[r.response_id] = {
           answers: [],
           summary: decryptedSummary, // เก็บค่าที่ถอดรหัสแล้ว
         };
       }
-      let decryptedValue = r.answer_value;
-      if (typeof decryptedValue === "string") {
-        decryptedValue = safeDecrypt(decryptedValue);
-      }
-
-      let value;
-      try {
-        // 🟢 ลองแปลงเป็น JSON (เผื่อเป็น Array/Object เช่น Checkbox, Grid)
-        value =
-          typeof decryptedValue === "string"
-            ? JSON.parse(decryptedValue)
-            : decryptedValue;
-      } catch {
-        value = decryptedValue;
-      }
+      const value = require("../utils/storedAnswer").normalizeStoredAnswer(
+        r.answer_value,
+        r.question_title,
+        safeDecrypt,
+        r.organization_id,
+      );
 
       grouped[r.response_id].answers.push(value);
     });
@@ -165,7 +165,10 @@ router.get("/charts/:formId/:questionId", verifyToken, async (req, res) => {
     // ส่งผลลัพธ์กลับไปเป็น Array ของ Object ที่มี summary_data ติดไปด้วย
     res.json(result);
   } catch (err) {
-    console.error("Chart API Error:", err);
+    console.error(
+      "Chart API Error:",
+      require("../utils/safeError").safeError(err),
+    );
     res.status(500).json({ message: "error" });
   }
 });
@@ -179,11 +182,11 @@ router.get("/admin/master-cases/stats", verifyToken, async (req, res) => {
 
     // 🟢 1. ดึง f.questions (โครงสร้างฟอร์ม) มาด้วย เพื่อเอามาเช็ค Type
     let sql = `
-            SELECT r.id AS response_id, r.summary_data, r.status AS response_status, r.submitted_at,
+            SELECT r.id AS response_id, r.organization_id, r.summary_data, r.status AS response_status, r.submitted_at,
                    m.id AS master_id, m.status AS master_status, m.clinical_data,
                    f.questions AS form_questions
             FROM form_responses r
-            LEFT JOIN mastercases m ON r.master_case_id = m.id
+            LEFT JOIN mastercases m ON r.master_case_id = m.id AND m.organization_id=r.organization_id
             LEFT JOIN forms f ON r.form_id = f.id
             WHERE 1=1
     `;
@@ -257,7 +260,14 @@ router.get("/admin/master-cases/stats", verifyToken, async (req, res) => {
       if (c.clinical_data) {
         let cData = c.clinical_data;
         try {
-          while (typeof cData === "string") cData = JSON.parse(cData);
+          cData = require("../utils/privateData").readJson(
+            cData,
+            require("../utils/privateData").fieldContext(
+              "mastercases",
+              "clinical_data",
+              c.organization_id,
+            ),
+          );
           const bt = String(cData?.blood_test || "")
             .trim()
             .toLowerCase();
@@ -269,16 +279,18 @@ router.get("/admin/master-cases/stats", verifyToken, async (req, res) => {
           if (bt === "positive") stats.bloodTestPositive++;
           if (prep === "prep_with_blood") stats.prepWithBlood++;
           if (prep === "prep_without_blood") stats.prepWithoutBlood++;
-        } catch (e) {}
+        } catch (e) {
+          if (e.name === "PrivateDataError") throw e;
+        }
       }
 
       if (c.summary_data) {
         try {
-          let summaryStr = safeDecrypt(c.summary_data);
-          let summary =
-            typeof summaryStr === "string"
-              ? JSON.parse(summaryStr)
-              : summaryStr;
+          let summary = decryptSummaryData(
+            c.summary_data,
+            safeDecrypt,
+            c.organization_id,
+          );
 
           let foundStatus = false;
           let targetQuestionTitles = [];
@@ -298,7 +310,9 @@ router.get("/admin/master-cases/stats", verifyToken, async (req, res) => {
                   q.type === "faculty",
               );
               targetQuestionTitles = statusQs.map((q) => q.title);
-            } catch (e) {}
+            } catch (e) {
+              if (e.name === "PrivateDataError") throw e;
+            }
           }
 
           // 🟢 3. เข้าไปอ่านคำตอบ เฉพาะข้อที่เราดึง Title มาจาก Type ได้เท่านั้น!
@@ -359,38 +373,35 @@ router.get("/admin/master-cases/stats", verifyToken, async (req, res) => {
             );
           });
           if (isHighRisk && !isClosed) stats.highRisk++;
-        } catch (e) {}
+        } catch (e) {
+          if (e.name === "PrivateDataError") throw e;
+        }
       }
     });
 
     res.json(stats);
   } catch (error) {
-    console.error("Stats API Error:", error);
+    console.error(
+      "Stats API Error:",
+      require("../utils/safeError").safeError(error),
+    );
     res.status(500).json({ message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
   }
 });
 
 // 🟢 1. สร้างฟังก์ชันช่วยถอดรหัสแบบปลอดภัย
-const decryptIfEncrypted = (text) => {
-  if (!text) return text;
-  try {
-    const decrypted = safeDecrypt(text);
-    return decrypted ? decrypted : text;
-  } catch (e) {
-    return text;
-  }
-};
+const decryptIfEncrypted = (text) => safeDecrypt(text);
 
 // 2. ข้อมูลเคสล่าสุด
 router.get("/dashboard/recent", verifyToken, async (req, res) => {
   try {
     const { clinic, startDate, endDate } = req.query;
     let sql = `
-            SELECT r.id, r.form_id, r.identity_value, r.summary_data, r.submitted_at, 
-                   r.status, r.risk_level, r.master_case_id, r.staff_id, 
-                   f.title as form_title, f.clinic_type 
-            FROM form_responses r 
-            LEFT JOIN forms f ON r.form_id = f.id 
+            SELECT r.id, r.organization_id, r.form_id, r.identity_value, r.summary_data, r.submitted_at,
+                   r.status, r.risk_level, r.master_case_id, r.staff_id,
+                   f.title as form_title, f.clinic_type
+            FROM form_responses r
+            LEFT JOIN forms f ON r.form_id = f.id
             WHERE 1=1
     `;
     const params = [];
@@ -406,56 +417,14 @@ router.get("/dashboard/recent", verifyToken, async (req, res) => {
 
     const [rows] = await db.query(sql, params);
 
-    const decryptedRows = rows.map((r) => {
-      if (r.identity_value)
-        r.identity_value = decryptIfEncrypted(r.identity_value);
-
-      if (r.summary_data) {
-        try {
-          let summaryStr = decryptIfEncrypted(r.summary_data);
-          let summary =
-            typeof summaryStr === "string"
-              ? JSON.parse(summaryStr)
-              : summaryStr;
-          if (summary.display_name)
-            summary.display_name = decryptIfEncrypted(summary.display_name);
-          if (summary.display_phone)
-            summary.display_phone = decryptIfEncrypted(summary.display_phone);
-          if (summary.name) summary.name = decryptIfEncrypted(summary.name);
-          if (summary.phone) summary.phone = decryptIfEncrypted(summary.phone);
-          if (summary.citizenId)
-            summary.citizenId = decryptIfEncrypted(summary.citizenId);
-          if (summary.idCard)
-            summary.idCard = decryptIfEncrypted(summary.idCard);
-
-          // 🟢 5. วนลูปถอดรหัสข้อมูลใน raw_answers (สำหรับเคสที่แอดมินสร้าง)
-          if (summary.raw_answers) {
-            for (const key in summary.raw_answers) {
-              if (
-                key.includes("ชื่อ") ||
-                key.includes("เบอร์") ||
-                key.includes("โทร") ||
-                key.includes("บัตร") ||
-                key.includes("name") ||
-                key.includes("phone")
-              ) {
-                summary.raw_answers[key] = decryptIfEncrypted(
-                  summary.raw_answers[key],
-                );
-              }
-            }
-          }
-          r.summary_data = summary;
-        } catch (e) {
-          console.error("Decrypt Summary Error:", e);
-        }
-      }
-      return decryptCaseResponse(r, decryptIfEncrypted);
-    });
+    const decryptedRows = rows.map((r) => decryptCaseResponse(r, safeDecrypt));
 
     res.json(decryptedRows);
   } catch (err) {
-    console.error("Dashboard Recent Error:", err);
+    console.error(
+      "Dashboard Recent Error:",
+      require("../utils/safeError").safeError(err),
+    );
     res.status(500).json({ message: "Server error" });
   }
 });

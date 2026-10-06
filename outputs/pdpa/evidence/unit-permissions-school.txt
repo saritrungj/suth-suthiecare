@@ -1,0 +1,27 @@
+[WebServer] (node:24008) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:36288) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 12 tests using 1 worker
+
+(node:40292) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › e2e\school-management.spec.js:250:3 › school organization › system admin sees school and hospital menus in a school unit (1.5s)
+  ok  2 [desktop-chromium] › e2e\school-management.spec.js:270:3 › school organization › the structure page is the sub-unit's school: grades and their rooms only (1.8s)
+  ok  3 [desktop-chromium] › e2e\school-management.spec.js:298:3 › school organization › student list opens the student health file (2.0s)
+  ok  4 [desktop-chromium] › e2e\school-management.spec.js:317:3 › school organization › the case list of a school organization is the student health view (1.7s)
+  ok  5 [desktop-chromium] › e2e\school-management.spec.js:333:3 › school organization › imports a CSV after a dry run and offers the credentials file (2.2s)
+  ok  6 [desktop-chromium] › e2e\school-management.spec.js:363:1 › a guest must accept PDPA before the national ID is sent (2.2s)
+(node:37964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -   7 [mobile-chromium] › e2e\school-management.spec.js:250:3 › school organization › system admin sees school and hospital menus in a school unit
+  -   8 [mobile-chromium] › e2e\school-management.spec.js:270:3 › school organization › the structure page is the sub-unit's school: grades and their rooms only
+  ok  9 [mobile-chromium] › e2e\school-management.spec.js:298:3 › school organization › student list opens the student health file (3.2s)
+  ok 10 [mobile-chromium] › e2e\school-management.spec.js:317:3 › school organization › the case list of a school organization is the student health view (2.3s)
+  -  11 [mobile-chromium] › e2e\school-management.spec.js:333:3 › school organization › imports a CSV after a dry run and offers the credentials file
+  -  12 [mobile-chromium] › e2e\school-management.spec.js:363:1 › a guest must accept PDPA before the national ID is sent
+
+  4 skipped
+  8 passed (21.4s)

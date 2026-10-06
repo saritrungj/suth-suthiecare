@@ -27,6 +27,8 @@ const faqRoutes = require("./routes/faqRoutes"); // <-- เส้นทางจ
 const patientAuthRoutes = require("./routes/patientAuthRoutes");
 const patientRoutes = require("./routes/patientRoutes");
 const organizationRoutes = require("./routes/organizationRoutes");
+const schoolRoutes = require("./routes/schoolRoutes");
+const caseReferralRoutes = require("./routes/caseReferralRoutes");
 const {
   verifyToken,
   requirePermission,
@@ -90,6 +92,19 @@ app.use("/api", apiLimiter);
 app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ limit: "25mb", extended: true }));
 app.use(cookieParser());
+app.use("/api", require("./services/pdpaReadiness").readinessMiddleware);
+// Even the initial authentication request must originate from the configured application.
+app.use("/api", (req, res, next) => {
+  if (
+    process.env.NODE_ENV !== "production" ||
+    ["GET", "HEAD", "OPTIONS"].includes(req.method)
+  )
+    return next();
+  const origin = req.get("Origin");
+  if (!origin || !allowedOrigins.includes(origin))
+    return res.status(403).json({ code: "ORIGIN_REJECTED" });
+  next();
+});
 
 app.use((req, res, next) => {
   req.requestId = crypto.randomUUID();
@@ -100,7 +115,18 @@ app.use((req, res, next) => {
 // Operational data always has an explicit organization context. This sits before
 // route handlers so a guessed URL or body field cannot escape tenant scope.
 app.use("/api", (req, res, next) => {
-  if (!needsOrganizationContext(req.path, Boolean(req.headers.authorization)))
+  if (
+    !needsOrganizationContext(
+      req.path,
+      Boolean(
+        req.headers.authorization ||
+        (req.headers["x-organization-id"] &&
+          req.cookies?.[
+            require("./services/sessionService").cookieName("staff")
+          ]),
+      ),
+    )
+  )
     return next();
   return verifyToken(req, res, () => resolveContext(req, res, next));
 });
@@ -108,6 +134,7 @@ app.use("/api", (req, res, next) => {
 // Permission gate for every administrative write endpoint. Individual routes still
 // validate their own payload and any stricter hierarchy rules.
 const permissionForWrite = (path) => {
+  if (path.endsWith("/export-data")) return null;
   if (
     /^\/forms\/[^/]+\/submit$/.test(path) ||
     path === "/counts" ||
@@ -123,6 +150,7 @@ const permissionForWrite = (path) => {
   if (path.startsWith("/banners")) return "Content Management";
   if (path.startsWith("/dashboard-settings")) return "Dashboard";
   if (path.startsWith("/appointments")) return "Appointments";
+  if (path.startsWith("/staffs")) return "User Management";
   if (
     path.startsWith("/cases") ||
     path.startsWith("/master-cases") ||
@@ -175,6 +203,13 @@ app.use("/api", (req, res, next) => {
 
 app.use("/api", (req, res, next) => {
   if (["GET", "HEAD", "OPTIONS"].includes(req.method)) return next();
+  if (
+    req.organizationContext === "all" &&
+    /^\/(cases|master-cases|appointments|staffs|services|templates|case-statuses|status-options|history)(\/|$)/.test(
+      req.path,
+    )
+  )
+    return res.status(422).json({ code: "SELECT_ONE_ORGANIZATION" });
   const module = permissionForWrite(req.path);
   if (!module) return next();
   const action =
@@ -188,6 +223,7 @@ app.use("/api", (req, res, next) => {
   );
 });
 
+app.use("/api", require("./middleware/privateDisclosure").privateDisclosure);
 // 🟢 ตั้งค่าหน้าแรก (Root Route)
 app.get("/", (req, res) => {
   res.send("Server is running!");
@@ -201,21 +237,43 @@ app.get("/health", (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+app.get("/ready", async (req, res) => {
+  try {
+    const readiness = await require("./services/pdpaReadiness").schemaReadiness(
+      require("./config/db"),
+    );
+    res.status(readiness.ready ? 200 : 503).json({
+      ready: readiness.ready,
+      code: readiness.ready ? "READY" : "PDPA_SCHEMA_NOT_READY",
+    });
+  } catch {
+    res.status(503).json({ ready: false, code: "PDPA_READINESS_FAILED" });
+  }
+});
 
 // 🟢 ผูก Routes เข้ากับ API Path หลัก
 app.use("/api", authRoutes);
+app.use("/api", require("./routes/sessionRoutes"));
+app.use("/api", require("./routes/privateFileRoutes"));
+app.use("/api", require("./routes/formInvitationRoutes"));
+app.use("/api", require("./routes/pdpaOrganizationRoutes"));
+app.use("/api", require("./routes/privateExportRoutes"));
+app.use("/api", require("./routes/pdpaGovernanceRoutes"));
 app.use("/api/patient-auth", patientAuthRoutes);
 app.use("/api/patient", patientRoutes);
 app.use("/api", formRoutes);
 app.use("/api", userRoutes);
 app.use("/api", roleRoutes);
 app.use("/api", organizationRoutes);
+app.use("/api", require("./routes/organizationPermissionRoutes"));
 app.use("/api", bannerRoutes);
 app.use("/api", dashboardRoutes);
+app.use("/api", require("./routes/operationalLookupRoutes"));
 app.use("/api", caseRoutes);
 app.use("/api/clinics", clinicRoutes);
-app.use("/api/staffs", staffRoutes);
 app.use("/api/admin/help-center", faqRoutes);
+app.use("/api/school", schoolRoutes);
+app.use("/api/case-referrals", caseReferralRoutes);
 
 // 🟢 6. API ทดสอบ Telegram (ป้องกันด้วย token — เฉพาะผู้ที่ล็อกอินแล้ว)
 app.post(
@@ -223,10 +281,7 @@ app.post(
   verifyToken,
   requirePermission("Dashboard", "manage"),
   async (req, res) => {
-    await sendTelegramAlert(
-      "🧪 <b>ทดสอบระบบ</b>\nถ้าเห็นข้อความนี้แสดงว่าเชื่อมต่อสำเร็จ ✅",
-    );
-    res.json({ message: "ส่งแล้ว ดู Terminal และ Telegram" });
+    res.status(410).json({ code: "GLOBAL_NOTIFICATION_RETIRED" });
   },
 );
 
@@ -245,10 +300,13 @@ app.use((err, req, res, next) => {
       .status(413)
       .json({ success: false, message: "ข้อมูลที่ส่งมามีขนาดใหญ่เกินไป" });
   }
-  console.error("Unhandled Error:", err);
+  console.error("Unhandled Error:", {
+    request_id: req.requestId,
+    code: err.code || err.name,
+  });
   res
     .status(
-      typeof status === "number" && status >= 400 && status < 500
+      typeof status === "number" && status >= 400 && status <= 503
         ? status
         : 500,
     )

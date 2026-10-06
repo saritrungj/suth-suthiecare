@@ -1,0 +1,49 @@
+{
+  "backend": {
+    "passed": 121,
+    "failed": 0,
+    "skipped": 2,
+    "evidence": "unit-permissions-backend.txt"
+  },
+  "frontend": {
+    "passed": 47,
+    "failed": 0,
+    "evidence": "unit-permissions-frontend.txt"
+  },
+  "mysql": {
+    "passed": 1,
+    "failed": 0,
+    "evidence": "unit-permissions-mysql.txt"
+  },
+  "browser": {
+    "method": "full_run_plus_affected_suite_reruns",
+    "passed": 110,
+    "unresolved_failures": 0,
+    "skipped": 34,
+    "total": 144,
+    "full_run": {
+      "passed": 108,
+      "failed": 1,
+      "skipped": 35,
+      "evidence": "unit-permissions-browser.txt"
+    },
+    "affected_school_rerun": {
+      "passed": 8,
+      "failed": 0,
+      "skipped": 4,
+      "evidence": "unit-permissions-school.txt"
+    },
+    "editor_desktop_mobile_rerun": {
+      "passed": 2,
+      "failed": 0,
+      "evidence": "unit-permissions-editor.txt"
+    },
+    "note": "The obsolete school-navigation assertion was updated to the new System Admin requirement. The school suite supersedes its earlier results, and the mobile unit editor replaces one previously skipped case. Repeated desktop/editor cases are counted once; application code did not change after the full run."
+  },
+  "build": {
+    "passed": true,
+    "evidence": "unit-permissions-build.txt"
+  },
+  "local_only": true,
+  "production_changed": false
+}

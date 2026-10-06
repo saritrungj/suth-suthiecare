@@ -5,36 +5,20 @@ const { loadAuthorization } = require("../authorization/authorization");
 const roleIdOf = (user) => Number(user?.role_id);
 
 const verifyToken = async (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1]; // Bearer <token>
-
-  if (!token) {
-    return res.status(401).json({
-      success: false,
-      message: "ไม่พบ Token กรุณา Login ใหม่",
-    });
-  }
-
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET, {
-      algorithms: ["HS256"],
-    });
-    if (decoded.account_type && decoded.account_type !== "staff") {
-      return res.status(401).json({
-        success: false,
-        message: "โทเค็นนี้ไม่สามารถใช้กับระบบเจ้าหน้าที่ได้",
-      });
-    }
-    if (
-      String(process.env.STAFF_EMAIL_OTP_MODE || "enroll").toLowerCase() ===
-        "required" &&
-      (decoded.account_type !== "staff" || decoded.email_otp !== true)
-    ) {
-      return res.status(401).json({
-        success: false,
-        message: "กรุณาเข้าสู่ระบบและยืนยันรหัสอีเมลใหม่",
-      });
-    }
+    const session = await require("../services/sessionService").loadSession(
+      req,
+      "staff",
+    );
+    if (!session)
+      return res
+        .status(401)
+        .json({ success: false, message: "กรุณาเข้าสู่ระบบเจ้าหน้าที่" });
+    const decoded = {
+      id: session.account_id,
+      account_type: "staff",
+      auth_version: session.auth_version,
+    };
     req.user = decoded;
     const authorization = await loadAuthorization(decoded.id);
     if (!authorization)
@@ -57,14 +41,20 @@ const verifyToken = async (req, res, next) => {
         });
       }
     }
+    req.user = {
+      ...authorization.user,
+      account_type: "staff",
+      auth_version: session.auth_version,
+    };
     req.authorizationProfile = authorization;
     return next();
   } catch (err) {
     // 401 (not 403) so the client session interceptor clears the stale
     // token and returns the user to the login page.
-    return res.status(401).json({
+    return res.status(err.status || 401).json({
       success: false,
-      message: "Token หมดอายุหรือไม่ถูกต้อง",
+      code: err.code,
+      message: "เซสชันหมดอายุหรือไม่ถูกต้อง",
     });
   }
 };

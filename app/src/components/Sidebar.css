@@ -51,6 +51,17 @@
   background: #fff;
   color: #1f2f3f;
 }
+.organization-switcher optgroup {
+  color: #8d3809;
+  font-weight: 800;
+}
+.organization-switcher-detail {
+  display: block;
+  margin-top: 6px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
 .sidebar.collapsed .organization-switcher {
   display: none;
 }
@@ -243,6 +254,30 @@ button.menu-item {
 }
 .menu-header-label:first-of-type {
   padding-top: 0.8rem;
+}
+/* System-wide settings are set apart from the active organization's menus. */
+.menu-header-label--system {
+  margin: 0.9rem 0.8rem 0.2rem;
+  padding: 0.9rem 0.4rem 0.3rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+}
+.menu-header-hint {
+  display: block;
+  flex-basis: 100%;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.sidebar.collapsed .menu-header-hint,
+.sidebar.collapsed .menu-header-label--system svg {
+  display: none;
 }
 .sidebar.collapsed .menu-header-label {
   opacity: 0;
@@ -696,4 +731,14 @@ button.menu-item::-moz-focus-inner {
   .sidebar .submenu-item {
     font-size: 14px !important;
   }
+}
+
+/* Collapsed sidebar: the admin section keeps a divider line instead of its title. */
+.sidebar.collapsed .menu-header-label--system {
+  height: 0;
+  margin: 0.6rem 0.9rem;
+  padding: 0;
+  opacity: 1;
+  border-top: 1px solid rgba(255, 255, 255, 0.45);
+  font-size: 0;
 }

@@ -1,0 +1,233 @@
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const express = require("express");
+const {
+  studentScopeClause,
+  canViewStudentHealth,
+  canUpdateStudentHealth,
+} = require("../utils/schoolAccess");
+
+// Mounts schoolRoutes with a fake db and a fake authorization context, the way
+// index.js does after verifyToken + resolveContext.
+async function withSchoolApp({ query, context = 7, authorization }, run) {
+  const dbPath = require.resolve("../config/db");
+  require.cache[dbPath] = {
+    exports: { query, getConnection: async () => ({}) },
+  };
+  const routerPath = require.resolve("../routes/schoolRoutes");
+  delete require.cache[routerPath];
+  // audit() lives in the authorization module, which holds its own db handle.
+  delete require.cache[require.resolve("../authorization/authorization")];
+  const app = express();
+  app.use(express.json());
+  app.use("/api/school", (req, _res, next) => {
+    req.user = { id: 30 };
+    req.organizationContext = context;
+    req.authorization = authorization;
+    next();
+  });
+  app.use("/api/school", require(routerPath));
+  const server = app.listen(0, "127.0.0.1");
+  await new Promise((resolve) => server.once("listening", resolve));
+  try {
+    const { port } = server.address();
+    await run((path, init) =>
+      fetch(`http://127.0.0.1:${port}/api/school${path}`, init),
+    );
+  } finally {
+    await new Promise((resolve, reject) =>
+      server.close((error) => (error ? reject(error) : resolve())),
+    );
+  }
+}
+
+const memberAuthorization = (permissions) => ({
+  isSystemAdmin: false,
+  permissions: new Set(permissions),
+});
+
+test("refuses an organization that is not a school", async () => {
+  await withSchoolApp(
+    {
+      authorization: memberAuthorization(["students.view"]),
+      query: async (sql) => {
+        if (sql.includes("FROM organizations"))
+          return [[{ id: 7, org_type: "hospital", status: "active" }]];
+        throw new Error(`Unexpected SQL: ${sql}`);
+      },
+    },
+    async (get) => {
+      const response = await get("/students");
+      assert.equal(response.status, 422);
+    },
+  );
+});
+
+test("refuses the all-organizations context", async () => {
+  await withSchoolApp(
+    {
+      context: "all",
+      authorization: { isSystemAdmin: true },
+      query: async (sql) => {
+        throw new Error(`Unexpected SQL: ${sql}`);
+      },
+    },
+    async (get) => {
+      assert.equal((await get("/access")).status, 422);
+    },
+  );
+});
+
+test("a teacher without students.view only sees their own classrooms", async () => {
+  let studentSql;
+  let studentParams;
+  await withSchoolApp(
+    {
+      authorization: memberAuthorization([]),
+      query: async (sql, params) => {
+        if (sql.includes("FROM organizations"))
+          return [[{ id: 7, org_type: "school", status: "active" }]];
+        if (sql.includes("FROM school_teachers st"))
+          return [[{ id: 4, school_id: 2 }]];
+        if (sql.includes("FROM school_classroom_teachers"))
+          return [[{ classroom_id: 11 }, { classroom_id: 12 }]];
+        if (sql.includes("FROM school_students ss")) {
+          studentSql = sql;
+          studentParams = params;
+          return [[]];
+        }
+        throw new Error(`Unexpected SQL: ${sql}`);
+      },
+    },
+    async (get) => {
+      const access = await (await get("/access")).json();
+      assert.equal(access.is_teacher, true);
+      assert.equal(access.can_view_all_students, false);
+      assert.deepEqual(access.classroom_ids, [11, 12]);
+      const response = await get("/students");
+      assert.equal(response.status, 200);
+      assert.match(studentSql, /ss\.classroom_id IN \(\?\)/);
+      assert.deepEqual(studentParams.at(-1), [11, 12]);
+    },
+  );
+});
+
+test("staff who are neither teachers nor permitted get no students", async () => {
+  await withSchoolApp(
+    {
+      authorization: memberAuthorization(["school.view"]),
+      query: async (sql) => {
+        if (sql.includes("FROM organizations"))
+          return [[{ id: 7, org_type: "school", status: "active" }]];
+        if (sql.includes("FROM school_teachers st")) return [[]];
+        throw new Error(`Unexpected SQL: ${sql}`);
+      },
+    },
+    async (get) => {
+      assert.equal((await get("/students")).status, 403);
+      assert.equal((await get("/cases")).status, 403);
+    },
+  );
+});
+
+test("health access follows the permission or the classroom assignment", () => {
+  const teacher = {
+    isTeacher: true,
+    canClinical: true,
+    classroomIds: [11],
+    canViewAllStudents: false,
+    canViewAllHealth: false,
+    canUpdateAllHealth: false,
+  };
+  assert.equal(canViewStudentHealth(teacher, { classroom_id: 11 }), true);
+  assert.equal(canUpdateStudentHealth(teacher, { classroom_id: 11 }), true);
+  assert.equal(canViewStudentHealth(teacher, { classroom_id: 12 }), false);
+
+  const nurse = {
+    isTeacher: false,
+    canClinical: true,
+    classroomIds: [],
+    canViewAllStudents: true,
+    canViewAllHealth: true,
+    canUpdateAllHealth: false,
+  };
+  assert.equal(canViewStudentHealth(nurse, { classroom_id: 12 }), true);
+  assert.equal(canUpdateStudentHealth(nurse, { classroom_id: 12 }), false);
+  assert.deepEqual(studentScopeClause(nurse), { sql: "", params: [] });
+  assert.deepEqual(studentScopeClause({ ...teacher, classroomIds: [] }), {
+    sql: " AND 1 = 0",
+    params: [],
+  });
+});
+
+test("the school sub-unit is the school: created on first use with a generated code", async () => {
+  const inserted = [];
+  await withSchoolApp(
+    {
+      authorization: memberAuthorization(["school.view"]),
+      query: async (sql, params) => {
+        if (sql.includes("org_type, status FROM organizations"))
+          return [[{ id: 7, org_type: "school", status: "active" }]];
+        if (sql.includes("SELECT id, name FROM organizations"))
+          return [[{ id: 7, name: "โรงเรียนสุรวิวัฒน์" }]];
+        if (sql.includes("FROM school_teachers st")) return [[]];
+        if (sql.includes("FROM schools WHERE organization_id")) return [[]];
+        if (sql.startsWith("INSERT INTO schools")) {
+          inserted.push(params);
+          return [{ insertId: 5 }];
+        }
+        if (sql.startsWith("SHOW TABLES")) return [[]]; // audit log disabled
+        if (sql.includes("FROM schools WHERE id"))
+          return [[{ id: 5, code: "SC007", name: "โรงเรียนสุรวิวัฒน์" }]];
+        if (sql.includes("FROM schools s WHERE s.id"))
+          return [
+            [{ id: params[0], code: "SC007", name: "โรงเรียนสุรวิวัฒน์" }],
+          ];
+        throw new Error(`Unexpected SQL: ${sql}`);
+      },
+    },
+    async (get) => {
+      const response = await get("/schools");
+      assert.equal(response.status, 200);
+      const rows = await response.json();
+      assert.equal(rows.length, 1);
+      assert.equal(rows[0].id, 5);
+      assert.deepEqual(inserted, [[7, "SC007", "โรงเรียนสุรวิวัฒน์"]]);
+    },
+  );
+});
+
+test("a room added without a name gets the next number in its grade and year", async () => {
+  let insertParams;
+  await withSchoolApp(
+    {
+      authorization: memberAuthorization(["school.create"]),
+      query: async (sql, params) => {
+        if (sql.includes("FROM organizations"))
+          return [[{ id: 7, org_type: "school", status: "active" }]];
+        if (sql.includes("FROM school_teachers st")) return [[]];
+        if (sql.includes("FROM schools WHERE id = ? AND organization_id"))
+          return [[{ id: 5, organization_id: 7 }]];
+        if (sql.includes("FROM school_grade_levels g JOIN schools"))
+          return [[{ id: 3, school_id: 5 }]];
+        if (sql.includes("SELECT name FROM school_classrooms"))
+          return [[{ name: "1" }, { name: "3" }]];
+        if (sql.startsWith("INSERT INTO school_classrooms")) {
+          insertParams = params;
+          return [{ insertId: 40 }];
+        }
+        throw new Error(`Unexpected SQL: ${sql}`);
+      },
+    },
+    async (request) => {
+      const response = await request("/schools/5/classrooms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ grade_level_id: 3, academic_year: 2569 }),
+      });
+      assert.equal(response.status, 201);
+      assert.deepEqual(await response.json(), { id: 40, name: "2" });
+      assert.deepEqual(insertParams, [5, 3, "2", 2569, null, "active"]);
+    },
+  );
+});

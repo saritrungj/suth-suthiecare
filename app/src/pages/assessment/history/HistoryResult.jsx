@@ -1,3 +1,4 @@
+import PatientPrivacyRequests from "../../../components/PatientPrivacyRequests";
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -529,7 +530,7 @@ export default function HistoryResult() {
       });
       const user = response.data.user;
       setPatientProfile((previous) => ({ ...previous, ...user }));
-      setPatientSession(getPatientSession().token, {
+      setPatientSession(getPatientSession().authenticated, {
         ...getPatientSession().user,
         ...user,
       });
@@ -824,6 +825,7 @@ export default function HistoryResult() {
       />
 
       <div className="hr-layout">
+        <PatientPrivacyRequests />
         {needsEmail && (
           <section
             className="hr-email-banner"

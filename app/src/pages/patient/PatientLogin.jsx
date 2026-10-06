@@ -1,3 +1,4 @@
+import { setAuthSession } from "../../utils/authSession";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -402,19 +403,24 @@ export default function PatientLogin({ initialRole = "patient" }) {
           setOtpValue("");
           return;
         }
-        if (!response.data?.success || !response.data?.token)
+        if (!response.data?.success || !response.data?.csrf_token)
           throw new Error("INVALID_LOGIN_RESPONSE");
-        sessionStorage.setItem("suth_user", JSON.stringify(response.data.user));
-        sessionStorage.setItem("suth_token", response.data.token);
-        navigate("/admin/dashboard", { replace: true });
+        setAuthSession("staff", response.data.user, response.data.csrf_token);
+        navigate("/admin", { replace: true });
       } else {
         const response = await patientLoginApi({
           username: form.username.trim(),
           password: form.password,
           turnstileToken,
         });
-        setPatientSession(response.data.token, response.data.user);
-        navigate(returnTo, { replace: true });
+        setPatientSession(response.data.csrf_token, response.data.user);
+        // Accounts created by a school import must choose their own password.
+        if (response.data.user?.must_change_password)
+          navigate(
+            `/account/change-password?returnTo=${encodeURIComponent(returnTo)}`,
+            { replace: true },
+          );
+        else navigate(returnTo, { replace: true });
       }
     } catch (requestError) {
       resetTurnstile();
@@ -459,11 +465,10 @@ export default function PatientLogin({ initialRole = "patient" }) {
         );
         return;
       }
-      if (!response.data?.success || !response.data?.token)
+      if (!response.data?.success || !response.data?.csrf_token)
         throw new Error("INVALID_OTP_RESPONSE");
-      sessionStorage.setItem("suth_user", JSON.stringify(response.data.user));
-      sessionStorage.setItem("suth_token", response.data.token);
-      navigate("/admin/dashboard", { replace: true });
+      setAuthSession("staff", response.data.user, response.data.csrf_token);
+      navigate("/admin", { replace: true });
     } catch (requestError) {
       setError(
         requestError.response?.data?.message ||

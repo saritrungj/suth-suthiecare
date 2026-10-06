@@ -14,7 +14,7 @@ router.get("/", verifyToken, async (req, res) => {
 
     res.json(rows);
   } catch (err) {
-    console.error(err);
+    console.error(require("../utils/safeError").safeError(err));
     res.status(500).json({
       message: "โหลดรายชื่อไม่สำเร็จ",
     });
@@ -47,7 +47,7 @@ router.post("/", verifyToken, async (req, res) => {
       fullname,
     });
   } catch (err) {
-    console.error(err);
+    console.error(require("../utils/safeError").safeError(err));
     res.status(500).json({
       message: "เพิ่มรายชื่อไม่สำเร็จ",
     });
@@ -70,7 +70,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
       success: true,
     });
   } catch (err) {
-    console.error(err);
+    console.error(require("../utils/safeError").safeError(err));
 
     res.status(500).json({
       message: "ลบผู้รับผิดชอบไม่สำเร็จ",

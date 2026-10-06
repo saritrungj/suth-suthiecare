@@ -1232,38 +1232,6 @@
   font-size: 1rem;
 }
 
-.sut2-floating-help-btn {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 56px;
-  height: 56px;
-  background-color: #f47932;
-  color: #ffffff;
-  border: none;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 9999;
-  box-shadow: 0 4px 20px rgba(244, 121, 50, 0.4);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.sut2-floating-help-btn svg {
-  width: 26px;
-  height: 26px;
-  display: block;
-}
-.sut2-floating-help-btn:hover {
-  transform: scale(1.1) translateY(-4px);
-  background-color: #d85f1b;
-  box-shadow: 0 8px 25px rgba(244, 121, 50, 0.6);
-}
-.sut2-floating-help-btn:active {
-  transform: scale(0.95) translateY(-2px);
-}
-
 /* =========================================
    9. SELECT ANIMATION
 ========================================= */
@@ -1460,17 +1428,6 @@
     text-overflow: ellipsis;
     width: 90%;
   }
-}
-.sut2-floating-help-btn {
-  bottom: 24px;
-  right: 24px;
-  width: 50px;
-  height: 50px;
-  box-shadow: 0 4px 15px rgba(244, 121, 50, 0.3);
-}
-.sut2-floating-help-btn svg {
-  width: 22px;
-  height: 22px;
 }
 
 /* Keep the landing navigation over the hero on touch layouts. */

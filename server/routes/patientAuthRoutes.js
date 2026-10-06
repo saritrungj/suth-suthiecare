@@ -1,3 +1,4 @@
+const accountEmail = require("../utils/accountEmail");
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const rateLimit = require("express-rate-limit");
@@ -17,7 +18,10 @@ const {
   signPatientToken,
   publicAccount,
 } = require("../utils/patientAuth");
-const { verifyPatientToken } = require("../middleware/patientAuthMiddleware");
+const {
+  verifyPatientTokenAllowingPasswordChange,
+} = require("../middleware/patientAuthMiddleware");
+const { linkAccountPerson } = require("../utils/personIdentity");
 const {
   isStrongPassword,
   PASSWORD_POLICY_MESSAGE,
@@ -100,22 +104,41 @@ router.post("/register", authLimiter, async (req, res) => {
           [identityHash],
         )
       : [[]];
-    if (userRows[0] || identityRows[0])
+    const [emailRows] = await db.query(
+      "SELECT id FROM patient_accounts WHERE email_hash=? OR (email_hash IS NULL AND email=?) LIMIT 1",
+      [accountEmail.lookup(email), email],
+    );
+    if (userRows[0] || identityRows[0] || emailRows[0])
       return res.status(409).json(genericConflict);
     const phone =
       (identityHash ? await getExistingPhone(identityHash) : null) ||
       validatePhone(req.body.phone);
     const [result] = await db.query(
-      "INSERT INTO patient_accounts (username,password_hash,first_name_encrypted,last_name_encrypted,identity_hash,phone_hash,phone_encrypted,email,status) VALUES (?,?,?,?,?,?,?,?, 'pending_verification')",
+      "INSERT INTO patient_accounts (username,password_hash,first_name_encrypted,last_name_encrypted,identity_hash,phone_hash,phone_encrypted,email,email_encrypted,email_hash,status) VALUES (?,?,?,?,?,?,?,NULL,?,?, 'pending_verification')",
       [
         creds.username,
         await bcrypt.hash(req.body.password, 12),
-        encrypt(firstName.value),
-        encrypt(lastName.value),
+        require("../utils/privateField").writeField(
+          firstName.value,
+          "patient_accounts",
+          "first_name_encrypted",
+        ),
+        require("../utils/privateField").writeField(
+          lastName.value,
+          "patient_accounts",
+          "last_name_encrypted",
+        ),
         identityHash,
         phone ? hmacHash(phone) : null,
-        phone ? encrypt(phone) : null,
-        email,
+        phone
+          ? require("../utils/privateField").writeField(
+              phone,
+              "patient_accounts",
+              "phone_encrypted",
+            )
+          : null,
+        accountEmail.encode(email, "patient_accounts"),
+        accountEmail.lookup(email),
       ],
     );
     let challenge;
@@ -146,7 +169,10 @@ router.post("/register", authLimiter, async (req, res) => {
     });
     if (error.code === "ER_DUP_ENTRY")
       return res.status(409).json(genericConflict);
-    console.error("Patient register failed:", error.code || error.message);
+    console.error(
+      "Patient register failed:",
+      require("../utils/safeError").safeError(error),
+    );
     return res.status(503).json({
       success: false,
       message: "ไม่สามารถสมัครสมาชิกได้ กรุณาลองใหม่ภายหลัง",
@@ -179,13 +205,23 @@ router.post("/email/verify", otpLimiter, async (req, res) => {
       result.account.id,
     ]);
     await audit(result.account.id, "email_verification_success", req);
+    // Guest assessments made earlier with the same national ID join this account.
+    await linkAccountPerson(db, result.account.id);
     return res.json({
       success: true,
-      token: signPatientToken(rows[0]),
+      ...(await require("../services/sessionService").establishSession(
+        req,
+        res,
+        "patient",
+        rows[0],
+      )),
       user: publicAccount(rows[0]),
     });
   } catch (error) {
-    console.error("Patient email verification failed:", error.message);
+    console.error(
+      "Patient email verification failed:",
+      require("../utils/safeError").safeError(error),
+    );
     return res
       .status(500)
       .json({ success: false, message: "ไม่สามารถยืนยันอีเมลได้" });
@@ -207,7 +243,7 @@ router.post("/email/resend", otpLimiter, async (req, res) => {
       });
     return res.json(result);
   } catch (error) {
-    console.error("Patient email resend failed:", error.code || error.message);
+    console.error("Patient email resend failed:", error.code || error.name);
     return res
       .status(503)
       .json({ success: false, message: "ไม่สามารถส่งรหัสใหม่ได้" });
@@ -223,14 +259,14 @@ router.post("/password-recovery/request", otpLimiter, async (req, res) => {
   try {
     if (!email) return res.json(generic);
     const [rows] = await db.query(
-      "SELECT id,email,auth_version FROM patient_accounts WHERE email=? AND email_verified_at IS NOT NULL AND status='active' LIMIT 2",
-      [email],
+      "SELECT id,email,email_encrypted,auth_version FROM patient_accounts WHERE (email_hash=? OR (email_hash IS NULL AND email=?)) AND email_verified_at IS NOT NULL AND status='active' LIMIT 2",
+      [accountEmail.lookup(email), email],
     );
     if (rows.length !== 1) return res.json(generic);
     const challenge = await createChallenge(db, {
       accountType: "patient",
       accountId: rows[0].id,
-      email: rows[0].email,
+      email: accountEmail.decode(rows[0], "patient_accounts"),
       purpose: "account_recovery",
       authVersion: rows[0].auth_version,
     });
@@ -312,7 +348,7 @@ router.post("/password-recovery/reset", otpLimiter, async (req, res) => {
     )
       throw new Error("invalid recovery token");
     const [result] = await db.query(
-      "UPDATE patient_accounts SET password_hash=?, token_version=token_version+1, auth_version=auth_version+1 WHERE id=? AND auth_version=? AND status='active'",
+      "UPDATE patient_accounts SET password_hash=?, must_change_password=0, token_version=token_version+1, auth_version=auth_version+1 WHERE id=? AND auth_version=? AND status='active'",
       [
         await bcrypt.hash(password, 12),
         decoded.sub,
@@ -407,23 +443,104 @@ router.post("/login", authLimiter, async (req, res) => {
     await audit(account.id, "login_success", req);
     return res.json({
       success: true,
-      token: signPatientToken(account),
+      ...(await require("../services/sessionService").establishSession(
+        req,
+        res,
+        "patient",
+        account,
+      )),
       user: publicAccount(account),
     });
   } catch (error) {
-    console.error("Patient login failed:", error.message);
+    console.error(
+      "Patient login failed:",
+      require("../utils/safeError").safeError(error),
+    );
     return res
       .status(500)
       .json({ success: false, message: "ไม่สามารถเข้าสู่ระบบได้" });
   }
 });
 
-router.post("/logout", verifyPatientToken, async (req, res) => {
-  await db.query(
-    "UPDATE patient_accounts SET token_version=token_version+1 WHERE id=?",
-    [req.patient.id],
-  );
-  await audit(req.patient.id, "logout", req);
-  res.json({ success: true });
-});
+// Signed-in password change. Required before first use of an account created
+// by a school import (must_change_password), and available to everyone else.
+router.post(
+  "/password/change",
+  otpLimiter,
+  verifyPatientTokenAllowingPasswordChange,
+  async (req, res) => {
+    const currentPassword = String(req.body.current_password || "");
+    const newPassword = req.body.new_password;
+    if (!isStrongPassword(newPassword))
+      return res
+        .status(400)
+        .json({ success: false, message: PASSWORD_POLICY_MESSAGE });
+    if (currentPassword === newPassword)
+      return res.status(400).json({
+        success: false,
+        message: "รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสผ่านเดิม",
+      });
+    try {
+      const [rows] = await db.query(
+        "SELECT * FROM patient_accounts WHERE id=? LIMIT 1",
+        [req.patient.id],
+      );
+      const account = rows[0];
+      if (
+        !account ||
+        !(await bcrypt.compare(currentPassword, account.password_hash))
+      ) {
+        await audit(req.patient.id, "password_change_failed", req);
+        return res
+          .status(400)
+          .json({ success: false, message: "รหัสผ่านปัจจุบันไม่ถูกต้อง" });
+      }
+      await db.query(
+        "UPDATE patient_accounts SET password_hash=?, must_change_password=0, token_version=token_version+1, auth_version=auth_version+1 WHERE id=?",
+        [await bcrypt.hash(newPassword, 12), account.id],
+      );
+      const [updated] = await db.query(
+        "SELECT * FROM patient_accounts WHERE id=?",
+        [account.id],
+      );
+      await audit(account.id, "password_change_success", req);
+      return res.json({
+        success: true,
+        ...(await require("../services/sessionService").establishSession(
+          req,
+          res,
+          "patient",
+          updated[0],
+        )),
+        user: publicAccount(updated[0]),
+      });
+    } catch (error) {
+      console.error(
+        "Patient password change failed:",
+        require("../utils/safeError").safeError(error),
+      );
+      return res
+        .status(500)
+        .json({ success: false, message: "ไม่สามารถเปลี่ยนรหัสผ่านได้" });
+    }
+  },
+);
+
+router.post(
+  "/logout",
+  verifyPatientTokenAllowingPasswordChange,
+  async (req, res) => {
+    await db.query(
+      "UPDATE patient_accounts SET token_version=token_version+1 WHERE id=?",
+      [req.patient.id],
+    );
+    await require("../services/sessionService").revokeSession(
+      req,
+      res,
+      "patient",
+    );
+    await audit(req.patient.id, "logout", req);
+    res.json({ success: true });
+  },
+);
 module.exports = router;

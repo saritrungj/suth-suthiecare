@@ -11,6 +11,10 @@ const {
 } = require("../utils/submissionIdentity");
 const { submittedBy } = require("../utils/submissionOwner");
 const {
+  PersonIdentityConflictError,
+  normalizeNationalId,
+} = require("../utils/personIdentity");
+const {
   verifyToken,
   requirePermission,
 } = require("../middleware/authMiddleware");
@@ -25,6 +29,8 @@ const {
   normalizeLoginEnforcement,
   normalizeResultDisplayMode,
   requiresAuthenticatedSubmission,
+  hasValidHealthDomain,
+  normalizeHealthDomain,
 } = require("../utils/formSettings");
 const NodeCache = require("node-cache");
 const sharp = require("sharp");
@@ -39,10 +45,60 @@ const coverCache = new NodeCache({ stdTTL: 3600, useClones: false });
 // Helper ถอดรหัส (ถ้าเป็น plain text เดิม จะคืนค่าเดิมกลับไป)
 const safeDecrypt = (val) => decrypt(val) || val;
 
+const isBlankDisplay = (value) =>
+  value === undefined ||
+  value === null ||
+  ["", "-"].includes(String(value).trim());
+
+const patientAccountName = (patient) =>
+  [patient.first_name_encrypted, patient.last_name_encrypted]
+    .map((value) => (value ? safeDecrypt(value) : ""))
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+
+// Question ids whose answers are personal data, decided by question type so a
+// title without a Thai keyword (e.g. "ID card") is still encrypted.
+const SENSITIVE_QUESTION_TYPES = new Set([
+  "national_id",
+  "full_name",
+  "phone_number",
+]);
+function sensitiveQuestionIdSet(questionsJson) {
+  const ids = new Set();
+  let questions = questionsJson;
+  if (typeof questions === "string") {
+    try {
+      questions = JSON.parse(questions);
+    } catch {
+      questions = [];
+    }
+  }
+  const visit = (items) => {
+    if (!Array.isArray(items)) return;
+    for (const question of items) {
+      if (!question || typeof question !== "object") continue;
+      if (
+        SENSITIVE_QUESTION_TYPES.has(question.type) ||
+        question.systemRole === "name"
+      )
+        ids.add(String(question.id));
+      visit(question.subQuestions);
+    }
+  };
+  visit(questions);
+  return ids;
+}
+
 const formScope = (req, column = "f.organization_id") =>
   req.organizationContext === undefined
     ? { sql: "", params: [] }
     : organizationWhere(column, req);
+const canManageForms = (req) =>
+  Boolean(
+    req.authorization?.isSystemAdmin ||
+    req.authorization?.permissions?.has("forms.view"),
+  );
 
 async function requireFormScope(req, res, formId) {
   const [rows] = await db.query(
@@ -51,6 +107,10 @@ async function requireFormScope(req, res, formId) {
   );
   if (!rows.length) {
     res.status(404).json({ message: "ไม่พบข้อมูลฟอร์ม" });
+    return false;
+  }
+  if (!rows[0].organization_id) {
+    res.status(503).json({ code: "FORM_OWNER_REVIEW_REQUIRED" });
     return false;
   }
   if (
@@ -115,11 +175,13 @@ router.post("/save-form", verifyToken, async (req, res) => {
     publish_end_date,
     login_enforcement,
     result_display_mode,
+    health_domain,
   } = req.body;
   try {
     if (
       !hasValidLoginEnforcement(login_enforcement) ||
-      !hasValidResultDisplayMode(result_display_mode)
+      !hasValidResultDisplayMode(result_display_mode) ||
+      !hasValidHealthDomain(health_domain)
     ) {
       return res
         .status(422)
@@ -132,9 +194,9 @@ router.post("/save-form", verifyToken, async (req, res) => {
     );
     if (!organizationId) return;
     const query = `
-      INSERT INTO forms 
-      (title, description, step_name, theme, questions, status, clinic_type, form_type, publish_start_date, publish_end_date, login_enforcement, result_display_mode, organization_id) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO forms
+      (title, description, step_name, theme, questions, status, clinic_type, form_type, publish_start_date, publish_end_date, login_enforcement, result_display_mode, health_domain, organization_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const values = [
       sanitizeRichText(title || "แบบฟอร์มไม่มีชื่อ"),
@@ -149,13 +211,14 @@ router.post("/save-form", verifyToken, async (req, res) => {
       publish_end_date || null,
       normalizeLoginEnforcement(login_enforcement),
       normalizeResultDisplayMode(result_display_mode),
+      normalizeHealthDomain(health_domain),
       organizationId,
     ];
     const [result] = await db.query(query, values);
     formCache.flushAll();
     res.json({ message: "Form saved successfully", id: result.insertId });
   } catch (error) {
-    console.error(error);
+    console.error(require("../utils/safeError").safeError(error));
     res.status(500).json({ error: "Failed to save form" });
   }
 });
@@ -165,7 +228,8 @@ router.get("/forms", async (req, res) => {
   try {
     const sort = req.query.sort || "lastOpened";
 
-    const cacheKey = `all_forms_${sort}_${req.organizationContext || "public"}`;
+    const management = canManageForms(req);
+    const cacheKey = `all_forms_${sort}_${req.organizationContext || "public"}_${management ? "management" : "published"}`;
 
     if (formCache.has(cacheKey)) {
       return res.json(formCache.get(cacheKey));
@@ -174,14 +238,14 @@ router.get("/forms", async (req, res) => {
     const scope = formScope(req);
     const [rows] = await db.query(
       `SELECT f.id, f.title, f.description, f.updated_at, f.status, f.clinic_type, f.form_type,
-              publish_start_date, publish_end_date, f.login_enforcement, f.result_display_mode,
+              publish_start_date, publish_end_date, f.login_enforcement, f.result_display_mode, f.health_domain,
               f.organization_id, o.name AS organization_name, o.code AS organization_code,
               CASE
                 WHEN JSON_VALID(f.theme) = 1
                   THEN COALESCE(JSON_UNQUOTE(JSON_EXTRACT(f.theme, '$.headerImage')), '') NOT IN ('', 'null')
                 ELSE 0
               END AS has_cover
-         FROM forms f LEFT JOIN organizations o ON o.id = f.organization_id WHERE 1=1${scope.sql}`,
+         FROM forms f LEFT JOIN organizations o ON o.id = f.organization_id WHERE 1=1${scope.sql}${!management ? " AND f.status='published' AND f.organization_id IS NOT NULL" : ""}`,
       scope.params,
     );
 
@@ -209,6 +273,7 @@ router.get("/forms", async (req, res) => {
         result_display_mode: normalizeResultDisplayMode(
           form.result_display_mode,
         ),
+        health_domain: normalizeHealthDomain(form.health_domain),
         organization_id: form.organization_id,
         organization_name: form.organization_name,
         organization_code: form.organization_code,
@@ -217,69 +282,132 @@ router.get("/forms", async (req, res) => {
     formCache.set(cacheKey, formattedForms);
     res.json(formattedForms);
   } catch (err) {
-    console.error("Error fetching forms:", err);
+    console.error(
+      "Error fetching forms:",
+      require("../utils/safeError").safeError(err),
+    );
     res.status(500).json({ message: "เกิดข้อผิดพลาดในการดึงข้อมูลฟอร์ม" });
   }
 });
 
 // 3. ดึงจำนวนผู้ตอบฟอร์ม
 // Serve covers separately instead of embedding every base64 image in /forms.
-router.get("/forms/:id/cover", async (req, res) => {
-  try {
-    const formId = Number(req.params.id);
-    if (!Number.isInteger(formId) || formId <= 0) {
-      return res.status(400).json({ message: "Invalid form ID" });
-    }
-
-    const [rows] = await db.query(
-      "SELECT theme, updated_at FROM forms WHERE id = ?",
-      [formId],
-    );
-    if (!rows.length) return res.status(404).end();
-
-    const theme =
-      typeof rows[0].theme === "string"
-        ? JSON.parse(rows[0].theme)
-        : rows[0].theme || {};
-    const cover = theme.headerImage;
-    if (!cover || typeof cover !== "string") return res.status(404).end();
-    // Do not turn a first-party image endpoint into an open redirect/tracker.
-    if (!cover.startsWith("data:")) return res.status(404).end();
-
-    const match =
-      /^data:(image\/(?:avif|gif|jpeg|png|webp));base64,([A-Za-z0-9+/=\s]+)$/.exec(
-        cover,
+router.get(
+  "/forms/:id/cover",
+  async (req, res, next) => {
+    try {
+      const [rows] = await db.query(
+        "SELECT status,organization_id FROM forms WHERE id=?",
+        [req.params.id],
       );
-    if (!match) return res.status(415).end();
-
-    const sourceImage = Buffer.from(match[2].replace(/\s/g, ""), "base64");
-    const updatedAt = new Date(rows[0].updated_at).getTime() || 0;
-    const cacheKey = `${formId}-${updatedAt}-${sourceImage.length}`;
-    let image = coverCache.get(cacheKey);
-    if (!image) {
-      image = await sharp(sourceImage)
-        .rotate()
-        .resize({ width: 800, withoutEnlargement: true })
-        .webp({ quality: 78, effort: 4 })
-        .toBuffer();
-      coverCache.set(cacheKey, image);
+      const form = rows[0];
+      if (!form?.organization_id) return res.status(404).end();
+      if (form.status === "published") return next();
+      const checked = async () => {
+        if (
+          !canManageForms(req) ||
+          !(await requireFormScope(req, res, req.params.id))
+        )
+          return res.headersSent ? undefined : res.status(404).end();
+        await require("../utils/pdpaAudit").requiredAudit(
+          req,
+          "form.cover.read",
+          "form",
+          req.params.id,
+        );
+        next();
+      };
+      if (req.authorization) return await checked();
+      if (
+        !req.cookies?.[
+          require("../services/sessionService").cookieName("staff")
+        ]
+      )
+        return res.status(404).end();
+      // Image tags cannot send the active-unit header. Resolve the unit from the
+      // stored form, then prove membership and permission on the authenticated server.
+      return verifyToken(req, res, () => {
+        req.headers["x-organization-id"] = String(form.organization_id);
+        return require("../authorization/authorization").resolveContext(
+          req,
+          res,
+          () => checked().catch(next),
+        );
+      });
+    } catch (error) {
+      next(error);
     }
+  },
+  async (req, res) => {
+    try {
+      const formId = Number(req.params.id);
+      if (!Number.isInteger(formId) || formId <= 0) {
+        return res.status(400).json({ message: "Invalid form ID" });
+      }
 
-    const etag = `W/\"${cacheKey}-${image.length}\"`;
-    if (req.headers["if-none-match"] === etag) return res.status(304).end();
+      const [rows] = await db.query(
+        "SELECT theme, updated_at,status,organization_id FROM forms WHERE id = ?",
+        [formId],
+      );
+      if (!rows.length) return res.status(404).end();
+      if (
+        !rows[0].organization_id ||
+        (!canManageForms(req) && rows[0].status !== "published")
+      )
+        return res.status(404).end();
+      if (
+        req.organizationContext !== undefined &&
+        !(await requireFormScope(req, res, formId))
+      )
+        return;
 
-    res.set({
-      "Content-Type": "image/webp",
-      "Content-Length": image.length,
-      "Cache-Control": "public, max-age=3600, must-revalidate",
-      ETag: etag,
-    });
-    return res.send(image);
-  } catch (err) {
-    console.error("Error fetching form cover:", err);
-    return res.status(500).end();
-  }
-});
+      const theme =
+        typeof rows[0].theme === "string"
+          ? JSON.parse(rows[0].theme)
+          : rows[0].theme || {};
+      const cover = theme.headerImage;
+      if (!cover || typeof cover !== "string") return res.status(404).end();
+      // Do not turn a first-party image endpoint into an open redirect/tracker.
+      if (!cover.startsWith("data:")) return res.status(404).end();
+
+      const match =
+        /^data:(image\/(?:avif|gif|jpeg|png|webp));base64,([A-Za-z0-9+/=\s]+)$/.exec(
+          cover,
+        );
+      if (!match) return res.status(415).end();
+
+      const sourceImage = Buffer.from(match[2].replace(/\s/g, ""), "base64");
+      const updatedAt = new Date(rows[0].updated_at).getTime() || 0;
+      const cacheKey = `${formId}-${updatedAt}-${sourceImage.length}`;
+      let image = coverCache.get(cacheKey);
+      if (!image) {
+        image = await sharp(sourceImage)
+          .rotate()
+          .resize({ width: 800, withoutEnlargement: true })
+          .webp({ quality: 78, effort: 4 })
+          .toBuffer();
+        coverCache.set(cacheKey, image);
+      }
+
+      const etag = `W/\"${cacheKey}-${image.length}\"`;
+      if (req.headers["if-none-match"] === etag) return res.status(304).end();
+
+      res.set({
+        "Content-Type": "image/webp",
+        "Content-Length": image.length,
+        "Cache-Control": "private, no-store",
+        ETag: etag,
+      });
+      return res.send(image);
+    } catch (err) {
+      console.error(
+        "Error fetching form cover:",
+        require("../utils/safeError").safeError(err),
+      );
+      return res.status(500).end();
+    }
+  },
+);
 
 router.get("/forms/:id/submission-count", verifyToken, async (req, res) => {
   try {
@@ -298,11 +426,18 @@ router.post("/counts", async (req, res) => {
   try {
     const { formIds } = req.body;
 
-    if (!Array.isArray(formIds) || formIds.length === 0) {
+    if (
+      !Array.isArray(formIds) ||
+      formIds.length === 0 ||
+      formIds.length > 200 ||
+      formIds.some((id) => !Number.isSafeInteger(Number(id)) || Number(id) < 1)
+    ) {
       return res.status(400).json({ error: "Invalid formIds" });
     }
 
-    const cacheKey = `counts_${formIds.sort().join("_")}`;
+    const management = canManageForms(req),
+      scope = formScope(req);
+    const cacheKey = `counts_${req.organizationContext || "public"}_${management ? "management" : "published"}_${[...formIds].sort().join("_")}`;
 
     if (formCache.has(cacheKey)) {
       return res.json({ data: formCache.get(cacheKey) });
@@ -310,13 +445,13 @@ router.post("/counts", async (req, res) => {
 
     const placeholders = formIds.map(() => "?").join(",");
     const query = `
-            SELECT form_id, COUNT(*) as count 
-            FROM form_responses 
-            WHERE form_id IN (${placeholders}) 
-            GROUP BY form_id
+            SELECT fr.form_id, COUNT(*) as count
+            FROM form_responses fr JOIN forms f ON f.id=fr.form_id AND f.organization_id=fr.organization_id
+            WHERE fr.form_id IN (${placeholders}) AND f.organization_id IS NOT NULL${scope.sql}${management ? "" : " AND f.status='published'"}
+            GROUP BY fr.form_id
         `;
 
-    const [rows] = await db.query(query, formIds);
+    const [rows] = await db.query(query, [...formIds, ...scope.params]);
 
     const countMap = {};
     rows.forEach((row) => {
@@ -330,7 +465,10 @@ router.post("/counts", async (req, res) => {
 
     res.json({ data: countMap });
   } catch (err) {
-    console.error("Error fetching counts:", err);
+    console.error(
+      "Error fetching counts:",
+      require("../utils/safeError").safeError(err),
+    );
     res.status(500).json({ error: "Failed to fetch counts" });
   }
 });
@@ -347,16 +485,15 @@ router.get("/forms/:id", async (req, res) => {
 
     // Calculate option usage for quota limits
     const [usageRows] = await db.query(
-      "SELECT question_id, answer_value, COUNT(*) as count FROM form_answers WHERE form_id = ? GROUP BY question_id, answer_value",
-      [req.params.id],
+      "SELECT fa.question_id,fa.question_title,fa.answer_value,fr.organization_id FROM form_answers fa JOIN form_responses fr ON fr.id=fa.response_id WHERE fa.form_id=? AND fr.organization_id=?",
+      [req.params.id, rows[0].organization_id],
     );
-    const optionUsage = {};
-    usageRows.forEach((row) => {
-      if (!optionUsage[row.question_id]) optionUsage[row.question_id] = {};
-      optionUsage[row.question_id][row.answer_value] = row.count;
-    });
-
     const form = rows[0];
+    if (
+      !canManageForms(req) &&
+      (form.status !== "published" || !form.organization_id)
+    )
+      return res.status(404).json({ code: "FORM_UNAVAILABLE" });
     form.title = sanitizeRichText(form.title);
     form.description = sanitizeRichText(form.description);
     form.step_name = sanitizeRichText(form.step_name);
@@ -365,11 +502,17 @@ router.get("/forms/:id", async (req, res) => {
         ? JSON.parse(form.questions)
         : form.questions;
     form.questions = sanitizeFormContent(parsedQuestions || []);
-    form.optionUsage = optionUsage;
+    form.optionUsage = require("../utils/formOptionUsage").optionUsage(
+      form.questions,
+      usageRows,
+    );
 
     res.json(form);
   } catch (err) {
-    console.error("Error fetching form:", err);
+    console.error(
+      "Error fetching form:",
+      require("../utils/safeError").safeError(err),
+    );
     res.status(500).json({ message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
   }
 });
@@ -390,11 +533,13 @@ router.put("/forms/:id", verifyToken, async (req, res) => {
     publish_end_date,
     login_enforcement,
     result_display_mode,
+    health_domain,
   } = req.body;
   try {
     if (
       !hasValidLoginEnforcement(login_enforcement) ||
-      !hasValidResultDisplayMode(result_display_mode)
+      !hasValidResultDisplayMode(result_display_mode) ||
+      !hasValidHealthDomain(health_domain)
     ) {
       return res
         .status(422)
@@ -408,7 +553,7 @@ router.put("/forms/:id", verifyToken, async (req, res) => {
     );
     if (!organizationId) return;
     const query = `
-      UPDATE forms SET title=?, description=?, step_name=?, theme=?, questions=?, status=?, clinic_type=?, form_type=?, publish_start_date=?, publish_end_date=?, login_enforcement=?, result_display_mode=?, organization_id=? WHERE id=?
+      UPDATE forms SET title=?, description=?, step_name=?, theme=?, questions=?, status=?, clinic_type=?, form_type=?, publish_start_date=?, publish_end_date=?, login_enforcement=?, result_display_mode=?, health_domain=?, organization_id=? WHERE id=?
     `;
     const values = [
       sanitizeRichText(title || "แบบฟอร์มไม่มีชื่อ"),
@@ -423,6 +568,7 @@ router.put("/forms/:id", verifyToken, async (req, res) => {
       publish_end_date || null,
       normalizeLoginEnforcement(login_enforcement),
       normalizeResultDisplayMode(result_display_mode),
+      normalizeHealthDomain(health_domain),
       organizationId,
       formId,
     ];
@@ -483,7 +629,10 @@ router.patch("/forms/:id/image", verifyToken, async (req, res) => {
     formCache.flushAll();
     res.json({ success: true, message: "อัปเดตรูปปกสำเร็จ!" });
   } catch (err) {
-    console.error("Error updating form image:", err);
+    console.error(
+      "Error updating form image:",
+      require("../utils/safeError").safeError(err),
+    );
     res.status(500).json({ message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
   }
 });
@@ -508,7 +657,13 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
   const connection = await db.getConnection();
   try {
     const formId = req.params.id;
-    const { answers, questionTitles = {}, summaryData } = req.body;
+    const {
+      answers,
+      questionTitles = {},
+      summaryData,
+      identityValue,
+      consent_given: consentGiven,
+    } = req.body;
 
     // 🔒 ตรวจสอบความถูกต้องของ input เบื้องต้น
     if (isNaN(Number(formId))) {
@@ -528,12 +683,19 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
     // Verify the form before opening a transaction. A missing form must never
     // create a response or a Master Case.
     const [formRows] = await connection.query(
-      "SELECT title, clinic_type, form_type, organization_id, login_enforcement, status, publish_start_date, publish_end_date FROM forms WHERE id = ?",
+      "SELECT title, clinic_type, form_type, organization_id, login_enforcement, status, publish_start_date, publish_end_date, questions FROM forms WHERE id = ?",
       [formId],
     );
     if (!formRows[0])
       return res.status(404).json({ message: "ไม่พบข้อมูลฟอร์ม" });
     const form = formRows[0];
+    if (
+      !Number.isSafeInteger(Number(form.organization_id)) ||
+      Number(form.organization_id) < 1
+    )
+      return res
+        .status(503)
+        .json({ code: "FORM_ORGANIZATION_REVIEW_REQUIRED" });
     // The landing page hides unpublished forms, but the API must enforce it too:
     // a draft or an expired form must not accept answers by direct URL.
     if (!isFormOpenForSubmission(form)) {
@@ -552,50 +714,114 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
       });
     }
 
+    // The national ID only identifies the person after explicit PDPA consent.
+    // Without consent the submission stays anonymous (or tied to the account).
+    const hasIdentityAnswer =
+      consentGiven === true && String(identityValue ?? "").trim() !== "";
+    const nationalId = hasIdentityAnswer
+      ? normalizeNationalId(identityValue)
+      : null;
+    if (hasIdentityAnswer && !nationalId)
+      return res
+        .status(422)
+        .json({ message: "เลขบัตรประชาชนไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง" });
+
     await connection.beginTransaction();
-    const owner = req.patient
-      ? await resolveSubmissionOwner({
+    const [purposes] = await connection.query(
+      "SELECT purpose,legal_basis,notice_version FROM pdpa_processing_purposes WHERE form_id=? AND organization_id=? AND approved_at IS NOT NULL",
+      [formId, form.organization_id],
+    );
+    const processingPurpose = purposes[0];
+    if (process.env.NODE_ENV === "production" && !processingPurpose)
+      throw Object.assign(new Error("PROCESSING_PURPOSE_REQUIRED"), {
+        status: 503,
+      });
+    if (
+      processingPurpose?.legal_basis === "consent" &&
+      (req.body.processing_consent !== true ||
+        req.body.notice_version !== processingPurpose.notice_version)
+    )
+      throw Object.assign(new Error("CURRENT_NOTICE_CONSENT_REQUIRED"), {
+        status: 422,
+      });
+    const invitation = req.body.invitation_token
+      ? await require("../services/formInvitationService").resolveInvitation(
           connection,
+          req.body.invitation_token,
+          req.patient,
+          formId,
+          { lock: true },
+        )
+      : null;
+    const owner = invitation
+      ? {
+          masterCaseId: invitation.master_case_id,
+          personId: invitation.person_id,
           patientAccountId: req.patient.id,
-          accountIdentityHash: req.patient.identity_hash || null,
-          clinicType,
-        })
-      : await resolveGuestSubmissionOwner({ connection, clinicType });
+          identityHash: req.patient.identity_hash,
+        }
+      : req.patient
+        ? await resolveSubmissionOwner({
+            connection,
+            patientAccountId: req.patient.id,
+            nationalId,
+            clinicType,
+            organizationId: Number(form.organization_id),
+          })
+        : await resolveGuestSubmissionOwner({
+            connection,
+            nationalId,
+            clinicType,
+            organizationId: Number(form.organization_id),
+          });
 
     // โคลน summaryData เพื่อนำไปเข้ารหัส
     const dbSummary = JSON.parse(JSON.stringify(summaryData || {}));
-
-    if (dbSummary.display_name && dbSummary.display_name !== "-")
-      dbSummary.display_name = encrypt(dbSummary.display_name);
-    if (dbSummary.display_phone && dbSummary.display_phone !== "-")
-      dbSummary.display_phone = encrypt(dbSummary.display_phone);
-    if (dbSummary.phone && dbSummary.phone !== "-")
-      dbSummary.phone = encrypt(dbSummary.phone);
-
-    if (dbSummary.raw_answers) {
-      for (const key in dbSummary.raw_answers) {
-        if (
-          key.includes("ชื่อ") ||
-          key.includes("เบอร์") ||
-          key.includes("โทร") ||
-          key.includes("บัตร")
-        ) {
-          const val = dbSummary.raw_answers[key];
-          if (val && val !== "-") dbSummary.raw_answers[key] = encrypt(val);
-        }
-      }
+    // A logged-in submitter is known: when the form asked no name (or phone),
+    // record the account's own so every case view can show who submitted.
+    const accountName = req.patient ? patientAccountName(req.patient) : "";
+    if (accountName && isBlankDisplay(dbSummary.display_name)) {
+      dbSummary.display_name = accountName;
+      dbSummary.display_name_source = "account";
     }
+    const accountPhone = req.patient?.phone_encrypted
+      ? safeDecrypt(req.patient.phone_encrypted)
+      : "";
+    if (accountPhone && isBlankDisplay(dbSummary.display_phone)) {
+      dbSummary.display_phone = accountPhone;
+      dbSummary.display_phone_source = "account";
+    }
+    const plainDisplayName = dbSummary.display_name;
+    const plainDisplayPhone = dbSummary.display_phone;
+    if (nationalId) dbSummary.consent_given = true;
 
     // 🟢 3. Insert response พร้อมผูก master_case_id
     const [respResult] = await connection.query(
-      "INSERT INTO form_responses (form_id, master_case_id, patient_account_id, identity_value, identity_hash, summary_data, organization_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO form_responses (form_id, master_case_id, person_id, patient_account_id, identity_value, identity_hash, summary_data, organization_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
       [
         formId,
         owner.masterCaseId,
+        owner.personId || null,
         owner.patientAccountId,
-        null,
+        nationalId
+          ? require("../utils/privateField").writeField(
+              nationalId,
+              "form_responses",
+              "identity_value",
+              form.organization_id,
+            )
+          : null,
         owner.identityHash,
-        JSON.stringify(dbSummary),
+        JSON.stringify(
+          require("../utils/privateData").sealJson(
+            dbSummary,
+            require("../utils/privateData").fieldContext(
+              "form_responses",
+              "summary_data",
+              form.organization_id,
+            ),
+          ),
+        ),
         formRows[0].organization_id || null,
       ],
     );
@@ -607,158 +833,92 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
     }
     const responseId = respResult.insertId;
 
-    // บันทึกคำตอบรายข้อ
-    for (const [qId, ansValue] of Object.entries(answers)) {
-      const qTitle = questionTitles[qId] || "Unknown Question";
-      let valToSave = ansValue;
-
-      if (
-        qTitle.includes("ชื่อ") ||
-        qTitle.includes("เบอร์") ||
-        qTitle.includes("โทร") ||
-        qTitle.includes("บัตร")
-      ) {
-        valToSave = encrypt(valToSave);
-      }
-
+    // A person without an account (guest with a consented ID) is named after
+    // the latest answer. A linked account keeps its own name.
+    if (
+      owner.personId &&
+      !owner.patientAccountId &&
+      !isBlankDisplay(plainDisplayName)
+    ) {
       await connection.query(
-        "INSERT INTO form_answers (response_id, form_id, question_id, question_title, answer_value) VALUES (?, ?, ?, ?, ?)",
-        [responseId, formId, qId, qTitle, JSON.stringify(valToSave)],
+        "UPDATE persons SET first_name_encrypted = ?, last_name_encrypted = NULL WHERE id = ? AND patient_account_id IS NULL",
+        [
+          require("../utils/privateField").writeField(
+            String(plainDisplayName),
+            "persons",
+            "display_name_encrypted",
+          ),
+          owner.personId,
+        ],
       );
     }
+
+    // บันทึกคำตอบรายข้อ
+    const titleMap = new Map();
+    const visit = (items) => {
+      for (const question of Array.isArray(items) ? items : []) {
+        titleMap.set(
+          String(question.id),
+          String(question.title || question.label || ""),
+        );
+        visit(question.subQuestions);
+      }
+    };
+    visit(
+      typeof form.questions === "string"
+        ? JSON.parse(form.questions)
+        : form.questions,
+    );
+    for (const [qId, ansValue] of Object.entries(answers)) {
+      const value = require("../utils/privateData").sealJson(
+        ansValue,
+        require("../utils/privateData").fieldContext(
+          "form_answers",
+          "answer_value",
+          form.organization_id,
+        ),
+      );
+      await connection.query(
+        "INSERT INTO form_answers (response_id, form_id, question_id, question_title, answer_value) VALUES (?, ?, ?, ?, ?)",
+        [
+          responseId,
+          formId,
+          qId,
+          titleMap.get(String(qId)) || "Unknown Question",
+          JSON.stringify(value),
+        ],
+      );
+    }
+    if (processingPurpose?.legal_basis === "consent")
+      await connection.query(
+        "INSERT INTO pdpa_consent_evidence (organization_id,patient_account_id,response_id,purpose,notice_version,granted) VALUES (?,?,?,?,?,1)",
+        [
+          form.organization_id,
+          req.patient?.id || null,
+          responseId,
+          processingPurpose.purpose,
+          processingPurpose.notice_version,
+        ],
+      );
+    if (invitation)
+      await require("../services/formInvitationService").consumeInvitation(
+        connection,
+        invitation,
+        responseId,
+      );
+    const [notification] = await connection.query(
+      'INSERT INTO organization_notification_events (organization_id,response_id,status,reason_code) VALUES (?,? ,"pending",NULL)',
+      [form.organization_id, responseId],
+    );
     await connection.commit();
 
-    try {
-      const safe = summaryData || {};
-
-      // 🟢 ดึง score
-      const scoreResults = Array.isArray(safe.score_results)
-        ? safe.score_results
-        : Array.isArray(safe.scoreResults)
-          ? safe.scoreResults
-          : [];
-
-      // 🟢 เช็คความเสี่ยง
-      const isHighRisk = scoreResults.some((s) => {
-        const colorClean = (s.color || "")
-          .toLowerCase()
-          .replace(/[^a-f0-9]/g, "");
-        const label = (s.label || "").toLowerCase();
-        return (
-          colorClean.includes("d93025") ||
-          colorClean.includes("e53935") ||
-          colorClean.includes("f44336") ||
-          label.includes("สูง") ||
-          label.includes("รุนแรง")
-        );
-      });
-
-      // 🟢 helper
-      const stripHtml = (str) =>
-        str
-          ? String(str)
-              .replace(/<[^>]*>?/gm, "")
-              .trim()
-          : "";
-
-      // 🟢 สร้างข้อมูล
-      const formTitle =
-        stripHtml(formRows[0]?.title || "") || `ฟอร์ม #${formId}`;
-      const caseId = `CASE-${String(responseId).padStart(4, "0")}`;
-      const displayName = stripHtml(safe.display_name || "") || "-";
-
-      const rawPhone = safe.display_phone || safe.phone || "-";
-      const phoneStr = stripHtml(rawPhone);
-      const cleanPhone = phoneStr.replace(/[^0-9+]/g, "");
-
-      // 🟢 หัวข้อ
-      const alertHeader = isHighRisk
-        ? `🚨 <b>แจ้งเตือนเคสเสี่ยงสูง!</b>`
-        : `✅ <b>แจ้งเตือนเคส</b>`;
-
-      // 🟢 ข้อมูลเพิ่มเติม (สถานะ และ คลินิก)
-      const clinicLabel =
-        {
-          general: "ทั่วไป",
-          teenager: "คลินิกวัยรุ่น",
-          behavior: "คลินิก LSM",
-          sti: "คลินิกโรคติดต่อฯ",
-        }[clinicType] || "ทั่วไป";
-
-      const isMediumRisk =
-        !isHighRisk &&
-        scoreResults.some((s) => {
-          const colorClean = (s.color || "")
-            .toLowerCase()
-            .replace(/[^a-f0-9]/g, "");
-          const label = (s.label || "").toLowerCase();
-          return (
-            colorClean.includes("ff9800") ||
-            colorClean.includes("fbbc04") ||
-            label.includes("ปานกลาง")
-          );
-        });
-
-      const riskLabel = isHighRisk
-        ? "สูง"
-        : isMediumRisk
-          ? "ปานกลาง"
-          : "ปกติ/ต่ำ";
-
-      // ✅ แก้จุดสำคัญ (กัน message พัง)
-      let phoneLine = "";
-
-      if (cleanPhone && cleanPhone.length >= 8) {
-        phoneLine = `📞 <b>เบอร์ติดต่อ:</b> <a href="tel:${cleanPhone}">${phoneStr}</a>`;
-      } else {
-        phoneLine = `📞 <b>เบอร์ติดต่อ:</b> -`;
-      }
-
-      // 🟢 message components
-      const riskLine = isHighRisk ? `` : `⚠️ <b>ความเสี่ยง:</b> ${riskLabel}`;
-
-      // 🟢 ตรวจสอบสถานะ (ติดตามผล หรือ เคสใหม่)
-      const dbFormType = String(formRows[0]?.form_type || "")
-        .trim()
-        .toLowerCase();
-      const statusLine =
-        dbFormType === "follow-up"
-          ? `📌 <b>สถานะ:</b> ติดตามผล`
-          : `📌 <b>สถานะ:</b> เคสใหม่`;
-
-      const clinicLine = `🏥 <b>คลินิก:</b> ${clinicLabel}`;
-
-      // 🟢 รวมร่าง message
-      const message = [
-        alertHeader,
-        `📋 <b>แบบประเมิน:</b> ${formTitle}`,
-        clinicLine,
-        riskLine,
-        statusLine,
-        `🔗 <b>Case ID:</b> ${caseId}`,
-        `👤 <b>ชื่อ:</b> ${displayName}`,
-        phoneLine,
-      ]
-        .filter((line) => line !== "")
-        .join("\n");
-
-      // 🟢 URL แยกตามประเภทเคส
-      const frontendBaseUrl =
-        process.env.FRONTEND_URL || "http://localhost:3000";
-      const caseUrl = isHighRisk
-        ? `${frontendBaseUrl}/admin/risk-cases`
-        : `${frontendBaseUrl}/admin/cases`;
-
-      const replyMarkup = {
-        inline_keyboard: [[{ text: "🌐 เปิดดูข้อมูลในระบบ", url: caseUrl }]],
-      };
-      // ✅ ส่งจริง
-      dispatchTelegramAlert(message, replyMarkup);
-
-      console.log(`✅ ส่ง Telegram แล้ว | ${caseId} | เสี่ยง: ${isHighRisk}`);
-    } catch (err) {
-      console.error("[Telegram ERROR]:", err);
-    }
+    require("../services/organizationNotificationService")
+      .notifySubmission({
+        organizationId: form.organization_id,
+        responseId,
+        eventId: notification.insertId,
+      })
+      .catch(() => console.warn("Notification unavailable"));
 
     res.status(201).json({
       message: "บันทึกคำตอบสำเร็จ",
@@ -767,7 +927,14 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
     });
   } catch (err) {
     await connection.rollback();
-    console.error(err);
+    if (err.status)
+      return res.status(err.status).json({
+        code: err.code,
+        message: "ไม่สามารถส่งแบบฟอร์มด้วยลิงก์นี้ได้",
+      });
+    if (err instanceof PersonIdentityConflictError)
+      return res.status(409).json({ code: err.code, message: err.message });
+    console.error(require("../utils/safeError").safeError(err));
     res.status(500).json({ message: "เกิดข้อผิดพลาดในการบันทึกคำตอบ" });
   } finally {
     connection.release();
@@ -831,7 +998,7 @@ router.get(
 
       res.json(decryptedRows);
     } catch (err) {
-      console.error(err);
+      console.error(require("../utils/safeError").safeError(err));
       res.status(500).json({ message: "เกิดข้อผิดพลาดในการดึงข้อมูลคำตอบ" });
     }
   },
@@ -904,8 +1071,8 @@ router.post("/forms/:id/duplicate", verifyToken, async (req, res) => {
         : originalForm.questions;
 
     const [result] = await db.query(
-      `INSERT INTO forms (title, description, step_name, theme, questions, image, status, clinic_type, form_type, publish_start_date, publish_end_date, login_enforcement, result_display_mode, organization_id) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO forms (title, description, step_name, theme, questions, image, status, clinic_type, form_type, publish_start_date, publish_end_date, login_enforcement, result_display_mode, health_domain, organization_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         newTitle,
         originalForm.description || "",
@@ -920,6 +1087,7 @@ router.post("/forms/:id/duplicate", verifyToken, async (req, res) => {
         originalForm.publish_end_date || null,
         normalizeLoginEnforcement(originalForm.login_enforcement),
         normalizeResultDisplayMode(originalForm.result_display_mode),
+        normalizeHealthDomain(originalForm.health_domain),
         originalForm.organization_id,
       ],
     );
@@ -932,7 +1100,10 @@ router.post("/forms/:id/duplicate", verifyToken, async (req, res) => {
       newFormId: result.insertId,
     });
   } catch (err) {
-    console.error("Error duplicating form:", err);
+    console.error(
+      "Error duplicating form:",
+      require("../utils/safeError").safeError(err),
+    );
     res.status(500).json({ message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
   }
 });
@@ -942,10 +1113,10 @@ router.post("/submit-system-feedback", async (req, res) => {
   const d = req.body;
   try {
     const query = `
-            INSERT INTO system_satisfaction_evaluations 
-            (sat_ui, sat_speed, sat_content, sat_access, sat_overall, 
-             sus1, sus2, sus3, sus4, sus5, sus6, sus7, sus8, sus9, sus10, 
-             sus_total_score, suggestions) 
+            INSERT INTO system_satisfaction_evaluations
+            (sat_ui, sat_speed, sat_content, sat_access, sat_overall,
+             sus1, sus2, sus3, sus4, sus5, sus6, sus7, sus8, sus9, sus10,
+             sus_total_score, suggestions)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
     const values = [
@@ -971,7 +1142,7 @@ router.post("/submit-system-feedback", async (req, res) => {
     await db.query(query, values);
     res.status(201).json({ message: "บันทึกการประเมินสำเร็จ" });
   } catch (err) {
-    console.error(err);
+    console.error(require("../utils/safeError").safeError(err));
     res.status(500).json({ error: "เกิดข้อผิดพลาดในการบันทึกข้อมูล" });
   }
 });
@@ -979,7 +1150,7 @@ router.post("/submit-system-feedback", async (req, res) => {
 router.get("/evaluations/stats", verifyToken, async (req, res) => {
   try {
     const [stats] = await db.query(`
-            SELECT 
+            SELECT
                 COUNT(id) as total_votes,
                 AVG(sat_ui) as avg_ui,
                 AVG(sat_speed) as avg_speed,
@@ -987,17 +1158,17 @@ router.get("/evaluations/stats", verifyToken, async (req, res) => {
                 AVG(sat_access) as avg_access,
                 AVG(sat_overall) as avg_overall,
                 AVG(sus_total_score) as avg_sus,
-                AVG(sus1) as avg_sus1, AVG(sus2) as avg_sus2, AVG(sus3) as avg_sus3, 
-                AVG(sus4) as avg_sus4, AVG(sus5) as avg_sus5, AVG(sus6) as avg_sus6, 
+                AVG(sus1) as avg_sus1, AVG(sus2) as avg_sus2, AVG(sus3) as avg_sus3,
+                AVG(sus4) as avg_sus4, AVG(sus5) as avg_sus5, AVG(sus6) as avg_sus6,
                 AVG(sus7) as avg_sus7, AVG(sus8) as avg_sus8, AVG(sus9) as avg_sus9, AVG(sus10) as avg_sus10
             FROM system_satisfaction_evaluations
         `);
 
     const [comments] = await db.query(`
-            SELECT suggestions, created_at 
-            FROM system_satisfaction_evaluations 
+            SELECT suggestions, created_at
+            FROM system_satisfaction_evaluations
             WHERE suggestions IS NOT NULL AND TRIM(suggestions) != ''
-            ORDER BY created_at DESC 
+            ORDER BY created_at DESC
             LIMIT 10
         `);
 
@@ -1006,7 +1177,10 @@ router.get("/evaluations/stats", verifyToken, async (req, res) => {
       recent_comments: comments,
     });
   } catch (err) {
-    console.error("Fetch Eval Stats Error:", err);
+    console.error(
+      "Fetch Eval Stats Error:",
+      require("../utils/safeError").safeError(err),
+    );
     res.status(500).json({ error: "Failed to fetch evaluation stats" });
   }
 });
@@ -1024,8 +1198,8 @@ router.get("/evaluations/list", verifyToken, async (req, res) => {
 
     const [rows] = await db.query(
       `
-            SELECT 
-                id, sat_ui, sat_speed, sat_content, sat_access, sat_overall, 
+            SELECT
+                id, sat_ui, sat_speed, sat_content, sat_access, sat_overall,
                 sus_total_score, suggestions, created_at
             FROM system_satisfaction_evaluations
             ORDER BY created_at DESC
@@ -1041,7 +1215,10 @@ router.get("/evaluations/list", verifyToken, async (req, res) => {
       totalPages: Math.ceil(total / limit),
     });
   } catch (err) {
-    console.error("Fetch Eval List Error:", err);
+    console.error(
+      "Fetch Eval List Error:",
+      require("../utils/safeError").safeError(err),
+    );
     res.status(500).json({ error: "Failed to fetch evaluation list" });
   }
 });

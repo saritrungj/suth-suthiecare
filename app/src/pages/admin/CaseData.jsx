@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import CaseTable from "../../components/case/CaseTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
 import FilterDropdown from "../../components/FilterDropdown";
@@ -13,18 +13,12 @@ import {
 import "./CaseData.css";
 import { useLocation } from "react-router-dom";
 import {
-  FiFolder,
-  FiUsers,
-  FiList,
-  FiSettings,
-  FiSearch,
-  FiChevronDown,
-  FiLayers,
-  FiActivity,
   FiCalendar,
   FiDownload,
+  FiList,
   FiPlus,
-  FiX,
+  FiSearch,
+  FiUsers,
 } from "react-icons/fi";
 import Swal from "sweetalert2";
 import {
@@ -33,6 +27,8 @@ import {
   normaliseDateRange,
 } from "../../utils/caseDateFilter";
 import { usePermissions } from "../../permissions/PermissionsProvider";
+import { prioritizeCases } from "../../components/case/caseDisplay";
+import { useMediaQuery } from "../../components/useMediaQuery";
 
 const FACULTIES = [
   "(1) สำนักวิชาวิทยาศาสตร์",
@@ -170,63 +166,38 @@ function getRiskLevel(summary_data) {
   return "ต่ำ";
 }
 
-// 🟢 คอมโพเนนต์ Custom Dropdown
-const CustomDropdown = ({
-  icon: Icon,
-  value,
-  options,
-  onChange,
-  styleClass,
-  iconClass,
-  textClass,
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (ref.current && !ref.current.contains(event.target)) setIsOpen(false);
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const selectedOption = options.find(
-    (opt) => String(opt.value) === String(value),
-  );
-  const displayLabel = selectedOption
-    ? selectedOption.label
-    : options[0]?.label || "โปรดเลือก...";
-
+// A labelled native select for the filter row and the filter menu.
+function FilterSelect({ label, value, onChange, options, className = "" }) {
   return (
-    <div
-      className={`scd-custom-select ${styleClass || ""}`}
-      ref={ref}
-      style={{ zIndex: isOpen ? 999 : 1 }}
-      onClick={() => setIsOpen(!isOpen)}
-    >
-      <Icon className={`scd-filter-icon ${iconClass || ""}`} />
-      <span className={`scd-select-value ${textClass || ""}`}>
-        {displayLabel}
-      </span>
-      <FiChevronDown className={`scd-dropdown-icon ${isOpen ? "open" : ""}`} />
-
-      {isOpen && (
-        <div className="scd-select-menu">
-          {options.map((opt) => (
-            <div
-              key={opt.value}
-              className={`scd-select-option ${String(value) === String(opt.value) ? "selected" : ""}`}
-              onClick={() => onChange(opt.value)}
-            >
-              {opt.label}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+    <label className={`cw-field ${className}`}>
+      <span>{label}</span>
+      <select
+        className="cw-select"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      >
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </label>
   );
-};
+}
+
+// Case statuses in follow-up order, for the status strip.
+const STATUS_ORDER = [
+  "รอติดต่อ (รอดำเนินการ)",
+  "ติดต่อไม่ได้ / ไม่รับสาย",
+  "ขอเลื่อนนัด",
+  "นัดหมายสำเร็จ",
+  "อยู่ระหว่างติดตามต่อเนื่อง",
+  "ส่งต่อผู้เชี่ยวชาญ",
+  "ปฏิเสธบริการ",
+  "ปิดเคสเรียบร้อย",
+];
+const NEW_CASE = "__new";
 
 function CreateCaseModal({ onClose, onSave, clinics = [] }) {
   const [formData, setFormData] = useState({
@@ -360,9 +331,10 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
 
             <div className="scd-form-grid">
               <div className="scd-form-group">
-                <label>เลขบัตรประชาชน</label>
+                <label htmlFor="create-case-field-1">เลขบัตรประชาชน</label>
 
                 <input
+                  id="create-case-field-1"
                   type="text"
                   placeholder="กรอกเลขบัตรประชาชน"
                   value={formData.citizenId}
@@ -371,9 +343,10 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
               </div>
 
               <div className="scd-form-group">
-                <label>คำนำหน้า</label>
+                <label htmlFor="create-case-field-2">คำนำหน้า</label>
 
                 <select
+                  id="create-case-field-2"
                   value={formData.prefix}
                   onChange={(e) => handleChange("prefix", e.target.value)}
                 >
@@ -386,9 +359,10 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
               </div>
 
               <div className="scd-form-group">
-                <label>ชื่อ - นามสกุล</label>
+                <label htmlFor="create-case-field-3">ชื่อ - นามสกุล</label>
 
                 <input
+                  id="create-case-field-3"
                   type="text"
                   placeholder="กรอกชื่อผู้รับบริการ"
                   value={formData.name}
@@ -397,9 +371,10 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
               </div>
 
               <div className="scd-form-group">
-                <label>เบอร์โทร</label>
+                <label htmlFor="create-case-field-4">เบอร์โทร</label>
 
                 <input
+                  id="create-case-field-4"
                   type="text"
                   placeholder="กรอกเบอร์โทรศัพท์"
                   value={formData.phone}
@@ -408,9 +383,10 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
               </div>
 
               <div className="scd-form-group">
-                <label>สำนักวิชา</label>
+                <label htmlFor="create-case-field-5">สำนักวิชา</label>
 
                 <select
+                  id="create-case-field-5"
                   value={formData.faculty}
                   onChange={(e) => handleChange("faculty", e.target.value)}
                 >
@@ -425,12 +401,14 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
               </div>
 
               <div className="scd-form-group">
-                <label>คลินิก</label>
+                <label htmlFor="create-case-field-6">คลินิก</label>
 
                 <select
+                  id="create-case-field-6"
                   value={formData.clinicType}
                   onChange={(e) => handleChange("clinicType", e.target.value)}
                 >
+                  <option value="general">ทั่วไป</option>
                   {clinics.map((c) => (
                     <option key={c.slug} value={c.slug}>
                       {c.name}
@@ -440,9 +418,10 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
               </div>
 
               <div className="scd-form-group">
-                <label>ระดับความเสี่ยง</label>
+                <label htmlFor="create-case-field-7">ระดับความเสี่ยง</label>
 
                 <select
+                  id="create-case-field-7"
                   value={formData.riskLevel}
                   onChange={(e) => handleChange("riskLevel", e.target.value)}
                 >
@@ -457,9 +436,10 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
               </div>
 
               <div className="scd-form-group">
-                <label>สถานะเคส</label>
+                <label htmlFor="create-case-field-8">สถานะเคส</label>
 
                 <select
+                  id="create-case-field-8"
                   value={formData.status}
                   onChange={(e) => handleChange("status", e.target.value)}
                 >
@@ -487,9 +467,10 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
             <div className="scd-section-title">รายละเอียดเพิ่มเติม</div>
 
             <div className="scd-form-group scd-full-width">
-              <label>หมายเหตุ</label>
+              <label htmlFor="create-case-field-9">หมายเหตุ</label>
 
               <textarea
+                id="create-case-field-9"
                 rows="5"
                 placeholder="บันทึกรายละเอียดเพิ่มเติม..."
                 value={formData.note}
@@ -534,8 +515,7 @@ export default function CaseData() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [visibleColumns, setVisibleColumns] = useState([]);
-  const [showColMenu, setShowColMenu] = useState(false);
-  const colMenuRef = useRef(null);
+  const [statusFilter, setStatusFilter] = useState("");
 
   const [clinicFilter, setClinicFilter] = useState("all");
   const [formStatusFilter, setFormStatusFilter] = useState("published");
@@ -544,16 +524,6 @@ export default function CaseData() {
   const [initialDateRange] = useState(getCurrentMonthDateRange);
   const [startDate, setStartDate] = useState(initialDateRange.startDate);
   const [endDate, setEndDate] = useState(initialDateRange.endDate);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (colMenuRef.current && !colMenuRef.current.contains(event.target)) {
-        setShowColMenu(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -700,12 +670,15 @@ export default function CaseData() {
     return scored;
   }, [currentFormDetails]);
 
-  const filteredData = useMemo(() => {
+  const scopedData = useMemo(() => {
     let baseData = responses;
     if (tableViewMode === "master") {
       const uniqueCases = new Map();
       responses.forEach((res) => {
-        const key = res.master_case_id || res.identity_value || `res_${res.id}`;
+        // One row per person: person_id groups the same human across cases.
+        const key = res.person_id
+          ? `person_${res.person_id}`
+          : res.master_case_id || res.identity_value || `res_${res.id}`;
         if (!uniqueCases.has(key)) {
           uniqueCases.set(key, res);
         } else {
@@ -767,6 +740,60 @@ export default function CaseData() {
     endDate,
   ]);
 
+  // Counts per status for the strip (person view), before the status filter.
+  const statusCounts = useMemo(() => {
+    const counts = new Map();
+    scopedData.forEach((row) => {
+      const key = row.status || NEW_CASE;
+      counts.set(key, (counts.get(key) || 0) + 1);
+    });
+    const order = [NEW_CASE, ...STATUS_ORDER];
+    return [...counts.entries()].sort(
+      ([a], [b]) =>
+        (order.indexOf(a) === -1 ? 99 : order.indexOf(a)) -
+        (order.indexOf(b) === -1 ? 99 : order.indexOf(b)),
+    );
+  }, [scopedData]);
+
+  // The person view is a work queue: open cases, highest risk first.
+  const filteredData = useMemo(() => {
+    if (tableViewMode !== "master") return scopedData;
+    const rows = statusFilter
+      ? scopedData.filter((row) =>
+          statusFilter === NEW_CASE ? !row.status : row.status === statusFilter,
+        )
+      : scopedData;
+    return prioritizeCases(rows, "master");
+  }, [scopedData, statusFilter, tableViewMode]);
+
+  useEffect(() => {
+    if (
+      statusFilter &&
+      !statusCounts.some(([status]) => status === statusFilter)
+    )
+      setStatusFilter("");
+  }, [statusCounts, statusFilter]);
+
+  // Previous/next inside the drawer follow the queue as shown.
+  const selectedIndex = selectedCase
+    ? filteredData.findIndex((row) => row.id === selectedCase.id)
+    : -1;
+  const caseNav =
+    selectedIndex === -1
+      ? undefined
+      : {
+          position: selectedIndex + 1,
+          total: filteredData.length,
+          onPrev:
+            selectedIndex > 0
+              ? () => setSelectedCase(filteredData[selectedIndex - 1])
+              : undefined,
+          onNext:
+            selectedIndex < filteredData.length - 1
+              ? () => setSelectedCase(filteredData[selectedIndex + 1])
+              : undefined,
+        };
+
   const toggleColumn = (qId) => {
     setVisibleColumns((prev) => {
       const newVisible = prev.includes(qId)
@@ -813,280 +840,263 @@ export default function CaseData() {
     setEndDate(safeEndDate);
   };
 
+  const pageTitle =
+    currentFormDetails?.title ||
+    (isInitialSetup
+      ? "กำลังโหลด..."
+      : filteredFormsList.length === 0
+        ? "ไม่มีข้อมูลแบบฟอร์ม"
+        : "กำลังโหลด...");
+  const isPhone = useMediaQuery("(max-width: 760px)");
+  const moreFilterCount = [
+    clinicFilter !== "all" ? clinicFilter : "",
+    faculty,
+    risk,
+    formStatusFilter !== "published" ? formStatusFilter : "",
+  ].filter(Boolean).length;
+
+  // Form and date range: visible in the filter row on a computer, inside
+  // the filter menu on a phone so the queue starts in the first screen.
+  const formAndDates = (
+    <>
+      <FilterSelect
+        label="แบบฟอร์ม"
+        className="cw-field--form"
+        value={selectedFormId}
+        onChange={setSelectedFormId}
+        options={
+          isInitialSetup
+            ? [{ value: "", label: "กำลังโหลดแบบฟอร์ม..." }]
+            : filteredFormsList.length > 0
+              ? filteredFormsList.map((f) => ({
+                  value: f.id,
+                  label: f.title,
+                }))
+              : [{ value: "", label: "-- ไม่มีแบบฟอร์ม --" }]
+        }
+      />
+      <div className="cw-field" role="group" aria-labelledby="cw-dates-label">
+        <span id="cw-dates-label">ช่วงวันที่</span>
+        <span className="cw-dates">
+          <FiCalendar aria-hidden="true" />
+          <span className="cw-date">
+            <output aria-hidden="true">
+              {displayThaiDate(startDate) || "วัน/เดือน/ปี"}
+            </output>
+            <input
+              type="date"
+              aria-label={`ตั้งแต่วันที่ ${displayThaiDate(startDate)}`}
+              value={startDate}
+              onChange={(e) => handleStartDateChange(e.target.value)}
+              onClick={(e) => e.target.showPicker && e.target.showPicker()}
+            />
+          </span>
+          <span>ถึง</span>
+          <span className="cw-date">
+            <output aria-hidden="true">
+              {displayThaiDate(endDate) || "วัน/เดือน/ปี"}
+            </output>
+            <input
+              type="date"
+              aria-label={`ถึงวันที่ ${displayThaiDate(endDate)}`}
+              value={endDate}
+              min={startDate || undefined}
+              onChange={(e) => handleEndDateChange(e.target.value)}
+              onClick={(e) => e.target.showPicker && e.target.showPicker()}
+            />
+          </span>
+        </span>
+      </div>
+    </>
+  );
+
   return (
-    <div className="scd-admin-wrapper">
-      <main className="scd-main-content">
-        <div className="scd-risk-container">
-          <div className="scd-header-flex">
-            <div className="scd-title-group">
-              <div className="scd-title-meta">
-                <FiList size={16} />
-                <span>ระบบจัดการข้อมูลและติดตามเคสผู้รับบริการ</span>
-                {cInfo && (
-                  <span
-                    className="scd-title-badge"
-                    style={{
-                      backgroundColor: cInfo.bg,
-                      color: cInfo.color,
-                      border: `1px solid ${cInfo.border}`,
-                    }}
-                  >
-                    {cInfo.text}
-                  </span>
-                )}
-              </div>
-              <h2
-                className="scd-main-title"
-                title={
-                  currentFormDetails?.title ||
-                  (isInitialSetup
-                    ? "กำลังโหลด..."
-                    : filteredFormsList.length === 0
-                      ? "ไม่มีข้อมูลแบบฟอร์ม"
-                      : "กำลังโหลด...")
-                }
-              >
-                {currentFormDetails?.title ||
-                  (isInitialSetup
-                    ? "กำลังโหลด..."
-                    : filteredFormsList.length === 0
-                      ? "ไม่มีข้อมูลแบบฟอร์ม"
-                      : "กำลังโหลด...")}
-              </h2>
-            </div>
-
-            <div className="scd-header-actions">
-              <div className="scd-view-mode-group">
-                <button
-                  onClick={() => setTableViewMode("master")}
-                  className={`scd-view-mode-btn ${tableViewMode === "master" ? "active-master" : ""}`}
-                >
-                  <FiUsers size={16} /> ภาพรวมเคสผู้ป่วย
-                </button>
-                <button
-                  onClick={() => setTableViewMode("form")}
-                  className={`scd-view-mode-btn ${tableViewMode === "form" ? "active-form" : ""}`}
-                >
-                  <FiList size={16} /> คำตอบแบบฟอร์ม
-                </button>
-              </div>
-
+    <div className="cw-wrapper">
+      <main className="cw-page">
+        <header className="cw-header">
+          <div className="cw-header-text">
+            <h1 title={pageTitle}>
+              {pageTitle}
+              {cInfo && <span className="cw-clinic-tag">{cInfo.text}</span>}
+            </h1>
+            <p>ระบบจัดการข้อมูลและติดตามเคสผู้รับบริการ</p>
+          </div>
+          <div className="cw-header-actions">
+            <div className="cw-mode" role="group" aria-label="มุมมองรายการ">
               <button
-                onClick={() => setIsExportModalOpen(true)}
-                className="scd-export-excel-btn"
-                title="ส่งออกข้อมูลเป็น Excel"
+                type="button"
+                aria-pressed={tableViewMode === "master"}
+                onClick={() => setTableViewMode("master")}
               >
-                <FiDownload size={16} /> Export Excel
+                <FiUsers aria-hidden="true" /> ภาพรวมเคสผู้ป่วย
+              </button>
+              <button
+                type="button"
+                aria-pressed={tableViewMode === "form"}
+                onClick={() => setTableViewMode("form")}
+              >
+                <FiList aria-hidden="true" /> คำตอบแบบฟอร์ม
               </button>
             </div>
-          </div>
-
-          {/* ✅ FILTER BAR (จัดเรียงลำดับตาม User Flow) */}
-          <div className="scd-filter-bar">
-            {/* 1. ค้นหา */}
-            <div className="scd-search-group scd-filter-search">
-              <FiSearch className="scd-filter-icon" />
-              <input
-                type="text"
-                placeholder="ค้นหา Case ID, เลขบัตร หรือชื่อ"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-
-            <FilterDropdown
-              activeCount={
-                [
-                  selectedFormId,
-                  clinicFilter !== "all" ? clinicFilter : "",
-                  faculty,
-                  risk,
-                  formStatusFilter !== "published" ? formStatusFilter : "",
-                ].filter(Boolean).length
-              }
+            <button
+              type="button"
+              className="cw-btn-secondary"
+              onClick={() => setIsExportModalOpen(true)}
             >
-              {/* 2. เลือกฟอร์ม */}
-              <CustomDropdown
-                icon={FiLayers}
-                value={selectedFormId}
-                onChange={setSelectedFormId}
-                options={
-                  isInitialSetup
-                    ? [{ value: "", label: "กำลังโหลดแบบฟอร์ม..." }]
-                    : filteredFormsList.length > 0
-                      ? filteredFormsList.map((f) => ({
-                          value: f.id,
-                          label: f.title,
-                        }))
-                      : [{ value: "", label: "-- ไม่มีแบบฟอร์ม --" }]
-                }
-                styleClass="scd-select-form scd-filter-form"
-                textClass="scd-text-form"
-              />
+              <FiDownload aria-hidden="true" /> Export Excel
+            </button>
+            <button
+              type="button"
+              className="cw-btn"
+              onClick={() => setIsCreateCaseModalOpen(true)}
+            >
+              <FiPlus aria-hidden="true" /> เพิ่มเคส
+            </button>
+          </div>
+        </header>
 
-              {/* 3. ช่วงวันที่ */}
-              <div className="scd-date-range-container scd-filter-date">
-                <div className={`scd-date-container`}>
-                  <FiCalendar className="scd-date-main-icon" />
-                  <div className="scd-date-field">
-                    <input
-                      type="text"
-                      className="scd-date-text-display"
-                      placeholder="วัน/เดือน/ปี"
-                      value={displayThaiDate(startDate)}
-                      readOnly
-                    />
-                    <input
-                      type="date"
-                      className="scd-date-native-hidden"
-                      value={startDate}
-                      onChange={(e) => handleStartDateChange(e.target.value)}
-                      onClick={(e) =>
-                        e.target.showPicker && e.target.showPicker()
+        <section className="cw-surface" aria-label="รายการเคส">
+          {tableViewMode === "master" && statusCounts.length > 0 && isPhone && (
+            <label className="cw-field cw-status-select">
+              <span>สถานะเคส</span>
+              <select
+                className="cw-select"
+                value={statusFilter}
+                onChange={(event) => setStatusFilter(event.target.value)}
+              >
+                <option value="">ทั้งหมด ({scopedData.length})</option>
+                {statusCounts.map(([status, count]) => (
+                  <option key={status} value={status}>
+                    {status === NEW_CASE ? "เคสใหม่" : status} ({count})
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+          {tableViewMode === "master" &&
+            statusCounts.length > 0 &&
+            !isPhone && (
+              <ul className="cw-strip" aria-label="กรองตามสถานะเคส">
+                <li>
+                  <button
+                    type="button"
+                    className="cw-chip"
+                    aria-pressed={statusFilter === ""}
+                    onClick={() => setStatusFilter("")}
+                  >
+                    ทั้งหมด <strong>{scopedData.length}</strong>
+                  </button>
+                </li>
+                {statusCounts.map(([status, count]) => (
+                  <li key={status}>
+                    <button
+                      type="button"
+                      className="cw-chip"
+                      aria-pressed={statusFilter === status}
+                      onClick={() =>
+                        setStatusFilter(statusFilter === status ? "" : status)
                       }
-                    />
-                  </div>
-                  <span className="scd-date-separator">ถึง</span>
-                  <div className="scd-date-field">
-                    <input
-                      type="text"
-                      className="scd-date-text-display"
-                      placeholder="วัน/เดือน/ปี"
-                      value={displayThaiDate(endDate)}
-                      readOnly
-                    />
-                    <input
-                      type="date"
-                      className="scd-date-native-hidden"
-                      value={endDate}
-                      onChange={(e) => handleEndDateChange(e.target.value)}
-                      min={startDate || undefined}
-                      onClick={(e) =>
-                        e.target.showPicker && e.target.showPicker()
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
+                    >
+                      {status === NEW_CASE ? "เคสใหม่" : status}
+                      <strong>{count}</strong>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
 
-              {/* 4. คลินิก */}
-              <CustomDropdown
-                icon={FiFolder}
+          <div className="cw-filters">
+            <label className="cw-field cw-field--grow">
+              <span>ค้นหา</span>
+              <span className="cw-search">
+                <FiSearch aria-hidden="true" />
+                <input
+                  type="search"
+                  placeholder="ค้นหาชื่อ, Case ID หรือเลขบัตร"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </span>
+            </label>
+            {!isPhone && formAndDates}
+            <FilterDropdown
+              activeCount={moreFilterCount}
+              label={isPhone ? "ตัวกรอง" : undefined}
+            >
+              {isPhone && formAndDates}
+              <FilterSelect
+                label="คลินิก"
                 value={clinicFilter}
                 onChange={setClinicFilter}
                 options={[
                   { value: "all", label: "ทุกคลินิก" },
                   { value: "general", label: "ทั่วไป" },
-                  ...clinics.map((c) => ({
-                    value: c.slug,
-                    label: c.name,
-                  })),
+                  ...clinics.map((c) => ({ value: c.slug, label: c.name })),
                 ]}
-                styleClass="scd-filter-clinic"
               />
-
-              {/* 5. สำนักวิชา */}
-              <CustomDropdown
-                icon={FiLayers}
+              <FilterSelect
+                label="สำนักวิชา"
                 value={faculty}
                 onChange={setFaculty}
                 options={[
                   { value: "", label: "ทุกสำนักวิชา" },
                   ...FACULTIES.map((f) => ({ value: f, label: f })),
                 ]}
-                styleClass="scd-filter-faculty"
               />
-
-              {/* 6. ระดับความเสี่ยง (โชว์เฉพาะฟอร์มที่มีคะแนน) */}
               {hasScoring && (
-                <CustomDropdown
-                  icon={FiActivity}
+                <FilterSelect
+                  label="ระดับความเสี่ยง"
                   value={risk}
                   onChange={setRisk}
                   options={[
                     { value: "", label: "ทุกระดับความเสี่ยง" },
-                    { value: "ต่ำ", label: "เสี่ยงต่ำ (สีเขียว)" },
-                    { value: "ปานกลาง", label: "เสี่ยงปานกลาง (สีเหลือง)" },
-                    { value: "สูง", label: "เสี่ยงสูง (สีแดง)" },
+                    { value: "สูง", label: "เสี่ยงสูง" },
+                    { value: "ปานกลาง", label: "เสี่ยงปานกลาง" },
+                    { value: "ต่ำ", label: "เสี่ยงต่ำ" },
                   ]}
-                  styleClass="scd-filter-risk"
                 />
               )}
-
-              {/* 7. สถานะฟอร์ม */}
-              <div className="scd-form-status-group">
-                <CustomDropdown
-                  icon={FiLayers}
-                  value={formStatusFilter}
-                  onChange={setFormStatusFilter}
-                  options={[
-                    { value: "published", label: "✓ ฟอร์มที่เผยแพร่แล้ว" },
-                    { value: "draft", label: "✎ ฟอร์มฉบับร่าง/ซ่อนอยู่" },
-                    { value: "all", label: "☰ สถานะฟอร์มทั้งหมด" },
-                  ]}
-                  styleClass="scd-select-status scd-filter-status"
-                  iconClass="scd-icon-status"
-                  textClass="scd-text-status"
-                />
-              </div>
-
-              {/* 8. เลือกคอลัมน์ (โชว์เฉพาะตอนดูแบบฟอร์ม) */}
-              {tableViewMode === "form" && (
-                <div
-                  className="scd-col-selector-wrapper scd-filter-columns"
-                  ref={colMenuRef}
-                >
-                  <button
-                    className="scd-custom-select scd-col-select-btn"
-                    onClick={() => setShowColMenu(!showColMenu)}
-                  >
-                    <FiSettings className="scd-filter-icon" />
-                    <span className="scd-select-value">
-                      เลือกคอลัมน์ ({visibleColumns.length})
-                    </span>
-                    <FiChevronDown className="scd-dropdown-icon" />
-                  </button>
-                  {showColMenu && (
-                    <div className="scd-col-dropdown-menu">
-                      <div className="scd-col-menu-header">
-                        เลือกคำถามที่ต้องการแสดง
-                      </div>
-                      <div className="scd-col-menu-list">
-                        {allDynamicQuestions.map((q) => {
-                          const cleanTitle = q.title
-                            .replace(/<[^>]+>/g, "")
-                            .replace(/&nbsp;/gi, " ")
-                            .replace(/\s+/g, " ")
-                            .trim();
-                          return (
-                            <label
-                              key={q.id}
-                              className="scd-col-menu-item"
-                              title={cleanTitle}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={visibleColumns.includes(q.id)}
-                                onChange={() => toggleColumn(q.id)}
-                              />
-                              <span className="scd-col-text">{cleanTitle}</span>
-                            </label>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
+              <FilterSelect
+                label="สถานะฟอร์ม"
+                value={formStatusFilter}
+                onChange={setFormStatusFilter}
+                options={[
+                  { value: "published", label: "ฟอร์มที่เผยแพร่แล้ว" },
+                  { value: "draft", label: "ฟอร์มฉบับร่าง/ซ่อนอยู่" },
+                  { value: "all", label: "สถานะฟอร์มทั้งหมด" },
+                ]}
+              />
+              {tableViewMode === "form" && allDynamicQuestions.length > 0 && (
+                <fieldset className="cw-columns">
+                  <legend>คอลัมน์ที่แสดง ({visibleColumns.length})</legend>
+                  {allDynamicQuestions.map((q) => {
+                    const cleanTitle = q.title
+                      .replace(/<[^>]+>/g, "")
+                      .replace(/&nbsp;/gi, " ")
+                      .replace(/\s+/g, " ")
+                      .trim();
+                    return (
+                      <label key={q.id} title={cleanTitle}>
+                        <input
+                          type="checkbox"
+                          checked={visibleColumns.includes(q.id)}
+                          onChange={() => toggleColumn(q.id)}
+                        />
+                        <span>{cleanTitle}</span>
+                      </label>
+                    );
+                  })}
+                </fieldset>
               )}
             </FilterDropdown>
-            <button
-              className="scd-add-walkin-btn"
-              onClick={() => setIsCreateCaseModalOpen(true)}
-            >
-              <FiPlus />
-              เพิ่มเคส
-            </button>
           </div>
+
+          {isPhone && (
+            <p className="cw-result-note">
+              ช่วงวันที่ {displayThaiDate(startDate)} –{" "}
+              {displayThaiDate(endDate)}
+            </p>
+          )}
 
           <CaseTable
             data={filteredData}
@@ -1096,11 +1106,14 @@ export default function CaseData() {
             onSelectCase={setSelectedCase}
             viewMode={tableViewMode}
             hasScoring={hasScoring}
+            selectedId={selectedCase?.id}
           />
 
           {selectedCase && (
             <CaseDetailModal
+              key={selectedCase.id}
               data={selectedCase}
+              nav={caseNav}
               onClose={() => setSelectedCase(null)}
               onCaseUpdated={(updatedCase) => {
                 setResponses((prev) =>
@@ -1177,7 +1190,7 @@ export default function CaseData() {
                     icon: "success",
                     title: "สำเร็จ",
                     text: "บันทึกเคสเรียบร้อยแล้ว",
-                    confirmButtonColor: "#ADFF2F",
+                    confirmButtonColor: "#c2410c",
                   });
                 } catch (err) {
                   console.error(err);
@@ -1185,7 +1198,7 @@ export default function CaseData() {
                     icon: "error",
                     title: "เกิดข้อผิดพลาด",
                     text: "ไม่สามารถบันทึกเคสได้",
-                    confirmButtonColor: "#F47932",
+                    confirmButtonColor: "#c2410c",
                   });
                 }
               }}
@@ -1201,7 +1214,7 @@ export default function CaseData() {
               formTitle={currentFormDetails?.title}
             />
           )}
-        </div>
+        </section>
       </main>
     </div>
   );

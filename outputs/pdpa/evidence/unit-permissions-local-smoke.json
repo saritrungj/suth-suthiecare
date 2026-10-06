@@ -1,0 +1,14 @@
+[
+  {
+    "path": "/health",
+    "status": 200
+  },
+  {
+    "path": "/ready",
+    "status": 200
+  },
+  {
+    "path": "/api/organizations/1/roles/3/permissions",
+    "status": 401
+  }
+]

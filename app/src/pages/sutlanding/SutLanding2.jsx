@@ -16,6 +16,9 @@ import {
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher.jsx";
 import PatientAccountMenu from "../../components/PatientAccountMenu.jsx";
+import { getPatientSession } from "../../utils/patientSession";
+import { authSession } from "../../utils/authSession";
+import FloatingActions from "../../components/floating/FloatingActions.jsx";
 import "./SutLanding2.css";
 
 import logo from "../../assets/logoSUTH.png";
@@ -957,7 +960,16 @@ export default function SutLanding2() {
 
             <div style={{ textAlign: "center", marginTop: "45px" }}>
               <a
-                href="/docs/user_manual.pdf"
+                href="/api/private-files/user_manual.pdf"
+                onClick={(event) => {
+                  if (
+                    !getPatientSession().authenticated &&
+                    !authSession("staff").user
+                  ) {
+                    event.preventDefault();
+                    navigate("/account/login?returnTo=%2F");
+                  }
+                }}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -1085,13 +1097,7 @@ export default function SutLanding2() {
         </div>
       </footer>
 
-      <button
-        className="sut2-floating-help-btn"
-        onClick={() => navigate("/help-center")}
-        title="ศูนย์ช่วยเหลือ"
-      >
-        <FiHelpCircle />
-      </button>
+      <FloatingActions />
     </div>
   );
 }

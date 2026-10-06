@@ -13,38 +13,7 @@ const permissionValue = (permission, english, thai) =>
 const validRoleId = (value) =>
   Number.isInteger(Number(value)) && Number(value) > 0;
 
-const PERMISSION_KEYS = [
-  "dashboard.view",
-  "cases.view",
-  "cases.create",
-  "cases.update",
-  "cases.delete",
-  "cases.assign",
-  "cases.export",
-  "appointments.view",
-  "appointments.create",
-  "appointments.update",
-  "appointments.delete",
-  "patient_members.view",
-  "patient_members.update",
-  "patient_members.delete",
-  "forms.view",
-  "forms.create",
-  "forms.update",
-  "forms.delete",
-  "clinics.view",
-  "clinics.create",
-  "clinics.update",
-  "clinics.delete",
-  "help_center.view",
-  "help_center.create",
-  "help_center.update",
-  "help_center.delete",
-  "content.view",
-  "content.create",
-  "content.update",
-  "content.delete",
-];
+const PERMISSION_KEYS = require("../authorization/permissionKeys");
 
 // Role templates are global administration and are never editable by an organization role.
 router.get("/roles", verifyToken, verifySuperAdmin, async (req, res) => {
@@ -105,6 +74,14 @@ router.post(
             "INSERT INTO role_permissions (role_id, permission_key) VALUES (?, ?)",
             [roleId, permission],
           );
+        await require("../utils/pdpaAudit").requiredAudit(
+          req,
+          "permissions.update",
+          "role",
+          roleId,
+          { count: permissions.length },
+          connection,
+        );
         await connection.commit();
       } catch (error) {
         await connection.rollback();
@@ -114,8 +91,11 @@ router.post(
       }
       res.json({ message: "Permissions saved" });
     } catch (err) {
-      console.error("Error saving permissions:", err);
-      res.status(500).json({ message: "Server error" });
+      console.error(
+        "Error saving permissions:",
+        require("../utils/safeError").safeError(err),
+      );
+      res.status(err.status || 500).json({ message: "Server error" });
     }
   },
 );
@@ -154,6 +134,12 @@ router.delete("/roles/:id", verifyToken, verifySuperAdmin, async (req, res) => {
       message:
         "บทบาทนี้ถูกใช้งานอยู่ ให้ปิดการใช้งานสมาชิกหรือเปลี่ยนบทบาทก่อน",
     });
+  await require("../utils/pdpaAudit").requiredAudit(
+    req,
+    "permissions.delete",
+    "role",
+    id,
+  );
   await db.query("DELETE FROM role_permissions WHERE role_id=?", [id]);
   const [result] = await db.query("DELETE FROM roles WHERE id=?", [id]);
   if (!result.affectedRows)

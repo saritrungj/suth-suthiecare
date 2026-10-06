@@ -1,3 +1,4 @@
+const accountEmail = require("../utils/accountEmail");
 const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
@@ -50,8 +51,9 @@ const otpLimiter = rateLimit({
   message: { success: false, message: "ลองยืนยันรหัสมากเกินไป กรุณารอสักครู่" },
 });
 const required = () =>
+  process.env.NODE_ENV === "production" ||
   String(process.env.STAFF_EMAIL_OTP_MODE || "enroll").toLowerCase() ===
-  "required";
+    "required";
 const validPassword = (password) =>
   typeof password === "string" &&
   password.length >= 8 &&
@@ -59,11 +61,9 @@ const validPassword = (password) =>
 
 // users.name is stored as AES ciphertext; the client only ever needs plaintext.
 const displayName = (value) => {
-  try {
-    return decrypt(value) || value || null;
-  } catch {
-    return value || null;
-  }
+  return (
+    require("../utils/privateField").readField(value, "users", "name") || null
+  );
 };
 
 function staffPayload(user) {
@@ -100,10 +100,10 @@ async function passwordUser(req) {
   if (!username || !password)
     return { error: "กรุณากรอกข้อมูลให้ครบ", status: 400 };
   const [rows] = await db.query(
-    "SELECT id, username, password, role, role_id, name, email, email_verified_at, status, auth_version FROM users WHERE username=? LIMIT 1",
+    "SELECT id, username, password, role, role_id, name, email,email_encrypted, email_verified_at, status, auth_version FROM users WHERE username=? LIMIT 1",
     [username],
   );
-  const user = rows[0];
+  const user = accountEmail.readAccount(rows[0], "users");
   if (
     !user ||
     user.status !== "active" ||
@@ -131,11 +131,19 @@ router.post("/login", loginLimiter, async (req, res) => {
       return res.json({
         success: true,
         message: "เข้าสู่ระบบสำเร็จ",
-        token: signStaffToken(user),
+        ...(await require("../services/sessionService").establishSession(
+          req,
+          res,
+          "staff",
+          user,
+          { mfa: required() },
+        )),
         user: staffPayload(user),
       });
     const trustedToken = req.cookies?.[TRUSTED_SESSION_COOKIE];
     if (
+      process.env.STAFF_TRUSTED_DEVICE_ENABLED === "true" &&
+      process.env.NODE_ENV !== "production" &&
       trustedToken &&
       (await verifyTrustedSession(db, {
         accountId: user.id,
@@ -146,7 +154,13 @@ router.post("/login", loginLimiter, async (req, res) => {
       return res.json({
         success: true,
         message: "เข้าสู่ระบบสำเร็จ",
-        token: signStaffToken(user),
+        ...(await require("../services/sessionService").establishSession(
+          req,
+          res,
+          "staff",
+          user,
+          { mfa: required() },
+        )),
         user: staffPayload(user),
       });
     if (!user.email)
@@ -161,7 +175,7 @@ router.post("/login", loginLimiter, async (req, res) => {
     const challenge = await createChallenge(db, {
       accountType: "staff",
       accountId: user.id,
-      email: user.email,
+      email: accountEmail.decode(user, "users"),
       purpose,
       authVersion: user.auth_version,
     });
@@ -172,7 +186,11 @@ router.post("/login", loginLimiter, async (req, res) => {
       ...challenge,
     });
   } catch (error) {
-    console.error("Staff login failed:", error.code || "", error.message);
+    console.error(
+      "Staff login failed:",
+      error.code || "",
+      require("../utils/safeError").safeError(error),
+    );
     return res.status(503).json({
       success: false,
       message:
@@ -200,23 +218,36 @@ router.post("/login/verify-otp", otpLimiter, async (req, res) => {
     });
     if (result.error)
       return res.status(400).json({ success: false, message: result.error });
-    const { token: trustedToken, maxAgeMs } = await issueTrustedSession(db, {
-      accountId: result.account.id,
-      authVersion: result.account.auth_version,
-    });
-    res.cookie(
-      TRUSTED_SESSION_COOKIE,
-      trustedToken,
-      trustedSessionCookieOptions(maxAgeMs),
-    );
+    if (
+      process.env.STAFF_TRUSTED_DEVICE_ENABLED === "true" &&
+      process.env.NODE_ENV !== "production"
+    ) {
+      const { token: trustedToken, maxAgeMs } = await issueTrustedSession(db, {
+        accountId: result.account.id,
+        authVersion: result.account.auth_version,
+      });
+      res.cookie(
+        TRUSTED_SESSION_COOKIE,
+        trustedToken,
+        trustedSessionCookieOptions(maxAgeMs),
+      );
+    }
     return res.json({
       success: true,
       message: "เข้าสู่ระบบสำเร็จ",
-      token: signStaffToken(result.account),
+      ...(await require("../services/sessionService").establishSession(
+        req,
+        res,
+        "staff",
+        result.account,
+      )),
       user: staffPayload(result.account),
     });
   } catch (error) {
-    console.error("Staff OTP verification failed:", error.message);
+    console.error(
+      "Staff OTP verification failed:",
+      require("../utils/safeError").safeError(error),
+    );
     return res
       .status(500)
       .json({ success: false, message: "ไม่สามารถยืนยันรหัสได้" });
@@ -232,10 +263,10 @@ router.post("/email/verify", otpLimiter, async (req, res) => {
       purpose: "email_verification",
       loadAccount: async (connection, id) => {
         const [rows] = await connection.query(
-          "SELECT id, username, role, role_id, name, email, status, auth_version FROM users WHERE id=? AND status='active' LIMIT 1",
+          "SELECT id, username, role, role_id, name, email,email_encrypted, status, auth_version FROM users WHERE id=? AND status='active' LIMIT 1",
           [id],
         );
-        return rows[0] || null;
+        return accountEmail.readAccount(rows[0], "users") || null;
       },
     });
     if (result.error)
@@ -248,15 +279,20 @@ router.post("/email/verify", otpLimiter, async (req, res) => {
       "SELECT id,username,role,role_id,name,auth_version FROM users WHERE id=?",
       [result.account.id],
     );
-    const { token: trustedToken, maxAgeMs } = await issueTrustedSession(db, {
-      accountId: rows[0].id,
-      authVersion: rows[0].auth_version,
-    });
-    res.cookie(
-      TRUSTED_SESSION_COOKIE,
-      trustedToken,
-      trustedSessionCookieOptions(maxAgeMs),
-    );
+    if (
+      process.env.STAFF_TRUSTED_DEVICE_ENABLED === "true" &&
+      process.env.NODE_ENV !== "production"
+    ) {
+      const { token: trustedToken, maxAgeMs } = await issueTrustedSession(db, {
+        accountId: rows[0].id,
+        authVersion: rows[0].auth_version,
+      });
+      res.cookie(
+        TRUSTED_SESSION_COOKIE,
+        trustedToken,
+        trustedSessionCookieOptions(maxAgeMs),
+      );
+    }
     return res.json({
       success: true,
       message: "ยืนยันอีเมลสำเร็จ กรุณาเข้าสู่ระบบอีกครั้ง",
@@ -264,7 +300,10 @@ router.post("/email/verify", otpLimiter, async (req, res) => {
       user: staffPayload(rows[0]),
     });
   } catch (error) {
-    console.error("Staff email verification failed:", error.message);
+    console.error(
+      "Staff email verification failed:",
+      require("../utils/safeError").safeError(error),
+    );
     return res
       .status(500)
       .json({ success: false, message: "ไม่สามารถยืนยันอีเมลได้" });
@@ -289,7 +328,10 @@ router.post("/login/resend-otp", otpLimiter, async (req, res) => {
       });
     return res.json(result);
   } catch (error) {
-    console.error("Staff OTP resend failed:", error.code || error.message);
+    console.error(
+      "Staff OTP resend failed:",
+      require("../utils/safeError").safeError(error),
+    );
     return res.status(503).json({
       success: false,
       message: "ไม่สามารถส่งรหัสใหม่ได้ กรุณาลองใหม่",
@@ -306,14 +348,14 @@ router.post("/password-recovery/request", otpLimiter, async (req, res) => {
   try {
     if (!email) return res.json(generic);
     const [rows] = await db.query(
-      "SELECT id,email,auth_version FROM users WHERE email=? AND status='active' LIMIT 2",
-      [email],
+      "SELECT id,email,email_encrypted,auth_version FROM users WHERE (email_hash=? OR (email_hash IS NULL AND email=?)) AND status='active' LIMIT 2",
+      [accountEmail.lookup(email), email],
     );
     if (rows.length !== 1) return res.json(generic);
     const challenge = await createChallenge(db, {
       accountType: "staff",
       accountId: rows[0].id,
-      email: rows[0].email,
+      email: accountEmail.decode(rows[0], "users"),
       purpose: "account_recovery",
       authVersion: rows[0].auth_version,
     });
@@ -368,7 +410,10 @@ router.post("/password-recovery/verify", otpLimiter, async (req, res) => {
       username: result.account.username,
     });
   } catch (error) {
-    console.error("Password recovery verification failed:", error.message);
+    console.error(
+      "Password recovery verification failed:",
+      require("../utils/safeError").safeError(error),
+    );
     return res
       .status(500)
       .json({ success: false, message: "ไม่สามารถยืนยันรหัสได้" });
@@ -435,7 +480,7 @@ const profileLimiter = rateLimit({
 
 async function loadOwnProfile(userId) {
   const [rows] = await db.query(
-    `SELECT u.id, u.username, u.name, u.email, u.email_verified_at, u.role, u.role_id,
+    `SELECT u.id, u.username, u.name, u.email,u.email_encrypted, u.email_verified_at, u.role, u.role_id,
             u.status, u.created_at, u.auth_version, r.name role_name
        FROM users u LEFT JOIN roles r ON r.id=u.role_id
       WHERE u.id=? LIMIT 1`,
@@ -447,7 +492,7 @@ async function loadOwnProfile(userId) {
 // Returns the stored row when the password matches, otherwise null.
 async function verifyOwnPassword(userId, password) {
   const [rows] = await db.query(
-    "SELECT password, email, auth_version FROM users WHERE id=? AND status='active' LIMIT 1",
+    "SELECT password, email,email_encrypted, auth_version FROM users WHERE id=? AND status='active' LIMIT 1",
     [userId],
   );
   const stored = rows[0];
@@ -475,7 +520,7 @@ const ownProfileResponse = (user) => ({
   id: user.id,
   username: user.username,
   name: displayName(user.name),
-  email: user.email,
+  email: accountEmail.decode(user, "users"),
   email_verified_at: user.email_verified_at,
   role_id: user.role_id,
   role_name: user.role_name,
@@ -491,7 +536,10 @@ router.get("/me/profile", verifyToken, async (req, res) => {
         .json({ success: false, message: "ไม่พบบัญชีผู้ใช้" });
     return res.json({ success: true, profile: ownProfileResponse(user) });
   } catch (error) {
-    console.error("Load own profile failed:", error.message);
+    console.error(
+      "Load own profile failed:",
+      require("../utils/safeError").safeError(error),
+    );
     return res
       .status(500)
       .json({ success: false, message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
@@ -508,7 +556,7 @@ router.put("/me/profile", verifyToken, async (req, res) => {
     });
   try {
     await db.query("UPDATE users SET name=? WHERE id=?", [
-      encrypt(name),
+      require("../utils/privateField").writeField(name, "users", "name"),
       req.user.id,
     ]);
     const user = await loadOwnProfile(req.user.id);
@@ -519,7 +567,10 @@ router.put("/me/profile", verifyToken, async (req, res) => {
       user: staffPayload(user),
     });
   } catch (error) {
-    console.error("Update own profile failed:", error.message);
+    console.error(
+      "Update own profile failed:",
+      require("../utils/safeError").safeError(error),
+    );
     return res
       .status(500)
       .json({ success: false, message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
@@ -560,11 +611,20 @@ router.put("/me/password", profileLimiter, verifyToken, async (req, res) => {
     return res.json({
       success: true,
       message: "เปลี่ยนรหัสผ่านเรียบร้อยแล้ว",
-      token: signStaffToken(user),
+      ...(await require("../services/sessionService").establishSession(
+        req,
+        res,
+        "staff",
+        user,
+        { mfa: required() },
+      )),
       user: staffPayload(user),
     });
   } catch (error) {
-    console.error("Change own password failed:", error.message);
+    console.error(
+      "Change own password failed:",
+      require("../utils/safeError").safeError(error),
+    );
     return res
       .status(500)
       .json({ success: false, message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });
@@ -590,22 +650,27 @@ router.put("/me/email", profileLimiter, verifyToken, async (req, res) => {
   try {
     const stored = await verifyOwnPassword(req.user.id, currentPassword);
     if (!stored) return wrongPassword(res);
-    if (normalizeEmail(stored.email) === email)
+    if (normalizeEmail(accountEmail.decode(stored, "users")) === email)
       return res
         .status(422)
         .json({ success: false, message: "อีเมลใหม่ต้องไม่ซ้ำกับอีเมลเดิม" });
     // Password recovery looks accounts up by email, so it must stay unique.
     const [taken] = await db.query(
-      "SELECT id FROM users WHERE email=? AND id<>? LIMIT 1",
-      [email, req.user.id],
+      "SELECT id FROM users WHERE (email_hash=? OR (email_hash IS NULL AND email=?)) AND id<>? LIMIT 1",
+      [accountEmail.lookup(email), email, req.user.id],
     );
     if (taken.length)
       return res
         .status(409)
         .json({ success: false, message: "อีเมลนี้ถูกใช้งานโดยบัญชีอื่นแล้ว" });
     const [result] = await db.query(
-      "UPDATE users SET email=?, email_verified_at=NULL, auth_version=auth_version+1 WHERE id=? AND auth_version=?",
-      [email, req.user.id, Number(stored.auth_version || 0)],
+      "UPDATE users SET email=NULL,email_encrypted=?,email_hash=?, email_verified_at=NULL, auth_version=auth_version+1 WHERE id=? AND auth_version=?",
+      [
+        accountEmail.encode(email, "users"),
+        accountEmail.lookup(email),
+        req.user.id,
+        Number(stored.auth_version || 0),
+      ],
     );
     if (!result.affectedRows) return accountChanged(res);
     const user = await loadOwnProfile(req.user.id);
@@ -613,11 +678,20 @@ router.put("/me/email", profileLimiter, verifyToken, async (req, res) => {
       success: true,
       message: "เปลี่ยนอีเมลเรียบร้อยแล้ว",
       profile: ownProfileResponse(user),
-      token: signStaffToken(user),
+      ...(await require("../services/sessionService").establishSession(
+        req,
+        res,
+        "staff",
+        user,
+        { mfa: required() },
+      )),
       user: staffPayload(user),
     });
   } catch (error) {
-    console.error("Change own email failed:", error.message);
+    console.error(
+      "Change own email failed:",
+      require("../utils/safeError").safeError(error),
+    );
     return res
       .status(500)
       .json({ success: false, message: "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์" });

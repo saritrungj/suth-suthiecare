@@ -1,0 +1,345 @@
+[WebServer] (node:11300) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:4980) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 56 tests using 1 worker
+
+(node:45352) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   1 [desktop-chromium] › e2e\dashboard-date-filter.spec.js:3:1 › dashboard applies the selected date range to statistics and recent cases (11.9s)
+(node:42164) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  2 [desktop-chromium] › e2e\organization-hierarchy.spec.js:135:1 › a school sub-unit inherits its main organization's type and shows school menus (2.9s)
+  ok  3 [desktop-chromium] › e2e\organization-hierarchy.spec.js:158:1 › main organizations choose the type, sub-units inherit it, members are added by checkbox (4.2s)
+  x   4 [desktop-chromium] › e2e\organization-hierarchy.spec.js:204:1 › system-wide settings sit in their own admin section (11.5s)
+(node:2312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   5 [desktop-chromium] › e2e\organization-hierarchy.spec.js:233:1 › an organization member does not get the admin section (12.6s)
+(node:17904) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  6 [desktop-chromium] › e2e\password-help.spec.js:75:1 › patient password recovery walks through email, code, and new password (4.6s)
+  ok  7 [desktop-chromium] › e2e\password-help.spec.js:90:1 › staff password recovery uses the staff endpoints (1.8s)
+  ok  8 [desktop-chromium] › e2e\password-help.spec.js:101:1 › password recovery shows a neutral notice for an unknown email (1.7s)
+  ok  9 [desktop-chromium] › e2e\public-flows.spec.js:9:1 › history requires patient login before loading any record (1.7s)
+  ok 10 [desktop-chromium] › e2e\public-flows.spec.js:20:1 › patient authentication keeps the selected language across login and register (1.6s)
+  ok 11 [desktop-chromium] › e2e\public-flows.spec.js:38:1 › patient login can continue to the protected history route (1.4s)
+  ok 12 [desktop-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (5.2s)
+  ok 13 [desktop-chromium] › e2e\public-flows.spec.js:101:1 › history hero shows the currently signed-in patient profile (2.1s)
+  ok 14 [desktop-chromium] › e2e\public-flows.spec.js:147:1 › homepage navbar shows the signed-in patient and can log out (2.4s)
+  x  15 [desktop-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code (11.9s)
+(node:36812) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 16 [desktop-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit (6.8s)
+  ok 17 [desktop-chromium] › e2e\school-management.spec.js:250:3 › school organization › shows school menus instead of hospital-only menus (2.1s)
+  ok 18 [desktop-chromium] › e2e\school-management.spec.js:270:3 › school organization › the structure page is the sub-unit's school: grades and their rooms only (2.2s)
+  ok 19 [desktop-chromium] › e2e\school-management.spec.js:298:3 › school organization › student list opens the student health file (2.7s)
+  ok 20 [desktop-chromium] › e2e\school-management.spec.js:317:3 › school organization › the case list of a school organization is the student health view (2.0s)
+  ok 21 [desktop-chromium] › e2e\school-management.spec.js:328:3 › school organization › imports a CSV after a dry run and offers the credentials file (2.5s)
+  ok 22 [desktop-chromium] › e2e\school-management.spec.js:358:1 › a guest must accept PDPA before the national ID is sent (2.8s)
+  ok 23 [desktop-chromium] › e2e\user-permissions.spec.js:124:3 › user management data integrity › saves a long Thai full name without truncating it (2.6s)
+  ok 24 [desktop-chromium] › e2e\user-permissions.spec.js:145:3 › user management data integrity › loads the unmasked record before editing a user (2.2s)
+  ok 25 [desktop-chromium] › e2e\user-permissions.spec.js:157:3 › user management data integrity › shows patient members without exposing sensitive identity fields (2.0s)
+  ok 26 [desktop-chromium] › e2e\user-permissions.spec.js:178:3 › user management data integrity › user management page provides its own vertical scroll area (2.2s)
+  ok 27 [desktop-chromium] › e2e\user-permissions.spec.js:206:3 › user management data integrity › edits patient details and resets the password from the service-recipient menu (2.5s)
+  ok 28 [desktop-chromium] › e2e\user-permissions.spec.js:233:3 › user management data integrity › deletes a patient login only after explicit confirmation (2.8s)
+(node:12728) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  29 [mobile-chromium] › e2e\dashboard-date-filter.spec.js:3:1 › dashboard applies the selected date range to statistics and recent cases (11.8s)
+(node:40400) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  30 [mobile-chromium] › e2e\organization-hierarchy.spec.js:135:1 › a school sub-unit inherits its main organization's type and shows school menus
+  -  31 [mobile-chromium] › e2e\organization-hierarchy.spec.js:158:1 › main organizations choose the type, sub-units inherit it, members are added by checkbox
+  -  32 [mobile-chromium] › e2e\organization-hierarchy.spec.js:204:1 › system-wide settings sit in their own admin section
+  -  33 [mobile-chromium] › e2e\organization-hierarchy.spec.js:233:1 › an organization member does not get the admin section
+  ok 34 [mobile-chromium] › e2e\password-help.spec.js:75:1 › patient password recovery walks through email, code, and new password (3.4s)
+  ok 35 [mobile-chromium] › e2e\password-help.spec.js:90:1 › staff password recovery uses the staff endpoints (4.0s)
+  ok 36 [mobile-chromium] › e2e\password-help.spec.js:101:1 › password recovery shows a neutral notice for an unknown email (3.0s)
+  ok 37 [mobile-chromium] › e2e\public-flows.spec.js:9:1 › history requires patient login before loading any record (2.6s)
+  ok 38 [mobile-chromium] › e2e\public-flows.spec.js:20:1 › patient authentication keeps the selected language across login and register (2.7s)
+  ok 39 [mobile-chromium] › e2e\public-flows.spec.js:38:1 › patient login can continue to the protected history route (2.5s)
+  ok 40 [mobile-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (10.6s)
+  ok 41 [mobile-chromium] › e2e\public-flows.spec.js:101:1 › history hero shows the currently signed-in patient profile (3.0s)
+  ok 42 [mobile-chromium] › e2e\public-flows.spec.js:147:1 › homepage navbar shows the signed-in patient and can log out (4.9s)
+  x  43 [mobile-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code (13.2s)
+(node:8112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 44 [mobile-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit (7.8s)
+  -  45 [mobile-chromium] › e2e\school-management.spec.js:250:3 › school organization › shows school menus instead of hospital-only menus
+  -  46 [mobile-chromium] › e2e\school-management.spec.js:270:3 › school organization › the structure page is the sub-unit's school: grades and their rooms only
+  -  47 [mobile-chromium] › e2e\school-management.spec.js:298:3 › school organization › student list opens the student health file
+  -  48 [mobile-chromium] › e2e\school-management.spec.js:317:3 › school organization › the case list of a school organization is the student health view
+  -  49 [mobile-chromium] › e2e\school-management.spec.js:328:3 › school organization › imports a CSV after a dry run and offers the credentials file
+  -  50 [mobile-chromium] › e2e\school-management.spec.js:358:1 › a guest must accept PDPA before the national ID is sent
+  ok 51 [mobile-chromium] › e2e\user-permissions.spec.js:124:3 › user management data integrity › saves a long Thai full name without truncating it (2.7s)
+  ok 52 [mobile-chromium] › e2e\user-permissions.spec.js:145:3 › user management data integrity › loads the unmasked record before editing a user (2.2s)
+  ok 53 [mobile-chromium] › e2e\user-permissions.spec.js:157:3 › user management data integrity › shows patient members without exposing sensitive identity fields (2.0s)
+  ok 54 [mobile-chromium] › e2e\user-permissions.spec.js:178:3 › user management data integrity › user management page provides its own vertical scroll area (2.1s)
+  ok 55 [mobile-chromium] › e2e\user-permissions.spec.js:206:3 › user management data integrity › edits patient details and resets the password from the service-recipient menu (2.7s)
+  ok 56 [mobile-chromium] › e2e\user-permissions.spec.js:233:3 › user management data integrity › deletes a patient login only after explicit confirmation (2.9s)
+
+
+  1) [desktop-chromium] › e2e\dashboard-date-filter.spec.js:3:1 › dashboard applies the selected date range to statistics and recent cases 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 6
+    + Received  + 1
+
+    - Array [
+    -   "07",
+    -   "02",
+    -   "01",
+    -   "03",
+    - ]
+    + Array []
+
+    Call Log:
+    - Timeout 10000ms exceeded while waiting on the predicate
+
+      94 |   await expect
+      95 |     .poll(async () => page.locator(".stat-modern-value").allTextContents())
+    > 96 |     .toEqual(["07", "02", "01", "03"]);
+         |      ^
+      97 |   await expect(page.locator('input[type="date"]').first()).toBeVisible();
+      98 |   const dateInputs = page.locator('input[type="date"]');
+      99 |   const expectedDefaultRange = await page.evaluate(() => {
+        at D:\github-clone\suth-suthiecare\app\e2e\dashboard-date-filter.spec.js:96:6
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-retry\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-retry\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [desktop-chromium] › e2e\organization-hierarchy.spec.js:204:1 › system-wide settings sit in their own admin section 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('aside.sidebar nav').locator('.menu-header-label').filter({ hasText: 'ผู้ดูแลระบบ' })
+    Expected substring: "ไม่ขึ้นกับหน่วยงานที่เลือก"
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" with timeout 10000ms
+      - waiting for locator('aside.sidebar nav').locator('.menu-header-label').filter({ hasText: 'ผู้ดูแลระบบ' })
+
+
+      209 |   const nav = page.locator("aside.sidebar nav");
+      210 |   const headers = nav.locator(".menu-header-label");
+    > 211 |   await expect(headers.filter({ hasText: "ผู้ดูแลระบบ" })).toContainText(
+          |                                                            ^
+      212 |     "ไม่ขึ้นกับหน่วยงานที่เลือก",
+      213 |   );
+      214 |   const labels = await nav
+        at D:\github-clone\suth-suthiecare\app\e2e\organization-hierarchy.spec.js:211:60
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\organization-hierarchy-sys-8b26b--in-their-own-admin-section-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\organization-hierarchy-sys-8b26b--in-their-own-admin-section-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-retry\organization-hierarchy-sys-8b26b--in-their-own-admin-section-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\organization-hierarchy-sys-8b26b--in-their-own-admin-section-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-retry\organization-hierarchy-sys-8b26b--in-their-own-admin-section-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [desktop-chromium] › e2e\organization-hierarchy.spec.js:233:1 › an organization member does not get the admin section 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('aside.sidebar nav').getByRole('link', { name: 'ผู้มารับบริการ' })
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('aside.sidebar nav').getByRole('link', { name: 'ผู้มารับบริการ' })
+
+
+      267 |   await page.goto("/admin/profile");
+      268 |   const nav = page.locator("aside.sidebar nav");
+    > 269 |   await expect(nav.getByRole("link", { name: "ผู้มารับบริการ" })).toBeVisible();
+          |                                                                   ^
+      270 |   await expect(nav.getByText("ผู้ดูแลระบบ", { exact: false })).toHaveCount(0);
+      271 |   await expect(nav.getByRole("link", { name: "บทบาทและสิทธิ์" })).toHaveCount(
+      272 |     0,
+        at D:\github-clone\suth-suthiecare\app\e2e\organization-hierarchy.spec.js:269:67
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\organization-hierarchy-an--87d5e-s-not-get-the-admin-section-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\organization-hierarchy-an--87d5e-s-not-get-the-admin-section-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-retry\organization-hierarchy-an--87d5e-s-not-get-the-admin-section-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\organization-hierarchy-an--87d5e-s-not-get-the-admin-section-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-retry\organization-hierarchy-an--87d5e-s-not-get-the-admin-section-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [desktop-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByLabel('รหัสยืนยัน')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByLabel('รหัสยืนยัน')
+
+
+      245 |
+      246 |   // The account is pending until the emailed code is entered.
+    > 247 |   await expect(page.getByLabel("รหัสยืนยัน")).toBeVisible();
+          |                                               ^
+      248 |   expect(registerPayload.email).toBe("somchay@example.test");
+      249 |   await page.getByLabel("รหัสยืนยัน").fill("123456");
+      250 |   await page.getByRole("button", { name: /ยืนยัน/ }).click();
+        at D:\github-clone\suth-suthiecare\app\e2e\public-flows.spec.js:247:47
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\public-flows-register-crea-6ba83-ates-it-with-the-email-code-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\public-flows-register-crea-6ba83-ates-it-with-the-email-code-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-retry\public-flows-register-crea-6ba83-ates-it-with-the-email-code-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\public-flows-register-crea-6ba83-ates-it-with-the-email-code-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-retry\public-flows-register-crea-6ba83-ates-it-with-the-email-code-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [mobile-chromium] › e2e\dashboard-date-filter.spec.js:3:1 › dashboard applies the selected date range to statistics and recent cases 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 6
+    + Received  + 1
+
+    - Array [
+    -   "07",
+    -   "02",
+    -   "01",
+    -   "03",
+    - ]
+    + Array []
+
+    Call Log:
+    - Timeout 10000ms exceeded while waiting on the predicate
+
+      94 |   await page.goto("/admin/dashboard");
+      95 |   await expect.poll(() => pageErrors).toEqual([]);
+    > 96 |   await expect
+         |      ^
+      97 |     .poll(async () => page.locator(".stat-modern-value").allTextContents())
+      98 |     .toEqual(["07", "02", "01", "03"]);
+      99 |   await expect(page.locator('input[type="date"]').first()).toBeVisible();
+        at D:\github-clone\suth-suthiecare\app\e2e\dashboard-date-filter.spec.js:96:6
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-retry\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-retry\dashboard-date-filter-dash-3f2a8-statistics-and-recent-cases-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [mobile-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByLabel('รหัสยืนยัน')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByLabel('รหัสยืนยัน')
+
+
+      245 |
+      246 |   // The account is pending until the emailed code is entered.
+    > 247 |   await expect(page.getByLabel("รหัสยืนยัน")).toBeVisible();
+          |                                               ^
+      248 |   expect(registerPayload.email).toBe("somchay@example.test");
+      249 |   await page.getByLabel("รหัสยืนยัน").fill("123456");
+      250 |   await page.getByRole("button", { name: /ยืนยัน/ }).click();
+        at D:\github-clone\suth-suthiecare\app\e2e\public-flows.spec.js:247:47
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\public-flows-register-crea-6ba83-ates-it-with-the-email-code-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\public-flows-register-crea-6ba83-ates-it-with-the-email-code-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\browser-retry\public-flows-register-crea-6ba83-ates-it-with-the-email-code-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\browser-retry\public-flows-register-crea-6ba83-ates-it-with-the-email-code-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace ..\outputs\pdpa\evidence\browser-retry\public-flows-register-crea-6ba83-ates-it-with-the-email-code-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6 failed
+    [desktop-chromium] › e2e\dashboard-date-filter.spec.js:3:1 › dashboard applies the selected date range to statistics and recent cases 
+    [desktop-chromium] › e2e\organization-hierarchy.spec.js:204:1 › system-wide settings sit in their own admin section 
+    [desktop-chromium] › e2e\organization-hierarchy.spec.js:233:1 › an organization member does not get the admin section 
+    [desktop-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code 
+    [mobile-chromium] › e2e\dashboard-date-filter.spec.js:3:1 › dashboard applies the selected date range to statistics and recent cases 
+    [mobile-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code 
+  10 skipped
+  40 passed (3.7m)

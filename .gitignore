@@ -40,6 +40,12 @@ Thumbs.db
 !app/.env.production.example
 /app/e2e-audit
 /app/e2e
+!/app/e2e/
+/app/e2e/*
+!/app/e2e/*.spec.js
+!/app/e2e/helpers/
+/app/e2e/helpers/*
+!/app/e2e/helpers/*.js
 DEPLOY.md
 CONTEXT.md
 /docs

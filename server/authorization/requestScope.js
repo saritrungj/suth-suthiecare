@@ -2,6 +2,11 @@
 // organization. Keeping this policy pure makes it regression-testable.
 function needsOrganizationContext(path, hasAuthorization = false) {
   return (
+    /^\/(staffs|services|templates|case-statuses|status-options)(\/|$)/.test(
+      path,
+    ) ||
+    path === "/form-invitations" ||
+    /^\/form-invitations\/\d+\/revoke$/.test(path) ||
     path.startsWith("/cases") ||
     path.startsWith("/master-cases") ||
     path.startsWith("/admin/master-cases") ||
@@ -12,7 +17,11 @@ function needsOrganizationContext(path, hasAuthorization = false) {
     path.startsWith("/dashboard") ||
     path.startsWith("/charts/") ||
     path.startsWith("/evaluations/") ||
-    ((path === "/forms" ||
+    path.startsWith("/school/") ||
+    path === "/case-referrals" ||
+    path.startsWith("/case-referrals/") ||
+    ((path === "/counts" ||
+      path === "/forms" ||
       path === "/save-form" ||
       (path.startsWith("/forms/") && !/^\/forms\/[^/]+\/submit$/.test(path)) ||
       path.startsWith("/clinics")) &&

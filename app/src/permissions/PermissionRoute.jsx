@@ -1,20 +1,14 @@
 import { Navigate } from "react-router-dom";
 import { usePermissions } from "./PermissionsProvider";
-import { hasActiveOrganizationMembership } from "./organizationContext";
 
 export default function PermissionRoute({
   module,
   children,
-  allowOrganizationMember = false,
+  systemAdminOnly = false,
 }) {
-  const { loading, can, authorization, activeOrganization } = usePermissions();
+  const { loading, can, authorization } = usePermissions();
   if (loading) return <div role="status">กำลังตรวจสอบสิทธิ์...</div>;
-  const canViewCentralManagement =
-    allowOrganizationMember &&
-    hasActiveOrganizationMembership(authorization, activeOrganization);
-  return can(module) || canViewCentralManagement ? (
-    children
-  ) : (
-    <Navigate to="/403" replace />
-  );
+  if (systemAdminOnly && !authorization?.is_system_admin)
+    return <Navigate to="/403" replace />;
+  return can(module) ? children : <Navigate to="/403" replace />;
 }

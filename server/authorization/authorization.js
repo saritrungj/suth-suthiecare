@@ -3,11 +3,9 @@ const { decrypt } = require("../utils/encryption");
 
 // users.name holds AES ciphertext; never hand the raw value to the client.
 const displayName = (value) => {
-  try {
-    return decrypt(value) || value || null;
-  } catch {
-    return value || null;
-  }
+  return (
+    require("../utils/privateField").readField(value, "users", "name") || null
+  );
 };
 
 const SYSTEM_ADMIN_PERMISSIONS = new Set([
@@ -51,6 +49,33 @@ async function tableExists(name) {
   return rows.length > 0;
 }
 
+// organizations.org_type and parent_id arrive with the school module
+// migrations. Until they are applied every organization is a hospital without
+// a parent. A positive answer is cached for good; a negative one is re-checked
+// after a minute.
+const columnChecks = new Map();
+async function organizationColumnExists(column) {
+  const known = columnChecks.get(column);
+  if (known && (known.exists || Date.now() - known.checkedAt < 60000))
+    return known.exists;
+  const [rows] = await db.query(
+    "SELECT 1 FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='organizations' AND COLUMN_NAME=? LIMIT 1",
+    [column],
+  );
+  columnChecks.set(column, { exists: rows.length > 0, checkedAt: Date.now() });
+  return rows.length > 0;
+}
+const hasOrganizationTypeColumn = () => organizationColumnExists("org_type");
+const hasOrganizationParentColumn = () => organizationColumnExists("parent_id");
+const organizationTypeSql = async (alias) =>
+  (await hasOrganizationTypeColumn()) ? `${alias}.org_type` : "'hospital'";
+const organizationParentSql = async (alias) =>
+  (await hasOrganizationParentColumn()) ? `${alias}.parent_id` : "NULL";
+const organizationLevelSql = async (alias) =>
+  (await organizationColumnExists("org_level"))
+    ? `${alias}.org_level`
+    : "'unit'";
+
 async function loadAuthorization(userId) {
   const [users] = await db.query(
     "SELECT id, username, name, status, role_id FROM users WHERE id = ?",
@@ -79,12 +104,18 @@ async function loadAuthorization(userId) {
   }
   let memberships = [];
   if (await tableExists("organization_memberships")) {
+    const orgType = await organizationTypeSql("o");
+    const parent = await organizationParentSql("o");
     const [rows] = await db.query(
       `SELECT om.id, om.organization_id, om.role_id, om.status, om.is_primary,
               o.code AS organization_code, o.name AS organization_name, o.status AS organization_status,
+              ${orgType} AS organization_type,
+              ${parent} AS organization_parent_id, p.name AS organization_parent_name,
+              ${await organizationLevelSql("o")} AS organization_level,
               r.name AS role_name
          FROM organization_memberships om
          JOIN organizations o ON o.id = om.organization_id
+         LEFT JOIN organizations p ON p.id = ${parent}
          JOIN roles r ON r.id = om.role_id
         WHERE om.user_id = ? ORDER BY om.is_primary DESC, o.name`,
       [userId],
@@ -116,21 +147,36 @@ async function resolveContext(req, res, next) {
       req.organizationContext = context;
       return next();
     }
-    if (typeof context !== "number")
+    if (typeof context !== "number") {
+      require("../utils/privacyTelemetry").record("scope_denial");
       return res
         .status(403)
         .json({ success: false, message: "คุณไม่มีสิทธิ์ใช้บริบทนี้" });
+    }
     const membership = authorization.memberships.find(
       (item) =>
         Number(item.organization_id) === context &&
         item.status === "active" &&
         item.organization_status === "active",
     );
-    if (!membership)
+    if (!membership) {
+      require("../utils/privacyTelemetry").record("scope_denial");
       return res
         .status(403)
         .json({ success: false, message: "คุณไม่ได้เป็นสมาชิกหน่วยงานนี้" });
-    const permissionRows = await permissionsForRole(membership.role_id);
+    }
+    const rolePermissions =
+      await require("./organizationPermissions").organizationRolePermissions(
+        db,
+        membership.organization_id,
+        membership.role_id,
+      );
+    const permissionRows =
+      await require("./dataPermissions").membershipPermissions(
+        db,
+        membership,
+        rolePermissions,
+      );
     req.authorization = {
       ...authorization,
       membership,
@@ -139,7 +185,10 @@ async function resolveContext(req, res, next) {
     req.organizationContext = context;
     return next();
   } catch (error) {
-    console.error("Authorization context failed:", error);
+    console.error(
+      "Authorization context failed:",
+      require("../utils/safeError").safeError(error),
+    );
     return res
       .status(500)
       .json({ success: false, message: "ไม่สามารถตรวจสอบสิทธิ์ได้" });
@@ -168,7 +217,8 @@ function requireAction(permission) {
 }
 
 function organizationWhere(column, req, params = []) {
-  if (req.organizationContext === "all") return { sql: "", params };
+  if (req.organizationContext === "all")
+    return { sql: ` AND ${column} IS NOT NULL`, params };
   return {
     sql: ` AND ${column} = ?`,
     params: [...params, req.organizationContext],
@@ -195,19 +245,27 @@ async function audit(
         targetId == null ? null : String(targetId),
         result,
         reason || null,
-        before ? JSON.stringify(before) : null,
-        after ? JSON.stringify(after) : null,
+        before ? JSON.stringify({ fields: Object.keys(before) }) : null,
+        after ? JSON.stringify({ fields: Object.keys(after) }) : null,
         req.ip || null,
         String(req.get("user-agent") || "").slice(0, 255),
       ],
     );
   } catch (error) {
-    console.error("Authorization audit failed:", error.message);
+    console.error(
+      "Authorization audit failed:",
+      require("../utils/safeError").safeError(error),
+    );
   }
 }
 
 module.exports = {
   SYSTEM_ADMIN_PERMISSIONS,
+  hasOrganizationTypeColumn,
+  hasOrganizationParentColumn,
+  organizationTypeSql,
+  organizationParentSql,
+  organizationLevelSql,
   LEGACY_PERMISSION_KEYS,
   loadAuthorization,
   permissionsForRole,

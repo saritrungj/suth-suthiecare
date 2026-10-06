@@ -1,3 +1,4 @@
+import { authSession } from "../utils/authSession";
 import React, { useState } from "react";
 import {
   FiEye,
@@ -23,9 +24,7 @@ export default function AddAdminModal({
   organizations = [],
   roles = [],
 }) {
-  const currentUserStr =
-    sessionStorage.getItem("suth_user") || localStorage.getItem("suth_user");
-  const currentUser = currentUserStr ? JSON.parse(currentUserStr) : null;
+  const currentUser = authSession("staff").user;
   const currentRoleId = currentUser ? Number(currentUser.role_id) : 3;
 
   const [showPassword, setShowPassword] = useState(false);

@@ -1,3 +1,8 @@
+import {
+  authSession,
+  bootstrapAuth,
+  subscribeAuthSession,
+} from "./utils/authSession";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import React, { lazy, Suspense, useEffect, useState } from "react";
 
@@ -8,11 +13,18 @@ import HelpCenterManager from "./pages/admin/HelpCenterManager";
 import HelpCenterUser from "./pages/helpCenter/HelpCenterUser";
 import ClinicHelpDetail from "./pages/helpCenter/ClinicHelpDetail";
 import AppErrorBoundary from "./components/AppErrorBoundary";
-import { PermissionsProvider } from "./permissions/PermissionsProvider";
+import {
+  PermissionsProvider,
+  usePermissions,
+} from "./permissions/PermissionsProvider";
+import { adminHomePath } from "./permissions/sidebarPolicy";
 import PermissionRoute from "./permissions/PermissionRoute";
 import PatientProtectedRoute from "./permissions/PatientProtectedRoute";
 import PatientLogin from "./pages/patient/PatientLogin";
 import PatientRegister from "./pages/patient/PatientRegister";
+import PatientChangePassword from "./pages/patient/PatientChangePassword";
+import SchoolRoute from "./permissions/SchoolRoute";
+import OrganizationTypeSwitch from "./permissions/OrganizationTypeSwitch";
 import SeoMetadata from "./components/SeoMetadata";
 import StatusPage from "./pages/errors/StatusPage";
 import OrganizationManagement from "./pages/admin/OrganizationManagement";
@@ -25,6 +37,7 @@ const FormManager = lazy(() => import("./pages/admin/forms/FormManager"));
 const FormBuilder = lazy(() => import("./pages/admin/forms/FormBuilder"));
 const Appointment = lazy(() => import("./pages/admin/Appointment"));
 const CaseData = lazy(() => import("./pages/admin/CaseData"));
+const CaseReferrals = lazy(() => import("./pages/admin/CaseReferrals"));
 const RolesPermissions = lazy(() => import("./pages/admin/RolesPermissions"));
 const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
 const RiskCases = lazy(() => import("./pages/admin/RiskCases"));
@@ -41,88 +54,65 @@ const AdminLayout = lazy(() => import("./components/AdminLayout"));
 const ClinicDetail = lazy(
   () => import("./pages/assessment/history/ClinicDetail"),
 );
+const SchoolStructure = lazy(
+  () => import("./pages/admin/school/SchoolStructure"),
+);
+const StudentList = lazy(() => import("./pages/admin/school/StudentList"));
+const StudentImport = lazy(() => import("./pages/admin/school/StudentImport"));
+const TeacherList = lazy(() => import("./pages/admin/school/TeacherList"));
+const SchoolTypes = lazy(() => import("./pages/admin/school/SchoolTypes"));
+const SchoolCaseData = lazy(
+  () => import("./pages/admin/school/SchoolCaseData"),
+);
 
 const AdminRoute = ({ children }) => {
-  const userStr =
-    sessionStorage.getItem("suth_user") || localStorage.getItem("suth_user");
-
-  if (!userStr) return <Navigate to="/login" replace />;
-  try {
-    JSON.parse(userStr);
-  } catch {
-    sessionStorage.removeItem("suth_user");
-    localStorage.removeItem("suth_user");
-    return <Navigate to="/login" replace />;
-  }
+  if (!authSession("staff").user) return <Navigate to="/login" replace />;
   return children;
+};
+
+const AdminHome = () => {
+  const {
+    loading,
+    authorization,
+    activeOrganizationType,
+    schoolAccess,
+    schoolAccessLoading,
+    can,
+  } = usePermissions();
+  if (loading || schoolAccessLoading)
+    return <div role="status">กำลังตรวจสอบสิทธิ์...</div>;
+  return (
+    <Navigate
+      to={adminHomePath({
+        authorization,
+        organizationType: activeOrganizationType,
+        schoolAccess,
+        can,
+      })}
+      replace
+    />
+  );
 };
 
 function App() {
   const [isInitializing, setIsInitializing] = useState(true);
+  const [, refreshSession] = useState(0);
+  useEffect(
+    () => subscribeAuthSession(() => refreshSession((value) => value + 1)),
+    [],
+  );
 
   useEffect(() => {
-    const isAdminPath = window.location.pathname.startsWith("/admin");
-
-    const syncSession = (event) => {
-      // 🟢 1. ระบบ Global Logout: ถ้ามีแท็บนึงสั่ง Logout แท็บอื่นต้องเด้งออกด้วย
-      if (event.key === "SUTH_LOGOUT") {
-        sessionStorage.removeItem("suth_token");
-        sessionStorage.removeItem("suth_user");
-        if (isAdminPath) window.location.href = "/login";
-      }
-
-      // 2. ถ้าแท็บอื่นขอข้อมูลมา ให้ส่งกลับไป (ถ้าเรามี)
-      if (
-        event.key === "REQUEST_SESSION_SYNC" &&
-        sessionStorage.getItem("suth_token")
-      ) {
-        localStorage.setItem(
-          "SESSION_SYNC_DATA",
-          JSON.stringify({
-            token: sessionStorage.getItem("suth_token"),
-            user: sessionStorage.getItem("suth_user"),
-          }),
-        );
-        localStorage.removeItem("SESSION_SYNC_DATA");
-      }
-
-      // 3. รับข้อมูลกลับมา แล้วเข้าสู่ระบบให้
-      if (event.key === "SESSION_SYNC_DATA" && event.newValue) {
-        const data = JSON.parse(event.newValue);
-        if (data.token && data.user) {
-          sessionStorage.setItem("suth_token", data.token);
-          sessionStorage.setItem("suth_user", data.user);
-          setIsInitializing(false);
-        }
-      }
+    let alive = true;
+    bootstrapAuth().finally(() => alive && setIsInitializing(false));
+    return () => {
+      alive = false;
     };
-
-    window.addEventListener("storage", syncSession);
-
-    // 🟢 4. ขอ Sync ข้อมูล "เฉพาะ" ตอนที่อยู่หน้า Admin เท่านั้น
-    if (
-      isAdminPath &&
-      !sessionStorage.getItem("suth_token") &&
-      !localStorage.getItem("suth_token")
-    ) {
-      localStorage.setItem("REQUEST_SESSION_SYNC", Date.now().toString());
-      localStorage.removeItem("REQUEST_SESSION_SYNC");
-
-      const timer = setTimeout(() => setIsInitializing(false), 300);
-      return () => {
-        window.removeEventListener("storage", syncSession);
-        clearTimeout(timer);
-      };
-    } else {
-      setIsInitializing(false);
-    }
-
-    return () => window.removeEventListener("storage", syncSession);
   }, []);
 
   const isAdminPath = window.location.pathname.startsWith("/admin");
 
-  if (isInitializing && isAdminPath) {
+  if (isInitializing) {
     return (
       <div
         style={{
@@ -163,6 +153,10 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/account/login" element={<PatientLogin />} />
             <Route path="/account/register" element={<PatientRegister />} />
+            <Route
+              path="/account/change-password"
+              element={<PatientChangePassword />}
+            />
             <Route path="/help-center" element={<HelpCenterUser />} />
             <Route
               path="/help-center/clinic/:id"
@@ -209,7 +203,7 @@ function App() {
                 </AdminRoute>
               }
             >
-              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route index element={<AdminHome />} />
               <Route
                 path="dashboard"
                 element={
@@ -221,10 +215,7 @@ function App() {
               <Route
                 path="forms"
                 element={
-                  <PermissionRoute
-                    module="Form Management"
-                    allowOrganizationMember
-                  >
+                  <PermissionRoute module="Form Management">
                     <FormManager />
                   </PermissionRoute>
                 }
@@ -232,10 +223,7 @@ function App() {
               <Route
                 path="forms/create"
                 element={
-                  <PermissionRoute
-                    module="Form Management"
-                    allowOrganizationMember
-                  >
+                  <PermissionRoute module="Form Management">
                     <FormBuilder />
                   </PermissionRoute>
                 }
@@ -243,10 +231,7 @@ function App() {
               <Route
                 path="forms/edit/:id"
                 element={
-                  <PermissionRoute
-                    module="Form Management"
-                    allowOrganizationMember
-                  >
+                  <PermissionRoute module="Form Management">
                     <FormBuilder />
                   </PermissionRoute>
                 }
@@ -260,17 +245,33 @@ function App() {
                 }
               />
               <Route
-                path="cases"
+                path="referrals"
                 element={
                   <PermissionRoute module="Case Management">
-                    <CaseData />
+                    <CaseReferrals />
                   </PermissionRoute>
+                }
+              />
+              <Route
+                path="cases"
+                element={
+                  <OrganizationTypeSwitch
+                    school={
+                      <SchoolRoute check="can_view_health">
+                        <SchoolCaseData />
+                      </SchoolRoute>
+                    }
+                  >
+                    <PermissionRoute module="Case Management">
+                      <CaseData />
+                    </PermissionRoute>
+                  </OrganizationTypeSwitch>
                 }
               />
               <Route
                 path="roles"
                 element={
-                  <PermissionRoute module="Roles & Permissions">
+                  <PermissionRoute module="Roles & Permissions" systemAdminOnly>
                     <RolesPermissions />
                   </PermissionRoute>
                 }
@@ -278,7 +279,7 @@ function App() {
               <Route
                 path="users"
                 element={
-                  <PermissionRoute module="User Management">
+                  <PermissionRoute module="User Management" systemAdminOnly>
                     <UserManagement initialTab="staff" standalone />
                   </PermissionRoute>
                 }
@@ -294,18 +295,23 @@ function App() {
               <Route
                 path="risk-cases"
                 element={
-                  <PermissionRoute module="Case Management">
-                    <RiskCases />
-                  </PermissionRoute>
+                  <OrganizationTypeSwitch
+                    school={
+                      <SchoolRoute check="can_view_health">
+                        <SchoolCaseData initialRisk="high" />
+                      </SchoolRoute>
+                    }
+                  >
+                    <PermissionRoute module="Case Management">
+                      <RiskCases />
+                    </PermissionRoute>
+                  </OrganizationTypeSwitch>
                 }
               />
               <Route
                 path="banner"
                 element={
-                  <PermissionRoute
-                    module="Content Management"
-                    allowOrganizationMember
-                  >
+                  <PermissionRoute module="Content Management" systemAdminOnly>
                     <BannerManagement />
                   </PermissionRoute>
                 }
@@ -313,10 +319,7 @@ function App() {
               <Route
                 path="clinics"
                 element={
-                  <PermissionRoute
-                    module="Clinic Management"
-                    allowOrganizationMember
-                  >
+                  <PermissionRoute module="Clinic Management">
                     <ClinicManager />
                   </PermissionRoute>
                 }
@@ -324,10 +327,7 @@ function App() {
               <Route
                 path="help-center"
                 element={
-                  <PermissionRoute
-                    module="Help Center Management"
-                    allowOrganizationMember
-                  >
+                  <PermissionRoute module="Help Center Management">
                     <HelpCenterManager />
                   </PermissionRoute>
                 }
@@ -335,9 +335,52 @@ function App() {
               <Route
                 path="organizations"
                 element={
-                  <PermissionRoute module="organizations.manage">
+                  <PermissionRoute
+                    module="organizations.manage"
+                    systemAdminOnly
+                  >
                     <OrganizationManagement />
                   </PermissionRoute>
+                }
+              />
+              <Route
+                path="school"
+                element={
+                  <SchoolRoute check="can_view_school">
+                    <SchoolStructure />
+                  </SchoolRoute>
+                }
+              />
+              <Route
+                path="school/students"
+                element={
+                  <SchoolRoute check="can_view_students">
+                    <StudentList />
+                  </SchoolRoute>
+                }
+              />
+              <Route
+                path="school/students/import"
+                element={
+                  <SchoolRoute check="can_create_students">
+                    <StudentImport />
+                  </SchoolRoute>
+                }
+              />
+              <Route
+                path="school/teachers"
+                element={
+                  <SchoolRoute check="can_view_school">
+                    <TeacherList />
+                  </SchoolRoute>
+                }
+              />
+              <Route
+                path="school/types"
+                element={
+                  <SchoolRoute check="can_view_school">
+                    <SchoolTypes />
+                  </SchoolRoute>
                 }
               />
               {/* Every signed-in staff member manages their own account. */}

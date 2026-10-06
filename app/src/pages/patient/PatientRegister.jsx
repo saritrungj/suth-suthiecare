@@ -156,7 +156,7 @@ export default function PatientRegister() {
         setOtp("");
         return;
       }
-      setPatientSession(response.data.token, response.data.user);
+      setPatientSession(null, response.data.user);
       await showSuccessAlert({
         title:
           language === "en" ? "Account created" : "สร้างบัญชีเรียบร้อยแล้ว",
@@ -205,7 +205,7 @@ export default function PatientRegister() {
         challengeToken: emailChallenge.challengeToken,
         otp,
       });
-      setPatientSession(response.data.token, response.data.user);
+      setPatientSession(null, response.data.user);
       await showSuccessAlert({
         title:
           language === "en" ? "Email verified" : "ยืนยันอีเมลเรียบร้อยแล้ว",

@@ -1,0 +1,284 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: organization-hierarchy.spec.js >> system-wide settings sit in their own admin section
+- Location: e2e\organization-hierarchy.spec.js:204:1
+
+# Error details
+
+```
+Error: expect(locator).toContainText(expected) failed
+
+Locator: locator('aside.sidebar nav').locator('.menu-header-label').filter({ hasText: 'ผู้ดูแลระบบ' })
+Expected substring: "ไม่ขึ้นกับหน่วยงานที่เลือก"
+Timeout: 10000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toContainText" with timeout 10000ms
+  - waiting for locator('aside.sidebar nav').locator('.menu-header-label').filter({ hasText: 'ผู้ดูแลระบบ' })
+
+```
+
+```yaml
+- complementary:
+    - img "SUTH Logo"
+    - button "Toggle sidebar"
+    - text: หน่วยงานที่กำลังใช้งาน
+    - combobox "หน่วยงานที่กำลังใช้งาน":
+        - option "ทุกหน่วยงาน"
+    - text: หน่วยงานย่อยประเภทโรงเรียน · ภายใต้ โรงเรียน
+    - navigation:
+        - text: หน้าหลัก
+        - link "แดชบอร์ด":
+            - /url: /admin/dashboard
+        - text: ทั่วไป
+        - link "ข้อมูลเคส":
+            - /url: /admin/cases
+        - link "เคสเสี่ยง":
+            - /url: /admin/risk-cases
+        - link "ส่งต่อระหว่างหน่วยงาน":
+            - /url: /admin/referrals
+        - text: โรงเรียน
+        - link "นักเรียน":
+            - /url: /admin/school/students
+        - link "ครู":
+            - /url: /admin/school/teachers
+        - link "ชั้นปีและห้องเรียน":
+            - /url: /admin/school
+        - link "ประเภทครูและนักเรียน":
+            - /url: /admin/school/types
+        - text: จัดการหน่วยงาน
+        - link "จัดการฟอร์ม":
+            - /url: /admin/forms
+        - link "ผู้มารับบริการ":
+            - /url: /admin/members
+        - link "จัดการศูนย์ช่วยเหลือ":
+            - /url: /admin/help-center
+        - text: จัดการหลักของระบบ ใช้กับทั้งระบบ ไม่ขึ้นกับหน่วยงานที่เลือก
+        - link "หน่วยงานหลักและหน่วยงานย่อย":
+            - /url: /admin/organizations
+        - link "ผู้ดูแลระบบและเจ้าหน้าที่":
+            - /url: /admin/users
+        - link "บทบาทและสิทธิ์":
+            - /url: /admin/roles
+        - link "จัดการภาพแบนเนอร์":
+            - /url: /admin/banner
+        - text: บัญชีของฉัน
+        - link "ข้อมูลส่วนตัว":
+            - /url: /admin/profile
+        - link "คู่มือการใช้งาน":
+            - /url: /docs/admin_manual.pdf
+    - button "ออกจากระบบ"
+- main:
+    - heading "หน่วยงานหลักและหน่วยงานย่อย" [level=1]
+    - paragraph: หน่วยงานหลักใช้จัดกลุ่ม ส่วนหน่วยงานย่อยคือหน่วยที่ทำงานจริง (โรงพยาบาลหรือโรงเรียน) มีสมาชิก บทบาท และข้อมูลของตัวเอง
+    - button "+ หน่วยงานหลัก"
+    - button "+ หน่วยงานย่อย"
+    - complementary "โครงสร้างหน่วยงาน":
+        - text: โครงสร้างหน่วยงาน 4
+        - button "โรงพยาบาล หน่วยงานหลักประเภทโรงพยาบาล · 1 หน่วยงานย่อย"
+        - button "คลินิกวัยรุ่น โรงพยาบาล · สมาชิก 0 คน"
+        - button "โรงเรียน หน่วยงานหลักประเภทโรงเรียน · 1 หน่วยงานย่อย"
+        - button "โรงเรียนสุรวิวัฒน์ โรงเรียน · สมาชิก 0 คน"
+    - heading "รายละเอียดหน่วยงานหลัก" [level=2]
+    - button "ปิดใช้งาน"
+    - text: รหัสหน่วยงาน
+    - textbox "รหัสหน่วยงานที่ระบบสร้าง": HOSP-MAIN
+    - text: ชื่อหน่วยงานหลัก
+    - textbox "ชื่อหน่วยงานหลัก": โรงพยาบาล
+    - group "ประเภทของหน่วยงานหลัก (หน่วยงานย่อยทั้งหมดภายใต้จะเป็นประเภทนี้)":
+        - text: ประเภทของหน่วยงานหลัก (หน่วยงานย่อยทั้งหมดภายใต้จะเป็นประเภทนี้)
+        - radio "โรงพยาบาล หน่วยย่อยภายในคือคลินิก ใช้เมนูคลินิก ตารางนัดหมาย และเคสแบบโรงพยาบาล" [checked]
+        - strong: โรงพยาบาล
+        - text: หน่วยย่อยภายในคือคลินิก ใช้เมนูคลินิก ตารางนัดหมาย และเคสแบบโรงพยาบาล
+        - radio "โรงเรียน หน่วยย่อยภายในคือโรงเรียน ใช้เมนูนักเรียน ครู ชั้นปี/ห้อง และเคสแบบรายนักเรียน"
+        - strong: โรงเรียน
+        - text: หน่วยย่อยภายในคือโรงเรียน ใช้เมนูนักเรียน ครู ชั้นปี/ห้อง และเคสแบบรายนักเรียน
+    - text: รายละเอียด
+    - textbox "รายละเอียด"
+    - button "บันทึกหน่วยงาน"
+    - heading "หน่วยงานย่อยภายใต้ โรงพยาบาล" [level=2]
+    - paragraph: หน่วยงานหลักไม่มีสมาชิกโดยตรง เพิ่มเจ้าหน้าที่ที่หน่วยงานย่อยที่ทำงานจริง
+    - button "+ เพิ่มหน่วยงานย่อย"
+    - article:
+        - strong: คลินิกวัยรุ่น
+        - text: โรงพยาบาล · สมาชิก 0 คน ใช้งาน
+        - button "จัดการ"
+```
+
+# Test source
+
+```ts
+  111 |           status: 201,
+  112 |           json: {
+  113 |             added: received.members.user_ids,
+  114 |             reactivated: [],
+  115 |             skipped: [],
+  116 |           },
+  117 |         });
+  118 |       }
+  119 |       return route.fulfill({ json: [] });
+  120 |     }
+  121 |     if (pathname.endsWith("/api/users"))
+  122 |       return route.fulfill({
+  123 |         json: [
+  124 |           { id: 11, username: "teacher1", name: "ครูหนึ่ง", status: "active" },
+  125 |           { id: 12, username: "teacher2", name: "ครูสอง", status: "active" },
+  126 |           { id: 13, username: "nurse1", name: "พยาบาลหนึ่ง", status: "active" },
+  127 |         ],
+  128 |       });
+  129 |     if (pathname.endsWith("/api/roles"))
+  130 |       return route.fulfill({ json: [{ id: 3, name: "Staff" }] });
+  131 |     return route.fulfill({ json: {} });
+  132 |   });
+  133 | }
+  134 |
+  135 | test("a school sub-unit inherits its main organization's type and shows school menus", async ({
+  136 |   page,
+  137 | }) => {
+  138 |   await mockApi(page, {});
+  139 |   await page.goto("/admin/organizations");
+  140 |   const nav = page.locator("aside.sidebar");
+  141 |   // The active unit is โรงเรียนสุรวิวัฒน์ (under โรงเรียน), so school menus show.
+  142 |   await expect(
+  143 |     nav.getByRole("link", { name: "นักเรียน", exact: true }),
+  144 |   ).toBeVisible();
+  145 |   await expect(nav.getByRole("link", { name: "จัดการคลินิก" })).toHaveCount(0);
+  146 |   await expect(
+  147 |     page.locator('#active-organization optgroup[label="โรงเรียน"] option'),
+  148 |   ).toHaveText(["โรงเรียนสุรวิวัฒน์ (โรงเรียน)"]);
+  149 |
+  150 |   // Switching to the clinic under โรงพยาบาล brings the hospital menus back.
+  151 |   await page.locator("#active-organization").selectOption("1");
+  152 |   await expect(nav.getByRole("link", { name: "จัดการคลินิก" })).toBeVisible();
+  153 |   await expect(
+  154 |     nav.getByRole("link", { name: "นักเรียน", exact: true }),
+  155 |   ).toHaveCount(0);
+  156 | });
+  157 |
+  158 | test("main organizations choose the type, sub-units inherit it, members are added by checkbox", async ({
+  159 |   page,
+  160 | }) => {
+  161 |   const received = {};
+  162 |   await mockApi(page, received);
+  163 |   await page.goto("/admin/organizations");
+  164 |   const directory = page.getByRole("complementary", {
+  165 |     name: "โครงสร้างหน่วยงาน",
+  166 |   });
+  167 |   await expect(
+  168 |     directory.getByText("หน่วยงานหลักประเภทโรงเรียน · 1 หน่วยงานย่อย"),
+  169 |   ).toBeVisible();
+  170 |
+  171 |   // A new sub-unit under โรงเรียน shows the inherited type and sends none.
+  172 |   await directory
+  173 |     .getByRole("button", { name: /^โรงเรียน หน่วยงานหลัก/ })
+  174 |     .click();
+  175 |   await page.getByRole("button", { name: "+ เพิ่มหน่วยงานย่อย" }).click();
+  176 |   await expect(page.getByText("(ตามหน่วยงานหลัก โรงเรียน)")).toBeVisible();
+  177 |   await expect(page.getByRole("radio")).toHaveCount(0);
+  178 |   await page.getByLabel("ชื่อหน่วยงานย่อย").fill("โรงเรียนใหม่");
+  179 |   await page.getByRole("button", { name: "บันทึกหน่วยงาน" }).click();
+  180 |   await expect
+  181 |     .poll(() => received.created)
+  182 |     .toEqual({
+  183 |       kind: "unit",
+  184 |       name: "โรงเรียนใหม่",
+  185 |       description: "",
+  186 |       parent_id: 4,
+  187 |     });
+  188 |
+  189 |   // Members of a sub-unit are picked with checkboxes and added together.
+  190 |   await directory.getByRole("button", { name: /โรงเรียนสุรวิวัฒน์/ }).click();
+  191 |   await page.getByRole("button", { name: "+ เพิ่มสมาชิก" }).click();
+  192 |   await page.getByRole("checkbox", { name: /ครูหนึ่ง/ }).check();
+  193 |   await page.getByRole("checkbox", { name: /ครูสอง/ }).check();
+  194 |   await page.getByLabel("บทบาทในหน่วยงานนี้").selectOption("3");
+  195 |   await page.getByRole("button", { name: "เพิ่ม 2 คน" }).click();
+  196 |   await expect
+  197 |     .poll(() => received.members)
+  198 |     .toEqual({
+  199 |       user_ids: [11, 12],
+  200 |       role_id: 3,
+  201 |     });
+  202 | });
+  203 |
+  204 | test("system-wide settings sit in their own admin section", async ({
+  205 |   page,
+  206 | }) => {
+  207 |   await mockApi(page, {});
+  208 |   await page.goto("/admin/organizations");
+  209 |   const nav = page.locator("aside.sidebar nav");
+  210 |   const headers = nav.locator(".menu-header-label");
+> 211 |   await expect(headers.filter({ hasText: "ผู้ดูแลระบบ" })).toContainText(
+      |                                                            ^ Error: expect(locator).toContainText(expected) failed
+  212 |     "ไม่ขึ้นกับหน่วยงานที่เลือก",
+  213 |   );
+  214 |   const labels = await nav
+  215 |     .locator(".menu-header-label, .menu-item .label")
+  216 |     .allTextContents();
+  217 |   const admin = labels.findIndex((text) => text.startsWith("ผู้ดูแลระบบ"));
+  218 |   const account = labels.indexOf("บัญชีของฉัน");
+  219 |   expect(labels.slice(admin + 1, account)).toEqual([
+  220 |     "หน่วยงานหลักและหน่วยงานย่อย",
+  221 |     "ผู้ดูแลระบบและเจ้าหน้าที่",
+  222 |     "บทบาทและสิทธิ์",
+  223 |     "จัดการภาพแบนเนอร์",
+  224 |   ]);
+  225 |   const unit = labels.indexOf("จัดการหน่วยงาน");
+  226 |   expect(labels.slice(unit + 1, admin)).toEqual([
+  227 |     "จัดการฟอร์ม",
+  228 |     "ผู้มารับบริการ",
+  229 |     "จัดการศูนย์ช่วยเหลือ",
+  230 |   ]);
+  231 | });
+  232 |
+  233 | test("an organization member does not get the admin section", async ({
+  234 |   page,
+  235 | }) => {
+  236 |   await page.route("**/api/**", async (route) => {
+  237 |     const { pathname } = new URL(route.request().url());
+  238 |     if (pathname.endsWith("/api/me/authorization"))
+  239 |       return route.fulfill({
+  240 |         json: {
+  241 |           user: { id: 1, username: "e2e-staff" },
+  242 |           is_system_admin: false,
+  243 |           system_permissions: [],
+  244 |           organizations: [],
+  245 |           memberships: [
+  246 |             {
+  247 |               status: "active",
+  248 |               organization: {
+  249 |                 id: 1,
+  250 |                 name: "คลินิกวัยรุ่น",
+  251 |                 org_type: "hospital",
+  252 |                 parent_id: 3,
+  253 |                 parent_name: "โรงพยาบาล",
+  254 |                 status: "active",
+  255 |               },
+  256 |               role: { id: 3, name: "Staff" },
+  257 |               permissions: ["cases.view", "forms.view", "patient_members.view"],
+  258 |             },
+  259 |           ],
+  260 |         },
+  261 |       });
+  262 |     return route.fulfill({ json: [] });
+  263 |   });
+  264 |   await page.addInitScript(() =>
+  265 |     localStorage.setItem("suth_active_organization_1", "1"),
+  266 |   );
+  267 |   await page.goto("/admin/profile");
+  268 |   const nav = page.locator("aside.sidebar nav");
+  269 |   await expect(nav.getByRole("link", { name: "ผู้มารับบริการ" })).toBeVisible();
+  270 |   await expect(nav.getByText("ผู้ดูแลระบบ", { exact: false })).toHaveCount(0);
+  271 |   await expect(nav.getByRole("link", { name: "บทบาทและสิทธิ์" })).toHaveCount(
+  272 |     0,
+  273 |   );
+  274 | });
+  275 |
+```

@@ -1,6 +1,10 @@
+const accountEmail = require("../utils/accountEmail");
 const express = require("express");
 const { db, decrypt, audit, publicAccount } = require("../utils/patientAuth");
-const { verifyPatientToken } = require("../middleware/patientAuthMiddleware");
+const {
+  verifyPatientToken,
+  verifyPatientTokenAllowingPasswordChange,
+} = require("../middleware/patientAuthMiddleware");
 const { normalizeStoredAnswer } = require("../utils/storedAnswer");
 const rateLimit = require("express-rate-limit");
 const {
@@ -19,33 +23,10 @@ const otpLimiter = rateLimit({
 });
 const validEmail = (email) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 254;
-const safeDecrypt = (value) => {
-  if (!value) return value;
-  try {
-    return decrypt(value) || value;
-  } catch {
-    return value;
-  }
-};
-const parseJson = (value) => {
-  try {
-    return typeof value === "string" ? JSON.parse(value) : value || {};
-  } catch {
-    return {};
-  }
-};
-const decryptSummary = (summary) => {
-  const result = parseJson(summary);
-  for (const key of ["display_name", "display_phone", "phone"])
-    if (result[key]) result[key] = safeDecrypt(result[key]);
-  if (result.raw_answers && typeof result.raw_answers === "object") {
-    for (const key of Object.keys(result.raw_answers)) {
-      if (/ชื่อ|เบอร์|โทร|บัตร/.test(key))
-        result.raw_answers[key] = safeDecrypt(result.raw_answers[key]);
-    }
-  }
-  return result;
-};
+const safeDecrypt = (value) => decrypt(value);
+const { decryptSummaryData } = require("../utils/decryptCaseData");
+const decryptSummary = (value) => decryptSummaryData(value, safeDecrypt);
+const { sealJson, fieldContext } = require("../utils/privateData");
 
 const cleanProfileValue = (value) => {
   if (value === undefined || value === null) return "";
@@ -89,7 +70,7 @@ const getHistoricalProfile = (responses) => {
 
 async function ownResponse(req, responseId) {
   const [rows] = await db.query(
-    "SELECT id, master_case_id, form_id, identity_hash FROM form_responses WHERE id = ? AND (patient_account_id = ? OR (patient_account_id IS NULL AND ? IS NOT NULL AND identity_hash = ?)) LIMIT 1",
+    "SELECT id, master_case_id, form_id, organization_id FROM form_responses WHERE id = ? AND organization_id IS NOT NULL AND (patient_account_id = ? OR (patient_account_id IS NULL AND ? IS NOT NULL AND identity_hash = ?)) LIMIT 1",
     [
       responseId,
       req.patient.id,
@@ -100,16 +81,22 @@ async function ownResponse(req, responseId) {
   return rows[0] || null;
 }
 
-router.use(verifyPatientToken);
+// Readable during a pending password change so the client can show who is
+// signed in on the change-password page.
+router.get(
+  "/me",
+  verifyPatientTokenAllowingPasswordChange,
+  async (req, res) => {
+    res.json({ success: true, user: publicAccount(req.patient) });
+  },
+);
 
-router.get("/me", async (req, res) => {
-  res.json({ success: true, user: publicAccount(req.patient) });
-});
+router.use(verifyPatientToken);
 
 const emailInUse = async (email, patientId) => {
   const [existing] = await db.query(
-    "SELECT id FROM patient_accounts WHERE email=? AND id<>? LIMIT 1",
-    [email, patientId],
+    "SELECT id FROM patient_accounts WHERE (email_hash=? OR (email_hash IS NULL AND email=?)) AND id<>? LIMIT 1",
+    [accountEmail.lookup(email), email, patientId],
   );
   return existing.length > 0;
 };
@@ -131,10 +118,14 @@ router.patch("/me/email", otpLimiter, async (req, res) => {
     if (await emailInUse(email, req.patient.id))
       return res.status(409).json(emailInUseResponse);
 
-    await db.query("UPDATE patient_accounts SET pending_email=? WHERE id=?", [
-      email,
-      req.patient.id,
-    ]);
+    await db.query(
+      "UPDATE patient_accounts SET pending_email=NULL,pending_email_encrypted=?,pending_email_hash=? WHERE id=?",
+      [
+        accountEmail.encode(email, "patient_accounts", "pending_email"),
+        accountEmail.lookup(email),
+        req.patient.id,
+      ],
+    );
     const challenge = await createChallenge(db, {
       accountType: "patient",
       accountId: req.patient.id,
@@ -149,7 +140,10 @@ router.patch("/me/email", otpLimiter, async (req, res) => {
       ...challenge,
     });
   } catch (error) {
-    console.error("Patient email update failed:", error.code || error.message);
+    console.error(
+      "Patient email update failed:",
+      require("../utils/safeError").safeError(error),
+    );
     return res.status(503).json({
       success: false,
       message: "ไม่สามารถส่งรหัสยืนยันอีเมลได้ กรุณาลองใหม่",
@@ -167,10 +161,11 @@ router.post("/me/email/verify", otpLimiter, async (req, res) => {
       loadAccount: async (connection, id) => {
         if (Number(id) !== Number(req.patient.id)) return null;
         const [rows] = await connection.query(
-          "SELECT id,auth_version,pending_email FROM patient_accounts WHERE id=? AND status='active' LIMIT 1",
+          "SELECT id,auth_version,pending_email,pending_email_encrypted FROM patient_accounts WHERE id=? AND status='active' LIMIT 1",
           [id],
         );
-        return rows[0]?.pending_email ? rows[0] : null;
+        const account = accountEmail.readAccount(rows[0], "patient_accounts");
+        return account?.pending_email ? account : null;
       },
     });
     if (result.error)
@@ -180,10 +175,14 @@ router.post("/me/email/verify", otpLimiter, async (req, res) => {
     // newer pending_email written by a parallel request is never trusted.
     const challengeId = Number(String(req.body.challengeToken).split(".")[0]);
     const [[challenge]] = await db.query(
-      "SELECT destination FROM auth_email_challenges WHERE id=? LIMIT 1",
+      "SELECT destination,destination_encrypted FROM auth_email_challenges WHERE id=? LIMIT 1",
       [challengeId],
     );
-    const email = challenge?.destination;
+    const email = accountEmail.decode(
+      challenge,
+      "auth_email_challenges",
+      "destination",
+    );
     if (!email || email !== result.account.pending_email)
       return res.status(400).json({
         success: false,
@@ -193,11 +192,18 @@ router.post("/me/email/verify", otpLimiter, async (req, res) => {
       return res.status(409).json(emailInUseResponse);
 
     await db.query(
-      "UPDATE patient_accounts SET email=?, email_verified_at=NOW(), pending_email=NULL WHERE id=? AND pending_email=?",
-      [email, req.patient.id, email],
+      "UPDATE patient_accounts SET email=NULL,email_encrypted=?,email_hash=?, email_verified_at=NOW(), pending_email=NULL,pending_email_encrypted=NULL,pending_email_hash=NULL WHERE id=? AND (pending_email_hash=? OR (pending_email_hash IS NULL AND pending_email=?))",
+      [
+        accountEmail.encode(email, "patient_accounts"),
+        accountEmail.lookup(email),
+        req.patient.id,
+        accountEmail.lookup(email),
+        email,
+      ],
     );
     Object.assign(req.patient, {
       email,
+      email_encrypted: accountEmail.encode(email, "patient_accounts"),
       email_verified_at: new Date(),
       pending_email: null,
     });
@@ -206,7 +212,10 @@ router.post("/me/email/verify", otpLimiter, async (req, res) => {
   } catch (error) {
     if (error.code === "ER_DUP_ENTRY")
       return res.status(409).json(emailInUseResponse);
-    console.error("Patient email verification failed:", error.message);
+    console.error(
+      "Patient email verification failed:",
+      require("../utils/safeError").safeError(error),
+    );
     return res
       .status(500)
       .json({ success: false, message: "ไม่สามารถยืนยันอีเมลได้" });
@@ -240,7 +249,7 @@ router.post("/me/email/resend", otpLimiter, async (req, res) => {
       });
     return res.json(result);
   } catch (error) {
-    console.error("Patient email resend failed:", error.code || error.message);
+    console.error("Patient email resend failed:", error.code || error.name);
     return res
       .status(503)
       .json({ success: false, message: "ไม่สามารถส่งรหัสใหม่ได้" });
@@ -250,7 +259,7 @@ router.post("/me/email/resend", otpLimiter, async (req, res) => {
 router.get("/history", async (req, res) => {
   try {
     const [responses] = await db.query(
-      "SELECT fr.id, fr.master_case_id, fr.form_id, fr.submitted_at, fr.status, fr.risk_level, f.title AS form_title, f.clinic_type, fr.summary_data FROM form_responses fr LEFT JOIN forms f ON fr.form_id = f.id WHERE fr.patient_account_id = ? OR (fr.patient_account_id IS NULL AND ? IS NOT NULL AND fr.identity_hash = ?) ORDER BY fr.submitted_at DESC",
+      "SELECT fr.id, fr.organization_id, fr.master_case_id, fr.form_id, fr.submitted_at, fr.status, fr.risk_level, f.title AS form_title, f.clinic_type, fr.summary_data FROM form_responses fr LEFT JOIN forms f ON fr.form_id = f.id WHERE fr.organization_id IS NOT NULL AND (fr.patient_account_id = ? OR (fr.patient_account_id IS NULL AND ? IS NOT NULL AND fr.identity_hash = ?)) ORDER BY fr.submitted_at DESC",
       [req.patient.id, req.patient.identity_hash, req.patient.identity_hash],
     );
     const ids = [
@@ -259,19 +268,26 @@ router.get("/history", async (req, res) => {
     let masterCases = [];
     if (ids.length) {
       [masterCases] = await db.query(
-        "SELECT id, identityValue, clinicType, status, overall_risk, currentStage, createdAt, updatedAt FROM mastercases WHERE id IN (?) ORDER BY createdAt DESC",
-        [ids],
+        "SELECT mc.id,mc.organization_id,mc.identityValue,mc.clinicType,mc.status,mc.overall_risk,mc.currentStage,mc.createdAt,mc.updatedAt FROM mastercases mc WHERE mc.id IN (?) AND EXISTS (SELECT 1 FROM form_responses fr WHERE fr.master_case_id=mc.id AND fr.organization_id=mc.organization_id AND (fr.patient_account_id=? OR (fr.patient_account_id IS NULL AND ? IS NOT NULL AND fr.identity_hash=?))) ORDER BY mc.createdAt DESC",
+        [
+          ids,
+          req.patient.id,
+          req.patient.identity_hash,
+          req.patient.identity_hash,
+        ],
       );
     } else if (req.patient.identity_hash) {
       [masterCases] = await db.query(
-        "SELECT id, identityValue, clinicType, status, overall_risk, currentStage, createdAt, updatedAt FROM mastercases WHERE identity_hash = ? ORDER BY createdAt DESC",
+        "SELECT id,organization_id, identityValue, clinicType, status, overall_risk, currentStage, createdAt, updatedAt FROM mastercases WHERE identity_hash = ? AND organization_id IS NOT NULL ORDER BY createdAt DESC",
         [req.patient.identity_hash],
       );
     }
-    const sanitized = responses.map((row) => ({
-      ...row,
-      summary_data: decryptSummary(row.summary_data),
-    }));
+    masterCases = masterCases.map((row) =>
+      require("../utils/decryptCaseData").decryptCaseResponse(row, safeDecrypt),
+    );
+    const sanitized = responses.map((row) =>
+      require("../utils/decryptCaseData").decryptCaseResponse(row, safeDecrypt),
+    );
     const identityValue = safeDecrypt(masterCases[0]?.identityValue);
     const identityMasked =
       identityValue && /^\d{13}$/.test(String(identityValue))
@@ -288,19 +304,31 @@ router.get("/history", async (req, res) => {
     profile.phone =
       cleanProfilePhone(safeDecrypt(req.patient.phone_encrypted)) ||
       historicalProfile.phone;
+    await require("../utils/pdpaAudit").requiredPatientAudit(
+      req,
+      "history.read",
+      req.patient.id,
+      { count: responses.length },
+    );
     return res.json({
       success: true,
       profile,
       identity_masked: identityMasked,
       masterCases: masterCases.map(
-        ({ identityValue: _identityValue, ...row }) => row,
+        ({ identityValue: _identityValue, ...row }) => ({
+          ...row,
+          overall_risk: safeDecrypt(row.overall_risk),
+        }),
       ),
       responses: sanitized,
     });
   } catch (error) {
-    console.error("Patient history failed:", error.message);
+    console.error(
+      "Patient history failed:",
+      require("../utils/safeError").safeError(error),
+    );
     return res
-      .status(500)
+      .status(error.status || 500)
       .json({ success: false, message: "ไม่สามารถโหลดประวัติได้" });
   }
 });
@@ -316,6 +344,12 @@ router.get("/history/responses/:id/answers", async (req, res) => {
       "SELECT question_id, question_title, answer_value FROM form_answers WHERE response_id = ? ORDER BY id ASC",
       [response.id],
     );
+    await require("../utils/pdpaAudit").requiredPatientAudit(
+      req,
+      "answers.read",
+      response.id,
+      { count: rows.length },
+    );
     res.json(
       rows.map((row) => ({
         ...row,
@@ -323,11 +357,14 @@ router.get("/history/responses/:id/answers", async (req, res) => {
           row.answer_value,
           row.question_title,
           safeDecrypt,
+          response.organization_id,
         ),
       })),
     );
   } catch (error) {
-    res.status(500).json({ success: false, message: "ไม่สามารถโหลดคำตอบได้" });
+    res
+      .status(error.status || 500)
+      .json({ success: false, message: "ไม่สามารถโหลดคำตอบได้" });
   }
 });
 
@@ -339,13 +376,29 @@ router.get("/history/responses/:id/logs", async (req, res) => {
       .json({ success: false, message: "ไม่พบข้อมูลประวัติ" });
   try {
     const [rows] = await db.query(
-      "SELECT * FROM case_logs WHERE response_id = ? ORDER BY created_at DESC",
-      [response.id],
+      "SELECT id,type,detail,created_at FROM case_logs WHERE response_id = ? AND patient_visible=1 AND (master_case_id IS NULL OR master_case_id=?) ORDER BY created_at DESC",
+      [response.id, response.master_case_id],
     );
-    res.json(rows);
-  } catch {
+    await require("../utils/pdpaAudit").requiredPatientAudit(
+      req,
+      "patient_notes.read",
+      response.id,
+      { count: rows.length },
+    );
+    res.json(
+      rows.map((row) => ({
+        ...row,
+        detail: require("../utils/privateField").readField(
+          row.detail,
+          "case_logs",
+          "detail",
+          response.organization_id,
+        ),
+      })),
+    );
+  } catch (error) {
     res
-      .status(500)
+      .status(error.status || 500)
       .json({ success: false, message: "ไม่สามารถโหลดประวัติการติดตามได้" });
   }
 });
@@ -373,13 +426,24 @@ router.patch("/history/responses/:id", async (req, res) => {
       [response.id],
     );
     // Keep the stored encrypted representation of unrelated fields intact.
-    const summary = parseJson(rows[0]?.summary_data);
-    summary[field] = ["display_name", "phone"].includes(field)
-      ? require("../utils/patientAuth").encrypt(value.trim())
-      : value.trim();
+    const summary = decryptSummaryData(
+      rows[0]?.summary_data,
+      safeDecrypt,
+      response.organization_id,
+    );
+    summary[field] = value.trim();
     summary[`${field}_updated_at`] = new Date().toISOString();
     await db.query("UPDATE form_responses SET summary_data = ? WHERE id = ?", [
-      JSON.stringify(summary),
+      JSON.stringify(
+        sealJson(
+          summary,
+          fieldContext(
+            "form_responses",
+            "summary_data",
+            response.organization_id,
+          ),
+        ),
+      ),
       response.id,
     ]);
     await audit(req.patient.id, "history_response_updated", req, { field });
@@ -399,9 +463,8 @@ router.patch(
       return res
         .status(404)
         .json({ success: false, message: "ไม่พบข้อมูลประวัติ" });
-    const value =
-      typeof req.body?.value === "string" ? req.body.value.trim() : "";
-    if (!value || value.length > 2000)
+    const value = req.body?.value;
+    if (value === undefined || JSON.stringify(value).length > 20000)
       return res
         .status(400)
         .json({ success: false, message: "คำตอบไม่ถูกต้อง" });
@@ -414,12 +477,10 @@ router.patch(
         return res
           .status(404)
           .json({ success: false, message: "ไม่พบคำถามนี้ในแบบประเมิน" });
-      const sensitive = /ชื่อ|เบอร์|โทร|บัตร/.test(
-        answerRows[0].question_title || "",
+      const saved = sealJson(
+        value,
+        fieldContext("form_answers", "answer_value", response.organization_id),
       );
-      const saved = sensitive
-        ? require("../utils/patientAuth").encrypt(value)
-        : value;
       await db.query(
         "UPDATE form_answers SET answer_value = ? WHERE id = ? AND response_id = ?",
         [JSON.stringify(saved), answerRows[0].id, response.id],

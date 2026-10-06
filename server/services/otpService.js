@@ -56,14 +56,18 @@ async function createChallenge(
     const opaque = newToken();
     const otp = newOtp();
     const [result] = await connection.query(
-      `INSERT INTO auth_email_challenges (token_hash, account_type, account_id, purpose, destination, otp_hmac, generation, auth_version_snapshot, attempts, expires_at, resend_after, send_status)
-       VALUES (?, ?, ?, ?, ?, '', 1, ?, 0, DATE_ADD(NOW(), INTERVAL ? SECOND), DATE_ADD(NOW(), INTERVAL ? SECOND), 'sending')`,
+      `INSERT INTO auth_email_challenges (token_hash, account_type, account_id, purpose, destination, destination_encrypted, otp_hmac, generation, auth_version_snapshot, attempts, expires_at, resend_after, send_status)
+       VALUES (?, ?, ?, ?, '', ?, '', 1, ?, 0, DATE_ADD(NOW(), INTERVAL ? SECOND), DATE_ADD(NOW(), INTERVAL ? SECOND), 'sending')`,
       [
         tokenHash(opaque),
         accountType,
         accountId,
         purpose,
-        destination,
+        require("../utils/accountEmail").encode(
+          destination,
+          "auth_email_challenges",
+          "destination",
+        ),
         authVersion,
         ttlSeconds(),
         cooldownSeconds(),
@@ -268,7 +272,11 @@ async function resendChallenge(db, { challengeToken, accountType, purpose }) {
       id: challenge.id,
       generation,
       otp,
-      destination: challenge.destination,
+      destination: require("../utils/accountEmail").decode(
+        challenge,
+        "auth_email_challenges",
+        "destination",
+      ),
     };
   } catch (error) {
     await connection.rollback();

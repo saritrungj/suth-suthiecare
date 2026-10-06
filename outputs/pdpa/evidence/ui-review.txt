@@ -1,0 +1,229 @@
+[WebServer] (node:16484) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:33020) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 40 tests using 1 worker
+
+(node:17416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › e2e\organization-hierarchy.spec.js:135:1 › system admin sees both school and hospital menus while changing unit context (1.9s)
+  ok  2 [desktop-chromium] › e2e\organization-hierarchy.spec.js:158:1 › unit role rights are edited under the selected organization (1.7s)
+  ok  3 [desktop-chromium] › e2e\organization-hierarchy.spec.js:180:1 › main organizations choose the type, sub-units inherit it, members are added by checkbox (3.8s)
+  ok  4 [desktop-chromium] › e2e\organization-hierarchy.spec.js:226:1 › system-wide settings sit in their own admin section (1.4s)
+  ok  5 [desktop-chromium] › e2e\organization-hierarchy.spec.js:256:1 › an organization member does not get the admin section (1.2s)
+  ok  6 [desktop-chromium] › e2e\pdpa-flows.spec.js:3:1 › case invitation requires the patient account and rejects another recipient (2.8s)
+  ok  7 [desktop-chromium] › e2e\pdpa-flows.spec.js:18:1 › System Admin configures explicit referral destinations in a unit with session CSRF (1.8s)
+  ok  8 [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:47:1 › new management sections follow the existing controls on desktop and mobile (2.8s)
+  x   9 [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:69:1 › settings save independently, preserve other edits, and report the retention preview (13.0s)
+(node:38172) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 10 [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:107:1 › a failed section does not block the other settings (1.9s)
+  x  11 [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:116:1 › patient requests retain input on failure and show readable status after retry (31.8s)
+(node:8516) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 12 [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:146:1 › privacy notice sits with the form and consent remains keyboard accessible (3.9s)
+  ok 13 [desktop-chromium] › e2e\public-flows.spec.js:9:1 › history requires patient login before loading any record (2.2s)
+  ok 14 [desktop-chromium] › e2e\public-flows.spec.js:20:1 › patient authentication keeps the selected language across login and register (2.2s)
+  ok 15 [desktop-chromium] › e2e\public-flows.spec.js:38:1 › patient login can continue to the protected history route (2.2s)
+  ok 16 [desktop-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (7.2s)
+  ok 17 [desktop-chromium] › e2e\public-flows.spec.js:101:1 › history hero shows the currently signed-in patient profile (7.2s)
+  ok 18 [desktop-chromium] › e2e\public-flows.spec.js:147:1 › homepage navbar shows the signed-in patient and can log out (2.6s)
+  ok 19 [desktop-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code (5.0s)
+  ok 20 [desktop-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit (6.7s)
+(node:40732) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  21 [mobile-chromium] › e2e\organization-hierarchy.spec.js:135:1 › system admin sees both school and hospital menus while changing unit context
+  ok 22 [mobile-chromium] › e2e\organization-hierarchy.spec.js:158:1 › unit role rights are edited under the selected organization (4.0s)
+  -  23 [mobile-chromium] › e2e\organization-hierarchy.spec.js:180:1 › main organizations choose the type, sub-units inherit it, members are added by checkbox
+  -  24 [mobile-chromium] › e2e\organization-hierarchy.spec.js:226:1 › system-wide settings sit in their own admin section
+  -  25 [mobile-chromium] › e2e\organization-hierarchy.spec.js:256:1 › an organization member does not get the admin section
+  ok 26 [mobile-chromium] › e2e\pdpa-flows.spec.js:3:1 › case invitation requires the patient account and rejects another recipient (4.7s)
+  ok 27 [mobile-chromium] › e2e\pdpa-flows.spec.js:18:1 › System Admin configures explicit referral destinations in a unit with session CSRF (4.0s)
+  ok 28 [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:47:1 › new management sections follow the existing controls on desktop and mobile (8.5s)
+  x  29 [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:69:1 › settings save independently, preserve other edits, and report the retention preview (17.3s)
+(node:22704) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 30 [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:107:1 › a failed section does not block the other settings (3.5s)
+  x  31 [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:116:1 › patient requests retain input on failure and show readable status after retry (31.2s)
+(node:27412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 32 [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:146:1 › privacy notice sits with the form and consent remains keyboard accessible (2.9s)
+  ok 33 [mobile-chromium] › e2e\public-flows.spec.js:9:1 › history requires patient login before loading any record (1.4s)
+  ok 34 [mobile-chromium] › e2e\public-flows.spec.js:20:1 › patient authentication keeps the selected language across login and register (1.5s)
+  ok 35 [mobile-chromium] › e2e\public-flows.spec.js:38:1 › patient login can continue to the protected history route (1.3s)
+  ok 36 [mobile-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (6.6s)
+  ok 37 [mobile-chromium] › e2e\public-flows.spec.js:101:1 › history hero shows the currently signed-in patient profile (3.0s)
+  ok 38 [mobile-chromium] › e2e\public-flows.spec.js:147:1 › homepage navbar shows the signed-in patient and can log out (4.6s)
+  ok 39 [mobile-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code (4.6s)
+  ok 40 [mobile-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit (6.2s)
+
+
+  1) [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:69:1 › settings save independently, preserve other edits, and report the retention preview 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 0
+    + Received  + 2
+
+      Object {
+    +   "permissions": Object {
+          "clinical.view": true,
+          "pii.view": true,
+    +   },
+      }
+
+    Call Log:
+    - Timeout 10000ms exceeded while waiting on the predicate
+
+      86 |   await member.getByRole('checkbox',{name:'เปิดข้อมูลสุขภาพ'}).check();
+      87 |   await member.getByRole('button',{name:'บันทึกสิทธิ์',exact:true}).click();
+    > 88 |   await expect.poll(()=>received.member).toEqual({'pii.view':true,'clinical.view':true});
+         |                                          ^
+      89 |   const purpose=panel('วัตถุประสงค์และประกาศ'); await purpose.locator('summary').click();
+      90 |   await purpose.getByLabel('ฟอร์ม',{exact:true}).selectOption('101');
+      91 |   await purpose.getByLabel('รหัสวัตถุประสงค์').fill('demo');
+        at D:\github-clone\suth-suthiecare\app\e2e\pdpa-settings-ui.spec.js:88:42
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-desktop-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:116:1 › patient requests retain input on failure and show readable status after retry 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.selectOption: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: 'คำขอเกี่ยวกับข้อมูลส่วนบุคคล' }).getByLabel('หน่วยงาน', { exact: true })
+
+
+      130 |   const section=page.getByRole('region',{name:'คำขอเกี่ยวกับข้อมูลส่วนบุคคล'});
+      131 |   await section.locator('summary').click();
+    > 132 |   await section.getByLabel('หน่วยงาน',{exact:true}).selectOption('1');
+          |                                                     ^
+      133 |   await section.getByLabel('รายละเอียด',{exact:true}).fill('ขอข้อมูลสาธิต');
+      134 |   await section.getByRole('button',{name:'ส่งคำขอ',exact:true}).click();
+      135 |   await expect(section.getByRole('alert')).toContainText('ส่งคำขอไม่สำเร็จ');
+        at D:\github-clone\suth-suthiecare\app\e2e\pdpa-settings-ui.spec.js:132:53
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-patient-r-12482-readable-status-after-retry-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-patient-r-12482-readable-status-after-retry-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-patient-r-12482-readable-status-after-retry-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-patient-r-12482-readable-status-after-retry-desktop-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-patient-r-12482-readable-status-after-retry-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:69:1 › settings save independently, preserve other edits, and report the retention preview 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 0
+    + Received  + 2
+
+      Object {
+    +   "permissions": Object {
+          "clinical.view": true,
+          "pii.view": true,
+    +   },
+      }
+
+    Call Log:
+    - Timeout 10000ms exceeded while waiting on the predicate
+
+      86 |   await member.getByRole('checkbox',{name:'เปิดข้อมูลสุขภาพ'}).check();
+      87 |   await member.getByRole('button',{name:'บันทึกสิทธิ์',exact:true}).click();
+    > 88 |   await expect.poll(()=>received.member).toEqual({permissions:{'pii.view':true,'clinical.view':true}});
+         |                                          ^
+      89 |   const purpose=panel('วัตถุประสงค์และประกาศ'); await purpose.locator('summary').click();
+      90 |   await purpose.getByRole('combobox',{name:'ฟอร์ม',exact:true}).selectOption('101');
+      91 |   await purpose.getByLabel('รหัสวัตถุประสงค์').fill('demo');
+        at D:\github-clone\suth-suthiecare\app\e2e\pdpa-settings-ui.spec.js:88:42
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-mobile-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-settings--9a36a-eport-the-retention-preview-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:116:1 › patient requests retain input on failure and show readable status after retry 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.selectOption: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('region', { name: 'คำขอเกี่ยวกับข้อมูลส่วนบุคคล' }).getByLabel('หน่วยงาน', { exact: true })
+
+
+      130 |   const section=page.getByRole('region',{name:'คำขอเกี่ยวกับข้อมูลส่วนบุคคล'});
+      131 |   await section.locator('summary').click();
+    > 132 |   await section.getByRole('combobox',{name:'หน่วยงาน',exact:true}).selectOption('1');
+          |                                                     ^
+      133 |   await section.getByRole('textbox',{name:/^รายละเอียด/}).fill('ขอข้อมูลสาธิต');
+      134 |   await section.getByRole('button',{name:'ส่งคำขอ',exact:true}).click();
+      135 |   await expect(section.getByRole('alert')).toContainText('ส่งคำขอไม่สำเร็จ');
+        at D:\github-clone\suth-suthiecare\app\e2e\pdpa-settings-ui.spec.js:132:53
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-patient-r-12482-readable-status-after-retry-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-patient-r-12482-readable-status-after-retry-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-patient-r-12482-readable-status-after-retry-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-patient-r-12482-readable-status-after-retry-mobile-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace ..\outputs\pdpa\evidence\ui-review\pdpa-settings-ui-patient-r-12482-readable-status-after-retry-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:69:1 › settings save independently, preserve other edits, and report the retention preview 
+    [desktop-chromium] › e2e\pdpa-settings-ui.spec.js:116:1 › patient requests retain input on failure and show readable status after retry 
+    [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:69:1 › settings save independently, preserve other edits, and report the retention preview 
+    [mobile-chromium] › e2e\pdpa-settings-ui.spec.js:116:1 › patient requests retain input on failure and show readable status after retry 
+  4 skipped
+  32 passed (3.8m)

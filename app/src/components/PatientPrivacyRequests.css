@@ -1,0 +1,30 @@
+.patient-privacy.management-settings {
+  margin: 0 0 24px;
+  padding: 0 20px;
+  border: 1px solid var(--gray-200, var(--suth-line));
+  border-radius: 14px;
+  background: var(--suth-surface);
+  font-family: inherit;
+}
+.patient-privacy .settings-panel,
+.patient-privacy .settings-panel:last-child {
+  border: 0;
+}
+.patient-privacy .settings-panel-content {
+  padding-left: 0;
+}
+.patient-privacy .patient-privacy-history {
+  margin: 28px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--suth-line);
+  align-items: center;
+}
+.patient-privacy-history h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+@media (max-width: 600px) {
+  .patient-privacy.management-settings {
+    padding: 0 16px;
+  }
+}

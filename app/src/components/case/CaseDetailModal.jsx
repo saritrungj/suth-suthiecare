@@ -1,9 +1,11 @@
+import { exportCaseData } from "../../services/api";
 import "./CaseDetailModal.css";
 import TemplateManagerModal from "./casedetail-childrens/TemplateManagerModal";
 import CaseLeftPanel from "./casedetail-childrens/CaseLeftPanel";
 import CaseHistoryTab from "./casedetail-childrens/CaseHistoryTab";
 import CaseModals from "./casedetail-childrens/CaseModals";
 import CaseActionTab from "./casedetail-childrens/CaseActionTab";
+import CaseReferralPanel from "./CaseReferralPanel";
 
 // 🟢 นำเข้า Utility Functions ที่เราแยกไฟล์ไว้
 import {
@@ -17,7 +19,7 @@ import {
   renderLogDetail,
 } from "./casedetail-childrens/logUtils";
 
-import { createPortal } from "react-dom";
+import CaseDrawer, { RiskPill, StatusPill } from "./CaseDrawer";
 import Swal from "sweetalert2";
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import {
@@ -37,6 +39,7 @@ import {
   getNoteTemplates,
   getForms,
   getMasterCasesById,
+  getPersonTimeline,
   closeMasterCase,
   updateClinicalData,
   generateSecureToken,
@@ -51,12 +54,11 @@ import {
   FaHistory,
   FaTrashAlt,
   FaChevronDown,
-  FaTimes,
+  FaCheck,
   FaCog,
   FaShareSquare,
   FaArchive,
   FaPrint,
-  FaRegCopy,
   FaClipboardList,
   FaCheckSquare,
   FaUserCircle,
@@ -78,6 +80,7 @@ export default function CaseDetailModal({
   onClose,
   onCaseUpdated,
   onCaseDeleted,
+  nav,
 }) {
   const summary = data?.summary_data || {};
   const scoreResults = useMemo(
@@ -113,11 +116,8 @@ export default function CaseDetailModal({
       defaultRisk = "ปานกลาง";
   }
 
-  // 🟢 เช็คว่าเปิดบนมือถือหรือไม่ แล้วตั้งค่าแท็บเริ่มต้นให้เป็น 'profile' สำหรับมือถือ
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const [activeTab, setActiveTab] = useState(
-    window.innerWidth <= 768 ? "profile" : "action",
-  );
+  // Tabs of the drawer: follow-up actions, the person's data, history.
+  const [activeTab, setActiveTab] = useState("action");
 
   const [historyLogs, setHistoryLogs] = useState([]);
 
@@ -176,6 +176,7 @@ export default function CaseDetailModal({
   const [riskLevel, setRiskLevel] = useState(savedRisk);
   const [clinicalImpression, setClinicalImpression] = useState("");
   const [staffNote, setStaffNote] = useState("");
+  const [patientVisible, setPatientVisible] = useState(false);
 
   const [clinicType, setClinicType] = useState(data?.clinic_type || "general");
 
@@ -329,25 +330,22 @@ export default function CaseDetailModal({
     }
   }, [data?.id]);
 
-  // 🟢 อัปเดตขนาดหน้าจอและซ่อนแท็บ Profile อัตโนมัติเมื่อหมุนเป็นแนวนอน
   useEffect(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
-      if (!mobile && activeTab === "profile") {
-        setActiveTab("action");
-      }
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [activeTab]);
-
-  useEffect(() => {
-    getForms("latest").then((res) => setFormsList(res.data));
+    let active = true;
+    let personTimelineLoaded = false;
+    setMasterCaseInfo(null);
+    setJourneyResponses([]);
+    getForms("latest")
+      .then((res) => {
+        if (active) setFormsList(res.data);
+      })
+      .catch(() => {});
     if (data?.master_case_id) {
       getMasterCasesById(data.master_case_id)
         .then((res) => {
-          setJourneyResponses(res.data.responses || []);
+          if (!active) return;
+          if (!personTimelineLoaded)
+            setJourneyResponses(res.data.responses || []);
           if (res.data.masterCases && res.data.masterCases.length > 0) {
             const masterData = res.data.masterCases[0];
             setMasterCaseInfo(masterData);
@@ -368,13 +366,29 @@ export default function CaseDetailModal({
           }
         })
         .catch((err) => {
+          if (!active) return;
           setMasterCaseInfo(null);
-          setJourneyResponses([]);
+          if (!personTimelineLoaded) setJourneyResponses([]);
         });
+      // The timeline shows the whole person file (every form and clinic). The
+      // clinic actions above still work on this Master Case only. Once loaded,
+      // the person timeline must win regardless of request completion order.
+      getPersonTimeline(data.master_case_id)
+        .then((res) => {
+          if (!active) return;
+          if (Array.isArray(res.data?.responses) && res.data.responses.length) {
+            personTimelineLoaded = true;
+            setJourneyResponses(res.data.responses);
+          }
+        })
+        .catch(() => {});
     } else {
       setMasterCaseInfo(null);
       setJourneyResponses([]);
     }
+    return () => {
+      active = false;
+    };
   }, [data?.master_case_id]);
 
   const handleSelectFollowup = async (formId) => {
@@ -386,9 +400,10 @@ export default function CaseDetailModal({
     const baseUrl = window.location.origin;
     try {
       const res = await generateSecureToken({
-        identity: data.identity_value || "",
+        response_id: data.id,
+        form_id: formId,
       });
-      const link = `${baseUrl}/assessment/${formId}?token=${encodeURIComponent(res.data.token)}`;
+      const link = res.data.link;
       setFollowupLink(link);
     } catch (err) {
       showToast("เกิดข้อผิดพลาด ไม่สามารถสร้างลิงก์ที่ปลอดภัยได้");
@@ -877,6 +892,7 @@ export default function CaseDetailModal({
         await addCaseLog(data.id, {
           master_case_id: targetMasterId,
           type: "note",
+          patient_visible: patientVisible,
           staff: getCurrentStaff(),
           staff_id: selectedStaff ? Number(selectedStaff) : null,
           detail: detailWithSession,
@@ -966,7 +982,38 @@ export default function CaseDetailModal({
     }));
   };
 
-  const handleCopyAll = () => {
+  const authorizedExport = async (format) => {
+    try {
+      const { data: exported } = await exportCaseData(
+        viewedResponse?.id || data.id,
+        format,
+      );
+      const record = exported.case;
+      return {
+        viewedResponse: record,
+        data: record,
+        displayName: record.summary_data?.display_name || "",
+        leftPanelSummary: record.summary_data || {},
+        leftPanelRawAnswers: record.summary_data?.raw_answers || {},
+        leftPanelScoreResults: record.summary_data?.score_results || [],
+        riskLevel: record.risk_level,
+        status: record.status,
+        staffNote: exported.logs[0]?.detail || "",
+      };
+    } catch (error) {
+      await Swal.fire({
+        icon: "error",
+        title: "ส่งออกไม่สำเร็จ",
+        text:
+          error.response?.data?.message ||
+          "ไม่สามารถตรวจสิทธิ์และบันทึกการส่งออกได้",
+      });
+      return null;
+    }
+  };
+  const handleCopyAll = async () => {
+    const exported = await authorizedExport("copy");
+    if (!exported) return;
     const text = generateCopyText({
       selections: {
         includeScores: true,
@@ -980,6 +1027,7 @@ export default function CaseDetailModal({
       staffNote,
       status,
       currentStaff: getCurrentStaff(),
+      ...exported,
     });
     navigator.clipboard.writeText(text);
     setShowExportMenu(false);
@@ -987,7 +1035,9 @@ export default function CaseDetailModal({
     showToast("คัดลอกทั้งหมดแล้ว!");
   };
 
-  const handleCopySelected = () => {
+  const handleCopySelected = async () => {
+    const exported = await authorizedExport("copy");
+    if (!exported) return;
     const text = generateCopyText({
       selections: copySelections,
       viewedResponse,
@@ -997,13 +1047,20 @@ export default function CaseDetailModal({
       staffNote,
       status,
       currentStaff: getCurrentStaff(),
+      ...exported,
     });
     navigator.clipboard.writeText(text);
     setShowSelectModal(false);
     showToast("คัดลอกข้อมูลที่เลือกแล้ว!");
   };
 
-  const onExportPDF = () => {
+  const onExportPDF = async () => {
+    const targetWindow = window.open("", "_blank", "width=800,height=900");
+    const exported = await authorizedExport("pdf");
+    if (!exported) {
+      targetWindow?.close();
+      return;
+    }
     executeExportPDF({
       displayName,
       viewedResponse,
@@ -1018,6 +1075,8 @@ export default function CaseDetailModal({
       showToast,
       setShowExportMenu,
       setShowExportCopySubmenu,
+      ...exported,
+      targetWindow,
     });
   };
 
@@ -1147,361 +1206,412 @@ export default function CaseDetailModal({
 
   const groupedLogs = groupLogsByDate(historyLogs);
 
-  return createPortal(
-    <>
-      <div className="cdm-overlay" onClick={onClose} role="presentation">
-        <div
-          className="cdm-card"
-          onClick={(e) => e.stopPropagation()}
-          style={{ maxWidth: "1100px" }}
-          role="dialog"
-          aria-modal="true"
-          aria-label="รายละเอียดเคส"
-        >
-          <div className="cdm-top-actions">
-            {masterCaseInfo ? (
-              <span
-                className={`cdm-badge ${masterCaseInfo.status === "Open" ? "active" : "closed"}`}
-              >
-                <span className="cdm-badge-dot"></span>
-                {masterCaseInfo.status === "Open"
-                  ? "กำลังดำเนินการ"
-                  : "ปิดเคสแล้ว"}
-              </span>
-            ) : (
-              <span className="cdm-badge legacy">
-                <span className="cdm-badge-dot"></span>เคสทั่วไป (Legacy)
-              </span>
-            )}
+  // Where the case stands in the follow-up, derived from what is saved.
+  // Steps are sequential: a later step only counts once the earlier ones
+  // are done. An unreachable person is an attempted contact, not a contact.
+  const isClosed =
+    masterCaseInfo?.status === "Closed" || savedStatus === "ปิดเคสเรียบร้อย";
+  const REACHED = [
+    "นัดหมายสำเร็จ",
+    "ขอเลื่อนนัด",
+    "อยู่ระหว่างติดตามต่อเนื่อง",
+    "ส่งต่อผู้เชี่ยวชาญ",
+    "ปฏิเสธบริการ",
+    "ปิดเคสเรียบร้อย",
+  ];
+  const contactAttempted =
+    !isClosed && savedStatus === "ติดต่อไม่ได้ / ไม่รับสาย";
+  const reached = {
+    contact: isClosed || REACHED.includes(savedStatus),
+    note: isClosed || historyLogs.some((log) => log.type === "note"),
+    appoint:
+      isClosed ||
+      historyLogs.some((log) => log.type === "appoint") ||
+      [
+        "นัดหมายสำเร็จ",
+        "ส่งต่อผู้เชี่ยวชาญ",
+        "อยู่ระหว่างติดตามต่อเนื่อง",
+      ].includes(savedStatus),
+    close: isClosed,
+  };
+  const STEP_DEFS = [
+    { id: "contact", label: "ติดต่อ", target: "case-step-contact" },
+    { id: "note", label: "บันทึกติดตาม", target: "case-step-note" },
+    { id: "appoint", label: "นัด/ส่งต่อ", target: "case-step-appoint" },
+    { id: "close", label: "ปิดเคส" },
+  ];
+  const steps = STEP_DEFS.reduce((list, step) => {
+    const previousDone = list.every((item) => item.done);
+    return [...list, { ...step, done: previousDone && reached[step.id] }];
+  }, []);
+  const currentStep = steps.find((step) => !step.done)?.id;
+  const goToStep = (step) => {
+    if (step.id === "close") {
+      if (masterCaseInfo?.status === "Open") setShowCloseCaseConfirm(true);
+      return;
+    }
+    setActiveTab("action");
+    requestAnimationFrame(() => {
+      const section = document.getElementById(step.target);
+      if (!section) return;
+      section.scrollIntoView({ block: "start", behavior: "smooth" });
+      section.querySelector("select, input, textarea, button")?.focus({
+        preventScroll: true,
+      });
+    });
+  };
 
-            {(!masterCaseInfo || masterCaseInfo.status === "Open") && (
-              <div className="cdm-dropdown" ref={manageMenuRef}>
-                <button
-                  className="cdm-btn cdm-btn-primary"
-                  onClick={() => setShowManageMenu(!showManageMenu)}
-                >
-                  <FaCog /> จัดการเคส{" "}
-                  <FaChevronDown
-                    style={{ fontSize: "10px", marginLeft: "4px" }}
-                  />
-                </button>
-                {showManageMenu && (
-                  <div className="cdm-dropdown-menu">
-                    <div
-                      className="cdm-dropdown-item"
+  const caseCode = data?.master_case_id
+    ? `MC-${String(data.master_case_id).padStart(4, "0")}`
+    : `CASE-${String(data?.id || "0").padStart(4, "0")}`;
+  const canManage = !masterCaseInfo || masterCaseInfo.status === "Open";
+  const closeMenus = () => {
+    setShowManageMenu(false);
+    setShowExportMenu(false);
+    setShowExportCopySubmenu(false);
+  };
+  const menuKeys = (event) => {
+    if (event.key === "Escape") {
+      event.stopPropagation();
+      closeMenus();
+      event.currentTarget.parentElement?.querySelector("button")?.focus();
+    }
+  };
+
+  const tabPanels = {
+    referrals: <CaseReferralPanel sourceResponseId={data.id} />,
+    profile: (
+      <CaseLeftPanel
+        leftViewMode={leftViewMode}
+        setLeftViewMode={setLeftViewMode}
+        viewingResponseId={viewingResponseId}
+        setViewingResponseId={setViewingResponseId}
+        journeyResponses={journeyResponses}
+        data={data}
+        scoreResults={leftPanelScoreResults}
+        rawAnswers={leftPanelRawAnswers}
+        stripHtml={stripHtml}
+        formatAnswer={formatAnswer}
+        formQuestions={formQuestions}
+        selectedStaff={selectedStaff}
+        staffOptions={staffOptions}
+        fullAnswers={fullAnswersMap}
+      />
+    ),
+    action: (
+      <CaseActionTab
+        masterCaseInfo={masterCaseInfo}
+        selectedStaff={selectedStaff}
+        setSelectedStaff={setSelectedStaff}
+        staffList={staffOptions}
+        customStaff={customStaff}
+        setCustomStaff={setCustomStaff}
+        isManagingStatus={isManagingStatus}
+        setIsManagingStatus={setIsManagingStatus}
+        status={status}
+        setStatus={setStatus}
+        statusOptions={statusOptions}
+        handleDeleteStatus={handleDeleteStatus}
+        newStatusName={newStatusName}
+        setNewStatusName={setNewStatusName}
+        handleAddStatus={handleAddStatus}
+        formRules={formRules}
+        showSubMetrics={showSubMetrics}
+        setShowSubMetrics={setShowSubMetrics}
+        dynamicRisks={dynamicRisks}
+        scoreResults={scoreResults}
+        editingRiskId={editingRiskId}
+        setEditingRiskId={setEditingRiskId}
+        tempRiskChange={tempRiskChange}
+        setTempRiskChange={setTempRiskChange}
+        handleDynamicRiskChange={handleDynamicRiskChange}
+        overallOptions={overallOptions}
+        riskLevel={riskLevel}
+        setRiskLevel={setRiskLevel}
+        clinicalImpression={clinicalImpression}
+        setClinicalImpression={setClinicalImpression}
+        clinicType={clinicType}
+        setIsManagingTemplates={setIsManagingTemplates}
+        activeTemplate={activeTemplate}
+        setActiveTemplate={setActiveTemplate}
+        templates={templates}
+        handleSelectTemplate={handleSelectTemplate}
+        templateAnswers={templateAnswers}
+        setTemplateAnswers={setTemplateAnswers}
+        finalizeTemplate={finalizeTemplate}
+        staffNote={staffNote}
+        patientVisible={patientVisible}
+        setPatientVisible={setPatientVisible}
+        setStaffNote={setStaffNote}
+        isAppointing={isAppointing}
+        setIsAppointing={setIsAppointing}
+        appointmentNo={appointmentNo}
+        setAppointmentNo={setAppointmentNo}
+        tempDate={tempDate}
+        setTempDate={setTempDate}
+        isManagingService={isManagingService}
+        setIsManagingService={setIsManagingService}
+        selectedServiceId={selectedServiceId}
+        setSelectedServiceId={setSelectedServiceId}
+        services={services}
+        editingServiceId={editingServiceId}
+        setEditingServiceId={setEditingServiceId}
+        editingServiceName={editingServiceName}
+        setEditingServiceName={setEditingServiceName}
+        handleEditService={handleEditService}
+        handleDeleteService={handleDeleteService}
+        newServiceName={newServiceName}
+        setNewServiceName={setNewServiceName}
+        handleAddService={handleAddService}
+        handleSaveAll={handleSaveAll}
+        stripHtml={stripHtml}
+        clinicalData={clinicalData}
+        setClinicalData={setClinicalData}
+        templateSessionNo={templateSessionNo}
+        setTemplateSessionNo={setTemplateSessionNo}
+        groupedLogs={groupedLogs}
+        staffOptions={staffOptions}
+        setStaffOptions={setStaffOptions}
+        isManagingStaff={isManagingStaff}
+        setIsManagingStaff={setIsManagingStaff}
+        newStaffName={newStaffName}
+        setNewStaffName={setNewStaffName}
+        handleAddStaff={handleAddStaff}
+        handleDeleteStaff={handleDeleteStaff}
+      />
+    ),
+    history: (
+      <CaseHistoryTab
+        groupedLogs={groupedLogs}
+        renderLogDetail={renderLogDetail}
+        staffOptions={staffOptions}
+      />
+    ),
+  };
+
+  return (
+    <CaseDrawer
+      title={displayName}
+      meta={`${caseCode} · ฟอร์มล่าสุดเข้าระบบเมื่อ ${submittedDate} น. · Response ID: RE-${String(data?.id || "0").padStart(4, "0")}`}
+      nav={nav}
+      onClose={onClose}
+      badges={
+        <>
+          {(!masterCaseInfo || masterCaseInfo.status !== "Open") && (
+            <span className="cw-case-state">
+              {masterCaseInfo ? "ปิดเคสแล้ว" : "เคสทั่วไป (Legacy)"}
+            </span>
+          )}
+          <RiskPill risk={savedRisk} label={`ความเสี่ยง ${savedRisk || "-"}`} />
+          <StatusPill status={savedStatus} />
+        </>
+      }
+      tools={
+        <>
+          <div className="cw-menu" ref={manageMenuRef}>
+            <button
+              type="button"
+              className="cw-btn-secondary"
+              aria-haspopup="true"
+              aria-expanded={showManageMenu}
+              onClick={() => {
+                setShowManageMenu(!showManageMenu);
+                setShowExportMenu(false);
+              }}
+            >
+              <FaCog aria-hidden="true" /> จัดการเคส
+              <FaChevronDown aria-hidden="true" className="cw-caret" />
+            </button>
+            {showManageMenu && (
+              <ul className="cw-menu-list" onKeyDown={menuKeys}>
+                {canManage && (
+                  <li>
+                    <button
+                      type="button"
+                      className="cw-menu-item"
                       onClick={() => {
                         setShowFollowupModal(true);
-                        setShowManageMenu(false);
+                        closeMenus();
                       }}
                     >
-                      <FaShareSquare color="#2563eb" /> ส่งแบบประเมินให้คนไข้
-                    </div>
-                    {masterCaseInfo?.status === "Open" && (
-                      <div
-                        className="cdm-dropdown-item danger"
-                        onClick={() => {
-                          setShowCloseCaseConfirm(true);
-                          setShowManageMenu(false);
-                        }}
-                      >
-                        <FaArchive color="#dc2626" /> สิ้นสุดการรักษา (ปิดเคส)
-                      </div>
-                    )}
-                  </div>
+                      <FaShareSquare aria-hidden="true" /> ส่งแบบประเมินให้คนไข้
+                    </button>
+                  </li>
                 )}
-              </div>
-            )}
-
-            <div
-              className="cdm-dropdown"
-              ref={exportMenuRef}
-              style={{ position: "relative" }}
-            >
-              <button
-                className="cdm-btn cdm-btn-outline"
-                onClick={() => {
-                  setShowExportMenu(!showExportMenu);
-                  setShowExportCopySubmenu(false);
-                }}
-              >
-                <FaPrint /> ส่งออก{" "}
-                <FaChevronDown
-                  style={{ fontSize: "10px", marginLeft: "4px" }}
-                />
-              </button>
-
-              {showExportMenu && (
-                <div className="cdm-dropdown-menu">
-                  <div className="cdm-dropdown-item" onClick={onExportPDF}>
-                    <FaPrint color="#7c3aed" /> <span>ปริ้น / ส่งออก PDF</span>
-                  </div>
-
-                  <div
-                    className="cdm-dropdown-item cdm-submenu-toggle"
-                    onClick={() =>
-                      setShowExportCopySubmenu(!showExportCopySubmenu)
-                    }
-                  >
-                    <span
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
+                {masterCaseInfo?.status === "Open" && (
+                  <li>
+                    <button
+                      type="button"
+                      className="cw-menu-item"
+                      onClick={() => {
+                        setShowCloseCaseConfirm(true);
+                        closeMenus();
                       }}
                     >
-                      <FaRegCopy color="#1967d2" /> คัดลอก{" "}
-                    </span>
-                    <FaChevronDown
-                      className={`cdm-submenu-arrow ${showExportCopySubmenu ? "open" : ""}`}
-                    />
-                  </div>
-
-                  {showExportCopySubmenu && (
-                    <div className="cdm-export-submenu">
-                      <div
-                        className="cdm-dropdown-item"
-                        onClick={handleCopyAll}
-                      >
-                        <FaClipboardList color="#1967d2" /> คัดลอกทั้งหมด
-                      </div>
-                      <div
-                        className="cdm-dropdown-item"
-                        onClick={() => {
-                          setShowExportMenu(false);
-                          setShowExportCopySubmenu(false);
-                          setShowSelectModal(true);
-                        }}
-                      >
-                        <FaCheckSquare color="#0f766e" /> เลือกข้อเอง...
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <button
-              className="cdm-delete-btn"
-              onClick={() => setShowDeleteConfirm(true)}
-              title="ลบแบบประเมินนี้ทิ้ง"
-            >
-              <FaTrashAlt />
-            </button>
-            <button
-              className="cdm-close-btn"
-              onClick={onClose}
-              aria-label="ปิดหน้าต่าง"
-            >
-              <FaTimes />
-            </button>
-          </div>
-
-          <div className="cdm-header">
-            <h2>{displayName}</h2>
-            <p>
-              ฟอร์มล่าสุดเข้าระบบเมื่อ {submittedDate} น. | Response ID: RE-
-              {String(data?.id || "0").padStart(4, "0")}
-            </p>
-          </div>
-
-          {/* 🟢 อัปเดต Layout ให้อ่าน State isMobile */}
-          <div
-            className="cdm-body-grid"
-            style={{ display: isMobile ? "flex" : "grid" }}
-          >
-            {/* Desktop Left Panel (ซ่อนถ้าเป็นมือถือ) */}
-            {!isMobile && (
-              <CaseLeftPanel
-                leftViewMode={leftViewMode}
-                setLeftViewMode={setLeftViewMode}
-                viewingResponseId={viewingResponseId}
-                setViewingResponseId={setViewingResponseId}
-                journeyResponses={journeyResponses}
-                data={data}
-                scoreResults={leftPanelScoreResults}
-                rawAnswers={leftPanelRawAnswers}
-                stripHtml={stripHtml}
-                formatAnswer={formatAnswer}
-                formQuestions={formQuestions}
-                selectedStaff={selectedStaff}
-                staffOptions={staffOptions}
-                fullAnswers={fullAnswersMap}
-              />
-            )}
-
-            <div className="cdm-right-panel" style={{ flex: 1 }}>
-              <div className="cdm-panel-tabs">
-                {/* 🟢 แสดงแท็บ ข้อมูลผู้ป่วย เฉพาะบนมือถือ */}
-                {isMobile && (
+                      <FaArchive aria-hidden="true" /> สิ้นสุดการรักษา (ปิดเคส)
+                    </button>
+                  </li>
+                )}
+                <li className="cw-menu-sep" role="separator" />
+                <li>
                   <button
-                    className={`cdm-tab-btn ${activeTab === "profile" ? "active" : ""}`}
-                    onClick={() => setActiveTab("profile")}
+                    type="button"
+                    className="cw-menu-item is-danger"
+                    onClick={() => {
+                      setShowDeleteConfirm(true);
+                      closeMenus();
+                    }}
                   >
-                    <FaUserCircle size={18} /> ข้อมูล
+                    <FaTrashAlt aria-hidden="true" /> ลบแบบประเมินนี้ทิ้ง
                   </button>
-                )}
-                <button
-                  className={`cdm-tab-btn ${activeTab === "action" ? "active" : ""}`}
-                  onClick={() => setActiveTab("action")}
-                >
-                  <FaRegEdit size={18} /> จัดการ
-                </button>
-                <button
-                  className={`cdm-tab-btn ${activeTab === "history" ? "active" : ""}`}
-                  onClick={() => setActiveTab("history")}
-                >
-                  <FaHistory size={18} /> ประวัติ
-                </button>
-              </div>
-
-              <div className="cdm-tab-content">
-                {/* 🟢 แสดงเนื้อหาในแท็บตามที่เลือก */}
-                {isMobile && activeTab === "profile" && (
-                  <CaseLeftPanel
-                    leftViewMode={leftViewMode}
-                    setLeftViewMode={setLeftViewMode}
-                    viewingResponseId={viewingResponseId}
-                    setViewingResponseId={setViewingResponseId}
-                    journeyResponses={journeyResponses}
-                    data={data}
-                    scoreResults={leftPanelScoreResults}
-                    rawAnswers={leftPanelRawAnswers}
-                    stripHtml={stripHtml}
-                    formatAnswer={formatAnswer}
-                    formQuestions={formQuestions}
-                    selectedStaff={selectedStaff}
-                    staffOptions={staffOptions}
-                    fullAnswers={fullAnswersMap}
-                  />
-                )}
-                {activeTab === "action" && (
-                  <CaseActionTab
-                    masterCaseInfo={masterCaseInfo}
-                    selectedStaff={selectedStaff}
-                    setSelectedStaff={setSelectedStaff}
-                    staffList={staffOptions}
-                    customStaff={customStaff}
-                    setCustomStaff={setCustomStaff}
-                    isManagingStatus={isManagingStatus}
-                    setIsManagingStatus={setIsManagingStatus}
-                    status={status}
-                    setStatus={setStatus}
-                    statusOptions={statusOptions}
-                    handleDeleteStatus={handleDeleteStatus}
-                    newStatusName={newStatusName}
-                    setNewStatusName={setNewStatusName}
-                    handleAddStatus={handleAddStatus}
-                    formRules={formRules}
-                    showSubMetrics={showSubMetrics}
-                    setShowSubMetrics={setShowSubMetrics}
-                    dynamicRisks={dynamicRisks}
-                    scoreResults={scoreResults}
-                    editingRiskId={editingRiskId}
-                    setEditingRiskId={setEditingRiskId}
-                    tempRiskChange={tempRiskChange}
-                    setTempRiskChange={setTempRiskChange}
-                    handleDynamicRiskChange={handleDynamicRiskChange}
-                    overallOptions={overallOptions}
-                    riskLevel={riskLevel}
-                    setRiskLevel={setRiskLevel}
-                    clinicalImpression={clinicalImpression}
-                    setClinicalImpression={setClinicalImpression}
-                    clinicType={clinicType}
-                    setIsManagingTemplates={setIsManagingTemplates}
-                    activeTemplate={activeTemplate}
-                    setActiveTemplate={setActiveTemplate}
-                    templates={templates}
-                    handleSelectTemplate={handleSelectTemplate}
-                    templateAnswers={templateAnswers}
-                    setTemplateAnswers={setTemplateAnswers}
-                    finalizeTemplate={finalizeTemplate}
-                    staffNote={staffNote}
-                    setStaffNote={setStaffNote}
-                    isAppointing={isAppointing}
-                    setIsAppointing={setIsAppointing}
-                    appointmentNo={appointmentNo}
-                    setAppointmentNo={setAppointmentNo}
-                    tempDate={tempDate}
-                    setTempDate={setTempDate}
-                    isManagingService={isManagingService}
-                    setIsManagingService={setIsManagingService}
-                    selectedServiceId={selectedServiceId}
-                    setSelectedServiceId={setSelectedServiceId}
-                    services={services}
-                    editingServiceId={editingServiceId}
-                    setEditingServiceId={setEditingServiceId}
-                    editingServiceName={editingServiceName}
-                    setEditingServiceName={setEditingServiceName}
-                    handleEditService={handleEditService}
-                    handleDeleteService={handleDeleteService}
-                    newServiceName={newServiceName}
-                    setNewServiceName={setNewServiceName}
-                    handleAddService={handleAddService}
-                    handleSaveAll={handleSaveAll}
-                    stripHtml={stripHtml}
-                    clinicalData={clinicalData}
-                    setClinicalData={setClinicalData}
-                    templateSessionNo={templateSessionNo}
-                    setTemplateSessionNo={setTemplateSessionNo}
-                    groupedLogs={groupedLogs}
-                    staffOptions={staffOptions}
-                    setStaffOptions={setStaffOptions}
-                    isManagingStaff={isManagingStaff}
-                    setIsManagingStaff={setIsManagingStaff}
-                    newStaffName={newStaffName}
-                    setNewStaffName={setNewStaffName}
-                    handleAddStaff={handleAddStaff}
-                    handleDeleteStaff={handleDeleteStaff}
-                  />
-                )}
-                {activeTab === "history" && (
-                  <CaseHistoryTab
-                    groupedLogs={groupedLogs}
-                    renderLogDetail={renderLogDetail}
-                    staffOptions={staffOptions}
-                  />
-                )}
-              </div>
-            </div>
+                </li>
+              </ul>
+            )}
           </div>
-        </div>
-      </div>
-
-      <CaseModals
-        showFollowupModal={showFollowupModal}
-        setShowFollowupModal={setShowFollowupModal}
-        formsList={relevantForms}
-        selectedFollowupForm={selectedFollowupForm}
-        handleSelectFollowup={handleSelectFollowup}
-        followupLink={followupLink}
-        copyFollowupLink={copyFollowupLink}
-        showCloseCaseConfirm={showCloseCaseConfirm}
-        setShowCloseCaseConfirm={setShowCloseCaseConfirm}
-        handleCloseMasterCase={handleCloseMasterCase}
-        isDeleting={isDeleting}
-        showSelectModal={showSelectModal}
-        setShowSelectModal={setShowSelectModal}
-        rawAnswers={leftPanelRawAnswers}
-        copySelections={copySelections}
-        toggleQuestionCheck={toggleQuestionCheck}
-        setCopySelections={setCopySelections}
-        handleCopySelected={handleCopySelected}
-        stripHtml={stripHtml}
-        showDeleteConfirm={showDeleteConfirm}
-        setShowDeleteConfirm={setShowDeleteConfirm}
-        handleDeleteCase={handleDeleteCase}
-      />
-
-      {isManagingTemplates && (
-        <TemplateManagerModal
-          clinicType={clinicType}
-          onClose={() => setIsManagingTemplates(false)}
-          onRefresh={fetchTemplates}
-          showToast={showToast}
-        />
-      )}
-      {toastMsg && <div className="cdm-toast-msg">{toastMsg}</div>}
-    </>,
-    document.body,
+          <div className="cw-menu" ref={exportMenuRef}>
+            <button
+              type="button"
+              className="cw-btn-secondary"
+              aria-haspopup="true"
+              aria-expanded={showExportMenu}
+              onClick={() => {
+                setShowExportMenu(!showExportMenu);
+                setShowExportCopySubmenu(false);
+                setShowManageMenu(false);
+              }}
+            >
+              <FaPrint aria-hidden="true" /> ส่งออก
+              <FaChevronDown aria-hidden="true" className="cw-caret" />
+            </button>
+            {showExportMenu && (
+              <ul className="cw-menu-list" onKeyDown={menuKeys}>
+                <li>
+                  <button
+                    type="button"
+                    className="cw-menu-item"
+                    onClick={onExportPDF}
+                  >
+                    <FaPrint aria-hidden="true" /> ปริ้น / ส่งออก PDF
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    className="cw-menu-item"
+                    onClick={handleCopyAll}
+                  >
+                    <FaClipboardList aria-hidden="true" /> คัดลอกทั้งหมด
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    className="cw-menu-item"
+                    onClick={() => {
+                      closeMenus();
+                      setShowSelectModal(true);
+                    }}
+                  >
+                    <FaCheckSquare aria-hidden="true" /> คัดลอกเฉพาะข้อที่เลือก
+                  </button>
+                </li>
+              </ul>
+            )}
+          </div>
+        </>
+      }
+      steps={
+        <ol className="cw-steps" aria-label="ขั้นตอนการติดตามเคส">
+          {steps.map((step, index) => (
+            <li key={step.id}>
+              <button
+                type="button"
+                className={`cw-step ${step.done ? "is-done" : ""} ${currentStep === step.id ? "is-current" : ""} ${step.id === "contact" && contactAttempted ? "is-attempted" : ""}`}
+                aria-current={currentStep === step.id ? "step" : undefined}
+                disabled={
+                  step.id === "close" && masterCaseInfo?.status !== "Open"
+                }
+                onClick={() => goToStep(step)}
+              >
+                <span className="cw-step-mark" aria-hidden="true">
+                  {step.done ? (
+                    <FaCheck />
+                  ) : step.id === "contact" && contactAttempted ? (
+                    "!"
+                  ) : (
+                    index + 1
+                  )}
+                </span>
+                <span className="cw-step-text">
+                  {step.label}
+                  {step.id === "contact" && contactAttempted && (
+                    <small>ติดต่อไม่ได้</small>
+                  )}
+                </span>
+                <span className="cw-sr-only">
+                  {step.done ? " (เสร็จแล้ว)" : ""}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      }
+      tabs={[
+        { id: "action", label: "ติดตาม", icon: FaRegEdit },
+        { id: "profile", label: "ข้อมูล", icon: FaUserCircle },
+        { id: "referrals", label: "ส่งต่อ", icon: FaShareSquare },
+        {
+          id: "history",
+          label: "ประวัติ",
+          icon: FaHistory,
+          count: historyLogs.length,
+        },
+      ]}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      after={
+        <>
+          <CaseModals
+            showFollowupModal={showFollowupModal}
+            setShowFollowupModal={setShowFollowupModal}
+            formsList={relevantForms}
+            selectedFollowupForm={selectedFollowupForm}
+            handleSelectFollowup={handleSelectFollowup}
+            followupLink={followupLink}
+            copyFollowupLink={copyFollowupLink}
+            showCloseCaseConfirm={showCloseCaseConfirm}
+            setShowCloseCaseConfirm={setShowCloseCaseConfirm}
+            handleCloseMasterCase={handleCloseMasterCase}
+            isDeleting={isDeleting}
+            showSelectModal={showSelectModal}
+            setShowSelectModal={setShowSelectModal}
+            rawAnswers={leftPanelRawAnswers}
+            copySelections={copySelections}
+            toggleQuestionCheck={toggleQuestionCheck}
+            setCopySelections={setCopySelections}
+            handleCopySelected={handleCopySelected}
+            stripHtml={stripHtml}
+            showDeleteConfirm={showDeleteConfirm}
+            setShowDeleteConfirm={setShowDeleteConfirm}
+            handleDeleteCase={handleDeleteCase}
+          />
+          {isManagingTemplates && (
+            <TemplateManagerModal
+              clinicType={clinicType}
+              onClose={() => setIsManagingTemplates(false)}
+              onRefresh={fetchTemplates}
+              showToast={showToast}
+            />
+          )}
+          {toastMsg && (
+            <div className="cdm-toast-msg" role="status">
+              {toastMsg}
+            </div>
+          )}
+        </>
+      }
+    >
+      {tabPanels[activeTab]}
+    </CaseDrawer>
   );
 }

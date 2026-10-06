@@ -12,7 +12,7 @@ export const stripHtml = (html) =>
 
 // 2. ฟังก์ชันจัดรูปแบบคำตอบ
 export const formatAnswer = (ans) => {
-  if (!ans) return "-";
+  if (ans === null || ans === undefined || ans === "") return "-";
   if (Array.isArray(ans)) return ans.map(stripHtml).join(", ");
   if (typeof ans === "object")
     return Object.entries(ans)
@@ -69,13 +69,26 @@ export const executeExportPDF = ({
   showToast,
   setShowExportMenu,
   setShowExportCopySubmenu,
+  targetWindow,
 }) => {
+  const escape = (value) =>
+    String(value ?? "").replace(
+      /[&<>"']/g,
+      (ch) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        })[ch],
+    );
   const htmlContent = `
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset='utf-8'>
-      <title>รายงานเคส — ${displayName}</title>
+      <title>รายงานเคส — ${escape(displayName)}</title>
       <style>
         @media print {
           @page { size: A4; margin: 2cm; }
@@ -95,11 +108,11 @@ export const executeExportPDF = ({
       </style>
     </head>
     <body>
-      <h2>📌 รายงานเคส — ${viewedResponse?.form_title || ""}</h2>
+      <h2>📌 รายงานเคส — ${escape(viewedResponse?.form_title)}</h2>
       <div class="meta">
         Response ID: RE-${String(data?.id || "0").padStart(4, "0")} &nbsp;|&nbsp;
-        ผู้ป่วย: ${leftPanelSummary.display_name || displayName} &nbsp;|&nbsp;
-        วันที่: ${submittedDate} น.
+        ผู้ป่วย: ${escape(leftPanelSummary.display_name || displayName)} &nbsp;|&nbsp;
+        วันที่: ${escape(submittedDate)} น.
       </div>
 
       <div class="section-title">📝 ข้อมูลแบบประเมิน</div>
@@ -107,8 +120,8 @@ export const executeExportPDF = ({
         .map(
           (q, i) => `
         <div class="qa-block">
-          <div class="qa-question">${i + 1}. ${stripHtml(q)}</div>
-          <div class="qa-answer">➤ ${formatAnswer(leftPanelRawAnswers[q])}</div>
+          <div class="qa-question">${i + 1}. ${escape(stripHtml(q))}</div>
+          <div class="qa-answer">➤ ${escape(formatAnswer(leftPanelRawAnswers[q]))}</div>
         </div>
       `,
         )
@@ -119,11 +132,11 @@ export const executeExportPDF = ({
           ? `
         <div class="section-title">📊 ผลการประเมิน</div>
         <div class="score-block">
-          <div class="risk-overall">ความเสี่ยงรวม: ${riskLevel}</div>
+          <div class="risk-overall">ความเสี่ยงรวม: ${escape(riskLevel)}</div>
           ${leftPanelScoreResults
             .map(
               (s) => `
-            <div class="score-row">• ${s.title}: <b>${s.score}</b> คะแนน (${s.label})</div>
+            <div class="score-row">• ${escape(s.title)}: <b>${escape(s.score)}</b> คะแนน (${escape(s.label)})</div>
           `,
             )
             .join("")}
@@ -133,13 +146,15 @@ export const executeExportPDF = ({
       }
 
       <div class="footer">
-        สถานะเคส: ${status} &nbsp;|&nbsp; ส่งออกโดย: ${currentStaff} &nbsp;|&nbsp; วันที่ส่งออก: ${new Date().toLocaleString("th-TH")} น.
+        สถานะเคส: ${escape(status)} &nbsp;|&nbsp; ส่งออกโดย: ${escape(currentStaff)} &nbsp;|&nbsp; วันที่ส่งออก: ${new Date().toLocaleString("th-TH")} น.
       </div>
     </body>
     </html>
   `;
 
-  const printWindow = window.open("", "_blank", "width=800,height=900");
+  const printWindow =
+    targetWindow || window.open("", "_blank", "width=800,height=900");
+  if (!printWindow) return showToast("กรุณาอนุญาตหน้าต่างสำหรับพิมพ์");
   printWindow.document.write(htmlContent);
   printWindow.document.close();
   printWindow.focus();
