@@ -8,11 +8,11 @@ import { getLegalDocument } from "./legalContent";
 import "./LegalPage.css";
 
 const TABS = [
-  { kind: "terms", to: "/terms", label: ["ข้อกำหนดการใช้บริการ", "Terms"] },
+  { kind: "terms", to: "/terms", label: ["ข้อกำหนดการใช้งาน", "Terms"] },
   {
     kind: "privacy",
     to: "/privacy-policy",
-    label: ["นโยบายความเป็นส่วนตัว", "Privacy"],
+    label: ["ความเป็นส่วนตัว", "Privacy"],
   },
 ];
 
