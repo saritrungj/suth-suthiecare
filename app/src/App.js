@@ -27,6 +27,7 @@ import SchoolRoute from "./permissions/SchoolRoute";
 import OrganizationTypeSwitch from "./permissions/OrganizationTypeSwitch";
 import SeoMetadata from "./components/SeoMetadata";
 import StatusPage from "./pages/errors/StatusPage";
+import LegalPage from "./pages/legal/LegalPage";
 import OrganizationManagement from "./pages/admin/OrganizationManagement";
 import PwaInstallPrompt from "./components/PwaInstallPrompt";
 
@@ -165,6 +166,11 @@ function App() {
             <Route path="/403" element={<StatusPage status={403} />} />
             <Route path="/404" element={<StatusPage status={404} />} />
             <Route path="/500" element={<StatusPage status={500} />} />
+            <Route path="/terms" element={<LegalPage kind="terms" />} />
+            <Route
+              path="/privacy-policy"
+              element={<LegalPage kind="privacy" />}
+            />
 
             <Route path="/assessment-result" element={<AssessmentResult />} />
             <Route path="/assessment/:id" element={<FormView />} />

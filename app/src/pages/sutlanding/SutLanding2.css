@@ -104,6 +104,21 @@
   font-size: 0.8125rem;
   line-height: 1.5;
 }
+.sut2-footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  margin-right: auto;
+}
+.sut2-footer-legal a {
+  color: #cbd5e1;
+  text-decoration: none;
+}
+.sut2-footer-legal a:hover,
+.sut2-footer-legal a:focus-visible {
+  color: #fff;
+  text-decoration: underline;
+}
 .sut2-footer-version {
   flex: 0 0 auto;
   color: #c2ced8;

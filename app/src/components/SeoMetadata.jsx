@@ -32,6 +32,22 @@ function getPageMetadata(pathname) {
     };
   }
 
+  if (pathname === "/terms") {
+    return {
+      title: `ข้อกำหนดการใช้บริการ | ${SITE_NAME}`,
+      description:
+        "ข้อกำหนดและเงื่อนไขการใช้บริการ SUTHie Care - สุดที่แคร์ โรงพยาบาลมหาวิทยาลัยเทคโนโลยีสุรนารี",
+    };
+  }
+
+  if (pathname === "/privacy-policy") {
+    return {
+      title: `นโยบายความเป็นส่วนตัว | ${SITE_NAME}`,
+      description:
+        "นโยบายความเป็นส่วนตัวของ SUTHie Care - สุดที่แคร์ การเก็บ ใช้ และเปิดเผยข้อมูลส่วนบุคคลตาม PDPA และสิทธิของเจ้าของข้อมูล",
+    };
+  }
+
   if (pathname.startsWith("/assessment/")) {
     return {
       title: `แบบประเมินสุขภาพ | ${SITE_NAME}`,

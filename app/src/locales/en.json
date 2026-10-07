@@ -54,7 +54,10 @@
     "tel1": "Phone: 044-376555",
     "tel2": "Phone: 044-376555 ext. 6799",
     "website": "Website: www.suth.go.th",
-    "copyright": "© {{year}} SUTHie Care. All rights reserved."
+    "copyright": "© {{year}} SUTHie Care. All rights reserved.",
+    "legal": "Legal",
+    "terms": "Terms of Service",
+    "privacy_policy": "Privacy Policy"
   },
   "nav": {
     "history": "Check History",
