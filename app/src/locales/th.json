@@ -45,7 +45,10 @@
     "tel1": "โทรศัพท์ 044-376555",
     "tel2": "โทรศัพท์ 044-376555 ต่อ 6799",
     "website": "เว็บไซต์ www.suth.go.th",
-    "copyright": "© {{year}} SUTHie Care. All rights reserved."
+    "copyright": "© {{year}} SUTHie Care. All rights reserved.",
+    "legal": "เอกสารทางกฎหมาย",
+    "terms": "ข้อกำหนดการใช้บริการ",
+    "privacy_policy": "นโยบายความเป็นส่วนตัว"
   },
   "nav": {
     "history": "ตรวจสอบประวัติ",

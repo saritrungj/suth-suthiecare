@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   FiChevronLeft,
@@ -1079,6 +1079,10 @@ export default function SutLanding2() {
         </div>
         <div className="sut2-footer-bottom">
           <p>{t("sutlanding.copyright", { year: copyrightYears })}</p>
+          <nav className="sut2-footer-legal" aria-label={t("sutlanding.legal")}>
+            <Link to="/terms">{t("sutlanding.terms")}</Link>
+            <Link to="/privacy-policy">{t("sutlanding.privacy_policy")}</Link>
+          </nav>
           {appVersion && (
             <span className="sut2-footer-version">v{appVersion}</span>
           )}
