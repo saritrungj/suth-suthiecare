@@ -6,12 +6,9 @@ import peeHomAvatar from "../../assets/pee-hom-ai.webp";
 import "./FloatingActions.css";
 
 const SHOW_SCROLL_TOP_AFTER = 400;
-const LOCAL_CHAT_URL = "https://infectious-bones-chain-camel.trycloudflare.com/chat";
-const PRODUCTION_CHAT_URL = "https://chat.suth.go.th/chat";
-
-// VITE_AI_CHAT_URL overrides the development tunnel and production destination.
-export const AI_CHAT_URL = import.meta.env.VITE_AI_CHAT_URL ||
-  (import.meta.env.DEV ? LOCAL_CHAT_URL : PRODUCTION_CHAT_URL);
+// Use the same Suthie Care referral link in development and production.
+export const AI_CHAT_URL =
+  "https://chat.suth.go.th/chat?source=suthiecare&return=https%3A%2F%2Fwww.suth.go.th%2F";
 
 function Sparkle({ className }) {
   return (
