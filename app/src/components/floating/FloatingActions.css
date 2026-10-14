@@ -1,380 +1,188 @@
-/* Floating actions: AI chat (primary) / back to top / help.
-   Palette follows the landing page: SUTH orange + teal on navy. */
+/* Pee Hom: a friendly sticker invitation, using the mascot's mint and peach. */
 .sut-fab-stack {
-  --fab-orange: #f47932;
-  --fab-orange-deep: #e2571a;
-  --fab-orange-ink: #b8460f; /* orange text on white, 4.9:1 */
-  --fab-teal: #038f9f;
-  --fab-teal-mint: #2fd4b8;
-  --fab-navy: #0f172a;
-  --fab-paper: #fffaf6; /* warm-tinted white */
+  --fab-mint: #a4eee0;
+  --fab-teal: #087d80;
+  --fab-teal-ink: #185e5d;
+  --fab-paper: #fffdf8;
+  --fab-pink: #f8a9c5;
+  --fab-peach: #ffc482;
   --fab-ease: cubic-bezier(0.16, 1, 0.3, 1);
-
   position: fixed;
-  right: 24px;
-  bottom: 24px;
+  right: max(24px, env(safe-area-inset-right));
+  bottom: calc(24px + env(safe-area-inset-bottom));
   z-index: 9999;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 12px;
+  align-items: flex-end;
+  gap: 14px;
   font-family: "Sarabun", "Noto Sans Thai", sans-serif;
 }
-
-/* ---- AI chat: round primary ---- */
-.sut-fab-stack .sut-fab-chat-wrap {
-  position: relative;
-}
 .sut-fab-stack .sut-fab-chat {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  color: #fff;
-  background: linear-gradient(
-    150deg,
-    #ff9a4d 0%,
-    var(--fab-orange) 45%,
-    var(--fab-orange-deep) 100%
-  );
-  box-shadow:
-    0 0 0 3px var(--fab-paper),
-    0 10px 22px -4px rgba(226, 87, 26, 0.55),
-    0 3px 8px rgba(15, 23, 42, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
-  transition:
-    transform 0.4s var(--fab-ease),
-    box-shadow 0.4s var(--fab-ease);
-}
-.sut-fab-chat__icon {
-  width: 38px;
-  height: 38px;
-  overflow: visible;
-  transition: transform 0.4s var(--fab-ease);
-}
-.sut-fab-chat-wrap:hover .sut-fab-chat,
-.sut-fab-chat-wrap:focus-within .sut-fab-chat {
-  transform: translateY(-3px) scale(1.06);
-  box-shadow:
-    0 0 0 3px var(--fab-paper),
-    0 16px 28px -6px rgba(226, 87, 26, 0.6),
-    0 4px 10px rgba(15, 23, 42, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
-}
-.sut-fab-chat-wrap:hover .sut-fab-chat__icon,
-.sut-fab-chat-wrap:focus-within .sut-fab-chat__icon {
-  transform: rotate(-8deg) scale(1.05);
-}
-.sut-fab-chat:active {
-  transform: scale(0.96);
-}
-.sut-fab-chat:focus-visible,
-.sut-fab-round:focus-visible {
-  outline: 3px solid #fff;
-  outline-offset: 0;
-  box-shadow: 0 0 0 6px var(--fab-teal);
-}
-
-/* twinkle: the inner star and the two small sparks pop in turn */
-.sut-fab-chat__star {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: sut-fab-twinkle 2.8s var(--fab-ease) infinite;
-}
-.sut-fab-chat__spark {
-  transform-box: fill-box;
-  transform-origin: center;
-  opacity: 0;
-  animation: sut-fab-ping 2.8s var(--fab-ease) infinite;
-}
-.sut-fab-chat__star--sm {
-  animation-delay: 0.7s;
-}
-.sut-fab-stack .sut-fab-chat__badge {
-  position: absolute;
-  top: -6px;
-  left: -6px;
-  padding: 1px 7px;
-  border-radius: 999px;
-  border: 2px solid transparent;
-  /* navy fill inside, a slow RGB sweep as the border */
-  background:
-    linear-gradient(var(--fab-navy), var(--fab-navy)) padding-box,
-    linear-gradient(
-        90deg,
-        #ff3b5c,
-        #ffb020,
-        #2fd66b,
-        #19c3ff,
-        #7a5cff,
-        #ff3bd4,
-        #ff3b5c
-      )
-      border-box;
-  background-size:
-    100% 100%,
-    300% 100%;
-  color: #fff;
-  font-size: 0.66rem;
-  font-weight: 800;
-  line-height: 1.3;
-  letter-spacing: 0.04em;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.35);
-  animation: sut-fab-rgb 4s linear infinite;
-}
-
-/* soft ring that breathes outward; stops once the user engages */
-.sut-fab-chat__pulse {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 2px solid var(--fab-orange);
-  opacity: 0;
-  animation: sut-fab-ring 3.4s var(--fab-ease) 1.2s infinite;
-  pointer-events: none;
-}
-.sut-fab-chat-wrap:hover .sut-fab-chat__pulse,
-.sut-fab-chat-wrap:focus-within .sut-fab-chat__pulse {
-  animation: none;
-}
-
-/* ---- hover: greeting bubble above, name tag beside ---- */
-.sut-fab-stack .sut-fab-hello,
-.sut-fab-stack .sut-fab-tag {
-  position: absolute;
-  background: var(--fab-paper);
-  color: var(--fab-navy);
-  box-shadow:
-    0 14px 28px -8px rgba(15, 23, 42, 0.35),
-    0 3px 8px rgba(15, 23, 42, 0.1);
-  transform-origin: right bottom;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(8px) scale(0.9);
-  transition:
-    opacity 0.25s var(--fab-ease),
-    transform 0.45s var(--fab-ease),
-    visibility 0s linear 0.45s;
-  pointer-events: none;
-}
-.sut-fab-chat-wrap:hover .sut-fab-hello,
-.sut-fab-chat-wrap:hover .sut-fab-tag,
-.sut-fab-chat-wrap:focus-within .sut-fab-hello,
-.sut-fab-chat-wrap:focus-within .sut-fab-tag {
-  opacity: 1;
-  visibility: visible;
-  transform: none;
-  transition-delay: 0s;
-}
-
-.sut-fab-stack .sut-fab-hello {
-  right: -4px;
-  bottom: calc(100% + 16px);
-  width: max-content;
-  max-width: min(260px, calc(100vw - 48px));
-  padding: 14px 20px 15px;
-  border-radius: 24px;
-}
-.sut-fab-chat-wrap:hover .sut-fab-hello,
-.sut-fab-chat-wrap:focus-within .sut-fab-hello {
-  transition-delay: 0.07s;
-}
-.sut-fab-stack .sut-fab-hello::after {
-  content: "";
-  position: absolute;
-  right: 26px;
-  bottom: -7px;
-  width: 16px;
-  height: 16px;
-  border-radius: 0 0 5px 0;
-  background: var(--fab-paper);
-  transform: rotate(45deg);
-}
-.sut-fab-stack .sut-fab-hello__greet {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 1.2rem;
-  font-weight: 800;
-  line-height: 1.3;
+  gap: 14px;
+  color: var(--fab-teal-ink);
+  text-decoration: none;
+  border-radius: 16px;
+  -webkit-tap-highlight-color: transparent;
 }
-.sut-fab-stack .sut-fab-hello__greet svg {
-  width: 19px;
-  height: 19px;
-  color: var(--fab-orange);
-  fill: var(--fab-orange);
-}
-.sut-fab-stack .sut-fab-hello__ask {
-  margin-top: 2px;
-  font-size: 1.05rem;
-  font-weight: 700;
-  line-height: 1.4;
-}
-.sut-fab-stack .sut-fab-hello__ask b {
-  color: var(--fab-orange-ink);
-  font-weight: 800;
-}
-
-.sut-fab-stack .sut-fab-tag {
-  right: calc(100% + 14px);
-  top: 50%;
+.sut-fab-stack .sut-fab-invite {
+  position: relative;
   display: flex;
   flex-direction: column;
-  padding: 9px 18px 10px;
-  border-radius: 20px;
+  gap: 4px;
+  padding: 12px 16px;
+  border-radius: 16px 16px 4px 16px;
+  background: var(--fab-paper);
+  box-shadow: 0 8px 24px -8px rgb(24 94 93 / 28%);
+  transition: transform 240ms var(--fab-ease), background-color 240ms var(--fab-ease);
+}
+.sut-fab-invite::after {
+  content: "";
+  position: absolute;
+  right: -6px;
+  bottom: 13px;
+  width: 12px;
+  height: 12px;
+  background: inherit;
+  transform: rotate(45deg);
+  border-radius: 3px;
+}
+.sut-fab-stack .sut-fab-invite strong,
+.sut-fab-stack .sut-fab-invite > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  line-height: 1.4;
   white-space: nowrap;
-  transform-origin: right center;
-  translate: 0 -50%;
 }
-.sut-fab-stack .sut-fab-tag strong {
-  font-size: 0.98rem;
-  font-weight: 800;
-  line-height: 1.25;
-}
-.sut-fab-stack .sut-fab-tag span {
-  font-size: 0.8rem;
-  line-height: 1.35;
-  color: #475569;
-}
-
-/* ---- round secondary buttons ---- */
-.sut-fab-stack .sut-fab-round {
-  width: 46px;
-  height: 46px;
-  border: none;
-  border-radius: 50%;
+.sut-fab-invite strong { font-size: 0.98rem; font-weight: 800; }
+.sut-fab-invite strong svg { width: 17px; height: 17px; }
+.sut-fab-invite > span { font-size: 0.8rem; color: #426b67; }
+.sut-fab-invite > span svg { width: 13px; height: 13px; color: #ae466b; }
+.sut-fab-mascot {
+  position: relative;
   display: grid;
   place-items: center;
-  cursor: pointer;
-  color: #fff;
-  transition:
-    transform 0.3s var(--fab-ease),
-    opacity 0.3s var(--fab-ease),
-    box-shadow 0.3s var(--fab-ease),
-    margin 0.3s var(--fab-ease),
-    height 0.3s var(--fab-ease);
+  flex-shrink: 0;
+  width: 84px;
+  height: 84px;
+  isolation: isolate;
+  transition: transform 260ms var(--fab-ease);
 }
-.sut-fab-round svg {
-  width: 21px;
-  height: 21px;
+.sut-fab-mascot__ring {
+  position: absolute;
+  inset: -3px;
+  z-index: -1;
+  border-radius: 50%;
+  background: conic-gradient(from 25deg, var(--fab-mint), #d4f8f1, var(--fab-peach), var(--fab-pink), var(--fab-mint));
+  box-shadow: 0 10px 26px -7px rgb(24 94 93 / 38%);
+  animation: sut-fab-orbit 4.6s linear 1;
 }
-.sut-fab-round:hover {
-  transform: translateY(-3px) scale(1.08);
-}
-.sut-fab-stack .sut-fab-top {
-  background: var(--fab-navy);
-  box-shadow: 0 6px 14px -4px rgba(15, 23, 42, 0.45);
-  opacity: 0;
-  pointer-events: none;
-  height: 0;
-  margin-bottom: -12px; /* cancel the flex gap while hidden */
-  transform: translateY(8px);
+.sut-fab-mascot__portrait {
+  display: block;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
+  border-radius: 50%;
+  background: var(--fab-paper);
+  animation: sut-fab-wave 4.6s var(--fab-ease) 1;
 }
-.sut-fab-stack .sut-fab-top.is-visible {
-  opacity: 1;
-  pointer-events: auto;
+.sut-fab-mascot__portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.sut-fab-stack .sut-fab-mascot__badge {
+  position: absolute;
+  bottom: -3px;
+  right: 0;
+  padding: 3px 9px;
+  border: 2px solid var(--fab-paper);
+  border-radius: 999px;
+  background: var(--fab-teal-ink);
+  color: var(--fab-paper);
+  font-size: 0.65rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+}
+.sut-fab-mascot__confetti { position: absolute; inset: 0; pointer-events: none; }
+.sut-fab-spark,
+.sut-fab-heart {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  animation: sut-fab-twinkle 2.3s var(--fab-ease) 2;
+}
+.sut-fab-spark--mint { top: 1px; left: -9px; color: var(--fab-mint); }
+.sut-fab-spark--peach { top: -11px; right: 12px; width: 19px; height: 19px; color: var(--fab-peach); animation-delay: 100ms; }
+.sut-fab-spark--pink { right: -10px; bottom: 26px; width: 12px; height: 12px; color: var(--fab-pink); animation-delay: 200ms; }
+.sut-fab-heart { left: -6px; bottom: 4px; color: var(--fab-pink); fill: var(--fab-pink); animation-delay: 300ms; }
+.sut-fab-chat:focus-visible,
+.sut-fab-round:focus-visible {
+  outline: 3px solid var(--fab-teal-ink);
+  outline-offset: 5px;
+  box-shadow: 0 0 0 5px var(--fab-paper);
+}
+.sut-fab-chat:focus-visible .sut-fab-invite { background: #e9fcf6; }
+.sut-fab-chat:active .sut-fab-mascot { transform: scale(0.95); }
+.sut-fab-stack .sut-fab-round {
+  display: grid;
+  place-items: center;
+  width: 46px;
   height: 46px;
-  margin-bottom: 0;
-  transform: none;
-}
-.sut-fab-top.is-visible:hover {
-  transform: translateY(-3px) scale(1.08);
-}
-.sut-fab-help {
+  margin-right: 19px;
+  border: 0;
+  border-radius: 50%;
   background: var(--fab-teal);
-  box-shadow: 0 6px 14px -4px rgba(3, 143, 159, 0.6);
+  color: var(--fab-paper);
+  box-shadow: 0 6px 16px -5px rgb(24 94 93 / 35%);
+  cursor: pointer;
+  transition: transform 200ms var(--fab-ease), background-color 200ms var(--fab-ease);
 }
-
-@keyframes sut-fab-rgb {
-  to {
-    background-position:
-      0 0,
-      300% 0;
-  }
+.sut-fab-round svg { width: 21px; height: 21px; }
+.sut-fab-stack .sut-fab-top { background: #1f2f3f; }
+.sut-fab-round:active { transform: scale(0.94); }
+@media (hover: hover) {
+  .sut-fab-chat:hover .sut-fab-mascot { transform: translateY(-3px) rotate(-5deg); }
+  .sut-fab-chat:hover .sut-fab-invite { transform: translateX(-3px); background: #e9fcf6; }
+  .sut-fab-round:hover { transform: translateY(-2px); background: var(--fab-teal-ink); }
+}
+/* A short welcome settles within five seconds; decorations then stay still. */
+@keyframes sut-fab-orbit { to { transform: rotate(360deg); } }
+@keyframes sut-fab-wave {
+  0%, 42%, 100% { transform: rotate(0); }
+  10%, 27% { transform: rotate(-7deg); }
+  18%, 35% { transform: rotate(4deg); }
 }
 @keyframes sut-fab-twinkle {
-  0%,
-  60%,
-  100% {
-    transform: scale(1) rotate(0);
-  }
-  20% {
-    transform: scale(1.22) rotate(45deg);
-  }
+  0%, 100% { transform: scale(1) rotate(0); opacity: 1; }
+  30% { transform: scale(0.45) rotate(-20deg); opacity: 0.35; }
+  65% { transform: scale(1.15) rotate(15deg); opacity: 1; }
 }
-@keyframes sut-fab-ping {
-  0%,
-  55%,
-  100% {
-    opacity: 0;
-    transform: scale(0.2) rotate(0);
-  }
-  18% {
-    opacity: 1;
-    transform: scale(1.25) rotate(45deg);
-  }
-  38% {
-    opacity: 0.9;
-    transform: scale(0.9) rotate(90deg);
-  }
-}
-@keyframes sut-fab-ring {
-  0% {
-    transform: scale(1);
-    opacity: 0.55;
-  }
-  60%,
-  100% {
-    transform: scale(1.55);
-    opacity: 0;
-  }
-}
-
-/* touch: no hover, so no explainer; the tap goes straight to the chat */
-@media (hover: none) {
-  .sut-fab-hello,
-  .sut-fab-tag {
-    display: none;
-  }
-}
-
+.sut-fab-stack.is-paused * { animation-play-state: paused; }
 @media (max-width: 640px) {
   .sut-fab-stack {
-    right: 16px;
-    bottom: 16px;
-    gap: 10px;
+    right: max(16px, env(safe-area-inset-right));
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    gap: 12px;
   }
-  .sut-fab-stack .sut-fab-chat {
-    width: 56px;
-    height: 56px;
-  }
-  .sut-fab-stack .sut-fab-round {
-    width: 44px;
-    height: 44px;
-  }
-  .sut-fab-stack .sut-fab-top.is-visible {
-    height: 44px;
-  }
+  .sut-fab-mascot { width: 68px; height: 68px; }
+  .sut-fab-stack .sut-fab-chat { gap: 12px; }
+  .sut-fab-stack .sut-fab-invite { padding: 10px 12px; }
+  .sut-fab-invite strong { font-size: 0.9rem; }
+  .sut-fab-stack .sut-fab-round { width: 44px; height: 44px; margin-right: 12px; }
 }
-
 @media (prefers-reduced-motion: reduce) {
-  .sut-fab-chat__pulse,
-  .sut-fab-chat__badge,
-  .sut-fab-chat__star {
-    animation: none;
+  .sut-fab-stack *, .sut-fab-stack *::after {
+    animation: none !important;
+    transition: none !important;
   }
-  .sut-fab-chat__spark {
-    animation: none;
-    opacity: 1;
-  }
-  .sut-fab-chat,
-  .sut-fab-chat__icon,
-  .sut-fab-hello,
-  .sut-fab-tag,
-  .sut-fab-round {
-    transition-duration: 0.01ms;
-  }
+  .sut-fab-chat:hover .sut-fab-mascot,
+  .sut-fab-chat:hover .sut-fab-invite,
+  .sut-fab-chat:active .sut-fab-mascot,
+  .sut-fab-round:hover,
+  .sut-fab-round:active { transform: none; }
 }
