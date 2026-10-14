@@ -16,6 +16,7 @@ import {
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher.jsx";
 import PatientAccountMenu from "../../components/PatientAccountMenu.jsx";
+import FloatingActions from "../../components/floating/FloatingActions.jsx";
 import "./SutLanding2.css";
 
 import logo from "../../assets/logoSUTH.png";
@@ -1089,13 +1090,7 @@ export default function SutLanding2() {
         </div>
       </footer>
 
-      <button
-        className="sut2-floating-help-btn"
-        onClick={() => navigate("/help-center")}
-        title="ศูนย์ช่วยเหลือ"
-      >
-        <FiHelpCircle />
-      </button>
+      <FloatingActions />
     </div>
   );
 }
