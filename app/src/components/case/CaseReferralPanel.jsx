@@ -1,3 +1,4 @@
+import SearchableSelect from '../SearchableSelect';
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiArrowUpRight, FiRefreshCw } from "react-icons/fi";
@@ -14,7 +15,7 @@ import {
 } from "./referralDisplay";
 import "../../pages/admin/CaseReferrals.css";
 
-export default function CaseReferralPanel({ sourceResponseId }) {
+export default function CaseReferralPanel({ sourceResponseId, onUpdated }) {
   const { activeOrganization, can } = usePermissions();
   const [destinations, setDestinations] = useState([]);
   const [items, setItems] = useState([]);
@@ -88,6 +89,7 @@ export default function CaseReferralPanel({ sourceResponseId }) {
       setReason("");
       setMessage("ส่งต่อแล้ว ปลายทางสามารถรับเรื่องและบันทึกผลสรุปได้");
       setReload((value) => value + 1);
+      await onUpdated?.();
     } catch (err) {
       setError(referralError(err));
     } finally {
@@ -119,7 +121,7 @@ export default function CaseReferralPanel({ sourceResponseId }) {
       {canSend ? (
         <form className="ref-form" onSubmit={send}>
           <label htmlFor="referral-destination">หน่วยงานปลายทาง</label>
-          <select
+          <SearchableSelect
             id="referral-destination"
             value={destination}
             onChange={(event) => setDestination(event.target.value)}
@@ -132,7 +134,7 @@ export default function CaseReferralPanel({ sourceResponseId }) {
                 {unit.name} ({unit.code})
               </option>
             ))}
-          </select>
+          </SearchableSelect>
           {!loading && !destinations.length && (
             <p className="ref-hint">ยังไม่มีหน่วยงานปลายทางที่เปิดใช้งาน</p>
           )}

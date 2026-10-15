@@ -1,0 +1,33 @@
+const catalog = {
+  faculty:{label:'สำนักวิชา',defaults:[
+  "(1) สำนักวิชาวิทยาศาสตร์",
+  "(2) สำนักวิชาเทคโนโลยีสังคม",
+  "(3) สำนักวิชาเทคโนโลยีการเกษตร",
+  "(4) สำนักวิชาวิศวกรรมศาสตร์",
+  "(5) สำนักวิชาแพทยศาสตร์",
+  "(6) สำนักวิชาพยาบาลศาสตร์",
+  "(7) สำนักวิชาทันตแพทยศาสตร์",
+  "(8) สำนักวิชาสาธารณสุขศาสตร์",
+  "(9) สำนักวิชาศาสตร์และศิลป์ดิจิทัล",
+  "อื่นๆ",
+].map((label,index)=>['faculty_'+index,label])},
+  user_status:{label:'อาชีพ/สถานะผู้รับบริการ',defaults:[['student','นักศึกษา'],['general','บุคคลทั่วไป']]},
+  publication_status:{label:'สถานะเผยแพร่',fixed:true,defaults:[['published','เผยแพร่'],['draft','ร่าง'],['hidden','ซ่อน']]},
+
+  student_status:{label:'สถานะนักเรียน',fixed:true,defaults:require('./studentStatus').current.map(code=>[code,require('./studentStatus').labels[code]])},
+  risk_level:{label:'ระดับความเสี่ยง',fixed:true,defaults:[['high','เสี่ยงสูง'],['medium','เสี่ยงปานกลาง'],['normal','ปกติ'],['none','ยังไม่มีผล']]},
+  gender:{label:'เพศ',fixed:true,defaults:[['male','ชาย'],['female','หญิง'],['other','อื่น ๆ']]},
+  blood_type:{label:'กรุ๊ปเลือด',fixed:true,defaults:['A','B','AB','O','unknown'].map(code=>[code,code==='unknown'?'ไม่ทราบ':code])},
+  hearing:{label:'ผลตรวจการได้ยิน',fixed:true,defaults:[['normal','ปกติ'],['abnormal','ผิดปกติ'],['not_tested','ยังไม่ได้ตรวจ']]},
+  prefix:{label:'คำนำหน้า',defaults:[['boy','ด.ช.'],['girl','ด.ญ.'],['mr','นาย'],['miss','นางสาว'],['mrs','นาง']]},
+  guardian_relationship:{label:'ความสัมพันธ์ผู้ปกครอง',defaults:[['father','บิดา'],['mother','มารดา'],['relative','ญาติ'],['other','อื่น ๆ']]},
+  living_with:{label:'พักอาศัยกับ',defaults:[['parents','บิดามารดา'],['guardian','ผู้ปกครอง'],['dormitory','หอพัก'],['other','อื่น ๆ']]},
+  family_status:{label:'สภาพครอบครัว',defaults:[['together','อยู่ร่วมกัน'],['separated','แยกกันอยู่'],['single_parent','ผู้ปกครองคนเดียว'],['other','อื่น ๆ']]},
+  support_needs:{label:'ความช่วยเหลือที่ต้องการ',defaults:[['education','การศึกษา'],['financial','ทุน/ค่าใช้จ่าย'],['health','สุขภาพ'],['family','ครอบครัว'],['other','อื่น ๆ']]},
+  teacher_types:{label:'ประเภทครู',table:'school_teacher_types',fields:['name','description'],school:true},
+  student_types:{label:'ประเภทนักเรียน',table:'school_student_types',fields:['name','description'],school:true},
+  services:{label:'ประเภทบริการ',table:'service_types',fields:['name','color']},
+  case_statuses:{label:'สถานะเคส',table:'case_statuses',lockedFields:['name'],fields:['name','color','clinic_type']},
+  templates:{label:'แม่แบบบันทึก',table:'note_templates',fields:['label','text','clinic_type'],private:['text']},
+};
+module.exports = catalog;

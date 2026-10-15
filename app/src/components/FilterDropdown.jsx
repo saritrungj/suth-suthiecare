@@ -1,3 +1,4 @@
+import { toDisplayText } from '../utils/textPresentation.js';
 import { FiChevronDown, FiSliders } from "react-icons/fi";
 
 /** Groups secondary filters without hiding the active, high-frequency controls. */
@@ -12,7 +13,7 @@ export default function FilterDropdown({
         <span className="filter-more__icon" aria-hidden="true">
           <FiSliders />
         </span>
-        <span className="filter-more__label">{label}</span>
+        <span className="filter-more__label">{toDisplayText(label)}</span>
         {activeCount > 0 && (
           <strong aria-label={`กำลังใช้ตัวกรอง ${activeCount} รายการ`}>
             {activeCount}

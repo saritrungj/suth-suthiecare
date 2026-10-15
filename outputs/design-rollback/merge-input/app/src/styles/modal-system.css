@@ -1,0 +1,637 @@
+:root {
+  --suth-modal-backdrop: rgba(15, 23, 42, 0.58);
+  --suth-modal-surface: #fffdfb;
+  --suth-modal-surface-muted: #fffaf7;
+  --suth-modal-border: #e2e8f0;
+  --suth-modal-text: #1e293b;
+  --suth-modal-muted: #64748b;
+  --suth-modal-accent: #f47932;
+  --suth-modal-accent-hover: #dc5f18;
+  --suth-modal-radius: 16px;
+  --suth-modal-control-radius: 10px;
+  --suth-modal-shadow:
+    0 24px 64px rgba(15, 23, 42, 0.2), 0 4px 16px rgba(15, 23, 42, 0.08);
+}
+
+body:has(
+  :is(
+    .adm-overlay,
+    .abm-overlay,
+    .ebm-premium-overlay,
+    .crm-overlay,
+    .sum-modal-backdrop,
+    .eem-modal-overlay,
+    .cdm-overlay,
+    .cdm-sub-modal-overlay,
+    .cdm-tpl-modal-overlay,
+    .scd-modal-overlay,
+    .cm-modal-overlay,
+    .hc-modal-overlay,
+    .fm-modal-overlay,
+    .sfb-modal-overlay,
+    .hr-modal-overlay,
+    .modal-overlay,
+    .ui-modal-overlay
+  )
+) {
+  overflow: hidden;
+}
+
+/* Shared backdrop treatment for every application modal. */
+:is(
+  .adm-overlay,
+  .abm-overlay,
+  .ebm-premium-overlay,
+  .crm-overlay,
+  .sum-modal-backdrop,
+  .eem-modal-overlay,
+  .cdm-overlay,
+  .cdm-sub-modal-overlay,
+  .cdm-tpl-modal-overlay,
+  .scd-modal-overlay,
+  .cm-modal-overlay,
+  .hc-modal-overlay,
+  .fm-modal-overlay,
+  .sfb-modal-overlay,
+  .hr-modal-overlay,
+  .ar-modal-overlay,
+  .modal-overlay,
+  .ui-modal-overlay
+) {
+  box-sizing: border-box !important;
+  padding: clamp(12px, 3vw, 32px) !important;
+  background: var(--suth-modal-backdrop) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  overscroll-behavior: contain;
+  animation: suthModalBackdropIn 160ms ease-out both !important;
+}
+
+/* Surface rules deliberately preserve each modal's task-specific width. */
+:is(
+  .adm-card,
+  .abm-card,
+  .ebm-premium-card,
+  .crm-card,
+  .sum-member-modal,
+  .eem-modal-content,
+  .cdm-card,
+  .cdm-sub-modal-card,
+  .cdm-tpl-modal-card,
+  .scd-create-case-modal,
+  .cm-modal-content,
+  .hc-modal-content,
+  .hc-clinic-modal-content,
+  .fm-modal-content,
+  .sfb-modal-content,
+  .hr-modal-card,
+  .ar-modal,
+  .modal-content,
+  .modal-box,
+  .form-modal,
+  .detail-modal,
+  .ui-modal
+) {
+  box-sizing: border-box !important;
+  max-width: min(100%, 1120px) !important;
+  max-height: calc(100dvh - clamp(24px, 6vw, 64px)) !important;
+  border: 1px solid var(--suth-modal-border) !important;
+  border-radius: var(--suth-modal-radius) !important;
+  background: var(--suth-modal-surface) !important;
+  box-shadow: var(--suth-modal-shadow) !important;
+  color: var(--suth-modal-text);
+  animation: suthModalSurfaceIn 220ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+}
+
+:is(
+  .adm-header,
+  .abm-header,
+  .ebm-header,
+  .crm-header,
+  .sum-member-modal__header,
+  .eem-modal-header,
+  .scd-create-case-header,
+  .cdm-interactive-header,
+  .hc-modal-header,
+  .hr-modal-header,
+  .modal-header,
+  .ui-modal__header
+) {
+  box-sizing: border-box !important;
+  min-height: 72px;
+  padding: 20px 24px !important;
+  border-bottom: 1px solid var(--suth-modal-border) !important;
+  background: var(--suth-modal-surface) !important;
+}
+
+:is(
+    .adm-header,
+    .abm-header,
+    .ebm-header,
+    .crm-header,
+    .sum-member-modal__header,
+    .eem-modal-header,
+    .scd-create-case-header,
+    .cdm-interactive-header,
+    .hc-modal-header,
+    .hr-modal-header,
+    .modal-header,
+    .ui-modal__header
+  )
+  :is(h2, h3) {
+  color: var(--suth-modal-text) !important;
+  font-family: "Noto Sans Thai", "Sarabun", sans-serif;
+  font-size: clamp(1.15rem, 1rem + 0.4vw, 1.35rem) !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+}
+
+:is(
+    .adm-header,
+    .abm-header,
+    .ebm-header,
+    .crm-header,
+    .sum-member-modal__header,
+    .eem-modal-header,
+    .scd-create-case-header,
+    .cdm-interactive-header,
+    .hc-modal-header,
+    .hr-modal-header,
+    .modal-header,
+    .ui-modal__header
+  )
+  p {
+  margin-top: 4px !important;
+  color: var(--suth-modal-muted) !important;
+  font-size: 0.875rem !important;
+  line-height: 1.55 !important;
+}
+
+:is(
+  .adm-body,
+  .abm-body,
+  .ebm-body,
+  .crm-body,
+  .eem-modal-body,
+  .scd-create-case-body,
+  .form-body,
+  .appointment-list,
+  .hr-modal-body,
+  .modal-body,
+  .ui-modal__body
+) {
+  padding: 24px !important;
+  scrollbar-gutter: stable;
+}
+
+:is(
+    .cm-modal-content,
+    .hc-modal-content,
+    .hc-clinic-modal-content,
+    .fm-modal-content,
+    .sfb-modal-content,
+    .cdm-sub-modal-card,
+    .modal-box
+  )
+  > :is(h2, h3) {
+  color: var(--suth-modal-text) !important;
+  font-family: "Noto Sans Thai", "Sarabun", sans-serif;
+  font-size: clamp(1.15rem, 1rem + 0.4vw, 1.35rem) !important;
+  font-weight: 700 !important;
+  line-height: 1.4 !important;
+}
+
+:is(
+  .adm-footer,
+  .abm-footer,
+  .ebm-footer,
+  .crm-footer,
+  .sum-member-modal__footer,
+  .eem-modal-footer,
+  .scd-create-case-footer,
+  .hc-modal-actions,
+  .cm-modal-actions,
+  .fm-modal-actions,
+  .sfb-modal-footer,
+  .cdm-sub-modal-actions,
+  .modal-footer,
+  .form-actions,
+  .modal-actions,
+  .ui-modal__footer
+) {
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+  padding: 16px 24px !important;
+  border-top: 1px solid var(--suth-modal-border) !important;
+  background: var(--suth-modal-surface-muted) !important;
+}
+
+:is(
+    .adm-footer,
+    .abm-footer,
+    .ebm-footer,
+    .crm-footer,
+    .sum-member-modal__footer,
+    .eem-modal-footer,
+    .scd-create-case-footer,
+    .hc-modal-actions,
+    .cm-modal-actions,
+    .fm-modal-actions,
+    .sfb-modal-footer,
+    .cdm-sub-modal-actions,
+    .modal-footer,
+    .form-actions,
+    .modal-actions,
+    .ui-modal__footer
+  )
+  > button {
+  min-height: 42px !important;
+  padding: 9px 18px !important;
+  border-radius: var(--suth-modal-control-radius) !important;
+  font-family: inherit !important;
+  font-size: 0.925rem !important;
+  font-weight: 650 !important;
+}
+
+:is(
+  .adm-btn-save,
+  .abm-btn-save,
+  .ebm-btn-save,
+  .crm-btn-save,
+  .sum-member-save,
+  .eem-export-btn,
+  .scd-save-btn,
+  .cm-btn-save,
+  .hc-btn-save,
+  .fm-btn-save,
+  .sfb-btn-save-modal,
+  .sfb-btn-primary,
+  .form-actions .save,
+  .modal-footer > button:not(.btn-secondary)
+) {
+  border: 1px solid var(--suth-modal-accent) !important;
+  background: var(--suth-modal-accent) !important;
+  color: #fffaf7 !important;
+  box-shadow: none !important;
+}
+
+:is(
+    .adm-btn-save,
+    .abm-btn-save,
+    .ebm-btn-save,
+    .crm-btn-save,
+    .sum-member-save,
+    .eem-export-btn,
+    .scd-save-btn,
+    .cm-btn-save,
+    .hc-btn-save,
+    .fm-btn-save,
+    .sfb-btn-save-modal,
+    .sfb-btn-primary,
+    .form-actions .save,
+    .modal-footer > button:not(.btn-secondary)
+  ):hover:not(:disabled) {
+  border-color: var(--suth-modal-accent-hover) !important;
+  background: var(--suth-modal-accent-hover) !important;
+  color: #fffaf7 !important;
+  transform: none !important;
+}
+
+:is(
+  .adm-btn-cancel,
+  .abm-btn-cancel,
+  .ebm-btn-cancel,
+  .crm-btn-cancel,
+  .sum-member-cancel,
+  .eem-cancel-btn,
+  .scd-cancel-btn,
+  .cm-btn-cancel,
+  .hc-btn-cancel,
+  .fm-btn-cancel,
+  .sfb-btn-cancel:not(.sfb-btn-primary),
+  .form-actions .cancel,
+  .modal-footer .btn-secondary
+) {
+  border: 1px solid #cbd5e1 !important;
+  background: #ffffff !important;
+  color: #475569 !important;
+  box-shadow: none !important;
+}
+
+:is(
+    .adm-btn-cancel,
+    .abm-btn-cancel,
+    .ebm-btn-cancel,
+    .crm-btn-cancel,
+    .sum-member-cancel,
+    .eem-cancel-btn,
+    .scd-cancel-btn,
+    .cm-btn-cancel,
+    .hc-btn-cancel,
+    .fm-btn-cancel,
+    .sfb-btn-cancel:not(.sfb-btn-primary),
+    .form-actions .cancel,
+    .modal-footer .btn-secondary
+  ):hover:not(:disabled) {
+  border-color: #94a3b8 !important;
+  background: #f8fafc !important;
+  color: #1e293b !important;
+  transform: none !important;
+}
+
+/* One quiet, predictable close-button pattern. */
+:is(
+  .ADM-close-circle-btn,
+  .abm-close-btn-custom,
+  .ebm-close-btn,
+  .crm-close-circle-btn,
+  .sum-member-modal__header > button,
+  .eem-close-btn,
+  .cdm-close-btn,
+  .cdm-tpl-close-btn,
+  .scd-close-btn,
+  .cm-close-btn-custom,
+  .hc-close-btn-custom,
+  .hr-modal-close-btn,
+  .modal-header > button,
+  .close-btn,
+  .ui-modal__close
+) {
+  width: 40px !important;
+  min-width: 40px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  padding: 0 !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 50% !important;
+  background: #f8fafc !important;
+  color: #64748b !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease !important;
+}
+
+:is(
+  .ADM-close-circle-btn,
+  .abm-close-btn-custom,
+  .ebm-close-btn,
+  .crm-close-circle-btn,
+  .sum-member-modal__header > button,
+  .eem-close-btn,
+  .cdm-close-btn,
+  .cdm-tpl-close-btn,
+  .scd-close-btn,
+  .cm-close-btn-custom,
+  .hc-close-btn-custom,
+  .hr-modal-close-btn,
+  .modal-header > button,
+  .close-btn,
+  .ui-modal__close
+):hover {
+  border-color: #fecaca !important;
+  background: #fff1f2 !important;
+  color: #be123c !important;
+  transform: none !important;
+}
+
+:is(.ADM-close-circle-btn, .scd-close-btn)::before,
+:is(.ADM-close-circle-btn, .scd-close-btn)::after,
+:is(
+  .abm-close-btn-custom .close-cross,
+  .ebm-close-btn .ebm-close-icon,
+  .crm-close-circle-btn .crm-close-icon-line,
+  .cm-close-btn-custom .cm-close-cross,
+  .hc-close-btn-custom .hc-close-cross
+)::before,
+:is(
+  .abm-close-btn-custom .close-cross,
+  .ebm-close-btn .ebm-close-icon,
+  .crm-close-circle-btn .crm-close-icon-line,
+  .cm-close-btn-custom .cm-close-cross,
+  .hc-close-btn-custom .hc-close-cross
+)::after {
+  background-color: currentColor !important;
+}
+
+.ui-modal {
+  width: min(100%, 1000px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.ui-modal__body {
+  min-height: 0;
+  overflow: auto !important;
+}
+
+:is(
+    .adm-card,
+    .abm-card,
+    .ebm-premium-card,
+    .crm-card,
+    .sum-member-modal,
+    .eem-modal-content,
+    .scd-create-case-modal,
+    .cm-modal-content,
+    .hc-modal-content,
+    .hc-clinic-modal-content,
+    .fm-modal-content,
+    .sfb-modal-content,
+    .hr-modal-card,
+    .modal-content,
+    .form-modal,
+    .detail-modal,
+    .ui-modal
+  )
+  :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
+  border-color: #cbd5e1;
+  border-radius: var(--suth-modal-control-radius) !important;
+}
+
+:is(
+    .adm-card,
+    .abm-card,
+    .ebm-premium-card,
+    .crm-card,
+    .sum-member-modal,
+    .eem-modal-content,
+    .scd-create-case-modal,
+    .cm-modal-content,
+    .hc-modal-content,
+    .hc-clinic-modal-content,
+    .fm-modal-content,
+    .sfb-modal-content,
+    .hr-modal-card,
+    .modal-content,
+    .form-modal,
+    .detail-modal,
+    .ui-modal
+  )
+  :is(
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    textarea
+  ):focus-visible {
+  border-color: var(--suth-modal-accent) !important;
+  outline: 3px solid rgba(244, 121, 50, 0.16) !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+}
+
+div.swal2-container .swal2-popup:not(.swal2-toast) {
+  border: 1px solid var(--suth-modal-border);
+  border-radius: var(--suth-modal-radius) !important;
+  background: var(--suth-modal-surface);
+  box-shadow: var(--suth-modal-shadow);
+  font-family: "Noto Sans Thai", "Sarabun", sans-serif;
+}
+
+div.swal2-container .swal2-title {
+  color: var(--suth-modal-text);
+  font-size: 1.35rem;
+  line-height: 1.4;
+}
+
+div.swal2-container .swal2-html-container {
+  color: var(--suth-modal-muted);
+  line-height: 1.65;
+}
+
+div.swal2-container button.swal2-styled {
+  min-height: 42px;
+  border-radius: var(--suth-modal-control-radius) !important;
+  font-family: inherit;
+  font-weight: 650;
+}
+
+@keyframes suthModalBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes suthModalSurfaceIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  :is(
+    .adm-header,
+    .abm-header,
+    .ebm-header,
+    .crm-header,
+    .sum-member-modal__header,
+    .eem-modal-header,
+    .scd-create-case-header,
+    .cdm-interactive-header,
+    .hc-modal-header,
+    .hr-modal-header,
+    .modal-header,
+    .ui-modal__header
+  ) {
+    min-height: 64px;
+    padding: 16px 18px !important;
+  }
+
+  :is(
+    .adm-body,
+    .abm-body,
+    .ebm-body,
+    .crm-body,
+    .eem-modal-body,
+    .scd-create-case-body,
+    .form-body,
+    .appointment-list,
+    .hr-modal-body,
+    .modal-body,
+    .ui-modal__body
+  ) {
+    padding: 18px !important;
+  }
+
+  :is(
+    .adm-footer,
+    .abm-footer,
+    .ebm-footer,
+    .crm-footer,
+    .sum-member-modal__footer,
+    .eem-modal-footer,
+    .scd-create-case-footer,
+    .hc-modal-actions,
+    .cm-modal-actions,
+    .fm-modal-actions,
+    .sfb-modal-footer,
+    .cdm-sub-modal-actions,
+    .modal-footer,
+    .form-actions,
+    .modal-actions,
+    .ui-modal__footer
+  ) {
+    align-items: stretch !important;
+    padding: 14px 18px !important;
+    flex-direction: column-reverse !important;
+  }
+
+  :is(
+      .adm-footer,
+      .abm-footer,
+      .ebm-footer,
+      .crm-footer,
+      .sum-member-modal__footer,
+      .eem-modal-footer,
+      .scd-create-case-footer,
+      .hc-modal-actions,
+      .cm-modal-actions,
+      .fm-modal-actions,
+      .sfb-modal-footer,
+      .cdm-sub-modal-actions,
+      .modal-footer,
+      .form-actions,
+      .modal-actions,
+      .ui-modal__footer
+    )
+    > button {
+    width: 100% !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(
+    .adm-overlay,
+    .abm-overlay,
+    .ebm-premium-overlay,
+    .crm-overlay,
+    .sum-modal-backdrop,
+    .eem-modal-overlay,
+    .cdm-overlay,
+    .cdm-sub-modal-overlay,
+    .cdm-tpl-modal-overlay,
+    .scd-modal-overlay,
+    .cm-modal-overlay,
+    .hc-modal-overlay,
+    .fm-modal-overlay,
+    .sfb-modal-overlay,
+    .hr-modal-overlay,
+    .modal-overlay,
+    .ui-modal-overlay
+  ) {
+    animation: none !important;
+  }
+}

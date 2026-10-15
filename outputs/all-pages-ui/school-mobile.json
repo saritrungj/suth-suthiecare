@@ -1,0 +1,14 @@
+[
+  {
+    "path": "/admin/dashboard",
+    "violations": []
+  },
+  {
+    "path": "/admin/cases",
+    "violations": []
+  },
+  {
+    "path": "/admin/risk-cases",
+    "violations": []
+  }
+]

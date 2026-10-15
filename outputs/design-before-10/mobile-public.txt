@@ -1,0 +1,77 @@
+[WebServer] (node:1972) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:39580) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 14 tests using 1 worker
+
+(node:42364) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [mobile-chromium] › e2e\admin-workspace.spec.js:48:3 › system admin legacy role 1 can enter school tools from hospital without membership (1.7s)
+  ok  2 [mobile-chromium] › e2e\admin-workspace.spec.js:48:3 › system admin legacy role 3 can enter school tools from hospital without membership (1.5s)
+  ok  3 [mobile-chromium] › e2e\admin-workspace.spec.js:60:1 › master starts with all organizations and saves under each row organization (2.7s)
+  ok  4 [mobile-chromium] › e2e\admin-workspace.spec.js:93:1 › master validates new codes, keeps failed edits and retries reads (1.9s)
+  ok  5 [mobile-chromium] › e2e\admin-workspace.spec.js:118:1 › ordinary staff remains limited to membership and cannot edit master (2.3s)
+  ok  6 [mobile-chromium] › e2e\admin-workspace.spec.js:129:1 › school workflows can switch between every school in the selected organization (3.2s)
+  ok  7 [mobile-chromium] › e2e\public-flows.spec.js:9:1 › history requires patient login before loading any record (1.7s)
+  ok  8 [mobile-chromium] › e2e\public-flows.spec.js:20:1 › patient authentication keeps the selected language across login and register (1.4s)
+  ok  9 [mobile-chromium] › e2e\public-flows.spec.js:38:1 › patient login can continue to the protected history route (1.4s)
+  x  10 [mobile-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (13.5s)
+(node:20820) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 11 [mobile-chromium] › e2e\public-flows.spec.js:101:1 › history hero shows the currently signed-in patient profile (1.3s)
+  ok 12 [mobile-chromium] › e2e\public-flows.spec.js:147:1 › homepage navbar shows the signed-in patient and can log out (3.3s)
+  ok 13 [mobile-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code (4.6s)
+  ok 14 [mobile-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit (6.4s)
+
+
+  1) [mobile-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet 
+
+    Error: expect(locator).toHaveCSS(expected) failed
+
+    Locator:  locator('.sut2-nav')
+    Expected: "rgb(255, 255, 255)"
+    Received: "rgba(0, 0, 0, 0)"
+    Timeout:  10000ms
+
+    Call log:
+      - Expect "toHaveCSS" with timeout 10000ms
+      - waiting for locator('.sut2-nav')
+        23 × locator resolved to <nav class="sut2-nav ">…</nav>
+           - unexpected value "rgba(0, 0, 0, 0)"
+
+
+      84 |     await page.goto("/");
+      85 |     const landingNav = page.locator(".sut2-nav");
+    > 86 |     await expect(landingNav).toHaveCSS("background-color", "rgb(255, 255, 255)");
+         |                              ^
+      87 |     await expect(landingNav).toHaveCSS("background-image", "none");
+      88 |     await expect(landingNav).toHaveCSS("box-shadow", "none");
+      89 |     const menuButton = page.getByRole("button", { name: "เปิดเมนู" });
+        at D:\github-clone\suth-suthiecare\app\e2e\public-flows.spec.js:86:30
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\public-flows-public-navbar-b1dd9-usable-on-mobile-and-tablet-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\public-flows-public-navbar-b1dd9-usable-on-mobile-and-tablet-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\public-flows-public-navbar-b1dd9-usable-on-mobile-and-tablet-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\public-flows-public-navbar-b1dd9-usable-on-mobile-and-tablet-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\public-flows-public-navbar-b1dd9-usable-on-mobile-and-tablet-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [mobile-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet 
+  13 passed (51.3s)
+undefined
+D:\github-clone\suth-suthiecare\app:
+[ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL] Command failed with exit code 1: playwright test e2e/admin-workspace.spec.js e2e/public-flows.spec.js "--project=mobile-chromium"

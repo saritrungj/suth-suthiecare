@@ -1,0 +1,356 @@
+/* ============================================================
+   ADD BANNER MODAL (Friendly UI - Brand Match Theme)
+   ============================================================ */
+
+/*พื้นหลัง*/
+.abm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: abmFadeIn 0.3s ease;
+}
+.abm-card {
+  width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 12px;
+  margin: auto;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  animation: abmSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ตกแต่ง Scrollbar */
+.abm-card::-webkit-scrollbar {
+  width: 6px;
+}
+.abm-card::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 15px 0;
+}
+.abm-card::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 100px;
+}
+.abm-card::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* 3. Header  */
+.abm-header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 25px 30px;
+  padding: 25px 30px 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.abm-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #1e293b;
+}
+.abm-header-content h3 {
+  margin: 0 0 4px 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.abm-header p {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+}
+.abm-header-content p {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+  display: block;
+}
+/* 4. Body */
+.abm-body {
+  padding: 30px 40px;
+}
+
+.abm-upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 220px;
+  border: 2px dashed #fed7aa;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: #fffaf7;
+  color: #f47932;
+  gap: 12px;
+}
+
+.abm-upload-area:hover {
+  border-color: #ea580c;
+  background: #fffaf7;
+  color: #ea580c;
+  transform: scale(1.02);
+}
+
+.abm-upload-area span {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* สไตล์รูปภาพพรีวิว */
+.abm-preview-section img {
+  border-radius: 12px !important;
+  border: 3px solid #ffffff !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* 6. Form Elements */
+.abm-input-group {
+  margin-top: 25px;
+}
+
+.abm-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #475569;
+  display: block;
+  margin-left: 4px;
+}
+
+.abm-input {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: 1.5px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  margin-top: 10px;
+}
+
+.abm-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+}
+
+/* ควบคุมกลุ่มอินพุตแบนเนอร์ */
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #334155;
+  font-family: "Sarabun", sans-serif !important;
+  font-size: 16px;
+}
+
+.abm-btn-outline-sm {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  color: #64748b;
+  padding: 8px 20px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.abm-btn-outline-sm:hover {
+  background: #fffaf7;
+  color: #f47932;
+  border-color: #fed7aa;
+}
+
+/* 7. Footer & Buttons */
+.abm-footer {
+  padding: 20px 40px 30px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: #fcfcfd;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* ปุ่มยกเลิก */
+.abm-btn-cancel {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.abm-btn-cancel:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+/*  ปุ่มบันทึก */
+.abm-btn-save {
+  background: linear-gradient(135deg, #f47932, #ea580c);
+  color: #ffffff;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 15px rgba(244, 121, 50, 0.25);
+  transition: all 0.2s ease;
+}
+
+.abm-btn-save:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(244, 121, 50, 0.35);
+  filter: brightness(1.05);
+}
+
+.abm-btn-save:disabled {
+  background: #e2e8f0;
+  color: #94a3b8;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.close-icon-custom {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.abm-close-btn-custom {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background-color: #fef2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
+  z-index: 10;
+}
+.close-cross {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-cross::before,
+.close-cross::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: #ef4444;
+  border-radius: 10px;
+  transition: background-color 0.3s;
+}
+.close-cross::before {
+  transform: rotate(45deg);
+}
+.close-cross::after {
+  transform: rotate(-45deg);
+}
+
+/* 🟢 เอฟเฟกต์ตอน Hover (หมุน 180 องศา) */
+.abm-close-btn-custom:hover {
+  background-color: #fee2e2;
+  transform: rotate(180deg);
+}
+
+.abm-close-btn-custom:hover .close-cross::before,
+.abm-close-btn-custom:hover .close-cross::after {
+  background-color: #dc2626;
+}
+
+/* 8. Animations */
+@keyframes abmFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes abmSlideUp {
+  from {
+    transform: translateY(30px) scale(0.98);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ── RESPONSIVE── */
+@media (max-width: 768px) {
+  .abm-card {
+    width: 90% !important;
+    max-width: 450px;
+    padding: 0;
+    border-radius: 16px;
+  }
+  .abm-header {
+    padding: 15px 20px;
+  }
+  .abm-body {
+    padding: 15px 20px;
+  }
+  .abm-preview-section img {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 4 / 3 !important;
+    margin: 0 auto 12px auto !important;
+  }
+  .abm-footer {
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 12px;
+    background: #f8fafc;
+  }
+  .abm-btn-cancel,
+  .abm-btn-save {
+    width: 100% !important;
+    padding: 12px !important;
+    font-size: 14px;
+    margin: 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

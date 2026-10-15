@@ -96,7 +96,7 @@ test("System Admin configures explicit referral destinations in a unit with sess
     .getByRole("button", { name: /หน่วยงานต้นทางทดสอบ โรงพยาบาล/ })
     .click();
   const settings = page.getByRole("region", {
-    name: "การตั้งค่าความปลอดภัยและ PDPA",
+    name: "การส่งต่อและการแจ้งเตือน",
   });
   await settings
     .locator("summary")

@@ -1,3 +1,4 @@
+import SearchableSelect from '../../../../components/SearchableSelect';
 import React, { useState } from "react";
 import {
   FaCalendarAlt,
@@ -507,14 +508,14 @@ const QuestionBody = ({
     const scoreModeUI = isActive && q.isScored && (
       <div className="sfb-smooth-element sfb-grid-score-toggle">
         <span className="sfb-grid-score-label">รูปแบบการให้คะแนน</span>
-        <select
+        <SearchableSelect
           className="sfb-grid-score-select sfb-type-selector"
           value={q.scoreMode || "column"}
           onChange={(e) => updateScoreMode(q.id, e.target.value)}
         >
           <option value="column">ให้คะแนนตามคอลัมน์</option>
           <option value="cell">ให้คะแนนตามช่อง</option>
-        </select>
+        </SearchableSelect>
       </div>
     );
 
@@ -729,7 +730,7 @@ const QuestionBody = ({
           style={{ marginBottom: "15px" }}
         >
           <span className="sfb-grid-score-label">รูปแบบการแสดงผล</span>
-          <select
+          <SearchableSelect
             className="sfb-grid-score-select sfb-type-selector"
             value={q.displayAs || "radio"}
             onChange={(e) =>
@@ -739,7 +740,7 @@ const QuestionBody = ({
           >
             <option value="radio">หลายตัวเลือก (Radio)</option>
             <option value="dropdown">เลื่อนลง (Dropdown)</option>
-          </select>
+          </SearchableSelect>
         </div>
       )}
       <div className="sfb-options-container">

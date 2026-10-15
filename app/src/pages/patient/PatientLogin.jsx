@@ -1,3 +1,4 @@
+import { toDisplayText } from '../../utils/textPresentation.js';
 import { setAuthSession } from "../../utils/authSession";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -585,7 +586,7 @@ export default function PatientLogin({ initialRole = "patient" }) {
             {content.benefits.map(([Icon, label]) => (
               <div className="patient-login-benefit" key={label}>
                 <Icon aria-hidden="true" />
-                <span>{label}</span>
+                <span>{toDisplayText(label)}</span>
               </div>
             ))}
           </div>
@@ -622,7 +623,7 @@ export default function PatientLogin({ initialRole = "patient" }) {
               <IntroIcon />
             </span>
             <div>
-              <h1 id={titleId}>{content.title}</h1>
+              <h1 id={titleId}>{toDisplayText(content.title)}</h1>
               <p>{content.subtitle}</p>
             </div>
           </div>
@@ -670,7 +671,7 @@ export default function PatientLogin({ initialRole = "patient" }) {
                     key={step}
                   >
                     <b>{index + 1}</b>
-                    {label}
+                    {toDisplayText(label)}
                   </span>
                 ))}
               </div>

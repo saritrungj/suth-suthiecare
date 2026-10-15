@@ -1,0 +1,70 @@
+Scope: 2 of 3 workspace projects
+app build$ vite build
+server build$ node --check index.js
+server build: Done
+app build: vite v7.3.6 building client environment for production...
+app build: transforming...
+app build: ✓ 942 modules transformed.
+app build: rendering chunks...
+app build: computing gzip size...
+app build: build/index.html                                  4.26 kB │ gzip:   1.12 kB
+app build: build/assets/pee-hom-ai-TJW4rMzV.webp            14.16 kB
+app build: build/assets/logoSUTH-C61czE0q.png               59.02 kB
+app build: build/assets/bg-health-CF5F11bm.jpg             656.44 kB
+app build: build/assets/login-image-auic4EU3.png         1,296.91 kB
+app build: build/assets/02-ChbMj7n0.png                  1,306.70 kB
+app build: build/assets/01-B43erMv6.png                  1,308.00 kB
+app build: build/assets/03-DuAF39By.png                  1,473.24 kB
+app build: build/assets/act.suth-qG5EZz1V.png            1,632.43 kB
+app build: build/assets/vitalcare-FsGwXx1b.png           1,632.84 kB
+app build: build/assets/bg-new-CxDf2QPd.jpg              5,286.88 kB
+app build: build/assets/style-BDyZL333.css                 512.03 kB │ gzip:  90.67 kB
+app build: build/assets/HistorySearch-CRfNxavI.js            0.43 kB │ gzip:   0.31 kB
+app build: build/assets/CaseReferrals-Dqq78pHn.js            0.90 kB │ gzip:   0.45 kB
+app build: build/assets/SchoolDashboard-BM0vIjKK.js          2.07 kB │ gzip:   0.95 kB
+app build: build/assets/PatientVerifyEmail-BctNs5mK.js       2.23 kB │ gzip:   1.09 kB
+app build: build/assets/useMediaQuery-BhDkchyJ.js            2.26 kB │ gzip:   1.05 kB
+app build: build/assets/FileSaver.min-D_--vHZc.js            3.02 kB │ gzip:   1.47 kB
+app build: build/assets/SchoolTypes-434Un-O9.js              5.75 kB │ gzip:   2.09 kB
+app build: build/assets/CaseTable-D7k-ypHQ.js                5.95 kB │ gzip:   2.30 kB
+app build: build/assets/ClinicDetail-DS4jcDEe.js             6.35 kB │ gzip:   2.27 kB
+app build: build/assets/RolesPermissions-CMdmpyIS.js         6.52 kB │ gzip:   2.26 kB
+app build: build/assets/CaseReferralPanel-CB_RQLmx.js        6.67 kB │ gzip:   2.58 kB
+app build: build/assets/CaseDrawer-B_S9t2Qk.js               6.97 kB │ gzip:   3.02 kB
+app build: build/assets/SchoolRoles-BorFcJpD.js              8.16 kB │ gzip:   2.06 kB
+app build: build/assets/MyProfile-BeHPFYRz.js                8.18 kB │ gzip:   2.41 kB
+app build: build/assets/school-DdV8X5jF.js                   8.86 kB │ gzip:   3.60 kB
+app build: build/assets/MasterData-r59fc-B4.js               9.43 kB │ gzip:   3.25 kB
+app build: build/assets/TeacherList-B3GXH1Jc.js              9.55 kB │ gzip:   3.05 kB
+app build: build/assets/studentImport-BPKDn-9t.js            9.76 kB │ gzip:   3.48 kB
+app build: build/assets/SchoolCaseData-C42wPM2I.js          10.68 kB │ gzip:   3.52 kB
+app build: build/assets/RiskCases-CEqkYpfv.js               10.80 kB │ gzip:   4.08 kB
+app build: build/assets/CaseReferrals-C5nm83Tw.js           10.86 kB │ gzip:   3.46 kB
+app build: build/assets/StudentImport-Btg4qxrp.js           11.74 kB │ gzip:   3.81 kB
+app build: build/assets/AssessmentResult-rqPCkYOO.js        11.87 kB │ gzip:   4.16 kB
+app build: build/assets/AdminLayout-DRBkMz6I.js             11.96 kB │ gzip:   3.78 kB
+app build: build/assets/SchoolStructure-E7PVQkVW.js         12.79 kB │ gzip:   3.80 kB
+app build: build/assets/StudentList-Bo2jAKoA.js             15.38 kB │ gzip:   4.58 kB
+app build: build/assets/FormManager-DW_ncNzf.js             18.17 kB │ gzip:   5.00 kB
+app build: build/assets/StudentDetailModal-DexpABZ_.js      26.07 kB │ gzip:   7.06 kB
+app build: build/assets/CaseData-DuY2AmfK.js                28.00 kB │ gzip:   8.81 kB
+app build: build/assets/StudentHealthCharts-l7B3J5hx.js     28.70 kB │ gzip:   9.29 kB
+app build: build/assets/UserManagement-B6SGeHQi.js          31.90 kB │ gzip:   8.07 kB
+app build: build/assets/SchoolWorkflows-vn9KTiSe.js         32.87 kB │ gzip:   8.68 kB
+app build: build/assets/FormView-BShYGpFw.js                41.58 kB │ gzip:  12.72 kB
+app build: build/assets/BannerManagement-DlduSo7_.js        42.32 kB │ gzip:  12.12 kB
+app build: build/assets/HistoryResult-Bw0FH2Kk.js           46.63 kB │ gzip:  13.75 kB
+app build: build/assets/caseDateFilter-CqIyoZjS.js          88.36 kB │ gzip:  23.49 kB
+app build: build/assets/FormBuilder-qsxCGgaF.js             99.86 kB │ gzip:  24.44 kB
+app build: build/assets/dashboard-Ckk9MmGW.js              107.17 kB │ gzip:  28.54 kB
+app build: build/assets/index-D3Dv9qbZ.js                  111.18 kB │ gzip:  30.56 kB
+app build: build/assets/Appointment-D39EVAuj.js            249.23 kB │ gzip:  75.15 kB
+app build: build/assets/CartesianChart-kbPFJU6_.js         352.61 kB │ gzip: 104.06 kB
+app build: build/assets/index-D74_O99y.js                  905.12 kB │ gzip: 265.48 kB
+app build: build/assets/exceljs.min-BSFiOVVQ.js            936.99 kB │ gzip: 270.75 kB
+app build: (!) Some chunks are larger than 500 kB after minification. Consider:
+app build: - Using dynamic import() to code-split the application
+app build: - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+app build: - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+app build: ✓ built in 19.31s
+app build: Done

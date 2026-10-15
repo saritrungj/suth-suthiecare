@@ -1,0 +1,60 @@
+.status-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background: var(--suth-canvas);
+  color: var(--suth-ink);
+  font-family: Sarabun, system-ui, sans-serif;
+}
+.status-page section {
+  max-width: 34rem;
+  border-radius: 16px;
+  padding: 2rem 2.25rem;
+  background: white;
+  box-shadow: 0 16px 40px #18332e18;
+}
+.status-code {
+  margin: 0;
+  color: var(--suth-action-ink);
+  font-size: clamp(3rem, 10vw, 6rem);
+  font-weight: 800;
+  line-height: 1;
+}
+.status-page h1 {
+  margin: 0.75rem 0;
+  font-size: 1.7rem;
+}
+.status-page p:not(.status-code) {
+  color: var(--suth-muted);
+  line-height: 1.7;
+}
+.status-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+.status-actions a,
+.status-actions button {
+  border: 0;
+  border-radius: 10px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.7rem 1rem;
+  background: var(--suth-action);
+  color: #fff;
+  text-decoration: none;
+  font: inherit;
+  cursor: pointer;
+}
+.status-actions a {
+  background: transparent;
+  color: var(--suth-action);
+  border: 1px solid var(--suth-action);
+}
+
+.status-actions :is(a, button):hover { background: var(--suth-action-hover); color: white; }
+.status-actions :is(a, button):focus-visible { outline: 3px solid var(--suth-focus); outline-offset: 3px; }
+@media (max-width: 480px) { .status-page { padding: 16px; } .status-page section { padding: 28px 20px; } .status-page h1 { font-size: 1.5rem; } }

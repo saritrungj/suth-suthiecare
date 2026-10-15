@@ -1,0 +1,98 @@
+[WebServer] (node:30148) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:32824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 8 tests using 1 worker
+
+(node:28652) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › e2e\school-management.spec.js:316:3 › school organization › student list opens the student health file (5.5s)
+  ok 2 [desktop-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 1440px (5.1s)
+  ok 3 [desktop-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 768px (4.8s)
+  ok 4 [desktop-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 390px (5.4s)
+  x  5 [desktop-chromium] › e2e\school-management.spec.js:455:1 › editing a physical record refreshes the school queue and student file (33.4s)
+(node:43312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 6 [mobile-chromium] › e2e\school-management.spec.js:316:3 › school organization › student list opens the student health file (3.3s)
+  ok 7 [mobile-chromium] › e2e\school-management.spec.js:335:3 › school organization › the case list of a school organization is the student health view (2.8s)
+  x  8 [mobile-chromium] › e2e\school-management.spec.js:455:1 › editing a physical record refreshes the school queue and student file (31.7s)
+
+
+  1) [desktop-chromium] › e2e\school-management.spec.js:455:1 › editing a physical record refreshes the school queue and student file 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('dialog', { name: 'แก้ไขผลตรวจร่างกาย' }).getByRole('button', { name: 'บันทึก', exact: true })
+
+
+      481 |   await dialog.getByRole("button", { name: /แก้ไขผลตรวจวันที่/ }).click();
+      482 |   const edit = page.getByRole("dialog", { name: "แก้ไขผลตรวจร่างกาย" });
+    > 483 |   await edit.getByRole("button", { name: "บันทึก", exact: true }).click();
+          |                                                                   ^
+      484 |   await expect(dialog.locator(".cw-activity-title")).toHaveText("แก้ไขผลตรวจร่างกาย");
+      485 |   expect(queueReads).toBeGreaterThan(1);
+      486 |   await expect(page.locator(".swal2-container")).not.toBeVisible();
+        at D:\github-clone\suth-suthiecare\app\e2e\school-management.spec.js:483:67
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\school-management-editing--1598c-hool-queue-and-student-file-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\school-management-editing--1598c-hool-queue-and-student-file-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\school-management-editing--1598c-hool-queue-and-student-file-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\school-management-editing--1598c-hool-queue-and-student-file-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\school-management-editing--1598c-hool-queue-and-student-file-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [mobile-chromium] › e2e\school-management.spec.js:455:1 › editing a physical record refreshes the school queue and student file 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('dialog', { name: 'แก้ไขผลตรวจร่างกาย' }).getByRole('button', { name: 'บันทึก', exact: true })
+
+
+      481 |   await dialog.getByRole("button", { name: /แก้ไขผลตรวจวันที่/ }).click();
+      482 |   const edit = page.getByRole("dialog", { name: "แก้ไขผลตรวจร่างกาย" });
+    > 483 |   await edit.getByRole("button", { name: "บันทึก", exact: true }).click();
+          |                                                                   ^
+      484 |   await expect(dialog.locator(".cw-activity-title")).toHaveText("แก้ไขผลตรวจร่างกาย");
+      485 |   expect(queueReads).toBeGreaterThan(1);
+      486 |   await expect(page.locator(".swal2-container")).not.toBeVisible();
+        at D:\github-clone\suth-suthiecare\app\e2e\school-management.spec.js:483:67
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\school-management-editing--1598c-hool-queue-and-student-file-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\school-management-editing--1598c-hool-queue-and-student-file-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\school-management-editing--1598c-hool-queue-and-student-file-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\school-management-editing--1598c-hool-queue-and-student-file-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\school-management-editing--1598c-hool-queue-and-student-file-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [desktop-chromium] › e2e\school-management.spec.js:455:1 › editing a physical record refreshes the school queue and student file 
+    [mobile-chromium] › e2e\school-management.spec.js:455:1 › editing a physical record refreshes the school queue and student file 
+  6 passed (1.6m)

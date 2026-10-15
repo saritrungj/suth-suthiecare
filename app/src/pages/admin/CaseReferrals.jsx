@@ -1,3 +1,6 @@
+import SearchableSelect from '../../components/SearchableSelect';
+import { toDisplayText } from '../../utils/textPresentation.js';
+import {usePageExport,ExportButton} from "../../components/ExcelExport";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { FiArrowDownLeft, FiArrowUpRight, FiRefreshCw } from "react-icons/fi";
@@ -29,6 +32,7 @@ export default function CaseReferrals() {
   const [error, setError] = useState("");
   const [reload, setReload] = useState(0);
   const selectedId = searchParams.get("referral");
+  usePageExport({title:"การส่งต่อ",sources:[{resource:"referrals",filters:{direction,status}}]});
   const hasOrganization = /^\d+$/.test(String(activeOrganization));
 
   useEffect(() => {
@@ -127,7 +131,7 @@ export default function CaseReferrals() {
               </div>
               <label className="ref-filter">
                 สถานะ
-                <select
+                <SearchableSelect
                   value={status}
                   onChange={(event) => {
                     setStatus(event.target.value);
@@ -137,10 +141,10 @@ export default function CaseReferrals() {
                   <option value="">ทุกสถานะ</option>
                   {Object.entries(REFERRAL_STATUSES).map(([value, label]) => (
                     <option value={value} key={value}>
-                      {label}
+                      {toDisplayText(label)}
                     </option>
                   ))}
-                </select>
+                </SearchableSelect>
               </label>
             </div>
             <p className="ref-hint">
@@ -200,7 +204,7 @@ export default function CaseReferrals() {
                       </button>
                       <span className="ref-sub">
                         REF-{String(item.id).padStart(4, "0")} ·{" "}
-                        {item.form_title || "เคสส่งต่อ"}
+                        {toDisplayText(item.form_title || "เคสส่งต่อ")}
                       </span>
                     </div>
                     <div>
@@ -368,6 +372,7 @@ function ReferralDetail({ id, onClose, onUpdated }) {
         )
       }
     >
+      <ExportButton sources={[{resource:"referral",id}]} title="รายละเอียดการส่งต่อ" />
       <div className="ref-panel">
         {error && (
           <p className="ref-error" role="alert">
@@ -389,7 +394,7 @@ function ReferralDetail({ id, onClose, onUpdated }) {
             <dl className="ref-facts">
               <div>
                 <dt>ฟอร์มอ้างอิง</dt>
-                <dd>{detail.form_title || "ไม่ระบุ"}</dd>
+                <dd>{toDisplayText(detail.form_title || "ไม่ระบุ")}</dd>
               </div>
               <div>
                 <dt>ส่งต่อเมื่อ</dt>
@@ -438,7 +443,7 @@ function ReferralDetail({ id, onClose, onUpdated }) {
                 {detail.allowed_statuses.length > 0 && (
                   <>
                     <label htmlFor="referral-next-status">การดำเนินการ</label>
-                    <select
+                    <SearchableSelect
                       id="referral-next-status"
                       value={status}
                       onChange={(event) => setStatus(event.target.value)}
@@ -450,7 +455,7 @@ function ReferralDetail({ id, onClose, onUpdated }) {
                           {REFERRAL_ACTIONS[value]}
                         </option>
                       ))}
-                    </select>
+                    </SearchableSelect>
                   </>
                 )}
                 <label htmlFor="referral-shared-summary">

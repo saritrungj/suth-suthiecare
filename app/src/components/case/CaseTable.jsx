@@ -1,10 +1,12 @@
+import SearchableSelect from '../SearchableSelect';
+import { toDisplayText } from '../../utils/textPresentation.js';
 import { useEffect, useId, useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiInbox } from "react-icons/fi";
 import { RiskPill, StatusPill } from "./CaseDrawer";
+import CasePerson from "./CasePerson";
 import {
   caseCode,
   formatCaseDate,
-  personName,
   rowRisk,
   stripHtml,
 } from "./caseDisplay";
@@ -12,7 +14,7 @@ import { useMediaQuery } from "../useMediaQuery";
 
 const findAnswerFlexible = (rawAnswers, qTitle) => {
   if (!rawAnswers || !qTitle) return undefined;
-  const exactKey = qTitle.replace(/<[^>]+>/g, "");
+  const exactKey = toDisplayText(qTitle);
   if (rawAnswers[exactKey] !== undefined) return rawAnswers[exactKey];
   const targetClean = stripHtml(qTitle).replace(/\s+/g, "").toLowerCase();
   for (const key in rawAnswers) {
@@ -31,11 +33,6 @@ const formatAnswer = (ans) => {
       .join(" | ");
   return stripHtml(String(ans));
 };
-
-const latestAction = (row) =>
-  row.case_source === "walkin"
-    ? "บันทึกโดยเจ้าหน้าที่"
-    : row.form_title || "ส่งแบบฟอร์มประเมิน";
 
 // One answer cell: a scored question shows its result, others the answer.
 function Answer({ row, question }) {
@@ -57,7 +54,7 @@ function Answer({ row, question }) {
           aria-hidden="true"
           style={{ backgroundColor: result.color || "#64748b" }}
         />
-        {result.label} ({result.score})
+        {toDisplayText(result.label)} ({result.score})
       </span>
     );
   return (
@@ -66,7 +63,7 @@ function Answer({ row, question }) {
 }
 
 // The case list. Person view ("master"): a follow-up queue with person,
-// risk, status, latest action. Answer view ("form"): one row per form
+// risk, status and a single update date. Answer view ("form"): one row per form
 // submission with the chosen question columns. Phones get one card per row
 // in both views, never a sideways-scrolling table.
 export default function CaseTable({
@@ -125,17 +122,13 @@ export default function CaseTable({
     );
 
   const nameButton = (row) => (
-    <button
-      type="button"
-      className="cw-name-btn"
-      onClick={() => onSelectCase(row)}
-      aria-haspopup="dialog"
-    >
-      {personName(row)}
-    </button>
+    <CasePerson id={row.id} name={row.first_name || "ไม่ระบุชื่อ"} code={caseCode(row)} onOpen={() => onSelectCase(row)} />
   );
-  const dateOf = (row) =>
-    `${formatCaseDate(row.submitted_at || row.updated_at || row.createdAt)} น.`;
+  const dateOf = (row) => {
+    const value = (viewMode === "master" && row.latest_activity?.occurred_at) || row.submitted_at || row.updated_at || row.created_at || row.createdAt;
+    const date = formatCaseDate(value);
+    return date === "-" ? "—" : `${date} น.`;
+  };
 
   let list;
   if (isPhone) {
@@ -150,14 +143,11 @@ export default function CaseTable({
               {nameButton(row)}
               {showRisk && <RiskPill risk={rowRisk(row, viewMode)} short />}
             </div>
-            <div className="cw-card-meta">
+            <div className="cw-card-summary">
               {viewMode === "master" && <StatusPill status={row.status} />}
-              <span>{caseCode(row)}</span>
-              <span>{dateOf(row)}</span>
+              <span className="cw-card-date">{dateOf(row)}</span>
             </div>
-            {viewMode === "master" ? (
-              <span className="cw-sub">{latestAction(row)}</span>
-            ) : (
+            {viewMode !== "master" && (
               dynamicQuestions.length > 0 && (
                 <dl className="cw-card-facts cw-card-facts--answers">
                   {dynamicQuestions.map((q) => (
@@ -183,49 +173,32 @@ export default function CaseTable({
         role="region"
         aria-label="รายการเคส"
       >
-        <table className="cw-queue">
+        <table className="cw-queue cw-queue--compact">
           <thead>
             <tr>
-              <th className="cw-col-num">ลำดับ</th>
               <th className="cw-col-person">ผู้รับบริการ</th>
-              {showRisk && <th>ความเสี่ยงคลินิก</th>}
-              <th>สถานะ · การดำเนินการล่าสุด</th>
+              {showRisk && <th>ความเสี่ยง</th>}
+              <th>สถานะ</th>
               <th className="cw-col-date">อัปเดตล่าสุด</th>
             </tr>
           </thead>
           <tbody>
-            {currentData.map((row, index) => (
+            {currentData.map((row) => (
               <tr
                 key={row.id}
                 className={
                   String(row.id) === String(selectedId) ? "is-open" : ""
                 }
               >
-                <td className="cw-col-num">{startIndex + index + 1}</td>
                 <td className="cw-col-person">
                   {nameButton(row)}
-                  <span className="cw-sub">
-                    {caseCode(row)}
-                    {row.summary_data?.display_faculty &&
-                    row.summary_data.display_faculty !== "-"
-                      ? ` · ${row.summary_data.display_faculty}`
-                      : ""}
-                  </span>
                 </td>
                 {showRisk && (
                   <td>
                     <RiskPill risk={rowRisk(row, "master")} short />
                   </td>
                 )}
-                <td>
-                  <StatusPill status={row.status} />
-                  <span
-                    className="cw-sub cw-action-text"
-                    title={latestAction(row)}
-                  >
-                    {latestAction(row)}
-                  </span>
-                </td>
+                <td className="cw-col-status"><StatusPill status={row.status} /></td>
                 <td className="cw-col-date">{dateOf(row)}</td>
               </tr>
             ))}
@@ -264,7 +237,6 @@ export default function CaseTable({
               >
                 <td className="cw-sticky cw-col-person">
                   {nameButton(row)}
-                  <span className="cw-sub">{caseCode(row)}</span>
                 </td>
                 {hasScoring && (
                   <td>
@@ -291,7 +263,7 @@ export default function CaseTable({
       <footer className="cw-pagination">
         <div>
           <label htmlFor={rowsId}>แสดง</label>
-          <select
+          <SearchableSelect
             id={rowsId}
             value={rowsPerPage}
             onChange={(event) => {
@@ -304,7 +276,7 @@ export default function CaseTable({
                 {size}
               </option>
             ))}
-          </select>
+          </SearchableSelect>
           <span>
             รายการ (รวมทั้งหมด {totalItems.toLocaleString("th-TH")} รายการ)
           </span>

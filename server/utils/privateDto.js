@@ -24,6 +24,7 @@ const PII = new Set([
   "name",
 ]);
 const CLINICAL = new Set([
+  "insights", "guidance", "guardian_name", "guardian_relationship", "guardian_phone", "living_with", "family_status", "living_conditions", "support_needs", "issue", "support",
   "clinical_data",
   "risk_level",
   "overall_risk",
@@ -43,6 +44,7 @@ const CLINICAL = new Set([
   "vision_right",
   "hearing_left",
   "hearing_right",
+  "fitness",
   "blood_type",
   "chronic_conditions",
   "allergies",
@@ -58,6 +60,9 @@ const CLINICAL = new Set([
   "profile",
 ]);
 const CASE_FIELDS = new Set([
+  "first_name",
+  "case_source",
+  "latest_activity",
   "id",
   "response_id",
   "form_id",
@@ -103,6 +108,7 @@ const CASE_FIELDS = new Set([
   "submitted_by",
 ]);
 const SUMMARY_FIELDS = new Set([
+  "case_source",
   "display_name",
   "display_phone",
   "name",
@@ -140,7 +146,7 @@ const STORED_TEXT = new Set([
 ]);
 function serialize(
   value,
-  { pii = false, clinical = false, list = false, credential = false } = {},
+  { pii = false, clinical = false, list = false, credential = false, caseNames = false } = {},
   scope = "root",
   decodedPayload = false,
 ) {
@@ -151,14 +157,14 @@ function serialize(
     return value.map((item) =>
       serialize(
         item,
-        { pii, clinical, list, credential },
+        { pii, clinical, list, credential, caseNames },
         scope,
         decodedPayload,
       ),
     );
   if (typeof value !== "object") return value;
   if (!decodedPayload && parseEnvelope(value))
-    return serialize(readJson(value), { pii, clinical, list }, scope, true);
+    return serialize(readJson(value), { pii, clinical, list, caseNames }, scope, true);
   const record =
     ("summary_data" in value ||
       "identity_value" in value ||
@@ -199,13 +205,13 @@ function serialize(
     )
       decoded = decrypt(raw);
     if (key === "staff" && raw) decoded = decrypt(raw);
-    if (PII.has(key) && (!pii || list)) {
+    if (PII.has(key) && (!pii || (list && !(caseNames && key === "first_name")))) {
       result[key] = mask(decoded, key);
       continue;
     }
     result[key] = serialize(
       decoded,
-      { pii, clinical, list, credential },
+      { pii, clinical, list, credential, caseNames },
       key === "summary_data"
         ? "summary"
         : key === "raw_answers"

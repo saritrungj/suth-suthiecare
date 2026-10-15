@@ -1,0 +1,54 @@
+[
+  {
+    "file": "app\\src\\pages\\admin\\Appointment.css",
+    "removed": 0
+  },
+  {
+    "file": "app\\src\\pages\\admin\\BannerManagement.css",
+    "removed": 27
+  },
+  {
+    "file": "app\\src\\pages\\admin\\CaseData.css",
+    "removed": 0
+  },
+  {
+    "file": "app\\src\\pages\\admin\\clinics\\ClinicManager.css",
+    "removed": 50
+  },
+  {
+    "file": "app\\src\\pages\\admin\\dashboard.css",
+    "removed": 0
+  },
+  {
+    "file": "app\\src\\pages\\admin\\forms\\styles\\FormBuilder.css",
+    "removed": 0
+  },
+  {
+    "file": "app\\src\\pages\\admin\\forms\\styles\\FormManager.css",
+    "removed": 25
+  },
+  {
+    "file": "app\\src\\pages\\admin\\forms\\styles\\FormPreview.css",
+    "removed": 0
+  },
+  {
+    "file": "app\\src\\pages\\admin\\HelpCenterManager.css",
+    "removed": 59
+  },
+  {
+    "file": "app\\src\\pages\\admin\\MyProfile.css",
+    "removed": 5
+  },
+  {
+    "file": "app\\src\\pages\\admin\\RiskCases.css",
+    "removed": 0
+  },
+  {
+    "file": "app\\src\\pages\\admin\\RolesPermissions.css",
+    "removed": 9
+  },
+  {
+    "file": "app\\src\\pages\\admin\\UserManagement.css",
+    "removed": 6
+  }
+]

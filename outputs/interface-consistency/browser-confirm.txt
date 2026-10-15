@@ -1,0 +1,547 @@
+[WebServer] (node:40496) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 24 tests using 1 worker
+
+(node:36068) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [phone] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus (15.3s)
+  ok  2 [phone] › e2e\interface-consistency.spec.js:41:1 › management dialogs share focus, close placement, scrolling and focus return (36.0s)
+  ok  3 [phone] › e2e\interface-consistency.spec.js:66:1 › a failed staff save preserves the form and opens a reachable confirmation above it (4.1s)
+  x   4 [phone] › e2e\interface-consistency.spec.js:93:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown (12.5s)
+(node:40680) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  5 [phone] › e2e\interface-consistency.spec.js:105:1 › default assessment and editor use the brand while an authored theme is preserved (6.7s)
+  ok  6 [phone] › e2e\interface-consistency.spec.js:116:1 › banner upload is keyboard accessible and the cropped preview fits a narrow modal (3.4s)
+  x   7 [phone] › e2e\interface-consistency.spec.js:130:1 › a case confirmation owns focus and Escape returns to the still-open case drawer (15.1s)
+(node:39452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   8 [phone] › e2e\interface-consistency.spec.js:152:1 › question option actions are discoverable with touch and keyboard without overflowing (30.5s)
+(node:38500) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  9 [tablet] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus (5.6s)
+  ok 10 [tablet] › e2e\interface-consistency.spec.js:41:1 › management dialogs share focus, close placement, scrolling and focus return (8.2s)
+  ok 11 [tablet] › e2e\interface-consistency.spec.js:66:1 › a failed staff save preserves the form and opens a reachable confirmation above it (3.7s)
+  ok 12 [tablet] › e2e\interface-consistency.spec.js:93:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown (2.3s)
+  ok 13 [tablet] › e2e\interface-consistency.spec.js:105:1 › default assessment and editor use the brand while an authored theme is preserved (3.6s)
+  ok 14 [tablet] › e2e\interface-consistency.spec.js:116:1 › banner upload is keyboard accessible and the cropped preview fits a narrow modal (2.2s)
+[WebServer] node:internal/fs/watchers:323
+[WebServer]     const error = new UVException({
+[WebServer]                   ^
+[WebServer] 
+[WebServer] Error: EBUSY: resource busy or locked, watch 'D:\github-clone\suth-suthiecare\app\test-results-interface\.playwright-artifacts-3\traces\d68a2529cc2af6464dc9-14b207028bc24a41f18b-recording6-pwnetcopy-1.network'
+[WebServer]     at FSWatcher.<computed> (node:internal/fs/watchers:323:19)
+[WebServer]     at Object.watch (node:fs:3062:36)
+[WebServer]     at createFsWatchInstance (file:///D:/github-clone/suth-suthiecare/node_modules/.pnpm/vite@7.3.6_@types+node@26.2.0/node_modules/vite/dist/node/chunks/config.js:12958:16)
+[WebServer]     at setFsWatchListener (file:///D:/github-clone/suth-suthiecare/node_modules/.pnpm/vite@7.3.6_@types+node@26.2.0/node_modules/vite/dist/node/chunks/config.js:13000:14)
+[WebServer]     at NodeFsHandler$1._watchWithNodeFs (file:///D:/github-clone/suth-suthiecare/node_modules/.pnpm/vite@7.3.6_@types+node@26.2.0/node_modules/vite/dist/node/chunks/config.js:13114:20)
+[WebServer]     at NodeFsHandler$1._handleFile (file:///D:/github-clone/suth-suthiecare/node_modules/.pnpm/vite@7.3.6_@types+node@26.2.0/node_modules/vite/dist/node/chunks/config.js:13158:24)
+[WebServer]     at NodeFsHandler$1._addToNodeFs (file:///D:/github-clone/suth-suthiecare/node_modules/.pnpm/vite@7.3.6_@types+node@26.2.0/node_modules/vite/dist/node/chunks/config.js:13332:26)
+[WebServer] Emitted 'error' event on FSWatcher instance at:
+[WebServer]     at FSWatcher._handleError (file:///D:/github-clone/suth-suthiecare/node_modules/.pnpm/vite@7.3.6_@types+node@26.2.0/node_modules/vite/dist/node/chunks/config.js:14133:148)
+[WebServer]     at NodeFsHandler$1._addToNodeFs (file:///D:/github-clone/suth-suthiecare/node_modules/.pnpm/vite@7.3.6_@types+node@26.2.0/node_modules/vite/dist/node/chunks/config.js:13337:18) {
+[WebServer]   errno: -4082,
+[WebServer]   syscall: 'watch',
+[WebServer]   code: 'EBUSY',
+[WebServer]   path: 'D:\\github-clone\\suth-suthiecare\\app\\test-results-interface\\.playwright-artifacts-3\\traces\\d68a2529cc2af6464dc9-14b207028bc24a41f18b-recording6-pwnetcopy-1.network',
+[WebServer]   filename: 'D:\\github-clone\\suth-suthiecare\\app\\test-results-interface\\.playwright-artifacts-3\\traces\\d68a2529cc2af6464dc9-14b207028bc24a41f18b-recording6-pwnetcopy-1.network'
+[WebServer] }
+[WebServer] 
+[WebServer] Node.js v26.7.0
+  x  15 [tablet] › e2e\interface-consistency.spec.js:130:1 › a case confirmation owns focus and Escape returns to the still-open case drawer (11.9s)
+(node:40384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  16 [tablet] › e2e\interface-consistency.spec.js:152:1 › question option actions are discoverable with touch and keyboard without overflowing (2.3s)
+(node:39704) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  17 [desktop] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus (2.3s)
+(node:38780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  18 [desktop] › e2e\interface-consistency.spec.js:41:1 › management dialogs share focus, close placement, scrolling and focus return (2.3s)
+(node:32964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  19 [desktop] › e2e\interface-consistency.spec.js:66:1 › a failed staff save preserves the form and opens a reachable confirmation above it (2.3s)
+(node:37960) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  20 [desktop] › e2e\interface-consistency.spec.js:93:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown (2.3s)
+(node:25772) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  21 [desktop] › e2e\interface-consistency.spec.js:105:1 › default assessment and editor use the brand while an authored theme is preserved (2.3s)
+(node:40680) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  22 [desktop] › e2e\interface-consistency.spec.js:116:1 › banner upload is keyboard accessible and the cropped preview fits a narrow modal (2.5s)
+(node:38128) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  23 [desktop] › e2e\interface-consistency.spec.js:130:1 › a case confirmation owns focus and Escape returns to the still-open case drawer (2.4s)
+(node:34452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  24 [desktop] › e2e\interface-consistency.spec.js:152:1 › question option actions are discoverable with touch and keyboard without overflowing (2.3s)
+
+
+  1) [phone] › e2e\interface-consistency.spec.js:93:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown 
+
+    Error: expect(locator).toBeFocused() failed
+
+    Locator: getByRole('combobox', { name: 'ค้นหาระดับสิทธิ์ (Role)' })
+    Expected: focused
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeFocused" with timeout 10000ms
+      - waiting for getByRole('combobox', { name: 'ค้นหาระดับสิทธิ์ (Role)' })
+
+
+      94 |   await openRoute(page,baseURL,'/admin/users');await page.getByRole('button',{name:'เพิ่มผู้ใช้งาน',exact:true}).click();
+      95 |   const dialog=page.getByRole('dialog',{name:'เพิ่มผู้ใช้งาน',exact:true}),select=dialog.getByRole('combobox',{name:'ระดับสิทธิ์ (Role)',exact:true});
+    > 96 |   await select.click();const search=page.getByRole('combobox',{name:'ค้นหาระดับสิทธิ์ (Role)'});await expect(search).toBeFocused();
+         |                                                                                                                      ^
+      97 |   const menu=page.locator('.searchable-select-menu');await fits(menu,page);
+      98 |   const triggerBox=await select.boundingBox(),menuBox=await menu.boundingBox();
+      99 |   expect(Math.min(Math.abs(menuBox.y-triggerBox.y-triggerBox.height),Math.abs(menuBox.y+menuBox.height-triggerBox.y))).toBeLessThanOrEqual(12);
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:96:118
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-phone\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-phone\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-phone\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-phone\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [phone] › e2e\interface-consistency.spec.js:130:1 › a case confirmation owns focus and Escape returns to the still-open case drawer 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.cw-drawer')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('.cw-drawer')
+
+
+      139 |   await openRoute(page,baseURL,'/admin/cases');
+      140 |   const opener=page.locator('.cw-person-open').first();await opener.click();
+    > 141 |   const drawer=page.locator('.cw-drawer');await expect(drawer).toBeVisible();
+          |                                                                ^
+      142 |   await drawer.getByRole('button',{name:'จัดการเคส',exact:true}).click();
+      143 |   await drawer.getByRole('button',{name:'สิ้นสุดการรักษา (ปิดเคส)',exact:true}).click();
+      144 |   const confirmation=page.getByRole('dialog',{name:'ยืนยันสิ้นสุดการรักษา',exact:true});await expect(confirmation).toBeVisible();await fits(confirmation,page);
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:141:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-a-ca-45d98--the-still-open-case-drawer-phone\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-a-ca-45d98--the-still-open-case-drawer-phone\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-a-ca-45d98--the-still-open-case-drawer-phone\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-a-ca-45d98--the-still-open-case-drawer-phone\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [phone] › e2e\interface-consistency.spec.js:152:1 › question option actions are discoverable with touch and keyboard without overflowing 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.sfb-question-card').first()
+        - locator resolved to <div class="sfb-form-card sfb-question-card inactive ">…</div>
+      - attempting click action
+        2 × waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - <div class="sfb-header-actions">…</div> from <header class="sfb-builder-header">…</header> subtree intercepts pointer events
+        - retrying click action
+        - waiting 20ms
+        - waiting for element to be visible, enabled and stable
+        - element is not stable
+      - retrying click action
+        - waiting 100ms
+        - waiting for element to be visible, enabled and stable
+        - element is visible, enabled and stable
+        - scrolling into view if needed
+        - done scrolling
+        - <div class="sfb-header-actions">…</div> from <header class="sfb-builder-header">…</header> subtree intercepts pointer events
+      - retrying click action
+        - waiting 100ms
+        - waiting for element to be visible, enabled and stable
+        - element is not stable
+      54 × retrying click action
+           - waiting 500ms
+           - waiting for element to be visible, enabled and stable
+           - element is visible, enabled and stable
+           - scrolling into view if needed
+           - done scrolling
+           - <div class="sfb-header-actions">…</div> from <header class="sfb-builder-header">…</header> subtree intercepts pointer events
+      - retrying click action
+        - waiting 500ms
+
+
+      153 |   await page.route('**/api/forms/101',route=>route.fulfill({json:{id:101,title:'แบบประเมินสาธิต',theme:{},questions:[{id:'q-layout',type:'multiple_choice',title:'คำถามตัวอย่างที่มีตัวเลือก',options:['ตัวเลือกสำหรับตรวจข้อความยาวบนหน้าจอเล็ก','ตัวเลือกที่สอง'],required:false}]}}));
+      154 |   await openRoute(page,baseURL,'/admin/forms/edit/101');
+    > 155 |   const card=page.locator('.sfb-question-card').first();await card.click();
+          |                                                                    ^
+      156 |   const option=card.locator('.sfb-opt-input').first();await option.focus();
+      157 |   const remove=card.getByRole('button',{name:'ลบตัวเลือก 1',exact:true});
+      158 |   await expect(remove).toHaveCSS('opacity','1');
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:155:68
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-ques-74f30-eyboard-without-overflowing-phone\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-ques-74f30-eyboard-without-overflowing-phone\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-ques-74f30-eyboard-without-overflowing-phone\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-ques-74f30-eyboard-without-overflowing-phone\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [tablet] › e2e\interface-consistency.spec.js:130:1 › a case confirmation owns focus and Escape returns to the still-open case drawer 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.cw-drawer')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('.cw-drawer')
+
+
+      139 |   await openRoute(page,baseURL,'/admin/cases');
+      140 |   const opener=page.locator('.cw-person-open').first();await opener.click();
+    > 141 |   const drawer=page.locator('.cw-drawer');await expect(drawer).toBeVisible();
+          |                                                                ^
+      142 |   await drawer.getByRole('button',{name:'จัดการเคส',exact:true}).click();
+      143 |   await drawer.getByRole('button',{name:'สิ้นสุดการรักษา (ปิดเคส)',exact:true}).click();
+      144 |   const confirmation=page.getByRole('dialog',{name:'ยืนยันสิ้นสุดการรักษา',exact:true});await expect(confirmation).toBeVisible();await fits(confirmation,page);
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:141:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-a-ca-45d98--the-still-open-case-drawer-tablet\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-a-ca-45d98--the-still-open-case-drawer-tablet\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-a-ca-45d98--the-still-open-case-drawer-tablet\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-a-ca-45d98--the-still-open-case-drawer-tablet\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [tablet] › e2e\interface-consistency.spec.js:152:1 › question option actions are discoverable with touch and keyboard without overflowing 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4196/admin/forms/edit/101
+    Call log:
+      - navigating to "http://127.0.0.1:4196/admin/forms/edit/101", waiting until "domcontentloaded"
+
+
+       8 |   await page.route('**/api/clinics/all',route=>route.fulfill({json:{data:[{id:1,name:'คลินิกสาธิต',slug:'general',show_in_help_center:1}]}}));
+       9 | });
+    > 10 | async function openRoute(page,baseURL,path){await setRouteSession(page,path,baseURL);await page.goto(path,{waitUntil:'domcontentloaded'});await expect(page.locator('.suth-page-header,.sfb-builder-header').first()).toBeVisible();}
+         |                                                                                                 ^
+      11 | async function navigate(page,path){
+      12 |   if(page.viewportSize().width<=1024)await page.locator('.mobile-hamburger-btn').click();
+      13 |   await page.locator(`.sidebar a[href="${path}"]`).first().click();
+        at openRoute (D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:10:97)
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:154:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-ques-74f30-eyboard-without-overflowing-tablet\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-ques-74f30-eyboard-without-overflowing-tablet\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-ques-74f30-eyboard-without-overflowing-tablet\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-ques-74f30-eyboard-without-overflowing-tablet\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [desktop] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4196/admin/clinics
+    Call log:
+      - navigating to "http://127.0.0.1:4196/admin/clinics", waiting until "domcontentloaded"
+
+
+       8 |   await page.route('**/api/clinics/all',route=>route.fulfill({json:{data:[{id:1,name:'คลินิกสาธิต',slug:'general',show_in_help_center:1}]}}));
+       9 | });
+    > 10 | async function openRoute(page,baseURL,path){await setRouteSession(page,path,baseURL);await page.goto(path,{waitUntil:'domcontentloaded'});await expect(page.locator('.suth-page-header,.sfb-builder-header').first()).toBeVisible();}
+         |                                                                                                 ^
+      11 | async function navigate(page,path){
+      12 |   if(page.viewportSize().width<=1024)await page.locator('.mobile-hamburger-btn').click();
+      13 |   await page.locator(`.sidebar a[href="${path}"]`).first().click();
+        at openRoute (D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:10:97)
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:25:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  7) [desktop] › e2e\interface-consistency.spec.js:41:1 › management dialogs share focus, close placement, scrolling and focus return 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4196/admin/users
+    Call log:
+      - navigating to "http://127.0.0.1:4196/admin/users", waiting until "domcontentloaded"
+
+
+       8 |   await page.route('**/api/clinics/all',route=>route.fulfill({json:{data:[{id:1,name:'คลินิกสาธิต',slug:'general',show_in_help_center:1}]}}));
+       9 | });
+    > 10 | async function openRoute(page,baseURL,path){await setRouteSession(page,path,baseURL);await page.goto(path,{waitUntil:'domcontentloaded'});await expect(page.locator('.suth-page-header,.sfb-builder-header').first()).toBeVisible();}
+         |                                                                                                 ^
+      11 | async function navigate(page,path){
+      12 |   if(page.viewportSize().width<=1024)await page.locator('.mobile-hamburger-btn').click();
+      13 |   await page.locator(`.sidebar a[href="${path}"]`).first().click();
+        at openRoute (D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:10:97)
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:51:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-mana-cf227--scrolling-and-focus-return-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-mana-cf227--scrolling-and-focus-return-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-mana-cf227--scrolling-and-focus-return-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-mana-cf227--scrolling-and-focus-return-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  8) [desktop] › e2e\interface-consistency.spec.js:66:1 › a failed staff save preserves the form and opens a reachable confirmation above it 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4196/admin/users
+    Call log:
+      - navigating to "http://127.0.0.1:4196/admin/users", waiting until "domcontentloaded"
+
+
+       8 |   await page.route('**/api/clinics/all',route=>route.fulfill({json:{data:[{id:1,name:'คลินิกสาธิต',slug:'general',show_in_help_center:1}]}}));
+       9 | });
+    > 10 | async function openRoute(page,baseURL,path){await setRouteSession(page,path,baseURL);await page.goto(path,{waitUntil:'domcontentloaded'});await expect(page.locator('.suth-page-header,.sfb-builder-header').first()).toBeVisible();}
+         |                                                                                                 ^
+      11 | async function navigate(page,path){
+      12 |   if(page.viewportSize().width<=1024)await page.locator('.mobile-hamburger-btn').click();
+      13 |   await page.locator(`.sidebar a[href="${path}"]`).first().click();
+        at openRoute (D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:10:97)
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:73:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-a-fa-6132d-hable-confirmation-above-it-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-a-fa-6132d-hable-confirmation-above-it-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-a-fa-6132d-hable-confirmation-above-it-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-a-fa-6132d-hable-confirmation-above-it-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  9) [desktop] › e2e\interface-consistency.spec.js:93:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4196/admin/users
+    Call log:
+      - navigating to "http://127.0.0.1:4196/admin/users", waiting until "domcontentloaded"
+
+
+       8 |   await page.route('**/api/clinics/all',route=>route.fulfill({json:{data:[{id:1,name:'คลินิกสาธิต',slug:'general',show_in_help_center:1}]}}));
+       9 | });
+    > 10 | async function openRoute(page,baseURL,path){await setRouteSession(page,path,baseURL);await page.goto(path,{waitUntil:'domcontentloaded'});await expect(page.locator('.suth-page-header,.sfb-builder-header').first()).toBeVisible();}
+         |                                                                                                 ^
+      11 | async function navigate(page,path){
+      12 |   if(page.viewportSize().width<=1024)await page.locator('.mobile-hamburger-btn').click();
+      13 |   await page.locator(`.sidebar a[href="${path}"]`).first().click();
+        at openRoute (D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:10:97)
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:94:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  10) [desktop] › e2e\interface-consistency.spec.js:105:1 › default assessment and editor use the brand while an authored theme is preserved 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4196/assessment/101
+    Call log:
+      - navigating to "http://127.0.0.1:4196/assessment/101", waiting until "load"
+
+
+      104 |
+      105 | test('default assessment and editor use the brand while an authored theme is preserved',async({page,baseURL})=>{
+    > 106 |   await setRouteSession(page,'/assessment/101',baseURL);await page.goto('/assessment/101');
+          |                                                                    ^
+      107 |   await expect(page.locator('.preview-form')).toBeVisible();
+      108 |   await expect(page.getByRole('button',{name:'ส่งคำตอบ',exact:true})).toHaveCSS('background-color','rgb(196, 84, 40)');
+      109 |   await openRoute(page,baseURL,'/admin/forms/create');
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:106:68
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-defa-51468-authored-theme-is-preserved-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-defa-51468-authored-theme-is-preserved-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-defa-51468-authored-theme-is-preserved-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-defa-51468-authored-theme-is-preserved-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  11) [desktop] › e2e\interface-consistency.spec.js:116:1 › banner upload is keyboard accessible and the cropped preview fits a narrow modal 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4196/admin/banner
+    Call log:
+      - navigating to "http://127.0.0.1:4196/admin/banner", waiting until "domcontentloaded"
+
+
+       8 |   await page.route('**/api/clinics/all',route=>route.fulfill({json:{data:[{id:1,name:'คลินิกสาธิต',slug:'general',show_in_help_center:1}]}}));
+       9 | });
+    > 10 | async function openRoute(page,baseURL,path){await setRouteSession(page,path,baseURL);await page.goto(path,{waitUntil:'domcontentloaded'});await expect(page.locator('.suth-page-header,.sfb-builder-header').first()).toBeVisible();}
+         |                                                                                                 ^
+      11 | async function navigate(page,path){
+      12 |   if(page.viewportSize().width<=1024)await page.locator('.mobile-hamburger-btn').click();
+      13 |   await page.locator(`.sidebar a[href="${path}"]`).first().click();
+        at openRoute (D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:10:97)
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:117:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-bann-35cd5-preview-fits-a-narrow-modal-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-bann-35cd5-preview-fits-a-narrow-modal-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-bann-35cd5-preview-fits-a-narrow-modal-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-bann-35cd5-preview-fits-a-narrow-modal-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  12) [desktop] › e2e\interface-consistency.spec.js:130:1 › a case confirmation owns focus and Escape returns to the still-open case drawer 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4196/admin/cases
+    Call log:
+      - navigating to "http://127.0.0.1:4196/admin/cases", waiting until "domcontentloaded"
+
+
+       8 |   await page.route('**/api/clinics/all',route=>route.fulfill({json:{data:[{id:1,name:'คลินิกสาธิต',slug:'general',show_in_help_center:1}]}}));
+       9 | });
+    > 10 | async function openRoute(page,baseURL,path){await setRouteSession(page,path,baseURL);await page.goto(path,{waitUntil:'domcontentloaded'});await expect(page.locator('.suth-page-header,.sfb-builder-header').first()).toBeVisible();}
+         |                                                                                                 ^
+      11 | async function navigate(page,path){
+      12 |   if(page.viewportSize().width<=1024)await page.locator('.mobile-hamburger-btn').click();
+      13 |   await page.locator(`.sidebar a[href="${path}"]`).first().click();
+        at openRoute (D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:10:97)
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:139:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-a-ca-45d98--the-still-open-case-drawer-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-a-ca-45d98--the-still-open-case-drawer-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-a-ca-45d98--the-still-open-case-drawer-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-a-ca-45d98--the-still-open-case-drawer-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  13) [desktop] › e2e\interface-consistency.spec.js:152:1 › question option actions are discoverable with touch and keyboard without overflowing 
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:4196/admin/forms/edit/101
+    Call log:
+      - navigating to "http://127.0.0.1:4196/admin/forms/edit/101", waiting until "domcontentloaded"
+
+
+       8 |   await page.route('**/api/clinics/all',route=>route.fulfill({json:{data:[{id:1,name:'คลินิกสาธิต',slug:'general',show_in_help_center:1}]}}));
+       9 | });
+    > 10 | async function openRoute(page,baseURL,path){await setRouteSession(page,path,baseURL);await page.goto(path,{waitUntil:'domcontentloaded'});await expect(page.locator('.suth-page-header,.sfb-builder-header').first()).toBeVisible();}
+         |                                                                                                 ^
+      11 | async function navigate(page,path){
+      12 |   if(page.viewportSize().width<=1024)await page.locator('.mobile-hamburger-btn').click();
+      13 |   await page.locator(`.sidebar a[href="${path}"]`).first().click();
+        at openRoute (D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:10:97)
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:154:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-ques-74f30-eyboard-without-overflowing-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-ques-74f30-eyboard-without-overflowing-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-ques-74f30-eyboard-without-overflowing-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-ques-74f30-eyboard-without-overflowing-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  13 failed
+    [phone] › e2e\interface-consistency.spec.js:93:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown 
+    [phone] › e2e\interface-consistency.spec.js:130:1 › a case confirmation owns focus and Escape returns to the still-open case drawer 
+    [phone] › e2e\interface-consistency.spec.js:152:1 › question option actions are discoverable with touch and keyboard without overflowing 
+    [tablet] › e2e\interface-consistency.spec.js:130:1 › a case confirmation owns focus and Escape returns to the still-open case drawer 
+    [tablet] › e2e\interface-consistency.spec.js:152:1 › question option actions are discoverable with touch and keyboard without overflowing 
+    [desktop] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus 
+    [desktop] › e2e\interface-consistency.spec.js:41:1 › management dialogs share focus, close placement, scrolling and focus return 
+    [desktop] › e2e\interface-consistency.spec.js:66:1 › a failed staff save preserves the form and opens a reachable confirmation above it 
+    [desktop] › e2e\interface-consistency.spec.js:93:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown 
+    [desktop] › e2e\interface-consistency.spec.js:105:1 › default assessment and editor use the brand while an authored theme is preserved 
+    [desktop] › e2e\interface-consistency.spec.js:116:1 › banner upload is keyboard accessible and the cropped preview fits a narrow modal 
+    [desktop] › e2e\interface-consistency.spec.js:130:1 › a case confirmation owns focus and Escape returns to the still-open case drawer 
+    [desktop] › e2e\interface-consistency.spec.js:152:1 › question option actions are discoverable with touch and keyboard without overflowing 
+  11 passed (3.2m)

@@ -1,0 +1,172 @@
+[WebServer] (node:37376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 70 tests using 1 worker
+
+(node:27936) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] 13:14:48 [vite] http proxy error: /api/session/staff
+[WebServer] Error: connect ECONNREFUSED 127.0.0.1:5000
+[WebServer]     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2017:16)
+[WebServer] 13:14:48 [vite] http proxy error: /api/session/patient
+[WebServer] Error: connect ECONNREFUSED 127.0.0.1:5000
+[WebServer]     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2017:16)
+[WebServer] 13:14:48 [vite] http proxy error: /api/session/staff
+[WebServer] Error: connect ECONNREFUSED 127.0.0.1:5000
+[WebServer]     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2017:16)
+[WebServer] 13:14:48 [vite] http proxy error: /api/session/patient
+[WebServer] Error: connect ECONNREFUSED 127.0.0.1:5000
+[WebServer]     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2017:16)
+  ok  1 [desktop-chromium] › e2e\assessment-result.spec.js:27:1 › assessment result renders one non-overlapping body per result (1.6s)
+[WebServer] 13:14:50 [vite] http proxy error: /api/forms/101/privacy-notice
+[WebServer] Error: connect ECONNREFUSED 127.0.0.1:5000
+[WebServer]     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2017:16)
+[WebServer] 13:14:50 [vite] http proxy error: /api/forms/101/privacy-notice
+[WebServer] Error: connect ECONNREFUSED 127.0.0.1:5000
+[WebServer]     at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2017:16)
+  ok  2 [desktop-chromium] › e2e\assessment-result.spec.js:45:1 › successful submission closes loading dialog and opens result (4.5s)
+  ok  3 [desktop-chromium] › e2e\auth.spec.js:4:1 › admin route redirects unauthenticated users to login (1.2s)
+  ok  4 [desktop-chromium] › e2e\auth.spec.js:12:1 › login validates required fields and toggles password visibility (1.4s)
+  ok  5 [desktop-chromium] › e2e\auth.spec.js:28:1 › successful login uses the cookie session without storing an access token (3.1s)
+  ok  6 [desktop-chromium] › e2e\case-person-timeline.spec.js:106:3 › person history survives a later successful case request (3.1s)
+  ok  7 [desktop-chromium] › e2e\case-person-timeline.spec.js:106:3 › person history survives a later failed case request (3.4s)
+  ok  8 [desktop-chromium] › e2e\case-person-timeline.spec.js:127:1 › uses the current case history when the person timeline fails (2.8s)
+  ok  9 [desktop-chromium] › e2e\case-person-timeline.spec.js:138:3 › case activity layout at 1440px (10.5s)
+  ok 10 [desktop-chromium] › e2e\case-person-timeline.spec.js:138:3 › case activity layout at 768px (9.8s)
+  ok 11 [desktop-chromium] › e2e\case-person-timeline.spec.js:138:3 › case activity layout at 390px (5.2s)
+  ok 12 [desktop-chromium] › e2e\case-person-timeline.spec.js:179:1 › saving a follow-up refreshes the activity without resetting the queue (5.0s)
+  ok 13 [desktop-chromium] › e2e\case-person-timeline.spec.js:204:1 › activity fallback identifies forms and walk-in records and exposes long titles (7.8s)
+  ok 14 [desktop-chromium] › e2e\case-person-timeline.spec.js:223:1 › surname reveal keeps the first name visible and can be hidden again (3.8s)
+  ok 15 [desktop-chromium] › e2e\case-person-timeline.spec.js:260:1 › surname reveal retries a failed request without opening case details (3.7s)
+  ok 16 [desktop-chromium] › e2e\case-person-timeline.spec.js:273:1 › case viewers without PII permission do not have a name reveal control (6.7s)
+  ok 17 [desktop-chromium] › e2e\component-system.spec.js:29:1 › shared components stay consistent across real admin workspaces (1.0m)
+  ok 18 [desktop-chromium] › e2e\component-system.spec.js:64:1 › clinic dialog shares input and keyboard behavior with school dialogs (3.7s)
+  ok 19 [desktop-chromium] › e2e\component-system.spec.js:74:1 › shared school dialog validates, traps focus, and returns to its opener (5.8s)
+  ok 20 [desktop-chromium] › e2e\dashboard-charts.spec.js:4:45 › school: create, edit, reorder and delete charts from all forms (23.3s)
+  ok 21 [desktop-chromium] › e2e\dashboard-charts.spec.js:4:45 › hospital: create, edit, reorder and delete charts from all forms (23.0s)
+  ok 22 [desktop-chromium] › e2e\dashboard-surfaces.spec.js:5:1 › recent cases and evaluation charts share the app colors; only the evaluation list opens a modal (11.2s)
+  ok 23 [desktop-chromium] › e2e\public-flows.spec.js:9:1 › history requires patient login before loading any record (17.5s)
+  ok 24 [desktop-chromium] › e2e\public-flows.spec.js:20:1 › patient authentication keeps the selected language across login and register (6.6s)
+  ok 25 [desktop-chromium] › e2e\public-flows.spec.js:38:1 › patient login can continue to the protected history route (5.2s)
+  x  26 [desktop-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (30.8s)
+(node:36844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 27 [desktop-chromium] › e2e\public-flows.spec.js:101:1 › history hero shows the currently signed-in patient profile (2.2s)
+  ok 28 [desktop-chromium] › e2e\public-flows.spec.js:147:1 › homepage navbar shows the signed-in patient and can log out (3.6s)
+  ok 29 [desktop-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code (4.4s)
+  ok 30 [desktop-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit (6.0s)
+  ok 31 [desktop-chromium] › e2e\searchable-school.spec.js:42:1 › search changes a year, supports keyboard and resets to current on return (3.8s)
+  ok 32 [desktop-chromium] › e2e\searchable-school.spec.js:63:1 › master year creation validates boundary and updates room editor options (2.9s)
+  ok 33 [desktop-chromium] › e2e\searchable-school.spec.js:83:1 › unassigned filter and teacher role search work inside a dialog (2.8s)
+  ok 34 [desktop-chromium] › e2e\searchable-school.spec.js:97:1 › role workspace lists members first and opens searchable edit form (2.4s)
+  ok 35 [desktop-chromium] › e2e\searchable-school.spec.js:111:1 › empty year filters can be reset and failed loading does not claim missing grades (3.9s)
+(node:33048) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 36 [mobile-chromium] › e2e\assessment-result.spec.js:27:1 › assessment result renders one non-overlapping body per result (2.3s)
+  ok 37 [mobile-chromium] › e2e\assessment-result.spec.js:45:1 › successful submission closes loading dialog and opens result (4.3s)
+  ok 38 [mobile-chromium] › e2e\auth.spec.js:4:1 › admin route redirects unauthenticated users to login (1.1s)
+  ok 39 [mobile-chromium] › e2e\auth.spec.js:12:1 › login validates required fields and toggles password visibility (1.6s)
+  ok 40 [mobile-chromium] › e2e\auth.spec.js:28:1 › successful login uses the cookie session without storing an access token (2.7s)
+  ok 41 [mobile-chromium] › e2e\case-person-timeline.spec.js:106:3 › person history survives a later successful case request (3.8s)
+  ok 42 [mobile-chromium] › e2e\case-person-timeline.spec.js:106:3 › person history survives a later failed case request (3.5s)
+  ok 43 [mobile-chromium] › e2e\case-person-timeline.spec.js:127:1 › uses the current case history when the person timeline fails (3.1s)
+  -  44 [mobile-chromium] › e2e\case-person-timeline.spec.js:138:3 › case activity layout at 1440px
+  -  45 [mobile-chromium] › e2e\case-person-timeline.spec.js:138:3 › case activity layout at 768px
+  -  46 [mobile-chromium] › e2e\case-person-timeline.spec.js:138:3 › case activity layout at 390px
+  ok 47 [mobile-chromium] › e2e\case-person-timeline.spec.js:179:1 › saving a follow-up refreshes the activity without resetting the queue (5.4s)
+  ok 48 [mobile-chromium] › e2e\case-person-timeline.spec.js:204:1 › activity fallback identifies forms and walk-in records and exposes long titles (8.6s)
+  ok 49 [mobile-chromium] › e2e\case-person-timeline.spec.js:223:1 › surname reveal keeps the first name visible and can be hidden again (3.6s)
+  ok 50 [mobile-chromium] › e2e\case-person-timeline.spec.js:260:1 › surname reveal retries a failed request without opening case details (2.9s)
+  ok 51 [mobile-chromium] › e2e\case-person-timeline.spec.js:273:1 › case viewers without PII permission do not have a name reveal control (4.8s)
+  ok 52 [mobile-chromium] › e2e\component-system.spec.js:29:1 › shared components stay consistent across real admin workspaces (43.4s)
+  ok 53 [mobile-chromium] › e2e\component-system.spec.js:64:1 › clinic dialog shares input and keyboard behavior with school dialogs (1.9s)
+  ok 54 [mobile-chromium] › e2e\component-system.spec.js:74:1 › shared school dialog validates, traps focus, and returns to its opener (3.0s)
+  ok 55 [mobile-chromium] › e2e\dashboard-charts.spec.js:4:45 › school: create, edit, reorder and delete charts from all forms (14.8s)
+  ok 56 [mobile-chromium] › e2e\dashboard-charts.spec.js:4:45 › hospital: create, edit, reorder and delete charts from all forms (11.9s)
+  ok 57 [mobile-chromium] › e2e\dashboard-surfaces.spec.js:5:1 › recent cases and evaluation charts share the app colors; only the evaluation list opens a modal (8.1s)
+  ok 58 [mobile-chromium] › e2e\public-flows.spec.js:9:1 › history requires patient login before loading any record (2.8s)
+  ok 59 [mobile-chromium] › e2e\public-flows.spec.js:20:1 › patient authentication keeps the selected language across login and register (2.9s)
+  ok 60 [mobile-chromium] › e2e\public-flows.spec.js:38:1 › patient login can continue to the protected history route (4.2s)
+  x  61 [mobile-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (31.9s)
+(node:728) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 62 [mobile-chromium] › e2e\public-flows.spec.js:101:1 › history hero shows the currently signed-in patient profile (2.4s)
+  ok 63 [mobile-chromium] › e2e\public-flows.spec.js:147:1 › homepage navbar shows the signed-in patient and can log out (5.2s)
+  ok 64 [mobile-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code (5.0s)
+  ok 65 [mobile-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit (6.4s)
+  ok 66 [mobile-chromium] › e2e\searchable-school.spec.js:42:1 › search changes a year, supports keyboard and resets to current on return (2.9s)
+  ok 67 [mobile-chromium] › e2e\searchable-school.spec.js:63:1 › master year creation validates boundary and updates room editor options (3.0s)
+  ok 68 [mobile-chromium] › e2e\searchable-school.spec.js:83:1 › unassigned filter and teacher role search work inside a dialog (3.4s)
+  ok 69 [mobile-chromium] › e2e\searchable-school.spec.js:97:1 › role workspace lists members first and opens searchable edit form (3.3s)
+  ok 70 [mobile-chromium] › e2e\searchable-school.spec.js:111:1 › empty year filters can be reset and failed loading does not claim missing grades (7.4s)
+
+
+  1) [desktop-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://127.0.0.1:4198/", waiting until "load"
+
+
+      82 |     ).toBeVisible();
+      83 |
+    > 84 |     await page.goto("/");
+         |                ^
+      85 |     const landingNav = page.locator(".sut2-nav");
+      86 |     await expect(landingNav).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+      87 |     await expect(landingNav).toHaveCSS("background-image", "none");
+        at D:\github-clone\suth-suthiecare\app\e2e\public-flows.spec.js:84:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface-regression\public-flows-public-navbar-b1dd9-usable-on-mobile-and-tablet-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface-regression\public-flows-public-navbar-b1dd9-usable-on-mobile-and-tablet-desktop-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface-regression\public-flows-public-navbar-b1dd9-usable-on-mobile-and-tablet-desktop-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface-regression\public-flows-public-navbar-b1dd9-usable-on-mobile-and-tablet-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [mobile-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://127.0.0.1:4198/", waiting until "load"
+
+
+      82 |     ).toBeVisible();
+      83 |
+    > 84 |     await page.goto("/");
+         |                ^
+      85 |     const landingNav = page.locator(".sut2-nav");
+      86 |     await expect(landingNav).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+      87 |     await expect(landingNav).toHaveCSS("background-image", "none");
+        at D:\github-clone\suth-suthiecare\app\e2e\public-flows.spec.js:84:16
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface-regression\public-flows-public-navbar-b1dd9-usable-on-mobile-and-tablet-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface-regression\public-flows-public-navbar-b1dd9-usable-on-mobile-and-tablet-mobile-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface-regression\public-flows-public-navbar-b1dd9-usable-on-mobile-and-tablet-mobile-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface-regression\public-flows-public-navbar-b1dd9-usable-on-mobile-and-tablet-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [desktop-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet 
+    [mobile-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet 
+  3 skipped
+  65 passed (8.7m)

@@ -1,0 +1,138 @@
+[
+  {
+    "file": "app\\src\\pages\\admin\\Appointment.jsx",
+    "counts": {
+      "SelectionGroup": 1
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\BannerManagement.jsx",
+    "counts": {
+      "Surface": 1
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\CaseData.jsx",
+    "counts": {
+      "SelectionGroup": 1,
+      "Surface": 1
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\CaseReferrals.jsx",
+    "counts": {
+      "SelectionGroup": 1
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\clinics\\ClinicManager.jsx",
+    "counts": {
+      "Badge": 2,
+      "Surface": 1
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\HelpCenterManager.jsx",
+    "counts": {
+      "Surface": 1,
+      "Badge": 2
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\MasterData.jsx",
+    "counts": {
+      "Surface": 1,
+      "Badge": 1
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\MyProfile.jsx",
+    "counts": {
+      "Surface": 3
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\RolesPermissions.jsx",
+    "counts": {
+      "Surface": 2
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\school\\GuardianStudents.jsx",
+    "counts": {
+      "Surface": 1
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\school\\SchoolCaseData.jsx",
+    "counts": {
+      "Surface": 2
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\school\\SchoolManagementNav.jsx",
+    "counts": {
+      "SelectionGroup": 1
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\school\\SchoolRoles.jsx",
+    "counts": {
+      "Surface": 2
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\school\\SchoolStructure.jsx",
+    "counts": {
+      "Surface": 2,
+      "Badge": 1
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\school\\SchoolTypes.jsx",
+    "counts": {
+      "Surface": 1,
+      "Badge": 1
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\school\\schoolUi.jsx",
+    "counts": {
+      "Badge": 1
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\school\\SchoolWorkflows.jsx",
+    "counts": {
+      "Surface": 2
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\school\\StudentImport.jsx",
+    "counts": {
+      "Surface": 3,
+      "Badge": 1
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\school\\StudentList.jsx",
+    "counts": {
+      "Surface": 1,
+      "Badge": 2
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\school\\TeacherList.jsx",
+    "counts": {
+      "Surface": 1,
+      "Badge": 1
+    }
+  },
+  {
+    "file": "app\\src\\pages\\admin\\UserManagement.jsx",
+    "counts": {
+      "SelectionGroup": 1,
+      "Surface": 1
+    }
+  }
+]

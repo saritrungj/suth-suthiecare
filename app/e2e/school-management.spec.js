@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 
 const ACCESS = {
   is_teacher: false,
@@ -18,6 +19,8 @@ const ACCESS = {
 };
 
 const STUDENT = {
+  can_view_health: true,
+  can_update_health: true,
   id: 1,
   school_id: 1,
   school_name: "โรงเรียนทดสอบ",
@@ -44,7 +47,10 @@ const STUDENT = {
   must_change_password: true,
 };
 
+const ACTIVITY = { type: "physical", title: "บันทึกผลตรวจร่างกาย", occurred_at: "2026-10-08T09:00:00+07:00" };
+
 const HEALTH = {
+  latest_activity: ACTIVITY,
   student: STUDENT,
   can_update: true,
   profile: {
@@ -189,6 +195,7 @@ async function openAsSchoolAdmin(page, received = {}) {
           pagination: { page: 1, limit: 20, total: 1, total_pages: 1 },
         },
       });
+    if (pathname.endsWith("/api/school/students/1")) return route.fulfill({ json: STUDENT });
     if (pathname.endsWith("/api/school/students/1/health"))
       return route.fulfill({ json: HEALTH });
     if (pathname.endsWith("/api/school/cases"))
@@ -197,6 +204,7 @@ async function openAsSchoolAdmin(page, received = {}) {
           data: [
             {
               ...STUDENT,
+              latest_activity: ACTIVITY,
               mental: {
                 risk: "high",
                 label: "เครียดสูง",
@@ -245,6 +253,7 @@ async function openAsSchoolAdmin(page, received = {}) {
       });
     }
     if (pathname.endsWith("/api/forms")) return route.fulfill({ json: [] });
+    if (pathname.endsWith('/api/school/screening-rounds')) return route.fulfill({json:[]});
     return route.fulfill({ json: {} });
   });
 }
@@ -257,7 +266,7 @@ test.describe("school organization", () => {
     );
   });
 
-  test("system admin sees school and hospital menus in a school unit", async ({
+  test("system admin sees school menus within the active school unit", async ({
     page,
   }) => {
     await openAsSchoolAdmin(page);
@@ -270,10 +279,10 @@ test.describe("school organization", () => {
       nav.getByRole("link", { name: "ครู", exact: true }),
     ).toBeVisible();
     await expect(nav.getByRole("link", { name: "จัดการคลินิก" })).toHaveCount(
-      1,
+      0,
     );
     await expect(nav.getByRole("link", { name: "ตารางนัดหมาย" })).toHaveCount(
-      1,
+      0,
     );
   });
 
@@ -334,12 +343,12 @@ test.describe("school organization", () => {
     ).toBeVisible();
     if (testInfo.project.name === "mobile-chromium") {
       await page
-        .getByRole("button", { name: "ด.ช. สมชาย ใจดี", exact: true })
+        .locator(".cw-person-open").first()
         .click();
       const dialog = page.getByRole("dialog", { name: "ด.ช. สมชาย ใจดี" });
       await dialog.getByRole("tab", { name: "สุขภาพจิต" }).click();
       await expect(dialog.getByText("เครียดสูง").first()).toBeVisible();
-    } else await expect(page.getByText("เครียดสูง")).toBeVisible();
+    } else await expect(page.getByText("เสี่ยงสูง", { exact: true }).last()).toBeVisible();
   });
 
   test("imports a CSV after a dry run and offers the credentials file", async ({
@@ -416,4 +425,88 @@ test("a guest must accept PDPA before the national ID is sent", async ({
   expect(payload.summaryData.raw_answers["เลขบัตรประชาชน"]).not.toContain(
     "0023",
   );
+});
+
+for (const width of [1440, 768, 390]) {
+  test(`school activity layout at ${width}px`, async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "desktop-chromium", "explicit viewport coverage");
+    await page.setViewportSize({ width, height: 1000 });
+    await openAsSchoolAdmin(page);
+    await page.goto("/admin/cases");
+    const person = page.locator(".cw-person-open").first();
+    await expect(person).toBeVisible();
+    await expect(page.locator(".cw-activity")).toHaveCount(0);
+    await expect(page.locator(".cw-person")).not.toContainText("ใจดี");
+    const accessibility = await new AxeBuilder({ page }).include(".cw-person").analyze();
+    expect(accessibility.violations).toEqual([]);
+    await page.screenshot({ path: `../outputs/school-cases-${width}.png`, fullPage: true });
+    await person.click();
+    const dialog = page.getByRole("dialog", { name: "ด.ช. สมชาย ใจดี" });
+    await expect(dialog.locator(".cw-activity-title")).toHaveText(ACTIVITY.title);
+    expect(await dialog.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+    const tabs = dialog.getByRole("tablist");
+    expect(await tabs.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+    const tabAccessibility = await new AxeBuilder({ page }).include(".cw-tabs").analyze();
+    expect(tabAccessibility.violations).toEqual([]);
+    await tabs.screenshot({ path: `../outputs/school-tabs-${width}.png` });
+    await page.screenshot({ path: `../outputs/school-drawer-${width}.png`, fullPage: true });
+  });
+}
+
+test("editing a physical record refreshes the school queue and student file", async ({ page }) => {
+  await openAsSchoolAdmin(page);
+  let activity = ACTIVITY;
+  let queueReads = 0;
+  await page.route("**/api/school/**", async (route) => {
+    const pathname = new URL(route.request().url()).pathname;
+    if (pathname.endsWith("/physical-records/1") && route.request().method() === "PUT") {
+      activity = { type: "physical", title: "แก้ไขผลตรวจร่างกาย", occurred_at: "2026-10-09T10:00:00+07:00" };
+      return route.fulfill({ json: { success: true } });
+    }
+    if (pathname.endsWith("/students/1/health"))
+      return route.fulfill({ json: { ...HEALTH, latest_activity: activity } });
+    if (pathname.endsWith("/school/cases")) {
+      queueReads++;
+      return route.fulfill({ json: {
+        data: [{ ...STUDENT, mental: null, physical: null, latest_vitals: { bmi: 20 }, overall_risk: "none", latest_activity: activity }],
+        pagination: { page: 1, limit: 20, total: 1, total_pages: 1 },
+        counts: { high: 0, medium: 0, normal: 0, none: 1 }, classrooms: [],
+      } });
+    }
+    return route.fallback();
+  });
+  await page.goto("/admin/cases");
+  await page.locator(".cw-person-open").first().click();
+  const dialog = page.getByRole("dialog", { name: "ด.ช. สมชาย ใจดี" });
+  await dialog.getByRole("tab", { name: "สุขภาพกาย" }).click();
+  await dialog.getByRole("button", { name: /แก้ไขผลตรวจวันที่/ }).click();
+  const edit = page.getByRole("dialog", { name: "แก้ไขผลตรวจร่างกาย" });
+  await edit.getByRole("button", { name: "บันทึก", exact: true }).click();
+  await expect(dialog.locator(".cw-activity-title")).toHaveText("แก้ไขผลตรวจร่างกาย");
+  expect(queueReads).toBeGreaterThan(1);
+  await expect(page.locator(".swal2-container")).not.toBeVisible();
+  await dialog.getByRole("button", { name: "ปิดหน้าต่าง", exact: true }).click();
+  await expect(page.locator(".cw-col-date, .cw-card-date").last()).toContainText("9 ต.ค.");
+});
+
+test("school case first name is visible and the eye toggles only the surname", async ({ page }, testInfo) => {
+  await openAsSchoolAdmin(page);
+  await page.route("**/api/school/students/1/last-name", (route) => route.fulfill({ json: { last_name: "ใจดี" } }));
+  await page.goto("/admin/cases");
+  if (testInfo.project.name === "mobile-chromium") {
+    const filter = page.getByLabel("ความเสี่ยง", { exact: true });
+    await expect(filter).toBeVisible();
+    expect((await filter.boundingBox()).height).toBeGreaterThanOrEqual(44);
+    await filter.selectOption("high");
+    await expect(filter).toHaveValue("high");
+  }
+  await expect(page.locator(".cw-person-name")).toContainText("สมชาย");
+  await expect(page.locator(".cw-person-name")).not.toContainText("ใจดี");
+  await page.getByRole("button", { name: "เปิดดูนามสกุล", exact: true }).click();
+  await expect(page.locator(".cw-person-name")).toContainText("สมชาย");
+  await expect(page.locator(".cw-person")).toContainText("ใจดี");
+  await page.screenshot({ path: "../outputs/school-case-name-revealed.png", fullPage: true });
+  await page.locator(".cw-scroll, .cw-cards").first().screenshot({ path: `../outputs/school-name-revealed-${testInfo.project.name}.png` });
+  await page.getByRole("button", { name: "ซ่อนนามสกุล", exact: true }).click();
+  await expect(page.locator(".cw-person-name")).not.toContainText("ใจดี");
 });

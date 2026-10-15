@@ -108,6 +108,10 @@ router.get(
       conditions.push(clause.sql);
       values.push(...clause.params);
     }
+    if (req.schoolSubjectScope) {
+      conditions.push("id IN (?)");
+      values.push(req.schoolSubjectScope.accountIds.length ? req.schoolSubjectScope.accountIds : [0]);
+    }
     if (search) {
       conditions.push("username LIKE ?");
       values.push(`%${search}%`);
@@ -595,7 +599,7 @@ router.post("/users", verifyToken, verifySuperAdmin, async (req, res) => {
       return res.status(422).json({ message: "ระดับสิทธิ์ไม่ถูกต้อง" });
     }
     if (
-      Number(req.user.role_id) !== 1 &&
+      !req.authorization?.isSystemAdmin &&
       requestedRoleId <= Number(req.user.role_id)
     ) {
       return res
@@ -694,7 +698,7 @@ router.put("/users/:id", verifyToken, verifySuperAdmin, async (req, res) => {
     const existing = existingRows[0];
     const actorRoleId = Number(req.user.role_id);
     const isSelf = Number(existing.id) === Number(req.user.id);
-    if (actorRoleId !== 1) {
+    if (!req.authorization?.isSystemAdmin) {
       const canManageTarget = Number(existing.role_id) > actorRoleId;
       const preservesOwnAccess =
         isSelf &&
@@ -798,7 +802,7 @@ router.delete("/users/:id", verifyToken, verifySuperAdmin, async (req, res) => {
       return res.status(422).json({ message: "ไม่สามารถลบบัญชีของตนเองได้" });
     }
     if (
-      Number(req.user.role_id) !== 1 &&
+      !req.authorization?.isSystemAdmin &&
       Number(target.role_id) <= Number(req.user.role_id)
     ) {
       return res.status(403).json({ message: "คุณไม่มีสิทธิ์ลบผู้ใช้นี้" });

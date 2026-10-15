@@ -1,0 +1,22 @@
+[
+  {
+    "file": "app\\src\\components\\case\\casedetail-childrens\\CaseActionTab.jsx",
+    "overrides": 1
+  },
+  {
+    "file": "app\\src\\components\\case\\casedetail-childrens\\CaseModals.jsx",
+    "overrides": 3
+  },
+  {
+    "file": "app\\src\\pages\\admin\\forms\\builder-components\\PublishSettingsModal.jsx",
+    "overrides": 1
+  },
+  {
+    "file": "app\\src\\pages\\admin\\forms\\FormManager.jsx",
+    "overrides": 1
+  },
+  {
+    "file": "app\\src\\pages\\admin\\HelpCenterManager.jsx",
+    "overrides": 4
+  }
+]

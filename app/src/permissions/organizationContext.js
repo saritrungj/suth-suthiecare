@@ -9,6 +9,15 @@ export const getSelectableOrganizations = (authorization) => {
   }));
 };
 
+export const getWorkspaceOrganization = (authorization, activeOrganization, type) => {
+  const organizations = getSelectableOrganizations(authorization).filter(org =>
+    (!org.status || org.status === "active") && org.org_level !== "main" &&
+    (!type || (org.org_type || "hospital") === type),
+  );
+  const selected = organizations.find(org => String(org.id) === String(activeOrganization)) || organizations[0] || null;
+  return { organizations, selected };
+};
+
 export const selectInitialOrganization = (authorization, savedValue) => {
   const organizations = getSelectableOrganizations(authorization);
   const saved = String(savedValue || "");

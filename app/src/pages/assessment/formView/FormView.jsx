@@ -1,3 +1,5 @@
+import { toDisplayText } from '../../../utils/textPresentation.js';
+import { toSafeHtml } from '../../../utils/richText.js';
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
@@ -742,7 +744,7 @@ const FormView = () => {
           if (typeof gridAns === "object" && gridAns !== null) {
             Object.keys(gridAns).forEach((rowIdx) => {
               const rowTitleText = qDef.rows[rowIdx]
-                ? qDef.rows[rowIdx].replace(/<[^>]+>/g, "").trim()
+                ? toDisplayText(qDef.rows[rowIdx]).trim()
                 : `แถวที่ ${Number(rowIdx) + 1}`;
               formattedGrid[rowTitleText] = Array.isArray(gridAns[rowIdx])
                 ? gridAns[rowIdx].join(", ")
@@ -829,11 +831,13 @@ const FormView = () => {
         },
       });
 
+      let submittedResults = scoreResultsArray;
       try {
-        await submitFormAnswers(id, {
+        const submitted = await submitFormAnswers(id, {
           ...payload,
           ...(urlToken ? { invitation_token: urlToken } : {}),
         });
+        if(Array.isArray(submitted.data?.score_results)) submittedResults=submitted.data.score_results;
       } catch (submitError) {
         setIsSubmitting(false);
         if (submitError.response?.status === 401) {
@@ -876,7 +880,7 @@ const FormView = () => {
 
       navigate("/assessment-result", {
         state: {
-          results: scoreResultsArray,
+          results: submittedResults,
           formId: id,
           hasBooking: hasBooking,
           isSaved: true,
@@ -1026,7 +1030,7 @@ const FormView = () => {
             <div
               className="preview-banner-text"
               style={{ textAlign: bannerTextAlign }}
-              dangerouslySetInnerHTML={{ __html: bannerText }}
+              dangerouslySetInnerHTML={{ __html: toSafeHtml(bannerText) }}
             />
           )}
         </div>
@@ -1055,7 +1059,7 @@ const FormView = () => {
                   <span
                     className={`preview-stepbar__label preview-stepbar__label--${state}`}
                   >
-                    {group.stepName}
+                    {toDisplayText(group.stepName)}
                   </span>
                   {i < groupedSteps.length - 1 && (
                     <div
@@ -1081,15 +1085,15 @@ const FormView = () => {
                 className="preview-step-intro__title"
                 dangerouslySetInnerHTML={{
                   __html:
-                    translatedStep?.title ||
+                    toSafeHtml(translatedStep?.title ||
                     stepData?.title ||
-                    "ส่วนที่ไม่มีชื่อ",
+                    "ส่วนที่ไม่มีชื่อ"),
                 }}
               />
               {(translatedStep?.desc || stepData?.desc) && (
                 <p
                   dangerouslySetInnerHTML={{
-                    __html: translatedStep?.desc || stepData.desc,
+                    __html: toSafeHtml(translatedStep?.desc || stepData.desc),
                   }}
                 />
               )}

@@ -1,3 +1,5 @@
+import SearchableSelect from '../../SearchableSelect';
+import { toDisplayText } from '../../../utils/textPresentation.js';
 import React, { useState } from "react";
 import { RiskPill } from "../CaseDrawer";
 import {
@@ -189,7 +191,7 @@ export default function CaseLeftPanel({
 
                 return (
                   <tr key={idx}>
-                    <td className="cdm-table-label">{displayRowTitle}</td>
+                    <td className="cdm-table-label">{toDisplayText(displayRowTitle)}</td>
                     <td className="cdm-table-value">
                       {Array.isArray(rowValue)
                         ? rowValue.join(", ")
@@ -269,7 +271,7 @@ export default function CaseLeftPanel({
                             #{journeyResponses.length - index}
                           </span>
                           <span className="cdm-timeline-title">
-                            {r.form_title}
+                            {toDisplayText(r.form_title)}
                           </span>
                         </div>
                         <div className="cdm-timeline-row">
@@ -320,7 +322,7 @@ export default function CaseLeftPanel({
             {/* Dropdown สลับดูคำตอบฟอร์มอื่น (กรณีไม่ได้กดจาก Timeline) */}
             <div className="cdm-form-select-box">
               <label className="cdm-form-label">กำลังดูข้อมูลจากฟอร์ม:</label>
-              <select
+              <SearchableSelect
                 className="cdm-form-input"
                 value={viewingResponseId}
                 onChange={(e) => setViewingResponseId(Number(e.target.value))}
@@ -328,19 +330,19 @@ export default function CaseLeftPanel({
                 {journeyResponses && journeyResponses.length > 0 ? (
                   journeyResponses.map((r, i) => (
                     <option key={r.id} value={r.id}>
-                      #{journeyResponses.length - i} {r.form_title} (
+                      #{journeyResponses.length - i} {toDisplayText(r.form_title)} (
                       {new Date(r.submitted_at).toLocaleDateString("th-TH")})
                     </option>
                   ))
                 ) : (
                   <option value={data.id}>
-                    {data.form_title || "แบบประเมินปัจจุบัน"}
+                    {toDisplayText(data.form_title || "แบบประเมินปัจจุบัน")}
                   </option>
                 )}
 
                 <strong>เจ้าหน้าที่ผู้รับผิดชอบ:</strong>
                 <p>{foundStaff ? foundStaff.fullname : "ยังไม่ระบุ"}</p>
-              </select>
+              </SearchableSelect>
             </div>
 
             {/* 🟢 ส่วนของ "ผลประเมินของการตอบครั้งนี้" (พับได้) */}
@@ -361,7 +363,7 @@ export default function CaseLeftPanel({
                     {scoreResults.map((s, i) => (
                       <div key={i} className="cdm-score-card">
                         <div className="cdm-score-header">
-                          <span className="cdm-score-title">{s.title}</span>
+                          <span className="cdm-score-title">{toDisplayText(s.title)}</span>
                           <span className="cdm-score-value">{s.score}</span>
                         </div>
                         <div className="cdm-score-badge">
@@ -369,11 +371,11 @@ export default function CaseLeftPanel({
                             aria-hidden="true"
                             style={{ backgroundColor: s.color || "#64748b" }}
                           />
-                          ระดับ: {s.label}
+                          ระดับ: {toDisplayText(s.label)}
                         </div>
                         {s.advice && (
                           <div className="cdm-score-advice">
-                            <strong>คำแนะนำ:</strong> {s.advice}
+                            <strong>คำแนะนำ:</strong> {toDisplayText(s.advice)}
                           </div>
                         )}
                       </div>

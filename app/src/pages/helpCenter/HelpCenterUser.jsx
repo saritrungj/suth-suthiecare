@@ -1,3 +1,4 @@
+import { toDisplayText } from '../../utils/textPresentation.js';
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -167,7 +168,7 @@ export default function HelpCenterUser() {
                           {faq.clinic_name || "ศูนย์ทั่วไป"}
                         </small>
                         <span className="hc-suggestion-text">
-                          {faq.question}
+                          {toDisplayText(faq.question)}
                         </span>
                       </div>
                       <FiChevronRight className="hc-suggestion-arrow" />
@@ -358,7 +359,7 @@ export default function HelpCenterUser() {
                           }}
                         >
                           <span style={{ fontWeight: "500" }}>
-                            {faq.question}
+                            {toDisplayText(faq.question)}
                           </span>
                         </div>
                         <FiChevronRight style={{ color: "#94a3b8" }} />

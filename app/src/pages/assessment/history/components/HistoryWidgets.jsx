@@ -1,3 +1,4 @@
+import { toDisplayText } from '../../../../utils/textPresentation.js';
 import React, { useState, useEffect } from "react";
 import {
   FiEye,
@@ -93,7 +94,7 @@ export function EditableAnswerField({
 
   return (
     <div className="hr-answer-row hr-answer-row--editable">
-      <span className="hr-answer-q">{questionLabel}</span>
+      <span className="hr-answer-q">{toDisplayText(questionLabel)}</span>
       <span className="hr-answer-sep">→</span>
       {editing ? (
         <div className="hr-inline-edit">
@@ -185,7 +186,7 @@ export function EditableField({
   return (
     <div className={`hr-field ${editing ? "editing" : ""}`}>
       <div className="hr-field-label">
-        {IconComponent && <IconComponent size={11} />} {label}
+        {IconComponent && <IconComponent size={11} />} {toDisplayText(label)}
       </div>
       {editing ? (
         <div className="hr-field-edit">

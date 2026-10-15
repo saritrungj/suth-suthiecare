@@ -1,0 +1,11 @@
+
+Running 6 tests using 1 worker
+
+  ok 1 [desktop-chromium] › e2e\text-rendering.spec.js:9:1 › assessment renders encoded formatting, lists and comparison operators without changing answers (2.5s)
+  ok 2 [desktop-chromium] › e2e\text-rendering.spec.js:29:1 › rich rendering strips encoded executable HTML and retains intended formatting (1.4s)
+  ok 3 [desktop-chromium] › e2e\text-rendering.spec.js:44:1 › landing form titles and descriptions contain readable content (2.3s)
+  ok 4 [mobile-chromium] › e2e\text-rendering.spec.js:9:1 › assessment renders encoded formatting, lists and comparison operators without changing answers (2.4s)
+  ok 5 [mobile-chromium] › e2e\text-rendering.spec.js:29:1 › rich rendering strips encoded executable HTML and retains intended formatting (1.3s)
+  ok 6 [mobile-chromium] › e2e\text-rendering.spec.js:44:1 › landing form titles and descriptions contain readable content (3.3s)
+
+  6 passed (15.6s)

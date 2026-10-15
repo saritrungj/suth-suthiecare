@@ -1,3 +1,5 @@
+import { toDisplayText } from '../../utils/textPresentation.js';
+import { toSafeHtml } from '../../utils/richText.js';
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
@@ -21,6 +23,7 @@ export default function ClinicHelpDetail() {
   const location = useLocation();
 
   const [selectedClinic, setSelectedClinic] = useState(null);
+  const [failedClinicImage, setFailedClinicImage] = useState("");
   const [clinicCategories, setClinicCategories] = useState([]);
   const [allFaqs, setAllFaqs] = useState([]);
   const [clinicSearchQuery, setClinicSearchQuery] = useState("");
@@ -206,7 +209,15 @@ export default function ClinicHelpDetail() {
         <div className="hc-user-container hc-clinic-hero-inner">
           {/* กรอบโลโก้คลินิกขนาดลงตัว */}
           <div className="hc-clinic-logo-frame">
-            <img src={selectedClinic.image} alt={selectedClinic.name} />
+            {selectedClinic.image && selectedClinic.image !== failedClinicImage ? (
+              <img
+                src={selectedClinic.image}
+                alt={selectedClinic.name}
+                onError={() => setFailedClinicImage(selectedClinic.image)}
+              />
+            ) : (
+              <FiHeart size={36} aria-hidden="true" />
+            )}
           </div>
 
           {/* บล็อกข้อความชิดซ้ายพร้อมป้ายส้มระบบ */}
@@ -276,7 +287,7 @@ export default function ClinicHelpDetail() {
                   }}
                 >
                   <FiFileText className="sub-q-icon" />
-                  <span className="sub-q-text">{faq.question}</span>
+                  <span className="sub-q-text">{toDisplayText(faq.question)}</span>
                 </li>
               ))}
 
@@ -337,7 +348,7 @@ export default function ClinicHelpDetail() {
                           onClick={() => setSelectedFaq(faq)}
                         >
                           <FiFileText className="sub-q-icon" />
-                          <span className="sub-q-text">{faq.question}</span>
+                          <span className="sub-q-text">{toDisplayText(faq.question)}</span>
                         </li>
                       ))}
                     </ul>
@@ -364,12 +375,12 @@ export default function ClinicHelpDetail() {
                       : "ข้อมูลทั่วไป";
                   })()}
                 </span>
-                <h3>{selectedFaq.question}</h3>
+                <h3>{toDisplayText(selectedFaq.question)}</h3>
               </div>
               <div className="hc-answer-body-content">
                 <div
                   className="hc-faq-answer suth-rich-content"
-                  dangerouslySetInnerHTML={{ __html: selectedFaq.answer }}
+                  dangerouslySetInnerHTML={{ __html: toSafeHtml(selectedFaq.answer) }}
                 />
               </div>
             </div>

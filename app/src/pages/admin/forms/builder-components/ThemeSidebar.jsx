@@ -61,7 +61,7 @@ const ThemeSidebar = ({
           <div className="sfb-theme-title-group">
             <FaPalette /> <span>ตัวเลือกธีม</span>
           </div>
-          <button className="sfb-btn-close-theme" onClick={onClose}>
+          <button type="button" aria-label="ปิดการปรับแต่งธีม" className="sfb-btn-close-theme" onClick={onClose}>
             <FaTimes />
           </button>
         </div>
@@ -185,6 +185,9 @@ const ThemeSidebar = ({
               {THEME_COLORS.map((color) => (
                 <button
                   key={color}
+                  type="button"
+                  aria-label={`สีธีม ${color}`}
+                  aria-pressed={themeColor === color}
                   className={`sfb-color-circle ${themeColor === color ? "active" : ""}`}
                   style={{ backgroundColor: color }}
                   onClick={() => setThemeColor(color)}
@@ -200,6 +203,8 @@ const ThemeSidebar = ({
                 <input
                   type="color"
                   id="custom-theme-color"
+                  aria-label="เลือกสีธีมกำหนดเอง"
+                  tabIndex={-1}
                   value={themeColor}
                   onChange={(e) => setThemeColor(e.target.value)}
                   style={{
@@ -211,6 +216,8 @@ const ThemeSidebar = ({
                   }}
                 />
                 <button
+                  type="button"
+                  aria-label="เลือกสีธีมกำหนดเอง"
                   className="sfb-color-circle sfb-custom-color-btn"
                   onClick={() =>
                     document.getElementById("custom-theme-color").click()
@@ -239,6 +246,9 @@ const ThemeSidebar = ({
               {BG_COLORS.map((color) => (
                 <button
                   key={color}
+                  type="button"
+                  aria-label={`สีพื้นหลัง ${color}`}
+                  aria-pressed={bgColor === color}
                   className={`sfb-color-circle sfb-bg-circle ${bgColor === color ? "active" : ""}`}
                   style={{ backgroundColor: color }}
                   onClick={() => setBgColor(color)}
@@ -254,6 +264,8 @@ const ThemeSidebar = ({
                 <input
                   type="color"
                   id="custom-bg-color"
+                  aria-label="เลือกสีพื้นหลังกำหนดเอง"
+                  tabIndex={-1}
                   value={bgColor}
                   onChange={(e) => setBgColor(e.target.value)}
                   style={{
@@ -265,6 +277,8 @@ const ThemeSidebar = ({
                   }}
                 />
                 <button
+                  type="button"
+                  aria-label="เลือกสีพื้นหลังกำหนดเอง"
                   className="sfb-color-circle sfb-custom-color-btn sfb-bg-circle"
                   onClick={() =>
                     document.getElementById("custom-bg-color").click()

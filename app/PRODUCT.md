@@ -56,8 +56,8 @@ type.
 
 ## Brand Commitments
 
-- Keep the existing app look: brand orange (#f47932) with the darker action
-  orange for solid buttons, Sarabun, grey canvas with white cards. Shared
+- Keep the existing app look: brand orange (#f47932, chosen 15 October 2026) with the darker action
+  orange for solid buttons, Sarabun, warm neutral canvas with white cards. Shared
   tokens live in `app/src/styles/tokens.css`.
 - Keep the eight case status labels word for word.
 

@@ -1,0 +1,429 @@
+import SearchableSelect from '../../SearchableSelect';
+import { toDisplayText } from '../../../utils/textPresentation.js';
+import React, { useState } from "react";
+import { RiskPill } from "../CaseDrawer";
+import {
+  FaStream,
+  FaChartBar,
+  FaClipboardList,
+  FaRegFolderOpen,
+  FaFileAlt,
+  FaChevronDown,
+} from "react-icons/fa";
+
+const CLINIC_LABELS = {
+  general: "ทั่วไป",
+  teenager: "คลินิกวัยรุ่น",
+  behavior: "คลินิก LSM",
+  sti: "คลินิกโรคติดต่อฯ",
+};
+
+export default function CaseLeftPanel({
+  leftViewMode,
+  setLeftViewMode,
+  viewingResponseId,
+  setViewingResponseId,
+  journeyResponses,
+  data,
+  scoreResults,
+  rawAnswers,
+  stripHtml,
+  formatAnswer,
+  formQuestions = [],
+  selectedStaff,
+  staffOptions,
+  fullAnswers = {},
+}) {
+  const foundStaff = staffOptions.find((s) => s.id === Number(selectedStaff));
+
+  // 🟢 State สำหรับควบคุมการย่อ-ขยาย (ค่าเริ่มต้นให้เปิดไว้ทั้งคู่)
+  const [isScoreOpen, setIsScoreOpen] = useState(true);
+  const [isAnswersOpen, setIsAnswersOpen] = useState(true);
+
+  // 🟢 ฟังก์ชันวาดตารางสำหรับคำตอบที่เป็น Object (เช่น Grid)
+  const renderAnswerContent = (qTitle, ans) => {
+    if (ans === undefined || ans === null || ans === "") return <p>-</p>;
+
+    let qDef = null;
+    for (const q of formQuestions) {
+      if (stripHtml(q.title) === stripHtml(qTitle)) {
+        qDef = q;
+        break;
+      }
+      if (q.type === "group" && q.subQuestions) {
+        const sub = q.subQuestions.find(
+          (sq) => stripHtml(sq.title) === stripHtml(qTitle),
+        );
+        if (sub) {
+          qDef = sub;
+          break;
+        }
+      }
+    }
+
+    if (qDef && qDef.type === "file_upload") {
+      const fullAns = fullAnswers[qDef.id];
+      console.log("File Upload Debug:", {
+        qTitle,
+        qDefId: qDef.id,
+        fullAns,
+        fullAnswers,
+      });
+
+      if (fullAns && fullAns.data) {
+        if (fullAns.type.startsWith("image/")) {
+          return (
+            <div style={{ marginTop: "10px" }}>
+              <img
+                src={fullAns.data}
+                alt="uploaded"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "200px",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  objectFit: "cover",
+                  border: "1px solid #e2e8f0",
+                }}
+                onClick={() => {
+                  import("sweetalert2").then((Swal) => {
+                    Swal.default.fire({
+                      imageUrl: fullAns.data,
+                      imageAlt: fullAns.name,
+                      showConfirmButton: false,
+                      showCloseButton: true,
+                      width: "auto",
+                      padding: "1em",
+                      background: "transparent",
+                      backdrop: "rgba(0,0,0,0.8)",
+                    });
+                  });
+                }}
+              />
+              <div style={{ marginTop: "8px" }}>
+                <a
+                  href={fullAns.data}
+                  download={fullAns.name}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    padding: "6px 12px",
+                    background: "#3b82f6",
+                    color: "#fff",
+                    borderRadius: "4px",
+                    textDecoration: "none",
+                    fontSize: "13px",
+                    fontWeight: "500",
+                  }}
+                >
+                  <FaFileAlt /> บันทึกภาพ
+                </a>
+              </div>
+            </div>
+          );
+        } else if (fullAns.type.startsWith("audio/")) {
+          return (
+            <div style={{ marginTop: "10px" }}>
+              <audio
+                controls
+                src={fullAns.data}
+                style={{ width: "100%", maxWidth: "300px" }}
+              />
+              <div style={{ marginTop: "8px" }}>
+                <a
+                  href={fullAns.data}
+                  download={fullAns.name}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    padding: "6px 12px",
+                    background: "#10b981",
+                    color: "#fff",
+                    borderRadius: "4px",
+                    textDecoration: "none",
+                    fontSize: "13px",
+                    fontWeight: "500",
+                  }}
+                >
+                  <FaFileAlt /> ดาวน์โหลดเสียง
+                </a>
+              </div>
+            </div>
+          );
+        }
+      } else {
+        // Fallback: If it's a file upload but data is missing in fullAnswers
+        return (
+          <div
+            style={{
+              marginTop: "10px",
+              padding: "10px",
+              border: "1px dashed #cbd5e1",
+              borderRadius: "8px",
+              background: "#f8fafc",
+            }}
+          >
+            <FaFileAlt style={{ marginRight: "6px", color: "#64748b" }} />
+            {formatAnswer(ans)}
+            <br />
+            <small style={{ color: "#ef4444" }}>
+              *ไม่สามารถดึงข้อมูล Base64 ได้
+            </small>
+          </div>
+        );
+      }
+    }
+
+    // ถ้าคำตอบเป็น Object (เช่น ข้อมูลตาราง) ให้วาดเป็น Table แทน Text
+    if (typeof ans === "object" && !Array.isArray(ans)) {
+      return (
+        <div className="cdm-table-container">
+          <table className="cdm-table">
+            <tbody>
+              {Object.entries(ans).map(([rowKey, rowValue], idx) => {
+                let displayRowTitle = rowKey;
+                // ดักจับข้อมูลเก่าที่บันทึกเป็นเลข 0, 1, 2
+                if (!isNaN(rowKey) && qDef && qDef.rows && qDef.rows[rowKey]) {
+                  displayRowTitle = stripHtml(qDef.rows[rowKey]);
+                }
+
+                return (
+                  <tr key={idx}>
+                    <td className="cdm-table-label">{toDisplayText(displayRowTitle)}</td>
+                    <td className="cdm-table-value">
+                      {Array.isArray(rowValue)
+                        ? rowValue.join(", ")
+                        : String(rowValue)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+
+    // ถ้าเป็นข้อมูลข้อความธรรมดา (Text/Array)
+    return <p>{formatAnswer(ans)}</p>;
+  };
+
+  return (
+    <div className="cdm-left-panel">
+      {/* 🟢 Tabs สลับโหมด */}
+      <div className="cdm-panel-tabs" style={{ marginBottom: "20px" }}>
+        <button
+          className={`cdm-tab-btn ${leftViewMode === "profile" ? "active" : ""}`}
+          onClick={() => setLeftViewMode("profile")}
+          style={{
+            flex: 1,
+            display: "flex",
+            justifyContent: "center",
+            gap: "8px",
+          }}
+        >
+          <FaRegFolderOpen /> ประวัติการทำฟอร์ม
+        </button>
+        <button
+          className={`cdm-tab-btn ${leftViewMode === "details" ? "active" : ""}`}
+          onClick={() => setLeftViewMode("details")}
+          style={{
+            flex: 1,
+            display: "flex",
+            justifyContent: "center",
+            gap: "8px",
+          }}
+        >
+          <FaFileAlt /> ข้อมูลคำตอบฟอร์ม
+        </button>
+      </div>
+
+      <div className="cdm-left-content-anim">
+        {/* 🟢 โหมด: แฟ้มประวัติ (Profile Timeline) */}
+        {leftViewMode === "profile" && (
+          <div>
+            <h3 className="cdm-section-title">
+              <FaStream /> ประวัติการทำแบบฟอร์ม/ประเมิน
+            </h3>
+
+            {journeyResponses && journeyResponses.length > 0 ? (
+              <div className="cdm-timeline-list">
+                {journeyResponses.map((r, index) => {
+                  const isCurrent = r.id === data.id;
+                  const isViewing = r.id === viewingResponseId;
+                  const d = new Date(r.submitted_at);
+                  const dateStr = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear() + 543}`;
+
+                  return (
+                    <div
+                      key={r.id}
+                      className={`cdm-timeline-card ${isViewing ? "active" : ""}`}
+                      onClick={() => {
+                        setViewingResponseId(r.id);
+                        setLeftViewMode("details"); // คลิกแล้วเด้งไปหน้าข้อมูลคำตอบทันที
+                      }}
+                    >
+                      <div className="cdm-timeline-info">
+                        <div className="cdm-timeline-row">
+                          <span className="cdm-timeline-index">
+                            #{journeyResponses.length - index}
+                          </span>
+                          <span className="cdm-timeline-title">
+                            {toDisplayText(r.form_title)}
+                          </span>
+                        </div>
+                        <div className="cdm-timeline-row">
+                          <span className="cdm-timeline-date">{dateStr}</span>
+                          {r.master_case_id &&
+                            data.master_case_id &&
+                            r.master_case_id !== data.master_case_id && (
+                              <span className="cdm-badge-other-clinic">
+                                {CLINIC_LABELS[r.clinic_type] ||
+                                  r.clinic_type ||
+                                  "คลินิกอื่น"}
+                              </span>
+                            )}
+                          {isCurrent && (
+                            <span className="cdm-badge-latest">
+                              รายการล่าสุด
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <RiskPill risk={r.risk_level} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div
+                style={{
+                  padding: "20px",
+                  textAlign: "center",
+                  color: "#64748b",
+                  background: "#f8fafc",
+                  borderRadius: "8px",
+                  border: "1px dashed #cbd5e1",
+                }}
+              >
+                ไม่พบประวัติการทำแบบประเมินอื่นๆ
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 🟢 โหมด: ข้อมูลคำตอบฟอร์ม (Form Details) */}
+        {leftViewMode === "details" && (
+          <div>
+            {/* Dropdown สลับดูคำตอบฟอร์มอื่น (กรณีไม่ได้กดจาก Timeline) */}
+            <div className="cdm-form-select-box">
+              <label className="cdm-form-label">กำลังดูข้อมูลจากฟอร์ม:</label>
+              <SearchableSelect
+                className="cdm-form-input"
+                value={viewingResponseId}
+                onChange={(e) => setViewingResponseId(Number(e.target.value))}
+              >
+                {journeyResponses && journeyResponses.length > 0 ? (
+                  journeyResponses.map((r, i) => (
+                    <option key={r.id} value={r.id}>
+                      #{journeyResponses.length - i} {toDisplayText(r.form_title)} (
+                      {new Date(r.submitted_at).toLocaleDateString("th-TH")})
+                    </option>
+                  ))
+                ) : (
+                  <option value={data.id}>
+                    {toDisplayText(data.form_title || "แบบประเมินปัจจุบัน")}
+                  </option>
+                )}
+
+                <strong>เจ้าหน้าที่ผู้รับผิดชอบ:</strong>
+                <p>{foundStaff ? foundStaff.fullname : "ยังไม่ระบุ"}</p>
+              </SearchableSelect>
+            </div>
+
+            {/* 🟢 ส่วนของ "ผลประเมินของการตอบครั้งนี้" (พับได้) */}
+            {scoreResults && scoreResults.length > 0 && (
+              <div style={{ marginBottom: "24px" }}>
+                <h3
+                  className="cdm-section-title cdm-collapse-header"
+                  onClick={() => setIsScoreOpen(!isScoreOpen)}
+                >
+                  <FaChartBar color="#f59e0b" /> ผลประเมินระบบ
+                  <FaChevronDown
+                    className={`cdm-collapse-icon ${isScoreOpen ? "open" : ""}`}
+                  />
+                </h3>
+
+                {isScoreOpen && (
+                  <div className="cdm-collapse-content">
+                    {scoreResults.map((s, i) => (
+                      <div key={i} className="cdm-score-card">
+                        <div className="cdm-score-header">
+                          <span className="cdm-score-title">{toDisplayText(s.title)}</span>
+                          <span className="cdm-score-value">{s.score}</span>
+                        </div>
+                        <div className="cdm-score-badge">
+                          <i
+                            aria-hidden="true"
+                            style={{ backgroundColor: s.color || "#64748b" }}
+                          />
+                          ระดับ: {toDisplayText(s.label)}
+                        </div>
+                        {s.advice && (
+                          <div className="cdm-score-advice">
+                            <strong>คำแนะนำ:</strong> {toDisplayText(s.advice)}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 🟢 ส่วนของ "ข้อมูลคำตอบ" (พับได้) */}
+            <div>
+              <h3
+                className="cdm-section-title cdm-collapse-header"
+                onClick={() => setIsAnswersOpen(!isAnswersOpen)}
+              >
+                <FaClipboardList color="#10b981" /> ข้อมูลคำตอบ
+                <FaChevronDown
+                  className={`cdm-collapse-icon ${isAnswersOpen ? "open" : ""}`}
+                />
+              </h3>
+
+              {isAnswersOpen && (
+                <div className="cdm-collapse-content">
+                  {Object.keys(rawAnswers).length > 0 ? (
+                    Object.entries(rawAnswers).map(([q, a], i) => (
+                      <div key={i} className="cdm-qa-box">
+                        <strong>{stripHtml(q)}</strong>
+                        {/* 🟢 เรียกใช้ฟังก์ชันวาดตาราง */}
+                        {renderAnswerContent(q, a)}
+                      </div>
+                    ))
+                  ) : (
+                    <div
+                      style={{
+                        color: "#94a3b8",
+                        fontStyle: "italic",
+                        padding: "10px 0",
+                      }}
+                    >
+                      ไม่มีข้อมูลคำตอบ
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

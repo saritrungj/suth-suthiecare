@@ -1,0 +1,11 @@
+
+Running 2 tests using 1 worker
+
+(node:4412) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › e2e\school-guardian.spec.js:46:1 › school administrator creates a guardian account with a password and explicit child links (3.4s)
+(node:11972) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [mobile-chromium] › e2e\school-guardian.spec.js:46:1 › school administrator creates a guardian account with a password and explicit child links (3.6s)
+
+  2 passed (11.0s)

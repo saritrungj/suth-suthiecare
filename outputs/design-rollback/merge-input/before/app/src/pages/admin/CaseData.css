@@ -1,0 +1,424 @@
+@import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap");
+
+/* ===============================
+   CASE PAGE
+================================= */
+
+/* ===============================
+   MODERN HEADER & FLEX
+================================= */
+
+/* ===============================
+   VIEW MODE TOGGLE
+================================= */
+
+/* ===============================
+   CLINIC TABS
+================================= */
+
+/* ===============================
+   FILTER BAR
+================================= */
+
+/* ===============================
+   CUSTOM SELECT (DROPDOWN)
+================================= */
+
+/* ✅ กำหนดขนาดหน้าจอ Desktop ด้วยคลาสเฉพาะ (ป้องกันบัคจากเงื่อนไขซ่อน/โชว์กล่อง) */
+
+/* ===============================
+   COLUMN DROPDOWN MENU
+================================= */
+
+/* ===============================
+   DATE PICKER
+================================= */
+/* =========================
+   FONT
+========================= */
+
+/* =========================
+   BUTTON GROUP
+========================= */
+
+/* =========================
+   ADD BUTTON
+========================= */
+
+/* =========================
+   OVERLAY
+========================= */
+
+.scd-modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(15, 23, 42, 0.42);
+
+  backdrop-filter: blur(6px);
+
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.scd-create-case-modal {
+  width: 100%;
+  max-width: 860px;
+
+  background: #f8fafc;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+
+  font-family: "Sarabun", sans-serif;
+
+  animation: modalEnter 0.18s ease;
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.scd-create-case-header {
+  padding: 22px 26px;
+
+  background: var(--suth-action);
+
+  color: #fff;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.scd-create-case-header h2 {
+  margin: 0;
+
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.scd-create-case-header p {
+  margin-top: 4px;
+
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.82);
+}
+.scd-close-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(10px);
+  color: #ffffff;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.scd-close-btn::before,
+.scd-close-btn::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 20%;
+  width: 60%;
+  height: 2px;
+  background-color: #ffffff;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+.scd-close-btn::before {
+  transform: rotate(45deg);
+}
+
+.scd-close-btn::after {
+  transform: rotate(-45deg);
+}
+.scd-close-btn:hover::before,
+.scd-close-btn:hover::after {
+  background-color: var(--suth-action);
+}
+
+.scd-close-btn:hover {
+  background: #ffffff;
+  transform: rotate(90deg);
+}
+/* =========================
+   BODY
+========================= */
+
+.scd-create-case-body {
+  padding: 22px;
+
+  max-height: 70vh;
+  overflow: auto;
+}
+
+/* =========================
+   SECTION
+========================= */
+
+/* Sections split by a 1px rule, not cards inside the modal. */
+.scd-form-section {
+  padding: 0 0 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--suth-line);
+}
+
+.scd-form-section:last-child {
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+
+.scd-section-title {
+  font-size: 15px;
+  font-weight: 700;
+
+  color: #0f172a;
+
+  margin-bottom: 18px;
+}
+
+/* =========================
+   GRID
+========================= */
+
+.scd-form-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 16px 20px;
+}
+
+/* =========================
+   FORM
+========================= */
+
+.scd-form-group {
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+.scd-form-group label {
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #334155;
+}
+
+/* =========================
+   INPUT
+========================= */
+
+.scd-form-group input,
+.scd-form-group select,
+.scd-form-group textarea {
+  width: 100%;
+
+  height: 44px;
+
+  border: 1px solid #cbd5e1;
+
+  background: #fff;
+
+  border-radius: 12px;
+
+  padding: 0 14px;
+
+  font-family: "Sarabun", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+
+  color: #0f172a;
+
+  outline: none;
+
+  transition: 0.18s ease;
+}
+
+.scd-form-group textarea {
+  min-height: 120px;
+
+  padding: 14px;
+
+  resize: vertical;
+}
+
+.scd-form-group input:focus,
+.scd-form-group select:focus,
+.scd-form-group textarea:focus {
+  border-color: var(--suth-action);
+
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+/* =========================
+   FULL WIDTH
+========================= */
+
+.scd-full-width {
+  grid-column: 1 / -1;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.scd-create-case-footer {
+  padding: 18px 22px;
+
+  background: #fff;
+
+  border-top: 1px solid #e2e8f0;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.scd-cancel-btn {
+  height: 42px;
+  padding: 0 18px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #e2e8f0;
+
+  color: #334155;
+
+  font-family: "Sarabun", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.scd-cancel-btn:hover {
+  background: #cbd5e1;
+}
+
+.scd-save-btn {
+  min-height: var(--suth-button-h);
+  padding: 0 18px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: var(--suth-action);
+
+  color: #fff;
+
+  font-family: "Sarabun", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.18s ease;
+}
+
+.scd-save-btn:hover {
+  background: var(--suth-action-hover);
+}
+
+/* =========================
+   SCROLLBAR
+========================= */
+
+.scd-create-case-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scd-create-case-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+  .scd-create-case-modal {
+    max-width: 100%;
+  }
+
+  .scd-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* ===============================
+   ANIMATIONS & MEDIA QUERIES
+================================= */
+
+/* ══ TABLET (769px - 1024px) ══ */
+@media (max-width: 1024px) {
+  /* บังคับให้ลูกทุกตัวกาง 100% เรียงลงมาทีละบรรทัด */
+}
+
+/* ══ MOBILE (<= 768px) ══ */
+@media (max-width: 768px) {
+  /* filter-bar เรียงแนวตั้ง */
+}
+
+/* modal-system.css paints every modal save button brand orange with
+   !important (its :is() list scores 0,2,1); white text needs the darker
+   action orange for AA, so this selector outranks it. */
+.scd-create-case-modal .scd-create-case-footer > button.scd-save-btn {
+  border-color: var(--suth-action) !important;
+  background: var(--suth-action) !important;
+  color: #ffffff !important;
+}
+
+.scd-create-case-modal
+  .scd-create-case-footer
+  > button.scd-save-btn:hover:not(:disabled) {
+  border-color: var(--suth-action-hover) !important;
+  background: var(--suth-action-hover) !important;
+}
+
+/* 44px touch targets on a phone (modal-system.css fixes 40/42px). */
+@media (max-width: 760px) {
+  .scd-create-case-modal .scd-create-case-footer > button,
+  .scd-create-case-modal .scd-close-btn {
+    min-height: var(--suth-control-h) !important;
+  }
+
+  .scd-create-case-modal .scd-close-btn {
+    width: var(--suth-control-h) !important;
+    min-width: var(--suth-control-h) !important;
+    height: var(--suth-control-h) !important;
+  }
+}

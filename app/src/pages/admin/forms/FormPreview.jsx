@@ -1,3 +1,6 @@
+import SearchableSelect from '../../../components/SearchableSelect';
+import { toDisplayText } from '../../../utils/textPresentation.js';
+import { toSafeHtml } from '../../../utils/richText.js';
 import React, { useEffect, useState } from "react";
 import "./styles/FormPreview.css";
 import { showSuccessAlert } from "../../../utils/alerts";
@@ -219,14 +222,14 @@ const FormPreview = () => {
             <h3
               className="preview-sec__title"
               dangerouslySetInnerHTML={{
-                __html: q.title || "คำถามที่ไม่มีชื่อ",
+                __html: toSafeHtml(q.title || "คำถามที่ไม่มีชื่อ"),
               }}
             />
             {q.required && <span className="req">*</span>}
             {q.hasDescription && q.text && (
               <div
                 className="preview-hint"
-                dangerouslySetInnerHTML={{ __html: q.text }}
+                dangerouslySetInnerHTML={{ __html: toSafeHtml(q.text) }}
               />
             )}
           </div>
@@ -358,7 +361,7 @@ const FormPreview = () => {
                         checked={isSelected}
                         onChange={() => handleAnswer(q.id, opt)}
                       />
-                      <span dangerouslySetInnerHTML={{ __html: opt }} />
+                      <span dangerouslySetInnerHTML={{ __html: toSafeHtml(opt) }} />
                     </label>
 
                     {isSelected && showInput && (
@@ -419,7 +422,7 @@ const FormPreview = () => {
                       <span className="preview-check__mark">
                         {isChecked ? "✓" : ""}
                       </span>
-                      <span dangerouslySetInnerHTML={{ __html: opt }} />
+                      <span dangerouslySetInnerHTML={{ __html: toSafeHtml(opt) }} />
                     </label>
 
                     {isChecked && showInput && (
@@ -461,7 +464,7 @@ const FormPreview = () => {
           )}
 
           {(q.type === "dropdown" || q.type === "faculty") && (
-            <select
+            <SearchableSelect
               className={`preview-input ${hasError ? "preview-input--error" : ""}`}
               value={ans || ""}
               onChange={(e) => handleAnswer(q.id, e.target.value)}
@@ -477,7 +480,7 @@ const FormPreview = () => {
                   </option>
                 );
               })}
-            </select>
+            </SearchableSelect>
           )}
 
           {(q.type === "grid_multiple" || q.type === "grid_checkbox") && (
@@ -487,7 +490,7 @@ const FormPreview = () => {
                   <tr>
                     <th></th>
                     {q.cols.map((col, i) => (
-                      <th key={i} dangerouslySetInnerHTML={{ __html: col }} />
+                      <th key={i} dangerouslySetInnerHTML={{ __html: toSafeHtml(col) }} />
                     ))}
                   </tr>
                 </thead>
@@ -505,7 +508,7 @@ const FormPreview = () => {
                           : ""
                       }
                     >
-                      <td dangerouslySetInnerHTML={{ __html: row }} />
+                      <td dangerouslySetInnerHTML={{ __html: toSafeHtml(row) }} />
                       {q.cols.map((col, j) => {
                         const key = String(i);
                         const rowAns =
@@ -600,7 +603,7 @@ const FormPreview = () => {
             <div
               className="preview-banner-text"
               style={{ textAlign: bannerTextAlign }}
-              dangerouslySetInnerHTML={{ __html: bannerText }}
+              dangerouslySetInnerHTML={{ __html: toSafeHtml(bannerText) }}
             />
           )}
         </div>
@@ -626,7 +629,7 @@ const FormPreview = () => {
                   <span
                     className={`preview-stepbar__label preview-stepbar__label--${state}`}
                   >
-                    {group.stepName}
+                    {toDisplayText(group.stepName)}
                   </span>
                   {i < groupedSteps.length - 1 && (
                     <div
@@ -646,11 +649,11 @@ const FormPreview = () => {
             <h2
               className="preview-step-intro__title"
               dangerouslySetInnerHTML={{
-                __html: stepData?.title || "ส่วนที่ไม่มีชื่อ",
+                __html: toSafeHtml(stepData?.title || "ส่วนที่ไม่มีชื่อ"),
               }}
             />
             {stepData?.desc && (
-              <p dangerouslySetInnerHTML={{ __html: stepData.desc }} />
+              <p dangerouslySetInnerHTML={{ __html: toSafeHtml(stepData.desc) }} />
             )}
             <p className="req" style={{ marginTop: "10px" }}>
               * แสดงว่าเป็นคำถามที่จำเป็น

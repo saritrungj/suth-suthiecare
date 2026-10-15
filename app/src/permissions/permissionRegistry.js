@@ -1,4 +1,5 @@
 export const PERMISSION_GROUPS = [
+  { id: "master_data", label: "ข้อมูลหลัก", actions: ["view", "manage", "export"] },
   {
     id: "pii",
     label: "ข้อมูลส่วนบุคคลเต็ม (ยังจำกัดด้วยขอบเขตสิทธิ์เดิม)",
@@ -9,7 +10,7 @@ export const PERMISSION_GROUPS = [
     label: "ข้อมูลสุขภาพ (ยังจำกัดด้วยขอบเขตสิทธิ์เดิม)",
     actions: ["view"],
   },
-  { id: "dashboard", label: "แดชบอร์ด", actions: ["view"] },
+  { id: "dashboard", label: "แดชบอร์ด", actions: ["view", "export"] },
   {
     id: "cases",
     label: "ข้อมูลเคสและเคสเสี่ยง",
@@ -18,37 +19,37 @@ export const PERMISSION_GROUPS = [
   {
     id: "appointments",
     label: "ตารางนัดหมาย",
-    actions: ["view", "create", "update", "delete"],
+    actions: ["view", "create", "update", "delete", "export"],
   },
   {
     id: "patient_members",
     label: "ผู้มารับบริการ",
-    actions: ["view", "update", "delete"],
+    actions: ["view", "update", "delete", "export"],
   },
   {
     id: "forms",
     label: "จัดการฟอร์ม",
-    actions: ["view", "create", "update", "delete"],
+    actions: ["view", "create", "update", "delete", "export"],
   },
   {
     id: "clinics",
     label: "จัดการคลินิก",
-    actions: ["view", "create", "update", "delete"],
+    actions: ["view", "create", "update", "delete", "export"],
   },
   {
     id: "help_center",
     label: "ศูนย์ช่วยเหลือ",
-    actions: ["view", "create", "update", "delete"],
+    actions: ["view", "create", "update", "delete", "export"],
   },
   {
     id: "content",
     label: "จัดการภาพแบนเนอร์",
-    actions: ["view", "create", "update", "delete"],
+    actions: ["view", "create", "update", "delete", "export"],
   },
   {
     id: "school",
     label: "โครงสร้างโรงเรียน ครู และประเภท",
-    actions: ["view", "create", "update", "delete"],
+    actions: ["view", "create", "update", "delete", "export"],
   },
   {
     id: "students",

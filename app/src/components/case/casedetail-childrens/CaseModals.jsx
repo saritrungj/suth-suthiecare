@@ -1,3 +1,4 @@
+import { toDisplayText } from '../../../utils/textPresentation.js';
 import React from "react";
 import {
   FaShareSquare,
@@ -207,7 +208,7 @@ export default function CaseModals({
                             lineHeight: "1.2",
                           }}
                         >
-                          {form.title}
+                          {toDisplayText(form.title)}
                         </div>
                         {/* 🟢 เรียกใช้ style.label ตรงๆ โดยไม่ต้องใส่คำว่าคลินิกนำหน้าแล้ว */}
                         <div
@@ -218,7 +219,7 @@ export default function CaseModals({
                             marginTop: "4px",
                           }}
                         >
-                          {style.label}
+                          {toDisplayText(style.label)}
                         </div>
                       </div>
 

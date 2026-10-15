@@ -1,3 +1,4 @@
+import { toDisplayText } from '../../../../utils/textPresentation.js';
 import React, { useState, useRef, useEffect } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -148,7 +149,7 @@ const CustomTypeSelector = ({ value, onChange }) => {
                   }}
                 >
                   <span className="sfb-opt-icon-sm">{opt.icon}</span>
-                  <span>{opt.label}</span>
+                  <span>{toDisplayText(opt.label)}</span>
                 </div>
               ))}
             </React.Fragment>

@@ -109,6 +109,8 @@ const decryptCaseResponse = (record, decrypt) => {
       decrypt,
       result.organization_id,
     );
+  if (result.summary_data?.case_source === "walkin")
+    result.case_source = "walkin";
   if (result.risk_level)
     result.risk_level = require("./privateField").readField(
       result.risk_level,

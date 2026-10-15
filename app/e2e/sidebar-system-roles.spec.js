@@ -103,7 +103,11 @@ for (const role of ["system_admin", "admin", "staff"]) {
   }) => {
     await setup(page, role);
     await page.goto(role === "staff" ? "/admin" : "/admin/members");
-    if (role === "staff") await expect(page).toHaveURL(/\/admin\/dashboard$/);
+    if (role === "staff") {
+      await expect(page).toHaveURL(/\/admin\/dashboard$/);
+      // Keep navigation checks on the directory; dashboard data has its own fixtures.
+      await page.goto("/admin/members");
+    }
     await openSidebar(page);
     const organizationSelector = page.getByLabel("หน่วยงานที่กำลังใช้งาน", {
       exact: true,
@@ -114,9 +118,13 @@ for (const role of ["system_admin", "admin", "staff"]) {
     if (role === "system_admin") {
       await organizationSelector.selectOption("all");
       await expect(organizationSelector).toHaveValue("all");
+      for (const path of ["/admin/school/students", "/admin/schedule", "/admin/clinics"])
+        await expect(page.locator(`.sidebar a[href="${path}"]`)).toHaveCount(1);
       for (const path of mainPaths)
         await expect(page.locator(`.sidebar a[href="${path}"]`)).toHaveCount(1);
       await organizationSelector.selectOption("1");
+      await expect(page.locator('.sidebar a[href="/admin/school/students"]')).toHaveCount(0);
+      await expect(page.locator('.sidebar a[href="/admin/schedule"]')).toHaveCount(1);
     }
     await expect(
       page.locator('.sidebar a[href="/admin/members"]'),
@@ -138,7 +146,8 @@ for (const role of ["system_admin", "admin", "staff"]) {
       ).toBeVisible();
       await expect(
         page.locator('.sidebar a[href="/admin/schedule"]'),
-      ).toHaveCount(1);
+      ).toHaveCount(0);
+      await expect(page.locator('.sidebar a[href="/admin/clinics"]')).toHaveCount(0);
     }
   });
 }

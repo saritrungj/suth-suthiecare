@@ -1,5 +1,9 @@
+import SearchableSelect from '../../../components/SearchableSelect';
+import { toDisplayText } from '../../../utils/textPresentation.js';
+import { usePageExport } from "../../../components/ExcelExport";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FiActivity } from "react-icons/fi";
+import api from '../../../services/api';
 import {
   getForms,
   getSchoolCases,
@@ -12,14 +16,15 @@ import {
   RISK_LABELS,
   classroomLabel,
   formatThaiDate,
-  studentName,
   useSchools,
   BarSelect,
   FilterDropdown,
   MenuSelect,
   SearchField,
   useMediaQuery,
+  ThaiDateField,
 } from "./schoolUi";
+import CasePerson from "../../../components/case/CasePerson";
 import StudentDetailModal from "./StudentDetailModal";
 import { RiskPill } from "../../../components/case/CaseDrawer";
 import "./school.css";
@@ -32,11 +37,6 @@ const RISK_LEVEL = {
 };
 
 // BMI with one decimal throughout (24.1, 20.0), or "-" when not measured.
-const formatBmi = (value) =>
-  value === null || value === undefined || value === ""
-    ? "-"
-    : Number(value).toFixed(1);
-
 function SchoolRisk({ risk }) {
   if (!risk) return <span className="cw-sub">ยังไม่มีผล</span>;
   return (
@@ -44,19 +44,6 @@ function SchoolRisk({ risk }) {
       level={RISK_LEVEL[risk] || "none"}
       label={RISK_LABELS[risk] || risk}
     />
-  );
-}
-
-function LatestResult({ result }) {
-  if (!result) return <span className="cw-sub">ยังไม่มีผล</span>;
-  return (
-    <>
-      <SchoolRisk risk={result.risk} />
-      <span className="cw-sub">
-        {result.label || result.form_title} ·{" "}
-        {formatThaiDate(result.submitted_at)}
-      </span>
-    </>
   );
 }
 
@@ -81,6 +68,7 @@ export default function SchoolCaseData({ initialRisk = "" }) {
   const [grades, setGrades] = useState([]);
   const [classrooms, setClassrooms] = useState([]);
   const [forms, setForms] = useState([]);
+  const [rounds,setRounds]=useState([]),[roundId,setRoundId]=useState('');
   const [filters, setFilters] = useState({
     grade_id: "",
     classroom_id: "",
@@ -88,7 +76,9 @@ export default function SchoolCaseData({ initialRisk = "" }) {
     form_id: "",
     risk: initialRisk,
     search: "",
+    start_date: '', end_date: '',
   });
+  usePageExport({title:"ผลประเมินนักเรียน",sources:[{resource:"school_cases",filters:{...filters,school_id:schoolId}}]});
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
   const [result, setResult] = useState(null);
@@ -96,6 +86,7 @@ export default function SchoolCaseData({ initialRisk = "" }) {
   const [error, setError] = useState("");
   const [viewing, setViewing] = useState(null);
   const requestId = useRef(0);
+  useEffect(()=>{api.get('/school/screening-rounds').then(({data})=>setRounds(Array.isArray(data)?data:[])).catch(()=>setRounds([]));},[schoolId]);
 
   useEffect(() => {
     getForms("latest")
@@ -240,12 +231,23 @@ export default function SchoolCaseData({ initialRisk = "" }) {
               ? "นักเรียนกลุ่มเสี่ยง"
               : "ข้อมูลสุขภาพนักเรียน"
           }
-          description="สรุปผลแบบประเมินสุขภาพจิตและสุขภาพกายล่าสุดของนักเรียนแต่ละคน คลิกที่ชื่อเพื่อเปิดแฟ้มสุขภาพของนักเรียน"
+          description="ติดตามเคสและเปิดแฟ้มสุขภาพนักเรียน"
         />
 
         <section className="cw-surface" aria-label="รายการนักเรียน">
+          {isPhone ? (
+            <label className="cw-field cw-school-risk-filter">
+              <span>ความเสี่ยง</span>
+              <SearchableSelect aria-label="ความเสี่ยง" value={filters.risk} onChange={(event) => update("risk", event.target.value)}>
+                <option value="">ทั้งหมด ({total})</option>
+                {["high", "medium", "normal", "none"].map((risk) => (
+                  <option key={risk} value={risk}>{RISK_LABELS[risk]} ({counts[risk] || 0})</option>
+                ))}
+              </SearchableSelect>
+            </label>
+          ) : (
           <ul
-            className={`cw-strip ${isPhone ? "sch-risk-summary" : ""}`}
+            className="cw-strip"
             aria-label="กรองตามระดับความเสี่ยง"
           >
             <li>
@@ -276,6 +278,8 @@ export default function SchoolCaseData({ initialRisk = "" }) {
             ))}
           </ul>
 
+          )}
+
           <div className="sch-filter-bar">
             <SearchField
               label="ค้นหานักเรียน"
@@ -295,6 +299,9 @@ export default function SchoolCaseData({ initialRisk = "" }) {
               }
             >
               {isPhone && classFilters}
+              <MenuSelect label="รอบประเมิน" value={roundId} onChange={value=>{setRoundId(value);const r=rounds.find(r=>String(r.id)===value);setFilters(old=>({...old,start_date:r?.starts_on||'',end_date:r?.ends_on||'',form_id:r?String(r.form_id):'',domain:r?.health_domain||''}));setPage(1);}}><option value="">ทุกช่วงเวลา</option>{rounds.filter(r=>String(r.school_id)===String(schoolId)).map(r=><option key={r.id} value={r.id}>{r.name} · {r.semester}/{r.academic_year}</option>)}</MenuSelect>
+              <ThaiDateField label="ประเมินตั้งแต่" allowFuture value={filters.start_date} onChange={value=>{setRoundId('');update('start_date',value);}}/>
+              <ThaiDateField label="ประเมินถึง" allowFuture value={filters.end_date} onChange={value=>{setRoundId('');update('end_date',value);}}/>
               <MenuSelect
                 label="หมวดสุขภาพ"
                 value={filters.domain}
@@ -312,7 +319,7 @@ export default function SchoolCaseData({ initialRisk = "" }) {
                 <option value="">ทุกแบบประเมิน</option>
                 {visibleForms.map((form) => (
                   <option key={form.id} value={form.id}>
-                    {String(form.title || "").replace(/<[^>]+>/g, "")}
+                    {toDisplayText(String(form.title || ""))}
                   </option>
                 ))}
               </MenuSelect>
@@ -345,43 +352,15 @@ export default function SchoolCaseData({ initialRisk = "" }) {
                   className={`cw-card ${viewing === row.id ? "is-open" : ""}`}
                 >
                   <div className="cw-card-top">
-                    <button
-                      type="button"
-                      className="cw-name-btn"
-                      aria-haspopup="dialog"
-                      onClick={() => setViewing(row.id)}
-                    >
-                      {studentName(row)}
-                    </button>
+                    <CasePerson school id={row.id} name={row.first_name} code={`รหัส ${row.student_code}`} onOpen={() => setViewing(row.id)} />
                     {row.overall_risk !== "none" && (
                       <SchoolRisk risk={row.overall_risk} />
                     )}
                   </div>
-                  <div className="cw-card-meta">
+                  <div className="cw-card-summary">
                     <span>{classroomLabel(row)}</span>
-                    <span>รหัส {row.student_code}</span>
-                    {row.nickname && <span>{row.nickname}</span>}
+                    <span className="cw-card-date">{row.latest_activity?.occurred_at ? formatThaiDate(row.latest_activity.occurred_at) : "ยังไม่มีข้อมูล"}</span>
                   </div>
-                  <dl className="cw-card-facts">
-                    <div>
-                      <dt>สุขภาพจิต</dt>
-                      <dd>
-                        <SchoolRisk risk={row.mental?.risk} />
-                      </dd>
-                    </div>
-                    <div>
-                      <dt>สุขภาพกาย</dt>
-                      <dd>
-                        <SchoolRisk risk={row.physical?.risk} />
-                      </dd>
-                    </div>
-                    <div>
-                      <dt>BMI</dt>
-                      <dd className="cw-num">
-                        {formatBmi(row.latest_vitals?.bmi)}
-                      </dd>
-                    </div>
-                  </dl>
                 </li>
               ))}
             </ul>
@@ -392,14 +371,13 @@ export default function SchoolCaseData({ initialRisk = "" }) {
               role="region"
               aria-label="ตารางข้อมูลสุขภาพนักเรียน"
             >
-              <table className="cw-queue">
+              <table className="cw-queue cw-queue--compact">
                 <thead>
                   <tr>
                     <th className="cw-col-person">นักเรียน</th>
                     <th>ภาพรวม</th>
-                    <th>สุขภาพจิตล่าสุด</th>
-                    <th>สุขภาพกายล่าสุด</th>
-                    <th className="cw-col-date">BMI ล่าสุด</th>
+                    <th>ชั้น / ห้อง</th>
+                    <th className="cw-col-date">อัปเดตล่าสุด</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -409,18 +387,7 @@ export default function SchoolCaseData({ initialRisk = "" }) {
                       className={viewing === row.id ? "is-open" : ""}
                     >
                       <td className="cw-col-person">
-                        <button
-                          type="button"
-                          className="cw-name-btn"
-                          aria-haspopup="dialog"
-                          onClick={() => setViewing(row.id)}
-                        >
-                          {studentName(row)}
-                        </button>
-                        <span className="cw-sub">
-                          {classroomLabel(row)} · รหัส {row.student_code}
-                          {row.nickname ? ` · ${row.nickname}` : ""}
-                        </span>
+                        <CasePerson school id={row.id} name={row.first_name} code={`รหัส ${row.student_code}`} onOpen={() => setViewing(row.id)} />
                       </td>
                       <td>
                         <SchoolRisk
@@ -431,15 +398,8 @@ export default function SchoolCaseData({ initialRisk = "" }) {
                           }
                         />
                       </td>
-                      <td>
-                        <LatestResult result={row.mental} />
-                      </td>
-                      <td>
-                        <LatestResult result={row.physical} />
-                      </td>
-                      <td className="cw-col-date">
-                        {formatBmi(row.latest_vitals?.bmi)}
-                      </td>
+                      <td>{classroomLabel(row)}</td>
+                      <td className="cw-col-date">{row.latest_activity?.occurred_at ? formatThaiDate(row.latest_activity.occurred_at) : "ยังไม่มีข้อมูล"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -477,7 +437,7 @@ export default function SchoolCaseData({ initialRisk = "" }) {
                         ["none", "ยังไม่มีผล"],
                       ].map(([risk, label]) => (
                         <div key={risk}>
-                          <dt>{label}</dt>
+                          <dt>{toDisplayText(label)}</dt>
                           <dd>{room[risk]}</dd>
                         </div>
                       ))}
@@ -522,6 +482,7 @@ export default function SchoolCaseData({ initialRisk = "" }) {
         {viewing && (
           <StudentDetailModal
             studentId={viewing}
+            onUpdated={load}
             initialTab="mental"
             nav={studentNav}
             onClose={() => setViewing(null)}

@@ -1,0 +1,60 @@
+/* Shared brand and component tokens. The primary #f47932 carries the brand and navigation;
+   the darker action orange keeps white button text above 4.5:1. */
+:root {
+  --suth-font: "Sarabun", "Noto Sans Thai", system-ui, sans-serif;
+
+  /* Action: solid buttons, current step, links styled as actions */
+  --suth-action: #c45428;
+  --suth-action-hover: #a94320;
+  --suth-action-ink: #a9430b; /* orange text on white or tint, 5.9:1 */
+  --suth-accent: #f47932; /* use dark ink on this fill, never white body text */
+  --suth-focus: #a9430b;
+  --suth-on-accent: #342014;
+  --suth-on-action: #ffffff;
+
+  /* Text: muted holds 4.5:1 on white, canvas, line-soft and tint */
+  --suth-ink: #1f2f3f;
+  --suth-ink-2: #344a5f;
+  --suth-muted: #526578;
+
+  /* Surfaces and lines */
+  --suth-canvas: #faf7f3;
+  --suth-surface: #ffffff;
+  --suth-surface-2: #f3f6f8;
+  --suth-surface-hover: #fffaf6;
+  --suth-tint: #fff4ec;
+  --suth-tint-strong: #ffeadc;
+  --suth-tint-line: #f5c3a3;
+  --suth-line: #d8e0e7;
+  --suth-line-soft: #e8edf1;
+  --suth-control-line: #afbdc7;
+
+  /* Status */
+  --suth-info: #1d5c8c;
+  --suth-info-tint: #e7f2fb;
+  --suth-danger: #b42318;
+  --suth-danger-tint: #fef2f2;
+  --suth-danger-line: #f2c6c3;
+  --suth-warning: #9a4a07;
+  --suth-warning-tint: #fff3e0;
+  --suth-warning-line: #fed7aa;
+  --suth-success: #17663a;
+  --suth-success-tint: #e4f6eb;
+  --suth-neutral-tint: #eef2f6;
+  /* Vivid categorical charts; clinical colors remain in the risk tokens. */
+  --suth-chart-apricot: #db711f;
+  --suth-chart-teal: #279b8d;
+  --suth-chart-sage: #71972f;
+  --suth-chart-hover: oklch(96% 0.018 65);
+  --suth-chart-surface: oklch(99% 0.006 65);
+  --suth-chart-blue: #498bc9;
+  --suth-chart-purple: #6d28d9;
+
+  /* Sizes */
+  --suth-control-h: 44px;
+  --suth-button-h: 44px;
+  --suth-radius: 10px;
+  --suth-radius-lg: 14px;
+  --suth-shadow-card: 0 6px 16px rgba(21, 40, 61, 0.08);
+  --suth-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}

@@ -1,0 +1,18 @@
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+⚠️ decrypt failed (Error); returning value as-is. len=2947
+⚠️ decrypt failed (Error); returning value as-is. len=968
+⚠️ decrypt failed (Error); returning value as-is. len=603
+⚠️ decrypt failed (Error); returning value as-is. len=2947
+⚠️ decrypt failed (Error); returning value as-is. len=968
+⚠️ decrypt failed (Error); returning value as-is. len=603
+✔ local MySQL master categories support scoped reads, creates, updates and private templates with rollback (1916.669ms)
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+✔ local MySQL guardian account creation, credentials, scoped reads and revocation with rollback (2593.1208ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2956.1433

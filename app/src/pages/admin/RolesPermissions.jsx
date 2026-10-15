@@ -1,3 +1,5 @@
+import { toDisplayText } from '../../utils/textPresentation.js';
+import { usePageExport } from "../../components/ExcelExport";
 import { useEffect, useMemo, useState } from "react";
 import {
   createRole,
@@ -51,6 +53,7 @@ export default function RolesPermissions() {
       ),
     [],
   );
+  usePageExport({title:"บทบาทและสิทธิ์",sources:[{resource:"roles"},...(selected?[{resource:"role_permissions",id:selected}]:[])]});
   const selectedRole = roles.find((role) => role.id === selected);
   const load = async () => {
     try {
@@ -229,7 +232,7 @@ export default function RolesPermissions() {
                 >
                   <div className="srp-module-title">
                     <span className="srp-module-dot" aria-hidden="true" />
-                    {group.label}
+                    {toDisplayText(group.label)}
                   </div>
                   <div className="srp-permission-row">
                     {group.actions.map((action) => {

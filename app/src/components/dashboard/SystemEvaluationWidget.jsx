@@ -260,11 +260,6 @@ export default function SystemEvaluationWidget() {
       >
         {/* 🟢 คอลัมน์ที่ 1: กราฟแท่ง Likert */}
         <div
-          className="ui-modal-overlay"
-          role="presentation"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) setIsModalOpen(false);
-          }}
           style={{
             border: "1px solid #e2e8f0",
             borderRadius: "12px",
@@ -288,10 +283,6 @@ export default function SystemEvaluationWidget() {
             <FiBarChart2 color="#8b5cf6" /> ความพึงพอใจ 5 ด้าน
           </h3>
           <div
-            className="ui-modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="system-evaluation-modal-title"
             style={{
               width: "100%",
               minWidth: 0,

@@ -1,3 +1,4 @@
+import { toDisplayText } from '../../utils/textPresentation.js';
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
@@ -38,18 +39,7 @@ const SLIDE_INTERVAL = 6000;
 const CARD_THEMES = ["sut2-card--blue", "sut2-card--pink", "sut2-card--green"];
 const PROJECT_START_YEAR = 2026;
 
-function stripHtml(html) {
-  if (!html) return "";
-  return html
-    .replace(/<br\s*\/?>/gi, " ")
-    .replace(/<[^>]+>/g, "")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/\s+/g, " ")
-    .trim();
-}
+function stripHtml(html) { return toDisplayText(html); }
 
 // ✅ FormCard ที่แก้ไขแล้ว
 function FormCard({ form, themeClass, count, isLoaded }) {
@@ -94,7 +84,7 @@ function FormCard({ form, themeClass, count, isLoaded }) {
       }}
       role="button"
       tabIndex={0}
-      aria-label={displayTitle}
+      aria-label={toDisplayText(displayTitle)}
     >
       {/* ===== Band ด้านบน ===== */}
       <div
@@ -104,7 +94,7 @@ function FormCard({ form, themeClass, count, isLoaded }) {
           <img
             className="sut2-card__band-img"
             src={displayImage}
-            alt={form.title}
+            alt={toDisplayText(form.title)}
             loading="lazy"
             decoding="async"
           />
@@ -113,8 +103,8 @@ function FormCard({ form, themeClass, count, isLoaded }) {
 
       {/* ===== Body ตัวหนังสือ ===== */}
       <div className="sut2-card__body">
-        <h3 className="sut2-card__title">{displayTitle}</h3>
-        <p className="sut2-card__desc">{displayDesc}</p>
+        <h3 className="sut2-card__title">{toDisplayText(displayTitle)}</h3>
+        <p className="sut2-card__desc">{toDisplayText(displayDesc)}</p>
       </div>
 
       {/* ===== Count ด้านล่าง ===== */}

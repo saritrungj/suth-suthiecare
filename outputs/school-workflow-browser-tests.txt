@@ -1,0 +1,316 @@
+[WebServer] (node:27080) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:57852) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 40 tests using 1 worker
+
+(node:60640) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › e2e\school-management.spec.js:268:3 › school organization › system admin sees school and hospital menus in a school unit (5.0s)
+  ok  2 [desktop-chromium] › e2e\school-management.spec.js:288:3 › school organization › the structure page is the sub-unit's school: grades and their rooms only (2.6s)
+  ok  3 [desktop-chromium] › e2e\school-management.spec.js:316:3 › school organization › student list opens the student health file (3.2s)
+  x   4 [desktop-chromium] › e2e\school-management.spec.js:335:3 › school organization › the case list of a school organization is the student health view (12.7s)
+(node:24736) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  5 [desktop-chromium] › e2e\school-management.spec.js:353:3 › school organization › imports a CSV after a dry run and offers the credentials file (3.3s)
+  ok  6 [desktop-chromium] › e2e\school-management.spec.js:383:1 › a guest must accept PDPA before the national ID is sent (3.0s)
+  x   7 [desktop-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 1440px (12.3s)
+(node:60456) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   8 [desktop-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 768px (11.9s)
+(node:46464) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   9 [desktop-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 390px (12.5s)
+(node:15472) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  10 [desktop-chromium] › e2e\school-management.spec.js:455:1 › editing a physical record refreshes the school queue and student file (33.6s)
+(node:45836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  11 [desktop-chromium] › e2e\school-management.spec.js:491:1 › school case first name is visible and the eye toggles only the surname (13.3s)
+(node:47216) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 12 [desktop-chromium] › e2e\school-master-export.spec.js:36:1 › student status editor contains all five choices and export includes every page (4.5s)
+  ok 13 [desktop-chromium] › e2e\school-master-export.spec.js:47:1 › school Admin sees general details without health or insight tabs (3.8s)
+  ok 14 [desktop-chromium] › e2e\school-master-export.spec.js:54:1 › authorized teacher can open optional family information (4.4s)
+  ok 15 [desktop-chromium] › e2e\school-master-export.spec.js:59:1 › master editor preserves fixed codes and allows deactivation (3.1s)
+  ok 16 [desktop-chromium] › e2e\school-master-export.spec.js:64:1 › school roles can be assigned and revoked independently of teacher types (2.6s)
+  ok 17 [desktop-chromium] › e2e\school-workflows.spec.js:230:1 › school workflows show minimal risk, actual round progress and accessible desktop/mobile layout (4.1s)
+  ok 18 [desktop-chromium] › e2e\school-workflows.spec.js:268:1 › general and dormitory staff have the minimal workflow without insight management (2.4s)
+  ok 19 [desktop-chromium] › e2e\school-workflows.spec.js:286:1 › risk rule selects the exact grid row and submits its approved trigger (4.3s)
+  ok 20 [desktop-chromium] › e2e\school-workflows.spec.js:316:1 › student Excel/CSV onboarding processes 800 rows in batches with email and boarding metadata (8.0s)
+(node:13252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  21 [mobile-chromium] › e2e\school-management.spec.js:268:3 › school organization › system admin sees school and hospital menus in a school unit
+  -  22 [mobile-chromium] › e2e\school-management.spec.js:288:3 › school organization › the structure page is the sub-unit's school: grades and their rooms only
+  ok 23 [mobile-chromium] › e2e\school-management.spec.js:316:3 › school organization › student list opens the student health file (4.0s)
+  ok 24 [mobile-chromium] › e2e\school-management.spec.js:335:3 › school organization › the case list of a school organization is the student health view (3.1s)
+  -  25 [mobile-chromium] › e2e\school-management.spec.js:353:3 › school organization › imports a CSV after a dry run and offers the credentials file
+  -  26 [mobile-chromium] › e2e\school-management.spec.js:383:1 › a guest must accept PDPA before the national ID is sent
+  -  27 [mobile-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 1440px
+  -  28 [mobile-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 768px
+  -  29 [mobile-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 390px
+  ok 30 [mobile-chromium] › e2e\school-management.spec.js:455:1 › editing a physical record refreshes the school queue and student file (5.4s)
+  ok 31 [mobile-chromium] › e2e\school-management.spec.js:491:1 › school case first name is visible and the eye toggles only the surname (2.6s)
+  ok 32 [mobile-chromium] › e2e\school-master-export.spec.js:36:1 › student status editor contains all five choices and export includes every page (4.5s)
+  ok 33 [mobile-chromium] › e2e\school-master-export.spec.js:47:1 › school Admin sees general details without health or insight tabs (5.3s)
+  ok 34 [mobile-chromium] › e2e\school-master-export.spec.js:54:1 › authorized teacher can open optional family information (5.8s)
+  ok 35 [mobile-chromium] › e2e\school-master-export.spec.js:59:1 › master editor preserves fixed codes and allows deactivation (2.9s)
+  ok 36 [mobile-chromium] › e2e\school-master-export.spec.js:64:1 › school roles can be assigned and revoked independently of teacher types (4.6s)
+  ok 37 [mobile-chromium] › e2e\school-workflows.spec.js:230:1 › school workflows show minimal risk, actual round progress and accessible desktop/mobile layout (6.6s)
+  ok 38 [mobile-chromium] › e2e\school-workflows.spec.js:268:1 › general and dormitory staff have the minimal workflow without insight management (3.0s)
+  ok 39 [mobile-chromium] › e2e\school-workflows.spec.js:286:1 › risk rule selects the exact grid row and submits its approved trigger (3.2s)
+  ok 40 [mobile-chromium] › e2e\school-workflows.spec.js:316:1 › student Excel/CSV onboarding processes 800 rows in batches with email and boarding metadata (5.7s)
+
+
+  1) [desktop-chromium] › e2e\school-management.spec.js:335:3 › school organization › the case list of a school organization is the student health view 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'ข้อมูลสุขภาพนักเรียน' })
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByRole('heading', { name: 'ข้อมูลสุขภาพนักเรียน' })
+
+
+      340 |     await expect(
+      341 |       page.getByRole("heading", { name: "ข้อมูลสุขภาพนักเรียน" }),
+    > 342 |     ).toBeVisible();
+          |       ^
+      343 |     if (testInfo.project.name === "mobile-chromium") {
+      344 |       await page
+      345 |         .locator(".cw-person-open").first()
+        at D:\github-clone\suth-suthiecare\app\e2e\school-management.spec.js:342:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\school-management-school-o-dd0ab--is-the-student-health-view-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\school-management-school-o-dd0ab--is-the-student-health-view-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\school-management-school-o-dd0ab--is-the-student-health-view-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\school-management-school-o-dd0ab--is-the-student-health-view-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\school-management-school-o-dd0ab--is-the-student-health-view-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [desktop-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 1440px ───
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.cw-person-open').first()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('.cw-person-open').first()
+
+
+      434 |     await page.goto("/admin/cases");
+      435 |     const person = page.locator(".cw-person-open").first();
+    > 436 |     await expect(person).toBeVisible();
+          |                          ^
+      437 |     await expect(page.locator(".cw-activity")).toHaveCount(0);
+      438 |     await expect(page.locator(".cw-person")).not.toContainText("ใจดี");
+      439 |     const accessibility = await new AxeBuilder({ page }).include(".cw-person").analyze();
+        at D:\github-clone\suth-suthiecare\app\e2e\school-management.spec.js:436:26
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\school-management-school-activity-layout-at-1440px-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\school-management-school-activity-layout-at-1440px-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\school-management-school-activity-layout-at-1440px-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\school-management-school-activity-layout-at-1440px-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\school-management-school-activity-layout-at-1440px-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [desktop-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 768px ────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.cw-person-open').first()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('.cw-person-open').first()
+
+
+      434 |     await page.goto("/admin/cases");
+      435 |     const person = page.locator(".cw-person-open").first();
+    > 436 |     await expect(person).toBeVisible();
+          |                          ^
+      437 |     await expect(page.locator(".cw-activity")).toHaveCount(0);
+      438 |     await expect(page.locator(".cw-person")).not.toContainText("ใจดี");
+      439 |     const accessibility = await new AxeBuilder({ page }).include(".cw-person").analyze();
+        at D:\github-clone\suth-suthiecare\app\e2e\school-management.spec.js:436:26
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\school-management-school-activity-layout-at-768px-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\school-management-school-activity-layout-at-768px-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\school-management-school-activity-layout-at-768px-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\school-management-school-activity-layout-at-768px-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\school-management-school-activity-layout-at-768px-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [desktop-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 390px ────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.cw-person-open').first()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('.cw-person-open').first()
+
+
+      434 |     await page.goto("/admin/cases");
+      435 |     const person = page.locator(".cw-person-open").first();
+    > 436 |     await expect(person).toBeVisible();
+          |                          ^
+      437 |     await expect(page.locator(".cw-activity")).toHaveCount(0);
+      438 |     await expect(page.locator(".cw-person")).not.toContainText("ใจดี");
+      439 |     const accessibility = await new AxeBuilder({ page }).include(".cw-person").analyze();
+        at D:\github-clone\suth-suthiecare\app\e2e\school-management.spec.js:436:26
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\school-management-school-activity-layout-at-390px-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\school-management-school-activity-layout-at-390px-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\school-management-school-activity-layout-at-390px-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\school-management-school-activity-layout-at-390px-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\school-management-school-activity-layout-at-390px-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [desktop-chromium] › e2e\school-management.spec.js:455:1 › editing a physical record refreshes the school queue and student file 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('.cw-person-open').first()
+
+
+      476 |   });
+      477 |   await page.goto("/admin/cases");
+    > 478 |   await page.locator(".cw-person-open").first().click();
+          |                                                 ^
+      479 |   const dialog = page.getByRole("dialog", { name: "ด.ช. สมชาย ใจดี" });
+      480 |   await dialog.getByRole("tab", { name: "สุขภาพกาย" }).click();
+      481 |   await dialog.getByRole("button", { name: /แก้ไขผลตรวจวันที่/ }).click();
+        at D:\github-clone\suth-suthiecare\app\e2e\school-management.spec.js:478:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\school-management-editing--1598c-hool-queue-and-student-file-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\school-management-editing--1598c-hool-queue-and-student-file-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\school-management-editing--1598c-hool-queue-and-student-file-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\school-management-editing--1598c-hool-queue-and-student-file-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\school-management-editing--1598c-hool-queue-and-student-file-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [desktop-chromium] › e2e\school-management.spec.js:491:1 › school case first name is visible and the eye toggles only the surname 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('.cw-person-name')
+    Expected substring: "สมชาย"
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toContainText" with timeout 10000ms
+      - waiting for locator('.cw-person-name')
+
+
+      500 |     await expect(filter).toHaveValue("high");
+      501 |   }
+    > 502 |   await expect(page.locator(".cw-person-name")).toContainText("สมชาย");
+          |                                                 ^
+      503 |   await expect(page.locator(".cw-person-name")).not.toContainText("ใจดี");
+      504 |   await page.getByRole("button", { name: "เปิดดูนามสกุล", exact: true }).click();
+      505 |   await expect(page.locator(".cw-person-name")).toContainText("สมชาย");
+        at D:\github-clone\suth-suthiecare\app\e2e\school-management.spec.js:502:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\school-management-school-c-8b772-ye-toggles-only-the-surname-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\school-management-school-c-8b772-ye-toggles-only-the-surname-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\school-management-school-c-8b772-ye-toggles-only-the-surname-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\school-management-school-c-8b772-ye-toggles-only-the-surname-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\school-management-school-c-8b772-ye-toggles-only-the-surname-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6 failed
+    [desktop-chromium] › e2e\school-management.spec.js:335:3 › school organization › the case list of a school organization is the student health view 
+    [desktop-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 1440px ────
+    [desktop-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 768px ─────
+    [desktop-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 390px ─────
+    [desktop-chromium] › e2e\school-management.spec.js:455:1 › editing a physical record refreshes the school queue and student file 
+    [desktop-chromium] › e2e\school-management.spec.js:491:1 › school case first name is visible and the eye toggles only the surname 
+  7 skipped
+  27 passed (3.8m)

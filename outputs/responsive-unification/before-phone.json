@@ -1,0 +1,77 @@
+{
+  "routes": [
+    {
+      "route": "/",
+      "width": 320,
+      "documentWidth": 320,
+      "overflow": [],
+      "shellBottom": null,
+      "title": "แบบลงทะเบียนขอเข้ารับคำปรึกษาปัญหาสุขภาพ",
+      "path": "/"
+    },
+    {
+      "route": "/account/register",
+      "width": 320,
+      "documentWidth": 320,
+      "overflow": [],
+      "shellBottom": null,
+      "title": "สร้างบัญชีเพื่อส่งและติดตามผลของคุณ",
+      "path": "/account/register"
+    },
+    {
+      "route": "/history/result",
+      "width": 320,
+      "documentWidth": 320,
+      "overflow": [],
+      "shellBottom": null,
+      "title": "กรุณาดาวน์โหลด SUTH App",
+      "path": "/history/result"
+    },
+    {
+      "route": "/assessment/101",
+      "width": 320,
+      "documentWidth": 320,
+      "overflow": [],
+      "shellBottom": null,
+      "title": "แบบประเมินสุขภาพและการติดตามสำหรับบุคคลตัวอย่าง",
+      "path": "/assessment/101"
+    },
+    {
+      "route": "/admin/dashboard",
+      "width": 320,
+      "documentWidth": 320,
+      "overflow": [],
+      "shellBottom": 805,
+      "title": "แดชบอร์ด",
+      "path": "/admin/dashboard"
+    },
+    {
+      "route": "/admin/forms/create",
+      "width": 320,
+      "documentWidth": 320,
+      "overflow": [],
+      "shellBottom": 805,
+      "title": "แบบฟอร์มไม่มีชื่อ",
+      "path": "/admin/forms/create"
+    },
+    {
+      "route": "/admin/roles",
+      "width": 320,
+      "documentWidth": 320,
+      "overflow": [],
+      "shellBottom": 805,
+      "title": "แม่แบบบทบาทและสิทธิ์",
+      "path": "/admin/roles"
+    },
+    {
+      "route": "/admin/school",
+      "width": 320,
+      "documentWidth": 320,
+      "overflow": [],
+      "shellBottom": 805,
+      "title": "ชั้นปีและห้องเรียน",
+      "path": "/admin/school"
+    }
+  ],
+  "errors": []
+}

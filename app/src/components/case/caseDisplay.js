@@ -2,6 +2,8 @@
 // case drawer. Risk is read from the score colors and labels the form
 // builder writes (red/orange/green and the words สูง / ปานกลาง).
 
+import { toDisplayText } from '../../utils/textPresentation.js';
+
 const HIGH_COLORS = [
   "d93025",
   "e53935",
@@ -13,14 +15,7 @@ const HIGH_COLORS = [
 ];
 const MEDIUM_COLORS = ["fbbc04", "ff9800", "f59e0b", "orange", "yellow"];
 
-export const stripHtml = (html) => {
-  if (html === undefined || html === null) return "";
-  if (typeof html !== "string") return String(html);
-  return html
-    .replace(/<[^>]+>/g, "")
-    .replace(/&nbsp;/g, " ")
-    .trim();
-};
+export const stripHtml = toDisplayText;
 
 // "สูง" | "ปานกลาง" | "ต่ำ" from the score results, or null when unscored.
 export function riskFromScores(scoreResults = []) {

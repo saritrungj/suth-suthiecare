@@ -1,8 +1,11 @@
-import { exportStudentData } from "../../../services/api";
+import SearchableSelect from '../../../components/SearchableSelect';
+import { toDisplayText } from '../../../utils/textPresentation.js';
+import GuardianStudents from "./GuardianStudents";
+import MasterSelect from "../../../components/MasterSelect";
+import { usePageExport } from "../../../components/ExcelExport";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  FiDownload,
   FiEdit2,
   FiEye,
   FiKey,
@@ -34,6 +37,7 @@ import {
   PageHeader,
   Pagination,
   STUDENT_STATUS_LABELS,
+  useStudentStatusLabels,
   RequiredMark,
   RequiredNote,
   SchoolModal,
@@ -51,7 +55,6 @@ import {
   SearchField,
 } from "./schoolUi";
 import StudentDetailModal from "./StudentDetailModal";
-import { downloadStudentsWorkbook } from "../../../utils/studentImport";
 import "./school.css";
 
 const emptyFilters = {
@@ -60,9 +63,15 @@ const emptyFilters = {
   student_type_id: "",
   status: "active",
   search: "",
+  is_boarder: '',
 };
 
 export default function StudentList() {
+  const { schoolAccess } = usePermissions();
+  return schoolAccess?.is_guardian ? <GuardianStudents /> : <StaffStudentList />;
+}
+function StaffStudentList() {
+  const statusLabels=useStudentStatusLabels();
   const { schoolAccess: access } = usePermissions();
   const { schoolId } = useSchools();
   const [filters, setFilters] = useState(emptyFilters);
@@ -172,9 +181,9 @@ export default function StudentList() {
   const remove = async (student) => {
     if (
       !(await confirmAlert({
-        title: `ปิดข้อมูลนักเรียน ${studentName(student)}?`,
-        text: "ประวัติสุขภาพยังเก็บไว้ บัญชีที่ยังไม่เคยเข้าใช้งานจะถูกปิด",
-        confirmText: "ปิดข้อมูล",
+        title: `ปิดบัญชี ${studentName(student)}?`,
+        text: "ปิดการเข้าสู่ระบบของบัญชีนักเรียน โดยคงสถานะการศึกษาและประวัติไว้",
+        confirmText: "ปิดบัญชี",
         danger: true,
       }))
     )
@@ -188,29 +197,7 @@ export default function StudentList() {
     }
   };
 
-  const exportExcel = async () => {
-    try {
-      const { data } = await getSchoolStudents({
-        school_id: schoolId || undefined,
-        ...Object.fromEntries(
-          Object.entries(filters).filter(([, value]) => value !== ""),
-        ),
-        all: 1,
-      });
-      const source = data.data || [];
-      const authorized = [];
-      for (let offset = 0; offset < source.length; offset += 200) {
-        const response = await exportStudentData(
-          source.slice(offset, offset + 200).map((student) => student.id),
-        );
-        authorized.push(...response.data.data);
-      }
-      await downloadStudentsWorkbook(authorized);
-    } catch (err) {
-      await showErrorAlert({ error: err, title: "ส่งออกไม่สำเร็จ" });
-    }
-  };
-
+  usePageExport({title:"นักเรียน",sources:[{resource:"students",filters:{...filters,school_id:schoolId}}],disabled:loading});
   const students = result.data || [];
   // Previous/next inside the student file follow this page of the list.
   const viewingIndex = students.findIndex((student) => student.id === viewing);
@@ -240,15 +227,6 @@ export default function StudentList() {
               : "นักเรียนในห้องที่คุณดูแล คลิกชื่อเพื่อดูข้อมูลสุขภาพจิตและสุขภาพกาย"
           }
         >
-          {access?.can_export_students && (
-            <button
-              type="button"
-              className="sch-btn-secondary"
-              onClick={exportExcel}
-            >
-              <FiDownload aria-hidden="true" /> ส่งออก Excel
-            </button>
-          )}
           {access?.can_create_students && (
             <>
               <Link
@@ -328,12 +306,13 @@ export default function StudentList() {
                 onChange={(value) => updateFilter("status", value)}
               >
                 <option value="">ทุกสถานะ</option>
-                {Object.entries(STUDENT_STATUS_LABELS).map(([value, label]) => (
+                {Object.entries(statusLabels).map(([value, label]) => (
                   <option key={value} value={value}>
-                    {label}
+                    {toDisplayText(label)}
                   </option>
                 ))}
               </MenuSelect>
+              <MenuSelect label="ที่พัก" value={filters.is_boarder} onChange={value=>updateFilter('is_boarder',value)}><option value="">ทุกประเภทที่พัก</option><option value="1">นักเรียนหอพัก</option><option value="0">ไปกลับ</option></MenuSelect>
             </FilterDropdown>
           </div>
 
@@ -404,7 +383,7 @@ export default function StudentList() {
                         <span
                           className={`sch-badge status-${student.status === "active" ? "active" : "inactive"}`}
                         >
-                          {STUDENT_STATUS_LABELS[student.status]}
+                          {student.status_label || statusLabels[student.status] || STUDENT_STATUS_LABELS[student.status]}
                         </span>
                       </td>
                       <td>
@@ -440,7 +419,7 @@ export default function StudentList() {
                             </>
                           )}
                           {access?.can_delete_students &&
-                            student.status === "active" && (
+                            student.account_status !== "disabled" && (
                               <button
                                 type="button"
                                 className="sch-icon-btn sch-danger"
@@ -610,7 +589,7 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
             ชั้น/ห้อง
             {isNew && <RequiredMark />}
           </span>
-          <select
+          <SearchableSelect
             required={isNew}
             value={form.classroom_id}
             onChange={set("classroom_id")}
@@ -622,38 +601,28 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
                 {room.grade_name} ห้อง {room.name} ({room.academic_year})
               </option>
             ))}
-          </select>
+          </SearchableSelect>
           {errorFor("classroom_id")}
         </label>
         <label className="sch-field">
           ประเภทนักเรียน
-          <select
+          <SearchableSelect
             value={form.student_type_id}
             onChange={set("student_type_id")}
           >
             <option value="">ไม่ระบุ</option>
             {studentTypes
-              .filter((type) => type.status === "active")
+              .filter((type) => type.status === "active" || String(type.id) === String(initial.student_type_id))
               .map((type) => (
                 <option key={type.id} value={type.id}>
                   {type.name}
                 </option>
               ))}
-          </select>
+          </SearchableSelect>
         </label>
         <label className="sch-field">
           คำนำหน้า
-          <input
-            maxLength={30}
-            list="student-prefixes"
-            value={form.prefix}
-            onChange={set("prefix")}
-          />
-          <datalist id="student-prefixes">
-            {["ด.ช.", "ด.ญ.", "นาย", "นางสาว"].map((value) => (
-              <option key={value} value={value} />
-            ))}
-          </datalist>
+          <MasterSelect category="prefix" labelValues value={form.prefix} onChange={set("prefix")} fallback={["ด.ช.","ด.ญ.","นาย","นางสาว"].map(label=>({code:label,label}))}><option value="">ไม่ระบุ</option></MasterSelect>
         </label>
         <label className="sch-field">
           <span>
@@ -693,14 +662,7 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
         </label>
         <label className="sch-field">
           เพศ
-          <select value={form.gender} onChange={set("gender")}>
-            <option value="">ไม่ระบุ</option>
-            {Object.entries(GENDER_LABELS).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
+          <MasterSelect category="gender" value={form.gender} onChange={set("gender")} fallback={Object.entries(GENDER_LABELS).map(([code,label])=>({code,label}))}><option value="">ไม่ระบุ</option></MasterSelect>
         </label>
         <ThaiDateField
           label="วันเกิด"
@@ -727,16 +689,10 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
             />
           </label>
         )}
-        {!isNew && (
+        {(
           <label className="sch-field">
             สถานะ
-            <select value={form.status} onChange={set("status")}>
-              {Object.entries(STUDENT_STATUS_LABELS).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
+            <MasterSelect category="student_status" value={form.status} onChange={set("status")} fallback={Object.entries(STUDENT_STATUS_LABELS).filter(([code])=>!["transferred","inactive"].includes(code)).map(([code,label])=>({code,label}))} />
           </label>
         )}
       </form>

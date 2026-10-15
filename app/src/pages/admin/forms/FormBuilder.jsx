@@ -1,3 +1,5 @@
+import {useMasterOptions} from "../../../components/MasterSelect";
+import {usePageExport} from "../../../components/ExcelExport";
 import React, {
   useState,
   useRef,
@@ -141,6 +143,8 @@ const deeplyCleanData = (items) => {
 const FormBuilder = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const facultyOptions=useMasterOptions("faculty",DEFAULT_FACULTIES.map((label,index)=>({code:String(index),label})));
+  const userStatusOptions=useMasterOptions("user_status",DEFAULT_USER_STATUSES.map((label,index)=>({code:String(index),label})));
 
   const [activeQuestionId, setActiveQuestionId] = useState("main-header");
 
@@ -200,6 +204,7 @@ const FormBuilder = () => {
     },
   ]);
 
+  usePageExport({title:"รายละเอียดแบบประเมิน",sources:id?[{resource:"form",id}]:[],...(id?{}:{localSheets:[{resource:"form_draft",data:{title:formTitle,description:formDesc,status:formStatus,clinic_type:clinicType,type:formType,questions}}]})});
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
   const sensors = useSensors(
     useSensor(TouchSensor, {
@@ -1076,7 +1081,7 @@ const FormBuilder = () => {
               !["dropdown", "multiple_choice", "checkboxes"].includes(q.type) ||
               (q.options?.length <= 1 && q.options?.[0] === "ตัวเลือก 1")
             ) {
-              updates.options = [...DEFAULT_FACULTIES];
+              updates.options = facultyOptions.map(o=>o.label);
             }
           }
 
@@ -1086,7 +1091,7 @@ const FormBuilder = () => {
               !["dropdown", "multiple_choice", "checkboxes"].includes(q.type) ||
               (q.options?.length <= 1 && q.options?.[0] === "ตัวเลือก 1")
             ) {
-              updates.options = [...DEFAULT_USER_STATUSES];
+              updates.options = userStatusOptions.map(o=>o.label);
             }
             updates.type = "multiple_choice";
             updates.isUserStatus = true;
@@ -1204,6 +1209,7 @@ const FormBuilder = () => {
               <div className="sfb-header-left">
                 <button
                   className="sfb-btn-back"
+                  aria-label="กลับไปจัดการฟอร์ม"
                   onClick={async () => {
                     const hasChanged =
                       JSON.stringify(currentState) !==
@@ -1234,7 +1240,7 @@ const FormBuilder = () => {
                     <span
                       style={{
                         fontSize: "14px",
-                        color: "#ff9800",
+                        color: "var(--suth-warning)",
                         marginLeft: "8px",
                         fontWeight: "bold",
                         display: "inline-flex",
@@ -1250,8 +1256,8 @@ const FormBuilder = () => {
                     className="sfb-badge-clinic"
                     style={{
                       fontSize: "12px",
-                      background: "#e3f2fd",
-                      color: "#1976d2",
+                      background: "var(--suth-info-tint)",
+                      color: "var(--suth-info)",
                       padding: "2px 8px",
                       borderRadius: "4px",
                       marginLeft: "10px",
@@ -1561,7 +1567,7 @@ const FormBuilder = () => {
                     className="sfb-tool-icon"
                     style={{ color: "#00bcd4" }}
                   />
-                  <span style={{ color: "#00bcd4", fontWeight: "bold" }}>
+                  <span style={{ color: "#0e6574", fontWeight: "bold" }}>
                     เพิ่ม BMI
                   </span>
                 </button>
@@ -1573,7 +1579,7 @@ const FormBuilder = () => {
                     className="sfb-tool-icon"
                     style={{ color: "#4caf50" }}
                   />
-                  <span style={{ color: "#4caf50", fontWeight: "bold" }}>
+                  <span style={{ color: "var(--suth-success)", fontWeight: "bold" }}>
                     เพิ่ม 3อ.
                   </span>
                 </button>
@@ -1585,7 +1591,7 @@ const FormBuilder = () => {
                     className="sfb-tool-icon"
                     style={{ color: "#e91e63" }}
                   />
-                  <span style={{ color: "#e91e63", fontWeight: "bold" }}>
+                  <span style={{ color: "#a7194f", fontWeight: "bold" }}>
                     เพิ่ม STIs
                   </span>
                 </button>

@@ -1,3 +1,4 @@
+import SearchableSelect from './SearchableSelect';
 import { authSession } from "../utils/authSession";
 import React, { useState } from "react";
 import {
@@ -270,7 +271,7 @@ export default function AddAdminModal({
               <label>
                 <FiShield className="label-icon" /> ระดับสิทธิ์ (Role)
               </label>
-              <select
+              <SearchableSelect
                 className="adm-select"
                 value={formData.role_id}
                 onChange={(e) =>
@@ -281,7 +282,7 @@ export default function AddAdminModal({
                 {currentRoleId === 1 && <option value="1">System Admin</option>}
                 <option value="2">Admin</option>
                 <option value="3">Staff</option>
-              </select>
+              </SearchableSelect>
             </div>
 
             <div className="adm-input-group">
@@ -370,7 +371,7 @@ export default function AddAdminModal({
                         <span>{organization.name}</span>
                       </label>
                       {membership && (
-                        <select
+                        <SearchableSelect
                           className="adm-select"
                           aria-label={`บทบาทของ ${organization.name}`}
                           value={membership.role_id}
@@ -393,7 +394,7 @@ export default function AddAdminModal({
                               {role.name}
                             </option>
                           ))}
-                        </select>
+                        </SearchableSelect>
                       )}
                     </div>
                   );

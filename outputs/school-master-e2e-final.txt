@@ -1,0 +1,47 @@
+[WebServer] (node:2108) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:43764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 32 tests using 1 worker
+
+(node:42296) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › e2e\school-management.spec.js:268:3 › school organization › system admin sees school and hospital menus in a school unit (2.1s)
+  ok  2 [desktop-chromium] › e2e\school-management.spec.js:288:3 › school organization › the structure page is the sub-unit's school: grades and their rooms only (2.1s)
+  ok  3 [desktop-chromium] › e2e\school-management.spec.js:316:3 › school organization › student list opens the student health file (2.3s)
+  ok  4 [desktop-chromium] › e2e\school-management.spec.js:335:3 › school organization › the case list of a school organization is the student health view (1.9s)
+  ok  5 [desktop-chromium] › e2e\school-management.spec.js:353:3 › school organization › imports a CSV after a dry run and offers the credentials file (2.4s)
+  ok  6 [desktop-chromium] › e2e\school-management.spec.js:383:1 › a guest must accept PDPA before the national ID is sent (2.2s)
+  ok  7 [desktop-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 1440px (3.8s)
+  ok  8 [desktop-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 768px (4.5s)
+  ok  9 [desktop-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 390px (11.0s)
+  ok 10 [desktop-chromium] › e2e\school-management.spec.js:455:1 › editing a physical record refreshes the school queue and student file (5.2s)
+  ok 11 [desktop-chromium] › e2e\school-management.spec.js:491:1 › school case first name is visible and the eye toggles only the surname (2.2s)
+  ok 12 [desktop-chromium] › e2e\school-master-export.spec.js:36:1 › student status editor contains all five choices and export includes every page (3.7s)
+  ok 13 [desktop-chromium] › e2e\school-master-export.spec.js:47:1 › school Admin sees general details without health or insight tabs (2.1s)
+  ok 14 [desktop-chromium] › e2e\school-master-export.spec.js:54:1 › authorized teacher can open optional family information (2.4s)
+  ok 15 [desktop-chromium] › e2e\school-master-export.spec.js:59:1 › master editor preserves fixed codes and allows deactivation (1.6s)
+  ok 16 [desktop-chromium] › e2e\school-master-export.spec.js:64:1 › school roles can be assigned and revoked independently of teacher types (2.2s)
+(node:5540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  -  17 [mobile-chromium] › e2e\school-management.spec.js:268:3 › school organization › system admin sees school and hospital menus in a school unit
+  -  18 [mobile-chromium] › e2e\school-management.spec.js:288:3 › school organization › the structure page is the sub-unit's school: grades and their rooms only
+  ok 19 [mobile-chromium] › e2e\school-management.spec.js:316:3 › school organization › student list opens the student health file (2.5s)
+  ok 20 [mobile-chromium] › e2e\school-management.spec.js:335:3 › school organization › the case list of a school organization is the student health view (2.2s)
+  -  21 [mobile-chromium] › e2e\school-management.spec.js:353:3 › school organization › imports a CSV after a dry run and offers the credentials file
+  -  22 [mobile-chromium] › e2e\school-management.spec.js:383:1 › a guest must accept PDPA before the national ID is sent
+  -  23 [mobile-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 1440px
+  -  24 [mobile-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 768px
+  -  25 [mobile-chromium] › e2e\school-management.spec.js:430:3 › school activity layout at 390px
+  ok 26 [mobile-chromium] › e2e\school-management.spec.js:455:1 › editing a physical record refreshes the school queue and student file (5.3s)
+  ok 27 [mobile-chromium] › e2e\school-management.spec.js:491:1 › school case first name is visible and the eye toggles only the surname (2.8s)
+  ok 28 [mobile-chromium] › e2e\school-master-export.spec.js:36:1 › student status editor contains all five choices and export includes every page (2.8s)
+  ok 29 [mobile-chromium] › e2e\school-master-export.spec.js:47:1 › school Admin sees general details without health or insight tabs (2.8s)
+  ok 30 [mobile-chromium] › e2e\school-master-export.spec.js:54:1 › authorized teacher can open optional family information (2.9s)
+  ok 31 [mobile-chromium] › e2e\school-master-export.spec.js:59:1 › master editor preserves fixed codes and allows deactivation (1.7s)
+  ok 32 [mobile-chromium] › e2e\school-master-export.spec.js:64:1 › school roles can be assigned and revoked independently of teacher types (2.0s)
+
+  7 skipped
+  25 passed (1.5m)

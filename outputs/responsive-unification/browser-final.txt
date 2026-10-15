@@ -1,0 +1,23 @@
+[WebServer] (node:39612) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4194"
+[WebServer] (node:13340) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:38624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [phone] › e2e\responsive-layout.spec.js:10:1 › all routed surfaces fit the viewport and preserve readable working space (53.7s)
+  -  2 [phone] › e2e\responsive-layout.spec.js:50:1 › forms and dialogs stay usable in landscape and wide workspaces
+(node:39156) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 [tablet] › e2e\responsive-layout.spec.js:10:1 › all routed surfaces fit the viewport and preserve readable working space (54.4s)
+  ok 4 [tablet] › e2e\responsive-layout.spec.js:50:1 › forms and dialogs stay usable in landscape and wide workspaces (6.7s)
+(node:33228) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 5 [desktop] › e2e\responsive-layout.spec.js:10:1 › all routed surfaces fit the viewport and preserve readable working space (1.2m)
+  -  6 [desktop] › e2e\responsive-layout.spec.js:50:1 › forms and dialogs stay usable in landscape and wide workspaces
+
+  2 skipped
+  4 passed (3.3m)

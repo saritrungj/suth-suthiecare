@@ -1,3 +1,4 @@
+import { toDisplayText } from '../../../utils/textPresentation.js';
 // ==========================================
 // Helper Functions สำหรับ FormView
 // ==========================================
@@ -233,11 +234,7 @@ export const calculateQuestionScore = (q, rawAns) => {
 };
 
 const stripHtml = (value, fallback) =>
-  value
-    ? String(value)
-        .replace(/<[^>]+>/g, "")
-        .trim()
-    : fallback;
+  toDisplayText(value) || fallback;
 
 const resolveScoreResult = (question, score, fallbackTitle) => {
   const matchedRule = (question.scoringRules || []).find(

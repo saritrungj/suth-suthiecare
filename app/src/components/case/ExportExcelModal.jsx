@@ -1,22 +1,15 @@
+import { toDisplayText } from '../../utils/textPresentation.js';
 import React, { useState, useEffect, useMemo } from "react";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { FiX, FiDownload, FiCheckSquare, FiSquare } from "react-icons/fi";
 import "./ExportExcelModal.css";
 
-const stripHtml = (html) => {
-  if (html === undefined || html === null) return "";
-  if (typeof html !== "string") return String(html);
-  return html
-    .replace(/<[^>]+>/g, "")
-    .replace(/&nbsp;/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-};
+const stripHtml = (html) => { return toDisplayText(html); };
 
 const findAnswerFlexible = (rawAnswers, qTitle) => {
   if (!rawAnswers || !qTitle) return undefined;
-  const exactKey = qTitle.replace(/<[^>]+>/g, "");
+  const exactKey = toDisplayText(qTitle);
   if (rawAnswers[exactKey] !== undefined) return rawAnswers[exactKey];
   const targetClean = stripHtml(qTitle).replace(/\s+/g, "").toLowerCase();
   for (const key in rawAnswers) {

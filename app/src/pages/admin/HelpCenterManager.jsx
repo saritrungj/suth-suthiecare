@@ -1,3 +1,7 @@
+import SearchableSelect from '../../components/SearchableSelect';
+import { toDisplayText } from '../../utils/textPresentation.js';
+import MasterSelect from "../../components/MasterSelect";
+import { usePageExport } from "../../components/ExcelExport";
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   getAllClinics,
@@ -345,7 +349,7 @@ export default function HelpCenterManager() {
     }
   };
 
-  // 🟢 2. ปรับปรุงปุ่มแก้ไขให้อ่านค่าเป็น ID สตริง เข้าคู่กับกล่องดีไซน์ <select> หน้าบ้าน
+  // 🟢 2. ปรับปรุงปุ่มแก้ไขให้อ่านค่าเป็น ID สตริง เข้าคู่กับกล่องดีไซน์ <SearchableSelect> หน้าบ้าน
   const handleOpenFaqModal = useCallback(async (faq = null) => {
     if (faq) {
       const actualClinicId = faq.clinic_id ? String(faq.clinic_id) : "";
@@ -532,6 +536,7 @@ export default function HelpCenterManager() {
       })
     : [];
 
+  usePageExport({title:"ศูนย์ช่วยเหลือ",sources:[{resource:"faqs",filters:{clinic_id:filterClinic,status:filterStatus,search:searchQuery},ids:sortedFaqs.map(r=>r.faq_id)},...(catSelectedClinic?[{resource:"faq_categories",id:catSelectedClinic}]:[])]});
   const totalItems = sortedFaqs.length;
   const totalPages = Math.ceil(totalItems / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -656,7 +661,7 @@ export default function HelpCenterManager() {
               <label style={{ fontSize: "13px", color: "#64748b" }}>
                 กรองตามคลินิก
               </label>
-              <select
+              <SearchableSelect
                 value={filterClinic}
                 onChange={(e) => setFilterClinic(e.target.value)}
               >
@@ -666,21 +671,13 @@ export default function HelpCenterManager() {
                     {c.name}
                   </option>
                 ))}
-              </select>
+              </SearchableSelect>
             </div>
             <div className="hc-form-group" style={{ margin: 0, flex: 1.2 }}>
               <label style={{ fontSize: "13px", color: "#64748b" }}>
                 สถานะ
               </label>
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-              >
-                <option value="">สถานะทั้งหมด</option>
-                <option value="published">เผยแพร่</option>
-                <option value="draft">ร่าง</option>
-                <option value="hidden">ซ่อน</option>
-              </select>
+              <MasterSelect category="publication_status" value={filterStatus} onChange={(e)=>setFilterStatus(e.target.value)} fallback={[{code:"published",label:"เผยแพร่"},{code:"draft",label:"ร่าง"},{code:"hidden",label:"ซ่อน"}]}><option value="">สถานะทั้งหมด</option></MasterSelect>
             </div>
           </FilterDropdown>
 
@@ -789,7 +786,7 @@ export default function HelpCenterManager() {
                               size={16}
                             />
                           </td>
-                          <td className="hc-col-question" title={faq.question}>
+                          <td className="hc-col-question" title={toDisplayText(faq.question)}>
                             {faq.question && faq.question.length > 60
                               ? faq.question.substring(0, 60) + "..."
                               : faq.question}
@@ -911,7 +908,7 @@ export default function HelpCenterManager() {
               <div className="table-pagination-footer">
                 <div className="pagination-info">
                   <span>แสดง</span>
-                  <select
+                  <SearchableSelect
                     value={rowsPerPage}
                     onChange={handleRowsPerPageChange}
                     className="pagination-select"
@@ -920,7 +917,7 @@ export default function HelpCenterManager() {
                     <option value={20}>20</option>
                     <option value={50}>50</option>
                     <option value={100}>100</option>
-                  </select>
+                  </SearchableSelect>
                   <span>รายการ (รวมทั้งหมด {totalItems} รายการ)</span>
                 </div>
                 <div className="pagination-controls">
@@ -973,7 +970,7 @@ export default function HelpCenterManager() {
                   เลือกคลินิกที่ต้องการจัดการ{" "}
                   <span className="hc-required">*</span>
                 </label>
-                <select
+                <SearchableSelect
                   required
                   value={catSelectedClinic}
                   onChange={(e) => setCatSelectedClinic(e.target.value)}
@@ -994,7 +991,7 @@ export default function HelpCenterManager() {
                       {c.name}
                     </option>
                   ))}
-                </select>
+                </SearchableSelect>
               </div>
 
               {catSelectedClinic && (
@@ -1181,7 +1178,7 @@ export default function HelpCenterManager() {
                                   textAlign: "center",
                                 }}
                               >
-                                <select
+                                <SearchableSelect
                                   value={cat.status || "published"}
                                   onChange={(e) =>
                                     handleCatStatusChange(cat, e.target.value)
@@ -1210,7 +1207,7 @@ export default function HelpCenterManager() {
                                   <option value="published">เผยแพร่</option>
                                   <option value="draft">ร่าง</option>
                                   <option value="hidden">ซ่อน</option>
-                                </select>
+                                </SearchableSelect>
                               </td>
                               <td
                                 style={{
@@ -1303,7 +1300,7 @@ export default function HelpCenterManager() {
                     <label>
                       เลือกคลินิกหลัก <span className="hc-required">*</span>
                     </label>
-                    <select
+                    <SearchableSelect
                       name="clinic_id"
                       value={faqForm.clinic_id || ""}
                       onChange={(e) => {
@@ -1325,14 +1322,14 @@ export default function HelpCenterManager() {
                           {clinic.name}
                         </option>
                       ))}
-                    </select>
+                    </SearchableSelect>
                   </div>
 
                   {/* 🟢 ปลดล็อกกล่องเลือกหมวดหมู่ย่อย ปล่อยว่างสำหรับคำถาม Hybrid ทั่วไปได้ */}
                   <div className="hc-form-group">
                     <label>เลือกหมวดหมู่ย่อย</label>
                     <div style={{ display: "flex", gap: "8px" }}>
-                      <select
+                      <SearchableSelect
                         name="category_id"
                         value={faqForm.category_id || ""}
                         onChange={(e) => {
@@ -1352,7 +1349,7 @@ export default function HelpCenterManager() {
                               {cat.category_name}
                             </option>
                           ))}
-                      </select>
+                      </SearchableSelect>
                     </div>
                     {!faqForm.clinic_id && (
                       <small style={{ color: "#ef4444" }}>
@@ -1367,17 +1364,7 @@ export default function HelpCenterManager() {
                     <label>
                       สถานะการแสดงผล <span className="hc-required">*</span>
                     </label>
-                    <select
-                      required
-                      value={faqForm.status}
-                      onChange={(e) =>
-                        setFaqForm({ ...faqForm, status: e.target.value })
-                      }
-                    >
-                      <option value="published">เผยแพร่</option>
-                      <option value="draft">ร่าง</option>
-                      <option value="hidden">ซ่อน</option>
-                    </select>
+                    <MasterSelect category="publication_status" required value={faqForm.status} onChange={(e)=>setFaqForm({...faqForm,status:e.target.value})} fallback={[{code:"published",label:"เผยแพร่"},{code:"draft",label:"ร่าง"},{code:"hidden",label:"ซ่อน"}]} />
                   </div>
                 </div>
                 <div className="hc-form-group">

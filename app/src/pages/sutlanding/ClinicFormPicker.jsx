@@ -1,3 +1,5 @@
+import SearchableSelect from '../../components/SearchableSelect';
+import { toDisplayText } from '../../utils/textPresentation.js';
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -21,20 +23,10 @@ const POPULAR_LIMIT = 3;
 const GROUP_LIMIT = 3;
 const PAGE_SIZE = 12;
 
-function stripHtml(html) {
-  if (!html) return "";
-  return html
-    .replace(/<br\s*\/?>/gi, " ")
-    .replace(/<[^>]+>/g, "")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/\s+/g, " ")
-    .trim();
-}
+function stripHtml(html) { return toDisplayText(html); }
 
 function Highlight({ text, query }) {
+  text = toDisplayText(text);
   if (!query) return text;
   const lower = text.toLowerCase();
   const parts = [];
@@ -79,7 +71,7 @@ function ClinicIcon({ clinic, className = "" }) {
 
 function FormCard({ form, index, query, clinicLabel, isPopular, count }) {
   const { t } = useTranslation();
-  const rawTitle = form.title || t("form_card.no_title");
+  const rawTitle = toDisplayText(form.title) || t("form_card.no_title");
   const rawDesc = stripHtml(form.description) || t("form_card.default_desc");
   const title = useLocalizedText(rawTitle);
   const desc = useLocalizedText(rawDesc);
@@ -425,11 +417,11 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
           )}
           <label className="cfp-sort">
             <span>{t("clinic_picker.sort_label")}</span>
-            <select value={sort} onChange={(e) => setSort(e.target.value)}>
+            <SearchableSelect value={sort} onChange={(e) => setSort(e.target.value)}>
               <option value="default">{t("clinic_picker.sort_default")}</option>
               <option value="popular">{t("clinic_picker.sort_popular")}</option>
               <option value="name">{t("clinic_picker.sort_name")}</option>
-            </select>
+            </SearchableSelect>
           </label>
         </div>
       </div>

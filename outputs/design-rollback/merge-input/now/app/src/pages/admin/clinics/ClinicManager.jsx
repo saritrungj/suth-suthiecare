@@ -1,0 +1,736 @@
+import { Badge as UiBadge, Surface as UiSurface } from '../../../components/ui/index.jsx';
+import { Button as UiButton, PageHeader as UiPageHeader, DataTable as UiDataTable, TextInput as UiTextInput, TextArea as UiTextArea } from '../../../components/ui/index.jsx';
+import { Dialog, EmptyRow } from '../../../components/ui/index.jsx';
+import SearchableSelect from '../../../components/SearchableSelect';
+import {usePageExport} from "../../../components/ExcelExport";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  getAllClinics,
+  createClinic,
+  updateClinic,
+  deleteClinic,
+  reorderClinics,
+  getOrganizations,
+} from "../../../services/api";
+import { usePermissions } from "../../../permissions/PermissionsProvider";
+import { getActiveOrganizationLabel } from "../../../permissions/organizationContext";
+import {
+  FaPlus,
+  FaEdit,
+  FaTrash,
+  FaImage,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaGripVertical,
+} from "react-icons/fa";
+import "./ClinicManager.css";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+// dnd-kit imports
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
+const MySwal = withReactContent(Swal);
+
+// ============================================================
+// ErrorBoundary (เหมือนเดิม)
+// ============================================================
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null, errorInfo: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    this.setState({ errorInfo });
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div
+          style={{ padding: "40px", background: "#fee2e2", color: "#991b1b" }}
+        >
+          <h2>💥 เกิดข้อผิดพลาด</h2>
+          <p>{this.state.error?.toString()}</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// ============================================================
+// SortableRow — แถวในตารางที่ลากได้
+// ============================================================
+function SortableRow({ clinic, onEdit, onDelete }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: clinic.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    background: isDragging ? "#f0f9ff" : "white",
+    boxShadow: isDragging ? "0 8px 24px rgba(0,0,0,0.12)" : "none",
+    zIndex: isDragging ? 999 : "auto",
+    position: "relative",
+  };
+
+  return (
+    <tr ref={setNodeRef} style={style}>
+      {/* ปุ่ม Drag Handle */}
+      <td className="cm-col-drag">
+        <span
+          className="cm-drag-handle"
+          {...attributes}
+          {...listeners}
+          title="ลากเพื่อเรียงลำดับ"
+        >
+          <FaGripVertical />
+        </span>
+      </td>
+
+      <td className="cm-col-logo">
+        {clinic.image ? (
+          <img
+            src={clinic.image}
+            alt={clinic.name}
+            className="cm-clinic-logo"
+          />
+        ) : (
+          <div className="cm-no-logo">ไม่มีรูป</div>
+        )}
+      </td>
+      <td className="cm-col-slug">
+        <span className="cm-slug">{clinic.slug}</span>
+      </td>
+      <td className="cm-col-name cm-name">{clinic.name}</td>
+      <td className="cm-col-organization">
+        <span
+          className="cm-organization-tag"
+          title={clinic.organization_code || "ยังไม่ระบุหน่วยงาน"}
+        >
+          {clinic.organization_name || "โรงพยาบาลมหาวิทยาลัยเทคโนโลยีสุรนารี"}
+        </span>
+      </td>
+      <td className="cm-col-status">
+        {clinic.is_active ? (
+          <UiBadge className="cm-status active">
+            <FaCheckCircle /> เปิดใช้งาน
+          </UiBadge>
+        ) : (
+          <UiBadge className="cm-status inactive">
+            <FaTimesCircle /> ปิดใช้งาน
+          </UiBadge>
+        )}
+      </td>
+      <td className="cm-col-actions">
+        <div className="cm-actions">
+          <UiButton variant="secondary" size="icon" type="submit"
+            className="cm-btn-edit"
+            onClick={() => onEdit(clinic)}
+            title="แก้ไข"
+          >
+            <FaEdit />
+          </UiButton>
+          <UiButton variant="danger" type="submit"
+            className="cm-btn-delete"
+            onClick={() => onDelete(clinic.id, clinic.name)}
+            title="ลบ"
+          >
+            <FaTrash />
+          </UiButton>
+        </div>
+      </td>
+    </tr>
+  );
+}
+
+// ============================================================
+// ClinicManagerContent — Main Component
+// ============================================================
+function ClinicManagerContent() {
+  const { authorization, activeOrganization } = usePermissions();
+  const isSystemAdmin = Boolean(authorization?.is_system_admin);
+  const [clinics, setClinics] = useState([]);
+  usePageExport({title:"คลินิก",sources:[{resource:"clinics"}]});
+  const [organizations, setOrganizations] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isReordering, setIsReordering] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingClinic, setEditingClinic] = useState(null);
+  const activeOrganizationLabel = getActiveOrganizationLabel(
+    authorization,
+    activeOrganization,
+  );
+
+  const [formData, setFormData] = useState({
+    slug: "",
+    name: "",
+    name_en: "",
+    description: "",
+    image: "",
+    bg: "",
+    is_active: 1,
+    show_icon: 1,
+    organization_id: "",
+  });
+
+  const logoInputRef = useRef(null);
+  const bgInputRef = useRef(null);
+
+  // dnd-kit sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 }, // ต้องลากอย่างน้อย 5px ถึงจะ activate
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  const fetchClinics = async () => {
+    setIsLoading(true);
+    try {
+      const res = await getAllClinics();
+      // sort ตาม sort_order ถ้ามี
+      const data = (res.data?.data || []).sort(
+        (a, b) => (a.sort_order ?? a.id) - (b.sort_order ?? b.id),
+      );
+      setClinics(data);
+    } catch (err) {
+      console.error("Error fetching clinics:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchClinics();
+  }, [activeOrganization]);
+
+  useEffect(() => {
+    if (!isSystemAdmin) return;
+    getOrganizations()
+      .then(({ data }) =>
+        setOrganizations(data.filter((item) => item.status === "active")),
+      )
+      .catch(() => setOrganizations([]));
+  }, [isSystemAdmin]);
+
+  // ============ Drag End Handler ============
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = clinics.findIndex((c) => c.id === active.id);
+    const newIndex = clinics.findIndex((c) => c.id === over.id);
+    const newOrder = arrayMove(clinics, oldIndex, newIndex);
+
+    // Optimistic update UI ก่อน
+    setClinics(newOrder);
+
+    // บันทึกลง DB
+    setIsReordering(true);
+    try {
+      const orderPayload = newOrder.map((c, index) => ({
+        id: c.id,
+        sort_order: index,
+      }));
+      await reorderClinics(orderPayload);
+
+      MySwal.fire({
+        icon: "success",
+        title: "บันทึกลำดับแล้ว",
+        timer: 1200,
+        showConfirmButton: false,
+        toast: true,
+        position: "top-end",
+      });
+    } catch (err) {
+      console.error("Reorder failed:", err);
+      // Rollback
+      fetchClinics();
+      MySwal.fire({ icon: "error", title: "ไม่สามารถบันทึกลำดับได้" });
+    } finally {
+      setIsReordering(false);
+    }
+  };
+
+  // ============ Modal Handlers (เหมือนเดิม) ============
+  const handleOpenModal = (clinic = null) => {
+    if (clinic) {
+      setEditingClinic(clinic);
+      setFormData({
+        slug: clinic.slug || "",
+        name: clinic.name || "",
+        name_en: clinic.name_en || "",
+        description: clinic.description || "",
+        image: clinic.image || "",
+        bg: clinic.bg || "",
+        is_active: clinic.is_active ?? 1,
+        show_icon: clinic.show_icon ?? 1,
+        organization_id: clinic.organization_id
+          ? String(clinic.organization_id)
+          : "",
+      });
+    } else {
+      setEditingClinic(null);
+      setFormData({
+        slug: "",
+        name: "",
+        name_en: "",
+        description: "",
+        image: "",
+        bg: "",
+        is_active: 1,
+        show_icon: 1,
+        organization_id:
+          typeof activeOrganization === "string" &&
+          /^\d+$/.test(activeOrganization)
+            ? activeOrganization
+            : "",
+      });
+    }
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingClinic(null);
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? (checked ? 1 : 0) : value,
+    }));
+  };
+
+  const compressImage = (file, maxWidth = 1024, quality = 0.8) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width,
+            height = img.height;
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        };
+      };
+    });
+  };
+
+  const handleFileChange = async (e, field) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    MySwal.fire({
+      title: "กำลังเตรียมรูปภาพ...",
+      allowOutsideClick: false,
+      didOpen: () => MySwal.showLoading(),
+    });
+    try {
+      const maxWidth = field === "bg" ? 1920 : 500;
+      const quality = field === "bg" ? 0.8 : 0.9;
+      const compressed = await compressImage(file, maxWidth, quality);
+      setFormData((prev) => ({ ...prev, [field]: compressed }));
+      MySwal.close();
+    } catch (err) {
+      MySwal.fire("ข้อผิดพลาด", "ไม่สามารถประมวลผลรูปภาพได้", "error");
+    }
+    if (e.target) e.target.value = null;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.slug || !formData.name) {
+      MySwal.fire({
+        icon: "error",
+        title: "ข้อผิดพลาด",
+        text: "กรุณากรอกรหัสอ้างอิงและชื่อคลินิก",
+      });
+      return;
+    }
+    setIsSaving(true);
+    try {
+      if (editingClinic) {
+        await updateClinic(editingClinic.id, formData);
+        setClinics((prev) =>
+          prev.map((c) =>
+            c.id === editingClinic.id ? { ...c, ...formData } : c,
+          ),
+        );
+        MySwal.fire({
+          icon: "success",
+          title: "สำเร็จ",
+          text: "อัปเดตข้อมูลคลินิกเรียบร้อย",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } else {
+        const res = await createClinic(formData);
+        setClinics((prev) => [
+          ...prev,
+          {
+            ...formData,
+            id: res.data?.id || Date.now(),
+            sort_order: prev.length,
+          },
+        ]);
+        MySwal.fire({
+          icon: "success",
+          title: "สำเร็จ",
+          text: "เพิ่มคลินิกเรียบร้อย",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+      handleCloseModal();
+      fetchClinics();
+    } catch (err) {
+      MySwal.fire({
+        icon: "error",
+        title: "ข้อผิดพลาด",
+        text: err?.response?.data?.error || "ไม่สามารถบันทึกข้อมูลได้",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async (id, name) => {
+    const result = await MySwal.fire({
+      title: "ยืนยันการลบ?",
+      text: `คุณต้องการลบคลินิก "${name}" ใช่หรือไม่?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "var(--suth-danger)",
+      cancelButtonColor: "var(--suth-muted)",
+      confirmButtonText: "ใช่, ลบเลย!",
+      cancelButtonText: "ยกเลิก",
+    });
+    if (result.isConfirmed) {
+      MySwal.fire({
+        title: "กำลังลบข้อมูล...",
+        allowOutsideClick: false,
+        didOpen: () => MySwal.showLoading(),
+      });
+      try {
+        await deleteClinic(id);
+        setClinics((prev) => prev.filter((c) => c.id !== id));
+        MySwal.fire({
+          icon: "success",
+          title: "ลบสำเร็จ",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+        fetchClinics();
+      } catch (err) {
+        MySwal.fire({
+          icon: "error",
+          title: "ข้อผิดพลาด",
+          text: "ไม่สามารถลบคลินิกได้",
+        });
+      }
+    }
+  };
+
+  return (
+    <div className="cm-admin-page">
+      <main className="cm-main">
+        <UiPageHeader className="cm-header">
+          <div className="cm-header-info">
+            <h1>จัดการคลินิก</h1>
+            {/* hint text */}
+            <p className="cm-header-hint">
+              จัดการคลินิกของหน่วยงานที่เลือก และเรียงลำดับเพื่อแสดงผลบนหน้าเว็บ
+            </p>
+            <p className="cm-context-indicator">
+              <span>ขอบเขตข้อมูล</span>
+              {activeOrganizationLabel}
+            </p>
+          </div>
+          <UiButton variant="primary" type="submit" className="cm-btn-add" onClick={() => handleOpenModal()}>
+            <FaPlus /> เพิ่มคลินิกใหม่
+          </UiButton>
+        </UiPageHeader>
+
+        {isLoading ? (
+          <div className="cm-loading-state">
+            <div className="cm-loading-spinner"></div>
+            <p>กำลังโหลดข้อมูล...</p>
+          </div>
+        ) : (
+          <UiSurface as="div" className="cm-table-container" role="region" aria-label="ตารางคลินิก" tabIndex={0}>
+            {isReordering && (
+              <div className="cm-reorder-saving">
+                <span>💾 กำลังบันทึกลำดับ...</span>
+              </div>
+            )}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <UiDataTable className="cm-table">
+                <thead>
+                  <tr>
+                    <th className="cm-col-drag"></th>
+                    <th className="cm-col-logo">โลโก้</th>
+                    <th className="cm-col-slug">รหัสอ้างอิง (Slug)</th>
+                    <th className="cm-col-name">ชื่อคลินิก</th>
+                    <th className="cm-col-organization">หน่วยงานเจ้าของ</th>
+                    <th className="cm-col-status">สถานะ</th>
+                    <th className="cm-col-actions">จัดการ</th>
+                  </tr>
+                </thead>
+                <SortableContext
+                  items={clinics.map((c) => c.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <tbody>
+                    {clinics.length > 0 ? (
+                      clinics.map((clinic) => (
+                        <SortableRow
+                          key={clinic.id}
+                          clinic={clinic}
+                          onEdit={handleOpenModal}
+                          onDelete={handleDelete}
+                        />
+                      ))
+                    ) : (
+                      <EmptyRow columns={7} title="ไม่พบข้อมูลคลินิก" />
+                    )}
+                  </tbody>
+                </SortableContext>
+              </UiDataTable>
+            </DndContext>
+          </UiSurface>
+        )}
+
+        {/* Modal (เหมือนเดิมทุกอย่าง) */}
+        {isModalOpen && (
+          <Dialog title={editingClinic ? "แก้ไขคลินิก" : "เพิ่มคลินิกใหม่"}
+            aria-label={editingClinic ? "แก้ไขคลินิก" : "เพิ่มคลินิก"}
+            size="small" onClose={handleCloseModal}>
+              <form onSubmit={handleSubmit}>
+                {isSystemAdmin && (
+                  <div className="cm-form-group cm-organization-field">
+                    <label htmlFor="clinic-organization">
+                      หน่วยงานเจ้าของ <span className="cm-required">*</span>
+                    </label>
+                    <SearchableSelect
+                      id="clinic-organization"
+                      name="organization_id"
+                      value={formData.organization_id}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">เลือกหน่วยงาน</option>
+                      {organizations.map((organization) => (
+                        <option key={organization.id} value={organization.id}>
+                          {organization.name} ({organization.code})
+                        </option>
+                      ))}
+                    </SearchableSelect>
+                    <small>
+                      ฟอร์มและข้อมูลคลินิกจะแสดงเฉพาะในขอบเขตหน่วยงานนี้
+                    </small>
+                  </div>
+                )}
+                <div className="cm-form-group">
+                  <label htmlFor="clinic-slug">
+                    รหัสอ้างอิง (Slug) <span className="cm-required">*</span>
+                  </label>
+                  <UiTextInput
+                    id="clinic-slug"
+                    type="text"
+                    name="slug"
+                    value={formData.slug}
+                    onChange={handleChange}
+                    placeholder="เช่น teenager, general"
+                    required
+                    disabled={!!editingClinic}
+                  />
+                  <small>
+                    ใช้เชื่อมโยงกับฟอร์มและระบบ
+                    (ห้ามซ้ำและแก้ไขไม่ได้หลังจากสร้าง)
+                  </small>
+                </div>
+                <div className="cm-form-group">
+                  <label htmlFor="clinic-name">
+                    ชื่อคลินิก (ภาษาไทย) <span className="cm-required">*</span>
+                  </label>
+                  <UiTextInput
+                    id="clinic-name"
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="เช่น คลินิกวัยรุ่น"
+                    required
+                  />
+                </div>
+                <div className="cm-form-group">
+                  <label htmlFor="clinic-name-en">ชื่อคลินิก (English)</label>
+                  <UiTextInput
+                    id="clinic-name-en"
+                    type="text"
+                    name="name_en"
+                    value={formData.name_en}
+                    onChange={handleChange}
+                    placeholder="e.g. Teenager Clinic"
+                  />
+                </div>
+                <div className="cm-form-group">
+                  <label htmlFor="clinic-description">รายละเอียด</label>
+                  <UiTextArea
+                    id="clinic-description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    rows="3"
+                  ></UiTextArea>
+                </div>
+                <div className="cm-form-row">
+                  <div className="cm-form-group">
+                    <label>รูปภาพโลโก้ (ไอคอน)</label>
+                    <div
+                      className="cm-img-preview-box"
+                      onClick={() => logoInputRef.current?.click()}
+                    >
+                      {formData.image ? (
+                        <img src={formData.image} alt="Logo" />
+                      ) : (
+                        <>
+                          <FaImage size={24} />
+                          <span>อัปโหลดโลโก้</span>
+                        </>
+                      )}
+                    </div>
+                    <input
+                      type="file"
+                      ref={logoInputRef}
+                      style={{ display: "none" }}
+                      accept="image/*"
+                      onChange={(e) => handleFileChange(e, "image")}
+                    />
+                  </div>
+                  <div className="cm-form-group">
+                    <label>รูปภาพพื้นหลัง (หน้าเว็บ)</label>
+                    <div
+                      className="cm-img-preview-box cm-bg-premium"
+                      onClick={() => bgInputRef.current?.click()}
+                    >
+                      {formData.bg ? (
+                        <img src={formData.bg} alt="BG" />
+                      ) : (
+                        <>
+                          <FaImage size={24} />
+                          <span>อัปโหลดพื้นหลัง</span>
+                        </>
+                      )}
+                    </div>
+                    <input
+                      type="file"
+                      ref={bgInputRef}
+                      style={{ display: "none" }}
+                      accept="image/*"
+                      onChange={(e) => handleFileChange(e, "bg")}
+                    />
+                  </div>
+                </div>
+                <div className="cm-form-group cm-toggle-group">
+                  <label className="cm-toggle">
+                    <input
+                      type="checkbox"
+                      name="show_icon"
+                      checked={formData.show_icon === 1}
+                      onChange={handleChange}
+                    />
+                    <span className="cm-slider"></span>
+                  </label>
+                  <span>แสดงไอคอนบนการ์ด</span>
+                </div>
+                <div className="cm-form-group cm-toggle-group">
+                  <label className="cm-toggle">
+                    <input
+                      type="checkbox"
+                      name="is_active"
+                      checked={formData.is_active === 1}
+                      onChange={handleChange}
+                    />
+                    <span className="cm-slider"></span>
+                  </label>
+                  <span>เปิดใช้งานคลินิกนี้</span>
+                </div>
+                <div className="cm-modal-actions">
+                  <UiButton variant="secondary"
+                    type="button"
+                    className="cm-btn-cancel"
+                    onClick={handleCloseModal}
+                    disabled={isSaving}
+                  >
+                    ยกเลิก
+                  </UiButton>
+                  <UiButton variant="primary"
+                    type="submit"
+                    className="cm-btn-save"
+                    disabled={isSaving}
+                  >
+                    {isSaving
+                      ? editingClinic
+                        ? "กำลังแก้ไข..."
+                        : "กำลังเพิ่ม..."
+                      : "บันทึกข้อมูล"}
+                  </UiButton>
+                </div>
+              </form>
+          </Dialog>
+        )}
+      </main>
+    </div>
+  );
+}
+
+const ClinicManager = () => (
+  <ErrorBoundary>
+    <ClinicManagerContent />
+  </ErrorBoundary>
+);
+export default ClinicManager;

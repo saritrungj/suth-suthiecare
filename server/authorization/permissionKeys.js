@@ -1,4 +1,6 @@
 module.exports = [
+  "master_data.view", "master_data.manage", "master_data.export",
+  "dashboard.export", "appointments.export", "patient_members.export", "forms.export", "clinics.export", "help_center.export", "content.export", "school.export",
   "pii.view",
   "clinical.view",
   "dashboard.view",

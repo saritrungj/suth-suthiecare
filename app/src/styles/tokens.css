@@ -31,6 +31,8 @@
   --suth-control-line: #afbdc7;
 
   /* Status */
+  --suth-info: #1d5c8c;
+  --suth-info-tint: #e7f2fb;
   --suth-danger: #b42318;
   --suth-danger-tint: #fef2f2;
   --suth-danger-line: #f2c6c3;
@@ -40,7 +42,13 @@
   --suth-success: #17663a;
   --suth-success-tint: #e4f6eb;
   --suth-neutral-tint: #eef2f6;
-  --suth-chart-blue: #2563eb;
+  /* Calm categorical charts; clinical colors remain in the risk tokens. */
+  --suth-chart-apricot: #c4814f;
+  --suth-chart-teal: #588d88;
+  --suth-chart-sage: #828e60;
+  --suth-chart-hover: oklch(96% 0.018 65);
+  --suth-chart-surface: oklch(99% 0.006 65);
+  --suth-chart-blue: #6b8ba6;
   --suth-chart-purple: #6d28d9;
 
   /* Sizes */

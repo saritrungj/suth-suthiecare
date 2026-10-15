@@ -223,6 +223,7 @@ app.use("/api", (req, res, next) => {
   );
 });
 
+app.use("/api", require("./middleware/schoolPrivacyBoundary").schoolPrivacyBoundary);
 app.use("/api", require("./middleware/privateDisclosure").privateDisclosure);
 // 🟢 ตั้งค่าหน้าแรก (Root Route)
 app.get("/", (req, res) => {
@@ -273,6 +274,10 @@ app.use("/api", caseRoutes);
 app.use("/api/clinics", clinicRoutes);
 app.use("/api/admin/help-center", faqRoutes);
 app.use("/api/school", schoolRoutes);
+app.use("/api/school", require("./routes/schoolInsightRoutes"));
+app.use("/api/school", require("./routes/schoolWorkflowRoutes"));
+app.use("/api/master-data", require("./routes/masterDataRoutes"));
+app.use("/api/exports", require("./routes/excelExportRoutes"));
 app.use("/api/case-referrals", caseReferralRoutes);
 
 // 🟢 6. API ทดสอบ Telegram (ป้องกันด้วย token — เฉพาะผู้ที่ล็อกอินแล้ว)

@@ -1,3 +1,5 @@
+import SearchableSelect from '../../../components/SearchableSelect';
+import {usePageExport} from "../../../components/ExcelExport";
 import React, { useState, useEffect, useRef } from "react";
 import {
   getAllClinics,
@@ -171,6 +173,7 @@ function ClinicManagerContent() {
   const { authorization, activeOrganization } = usePermissions();
   const isSystemAdmin = Boolean(authorization?.is_system_admin);
   const [clinics, setClinics] = useState([]);
+  usePageExport({title:"คลินิก",sources:[{resource:"clinics"}]});
   const [organizations, setOrganizations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -564,7 +567,7 @@ function ClinicManagerContent() {
                     <label>
                       หน่วยงานเจ้าของ <span className="cm-required">*</span>
                     </label>
-                    <select
+                    <SearchableSelect
                       name="organization_id"
                       value={formData.organization_id}
                       onChange={handleChange}
@@ -576,7 +579,7 @@ function ClinicManagerContent() {
                           {organization.name} ({organization.code})
                         </option>
                       ))}
-                    </select>
+                    </SearchableSelect>
                     <small>
                       ฟอร์มและข้อมูลคลินิกจะแสดงเฉพาะในขอบเขตหน่วยงานนี้
                     </small>

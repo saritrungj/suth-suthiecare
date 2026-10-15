@@ -1,0 +1,30 @@
+◇ injected env (26) from .env // tip: ⌘ suppress logs { quiet: true }
+✔ submits a hash-linked form and names it after the account (294.1846ms)
+✔ accepts a public form submission without a patient session (13.5186ms)
+✔ blocks unauthenticated submission when login is strict or optional (20.0413ms)
+✔ rejects a submission to a draft form even by direct URL (10.6296ms)
+✔ a guest who consents is filed under their national ID (8.9414ms)
+✔ an invalid consented national ID is rejected before anything is saved (7.6745ms)
+◇ injected env (26) from .env // tip: ⌘ enable debugging { debug: true }
+✔ physical admin API and exports return only physical data and reject insight routes (148.5546ms)
+◇ injected env (26) from .env // tip: ⌘ override existing { override: true }
+✔ generic case APIs and writes cannot bypass a homeroom boundary (132.0148ms)
+✔ role revocation and classroom removal take effect on the next API request (38.3853ms)
+✔ subject restriction is included in SQL before pagination or aggregation (0.8324ms)
+◇ injected env (26) from .env // tip: ⌘ enable debugging { debug: true }
+✔ school role matrix separates physical data, mental insights and boarder scope (1.432ms)
+✔ risk triggers inspect the specified row, survive low totals and ignore inactive rules (0.7995ms)
+✔ date filters reject impossible dates, reverse ranges and SQL input (1.9472ms)
+✔ student onboarding validates email, optional initial password and independent boarding status (3.9404ms)
+✔ general school risk summary returns only allowed fields and configured care advice (128.3354ms)
+✔ screening progress counts actual responses within the round, organization and classroom scope (19.4712ms)
+✔ promotion validates all destinations before any enrollment write (29.2672ms)
+✔ retention counts from graduation, excludes holds, and preview performs no archive writes (16.2218ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 809.449

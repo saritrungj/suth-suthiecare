@@ -10,6 +10,7 @@ const MEASUREMENTS = [
   "vision_right",
   "hearing_left",
   "hearing_right",
+  "fitness",
 ];
 function encodeMeasurements(value, org) {
   return sealText(

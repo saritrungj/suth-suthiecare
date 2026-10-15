@@ -1,0 +1,44 @@
+[
+  {
+    "branch": "agency",
+    "before": "b9caf147ea493e67bf54e908aab7cf2d2fb07bea",
+    "commit": "7e4b50c3f3e05341443deb22d9a7036b16fc9ba7",
+    "files": [
+      "app/src/assets/pee-hom-ai.webp",
+      "app/src/components/floating/FloatingActions.css",
+      "app/src/components/floating/FloatingActions.jsx"
+    ]
+  },
+  {
+    "branch": "production",
+    "before": "5db323f2c9e592d48c23b227e8b07d2cf9070ec4",
+    "commit": "1e3e2522fdbdd72470be3892be50e93017b6482a",
+    "files": [
+      "app/src/assets/pee-hom-ai.webp",
+      "app/src/components/floating/FloatingActions.css",
+      "app/src/components/floating/FloatingActions.jsx",
+      "app/src/pages/sutlanding/SutLanding2.jsx"
+    ]
+  },
+  {
+    "branch": "claude/registration-uxui-improvement-872c18",
+    "before": "722a0f08163974665cbc0cc91ee2e43d3059aa99",
+    "commit": "7388f673dc6b307824f23106981dac04e0755f9f",
+    "files": [
+      "app/src/assets/pee-hom-ai.webp",
+      "app/src/components/floating/FloatingActions.css",
+      "app/src/components/floating/FloatingActions.jsx"
+    ]
+  },
+  {
+    "branch": "main",
+    "before": "5db323f2c9e592d48c23b227e8b07d2cf9070ec4",
+    "commit": "6d010edab2bb291da5412133c71d5b73c639b239",
+    "files": [
+      "app/src/assets/pee-hom-ai.webp",
+      "app/src/components/floating/FloatingActions.css",
+      "app/src/components/floating/FloatingActions.jsx",
+      "app/src/pages/sutlanding/SutLanding2.jsx"
+    ]
+  }
+]

@@ -1,0 +1,61 @@
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 942 modules transformed.
+rendering chunks...
+computing gzip size...
+build/index.html                                  4.26 kB │ gzip:   1.12 kB
+build/assets/pee-hom-ai-TJW4rMzV.webp            14.16 kB
+build/assets/logoSUTH-C61czE0q.png               59.02 kB
+build/assets/bg-health-CF5F11bm.jpg             656.44 kB
+build/assets/login-image-auic4EU3.png         1,296.91 kB
+build/assets/02-ChbMj7n0.png                  1,306.70 kB
+build/assets/01-B43erMv6.png                  1,308.00 kB
+build/assets/03-DuAF39By.png                  1,473.24 kB
+build/assets/act.suth-qG5EZz1V.png            1,632.43 kB
+build/assets/vitalcare-FsGwXx1b.png           1,632.84 kB
+build/assets/bg-new-CxDf2QPd.jpg              5,286.88 kB
+build/assets/style-BQN92ybz.css                 512.46 kB │ gzip:  90.77 kB
+build/assets/HistorySearch-xK5T8zlN.js            0.43 kB │ gzip:   0.31 kB
+build/assets/CaseReferrals-Dqq78pHn.js            0.90 kB │ gzip:   0.45 kB
+build/assets/SchoolDashboard-Bw8y4Fzj.js          2.07 kB │ gzip:   0.95 kB
+build/assets/PatientVerifyEmail-CVk-OvcA.js       2.23 kB │ gzip:   1.09 kB
+build/assets/useMediaQuery-ChiJGHpz.js            2.26 kB │ gzip:   1.05 kB
+build/assets/FileSaver.min-B638ZVxz.js            3.02 kB │ gzip:   1.47 kB
+build/assets/SchoolTypes-D35LBbei.js              5.75 kB │ gzip:   2.08 kB
+build/assets/CaseTable-DfwTiBcb.js                5.95 kB │ gzip:   2.30 kB
+build/assets/ClinicDetail-Bq5eNmAy.js             6.35 kB │ gzip:   2.26 kB
+build/assets/RolesPermissions-m6v-NLSW.js         6.52 kB │ gzip:   2.26 kB
+build/assets/CaseReferralPanel-KGPSrZLS.js        6.67 kB │ gzip:   2.58 kB
+build/assets/CaseDrawer-B1yo5nMe.js               6.97 kB │ gzip:   3.02 kB
+build/assets/SchoolRoles-LvvujZNX.js              8.16 kB │ gzip:   2.05 kB
+build/assets/MyProfile-BMFfQtAD.js                8.18 kB │ gzip:   2.41 kB
+build/assets/school-BPEReZia.js                   8.86 kB │ gzip:   3.60 kB
+build/assets/MasterData-CbjmgRCB.js               9.43 kB │ gzip:   3.25 kB
+build/assets/TeacherList-QJXvZfOj.js              9.55 kB │ gzip:   3.04 kB
+build/assets/studentImport-DamgPeOP.js            9.76 kB │ gzip:   3.48 kB
+build/assets/SchoolCaseData-DTlnJLce.js          10.68 kB │ gzip:   3.52 kB
+build/assets/RiskCases--8EG0mTO.js               10.80 kB │ gzip:   4.08 kB
+build/assets/CaseReferrals-C0mx0jwN.js           10.86 kB │ gzip:   3.46 kB
+build/assets/StudentImport-C3hBmsZk.js           11.74 kB │ gzip:   3.81 kB
+build/assets/AssessmentResult-BIw_kqlQ.js        11.87 kB │ gzip:   4.17 kB
+build/assets/AdminLayout-Ccudh5IB.js             11.96 kB │ gzip:   3.78 kB
+build/assets/SchoolStructure-D7sEBn1Z.js         12.79 kB │ gzip:   3.80 kB
+build/assets/StudentList-CCszbb4u.js             15.38 kB │ gzip:   4.57 kB
+build/assets/FormManager-Cz7jXqGf.js             18.17 kB │ gzip:   5.00 kB
+build/assets/StudentDetailModal-BBTmj7us.js      26.07 kB │ gzip:   7.05 kB
+build/assets/CaseData-B1SgttUi.js                28.00 kB │ gzip:   8.81 kB
+build/assets/StudentHealthCharts-HfUF07FY.js     28.70 kB │ gzip:   9.28 kB
+build/assets/UserManagement-D2gjm6gO.js          31.90 kB │ gzip:   8.07 kB
+build/assets/SchoolWorkflows-ypUO9JK_.js         32.87 kB │ gzip:   8.68 kB
+build/assets/FormView-DMhmX3W0.js                41.58 kB │ gzip:  12.71 kB
+build/assets/BannerManagement-COR3UbSl.js        42.32 kB │ gzip:  12.12 kB
+build/assets/HistoryResult-DNHnEnsI.js           46.63 kB │ gzip:  13.75 kB
+build/assets/caseDateFilter-BcSahLBh.js          88.39 kB │ gzip:  23.50 kB
+build/assets/FormBuilder-BoaMJeQH.js             99.86 kB │ gzip:  24.44 kB
+build/assets/dashboard-BKoN8w6M.js              107.17 kB │ gzip:  28.53 kB
+build/assets/index-JTTat4MK.js                  111.18 kB │ gzip:  30.56 kB
+build/assets/Appointment-DnCrOuGm.js            249.23 kB │ gzip:  75.14 kB
+build/assets/CartesianChart-BK0kl8am.js         352.61 kB │ gzip: 104.06 kB
+build/assets/index-BF0TBIpp.js                  905.12 kB │ gzip: 265.47 kB
+build/assets/exceljs.min-MZDTRagQ.js            936.99 kB │ gzip: 270.75 kB
+✓ built in 13.60s

@@ -1,0 +1,59 @@
+
+Running 6 tests using 1 worker
+
+(node:34632) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › e2e\school-guardian.spec.js:29:1 › guardian opens only their student file and all health and insight tabs are read only (3.9s)
+  x  2 [desktop-chromium] › e2e\school-guardian.spec.js:46:1 › school administrator creates a guardian account with a password and explicit child links (30.7s)
+(node:29120) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 [desktop-chromium] › e2e\school-guardian.spec.js:63:1 › missing school organization gives a branded recovery page (2.5s)
+(node:17008) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 4 [mobile-chromium] › e2e\school-guardian.spec.js:29:1 › guardian opens only their student file and all health and insight tabs are read only (8.7s)
+  ok 5 [mobile-chromium] › e2e\school-guardian.spec.js:46:1 › school administrator creates a guardian account with a password and explicit child links (2.8s)
+  ok 6 [mobile-chromium] › e2e\school-guardian.spec.js:63:1 › missing school organization gives a branded recovery page (7.1s)
+
+
+  1) [desktop-chromium] › e2e\school-guardian.spec.js:46:1 › school administrator creates a guardian account with a password and explicit child links 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.fill: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByRole('dialog').getByLabel('อีเมล', { exact: true })
+
+
+      51 |   await dialog.getByLabel('ชื่อผู้ใช้', { exact: true }).fill('demo-parent');
+      52 |   await dialog.getByLabel('ชื่อ–นามสกุล', { exact: true }).fill('ผู้ปกครองจำลอง');
+    > 53 |   await dialog.getByLabel('อีเมล', { exact: true }).fill('demo-parent@example.test');
+         |                                                     ^
+      54 |   await dialog.getByLabel('รหัสผ่าน', { exact: true }).fill('Synthetic-901!');
+      55 |   await dialog.getByRole('checkbox', { name: 'รหัสนักเรียน DEMO011' }).check();
+      56 |   await page.screenshot({ path: `../outputs/guardian-create-${test.info().project.name}.png`, fullPage: true });
+        at D:\github-clone\suth-suthiecare\app\e2e\school-guardian.spec.js:53:53
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\school-guardian-school-adm-b8981-rd-and-explicit-child-links-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\school-guardian-school-adm-b8981-rd-and-explicit-child-links-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\school-guardian-school-adm-b8981-rd-and-explicit-child-links-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\school-guardian-school-adm-b8981-rd-and-explicit-child-links-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\school-guardian-school-adm-b8981-rd-and-explicit-child-links-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [desktop-chromium] › e2e\school-guardian.spec.js:46:1 › school administrator creates a guardian account with a password and explicit child links 
+  5 passed (58.8s)
+undefined
+D:\github-clone\suth-suthiecare\app:
+[ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL] Command failed with exit code 1: playwright test e2e/school-guardian.spec.js "--reporter=list"

@@ -1,0 +1,12 @@
+◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+✔ MySQL school lists, details and exports match the scoped student count (4873.69ms)
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+✔ local MySQL runs screening, teacher onboarding, enrollment history and retention with rollback (6053.6896ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6872.3804

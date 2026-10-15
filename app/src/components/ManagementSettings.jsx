@@ -1,3 +1,4 @@
+import { toDisplayText } from '../utils/textPresentation.js';
 import {
   FiAlertCircle,
   FiCheckCircle,
@@ -21,7 +22,7 @@ export function SettingsFeedback({ notice }) {
       role={notice.type === "error" ? "alert" : "status"}
     >
       <Icon aria-hidden="true" />
-      <span>{notice.text}</span>
+      <span>{toDisplayText(notice.text)}</span>
     </div>
   );
 }

@@ -1,0 +1,12 @@
+[
+  "app/src\\pages\\admin\\UserManagement.jsx",
+  "app/src\\pages\\admin\\clinics\\ClinicManager.jsx",
+  "app/src\\components\\Sidebar.jsx",
+  "app/src\\pages\\admin\\BannerManagement.jsx",
+  "app/src\\pages\\admin\\HelpCenterManager.jsx",
+  "app/src\\pages\\assessment\\formView\\FormView.jsx",
+  "app/src\\pages\\admin\\forms\\FormBuilder.jsx",
+  "app/src\\components\\case\\CaseDetailModal.jsx",
+  "app/src\\components\\case\\casedetail-childrens\\CaseActionTab.jsx",
+  "app/src\\components\\case\\casedetail-childrens\\TemplateManagerModal.jsx"
+]

@@ -1,0 +1,156 @@
+[WebServer] (node:37236) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 15 tests using 1 worker
+
+(node:33564) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   1 [phone] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus (15.5s)
+(node:8944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  2 [phone] › e2e\interface-consistency.spec.js:41:1 › management dialogs share focus, close placement, scrolling and focus return (8.9s)
+  ok  3 [phone] › e2e\interface-consistency.spec.js:65:1 › a failed staff save preserves the form and opens a reachable confirmation above it (5.3s)
+  ok  4 [phone] › e2e\interface-consistency.spec.js:92:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown (2.9s)
+  ok  5 [phone] › e2e\interface-consistency.spec.js:102:1 › default assessment and editor use the brand while an authored theme is preserved (3.5s)
+(node:39648) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   6 [tablet] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus (15.3s)
+(node:8036) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  7 [tablet] › e2e\interface-consistency.spec.js:41:1 › management dialogs share focus, close placement, scrolling and focus return (8.7s)
+  ok  8 [tablet] › e2e\interface-consistency.spec.js:65:1 › a failed staff save preserves the form and opens a reachable confirmation above it (3.6s)
+  ok  9 [tablet] › e2e\interface-consistency.spec.js:92:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown (2.4s)
+  ok 10 [tablet] › e2e\interface-consistency.spec.js:102:1 › default assessment and editor use the brand while an authored theme is preserved (4.1s)
+(node:13148) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  11 [desktop] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus (13.5s)
+(node:31184) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 12 [desktop] › e2e\interface-consistency.spec.js:41:1 › management dialogs share focus, close placement, scrolling and focus return (10.5s)
+  ok 13 [desktop] › e2e\interface-consistency.spec.js:65:1 › a failed staff save preserves the form and opens a reachable confirmation above it (4.5s)
+  ok 14 [desktop] › e2e\interface-consistency.spec.js:92:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown (3.0s)
+  ok 15 [desktop] › e2e\interface-consistency.spec.js:102:1 › default assessment and editor use the brand while an authored theme is preserved (4.0s)
+
+
+  1) [phone] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus 
+
+    Error: expect(locator).toHaveCSS(expected) failed
+
+    Locator:  locator('.cm-btn-add')
+    Expected: "solid"
+    Received: "none"
+    Timeout:  10000ms
+
+    Call log:
+      - Expect "toHaveCSS" with timeout 10000ms
+      - waiting for locator('.cm-btn-add')
+        23 × locator resolved to <button type="submit" class="suth-button suth-button--primary cm-btn-add">…</button>
+           - unexpected value "none"
+
+
+      32 |   expect(await metrics()).toEqual(before);
+      33 |   const primary=page.locator('.cm-btn-add');
+    > 34 |   await primary.focus();await expect(primary).toHaveCSS('outline-style','solid');
+         |                                               ^
+      35 |   const idle=await primary.evaluate(el=>getComputedStyle(el).backgroundColor);
+      36 |   await primary.hover();await expect(primary).toHaveCSS('background-color','rgb(169, 67, 32)');
+      37 |   expect(idle).toBe('rgb(196, 84, 40)');
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:34:47
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-phone\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-phone\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-phone\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-phone\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [tablet] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus 
+
+    Error: expect(locator).toHaveCSS(expected) failed
+
+    Locator:  locator('.cm-btn-add')
+    Expected: "solid"
+    Received: "none"
+    Timeout:  10000ms
+
+    Call log:
+      - Expect "toHaveCSS" with timeout 10000ms
+      - waiting for locator('.cm-btn-add')
+        23 × locator resolved to <button type="submit" class="suth-button suth-button--primary cm-btn-add">…</button>
+           - unexpected value "none"
+
+
+      32 |   expect(await metrics()).toEqual(before);
+      33 |   const primary=page.locator('.cm-btn-add');
+    > 34 |   await primary.focus();await expect(primary).toHaveCSS('outline-style','solid');
+         |                                               ^
+      35 |   const idle=await primary.evaluate(el=>getComputedStyle(el).backgroundColor);
+      36 |   await primary.hover();await expect(primary).toHaveCSS('background-color','rgb(169, 67, 32)');
+      37 |   expect(idle).toBe('rgb(196, 84, 40)');
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:34:47
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-tablet\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-tablet\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-tablet\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-tablet\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [desktop] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus 
+
+    Error: expect(locator).toHaveCSS(expected) failed
+
+    Locator:  locator('.cm-btn-add')
+    Expected: "solid"
+    Received: "none"
+    Timeout:  10000ms
+
+    Call log:
+      - Expect "toHaveCSS" with timeout 10000ms
+      - waiting for locator('.cm-btn-add')
+        23 × locator resolved to <button type="submit" class="suth-button suth-button--primary cm-btn-add">…</button>
+           - unexpected value "none"
+
+
+      32 |   expect(await metrics()).toEqual(before);
+      33 |   const primary=page.locator('.cm-btn-add');
+    > 34 |   await primary.focus();await expect(primary).toHaveCSS('outline-style','solid');
+         |                                               ^
+      35 |   const idle=await primary.evaluate(el=>getComputedStyle(el).backgroundColor);
+      36 |   await primary.hover();await expect(primary).toHaveCSS('background-color','rgb(169, 67, 32)');
+      37 |   expect(idle).toBe('rgb(196, 84, 40)');
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:34:47
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-styl-1a126-witching-through-real-menus-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    [phone] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus 
+    [tablet] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus 
+    [desktop] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus 
+  12 passed (1.9m)

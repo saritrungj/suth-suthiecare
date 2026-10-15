@@ -1,3 +1,5 @@
+import SearchableSelect from '../../../components/SearchableSelect';
+import { toDisplayText } from '../../../utils/textPresentation.js';
 import { useCallback, useEffect, useState } from "react";
 import { FiEdit2, FiPlus, FiTrash2 } from "react-icons/fi";
 import {
@@ -137,7 +139,7 @@ function TypePanel({ kind, title, hint }) {
               rows.map((row) => (
                 <tr key={row.id}>
                   <td className="sch-name">{row.name}</td>
-                  <td>{row.description || "-"}</td>
+                  <td>{toDisplayText(row.description || "-")}</td>
                   <td className="sch-num">{row.usage_count}</td>
                   <td>
                     <span className={`sch-badge status-${row.status}`}>
@@ -274,7 +276,7 @@ function TypeModal({ kind, title, initial, onClose, onSaved }) {
         </label>
         <label className="sch-field">
           สถานะ
-          <select
+          <SearchableSelect
             value={form.status}
             onChange={(event) =>
               setForm({ ...form, status: event.target.value })
@@ -282,7 +284,7 @@ function TypeModal({ kind, title, initial, onClose, onSaved }) {
           >
             <option value="active">ใช้งาน</option>
             <option value="inactive">ปิดใช้งาน</option>
-          </select>
+          </SearchableSelect>
         </label>
       </form>
     </SchoolModal>

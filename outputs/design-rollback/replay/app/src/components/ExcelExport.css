@@ -1,0 +1,7 @@
+.excel-export-toolbar{flex-shrink:0;padding:8px 20px;background:var(--surface,#fff);border-bottom:1px solid var(--line,#d8e0e7)}
+.excel-export{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;font-family:inherit;font-size:.85rem}
+.excel-export label{display:flex;align-items:center;gap:6px;color:var(--ink-2,#344a5f)}
+.excel-export button{min-height:44px;display:inline-flex;align-items:center;gap:8px;border:1px solid #afbdc7;border-radius:10px;background:#fff;padding:8px 14px;color:#344a5f;font:inherit;cursor:pointer}
+.excel-export button:hover{background:#fff4ec}.excel-export button:disabled{opacity:.6;cursor:wait}.excel-export input{accent-color:#c2410c}
+.excel-export button:focus-visible,.excel-export input:focus-visible{outline:2px solid #c2410c;outline-offset:3px}
+@media(max-width:600px){.excel-export-toolbar{padding:8px 12px}.excel-export{gap:8px}.excel-export .sch-error{width:100%}}

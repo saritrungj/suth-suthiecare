@@ -1,3 +1,4 @@
+import { toDisplayText } from '../../utils/textPresentation.js';
 import "./AppointmentTable.css";
 import { FiCalendar } from "react-icons/fi";
 import { formatBangkokDate } from "../../utils/caseDateFilter";
@@ -18,13 +19,7 @@ export default function AppointmentTable({
     return !isClosedCase; // คืนค่า true เฉพาะเคสที่ยังไม่ถูกปิด
   });
 
-  const stripHtml = (html) => {
-    if (!html) return "";
-    return String(html)
-      .replace(/<[^>]+>/g, "")
-      .replace(/&nbsp;/g, " ")
-      .trim();
-  };
+  const stripHtml = (html) => { return toDisplayText(html); };
 
   const getRiskBadge = (riskLevel) => {
     if (riskLevel === "สูง")
@@ -205,8 +200,8 @@ export default function AppointmentTable({
                     {getRiskBadge(a.overall_risk || a.risk_level || "ต่ำ")}
                   </td>
                   <td>{stripHtml(phone)}</td>
-                  <td className="aptt-col-note" title={a.note}>
-                    {a.note || "-"}
+                  <td className="aptt-col-note" title={toDisplayText(a.note)}>
+                    {toDisplayText(a.note || "-")}
                   </td>
 
                   <td>

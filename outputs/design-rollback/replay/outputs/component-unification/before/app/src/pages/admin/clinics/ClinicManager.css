@@ -1,0 +1,763 @@
+/* ============================================================
+   CLINIC MANAGEMENT MAIN LAYOUT
+   ============================================================ */
+.cm-admin-page {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: #f8fafc;
+  font-family: "Noto Sans Thai", sans-serif;
+}
+
+/* บังคับควบคุมให้ปุ่มและฟอร์มต่างๆ เปลี่ยนฟอนต์ตามหน้าเว็บหลัก */
+.cm-admin-page input,
+.cm-admin-page button,
+.cm-admin-page select,
+.cm-admin-page textarea {
+  font-family: "Noto Sans Thai", sans-serif;
+}
+
+.cm-main {
+  flex: 1;
+  padding: 30px 40px;
+  background-color: #f8fafc;
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================================
+   HEADER PREMIUM CARD 
+   ============================================================ */
+.cm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff !important;
+  border-radius: 12px;
+  padding: 25px 35px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: none;
+  border-left: 6px solid var(--suth-action); /* แถบสีส้มเอกลักษณ์ มทส. */
+}
+
+.cm-header-info h1 {
+  font-size: 26px;
+  color: var(--suth-action) !important; /* ปรับเป็นสีส้มแบรนด์ให้เข้าคู่กับแถบซ้าย */
+  margin: 0 0 6px 0;
+  font-weight: 800;
+}
+
+.cm-header-info p {
+  margin: 0;
+  font-size: 15px;
+  color: #64748b;
+  font-weight: 400;
+}
+
+.cm-header-hint {
+  margin: 6px 0 0 0 !important;
+  font-size: 13.5px !important;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.cm-context-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 0 !important;
+  color: #0f4c5c !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+.cm-context-indicator span {
+  padding: 3px 8px;
+  color: #fff7ed;
+  background: #c2410c;
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+}
+
+/* ============================================================
+   BUTTONS 
+   ============================================================ */
+.cm-btn-add {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--suth-action);
+  color: #ffffff;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(244, 121, 50, 0.3);
+}
+
+.cm-btn-add:hover {
+  background-color: var(--suth-action-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(244, 121, 50, 0.4);
+}
+
+/* ============================================================
+   TABLE CONTAINER & HEADERS 
+   ============================================================ */
+.cm-table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #f1f1f1;
+  overflow-x: auto;
+}
+
+.cm-table {
+  width: 100%;
+  border-collapse: separate !important; /* เปิดทางให้ทำมุมมนโค้ง */
+  border-spacing: 0;
+  min-width: 700px;
+}
+
+.cm-table-container thead {
+  background-color: var(--suth-action) !important;
+}
+
+.cm-table th {
+  color: #ffffff !important;
+  background-color: var(--suth-action) !important;
+  font-family: "Noto Sans Thai", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 18px 20px;
+  text-align: left;
+  border: none !important;
+  white-space: nowrap;
+}
+
+.cm-table thead tr th:first-child {
+  border-top-left-radius: 12px;
+}
+.cm-table thead tr th:last-child {
+  border-top-right-radius: 12px;
+  border-right: none !important;
+}
+.cm-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+.cm-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+/* ============================================================
+   TABLE BODY ROWS
+   ============================================================ */
+.cm-table td {
+  padding: 16px 20px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+  border-right: none !important;
+  color: #475569;
+  vertical-align: middle;
+  background-color: #ffffff;
+}
+
+.cm-table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+.cm-table tbody tr:hover td {
+  background-color: #fffaf7 !important;
+}
+
+.cm-col-drag {
+  width: 50px;
+  text-align: center !important;
+}
+.cm-col-logo {
+  width: 110px;
+  text-align: center !important;
+}
+.cm-col-slug {
+  width: 180px;
+}
+.cm-col-name {
+  min-width: 250px;
+}
+.cm-col-organization {
+  min-width: 260px;
+  white-space: normal;
+}
+.cm-organization-tag {
+  display: inline;
+  padding: 4px 9px;
+  color: #155e75;
+  background: #ecfeff;
+  border: 1px solid #a5f3fc;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.75;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.cm-col-status {
+  width: 160px;
+}
+.cm-col-actions {
+  width: 140px;
+  text-align: center !important;
+}
+
+/* ============================================================
+   CLINIC COMPONENTS INNER STYLE
+   ============================================================ */
+.cm-clinic-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 4px;
+  border: 1px solid #e2e8f0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.cm-no-logo {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  color: #94a3b8;
+  font-size: 11px;
+  border-radius: 8px;
+  border: 1px dashed #cbd5e1;
+  vertical-align: middle;
+}
+
+.cm-slug {
+  background-color: #e0f2fe;
+  color: #0284c7;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cm-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.cm-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cm-status.active {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.cm-status.inactive {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* ============================================================
+   ACTIONS CELLS
+   ============================================================ */
+.cm-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.cm-btn-edit,
+.cm-btn-delete {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  flex-shrink: 0;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cm-btn-edit {
+  color: #64748b;
+  background-color: #f8fafc;
+}
+
+.cm-btn-edit:hover {
+  background: #f0f9f9 !important;
+  color: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  transform: translateY(-2px);
+}
+
+.cm-btn-delete {
+  color: #64748b;
+  background-color: #f8fafc;
+}
+
+.cm-btn-delete:hover {
+  background: #fef2f2 !important;
+  color: #ef4444 !important;
+  border-color: #fee2e2 !important;
+  transform: translateY(-2px);
+}
+
+.cm-empty {
+  text-align: center;
+  color: #94a3b8;
+  font-weight: 600;
+  padding: 40px !important;
+}
+
+/* ============================================================
+   MODAL DIALOG STRUCTURE
+   ============================================================ */
+.cm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  padding: 20px;
+}
+
+.cm-modal-content {
+  background: white;
+  width: 100%;
+  max-width: 600px;
+  border-radius: 16px;
+  padding: 32px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.cm-modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  margin-left: -32px;
+  margin-right: -32px;
+  padding-left: 32px;
+  padding-right: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #0f172a;
+  font-weight: 800;
+}
+.cm-organization-field {
+  padding: 14px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+}
+.cm-organization-field select {
+  background: #fff;
+}
+.cm-close-btn-custom {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background-color: #fef2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
+  z-index: 10;
+}
+.cm-close-btn-custom:hover {
+  background-color: #fee2e2;
+  transform: rotate(180deg);
+}
+
+.cm-close-btn-custom:hover .close-cross::before,
+.cm-close-btn-custom:hover .close-cross::after {
+  background-color: #dc2626;
+}
+.cm-close-cross {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cm-close-cross::before,
+.cm-close-cross::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: #ef4444;
+  border-radius: 10px;
+  transition: background-color 0.3s;
+}
+.cm-close-cross::before {
+  transform: rotate(45deg);
+}
+.cm-close-cross::after {
+  transform: rotate(-45deg);
+}
+
+.cm-form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.cm-form-group label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #334155;
+  font-size: 14.5px;
+}
+
+.cm-required {
+  color: #ef4444;
+}
+
+.cm-form-group input[type="text"],
+.cm-form-group textarea {
+  padding: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.cm-form-group input[type="text"]:focus,
+.cm-form-group textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.cm-form-group input:disabled {
+  background-color: #f1f5f9;
+  cursor: not-allowed;
+  color: #94a3b8;
+}
+
+.cm-form-group small {
+  margin-top: 6px;
+  color: #64748b;
+  font-size: 12.5px;
+}
+
+.cm-form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.cm-form-row .cm-form-group {
+  flex: 1;
+}
+
+.cm-img-preview-box {
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #64748b;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s;
+  background-color: #f8fafc;
+}
+
+.cm-img-preview-box:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.cm-img-preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.cm-bg-premium img {
+  object-fit: cover;
+}
+
+.cm-toggle-group {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+/* Switch Toggle Slider */
+.cm-toggle {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.cm-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.cm-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+
+.cm-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .cm-slider {
+  background-color: #10b981;
+}
+
+input:checked + .cm-slider:before {
+  transform: translateX(24px);
+}
+
+.cm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.cm-btn-cancel,
+.cm-btn-save {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-size: 15px;
+}
+
+.cm-btn-cancel {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.cm-btn-cancel:hover {
+  background-color: #e2e8f0;
+}
+
+.cm-btn-save {
+  background-color: var(--suth-action);
+  color: #ffffff;
+  box-shadow: 0 4px 15px rgba(244, 121, 50, 0.3);
+  transition: all 0.2s;
+}
+
+.cm-btn-save:hover {
+  background-color: var(--suth-action-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(244, 121, 50, 0.4);
+}
+
+/* ============================================================
+   SYSTEM ANIMATIONS & LOADERS
+   ============================================================ */
+.cm-loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  width: 100%;
+}
+
+.cm-loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f1f5f9;
+  border-top: 4px solid var(--suth-action);
+  border-radius: 50%;
+  animation: cm-spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+  margin-bottom: 20px;
+}
+
+.cm-loading-state p {
+  color: #64748b;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  animation: cm-pulseText 1.5s ease-in-out infinite;
+}
+
+@keyframes cm-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes cm-pulseText {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ============================================================
+   DRAG AND DROP REORDER STATES
+   ============================================================ */
+.cm-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: #94a3b8;
+  cursor: grab;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.cm-drag-handle:hover {
+  color: #475569;
+  background-color: #f1f5f9;
+}
+
+.cm-drag-handle:active {
+  cursor: grabbing;
+  color: #2563eb; /* 🟢 เปลี่ยนสีโฮเวอร์สายลากเป็นสีฟ้า */
+  background-color: #eff6ff;
+}
+
+.cm-reorder-saving {
+  padding: 12px 20px;
+  background: #eff6ff;
+  border-bottom: 1px solid #bfdbfe;
+  color: #2563eb; /* 🟢 เปลี่ยนแถบแจ้งเตือนบันทึกลำดับเป็นสีฟ้า */
+  font-size: 13.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px 12px 0 0;
+}
+
+/* ============================================================
+   RESPONSIVE DESIGN SYSTEM
+   ============================================================ */
+@media (max-width: 1200px) {
+  .cm-main {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cm-main {
+    padding: 16px;
+  }
+  .cm-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+  }
+  .cm-btn-add {
+    width: 100%;
+    justify-content: center;
+  }
+  .cm-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+/* ===============================
+   Help Center Toggle Switch 
+   ===============================*/
+.cm-col-help-center {
+  width: 180px;
+  text-align: center;
+  vertical-align: middle;
+}
+.cm-col-help-center .flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.cm-col-help-center .cursor-pointer {
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.cm-col-help-center input[type="checkbox"] + div {
+  transition: all 0.2s ease-in-out;
+}
+.cm-col-help-center input:checked + .cm-slider {
+  background-color: var(--suth-action);
+}

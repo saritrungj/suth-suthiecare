@@ -1,0 +1,27 @@
+
+Running 18 tests using 1 worker
+
+(node:33436) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › e2e\admin-workspace.spec.js:48:3 › system admin legacy role 1 can enter school tools from hospital without membership (2.1s)
+  ok  2 [desktop-chromium] › e2e\admin-workspace.spec.js:48:3 › system admin legacy role 3 can enter school tools from hospital without membership (2.0s)
+  ok  3 [desktop-chromium] › e2e\admin-workspace.spec.js:60:1 › master starts with all organizations and saves under each row organization (9.3s)
+  ok  4 [desktop-chromium] › e2e\admin-workspace.spec.js:93:1 › master validates new codes, keeps failed edits and retries reads (2.4s)
+  ok  5 [desktop-chromium] › e2e\admin-workspace.spec.js:118:1 › ordinary staff remains limited to membership and cannot edit master (2.4s)
+  ok  6 [desktop-chromium] › e2e\admin-workspace.spec.js:129:1 › school workflows can switch between every school in the selected organization (2.4s)
+  ok  7 [desktop-chromium] › e2e\school-guardian.spec.js:29:1 › guardian opens only their student file and all health and insight tabs are read only (9.3s)
+  ok  8 [desktop-chromium] › e2e\school-guardian.spec.js:46:1 › school administrator creates a guardian account with a password and explicit child links (2.8s)
+  ok  9 [desktop-chromium] › e2e\school-guardian.spec.js:63:1 › missing school organization gives a branded recovery page (2.6s)
+(node:36768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 10 [mobile-chromium] › e2e\admin-workspace.spec.js:48:3 › system admin legacy role 1 can enter school tools from hospital without membership (1.7s)
+  ok 11 [mobile-chromium] › e2e\admin-workspace.spec.js:48:3 › system admin legacy role 3 can enter school tools from hospital without membership (1.6s)
+  ok 12 [mobile-chromium] › e2e\admin-workspace.spec.js:60:1 › master starts with all organizations and saves under each row organization (3.7s)
+  ok 13 [mobile-chromium] › e2e\admin-workspace.spec.js:93:1 › master validates new codes, keeps failed edits and retries reads (2.2s)
+  ok 14 [mobile-chromium] › e2e\admin-workspace.spec.js:118:1 › ordinary staff remains limited to membership and cannot edit master (2.6s)
+  ok 15 [mobile-chromium] › e2e\admin-workspace.spec.js:129:1 › school workflows can switch between every school in the selected organization (1.8s)
+  ok 16 [mobile-chromium] › e2e\school-guardian.spec.js:29:1 › guardian opens only their student file and all health and insight tabs are read only (3.3s)
+  ok 17 [mobile-chromium] › e2e\school-guardian.spec.js:46:1 › school administrator creates a guardian account with a password and explicit child links (3.3s)
+  ok 18 [mobile-chromium] › e2e\school-guardian.spec.js:63:1 › missing school organization gives a branded recovery page (2.5s)
+
+  18 passed (1.0m)

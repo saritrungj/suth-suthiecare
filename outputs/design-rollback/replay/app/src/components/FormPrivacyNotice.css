@@ -1,0 +1,73 @@
+.form-privacy-notice {
+  color: var(--suth-ink);
+  scroll-margin-top: 80px;
+}
+.form-privacy-notice summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+  border-radius: var(--suth-radius);
+}
+.form-privacy-notice summary::-webkit-details-marker {
+  display: none;
+}
+.form-privacy-notice summary > svg:first-child {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: var(--theme-color, var(--suth-action));
+}
+.form-privacy-notice summary span {
+  flex: 1;
+  font-weight: 600;
+}
+.form-privacy-notice summary small {
+  display: block;
+  font-weight: 400;
+  color: var(--suth-muted);
+  font-size: 0.85em;
+}
+.form-privacy-chevron {
+  flex: none;
+  transition: transform 0.15s;
+}
+.form-privacy-notice details[open] .form-privacy-chevron {
+  transform: rotate(180deg);
+}
+.form-privacy-notice p {
+  margin: 12px 0 16px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+}
+.form-privacy-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--assessment-surface, var(--suth-surface-2));
+  border-radius: var(--suth-radius);
+  cursor: pointer;
+  line-height: 1.7;
+}
+.form-privacy-consent input {
+  width: 18px;
+  height: 18px;
+  margin: 4px 0 0;
+  flex: none;
+  accent-color: var(--theme-color, var(--suth-action));
+}
+.form-privacy-notice :is(summary, input):focus-visible {
+  outline: 2px solid var(--theme-color, var(--suth-action));
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .form-privacy-chevron {
+    transition: none;
+  }
+}

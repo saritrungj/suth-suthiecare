@@ -324,7 +324,7 @@ const privacy = {
           "ร้องเรียนต่อสำนักงานคณะกรรมการคุ้มครองข้อมูลส่วนบุคคล (สคส.)",
         ],
         after: [
-          "ท่านยื่นคำขอได้ผ่านเมนูคำขอใช้สิทธิในบัญชีของท่าน (ถ้ามี) หรือช่องทางติดต่อด้านล่าง เราจะตรวจสอบตัวตนก่อนดำเนินการ และตอบกลับภายใน 30 วันนับจากวันที่ได้รับคำขอ เราอาจปฏิเสธคำขอได้ในกรณีที่กฎหมายอนุญาต เช่น ต้องเก็บข้อมูลไว้ตามหน้าที่ทางกฎหมายหรือเพื่อการรักษา โดยจะแจ้งเหตุผลให้ทราบ",
+          "ท่านยื่นคำขอได้ผ่านช่องทางติดต่อด้านล่าง เราจะตรวจสอบตัวตนก่อนดำเนินการ และตอบกลับภายใน 30 วันนับจากวันที่ได้รับคำขอ เราอาจปฏิเสธคำขอได้ในกรณีที่กฎหมายอนุญาต เช่น ต้องเก็บข้อมูลไว้ตามหน้าที่ทางกฎหมายหรือเพื่อการรักษา โดยจะแจ้งเหตุผลให้ทราบ",
         ],
       },
       {
@@ -435,7 +435,7 @@ const privacy = {
           "complain to the Personal Data Protection Committee (PDPC).",
         ],
         after: [
-          "Submit a request from the privacy requests menu in your account (where available) or through the contacts below. We verify your identity first and reply within 30 days of receiving the request. We may refuse where the law allows, for example when we must keep data by law or for treatment, and will tell you why.",
+          "Submit a request through the contacts below. We verify your identity first and reply within 30 days of receiving the request. We may refuse where the law allows, for example when we must keep data by law or for treatment, and will tell you why.",
         ],
       },
       {

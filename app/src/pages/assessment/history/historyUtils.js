@@ -1,3 +1,4 @@
+import { toDisplayText } from '../../../utils/textPresentation.js';
 // ตัวแปรการตั้งค่า API
 export const API_BASE = (import.meta.env?.VITE_API_URL || "/api").replace(
   /\/api$/,
@@ -45,19 +46,7 @@ export const CLINIC_INFO = {
 };
 
 // ฟังก์ชันช่วยเหลือต่างๆ (Helpers)
-export const stripHtml = (str) => {
-  if (!str) return "";
-  return String(str)
-    .replace(/<[^>]*>/g, "")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/\s+/g, " ")
-    .trim();
-};
+export const stripHtml = toDisplayText;
 
 export const formatDate = (dateStr) => {
   if (!dateStr) return "-";

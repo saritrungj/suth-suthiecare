@@ -1,4 +1,5 @@
-import PatientPrivacyRequests from "../../../components/PatientPrivacyRequests";
+import { toDisplayText } from '../../../utils/textPresentation.js';
+import { toSafeHtml } from '../../../utils/richText.js';
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -167,6 +168,7 @@ const ExpandableText = ({ text, color }) => {
         <button
           type="button"
           className="hr-advice-toggle-btn-new"
+          aria-expanded={isExpanded}
           style={{ color: color || "var(--theme-green-700)" }}
           onClick={(e) => {
             e.stopPropagation();
@@ -200,6 +202,7 @@ export default function HistoryResult() {
 
   const [showId, setShowId] = useState(false);
   const [expanded, setExpanded] = useState(null);
+  const openedRequestedResponse = useRef(false);
 
   const [activeInnerTab, setActiveInnerTab] = useState({});
 
@@ -640,6 +643,20 @@ export default function HistoryResult() {
     }
   };
 
+  useEffect(() => {
+    const requestedId = location.state?.expandResponseId;
+    if (loading || requestedId == null || openedRequestedResponse.current) return;
+    const record = data.find((item) => String(item.id) === String(requestedId));
+    if (!record) return;
+    openedRequestedResponse.current = true;
+    setExpanded(record.id);
+    loadAnswers(record);
+    setActiveInnerTab((previous) => ({
+      ...previous,
+      [record.id]: record.summary_data?.score_results?.length ? "scores" : "answers",
+    }));
+  }, [data, loading, location.state?.expandResponseId]);
+
   // --- ส่วน Loading ---
   if (loading)
     return (
@@ -825,7 +842,6 @@ export default function HistoryResult() {
       />
 
       <div className="hr-layout">
-        <PatientPrivacyRequests />
         {needsEmail && (
           <section
             className="hr-email-banner"
@@ -967,6 +983,8 @@ export default function HistoryResult() {
                   </span>
                   <button
                     className="hr-id-toggle"
+                    aria-pressed={showId}
+                    aria-label={showId ? (i18n.language === "en" ? "Hide identity status" : "ซ่อนสถานะยืนยันตัวตน") : (i18n.language === "en" ? "Show identity status" : "แสดงสถานะยืนยันตัวตน")}
                     onClick={() => setShowId(!showId)}
                   >
                     {showId ? <FiEyeOff size={13} /> : <FiEye size={13} />}
@@ -1593,6 +1611,15 @@ export default function HistoryResult() {
                 >
                   <div
                     className="hr-card-head"
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={isOpen}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        toggleCard(record);
+                      }
+                    }}
                     onClick={() => toggleCard(record)}
                   >
                     <div className="hr-card-left">
@@ -1987,7 +2014,7 @@ export default function HistoryResult() {
                                         {i + 1}
                                       </span>
                                       <span className="hr-answer-q">
-                                        {questionLabel}
+                                        {toDisplayText(questionLabel)}
                                       </span>
                                       <span className="hr-answer-sep">→</span>
                                     </div>
@@ -2036,7 +2063,7 @@ export default function HistoryResult() {
                                         className="hr-answer-q"
                                         style={{ fontWeight: "bold" }}
                                       >
-                                        {questionLabel}
+                                        {toDisplayText(questionLabel)}
                                       </span>
                                     </div>
                                     <div className="hr-table-container">
@@ -2083,7 +2110,7 @@ export default function HistoryResult() {
                                                       <div
                                                         dangerouslySetInnerHTML={{
                                                           __html:
-                                                            displayRowTitle,
+                                                            toSafeHtml(displayRowTitle),
                                                         }}
                                                       />
                                                     ) : (
@@ -2163,7 +2190,7 @@ export default function HistoryResult() {
                                       {i + 1}
                                     </span>
                                     <span className="hr-answer-q">
-                                      {questionLabel}
+                                      {toDisplayText(questionLabel)}
                                     </span>
                                     <span className="hr-answer-sep">→</span>
                                   </div>

@@ -1,0 +1,27 @@
+[WebServer] (node:7764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 16 tests using 1 worker
+
+(node:37296) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › e2e\dashboard-charts.spec.js:4:45 › school: create, edit, reorder and delete charts from all forms (11.3s)
+  ok  2 [desktop-chromium] › e2e\dashboard-charts.spec.js:4:45 › hospital: create, edit, reorder and delete charts from all forms (13.5s)
+  ok  3 [desktop-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (4.1s)
+  ok  4 [desktop-chromium] › e2e\searchable-school.spec.js:42:1 › search changes a year, supports keyboard and resets to current on return (2.7s)
+  ok  5 [desktop-chromium] › e2e\searchable-school.spec.js:63:1 › master year creation validates boundary and updates room editor options (2.9s)
+  ok  6 [desktop-chromium] › e2e\searchable-school.spec.js:83:1 › unassigned filter and teacher role search work inside a dialog (3.2s)
+  ok  7 [desktop-chromium] › e2e\searchable-school.spec.js:97:1 › role workspace lists members first and opens searchable edit form (3.1s)
+  ok  8 [desktop-chromium] › e2e\searchable-school.spec.js:111:1 › empty year filters can be reset and failed loading does not claim missing grades (3.6s)
+(node:12792) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  9 [mobile-chromium] › e2e\dashboard-charts.spec.js:4:45 › school: create, edit, reorder and delete charts from all forms (10.1s)
+  ok 10 [mobile-chromium] › e2e\dashboard-charts.spec.js:4:45 › hospital: create, edit, reorder and delete charts from all forms (13.2s)
+  ok 11 [mobile-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (10.1s)
+  ok 12 [mobile-chromium] › e2e\searchable-school.spec.js:42:1 › search changes a year, supports keyboard and resets to current on return (4.5s)
+  ok 13 [mobile-chromium] › e2e\searchable-school.spec.js:63:1 › master year creation validates boundary and updates room editor options (3.2s)
+  ok 14 [mobile-chromium] › e2e\searchable-school.spec.js:83:1 › unassigned filter and teacher role search work inside a dialog (2.7s)
+  ok 15 [mobile-chromium] › e2e\searchable-school.spec.js:97:1 › role workspace lists members first and opens searchable edit form (2.8s)
+  ok 16 [mobile-chromium] › e2e\searchable-school.spec.js:111:1 › empty year filters can be reset and failed loading does not claim missing grades (4.1s)
+
+  16 passed (1.7m)

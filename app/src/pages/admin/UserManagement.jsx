@@ -1,3 +1,6 @@
+import SearchableSelect from '../../components/SearchableSelect';
+import { toDisplayText } from '../../utils/textPresentation.js';
+import { usePageExport } from "../../components/ExcelExport";
 import { authSession } from "../../utils/authSession";
 import React, {
   useCallback,
@@ -175,7 +178,7 @@ export default function UserManagement({
   useEffect(() => {
     if (activeTab !== "staff") return undefined;
     fetchStaffUsers();
-    if (currentRoleId === 1) {
+    if (isSystemAdmin) {
       setCanViewPassword(true);
       return undefined;
     }
@@ -190,7 +193,7 @@ export default function UserManagement({
       })
       .catch(() => setCanViewPassword(false));
     return undefined;
-  }, [activeTab, currentRoleId, fetchStaffUsers]);
+  }, [activeTab, currentRoleId, isSystemAdmin, fetchStaffUsers]);
 
   useEffect(() => {
     if (activeTab !== "members") return undefined;
@@ -229,6 +232,7 @@ export default function UserManagement({
   );
   const totalItems =
     activeTab === "staff" ? filteredUsers.length : memberPagination.total;
+  usePageExport({title:activeTab === "staff" ? "ผู้ใช้" : "สมาชิก",sources:activeTab === "staff" ? [{resource:"users",ids:filteredUsers.map(r=>r.id)}] : [{resource:"members",filters:{search,status:statusFilter}}],disabled:loading});
   const totalPages =
     activeTab === "staff" ? staffTotalPages : memberPagination.total_pages;
 
@@ -533,7 +537,7 @@ export default function UserManagement({
               {activeTab === "staff" && (
                 <label className="sum-native-filter">
                   <span>ระดับสิทธิ์</span>
-                  <select
+                  <SearchableSelect
                     value={roleFilter}
                     onChange={(event) => setRoleFilter(event.target.value)}
                   >
@@ -541,13 +545,13 @@ export default function UserManagement({
                     <option value="1">Super Admin</option>
                     <option value="2">Admin</option>
                     <option value="3">Staff</option>
-                  </select>
+                  </SearchableSelect>
                 </label>
               )}
 
               <label className="sum-native-filter">
                 <span>สถานะ</span>
-                <select
+                <SearchableSelect
                   value={statusFilter}
                   onChange={(event) => setStatusFilter(event.target.value)}
                 >
@@ -565,7 +569,7 @@ export default function UserManagement({
                       <option value="disabled">ปิดการใช้งาน</option>
                     </>
                   )}
-                </select>
+                </SearchableSelect>
               </label>
             </FilterDropdown>
           </div>
@@ -778,7 +782,7 @@ export default function UserManagement({
             <footer className="sum-table-pagination-footer">
               <div className="sum-pagination-info">
                 <span>แสดง</span>
-                <select
+                <SearchableSelect
                   value={itemsPerPage}
                   onChange={(event) =>
                     setItemsPerPage(Number(event.target.value))
@@ -789,7 +793,7 @@ export default function UserManagement({
                   <option value={20}>20</option>
                   <option value={50}>50</option>
                   <option value={100}>100</option>
-                </select>
+                </SearchableSelect>
                 <span>
                   จากทั้งหมด {totalItems.toLocaleString("th-TH")} รายการ
                 </span>
@@ -854,7 +858,7 @@ function StatusBadge({ status, staff = false }) {
       ? "ใช้งานปกติ"
       : "ระงับการใช้งาน"
     : memberStatusMap[status] || "ไม่ทราบสถานะ";
-  return <span className={`sum-status sum-status-${status}`}>{label}</span>;
+  return <span className={`sum-status sum-status-${status}`}>{toDisplayText(label)}</span>;
 }
 
 function LoadingRows({ columns }) {

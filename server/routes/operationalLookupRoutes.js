@@ -43,12 +43,14 @@ const definitions = [
   {
     paths: ["/services"],
     table: "service_types",
+    active: "is_active",
     fields: ["name", "color"],
     required: ["name"],
   },
   {
     paths: ["/templates"],
     table: "note_templates",
+    active: "is_active",
     fields: ["clinic_type", "label", "text"],
     required: ["clinic_type", "label", "text"],
     private: ["text"],
@@ -97,7 +99,7 @@ for (const def of definitions)
             params.push(req.query.clinic_type || req.query.clinic);
           }
           const [rows] = await db.query(
-            `SELECT id, organization_id, ${def.fields.join(",")} FROM ${def.table}${where} ORDER BY id`,
+            `SELECT id, organization_id, ${def.fields.join(",")} FROM ${def.table}${where} ORDER BY ${def.table === "staffs" ? "id" : "sort_order,id"}`,
             params,
           );
           const items = rows.map((row) =>

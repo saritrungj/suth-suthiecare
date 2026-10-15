@@ -1,0 +1,18 @@
+[WebServer] (node:40376) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:29372) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:45292) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › e2e\admin-workspace.spec.js:48:3 › system admin legacy role 1 can enter school tools from hospital without membership (2.0s)
+  ok 2 [desktop-chromium] › e2e\admin-workspace.spec.js:48:3 › system admin legacy role 3 can enter school tools from hospital without membership (1.6s)
+  ok 3 [desktop-chromium] › e2e\admin-workspace.spec.js:60:1 › master starts with all organizations and saves under each row organization (2.6s)
+  ok 4 [desktop-chromium] › e2e\admin-workspace.spec.js:93:1 › master validates new codes, keeps failed edits and retries reads (1.7s)
+  ok 5 [desktop-chromium] › e2e\admin-workspace.spec.js:118:1 › ordinary staff remains limited to membership and cannot edit master (1.9s)
+  ok 6 [desktop-chromium] › e2e\admin-workspace.spec.js:129:1 › school workflows can switch between every school in the selected organization (1.3s)
+
+  6 passed (15.5s)

@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "route": "/help-center/clinic/1",
+      "path": "/help-center/clinic/1",
+      "width": 1440,
+      "documentWidth": 1440,
+      "brand": "#f47932",
+      "title": "คลินิกสาธิตสำหรับตรวจรูปแบบและการจัดวาง",
+      "screenshot": "-help-center-clinic-1-desktop.png",
+      "violations": []
+    }
+  ],
+  "errors": []
+}

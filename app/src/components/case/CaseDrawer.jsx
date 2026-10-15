@@ -1,3 +1,4 @@
+import { toDisplayText } from '../../utils/textPresentation.js';
 import { useId, useRef } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -29,7 +30,7 @@ export function RiskPill({ risk, level, label, short = false }) {
   return (
     <span className={`cw-risk cw-risk--${tone}`}>
       <Icon aria-hidden="true" />
-      {text}
+      {toDisplayText(text)}
     </span>
   );
 }
@@ -40,7 +41,7 @@ export function StatusPill({ status, emptyLabel = "เคสใหม่" }) {
       className={`cw-status cw-status--${statusTone(status)}`}
       title={status || emptyLabel}
     >
-      {status || emptyLabel}
+      <span className="cw-status-label">{toDisplayText(status || emptyLabel)}</span>
     </span>
   );
 }
@@ -160,6 +161,7 @@ export default function CaseDrawer({
           <div
             className="cw-tabs"
             role="tablist"
+            aria-orientation="horizontal"
             aria-label={`ข้อมูล ${title}`}
             onKeyDown={moveTab}
           >
@@ -178,9 +180,11 @@ export default function CaseDrawer({
                 tabIndex={activeTab === tab.id ? 0 : -1}
                 onClick={() => onTabChange(tab.id)}
               >
-                {tab.icon && <tab.icon aria-hidden="true" />}
-                {tab.label}
-                {tab.count > 0 && <small>{tab.count}</small>}
+                {tab.icon && <tab.icon className="cw-tab-icon" aria-hidden="true" />}
+                <span className="cw-tab-text">
+                  <span className="cw-tab-label">{toDisplayText(tab.label)}</span>
+                  {tab.count > 0 && <small className="cw-tab-count" aria-label={`${tab.count} รายการ`}>{tab.count}</small>}
+                </span>
               </button>
             ))}
           </div>

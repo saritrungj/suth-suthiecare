@@ -1,3 +1,5 @@
+import SearchableSelect from './SearchableSelect';
+import { toDisplayText } from '../utils/textPresentation.js';
 import React, { useState, useEffect, useRef } from "react";
 import "./Sidebar.css";
 import logo from "../assets/logoSUTH.png";
@@ -271,6 +273,9 @@ const rawMenuItems = [
     schoolCheck: (access) => access?.can_view_school,
   },
 
+  { href: "/admin/school/roles", icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />, label: "บทบาทโรงเรียน", key: "school-roles", orgTypes: ["school"], schoolCheck: access => access?.can_manage_staff },
+  { href: "/admin/school/workflows", icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />, label: "คัดกรองและติดตามโรงเรียน", key: "school-workflows", orgTypes: ["school"], schoolCheck: access => access?.can_view_school },
+
   // 🟠 งานของหน่วยงานที่เลือกอยู่ (ข้อมูลแยกตามหน่วยงาน)
   { type: "header", label: "จัดการหน่วยงาน", key: "header-setup" },
   {
@@ -307,10 +312,10 @@ const rawMenuItems = [
   {
     type: "header",
     label: "จัดการหลักของระบบ",
-    hint: "ใช้กับทั้งระบบ ไม่ขึ้นกับหน่วยงานที่เลือก",
+    hint: "",
     key: "header-system",
-    system: true,
   },
+  { href: "/admin/master-data", icon: <FontAwesomeIcon icon={faTags} fixedWidth />, label: "จัดการข้อมูลหลัก", key: "master-data", module: "master_data.view" },
   {
     href: "/admin/organizations",
     icon: <FontAwesomeIcon icon={faSitemap} fixedWidth />,
@@ -389,6 +394,44 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
   const menuRef = useRef(null);
 
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const sidebarRef = useRef(null);
+  const menuButtonRef = useRef(null);
+
+  // The mobile drawer owns focus and prevents interaction with the covered page.
+  useEffect(() => {
+    if (!isMobileOpen) return;
+    const drawer = sidebarRef.current;
+    const background = document.querySelectorAll('.admin-shell-content, .mobile-header-bar');
+    const previousInert = [...background].map(element => element.inert);
+    background.forEach(element => { element.inert = true; });
+    drawer?.querySelector('.mobile-close-btn')?.focus({ preventScroll: true });
+    const keyboard = event => {
+      if (event.defaultPrevented || !drawer?.contains(event.target)) return;
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setIsMobileOpen(false);
+      }
+      if (event.key !== 'Tab') return;
+      const items = [...drawer.querySelectorAll('a[href], button:not(:disabled), select:not(:disabled), [tabindex="0"]')]
+        .filter(element => element.getClientRects().length && getComputedStyle(element).visibility !== 'hidden');
+      if (!items.length) return;
+      if (event.shiftKey && document.activeElement === items[0]) {
+        event.preventDefault(); items.at(-1).focus();
+      } else if (!event.shiftKey && document.activeElement === items.at(-1)) {
+        event.preventDefault(); items[0].focus();
+      }
+    };
+    const desktop = window.matchMedia('(min-width: 769px)');
+    const resize = event => { if (event.matches) setIsMobileOpen(false); };
+    desktop.addEventListener('change', resize);
+    document.addEventListener('keydown', keyboard);
+    return () => {
+      background.forEach((element, index) => { element.inert = previousInert[index]; });
+      document.removeEventListener('keydown', keyboard);
+      desktop.removeEventListener('change', resize);
+      if (!desktop.matches) menuButtonRef.current?.focus({ preventScroll: true });
+    };
+  }, [isMobileOpen]);
 
   const {
     can,
@@ -413,10 +456,11 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
   //   : activeOrganization === "all"
   //     ? "ดูข้อมูลรวมทุกหน่วยงาน"
   //     : "";
-  // Ordinary members see menus for their selected unit; System Admin sees all.
+  // All roles follow the selected unit type; only "all" exposes every type.
   const organizationType = activeOrganizationType || "hospital";
   const menuItems = filterSidebarItems(rawMenuItems, {
     authorization,
+    activeOrganization,
     organizationType,
     schoolAccess,
     can,
@@ -439,28 +483,16 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (window.innerWidth <= 768 && menuRef.current) {
-      const scrollTimer = window.setTimeout(() => {
-        const container = menuRef.current;
-        if (!container) return;
-        const activeEl = container.querySelector(".active");
-
-        if (activeEl) {
-          const scrollLeftPos =
-            activeEl.offsetLeft -
-            container.offsetWidth / 2 +
-            activeEl.offsetWidth / 2;
-
-          container.scrollTo({
-            left: scrollLeftPos,
-            behavior: "smooth",
-          });
-        }
-      }, 100);
-      return () => window.clearTimeout(scrollTimer);
+    if (!isMobileOpen || !menuRef.current) return;
+    const container = menuRef.current;
+    const active = container.querySelector('[aria-current="page"]');
+    if (active) {
+      const item = active.getBoundingClientRect();
+      const menu = container.getBoundingClientRect();
+      if (item.bottom > menu.bottom) container.scrollTop += item.bottom - menu.bottom + 12;
+      else if (item.top < menu.top) container.scrollTop -= menu.top - item.top + 12;
     }
-    return undefined;
-  }, [location.pathname, activeKey]);
+  }, [location.pathname, isMobileOpen]);
 
   // 🟢 จำตำแหน่งการ Scroll (แนวตั้ง) ของ Sidebar
   useEffect(() => {
@@ -536,8 +568,11 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
       <div className="mobile-header-bar">
         <button
           className="mobile-hamburger-btn"
+          ref={menuButtonRef}
           onClick={() => setIsMobileOpen(true)}
           aria-label="Open Menu"
+          aria-expanded={isMobileOpen}
+          aria-controls="admin-navigation"
         >
           <FontAwesomeIcon icon={faBars} size="lg" />
         </button>
@@ -551,6 +586,11 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
       ></div>
 
       <aside
+        id="admin-navigation"
+        ref={sidebarRef}
+        role={isMobileOpen ? "dialog" : undefined}
+        aria-modal={isMobileOpen || undefined}
+        aria-label="เมนูหลังบ้าน"
         className={`sidebar ${collapsed ? "collapsed" : ""} ${isMobileOpen ? "mobile-open" : ""}`}
       >
         <button
@@ -590,7 +630,7 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
         {!collapsed && authorization && (
           <div className="organization-switcher">
             <label htmlFor="active-organization">หน่วยงานที่กำลังใช้งาน</label>
-            <select
+            <SearchableSelect
               id="active-organization"
               value={activeOrganization || ""}
               onChange={(event) => setActiveOrganization(event.target.value)}
@@ -616,7 +656,7 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
                   </optgroup>
                 ),
               )}
-            </select>
+            </SearchableSelect>
           </div>
         )}
 
@@ -627,14 +667,14 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
                 <div
                   key={item.key}
                   className={`menu-header-label ${item.system ? "menu-header-label--system" : ""}`}
-                  title={item.hint}
+                  title={toDisplayText(item.hint)}
                 >
                   {item.system && (
                     <FontAwesomeIcon icon={faUserShield} fixedWidth />
                   )}
-                  {item.label}
+                  {toDisplayText(item.label)}
                   {item.hint && (
-                    <small className="menu-header-hint">{item.hint}</small>
+                    <small className="menu-header-hint">{toDisplayText(item.hint)}</small>
                   )}
                 </div>
               );
@@ -665,7 +705,7 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
                     }}
                   >
                     <span className="icon">{item.icon}</span>
-                    <span className="label">{item.label}</span>
+                    <span className="label">{toDisplayText(item.label)}</span>
                     <span className="arrow">
                       <FontAwesomeIcon
                         icon={isOpen ? faChevronDown : faChevronLeft}
@@ -691,7 +731,7 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
                           {child.icon && (
                             <span className="sub-icon">{child.icon}</span>
                           )}
-                          {child.label}
+                          {toDisplayText(child.label)}
                         </NavLink>
                       ))}
                     </div>
@@ -714,7 +754,7 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
                   }}
                 >
                   <span className="icon">{item.icon}</span>
-                  <span className="label">{item.label}</span>
+                  <span className="label">{toDisplayText(item.label)}</span>
                 </a>
               );
             }
@@ -733,7 +773,7 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
                 }}
               >
                 <span className="icon">{item.icon}</span>
-                <span className="label">{item.label}</span>
+                <span className="label">{toDisplayText(item.label)}</span>
               </NavLink>
             );
           })}

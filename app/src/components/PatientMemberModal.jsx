@@ -1,3 +1,5 @@
+import SearchableSelect from './SearchableSelect';
+import {ExportButton} from "./ExcelExport";
 import { useEffect, useRef, useState } from "react";
 import { FiEye, FiEyeOff, FiKey, FiSave, FiX } from "react-icons/fi";
 
@@ -90,6 +92,7 @@ export default function PatientMemberModal({ member, onClose, onSave }) {
           </button>
         </header>
 
+        <ExportButton sources={[{resource:"member",id:member.id}]} title="ข้อมูลผู้มารับบริการ" />
         <form onSubmit={submit} aria-busy={saving}>
           {error && (
             <div className="sum-member-modal__error" role="alert">
@@ -160,12 +163,12 @@ export default function PatientMemberModal({ member, onClose, onSave }) {
             </label>
             <label className="sum-member-field">
               <span>สถานะบัญชี</span>
-              <select value={form.status} onChange={update("status")}>
+              <SearchableSelect value={form.status} onChange={update("status")}>
                 <option value="active">ใช้งานปกติ</option>
                 <option value="pending_verification">รอยืนยัน</option>
                 <option value="locked">ล็อกบัญชี</option>
                 <option value="disabled">ปิดการใช้งาน</option>
-              </select>
+              </SearchableSelect>
             </label>
 
             <label className="sum-member-field sum-member-field--wide">

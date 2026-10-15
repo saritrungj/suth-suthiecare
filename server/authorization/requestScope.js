@@ -18,6 +18,8 @@ function needsOrganizationContext(path, hasAuthorization = false) {
     path.startsWith("/charts/") ||
     path.startsWith("/evaluations/") ||
     path.startsWith("/school/") ||
+    path.startsWith("/master-data/") ||
+    path.startsWith("/exports/") ||
     path === "/case-referrals" ||
     path.startsWith("/case-referrals/") ||
     ((path === "/counts" ||

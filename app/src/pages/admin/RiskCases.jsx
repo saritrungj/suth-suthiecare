@@ -1,3 +1,5 @@
+import { toDisplayText } from '../../utils/textPresentation.js';
+import { usePageExport } from "../../components/ExcelExport";
 import { useState, useEffect, useMemo, useRef } from "react";
 import "./RiskCases.css";
 import CaseTable from "../../components/case/CaseTable";
@@ -180,7 +182,7 @@ const CustomDropdown = ({
               onClick={() => onChange(opt.value)}
             >
               {" "}
-              {opt.label}{" "}
+              {toDisplayText(opt.label)}{" "}
             </div>
           ))}
         </div>
@@ -407,6 +409,8 @@ export default function RiskCases() {
     setEndDate(safeEndDate);
   };
 
+  usePageExport({title:"เคสเสี่ยง",sources:[{resource:"responses",id:selectedFormId,filters:{startDate,endDate},ids:filteredData.map(r=>r.id)}],disabled:!selectedFormId||isLoading});
+
   return (
     <div className="admin-wrapper2">
       <main className="main-content">
@@ -436,7 +440,7 @@ export default function RiskCases() {
                         border: `1px solid ${cInfo.border}`,
                       }}
                     >
-                      {cInfo.text}
+                      {toDisplayText(cInfo.text)}
                     </span>
                   )}
                 </h2>
@@ -607,8 +611,7 @@ export default function RiskCases() {
                     </div>
                     <div className="col-menu-list">
                       {allDynamicQuestions.map((q) => {
-                        const cleanTitle = q.title
-                          .replace(/<[^>]+>/g, "")
+                        const cleanTitle = toDisplayText(q.title)
                           .replace(/&nbsp;/gi, " ")
                           .replace(/\s+/g, " ")
                           .trim();

@@ -1,0 +1,9 @@
+/* ลบ max-width, margin: auto, padding, text-align ออกจาก #root
+   เพราะทำให้หน้าเว็บไม่เต็มจffอ */
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}

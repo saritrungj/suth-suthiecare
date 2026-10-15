@@ -1,3 +1,6 @@
+import SearchableSelect from '../../../components/SearchableSelect';
+import { toSafeHtml } from '../../../utils/richText.js';
+import { toDisplayText } from '../../../utils/textPresentation.js';
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { FiRefreshCw, FiCheck, FiXCircle } from "react-icons/fi";
@@ -53,6 +56,9 @@ const QuestionRenderer = ({
 
   const displayTitle = translatedQ?.title || q.title;
   const displayText = translatedQ?.text || q.text;
+  const titleId = `question-title-${q.id}`;
+  const hintId = `question-hint-${q.id}`;
+  const errorId = `question-error-${q.id}`;
 
   // กรณีเป็นคำถามกลุ่ม (Group)
   if (q.type === "group") {
@@ -66,12 +72,13 @@ const QuestionRenderer = ({
         <div className="preview-group-header">
           <h3
             className="preview-sec__title"
-            dangerouslySetInnerHTML={{ __html: displayTitle || "กลุ่มคำถาม" }}
+            dangerouslySetInnerHTML={{ __html: toSafeHtml(displayTitle || "กลุ่มคำถาม") }}
           />
           {displayText && (
             <div
+              id={hintId}
               className="preview-hint"
-              dangerouslySetInnerHTML={{ __html: displayText }}
+              dangerouslySetInnerHTML={{ __html: toSafeHtml(displayText) }}
             />
           )}
         </div>
@@ -87,6 +94,7 @@ const QuestionRenderer = ({
                 errors={errors}
                 verifiedIdentity={verifiedIdentity}
                 optionInputValues={optionInputValues}
+                optionUsage={optionUsage}
                 handleClearQuestionAnswer={handleClearQuestionAnswer}
                 handleAnswer={handleAnswer}
                 handleOptionInputChange={handleOptionInputChange}
@@ -101,6 +109,12 @@ const QuestionRenderer = ({
 
   const ans = answers[q.id];
   const hasError = !!errors[q.id];
+  const fieldA11y = {
+    "aria-labelledby": titleId,
+    "aria-describedby": [q.hasDescription && displayText ? hintId : null, hasError ? errorId : null].filter(Boolean).join(" ") || undefined,
+    "aria-invalid": hasError || undefined,
+    "aria-required": q.required || undefined,
+  };
 
   // เช็คว่าข้อนี้ถูกตอบไปหรือยัง
   let hasAnswer = false;
@@ -126,22 +140,26 @@ const QuestionRenderer = ({
   return (
     <div
       id={`question-${q.id}`}
+      role="group"
+      aria-labelledby={titleId}
       className={`preview-sec ${hasError ? "preview-sec--error" : ""} ${q.isSubQuestion ? "preview-sec--sub" : ""}`}
       style={{ animationDelay: `${index * 0.05}s` }}
     >
       <div className="preview-sec__head_wrap">
         <div style={{ flex: 1 }}>
           <h3
+            id={titleId}
             className="preview-sec__title"
             dangerouslySetInnerHTML={{
-              __html: displayTitle || "คำถามที่ไม่มีชื่อ",
+              __html: toSafeHtml(displayTitle || "คำถามที่ไม่มีชื่อ"),
             }}
           />
           {q.required && <span className="req">*</span>}
           {q.hasDescription && displayText && (
             <div
+              id={hintId}
               className="preview-hint"
-              dangerouslySetInnerHTML={{ __html: displayText }}
+              dangerouslySetInnerHTML={{ __html: toSafeHtml(displayText) }}
             />
           )}
         </div>
@@ -212,6 +230,7 @@ const QuestionRenderer = ({
           <div className="preview-file-upload-wrapper">
             <input
               type="file"
+              {...fieldA11y}
               accept="image/*,audio/*"
               onChange={(e) => {
                 const file = e.target.files[0];
@@ -290,6 +309,7 @@ const QuestionRenderer = ({
         {(q.type === "short_text" || q.type === "full_name") && (
           <input
             type="text"
+            {...fieldA11y}
             className={`preview-input ${hasError ? "preview-input--error" : ""}`}
             placeholder="คำตอบของคุณ"
             value={ans || ""}
@@ -301,6 +321,7 @@ const QuestionRenderer = ({
           <input
             type="text"
             inputMode="numeric"
+            {...fieldA11y}
             className={`preview-input ${hasError ? "preview-input--error" : ""}`}
             placeholder="0-0000-00000-00-0"
             value={ans || ""}
@@ -312,6 +333,7 @@ const QuestionRenderer = ({
 
         {(q.type === "paragraph" || q.type === "main_issue") && (
           <textarea
+            {...fieldA11y}
             className={`preview-input ${hasError ? "preview-input--error" : ""}`}
             placeholder="คำตอบของคุณ"
             rows="4"
@@ -323,6 +345,7 @@ const QuestionRenderer = ({
         {q.type === "phone_number" && (
           <input
             type="tel"
+            {...fieldA11y}
             className={`preview-input ${hasError ? "preview-input--error" : ""}`}
             placeholder="0xx-xxx-xxxx"
             value={ans || ""}
@@ -336,6 +359,7 @@ const QuestionRenderer = ({
         {q.type === "date" && (
           <input
             type="date"
+            {...fieldA11y}
             className={`preview-input ${hasError ? "preview-input--error" : ""}`}
             value={ans || ""}
             onChange={(e) => handleAnswer(q.id, e.target.value)}
@@ -348,11 +372,11 @@ const QuestionRenderer = ({
             return (
               <div style={{ display: "flex", gap: "15px", flexWrap: "wrap" }}>
                 <div style={{ flex: 1, minWidth: "120px" }}>
-                  <label
+                  <label htmlFor={`bmi-weight-${q.id}`}
                     style={{
                       fontSize: "14px",
                       color: "#5f6368",
-                      marginBot: "6px",
+                      marginBottom: "6px",
                       display: "block",
                       fontWeight: 600,
                     }}
@@ -360,9 +384,13 @@ const QuestionRenderer = ({
                     น้ำหนัก (กิโลกรัม)
                   </label>
                   <input
+                    id={`bmi-weight-${q.id}`}
                     type="number"
                     step="0.1"
                     min="0"
+                    aria-invalid={hasError || undefined}
+                    aria-describedby={hasError ? errorId : undefined}
+                    aria-required={q.required || undefined}
                     className={`preview-input ${hasError ? "preview-input--error" : ""}`}
                     placeholder="เช่น 65.5"
                     value={bmiAns.weight || ""}
@@ -372,11 +400,11 @@ const QuestionRenderer = ({
                   />
                 </div>
                 <div style={{ flex: 1, minWidth: "120px" }}>
-                  <label
+                  <label htmlFor={`bmi-height-${q.id}`}
                     style={{
                       fontSize: "14px",
                       color: "#5f6368",
-                      marginBot: "6px",
+                      marginBottom: "6px",
                       display: "block",
                       fontWeight: 600,
                     }}
@@ -384,9 +412,13 @@ const QuestionRenderer = ({
                     ส่วนสูง (เซนติเมตร)
                   </label>
                   <input
+                    id={`bmi-height-${q.id}`}
                     type="number"
                     step="0.1"
                     min="0"
+                    aria-invalid={hasError || undefined}
+                    aria-describedby={hasError ? errorId : undefined}
+                    aria-required={q.required || undefined}
                     className={`preview-input ${hasError ? "preview-input--error" : ""}`}
                     placeholder="เช่น 170"
                     value={bmiAns.height || ""}
@@ -400,7 +432,8 @@ const QuestionRenderer = ({
           })()}
 
         {q.type === "booking" && q.displayAs === "dropdown" && (
-          <select
+          <SearchableSelect
+            {...fieldA11y}
             className={`preview-input ${hasError ? "preview-input--error" : ""}`}
             value={ans || ""}
             onChange={(e) => handleAnswer(q.id, e.target.value)}
@@ -410,7 +443,7 @@ const QuestionRenderer = ({
             </option>
             {q.options.map((opt, i) => {
               const displayOpt = translatedQ?.options?.[i] || opt;
-              const textOnly = displayOpt.replace(/<[^>]+>/g, "");
+              const textOnly = toDisplayText(displayOpt);
               const originalTextOnly = opt.replace(/<[^>]+>/g, "");
               const limit = q.optionLimits?.[i];
               const usageCount = optionUsage?.[q.id]?.[opt] || 0;
@@ -433,7 +466,7 @@ const QuestionRenderer = ({
                 </option>
               );
             })}
-          </select>
+          </SearchableSelect>
         )}
 
         {q.type === "booking" && q.displayAs !== "dropdown" && (
@@ -487,7 +520,7 @@ const QuestionRenderer = ({
                     >
                       <div
                         style={{ display: "inline" }}
-                        dangerouslySetInnerHTML={{ __html: displayOpt }}
+                        dangerouslySetInnerHTML={{ __html: toSafeHtml(displayOpt) }}
                       />
                       {isLimited && (
                         <span
@@ -518,6 +551,7 @@ const QuestionRenderer = ({
                       <input
                         type="text"
                         className="preview-input"
+                        aria-label={`${toDisplayText(displayOpt)}: ${i18n.language === "en" ? "Additional details" : "รายละเอียดเพิ่มเติม"}`}
                         placeholder="โปรดระบุรายละเอียด..."
                         value={optionInputValues[`${q.id}_${opt}`] || ""}
                         onChange={(e) =>
@@ -568,7 +602,7 @@ const QuestionRenderer = ({
                     />
                     <div
                       style={{ display: "inline" }}
-                      dangerouslySetInnerHTML={{ __html: displayOpt }}
+                      dangerouslySetInnerHTML={{ __html: toSafeHtml(displayOpt) }}
                     />
                   </label>
 
@@ -582,6 +616,7 @@ const QuestionRenderer = ({
                       <input
                         type="text"
                         className="preview-input"
+                        aria-label={`${toDisplayText(displayOpt)}: ${i18n.language === "en" ? "Additional details" : "รายละเอียดเพิ่มเติม"}`}
                         placeholder="โปรดระบุรายละเอียด..."
                         value={optionInputValues[`${q.id}_${opt}`] || ""}
                         onChange={(e) =>
@@ -633,7 +668,7 @@ const QuestionRenderer = ({
                     </span>
                     <div
                       style={{ display: "inline" }}
-                      dangerouslySetInnerHTML={{ __html: displayOpt }}
+                      dangerouslySetInnerHTML={{ __html: toSafeHtml(displayOpt) }}
                     />
                   </label>
 
@@ -647,6 +682,7 @@ const QuestionRenderer = ({
                       <input
                         type="text"
                         className="preview-input"
+                        aria-label={`${toDisplayText(displayOpt)}: ${i18n.language === "en" ? "Additional details" : "รายละเอียดเพิ่มเติม"}`}
                         placeholder="โปรดระบุรายละเอียด..."
                         value={optionInputValues[`${q.id}_${opt}`] || ""}
                         onChange={(e) =>
@@ -677,7 +713,8 @@ const QuestionRenderer = ({
         )}
 
         {(q.type === "dropdown" || q.type === "faculty") && (
-          <select
+          <SearchableSelect
+            {...fieldA11y}
             className={`preview-input ${hasError ? "preview-input--error" : ""}`}
             value={ans || ""}
             onChange={(e) => handleAnswer(q.id, e.target.value)}
@@ -687,7 +724,7 @@ const QuestionRenderer = ({
             </option>
             {q.options.map((opt, i) => {
               const displayOpt = translatedQ?.options?.[i] || opt;
-              const textOnly = displayOpt.replace(/<[^>]+>/g, "");
+              const textOnly = toDisplayText(displayOpt);
               const originalTextOnly = opt.replace(/<[^>]+>/g, "");
               return (
                 <option key={i} value={originalTextOnly}>
@@ -695,7 +732,7 @@ const QuestionRenderer = ({
                 </option>
               );
             })}
-          </select>
+          </SearchableSelect>
         )}
 
         {(q.type === "grid_multiple" || q.type === "grid_checkbox") && (
@@ -708,7 +745,7 @@ const QuestionRenderer = ({
                     <th
                       key={i}
                       dangerouslySetInnerHTML={{
-                        __html: translatedQ?.cols?.[i] || col,
+                        __html: toSafeHtml(translatedQ?.cols?.[i] || col),
                       }}
                     />
                   ))}
@@ -730,7 +767,7 @@ const QuestionRenderer = ({
                   >
                     <td
                       dangerouslySetInnerHTML={{
-                        __html: translatedQ?.rows?.[i] || row,
+                        __html: toSafeHtml(translatedQ?.rows?.[i] || row),
                       }}
                     />
                     {q.cols.map((col, j) => {
@@ -747,6 +784,9 @@ const QuestionRenderer = ({
                             type={
                               q.type === "grid_multiple" ? "radio" : "checkbox"
                             }
+                            aria-label={`${toDisplayText(translatedQ?.rows?.[i] || row)}: ${toDisplayText(translatedQ?.cols?.[j] || col)}`}
+                            aria-invalid={hasError || undefined}
+                            aria-describedby={hasError ? errorId : undefined}
                             name={`grid-${q.id}-${i}`}
                             checked={isChecked}
                             onChange={() =>
@@ -769,7 +809,7 @@ const QuestionRenderer = ({
         )}
 
         {hasError && (
-          <div className="preview-error-msg">
+          <div className="preview-error-msg" id={errorId} role="alert">
             <FiXCircle size={18} />
             {errors[q.id]}
           </div>

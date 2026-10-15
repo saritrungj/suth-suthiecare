@@ -16,6 +16,7 @@ export function filterSidebarItems(
   items,
   {
     authorization,
+    activeOrganization,
     organizationType = "hospital",
     schoolAccess,
     can = () => false,
@@ -25,8 +26,10 @@ export function filterSidebarItems(
   const allowed = (item) => {
     if (!authorization) return false;
     if ((item.system || item.systemAdminOnly) && !isSystemAdmin) return false;
-    // Show every module to a System Admin, including modules for another unit
-    // type. Pages still require an appropriate organization before loading data.
+    // Only the global overview exposes menus for every organization type.
+    const showAllTypes = isSystemAdmin && activeOrganization === "all";
+    if (item.orgTypes && !showAllTypes && !item.orgTypes.includes(organizationType))
+      return false;
     if (isSystemAdmin) return true;
     if (item.type === "header")
       return !item.orgTypes || item.orgTypes.includes(organizationType);

@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import SchoolManagementNav from './SchoolManagementNav';
+import AcademicYearSelect, { useAcademicYears } from './AcademicYearSelect';
+import api from '../../../services/api';
+import SearchableSelect from '../../../components/SearchableSelect';
+import { toDisplayText } from '../../../utils/textPresentation.js';
+import { usePageExport } from "../../../components/ExcelExport";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { FiEdit2, FiPlus, FiTrash2, FiUsers } from "react-icons/fi";
 import {
   createSchoolClassroom,
@@ -37,6 +43,7 @@ export default function SchoolStructure() {
   const { schools, loading, error } = useSchools();
   const school = schools[0];
 
+  usePageExport({title:"โครงสร้างโรงเรียน",sources:[{resource:"schools"},...(school?[{resource:"grades",id:school.id},{resource:"classrooms",id:school.id}]:[])]});
   return (
     <div className="sch-wrapper">
       <main className="sch-page">
@@ -44,17 +51,18 @@ export default function SchoolStructure() {
           title="ชั้นปีและห้องเรียน"
           description={
             school
-              ? `${school.name} · รหัสโรงเรียน ${school.code} (สร้างอัตโนมัติ ใช้นำหน้าชื่อผู้ใช้นักเรียน)`
+              ? `${school.name} · รหัสโรงเรียน ${school.code}`
               : undefined
           }
         />
+        <SchoolManagementNav />
         {error && (
           <p className="sch-error" role="alert">
             {error}
           </p>
         )}
         {loading && !school && <p className="sch-muted">กำลังโหลด...</p>}
-        {school && <SchoolClasses school={school} access={access} />}
+        {school && <SchoolClasses key={school.id} school={school} access={access} />}
       </main>
     </div>
   );
@@ -68,35 +76,45 @@ function SchoolClasses({ school, access }) {
   const [teachers, setTeachers] = useState([]);
   const [year, setYear] = useState(String(currentAcademicYear()));
   const [loading, setLoading] = useState(true);
+  const academic = useAcademicYears(school.id);
+  const [newYear, setNewYear] = useState('');
+  const [yearError, setYearError] = useState('');
+  const [search, setSearch] = useState('');
+  const [gradeFilter, setGradeFilter] = useState('');
+  const [unassignedOnly, setUnassignedOnly] = useState(false);
+  const [loadError, setLoadError] = useState('');
   const [gradeName, setGradeName] = useState("");
   const [busy, setBusy] = useState(false);
   const [classroomModal, setClassroomModal] = useState(null);
   const [teacherModal, setTeacherModal] = useState(null);
+  const loadVersion = useRef(0);
+  usePageExport({priority:1,title:"โครงสร้างโรงเรียน",sources:[{resource:"schools"},{resource:"grades",id:school.id},{resource:"classrooms",id:school.id,filters:{academic_year:year}}],disabled:loading});
 
   const load = useCallback(async () => {
     if (!validYear(year)) return;
+    const version = ++loadVersion.current;
     setLoading(true);
+    setLoadError('');
     try {
       const [gradeRes, roomRes, teacherRes] = await Promise.all([
         getSchoolGrades(school.id),
         getSchoolClassrooms(school.id, { academic_year: year }),
         getSchoolTeachers({ school_id: school.id, status: "active" }),
       ]);
+      if (version !== loadVersion.current) return;
       setGrades(gradeRes.data || []);
-      setClassrooms(roomRes.data || []);
+      setClassrooms((roomRes.data || []).map(room => ({ ...room, teachers: room.teachers || [] })));
       setTeachers(teacherRes.data || []);
     } catch (err) {
-      await showErrorAlert({
-        error: err,
-        title: "โหลดข้อมูลชั้นเรียนไม่สำเร็จ",
-      });
+      if (version === loadVersion.current) setLoadError(err.response?.data?.message || 'โหลดข้อมูลชั้นเรียนไม่สำเร็จ กรุณาลองใหม่');
     } finally {
-      setLoading(false);
+      if (version === loadVersion.current) setLoading(false);
     }
   }, [school.id, year]);
 
   useEffect(() => {
     load();
+    return () => { loadVersion.current++; };
   }, [load]);
 
   const addGrade = async (event) => {
@@ -195,54 +213,71 @@ function SchoolClasses({ school, access }) {
 
   return (
     <>
-      <section className="sch-card sch-structure-bar">
-        <label className="sch-field sch-year-field">
-          ปีการศึกษา (พ.ศ.)
-          <input
-            inputMode="numeric"
-            value={year}
-            aria-invalid={!validYear(year)}
-            onChange={(event) =>
-              setYear(event.target.value.replace(/\D/g, "").slice(0, 4))
-            }
-          />
-        </label>
-        {access?.can_create_school && (
-          <form className="sch-add-grade" onSubmit={addGrade}>
-            <label className="sch-field">
-              ชั้นปีใหม่
-              <input
-                placeholder="เช่น ม.1 หรือ ป.4"
-                maxLength={50}
-                value={gradeName}
-                onChange={(event) => setGradeName(event.target.value)}
-              />
-            </label>
-            <button
-              className="sch-btn"
-              type="submit"
-              disabled={busy || !gradeName.trim()}
-            >
-              <FiPlus aria-hidden="true" /> เพิ่มชั้นปี
-            </button>
-          </form>
-        )}
+      <section className="sch-card sch-structure-workspace" aria-label="จัดการห้องเรียนตามปีการศึกษา">
+        <div className="sch-structure-toolbar">
+          <label className="sch-field sch-year-field">ปีการศึกษา (พ.ศ.)
+            <AcademicYearSelect years={academic.years} currentYear={academic.current_year} value={year} onChange={e => setYear(e.target.value)} />
+          </label>
+          <div className="sch-structure-context"><strong>ห้องเรียนปี {year}</strong><span className="sch-muted">{grades.length} ชั้นปี · {classrooms.length} ห้อง · นักเรียน {classrooms.reduce((n,r) => n + Number(r.student_count || 0), 0)} คน</span></div>
+          {year !== String(academic.current_year) && <button className="sch-btn-secondary" onClick={() => setYear(String(academic.current_year))}>กลับปีปัจจุบัน</button>}
+        </div>
+        <div className="sch-structure-filters">
+          <label className="sch-field">ค้นหาห้องหรือครู<input type="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="ชื่อห้อง หรือชื่อครูที่ดูแล" /></label>
+          <label className="sch-field">ชั้นปี<SearchableSelect value={gradeFilter} onChange={e => setGradeFilter(e.target.value)}><option value="">ทุกชั้นปี</option>{grades.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}</SearchableSelect></label>
+          <label className="sch-unassigned-toggle"><input type="checkbox" checked={unassignedOnly} onChange={e => setUnassignedOnly(e.target.checked)} />เฉพาะห้องที่ยังไม่มีครู ({classrooms.filter(r => !r.teachers.length).length})</label>
+        </div>
+        {loadError && <p className="sch-error" role="alert">{loadError} <button className="sch-btn-secondary" onClick={load}>โหลดใหม่</button></p>}
+        {academic.error && <p className="sch-error" role="alert">{academic.error} <button type="button" className="sch-btn-secondary" onClick={() => window.dispatchEvent(new Event('school:academic-years'))}>โหลดปีการศึกษาใหม่</button></p>}
+        {loading && <p role="status">กำลังโหลดห้องเรียน…</p>}
       </section>
+      {(access?.can_create_school || access?.can_update_school) && <details className="sch-card sch-structure-settings">
+        <summary>ตั้งค่าปีการศึกษาและชั้นปี</summary>
+        <p className="sch-muted">ชั้นปีใช้ร่วมกันทุกปีการศึกษา ห้องเรียนและครูที่ดูแลจัดแยกตามปี</p>
+        {access?.can_create_school && <div className="sch-structure-settings-grid">
+          <form onSubmit={async e => {
+            e.preventDefault(); setYearError('');
+            if (!/^\d{4}$/.test(newYear) || Number(newYear) < academic.minimum_year) { setYearError(`กรุณากรอก พ.ศ. 4 หลัก ตั้งแต่ ${academic.minimum_year}`); return; }
+            setBusy(true);
+            try { await api.post(`/school/schools/${school.id}/academic-years`, { academic_year: Number(newYear) }); window.dispatchEvent(new Event('school:academic-years')); setNewYear(''); await showSuccessToast('เพิ่มปีการศึกษาแล้ว'); }
+            catch (err) { setYearError(err.response?.data?.message || 'เพิ่มปีการศึกษาไม่สำเร็จ'); }
+            finally { setBusy(false); }
+          }}>
+            <label className="sch-field">ปีการศึกษาใหม่ (พ.ศ.)<input inputMode="numeric" maxLength={4} value={newYear} onChange={e => setNewYear(e.target.value.replace(/\D/g,''))} placeholder={String(academic.current_year + 1)} aria-describedby="academic-year-help" required /></label>
+            <p className="sch-muted" id="academic-year-help">ย้อนหลังได้สูงสุด 10 ปี (ตั้งแต่ {academic.minimum_year}) และเพิ่มปีในอนาคตได้</p>
+            {yearError && <p role="alert" className="sch-error">{yearError}</p>}
+            <button className="sch-btn-secondary" disabled={busy}><FiPlus aria-hidden="true" /> เพิ่มปีการศึกษา</button>
+          </form>
+          <form onSubmit={addGrade}>
+            <label className="sch-field">ชั้นปีใหม่<input placeholder="เช่น ม.1 หรือ ป.4" maxLength={50} value={gradeName} onChange={e => setGradeName(e.target.value)} required /></label>
+            <p className="sch-muted">เพิ่มครั้งเดียว แล้วสร้างห้องแยกในแต่ละปีการศึกษา</p>
+            <button className="sch-btn-secondary" disabled={busy || !gradeName.trim()}><FiPlus aria-hidden="true" /> เพิ่มชั้นปี</button>
+          </form>
+        </div>}
+      </details>}
 
-      {!loading && !grades.length && (
+      {!loading && !loadError && !grades.length && (
         <div className="sch-empty-state">
           <strong>ยังไม่มีชั้นปี</strong>
           <span>
-            เพิ่มชั้นปีด้านบน แล้วกด &quot;+ เพิ่มห้อง&quot;
+            เปิดตั้งค่าปีการศึกษาและชั้นปีเพื่อเพิ่มชั้นปี แล้วกด &quot;+ เพิ่มห้อง&quot;
             ในชั้นปีนั้นเพื่อสร้างห้องเรียน
           </span>
         </div>
       )}
 
-      {grades.map((grade) => {
+      {!loading && !loadError && grades.length > 0 && !grades.some(grade =>
+        (!gradeFilter || String(grade.id) === gradeFilter) &&
+        ((!search.trim() && !unassignedOnly) || classrooms.some(room =>
+          Number(room.grade_level_id) === Number(grade.id) && (!unassignedOnly || !room.teachers.length) &&
+          `${grade.name} ${room.name} ${room.teachers.map(t => t.name).join(' ')}`.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase())
+        ))
+      ) && <div className="sch-empty-state"><strong>ไม่พบห้องเรียนตามตัวกรอง</strong><button className="sch-btn-secondary" onClick={() => { setSearch(''); setGradeFilter(''); setUnassignedOnly(false); }}>ล้างตัวกรอง</button></div>}
+      {!loading && !loadError && grades.filter(g => !gradeFilter || String(g.id) === gradeFilter).map((grade) => {
         const rooms = classrooms.filter(
           (room) => Number(room.grade_level_id) === Number(grade.id),
         );
+        const visibleRooms = rooms.filter(r => (!unassignedOnly || !r.teachers.length) && `${grade.name} ${r.name} ${r.teachers.map(t => t.name).join(' ')}`.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()));
+        if (!visibleRooms.length && (search.trim() || unassignedOnly)) return null;
         const students = rooms.reduce(
           (sum, room) => sum + Number(room.student_count || 0),
           0,
@@ -300,7 +335,7 @@ function SchoolClasses({ school, access }) {
               </p>
             ) : (
               <ul className="sch-room-list">
-                {rooms.map((room) => (
+                {visibleRooms.map((room) => (
                   <li key={room.id}>
                     <span className="sch-name">
                       ห้อง {room.name}
@@ -329,12 +364,12 @@ function SchoolClasses({ school, access }) {
                         <>
                           <button
                             type="button"
-                            className="sch-icon-btn"
+                            className="sch-btn-secondary"
                             aria-label={`กำหนดครู ${grade.name} ห้อง ${room.name}`}
                             title="กำหนดครูที่ดูแล"
                             onClick={() => setTeacherModal(room)}
                           >
-                            <FiUsers aria-hidden="true" />
+                            <FiUsers aria-hidden="true" /> กำหนดครู
                           </button>
                           <button
                             type="button"
@@ -371,6 +406,7 @@ function SchoolClasses({ school, access }) {
         <ClassroomModal
           school={school}
           grades={grades}
+          years={academic.years}
           initial={classroomModal}
           onClose={() => setClassroomModal(null)}
           onSaved={async () => {
@@ -394,7 +430,7 @@ function SchoolClasses({ school, access }) {
   );
 }
 
-function ClassroomModal({ school, grades, initial, onClose, onSaved }) {
+function ClassroomModal({ school, grades, years, initial, onClose, onSaved }) {
   const [form, setForm] = useState({
     grade_level_id: initial.grade_level_id,
     name: initial.name || "",
@@ -446,7 +482,7 @@ function ClassroomModal({ school, grades, initial, onClose, onSaved }) {
             ชั้นปี
             <RequiredMark />
           </span>
-          <select
+          <SearchableSelect
             required
             {...bind("grade_level_id", "กรุณาเลือกชั้นปี")}
             value={form.grade_level_id}
@@ -459,7 +495,7 @@ function ClassroomModal({ school, grades, initial, onClose, onSaved }) {
                 {grade.name}
               </option>
             ))}
-          </select>
+          </SearchableSelect>
           {errorFor("grade_level_id")}
         </label>
         <label className="sch-field">
@@ -482,20 +518,7 @@ function ClassroomModal({ school, grades, initial, onClose, onSaved }) {
             ปีการศึกษา (พ.ศ.)
             <RequiredMark />
           </span>
-          <input
-            required
-            {...bind("academic_year", "กรุณากรอกปีการศึกษา")}
-            inputMode="numeric"
-            value={form.academic_year}
-            onChange={(event) =>
-              setForm({
-                ...form,
-                academic_year: event.target.value
-                  .replace(/\D/g, "")
-                  .slice(0, 4),
-              })
-            }
-          />
+          <AcademicYearSelect years={years} required {...bind("academic_year", "กรุณาเลือกปีการศึกษา")} value={form.academic_year} onChange={e => setForm({ ...form, academic_year: e.target.value })} />
           {errorFor("academic_year")}
         </label>
         <label className="sch-field">
@@ -514,7 +537,7 @@ function ClassroomModal({ school, grades, initial, onClose, onSaved }) {
         {initial.id && (
           <label className="sch-field">
             สถานะ
-            <select
+            <SearchableSelect
               value={form.status}
               onChange={(event) =>
                 setForm({ ...form, status: event.target.value })
@@ -522,7 +545,7 @@ function ClassroomModal({ school, grades, initial, onClose, onSaved }) {
             >
               <option value="active">ใช้งาน</option>
               <option value="inactive">ปิดใช้งาน</option>
-            </select>
+            </SearchableSelect>
           </label>
         )}
       </form>
@@ -607,7 +630,7 @@ function ClassroomTeachersModal({ room, teachers, onClose, onSaved }) {
               return (
                 <li key={teacherId}>
                   <span className="sch-name">{teacher?.name || "-"}</span>
-                  <select
+                  <SearchableSelect
                     aria-label={`บทบาทของ ${teacher?.name || "ครู"}`}
                     value={role}
                     onChange={(event) =>
@@ -619,11 +642,11 @@ function ClassroomTeachersModal({ room, teachers, onClose, onSaved }) {
                     {Object.entries(TEACHER_ROLE_LABELS).map(
                       ([value, label]) => (
                         <option key={value} value={value}>
-                          {label}
+                          {toDisplayText(label)}
                         </option>
                       ),
                     )}
-                  </select>
+                  </SearchableSelect>
                 </li>
               );
             })}

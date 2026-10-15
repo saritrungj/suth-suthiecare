@@ -1,0 +1,71 @@
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 970 modules transformed.
+rendering chunks...
+computing gzip size...
+build/index.html                                  4.26 kB │ gzip:   1.12 kB
+build/assets/pee-hom-ai-TJW4rMzV.webp            14.16 kB
+build/assets/logoSUTH-C61czE0q.png               59.02 kB
+build/assets/bg-health-CF5F11bm.jpg             656.44 kB
+build/assets/login-image-auic4EU3.png         1,296.91 kB
+build/assets/02-ChbMj7n0.png                  1,306.70 kB
+build/assets/01-B43erMv6.png                  1,308.00 kB
+build/assets/03-DuAF39By.png                  1,473.24 kB
+build/assets/act.suth-qG5EZz1V.png            1,632.43 kB
+build/assets/vitalcare-FsGwXx1b.png           1,632.84 kB
+build/assets/bg-new-CxDf2QPd.jpg              5,286.88 kB
+build/assets/style-DRxHq_CV.css                 550.52 kB │ gzip:  98.04 kB
+build/assets/HistorySearch-A1z6auob.js            0.43 kB │ gzip:   0.31 kB
+build/assets/IconSelect-ByUS2x8o.js               0.68 kB │ gzip:   0.45 kB
+build/assets/SchoolManagementNav-DmsjVBRQ.js      0.71 kB │ gzip:   0.40 kB
+build/assets/CaseReferrals-Dqq78pHn.js            0.90 kB │ gzip:   0.45 kB
+build/assets/AcademicYearSelect-CeHJ7Hn3.js       1.10 kB │ gzip:   0.67 kB
+build/assets/caseDateFilter-ABvU873B.js           1.46 kB │ gzip:   0.70 kB
+build/assets/PatientVerifyEmail-Ce3vxxB5.js       2.23 kB │ gzip:   1.09 kB
+build/assets/useMediaQuery-D9HtvuX3.js            2.26 kB │ gzip:   1.05 kB
+build/assets/FileSaver.min-C-Q7HgHF.js            3.02 kB │ gzip:   1.47 kB
+build/assets/SchoolDashboard-CRkyQYRs.js          4.80 kB │ gzip:   1.77 kB
+build/assets/CaseDrawer-C4QqV_yz.js               5.16 kB │ gzip:   2.23 kB
+build/assets/SchoolTypes-C5oTgr9Y.js              5.94 kB │ gzip:   2.20 kB
+build/assets/CaseTable-CkrUdArx.js                6.00 kB │ gzip:   2.33 kB
+build/assets/ClinicDetail-DwCEZ6Lp.js             6.36 kB │ gzip:   2.27 kB
+build/assets/RolesPermissions-CGaK9KQe.js         6.63 kB │ gzip:   2.33 kB
+build/assets/CaseReferralPanel-C7y-ZdZ1.js        6.70 kB │ gzip:   2.60 kB
+build/assets/MyProfile-De7-7k7n.js                8.21 kB │ gzip:   2.44 kB
+build/assets/school-Bj0QPsG5.js                   8.52 kB │ gzip:   3.63 kB
+build/assets/TeacherList-CWpnIN-B.js              9.72 kB │ gzip:   3.16 kB
+build/assets/studentImport-DZ-rIU0N.js            9.76 kB │ gzip:   3.48 kB
+build/assets/RiskCases-BwbJrvEq.js               10.03 kB │ gzip:   3.89 kB
+build/assets/MasterData-DxW1REL1.js              10.55 kB │ gzip:   3.59 kB
+build/assets/SchoolCaseData-CzEO4u_9.js          10.70 kB │ gzip:   3.53 kB
+build/assets/CaseReferrals-f5b-FyYH.js           11.00 kB │ gzip:   3.52 kB
+build/assets/AssessmentResult-ClSXczXv.js        11.71 kB │ gzip:   4.08 kB
+build/assets/StudentImport-03Xuv6Qj.js           11.89 kB │ gzip:   3.86 kB
+build/assets/AdminLayout-_rsAe6KH.js             13.36 kB │ gzip:   4.31 kB
+build/assets/StudentHealthCharts-BS1ISdF2.js     16.49 kB │ gzip:   5.45 kB
+build/assets/SchoolRoles-BI8OgRzI.js             16.89 kB │ gzip:   4.03 kB
+build/assets/FormManager-DE8a7m19.js             17.29 kB │ gzip:   4.79 kB
+build/assets/SchoolStructure-CJAUiYi8.js         18.46 kB │ gzip:   5.08 kB
+build/assets/StudentList-RsnOHTZl.js             18.47 kB │ gzip:   5.23 kB
+build/assets/StudentDetailModal-pvzEQQCd.js      26.52 kB │ gzip:   7.18 kB
+build/assets/CaseData-O-L9igsW.js                28.13 kB │ gzip:   8.90 kB
+build/assets/UserManagement-D8w2kprw.js          32.01 kB │ gzip:   8.17 kB
+build/assets/SchoolWorkflows-pH47IADC.js         33.36 kB │ gzip:   8.73 kB
+build/assets/HistoryResult-6ASfGj8v.js           40.79 kB │ gzip:  12.10 kB
+build/assets/FormView-DcUGWp7I.js                41.56 kB │ gzip:  12.73 kB
+build/assets/BannerManagement-Dc5jR5fy.js        42.40 kB │ gzip:  12.19 kB
+build/assets/dashboard-DCXCGv-x.js               52.58 kB │ gzip:  14.48 kB
+build/assets/FormChartWorkspace-CoLHHHrs.js      58.93 kB │ gzip:  17.59 kB
+build/assets/CaseDetailModal-BiiFrAtW.js         87.08 kB │ gzip:  22.96 kB
+build/assets/FormBuilder-BOpFgLRu.js             98.97 kB │ gzip:  24.34 kB
+build/assets/index-B4n_wV74.js                  111.18 kB │ gzip:  30.56 kB
+build/assets/Appointment-C0nh8NPz.js            248.07 kB │ gzip:  74.87 kB
+build/assets/LineChart-DnjRYo3U.js              364.45 kB │ gzip: 107.47 kB
+build/assets/exceljs.min-2N8TAtsF.js            936.99 kB │ gzip: 270.75 kB
+build/assets/index-B7WxfscG.js                  982.05 kB │ gzip: 299.49 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 27.72s

@@ -12,7 +12,7 @@ function privateDisclosure(req, res, next) {
   if (!sensitivePath(req.path)) return next();
   const canClinical =
     req.authorization?.isSystemAdmin ||
-    req.authorization?.permissions?.has("clinical.view");
+    (req.schoolAccess ? req.schoolAccess.canClinical : req.authorization?.permissions?.has("clinical.view"));
   const canPii =
     req.authorization?.isSystemAdmin ||
     req.authorization?.permissions?.has("pii.view");
@@ -41,12 +41,12 @@ function privateDisclosure(req, res, next) {
     if (res.statusCode >= 400 || !req.authorization) return original(body);
     const sys = req.authorization.isSystemAdmin;
     const pii = sys || req.authorization.permissions?.has("pii.view");
-    const clinical = sys || req.authorization.permissions?.has("clinical.view");
+    const clinical = sys || (req.schoolAccess ? req.schoolAccess.canClinical : req.authorization.permissions?.has("clinical.view"));
     Promise.resolve()
       .then(async () => {
         const credential =
           req.method === "POST" &&
-          /^\/school\/students(?:\/(import|\d+\/reset-password))?$/.test(
+          /^\/school\/(?:students(?:\/(import|\d+\/reset-password))?|teachers\/import)$/.test(
             req.path,
           );
         if (
@@ -69,14 +69,19 @@ function privateDisclosure(req, res, next) {
             },
           );
         const list =
-          req.method === "GET" &&
+          !req.exporting && req.method === "GET" &&
           (/^\/(cases|master-cases|all-cases|appointments|patient-members|case-referrals)$/.test(
             req.path,
           ) ||
             /^\/forms\/[^/]+\/responses/.test(req.path) ||
             req.path === "/dashboard/recent" ||
-            /^\/school\/students$/.test(req.path));
-        return original(serialize(body, { pii, clinical, list, credential }));
+            /^\/school\/(students|cases)$/.test(req.path));
+        const caseNames = list && (
+          /^\/(cases|all-cases)$/.test(req.path) ||
+          /^\/forms\/[^/]+\/responses/.test(req.path) ||
+          req.path === "/dashboard/recent" || req.path === "/school/cases"
+        );
+        return original(serialize(body, { pii, clinical, list, credential, caseNames }));
       })
       .catch((error) => {
         res.status(error.status || 503);

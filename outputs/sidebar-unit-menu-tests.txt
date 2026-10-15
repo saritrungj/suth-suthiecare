@@ -1,0 +1,107 @@
+
+Running 10 tests using 1 worker
+
+(node:2732) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › e2e\sidebar-system-roles.spec.js:101:3 › system_admin uses unit menus independently of system role (3.2s)
+  ok  2 [desktop-chromium] › e2e\sidebar-system-roles.spec.js:101:3 › admin uses unit menus independently of system role (2.3s)
+  x   3 [desktop-chromium] › e2e\sidebar-system-roles.spec.js:101:3 › staff uses unit menus independently of system role (32.7s)
+(node:1540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  4 [desktop-chromium] › e2e\sidebar-system-roles.spec.js:151:1 › staff user menu follows the active unit's permissions (2.1s)
+  ok  5 [desktop-chromium] › e2e\sidebar-system-roles.spec.js:164:1 › admin cannot open main system pages by entering their URLs (4.5s)
+(node:5400) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  6 [mobile-chromium] › e2e\sidebar-system-roles.spec.js:101:3 › system_admin uses unit menus independently of system role (3.3s)
+  ok  7 [mobile-chromium] › e2e\sidebar-system-roles.spec.js:101:3 › admin uses unit menus independently of system role (3.3s)
+  x   8 [mobile-chromium] › e2e\sidebar-system-roles.spec.js:101:3 › staff uses unit menus independently of system role (13.3s)
+(node:15540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  9 [mobile-chromium] › e2e\sidebar-system-roles.spec.js:151:1 › staff user menu follows the active unit's permissions (2.8s)
+  ok 10 [mobile-chromium] › e2e\sidebar-system-roles.spec.js:164:1 › admin cannot open main system pages by entering their URLs (4.7s)
+
+
+  1) [desktop-chromium] › e2e\sidebar-system-roles.spec.js:101:3 › staff uses unit menus independently of system role 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.selectOption: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for getByLabel('หน่วยงานที่กำลังใช้งาน', { exact: true })
+
+
+      133 |     await page
+      134 |       .getByLabel("หน่วยงานที่กำลังใช้งาน", { exact: true })
+    > 135 |       .selectOption("2");
+          |        ^
+      136 |     await expect(
+      137 |       page.locator('.sidebar a[href="/admin/school/students"]'),
+      138 |     ).toBeVisible();
+        at D:\github-clone\suth-suthiecare\app\e2e\sidebar-system-roles.spec.js:135:8
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\sidebar-system-roles-staff-d4f7d-ndependently-of-system-role-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\sidebar-system-roles-staff-d4f7d-ndependently-of-system-role-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\sidebar-system-roles-staff-d4f7d-ndependently-of-system-role-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\sidebar-system-roles-staff-d4f7d-ndependently-of-system-role-desktop-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\sidebar-system-roles-staff-d4f7d-ndependently-of-system-role-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [mobile-chromium] › e2e\sidebar-system-roles.spec.js:101:3 › staff uses unit menus independently of system role 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('.sidebar a[href="/admin/cases"]')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for locator('.sidebar a[href="/admin/cases"]')
+
+
+      126 |       page.locator('.sidebar a[href="/admin/members"]'),
+      127 |     ).toBeVisible();
+    > 128 |     await expect(page.locator('.sidebar a[href="/admin/cases"]')).toBeVisible();
+          |                                                                   ^
+      129 |     for (const path of mainPaths)
+      130 |       await expect(page.locator(`.sidebar a[href="${path}"]`)).toHaveCount(
+      131 |         role === "system_admin" ? 1 : 0,
+        at D:\github-clone\suth-suthiecare\app\e2e\sidebar-system-roles.spec.js:128:67
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\sidebar-system-roles-staff-d4f7d-ndependently-of-system-role-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\sidebar-system-roles-staff-d4f7d-ndependently-of-system-role-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\sidebar-system-roles-staff-d4f7d-ndependently-of-system-role-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\sidebar-system-roles-staff-d4f7d-ndependently-of-system-role-mobile-chromium\trace.zip
+    Usage:
+
+        pnpm exec playwright show-trace test-results\sidebar-system-roles-staff-d4f7d-ndependently-of-system-role-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [desktop-chromium] › e2e\sidebar-system-roles.spec.js:101:3 › staff uses unit menus independently of system role 
+    [mobile-chromium] › e2e\sidebar-system-roles.spec.js:101:3 › staff uses unit menus independently of system role 
+  8 passed (1.3m)
+undefined
+D:\github-clone\suth-suthiecare\app:
+[ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL] Command failed with exit code 1: playwright test e2e/sidebar-system-roles.spec.js "--reporter=list"

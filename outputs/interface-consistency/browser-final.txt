@@ -1,0 +1,177 @@
+[WebServer] (node:31988) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 18 tests using 1 worker
+
+(node:25800) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [phone] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus (10.8s)
+  ok  2 [phone] › e2e\interface-consistency.spec.js:41:1 › management dialogs share focus, close placement, scrolling and focus return (25.2s)
+  ok  3 [phone] › e2e\interface-consistency.spec.js:65:1 › a failed staff save preserves the form and opens a reachable confirmation above it (5.0s)
+  x   4 [phone] › e2e\interface-consistency.spec.js:92:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown (7.1s)
+(node:4976) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  5 [phone] › e2e\interface-consistency.spec.js:104:1 › default assessment and editor use the brand while an authored theme is preserved (9.2s)
+  ok  6 [phone] › e2e\interface-consistency.spec.js:115:1 › banner upload is keyboard accessible and the cropped preview fits a narrow modal (4.1s)
+(node:37808) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  7 [tablet] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus (7.8s)
+  ok  8 [tablet] › e2e\interface-consistency.spec.js:41:1 › management dialogs share focus, close placement, scrolling and focus return (25.4s)
+  ok  9 [tablet] › e2e\interface-consistency.spec.js:65:1 › a failed staff save preserves the form and opens a reachable confirmation above it (7.2s)
+  x  10 [tablet] › e2e\interface-consistency.spec.js:92:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown (9.6s)
+(node:37112) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 11 [tablet] › e2e\interface-consistency.spec.js:104:1 › default assessment and editor use the brand while an authored theme is preserved (20.6s)
+  ok 12 [tablet] › e2e\interface-consistency.spec.js:115:1 › banner upload is keyboard accessible and the cropped preview fits a narrow modal (16.4s)
+(node:37140) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 13 [desktop] › e2e\interface-consistency.spec.js:24:1 › styles and alignment survive switching through real menus (4.5s)
+  x  14 [desktop] › e2e\interface-consistency.spec.js:41:1 › management dialogs share focus, close placement, scrolling and focus return (30.4s)
+(node:35836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 15 [desktop] › e2e\interface-consistency.spec.js:65:1 › a failed staff save preserves the form and opens a reachable confirmation above it (9.6s)
+  x  16 [desktop] › e2e\interface-consistency.spec.js:92:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown (3.5s)
+(node:5344) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 17 [desktop] › e2e\interface-consistency.spec.js:104:1 › default assessment and editor use the brand while an authored theme is preserved (5.7s)
+  ok 18 [desktop] › e2e\interface-consistency.spec.js:115:1 › banner upload is keyboard accessible and the cropped preview fits a narrow modal (3.5s)
+
+
+  1) [phone] › e2e\interface-consistency.spec.js:92:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown 
+
+    Error: locator.boundingBox: Error: strict mode violation: getByRole('dialog', { name: 'เพิ่มผู้ใช้งาน', exact: true }).getByLabel('ระดับสิทธิ์ (Role)', { exact: true }) resolved to 2 elements:
+        1) <select id="admin-role" class="adm-select" aria-expanded="true" aria-haspopup="listbox" aria-controls="_r_3l_-list" data-searchable-select="true">…</select> aka locator('#admin-role')
+        2) <div role="listbox" id="_r_3l_-list" aria-label="ระดับสิทธิ์ (Role)" class="searchable-select-options">…</div> aka getByRole('listbox', { name: 'ระดับสิทธิ์ (Role)' })
+
+    Call log:
+      - waiting for getByRole('dialog', { name: 'เพิ่มผู้ใช้งาน', exact: true }).getByLabel('ระดับสิทธิ์ (Role)', { exact: true })
+
+
+       95 |   await select.click();const search=page.getByRole('combobox',{name:'ค้นหาระดับสิทธิ์ (Role)'});await expect(search).toBeFocused();
+       96 |   const menu=page.locator('.searchable-select-menu');await fits(menu,page);
+    >  97 |   const triggerBox=await select.boundingBox(),menuBox=await menu.boundingBox();
+          |                                 ^
+       98 |   expect(Math.min(Math.abs(menuBox.y-triggerBox.y-triggerBox.height),Math.abs(menuBox.y+menuBox.height-triggerBox.y))).toBeLessThanOrEqual(12);
+       99 |   await search.fill('Staff');await search.press('Enter');await expect(select).toHaveValue('3');await expect(select).toBeFocused();
+      100 |   await select.click();await search.press('Escape');await expect(menu).toHaveCount(0);await expect(dialog).toBeVisible();await expect(select).toBeFocused();
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:97:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-phone\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-phone\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-phone\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-phone\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [tablet] › e2e\interface-consistency.spec.js:92:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown 
+
+    Error: locator.boundingBox: Error: strict mode violation: getByRole('dialog', { name: 'เพิ่มผู้ใช้งาน', exact: true }).getByLabel('ระดับสิทธิ์ (Role)', { exact: true }) resolved to 2 elements:
+        1) <select id="admin-role" class="adm-select" aria-expanded="true" aria-haspopup="listbox" aria-controls="_r_3l_-list" data-searchable-select="true">…</select> aka locator('#admin-role')
+        2) <div role="listbox" id="_r_3l_-list" aria-label="ระดับสิทธิ์ (Role)" class="searchable-select-options">…</div> aka getByRole('listbox', { name: 'ระดับสิทธิ์ (Role)' })
+
+    Call log:
+      - waiting for getByRole('dialog', { name: 'เพิ่มผู้ใช้งาน', exact: true }).getByLabel('ระดับสิทธิ์ (Role)', { exact: true })
+
+
+       95 |   await select.click();const search=page.getByRole('combobox',{name:'ค้นหาระดับสิทธิ์ (Role)'});await expect(search).toBeFocused();
+       96 |   const menu=page.locator('.searchable-select-menu');await fits(menu,page);
+    >  97 |   const triggerBox=await select.boundingBox(),menuBox=await menu.boundingBox();
+          |                                 ^
+       98 |   expect(Math.min(Math.abs(menuBox.y-triggerBox.y-triggerBox.height),Math.abs(menuBox.y+menuBox.height-triggerBox.y))).toBeLessThanOrEqual(12);
+       99 |   await search.fill('Staff');await search.press('Enter');await expect(select).toHaveValue('3');await expect(select).toBeFocused();
+      100 |   await select.click();await search.press('Escape');await expect(menu).toHaveCount(0);await expect(dialog).toBeVisible();await expect(select).toBeFocused();
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:97:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-tablet\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-tablet\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-tablet\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-tablet\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [desktop] › e2e\interface-consistency.spec.js:41:1 › management dialogs share focus, close placement, scrolling and focus return 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: page.goto: Test timeout of 30000ms exceeded.
+    Call log:
+      - navigating to "http://127.0.0.1:4196/admin/help-center", waiting until "load"
+
+
+       8 |   await page.route('**/api/clinics/all',route=>route.fulfill({json:{data:[{id:1,name:'คลินิกสาธิต',slug:'general',show_in_help_center:1}]}}));
+       9 | });
+    > 10 | async function openRoute(page,baseURL,path){await setRouteSession(page,path,baseURL);await page.goto(path);await expect(page.locator('.suth-page-header,.sfb-builder-header').first()).toBeVisible();}
+         |                                                                                                 ^
+      11 | async function navigate(page,path){
+      12 |   if(page.viewportSize().width<=1024)await page.locator('.mobile-hamburger-btn').click();
+      13 |   await page.locator(`.sidebar a[href="${path}"]`).first().click();
+        at openRoute (D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:10:97)
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:50:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-mana-cf227--scrolling-and-focus-return-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-mana-cf227--scrolling-and-focus-return-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-mana-cf227--scrolling-and-focus-return-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-mana-cf227--scrolling-and-focus-return-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [desktop] › e2e\interface-consistency.spec.js:92:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown 
+
+    Error: locator.boundingBox: Error: strict mode violation: getByRole('dialog', { name: 'เพิ่มผู้ใช้งาน', exact: true }).getByLabel('ระดับสิทธิ์ (Role)', { exact: true }) resolved to 2 elements:
+        1) <select id="admin-role" class="adm-select" aria-expanded="true" aria-haspopup="listbox" aria-controls="_r_3l_-list" data-searchable-select="true">…</select> aka locator('#admin-role')
+        2) <div role="listbox" id="_r_3l_-list" aria-label="ระดับสิทธิ์ (Role)" class="searchable-select-options">…</div> aka getByRole('listbox', { name: 'ระดับสิทธิ์ (Role)' })
+
+    Call log:
+      - waiting for getByRole('dialog', { name: 'เพิ่มผู้ใช้งาน', exact: true }).getByLabel('ระดับสิทธิ์ (Role)', { exact: true })
+
+
+       95 |   await select.click();const search=page.getByRole('combobox',{name:'ค้นหาระดับสิทธิ์ (Role)'});await expect(search).toBeFocused();
+       96 |   const menu=page.locator('.searchable-select-menu');await fits(menu,page);
+    >  97 |   const triggerBox=await select.boundingBox(),menuBox=await menu.boundingBox();
+          |                                 ^
+       98 |   expect(Math.min(Math.abs(menuBox.y-triggerBox.y-triggerBox.height),Math.abs(menuBox.y+menuBox.height-triggerBox.y))).toBeLessThanOrEqual(12);
+       99 |   await search.fill('Staff');await search.press('Enter');await expect(select).toHaveValue('3');await expect(select).toBeFocused();
+      100 |   await select.click();await search.press('Escape');await expect(menu).toHaveCount(0);await expect(dialog).toBeVisible();await expect(select).toBeFocused();
+        at D:\github-clone\suth-suthiecare\app\e2e\interface-consistency.spec.js:97:33
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-desktop\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-desktop\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-desktop\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results-interface\interface-consistency-drop-3f978-pe-closes-only-the-dropdown-desktop\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    [phone] › e2e\interface-consistency.spec.js:92:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown 
+    [tablet] › e2e\interface-consistency.spec.js:92:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown 
+    [desktop] › e2e\interface-consistency.spec.js:41:1 › management dialogs share focus, close placement, scrolling and focus return 
+    [desktop] › e2e\interface-consistency.spec.js:92:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown 
+  14 passed (3.7m)

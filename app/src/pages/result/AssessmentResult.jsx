@@ -1,3 +1,5 @@
+import { toDisplayText } from '../../utils/textPresentation.js';
+import { toSafeHtml } from '../../utils/richText.js';
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -432,13 +434,13 @@ export default function AssessmentResult() {
             ) : results.length > 0 ? (
               <span
                 dangerouslySetInnerHTML={{
-                  __html: t("assessment_result.hero_done_desc1"),
+                  __html: toSafeHtml(t("assessment_result.hero_done_desc1")),
                 }}
               />
             ) : (
               <span
                 dangerouslySetInnerHTML={{
-                  __html: t("assessment_result.hero_done_desc2"),
+                  __html: toSafeHtml(t("assessment_result.hero_done_desc2")),
                 }}
               />
             )}
@@ -477,10 +479,10 @@ export default function AssessmentResult() {
                       className="ar-level-badge"
                       style={{ color: level.textColor }}
                     >
-                      <FiActivity size={24} /> <span>{level.label}</span>
+                      <FiActivity size={24} /> <span>{toDisplayText(level.label)}</span>
                     </div>
                     <p className="ar-card-title">
-                      {isTotal
+                      {toDisplayText(isTotal
                         ? t("assessment_result.total_score_summary", {
                             count: res.partCount,
                           })
@@ -491,7 +493,7 @@ export default function AssessmentResult() {
                               (displayResults[0]?.displayKind === "total"
                                 ? 0
                                 : 1),
-                          })}
+                          }))}
                     </p>
 
                     <div
@@ -535,7 +537,7 @@ export default function AssessmentResult() {
 
                     <ul className="ar-advice__list">
                       {level.advice.map((a, i) => (
-                        <li key={i}>{a}</li>
+                        <li key={i} dangerouslySetInnerHTML={{__html:toSafeHtml(a)}} />
                       ))}
                     </ul>
                   </div>
@@ -554,7 +556,7 @@ export default function AssessmentResult() {
                         background: `radial-gradient(circle at 50% 50%, rgba(${level.rgb}, 0.25), transparent 70%)`,
                       }}
                     >
-                      <img src={level.visualImage} alt={level.label} />
+                      <img src={level.visualImage} alt={toDisplayText(level.label)} />
                     </div>
                   </div>
                 </div>

@@ -3,6 +3,7 @@
 // (studentImport.test.js); exceljs and file-saver are loaded on demand.
 
 export const IMPORT_FIELDS = [
+  { key: "status", label: "สถานะนักเรียน", example: "กำลังศึกษา" },
   {
     key: "student_code",
     label: "รหัสนักเรียน",
@@ -20,10 +21,14 @@ export const IMPORT_FIELDS = [
   { key: "birth_date", label: "วันเกิด", example: "31/05/2556" },
   { key: "national_id", label: "เลขบัตรประชาชน", example: "" },
   { key: "username", label: "ชื่อผู้ใช้", example: "" },
+  { key: "email", label: "อีเมล", example: "" },
+  { key: "initial_password", label: "รหัสผ่านตั้งต้น", example: "" },
+  { key: "is_boarder", label: "นักเรียนหอพัก", example: "ไม่ใช่" },
 ];
 
 // Thai and English header names accepted for each field.
 const HEADER_ALIASES = {
+  status: ["สถานะนักเรียน", "สถานะ", "status"],
   student_code: [
     "รหัสนักเรียน",
     "เลขประจำตัว",
@@ -58,6 +63,9 @@ const HEADER_ALIASES = {
     "idcard",
   ],
   username: ["ชื่อผู้ใช้", "username", "user"],
+  email: ["อีเมล", "email", "e-mail"],
+  initial_password: ["รหัสผ่านตั้งต้น", "initial_password", "password"],
+  is_boarder: ["นักเรียนหอพัก", "is_boarder", "boarding"],
 };
 
 const normalizeHeader = (value) =>
@@ -248,6 +256,9 @@ export async function downloadImportTemplate() {
       "ไม่บังคับ ถ้ามีจะใช้รวมผลประเมินที่นักเรียนเคยทำไว้ และผูกกับบัญชีเดิมถ้ามี",
     ],
     ["ชื่อผู้ใช้", "ไม่บังคับ เว้นว่างเพื่อให้ระบบสร้างให้"],
+    ["อีเมล", "อีเมลของนักเรียนสำหรับยืนยันตัวตนและกู้รหัสผ่าน ต้องยืนยันด้วย OTP หลังเข้าสู่ระบบ"],
+    ["รหัสผ่านตั้งต้น", "ไม่บังคับ เว้นว่างเพื่อสุ่มรหัสผ่านที่รัดกุม ต้องเปลี่ยนเมื่อเข้าสู่ระบบครั้งแรก"],
+    ["นักเรียนหอพัก", "ใช่ หรือ ไม่ใช่ (เว้นว่างเพื่อรักษาค่าเดิมเมื่อนำเข้าอัปเดต)"],
   ].forEach(([label, note]) => help.addRow({ label, note }));
   styleHeader(help);
   await saveWorkbook(workbook, "แบบฟอร์มนำเข้านักเรียน.xlsx");

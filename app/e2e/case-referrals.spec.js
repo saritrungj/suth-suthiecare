@@ -203,10 +203,7 @@ test("send, receive and sync only the shared status and summary across organizat
   await mockPage(page, 1, store);
   await page.goto("/admin/cases");
   await page
-    .getByRole("button", {
-      name: current.summary_data.display_name,
-      exact: true,
-    })
+    .locator(".cw-person-open").first()
     .click();
   await page.getByRole("tab", { name: "ส่งต่อ", exact: true }).click();
   await page.getByLabel("หน่วยงานปลายทาง", { exact: true }).selectOption("2");

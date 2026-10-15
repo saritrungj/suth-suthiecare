@@ -1,3 +1,5 @@
+import { toDisplayText } from '../../utils/textPresentation.js';
+import { usePageExport } from "../../components/ExcelExport";
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import AppointmentTable from "../../components/appointment/AppointmentTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
@@ -84,7 +86,7 @@ const CustomDropdown = ({
               className={`apt-select-option ${String(value) === String(opt.value) ? "selected" : ""}`}
               onClick={() => onChange(opt.value)}
             >
-              {opt.label}
+              {toDisplayText(opt.label)}
             </div>
           ))}
         </div>
@@ -403,6 +405,8 @@ export default function Appointment() {
   };
 
   /* ================= UI ================= */
+  usePageExport({title:"นัดหมาย",sources:[{resource:"appointments",filters:{startDate,endDate},ids:filteredAppointments.map(r=>r.appointment_id||r.id)}]});
+
   return (
     <div className="apt-admin-layout">
       <main className="apt-main-content">
@@ -742,7 +746,7 @@ export default function Appointment() {
                   lineHeight: "1.4",
                 }}
               >
-                {quickActionPopup.data.title}{" "}
+                {toDisplayText(quickActionPopup.data.title)}{" "}
               </h4>
               <button
                 onClick={() =>

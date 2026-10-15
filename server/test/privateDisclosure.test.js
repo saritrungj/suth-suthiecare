@@ -32,6 +32,7 @@ test("full disclosure and exports stop when mandatory audit storage is unavailab
             {
               id: 1,
               identity_hash: "never-return",
+              first_name: "Synthetic",
               summary_data: {
                 display_name: "Synthetic Patient",
                 raw_answers: { health: "secret" },
@@ -47,6 +48,7 @@ test("full disclosure and exports stop when mandatory audit storage is unavailab
           },
     ),
   );
+  app.get("/school/cases", (_req, res) => res.json({ data: [{ id: 1, first_name: "Somchai", last_name: "Surname" }] }));
   const server = app.listen(0, "127.0.0.1");
   await new Promise((r) => server.once("listening", r));
   const request = (path, keys) =>
@@ -56,8 +58,16 @@ test("full disclosure and exports stop when mandatory audit storage is unavailab
   try {
     const list = await (await request("/cases")).json();
     assert.equal(list[0].identity_hash, undefined);
+    assert.equal(list[0].first_name, "Synthetic");
+    const masked = await (await request("/cases", "clinical.view")).json();
+    assert.equal(masked[0].first_name, "S***");
+    const maskedSchool = await (await request("/school/cases", "clinical.view")).json();
+    assert.equal(maskedSchool.data[0].first_name, "S***");
     assert.equal(list[0].summary_data.display_name, "S***");
     assert.equal(list[0].summary_data.raw_answers, undefined);
+    const schoolList = await (await request("/school/cases")).json();
+    assert.equal(schoolList.data[0].first_name, "Somchai");
+    assert.equal(schoolList.data[0].last_name, "S***");
     assert.equal(
       (await request("/cases/1/answers", "clinical.view")).status,
       403,

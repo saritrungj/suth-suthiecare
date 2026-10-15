@@ -1,6 +1,9 @@
 const KEYS = ["pii.view", "clinical.view"];
 async function membershipPermissions(db, membership, roleKeys) {
   const result = new Set(roleKeys);
+  const school=await require('./schoolRolePermissions').schoolRolePermissions(db,membership);
+  if(school.guardian)result.clear();
+  for(const key of school)result.add(key);
   const [rows] = await db.query(
     'SELECT permission_key,granted,source FROM organization_membership_data_permissions WHERE membership_id=? ORDER BY source="explicit" ASC',
     [membership.id],

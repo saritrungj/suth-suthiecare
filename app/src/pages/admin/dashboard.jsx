@@ -1,39 +1,23 @@
+import { toDisplayText } from '../../utils/textPresentation.js';
+import { usePageExport } from "../../components/ExcelExport";
 import React, {
   useState,
   useEffect,
   useRef,
   useMemo,
-  useCallback,
 } from "react";
 import CaseTable from "../../components/case/CaseTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
 import FilterDropdown from "../../components/FilterDropdown";
 import {
   getForms,
-  getChartData,
   getFormById,
   getDashboardSettings,
-  saveDashboardSettings,
   getMasterCaseStats,
   getRecentCases,
   getActiveClinics,
 } from "../../services/api";
 import SystemEvaluationWidget from "../../components/dashboard/SystemEvaluationWidget";
-import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-  arrayMove,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { restrictToParentElement } from "@dnd-kit/modifiers";
 import {
   getCurrentMonthDateRange,
   isCaseInDateRange,
@@ -41,21 +25,8 @@ import {
   parseCaseDate,
 } from "../../utils/caseDateFilter";
 import { usePermissions } from "../../permissions/PermissionsProvider";
-import { showErrorAlert, showSuccessToast } from "../../utils/alerts";
 import "./dashboard.css";
-import AddChartModal from "../../components/AddChartModal";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid,
-} from "recharts";
+import FormChartWorkspace from "../../components/FormChartWorkspace";
 import { useNavigate } from "react-router-dom";
 import {
   FiArrowRight,
@@ -69,31 +40,7 @@ import {
   FiShield,
   FiLayers,
   FiChevronDown,
-  FiBarChart2,
 } from "react-icons/fi";
-
-const COLORS = [
-  "#FF6B6B",
-  "#FFD93D",
-  "#6BCB77",
-  "#4D96FF",
-  "#FF8FAB",
-  "#C77DFF",
-  "#00C2A8",
-  "#FFA94D",
-  "#A0E7E5",
-  "#B4F8C8",
-  "#FBE7C6",
-  "#FFAEBC",
-  "#A0C4FF",
-  "#BDB2FF",
-  "#FFC6FF",
-  "#9BF6FF",
-  "#CAFFBF",
-  "#FDFFB6",
-  "#FFD6A5",
-  "#E4C1F9",
-];
 
 function StatBoxModern({
   icon: Icon,
@@ -133,7 +80,7 @@ function StatBoxModern({
           className="stat-modern-label"
           style={{ color: urgent ? "#b91c1c" : "#475569", fontWeight: 700 }}
         >
-          {label}
+          {toDisplayText(label)}
         </span>
       </div>
       {isLoading ? (
@@ -200,7 +147,7 @@ const CustomDropdown = ({
               className={`db-select-option ${String(value) === String(opt.value) ? "selected" : ""}`}
               onClick={() => onChange(opt.value)}
             >
-              {opt.label}
+              {toDisplayText(opt.label)}
             </div>
           ))}
         </div>
@@ -210,7 +157,7 @@ const CustomDropdown = ({
 };
 
 export default function Dashboard() {
-  const { activeOrganization } = usePermissions();
+  const { activeOrganization, can } = usePermissions();
   const canManageDashboardSettings = Boolean(
     activeOrganization && activeOrganization !== "all",
   );
@@ -235,9 +182,6 @@ export default function Dashboard() {
   const [isStatsLoading, setIsStatsLoading] = useState(true);
   const [statsRefetchTrigger, setStatsRefetchTrigger] = useState(0);
 
-  const [chartToDelete, setChartToDelete] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [chartsByForm, setChartsByForm] = useState({});
   const [forms, setForms] = useState([]);
 
   const [formStatusFilter, setFormStatusFilter] = useState("published");
@@ -250,14 +194,11 @@ export default function Dashboard() {
   const [initialDateRange] = useState(getCurrentMonthDateRange);
   const [startDate, setStartDate] = useState(initialDateRange.startDate);
   const [endDate, setEndDate] = useState(initialDateRange.endDate);
+  usePageExport({title:"แดชบอร์ด",sources:[...(can("clinical.view")?[{resource:"dashboard_stats",filters:{startDate,endDate,form_id:selectedFormId,clinic:selectedClinic}}]:[{resource:"dashboard"}]),...(selectedFormId&&can("cases.view")&&can("cases.export")?[{resource:"responses",id:selectedFormId,filters:{startDate,endDate}}]:[])]});
   const hasDateRange = Boolean(startDate || endDate);
   const newCaseLabel = hasDateRange ? "เคสใหม่ในช่วงที่เลือก" : "เคสใหม่วันนี้";
   // 🟢 1. เพิ่ม State นี้เพื่อกั้นการโหลดข้อมูลก่อนเวลาอันควร
   const [isInitialSetup, setIsInitialSetup] = useState(true);
-  const charts = useMemo(
-    () => chartsByForm[selectedFormId] || [],
-    [chartsByForm, selectedFormId],
-  );
 
   const filteredForms = useMemo(() => {
     let list = forms;
@@ -307,7 +248,6 @@ export default function Dashboard() {
       setIsInitialSetup(true);
       setCases([]);
       setCurrentFormDetails(null);
-      setChartsByForm({});
       try {
         const settingsRequest = canManageDashboardSettings
           ? getDashboardSettings()
@@ -331,11 +271,7 @@ export default function Dashboard() {
             setSelectedClinic(lastForm.clinic_type);
             if (lastForm.status === "published") {
               setSelectedFormId(lastId);
-              const parsedCharts =
-                typeof savedSettings.active_charts === "string"
-                  ? JSON.parse(savedSettings.active_charts)
-                  : savedSettings.active_charts || {};
-              setChartsByForm(parsedCharts);
+
             }
           }
         }
@@ -361,45 +297,6 @@ export default function Dashboard() {
     }
   }, [selectedClinic, formStatusFilter, filteredForms, selectedFormId]);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 15 } }),
-  );
-
-  const prevFetchRef = useRef({ startDate: null, endDate: null, formId: null });
-  useEffect(() => {
-    if (!selectedFormId || charts.length === 0) return;
-
-    // 🟢 ตรวจสอบว่าต้องโหลดข้อมูลใหม่หรือไม่ (ถ้า Form ID หรือ วันที่เปลี่ยน)
-    const needsFetch =
-      prevFetchRef.current.startDate !== startDate ||
-      prevFetchRef.current.endDate !== endDate ||
-      prevFetchRef.current.formId !== selectedFormId;
-
-    if (!needsFetch) return;
-
-    prevFetchRef.current = { startDate, endDate, formId: selectedFormId };
-
-    const refetchCharts = async () => {
-      try {
-        const freshCharts = await Promise.all(
-          charts.map(async (chart) => {
-            const res = await getChartData(
-              selectedFormId,
-              chart.question,
-              startDate,
-              endDate,
-            );
-            return {
-              ...chart,
-              data: Array.isArray(res.data) ? res.data : res.data.data,
-            };
-          }),
-        );
-        setChartsByForm((prev) => ({ ...prev, [selectedFormId]: freshCharts }));
-      } catch (err) {}
-    };
-    refetchCharts();
-  }, [startDate, endDate, selectedFormId, charts, activeOrganization]);
 
   useEffect(() => {
     if (!selectedFormId) {
@@ -442,135 +339,11 @@ export default function Dashboard() {
     fetchRecentCasesForClinic();
   }, [selectedClinic, startDate, endDate, activeOrganization]);
 
-  const handleFormChange = useCallback(
-    async (newFormId) => {
-      setSelectedFormId(newFormId);
-      if (!canManageDashboardSettings) return;
-      try {
-        await saveDashboardSettings({
-          formId: newFormId,
-          charts: chartsByForm,
-        });
-        await showSuccessToast("บันทึกฟอร์มที่ใช้ในแดชบอร์ดแล้ว");
-      } catch (error) {
-        await showErrorAlert({
-          error,
-          title: "บันทึกการตั้งค่าแดชบอร์ดไม่สำเร็จ",
-        });
-      }
-    },
-    [chartsByForm, canManageDashboardSettings],
-  );
+  const handleFormChange = (newFormId) => setSelectedFormId(newFormId);
 
   const filteredData = useMemo(() => {
     return cases.filter((item) => isCaseInDateRange(item, startDate, endDate));
   }, [cases, startDate, endDate]);
-
-  const removeChart = useCallback(
-    (id) => {
-      if (canManageDashboardSettings) setChartToDelete(id);
-    },
-    [canManageDashboardSettings],
-  );
-
-  const confirmDelete = useCallback(async () => {
-    if (!canManageDashboardSettings) return;
-    const updatedCharts = charts.filter((c) => c.id !== chartToDelete);
-    const updatedChartsByForm = {
-      ...chartsByForm,
-      [selectedFormId]: updatedCharts,
-    };
-    try {
-      setChartsByForm(updatedChartsByForm);
-      setChartToDelete(null);
-      await saveDashboardSettings({
-        formId: selectedFormId,
-        charts: updatedChartsByForm,
-      });
-      await showSuccessToast("ลบกราฟออกจากแดชบอร์ดแล้ว");
-    } catch (error) {
-      setChartsByForm(chartsByForm);
-      await showErrorAlert({ error, title: "ลบกราฟไม่สำเร็จ" });
-    }
-  }, [
-    charts,
-    chartToDelete,
-    chartsByForm,
-    selectedFormId,
-    canManageDashboardSettings,
-  ]);
-
-  const handleSaveChart = useCallback(
-    async (newChartData) => {
-      if (!canManageDashboardSettings) return;
-      try {
-        const res = await getChartData(
-          selectedFormId,
-          newChartData.question,
-          startDate,
-          endDate,
-        );
-        const newChart = {
-          id: newChartData.id,
-          title: newChartData.title,
-          type: newChartData.type,
-          question: newChartData.question,
-          data: Array.isArray(res.data) ? res.data : res.data.data,
-        };
-        const updatedCharts = [
-          ...(chartsByForm[selectedFormId] || []),
-          newChart,
-        ];
-        const updatedChartsByForm = {
-          ...chartsByForm,
-          [selectedFormId]: updatedCharts,
-        };
-        setChartsByForm(updatedChartsByForm);
-        setIsModalOpen(false);
-        await saveDashboardSettings({
-          formId: selectedFormId,
-          charts: updatedChartsByForm,
-        });
-        await showSuccessToast("เพิ่มกราฟในแดชบอร์ดแล้ว");
-      } catch (error) {
-        await showErrorAlert({ error, title: "เพิ่มกราฟไม่สำเร็จ" });
-      }
-    },
-    [
-      chartsByForm,
-      selectedFormId,
-      startDate,
-      endDate,
-      canManageDashboardSettings,
-    ],
-  );
-
-  const handleDragEnd = useCallback(
-    async (event) => {
-      if (!canManageDashboardSettings) return;
-      const { active, over } = event;
-      if (!over || active.id === over.id) return;
-      const oldIndex = charts.findIndex((i) => i.id === active.id);
-      const newIndex = charts.findIndex((i) => i.id === over.id);
-      const updatedCharts = arrayMove(charts, oldIndex, newIndex);
-      const updatedChartsByForm = {
-        ...chartsByForm,
-        [selectedFormId]: updatedCharts,
-      };
-      try {
-        setChartsByForm(updatedChartsByForm);
-        await saveDashboardSettings({
-          formId: selectedFormId,
-          charts: updatedChartsByForm,
-        });
-        await showSuccessToast("บันทึกลำดับกราฟแล้ว");
-      } catch (error) {
-        setChartsByForm(chartsByForm);
-        await showErrorAlert({ error, title: "บันทึกลำดับกราฟไม่สำเร็จ" });
-      }
-    },
-    [charts, chartsByForm, selectedFormId, canManageDashboardSettings],
-  );
 
   const clinicNameMap = {
     all: "ทั้งหมด",
@@ -1007,69 +780,7 @@ export default function Dashboard() {
 
             <hr className="divider" />
 
-            <div className="block overflow-hidden mb-10">
-              <button
-                className="btn-add"
-                onClick={() => setIsModalOpen(true)}
-                disabled={!canManageDashboardSettings}
-                title={
-                  canManageDashboardSettings
-                    ? "สร้างกราฟสรุป"
-                    : "เลือกหน่วยงานก่อนสร้างกราฟ"
-                }
-              >
-                <span>+</span> สร้างกราฟสรุปแบบประเมิน
-              </button>
-            </div>
-
-            {filteredData.length === 0 ? (
-              <div className="db-empty-state-card">
-                <div className="db-empty-icon-wrap">
-                  <FiBarChart2 size={48} strokeWidth={1.5} />
-                </div>
-
-                <h3
-                  style={{
-                    fontSize: "20px",
-                    fontWeight: "600",
-                    color: "#64748B",
-                  }}
-                >
-                  ไม่มีข้อมูลสถิติในช่วงวันที่เลือก
-                </h3>
-                <p style={{ color: "#94A3B8", marginTop: "8px" }}>
-                  กรุณาลองปรับเปลี่ยนช่วงเวลา หรือเลือกแบบฟอร์มใหม่อีกครั้ง
-                </p>
-              </div>
-            ) : (
-              <DndContext
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-                modifiers={[restrictToParentElement]}
-                sensors={sensors}
-              >
-                <SortableContext
-                  items={charts.map((c) => c.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="charts-grid">
-                    {charts.map((chart) => (
-                      <SortableChart
-                        key={chart.id}
-                        id={chart.id}
-                        title={chart.title}
-                        type={chart.type}
-                        question={chart.question}
-                        data={chart.data}
-                        colors={COLORS}
-                        formQuestions={currentFormDetails?.questions || []}
-                        onRemove={removeChart}
-                      />
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
-            )}
+            <FormChartWorkspace key={activeOrganization} startDate={startDate} endDate={endDate} formId={selectedFormId} />
 
             <hr className="divider" />
 
@@ -1094,7 +805,7 @@ export default function Dashboard() {
               </div>
               <div className="dash-case-table-scroll-area">
                 <CaseTable
-                  data={filteredData.slice(0, 10)}
+                  data={filteredData}
                   questions={currentFormDetails?.questions || []}
                   visibleColumns={visibleColumns}
                   isLoading={isLoading}
@@ -1143,376 +854,10 @@ export default function Dashboard() {
           </div>
         )}
 
-        {chartToDelete && (
-          <div className="modal-overlay" role="presentation">
-            <div
-              className="modal-box"
-              role="dialog"
-              aria-modal="true"
-              aria-label="ยืนยันการลบกราฟ"
-            >
-              <h3>ยืนยันการลบกราฟ</h3>
-              <p>คุณต้องการลบกราฟนี้ใช่หรือไม่?</p>
-              <div className="modal-actions">
-                <button
-                  className="btn-cancel"
-                  onClick={() => setChartToDelete(null)}
-                >
-                  ยกเลิก
-                </button>
-                <button className="btn-confirm" onClick={confirmDelete}>
-                  ลบ
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+
       </main>
 
-      <AddChartModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveChart}
-        formId={selectedFormId}
-        getChartData={getChartData}
-      />
+
     </div>
   );
 }
-
-// ✅ label ยื่นออกนอกวง + เส้นชี้
-const renderCustomizedLabel = ({
-  cx,
-  cy,
-  midAngle,
-  innerRadius,
-  outerRadius,
-  percent,
-}) => {
-  if (percent < 0.03) return null;
-
-  const RADIAN = Math.PI / 180;
-
-  // จุดปลายเส้น (อยู่นอกวง)
-  const outerEdgeRadius = outerRadius + 8;
-  const labelRadius = outerRadius + 20;
-
-  const sx = cx + outerRadius * Math.cos(-midAngle * RADIAN);
-  const sy = cy + outerRadius * Math.sin(-midAngle * RADIAN);
-  const ex = cx + outerEdgeRadius * Math.cos(-midAngle * RADIAN);
-  const ey = cy + outerEdgeRadius * Math.sin(-midAngle * RADIAN);
-  const lx = cx + labelRadius * Math.cos(-midAngle * RADIAN);
-  const ly = cy + labelRadius * Math.sin(-midAngle * RADIAN);
-
-  const textAnchor = lx > cx ? "start" : "end";
-
-  return (
-    <g>
-      {/* เส้นชี้จาก slice ออกนอก */}
-      <line x1={sx} y1={sy} x2={ex} y2={ey} stroke="#94a3b8" strokeWidth={1} />
-      {/* จุดกลม */}
-      <circle cx={ex} cy={ey} r={2} fill="#94a3b8" />
-      {/* ตัวเลข % */}
-      <text
-        x={lx}
-        y={ly}
-        textAnchor={textAnchor}
-        dominantBaseline="central"
-        style={{ fontSize: "12px", fontWeight: "700", fill: "#374151" }}
-      >
-        {`${Math.round(percent * 100)}%`}
-      </text>
-    </g>
-  );
-};
-
-const SortableChart = React.memo(function SortableChart({
-  id,
-  title,
-  type,
-  question,
-  data,
-  colors,
-  formQuestions,
-  onRemove,
-}) {
-  const [isSelected, setIsSelected] = useState(false);
-  const cardRef = useRef(null);
-
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.6 : 1,
-    zIndex: isDragging ? 50 : "auto",
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (cardRef.current && !cardRef.current.contains(event.target)) {
-        setIsSelected(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const processedPieData = useMemo(() => {
-    if (!data || data.length === 0) return [];
-
-    // 🟢 ดึงเกณฑ์คะแนนของคำถามนี้มาเตรียมไว้
-    const questionDetails = formQuestions?.find(
-      (q) => String(q.id) === String(question),
-    );
-    const scoringRules = questionDetails?.scoringRules || [];
-
-    const counts = {};
-    data.forEach((item) => {
-      let resultText = "";
-
-      // 🟢 1. ตรวจสอบหาผลสรุปคะแนนจากฟิลด์ "result" ที่ Backend ส่งมาตรงๆ
-      if (item.result) {
-        resultText = item.result;
-      }
-      // 🟢 2. หากไม่มีใน result ให้ลองหาใน summary_data เผื่อไว้
-      else if (item.summary_data) {
-        try {
-          const summary =
-            typeof item.summary_data === "string"
-              ? JSON.parse(item.summary_data)
-              : item.summary_data;
-
-          if (summary.score_results && Array.isArray(summary.score_results)) {
-            const sr = summary.score_results.find(
-              (s) =>
-                String(s.question_id) === String(question) ||
-                String(s.id) === String(question) ||
-                String(s.questionId) === String(question),
-            );
-            if (sr && sr.label) resultText = sr.label;
-          }
-
-          if (!resultText) {
-            resultText =
-              summary[`${question}_label`] ||
-              summary[`${question}_result`] ||
-              "";
-          }
-
-          if (!resultText) {
-            if (question === "food_1774859637605")
-              resultText = summary.food_result_text;
-            else if (question === "exercise_1774859637605")
-              resultText = summary.exercise_result_text;
-            else if (question === "emotion_1774859637605")
-              resultText = summary.emotion_result_text;
-          }
-        } catch (e) {}
-      }
-
-      // 🟢 3. กรณีไม่มีคะแนนสรุป ให้ดึงจากคำตอบดิบ
-      if (!resultText) {
-        let rawName = item.name;
-
-        if (typeof rawName === "string" && rawName.trim().startsWith("{")) {
-          try {
-            rawName = JSON.parse(rawName);
-          } catch (e) {}
-        }
-
-        if (typeof rawName === "object" && rawName !== null) {
-          Object.values(rawName).forEach((val) => {
-            if (val) {
-              const cleanVal = String(val)
-                .replace(/<[^>]*>/g, "")
-                .replace(/&nbsp;/gi, " ")
-                .trim();
-              counts[cleanVal] = (counts[cleanVal] || 0) + 1;
-            }
-          });
-          return;
-        } else if (rawName) {
-          resultText = String(rawName)
-            .replace(/<[^>]*>/g, "")
-            .replace(/&nbsp;/gi, " ")
-            .trim();
-        }
-      }
-
-      // 🟢 4. บันทึกผลลง counts
-      if (
-        resultText &&
-        resultText !== "-" &&
-        !resultText.includes("รอผลสรุปคะแนน")
-      ) {
-        counts[resultText] =
-          (counts[resultText] || 0) + Number(item.value || 1);
-      }
-    });
-
-    // 🟢 5. แปลงเป็น Array และใส่สีตามเกณฑ์
-    return Object.keys(counts)
-      .map((k, index) => {
-        // ค้นหาเกณฑ์ที่ตรงกับชื่อ
-        const matchedRule = scoringRules.find((r) => r.label === k);
-        return {
-          name: k,
-          value: counts[k],
-          color: matchedRule?.color || colors[index % colors.length],
-        };
-      })
-      .sort((a, b) => b.value - a.value);
-  }, [data, question, colors, formQuestions]);
-
-  return (
-    <div
-      ref={(node) => {
-        setNodeRef(node);
-        cardRef.current = node;
-      }}
-      style={style}
-      onClick={() => setIsSelected(true)}
-      className={`chart-card ${isSelected ? "ring-4 ring-blue-400 shadow-md" : ""}`}
-    >
-      <div className="drag-indicator">
-        <div
-          {...attributes}
-          {...listeners}
-          onClick={(e) => e.stopPropagation()}
-          className="drag-handle"
-        >
-          ⋮⋮
-        </div>
-      </div>
-
-      {isSelected && (
-        <div
-          className="delete-btn"
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove(id);
-          }}
-        >
-          ✕
-        </div>
-      )}
-
-      <h4 className="chart-title" style={{ marginTop: "10px" }}>
-        {title}
-      </h4>
-
-      <div className="chart-wrapper">
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          {/* ✅ PIE CHART — แก้บัคตัวเลข % ทับกันบนมือถือ */}
-          <div style={{ width: "100%", height: "260px" }}>
-            <ResponsiveContainer width="100%" height="100%">
-              {type?.toLowerCase() === "pie" ? (
-                <PieChart margin={{ top: 0, right: 35, bottom: 0, left: 35 }}>
-                  <Pie
-                    data={processedPieData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius="65%"
-                    label={renderCustomizedLabel}
-                    labelLine={false}
-                  >
-                    {processedPieData.map((entry, index) => (
-                      <Cell key={index} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(value, name) => [`${value} ราย`, name]}
-                  />
-                </PieChart>
-              ) : (
-                <BarChart
-                  data={processedPieData}
-                  margin={{ top: 25, right: 30, left: 10, bottom: 10 }}
-                >
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="#cbd5e1"
-                  />
-                  <XAxis dataKey="name" hide />
-
-                  <YAxis
-                    tick={{ fontSize: 12, fill: "#1e293b", fontWeight: "500" }}
-                    axisLine={false}
-                    tickLine={false}
-                    allowDecimals={false}
-                  />
-                  <Tooltip cursor={{ fill: "rgba(0,0,0,0.04)" }} />
-
-                  <Bar dataKey="value" radius={[8, 8, 0, 0]} barSize={60}>
-                    {processedPieData.map((entry, index) => (
-                      <Cell key={index} fill={entry.color} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              )}
-            </ResponsiveContainer>
-          </div>
-
-          {/* 🟢 5. ส่วนคำอธิบายแบบป้าย (Badges) และจุดสีวงกลม */}
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "center",
-              gap: "10px",
-              marginTop: "15px",
-              width: "100%",
-              padding: "0 10px",
-            }}
-          >
-            {processedPieData.map((item, index) => (
-              <div
-                key={index}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  fontSize: "12px",
-                  background: "#f8fafc",
-                  padding: "4px 12px",
-                  borderRadius: "20px",
-                  border: "1px solid #e2e8f0",
-                }}
-              >
-                <div
-                  style={{
-                    width: "8px",
-                    height: "8px",
-                    background: item.color,
-                    borderRadius: "50%",
-                  }}
-                />
-                <span style={{ color: "#475569" }}>
-                  {item.name}: <strong>{item.value} คน</strong>
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-});

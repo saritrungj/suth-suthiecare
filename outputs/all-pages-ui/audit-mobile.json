@@ -1,0 +1,421 @@
+{
+  "rows": [
+    {
+      "route": "/",
+      "path": "/",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "แบบลงทะเบียนขอเข้ารับคำปรึกษาปัญหาสุขภาพ",
+      "screenshot": "--mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/login",
+      "path": "/login",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "ดูแลข้อมูลและติดตามบริการได้อย่างมั่นใจ",
+      "screenshot": "-login-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/account/login",
+      "path": "/account/login",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "ดูประวัติสุขภาพของคุณได้อย่างมั่นใจ",
+      "screenshot": "-account-login-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/account/register",
+      "path": "/account/register",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "สร้างบัญชีเพื่อส่งและติดตามผลของคุณ",
+      "screenshot": "-account-register-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/account/verify-email",
+      "path": "/account/verify-email",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "ยืนยันอีเมลนักเรียน",
+      "screenshot": "-account-verify-email-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/account/change-password",
+      "path": "/account/change-password",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "ตั้งรหัสผ่านของคุณเอง",
+      "screenshot": "-account-change-password-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/help-center",
+      "path": "/help-center",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "ศูนย์ช่วยเหลือ SUTHieCare",
+      "screenshot": "-help-center-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/help-center/clinic/1",
+      "path": "/help-center/clinic/1",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "คลินิกสาธิตสำหรับตรวจรูปแบบและการจัดวาง",
+      "screenshot": "-help-center-clinic-1-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/terms",
+      "path": "/terms",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "ข้อกำหนดและเงื่อนไขการใช้บริการ",
+      "screenshot": "-terms-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/privacy-policy",
+      "path": "/privacy-policy",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "นโยบายความเป็นส่วนตัว",
+      "screenshot": "-privacy-policy-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/assessment/101",
+      "path": "/assessment/101",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "แบบประเมินสุขภาพและการติดตามสำหรับบุคคลตัวอย่าง",
+      "screenshot": "-assessment-101-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/assessment-result",
+      "path": "/assessment-result",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "ส่งข้อมูลให้เจ้าหน้าที่สำเร็จ",
+      "screenshot": "-assessment-result-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/history",
+      "path": "/history/result",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "กรุณาดาวน์โหลด SUTH App",
+      "screenshot": "-history-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/history/result",
+      "path": "/history/result",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "กรุณาดาวน์โหลด SUTH App",
+      "screenshot": "-history-result-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/clinic-detail",
+      "path": "/clinic-detail",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "คลินิกปรับเปลี่ยนพฤติกรรม",
+      "screenshot": "-clinic-detail-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/403",
+      "path": "/403",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "คุณไม่มีสิทธิ์เข้าถึงหน้านี้",
+      "screenshot": "-403-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/404",
+      "path": "/404",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "ไม่พบหน้าที่ต้องการ",
+      "screenshot": "-404-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/500",
+      "path": "/500",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "ระบบขัดข้องชั่วคราว",
+      "screenshot": "-500-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/dashboard",
+      "path": "/admin/dashboard",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "แดชบอร์ด",
+      "screenshot": "-admin-dashboard-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/forms",
+      "path": "/admin/forms",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "จัดการฟอร์ม",
+      "screenshot": "-admin-forms-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/forms/create",
+      "path": "/admin/forms/create",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "แบบฟอร์มไม่มีชื่อ",
+      "screenshot": "-admin-forms-create-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/forms/edit/101",
+      "path": "/admin/forms/edit/101",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "แบบประเมินสุขภาพและการติดตามสำหรับบุคคลตัวอย่าง",
+      "screenshot": "-admin-forms-edit-101-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/schedule",
+      "path": "/admin/schedule",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "ตารางนัดหมาย",
+      "screenshot": "-admin-schedule-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/referrals",
+      "path": "/admin/referrals",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "ส่งต่อระหว่างหน่วยงาน",
+      "screenshot": "-admin-referrals-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/cases",
+      "path": "/admin/cases",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "กำลังโหลด...ทั่วไป",
+      "screenshot": "-admin-cases-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/roles",
+      "path": "/admin/roles",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "แม่แบบบทบาทและสิทธิ์",
+      "screenshot": "-admin-roles-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/users",
+      "path": "/admin/users",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "ผู้ดูแลระบบและเจ้าหน้าที่",
+      "screenshot": "-admin-users-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/members",
+      "path": "/admin/members",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "ผู้มารับบริการ",
+      "screenshot": "-admin-members-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/risk-cases",
+      "path": "/admin/risk-cases",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "เคสเสี่ยง: แบบประเมินสุขภาพและการติดตามสำหรับบุคคลตัวอย่างทั่วไป",
+      "screenshot": "-admin-risk-cases-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/banner",
+      "path": "/admin/banner",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "จัดการภาพแบนเนอร์",
+      "screenshot": "-admin-banner-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/clinics",
+      "path": "/admin/clinics",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "จัดการคลินิก",
+      "screenshot": "-admin-clinics-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/help-center",
+      "path": "/admin/help-center",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "จัดการศูนย์ช่วยเหลือ (FAQ)",
+      "screenshot": "-admin-help-center-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/organizations",
+      "path": "/admin/organizations",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "หน่วยงานหลักและหน่วยงานย่อย",
+      "screenshot": "-admin-organizations-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/school",
+      "path": "/admin/school",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "screenshot": "-admin-school-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/school/students",
+      "path": "/admin/school/students",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "screenshot": "-admin-school-students-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/school/students/import",
+      "path": "/admin/school/students/import",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "นำเข้านักเรียนจาก Excel / CSV",
+      "screenshot": "-admin-school-students-import-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/school/teachers",
+      "path": "/admin/school/teachers",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "รายชื่อครู",
+      "screenshot": "-admin-school-teachers-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/school/types",
+      "path": "/admin/school/types",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "screenshot": "-admin-school-types-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/master-data",
+      "path": "/admin/master-data",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "จัดการข้อมูลหลัก",
+      "screenshot": "-admin-master-data-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/school/roles",
+      "path": "/admin/school/roles",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "บทบาทและสิทธิ์โรงเรียน",
+      "screenshot": "-admin-school-roles-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/school/workflows",
+      "path": "/admin/school/workflows",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "screenshot": "-admin-school-workflows-mobile.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/profile",
+      "path": "/admin/profile",
+      "width": 390,
+      "documentWidth": 390,
+      "brand": "#f47932",
+      "title": "ข้อมูลส่วนตัว",
+      "screenshot": "-admin-profile-mobile.png",
+      "violations": []
+    }
+  ],
+  "errors": []
+}

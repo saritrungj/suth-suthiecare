@@ -1,3 +1,6 @@
+import { toDisplayText } from '../../utils/textPresentation.js';
+import {ExportButton} from "../ExcelExport";
+import CaseActivity, { responseActivity, logActivity } from "./CaseActivity";
 import { exportCaseData } from "../../services/api";
 import "./CaseDetailModal.css";
 import TemplateManagerModal from "./casedetail-childrens/TemplateManagerModal";
@@ -50,8 +53,6 @@ import {
 } from "../../services/api";
 
 import {
-  FaRegEdit,
-  FaHistory,
   FaTrashAlt,
   FaChevronDown,
   FaCheck,
@@ -61,8 +62,8 @@ import {
   FaPrint,
   FaClipboardList,
   FaCheckSquare,
-  FaUserCircle,
 } from "react-icons/fa";
+import { FiEdit3, FiUser, FiCornerUpRight, FiClock } from "react-icons/fi";
 
 const SYSTEM_STATUSES = [
   "รอติดต่อ (รอดำเนินการ)",
@@ -120,6 +121,7 @@ export default function CaseDetailModal({
   const [activeTab, setActiveTab] = useState("action");
 
   const [historyLogs, setHistoryLogs] = useState([]);
+  const [latestActivity, setLatestActivity] = useState(responseActivity(data));
 
   const [isManagingStatus, setIsManagingStatus] = useState(false);
   const [statusOptions, setStatusOptions] = useState([]);
@@ -520,6 +522,8 @@ export default function CaseDetailModal({
       const targetId = masterCaseInfo ? masterCaseInfo.id : data.id;
       const targetType = masterCaseInfo ? "master" : "response";
       const logsRes = await getCaseLogs(targetId, targetType);
+      const activity = logActivity(logsRes.data, data);
+      setLatestActivity(activity);
       setHistoryLogs(
         logsRes.data.map((log) => ({
           id: log.id,
@@ -529,9 +533,10 @@ export default function CaseDetailModal({
           detail: log.detail,
         })),
       );
-      const apptRes = await getCaseAppointments(targetId, targetType);
+      const apptRes = await getCaseAppointments(targetId, targetType).catch(() => ({ data: [] }));
       setAppointmentNo(apptRes.data.length + 1);
       await fetchServicesList();
+      return activity;
     } catch (err) {}
   }, [data?.id, masterCaseInfo, fetchServicesList]);
 
@@ -701,15 +706,16 @@ export default function CaseDetailModal({
       setMasterCaseInfo({ ...masterCaseInfo, status: "Closed" });
       setStatus("ปิดเคสเรียบร้อย");
       setSavedStatus("ปิดเคสเรียบร้อย");
+      const latest_activity = await fetchData();
       if (onCaseUpdated)
         onCaseUpdated({
+          latest_activity,
           id: data.id,
           master_case_id: masterCaseInfo.id,
           status: "ปิดเคสเรียบร้อย",
           overall_risk: riskLevel,
           risk_level: data.risk_level,
         });
-      await fetchData();
     } catch (err) {
       Swal.fire({
         icon: "error",
@@ -866,16 +872,6 @@ export default function CaseDetailModal({
         setDynamicRisks(clearedDynamicRisks);
       }
 
-      if (onCaseUpdated)
-        onCaseUpdated({
-          id: data.id,
-          master_case_id: targetMasterId,
-          status: status,
-          overall_risk: riskLevel,
-          risk_level: data.risk_level,
-          staff_id: selectedStaff ? Number(selectedStaff) : null,
-        });
-
       if (hasNote) {
         const formattedNote = staffNote
           .split("\n")
@@ -929,7 +925,18 @@ export default function CaseDetailModal({
       setStaffNote("");
       setIsAppointing(false);
       setTempDate("");
-      await fetchData();
+      const latest_activity = await fetchData();
+      if (onCaseUpdated)
+        onCaseUpdated({
+          latest_activity,
+          id: data.id,
+          master_case_id: targetMasterId,
+          status: status,
+          overall_risk: riskLevel,
+          risk_level: data.risk_level,
+          staff_id: selectedStaff ? Number(selectedStaff) : null,
+        });
+
       setActiveTab("history");
       Swal.fire({
         icon: "success",
@@ -1523,7 +1530,7 @@ export default function CaseDetailModal({
       steps={
         <ol className="cw-steps" aria-label="ขั้นตอนการติดตามเคส">
           {steps.map((step, index) => (
-            <li key={step.id}>
+            <li key={step.id} className={step.done ? "is-complete" : undefined}>
               <button
                 type="button"
                 className={`cw-step ${step.done ? "is-done" : ""} ${currentStep === step.id ? "is-current" : ""} ${step.id === "contact" && contactAttempted ? "is-attempted" : ""}`}
@@ -1543,7 +1550,7 @@ export default function CaseDetailModal({
                   )}
                 </span>
                 <span className="cw-step-text">
-                  {step.label}
+                  {toDisplayText(step.label)}
                   {step.id === "contact" && contactAttempted && (
                     <small>ติดต่อไม่ได้</small>
                   )}
@@ -1557,13 +1564,13 @@ export default function CaseDetailModal({
         </ol>
       }
       tabs={[
-        { id: "action", label: "ติดตาม", icon: FaRegEdit },
-        { id: "profile", label: "ข้อมูล", icon: FaUserCircle },
-        { id: "referrals", label: "ส่งต่อ", icon: FaShareSquare },
+        { id: "action", label: "ติดตาม", icon: FiEdit3 },
+        { id: "profile", label: "ข้อมูล", icon: FiUser },
+        { id: "referrals", label: "ส่งต่อ", icon: FiCornerUpRight },
         {
           id: "history",
           label: "ประวัติ",
-          icon: FaHistory,
+          icon: FiClock,
           count: historyLogs.length,
         },
       ]}
@@ -1611,6 +1618,8 @@ export default function CaseDetailModal({
         </>
       }
     >
+      <ExportButton sources={[{resource:"case",id:data.id}]} title="รายละเอียดเคส" />
+      <CaseActivity full activity={latestActivity} />
       {tabPanels[activeTab]}
     </CaseDrawer>
   );

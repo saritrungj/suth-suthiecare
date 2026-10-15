@@ -1,0 +1,66 @@
+[
+  {
+    "route": "dashboard",
+    "violations": []
+  },
+  {
+    "route": "cases",
+    "violations": []
+  },
+  {
+    "route": "risk-cases",
+    "violations": []
+  },
+  {
+    "route": "schedule",
+    "violations": []
+  },
+  {
+    "route": "referrals",
+    "violations": []
+  },
+  {
+    "route": "forms",
+    "violations": []
+  },
+  {
+    "route": "clinics",
+    "violations": []
+  },
+  {
+    "route": "members",
+    "violations": []
+  },
+  {
+    "route": "help-center",
+    "violations": []
+  },
+  {
+    "route": "master-data",
+    "violations": []
+  },
+  {
+    "route": "organizations",
+    "violations": []
+  },
+  {
+    "route": "users",
+    "violations": []
+  },
+  {
+    "route": "roles",
+    "violations": []
+  },
+  {
+    "route": "banner",
+    "violations": []
+  },
+  {
+    "route": "profile",
+    "violations": []
+  },
+  {
+    "route": "school/types",
+    "violations": []
+  }
+]

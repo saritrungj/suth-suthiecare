@@ -1,0 +1,180 @@
+/* Admin-only color roles. Public assessments and author-defined form themes
+   keep their own palette. Clinical risk/status tokens retain their meaning. */
+.admin-shell {
+  /* Remap the older shared button/filter contracts inside admin as well. */
+  --suth-brand-orange: var(--suth-action);
+  --suth-brand-orange-hover: var(--suth-action-hover);
+  --suth-filter-muted: var(--suth-muted);
+  --suth-filter-focus: var(--suth-focus);
+  --suth-admin-canvas: var(--suth-canvas);
+  --suth-admin-band: var(--suth-surface-2);
+  --suth-admin-band-ink: var(--suth-ink-2);
+  --suth-admin-nav: #a9430b;
+  --suth-admin-nav-hover: #8b360a;
+  --suth-admin-nav-ink: #fffaf6;
+  --suth-admin-blue-line: #bad5e8;
+  color: var(--suth-ink);
+  background: var(--suth-admin-canvas);
+  accent-color: var(--suth-action);
+  caret-color: var(--suth-action);
+}
+
+.admin-shell-content { min-height: 0; }
+.admin-shell ::selection { background: var(--suth-tint-strong); color: var(--suth-action-hover); }
+.admin-shell :focus-visible { outline: 3px solid var(--suth-focus); outline-offset: 3px; }
+.admin-shell :is(input, textarea)::placeholder { color: var(--suth-muted); opacity: 1; }
+.admin-shell :is(.menu, .admin-shell-content, .sch-wrapper, .cw-wrapper, .org-wrapper) {
+  scrollbar-color: var(--suth-control-line) transparent;
+  scrollbar-width: thin;
+}
+
+/* A readable orange anchor for wayfinding; selection uses brand apricot.
+   Important declarations override the incumbent mobile sidebar declarations. */
+.admin-shell .sidebar { background: var(--suth-admin-nav) !important; }
+.admin-shell .sidebar :is(.menu-item, .submenu-item, .menu-header-label, .menu-header-hint) {
+  color: var(--suth-admin-nav-ink) !important;
+}
+.admin-shell .sidebar .label { color: inherit !important; }
+.admin-shell .sidebar :is(.menu-item, .submenu-item):hover {
+  background: var(--suth-admin-nav-hover) !important;
+}
+.admin-shell .sidebar :is(.menu-item, .submenu-item).active {
+  background: var(--suth-tint-strong) !important;
+  color: var(--suth-action-hover) !important;
+  box-shadow: none !important;
+}
+.admin-shell .sidebar .submenu-item.active .sub-icon { color: inherit; }
+.admin-shell .sidebar :is(button, a):focus-visible {
+  outline: 3px solid var(--suth-admin-nav-ink);
+  outline-offset: -3px;
+}
+.admin-shell .sidebar .organization-switcher { background: var(--suth-admin-nav-hover); }
+.admin-shell .sidebar .organization-switcher label { color: var(--suth-admin-nav-ink); }
+.admin-shell .sidebar .organization-switcher label::before { box-shadow: none; }
+.admin-shell .mobile-header-bar { border-bottom: 1px solid var(--suth-tint-line); }
+.admin-shell .mobile-hamburger-btn { color: var(--suth-action); }
+
+/* Shared canvas and page headings across hospital, school and system tools. */
+.admin-shell :is(.admin-content, .sch-wrapper, .cw-wrapper, .org-wrapper,
+  .sum-user-wrapper, .srp-roles-permissions-page, .profile-page,
+  .cm-main, .hc-main, .bm-page, .fm-main-content, .apt-main-content,
+  .admin-wrapper2, .main-content, .sfb-builder-container) {
+  background: var(--suth-admin-canvas) !important;
+}
+.admin-shell :is(.sch-header h1, .cw-header h1, .org-header h1,
+  .sum-user-header h1, .srp-roles-header-section h1, .profile-header h1,
+  .content-header h1, .cm-header-info h1, .hc-header-info h1,
+  .bm-title, .fm-content-header :is(h1,h2), .apt-title, .rc-inside-title) {
+  color: var(--suth-ink) !important;
+}
+.admin-shell :is(.select-label, .date-separator-premium, .rc-header__sub,
+  .bm-empty-text, .bm-empty) { color: var(--suth-muted); }
+.admin-shell .rc-count-badge {
+  color: var(--suth-danger);
+  background: var(--suth-danger-tint);
+  box-shadow: none;
+}
+.admin-shell .fm-add-empty-card { border-color: var(--suth-info); }
+.admin-shell .fm-add-empty-card :is(p, .fm-plus-icon) { color: var(--suth-info); }
+.admin-shell .apt-view-btn.active {
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
+}
+.admin-shell :is(.apt-container, .apt-title, .apt-view-toggle, .apt-filter-section, .apt-calendar-box) {
+  opacity: 1;
+  animation: none;
+}
+.admin-shell :is(.fm-content-header, .cm-header, .hc-header, .bm-header) {
+  border-left: 0;
+  border-bottom: 1px solid var(--suth-tint-line);
+  box-shadow: none;
+}
+
+/* Tint only the table heading band. Risk, status and user chart colors stay
+   distinct, so an orange table header never implies a patient's risk level. */
+.admin-shell :is(.sch-table, .org-table, .sum-table-responsive,
+  .cm-table, .hc-table, .bm-table-card, .cw-table, .risk-container) thead th {
+  background: var(--suth-admin-band);
+  color: var(--suth-admin-band-ink);
+  border-bottom-color: var(--suth-tint-line);
+}
+.admin-shell :is(.cm-table, .hc-table) thead th {
+  background: var(--suth-admin-band) !important;
+  color: var(--suth-admin-band-ink) !important;
+}
+.admin-shell :is(.sch-table, .org-table, .sum-table-responsive,
+  .cm-table, .hc-table, .bm-table-card, .cw-table) tbody tr:hover > td {
+  background: var(--suth-surface-hover);
+}
+.admin-shell :is(.sch-table, .org-table, .cw-table, .sum-table-responsive) {
+  font-variant-numeric: tabular-nums;
+}
+
+/* One selection language across navigation, roles and filters. */
+.admin-shell :is(.sch-management-nav a[aria-current="page"],
+  .sum-user-tabs button.active, .srp-role-item.active) {
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
+  border-color: var(--suth-tint-line);
+}
+.admin-shell .sch-management-nav a:hover {
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
+}
+.admin-shell .sum-user-tabs button.active strong {
+  background: var(--suth-action);
+  color: var(--suth-on-action);
+}
+.admin-shell :is(.sch-badge.status-active, .hc-status-badge.active) {
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
+}
+.admin-shell :is(.sch-role-guide, .master-note, .ref-hint) {
+  padding: 12px 16px;
+  border-radius: var(--suth-radius);
+  background: var(--suth-info-tint);
+  color: var(--suth-info);
+}
+.admin-shell :is(.sch-header h1, .org-header h1, .cw-header h1,
+  .profile-card h2) > svg { color: var(--suth-action-ink); }
+.admin-shell :is(.sch-btn-secondary, .org-btn-secondary, .cw-btn-secondary) > svg {
+  color: var(--suth-info);
+}
+
+/* Solid actions always use the AA orange, including legacy page buttons. */
+.admin-shell :is(.sum-add-btn, .srp-create-btn, .bm-add-btn, .cm-btn-add,
+  .cm-btn-save, .hc-btn-add, .hc-btn-save, .fm-btn-add-form,
+  .sfb-btn-save, .sfb-btn-save-modal, .scd-save-btn, .sum-member-save) {
+  background: var(--suth-action);
+  color: var(--suth-on-action);
+  border-color: var(--suth-action);
+  box-shadow: none;
+}
+.admin-shell :is(.sum-add-btn, .srp-create-btn, .bm-add-btn, .cm-btn-add,
+  .cm-btn-save, .hc-btn-add, .hc-btn-save, .fm-btn-add-form,
+  .sfb-btn-save, .sfb-btn-save-modal, .scd-save-btn, .sum-member-save):hover:not(:disabled) {
+  background: var(--suth-action-hover);
+  color: var(--suth-on-action);
+}
+.admin-shell .excel-export-toolbar {
+  background: var(--suth-surface-hover);
+  border-bottom-color: var(--suth-tint-line);
+}
+.admin-shell .excel-export button {
+  background: var(--suth-info-tint);
+  color: var(--suth-info);
+  border-color: var(--suth-admin-blue-line);
+}
+.admin-shell .excel-export button:hover:not(:disabled) {
+  background: var(--suth-info);
+  color: var(--suth-on-action);
+  border-color: var(--suth-info);
+}
+
+@media (max-width: 760px) {
+  .admin-shell :is(.sum-add-btn, .srp-create-btn, .bm-add-btn, .cm-btn-add,
+    .hc-btn-add, .fm-btn-add-form, .sfb-btn-back, .sch-management-nav a,
+    .sidebar .submenu-item) { min-height: 44px; }
+  .admin-shell .sch-management-nav { gap: 6px; }
+  .admin-shell .sch-management-nav a { flex: 1 1 auto; justify-content: center; }
+}

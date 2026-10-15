@@ -1,3 +1,4 @@
+import { toDisplayText } from '../../../utils/textPresentation.js';
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -53,9 +54,6 @@ export default function ClinicDetail() {
 
   const graphData = clinicType === "behavior" ? clinicBMI : riskRecords;
 
-  console.log("riskRecords", riskRecords);
-  console.log("graphData", graphData);
-  console.log("clinicBMI", clinicBMI);
   const clinicNameMap = {
     en: {
       behavior: "Behavioral Clinic",
@@ -89,10 +87,6 @@ export default function ClinicDetail() {
       ? "Comprehensive health care"
       : "ดูแลสุขภาพอย่างครบวงจร");
   const clinicName = clinicNameMap[currentLang][clinicType] || clinicType;
-  console.log("clinicType", clinicType);
-  console.log("clinicBMI", clinicBMI);
-  console.log("clinicTimeline", clinicTimeline);
-  console.log("advice", advice);
 
   const latestRecord = graphData[graphData.length - 1];
   const firstRecord = graphData[0];
@@ -123,7 +117,7 @@ export default function ClinicDetail() {
           : "ไม่มีการเปลี่ยนแปลง";
 
   const latestLabel =
-    clinicType === "behavior"
+    !graphData.length ? (currentLang === "en" ? "No assessment yet" : "ยังไม่มีผลประเมิน") : clinicType === "behavior"
       ? latestValue < 18.5
         ? currentLang === "en"
           ? "Underweight"
@@ -159,13 +153,13 @@ export default function ClinicDetail() {
           <div className="hero-health-status">
             <div className="hero-main-value">
               {clinicType === "behavior"
-                ? `${currentLang === "en" ? "Current BMI" : "BMI ปัจจุบัน"} ${latestValue || "-"}`
-                : `${currentLang === "en" ? "Latest Score" : "คะแนนล่าสุด"} ${latestValue || "-"}`}
+                ? `${currentLang === "en" ? "Current BMI" : "BMI ปัจจุบัน"} ${graphData.length ? latestValue : "-"}`
+                : `${currentLang === "en" ? "Latest Score" : "คะแนนล่าสุด"} ${graphData.length ? latestValue : "-"}`}
 
               <span>({latestLabel})</span>
             </div>
 
-            <div className="hero-trend">{trendText}</div>
+            <div className="hero-trend">{graphData.length > 1 ? trendText : currentLang === "en" ? "More assessments are needed to show a trend" : "ต้องมีผลประเมินเพิ่มเติมเพื่อแสดงแนวโน้ม"}</div>
           </div>
         </div>
       </div>
@@ -199,6 +193,7 @@ export default function ClinicDetail() {
           </div>
 
           <div className="hr-trend-chart">
+            {!graphData.length && <p className="empty-timeline">{currentLang === "en" ? "No assessment data yet" : "ยังไม่มีข้อมูลผลประเมิน"}</p>}
             {graphData.map((item, i) => {
               const value =
                 clinicType === "behavior"
@@ -214,7 +209,7 @@ export default function ClinicDetail() {
                   <div
                     className="hr-trend-bar"
                     style={{
-                      height: `${heightPct}%`,
+                      height: `${Math.max(heightPct * 1.8, 4)}px`,
                       background: item.color || "#22c55e",
                     }}
                   >
@@ -223,7 +218,7 @@ export default function ClinicDetail() {
 
                   <div className="hr-trend-date">
                     {item.date
-                      ? new Date(item.date).toLocaleDateString("th-TH", {
+                      ? new Date(item.date).toLocaleDateString(currentLang === "en" ? "en-GB" : "th-TH", {
                           month: "short",
                           day: "numeric",
                         })
@@ -243,7 +238,7 @@ export default function ClinicDetail() {
                         color: item.color || "#22c55e",
                       }}
                     >
-                      {item.label}
+                      {toDisplayText(item.label)}
                     </div>
                   )}
                 </div>
@@ -318,17 +313,17 @@ export default function ClinicDetail() {
 
               <div className="timeline-content">
                 <div className="timeline-title">
-                  {item.title || item.form_title}
+                  {toDisplayText(item.title || item.form_title)}
                 </div>
 
                 <div className="timeline-date">
                   {new Date(item.date || item.submitted_at).toLocaleDateString(
-                    "th-TH",
+                    currentLang === "en" ? "en-GB" : "th-TH",
                   )}
                 </div>
               </div>
 
-              <button className="timeline-btn">
+              <button className="timeline-btn" onClick={() => navigate("/history/result", { state: { expandResponseId: item.case_id || item.response_id || item.id } })}>
                 {currentLang === "en" ? "View More" : "ดูเพิ่มเติม"}
               </button>
             </div>

@@ -1,4 +1,7 @@
-import PdpaOrganizationSettings from "../../components/PdpaOrganizationSettings";
+import SearchableSelect from '../../components/SearchableSelect';
+import { toDisplayText } from '../../utils/textPresentation.js';
+import { usePageExport } from "../../components/ExcelExport";
+import OrganizationServiceSettings from "../../components/OrganizationServiceSettings";
 import OrganizationRolePermissions from "../../components/OrganizationRolePermissions";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -44,6 +47,7 @@ export default function OrganizationManagement() {
   const [roles, setRoles] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   // "view" an existing organization, or create a "main" one or a "unit".
+  usePageExport({title:"หน่วยงาน",sources:[{resource:"organizations"},...(selectedId?[{resource:"organization_members",id:selectedId}]:[])]});
   const [mode, setMode] = useState("view");
   const [form, setForm] = useState(blankForm);
   const [members, setMembers] = useState([]);
@@ -411,7 +415,7 @@ export default function OrganizationManagement() {
                   {isUnit && (
                     <label>
                       อยู่ภายใต้หน่วยงานหลัก
-                      <select
+                      <SearchableSelect
                         required={
                           mode === "create-unit" || Boolean(selected?.parent_id)
                         }
@@ -436,7 +440,7 @@ export default function OrganizationManagement() {
                               {main.name}
                             </option>
                           ))}
-                      </select>
+                      </SearchableSelect>
                     </label>
                   )}
                   <label
@@ -488,7 +492,7 @@ export default function OrganizationManagement() {
                             }
                           />
                           <span>
-                            <strong>{label}</strong>
+                            <strong>{toDisplayText(label)}</strong>
                             <small>{ORG_TYPE_HINTS[value]}</small>
                           </span>
                         </label>
@@ -605,11 +609,10 @@ export default function OrganizationManagement() {
               />
             )}
             {mode === "view" && selected?.kind === "unit" && (
-              <PdpaOrganizationSettings
+              <OrganizationServiceSettings
                 key={selected.id}
                 organization={selected}
                 organizations={organizations}
-                members={members}
               />
             )}
           </section>
@@ -722,7 +725,7 @@ function MemberSection({
           <div className="org-add-panel-footer">
             <label className="org-field">
               <span>บทบาทในหน่วยงานนี้</span>
-              <select
+              <SearchableSelect
                 required
                 value={roleId}
                 onChange={(event) => setRoleId(event.target.value)}
@@ -733,7 +736,7 @@ function MemberSection({
                     {role.name}
                   </option>
                 ))}
-              </select>
+              </SearchableSelect>
             </label>
             <div className="org-add-panel-actions">
               <button
@@ -789,7 +792,7 @@ function MemberSection({
                   {member.email ? ` · ${member.email}` : ""}
                 </small>
               </span>
-              <select
+              <SearchableSelect
                 className="org-role-select"
                 aria-label={`บทบาทของ ${member.username}`}
                 value={member.role_id}
@@ -802,7 +805,7 @@ function MemberSection({
                     {role.name}
                   </option>
                 ))}
-              </select>
+              </SearchableSelect>
               <button
                 type="button"
                 className="org-icon-btn org-icon-btn--danger"

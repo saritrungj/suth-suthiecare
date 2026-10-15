@@ -13,7 +13,7 @@ const {
 } = require("../utils/decryptCaseData");
 const safeDecrypt = (val) => decrypt(val) || val;
 const isDateInput = (value) =>
-  typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
+  typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0,10) === value;
 
 function addDateRange(sql, params, column, startDate, endDate) {
   if (isDateInput(startDate)) {
@@ -53,124 +53,75 @@ router.get("/dashboard/summary", verifyToken, async (req, res) => {
   }
 });
 
-// 3. ดึงการตั้งค่าหน้า Dashboard
-router.get("/dashboard-settings/settings", verifyToken, async (req, res) => {
-  try {
-    const role_id = 1; // Dashboard ส่วนกลางสำหรับ Admin
-    const [rows] = await db.query(
-      "SELECT * FROM dashboard_settings WHERE role_id = ?",
-      [role_id],
-    );
-    res.json(rows[0] || { last_selected_form_id: null, active_charts: "[]" });
-  } catch (err) {
-    console.error(
-      "GET Dashboard Settings Error:",
-      require("../utils/safeError").safeError(err),
-    );
-    res.status(500).json({ error: "เกิดข้อผิดพลาดจากฐานข้อมูล" });
-  }
+// Chart workspaces are isolated by organization inside the existing settings row.
+const {readWorkspace,mergeWorkspace}=require('../utils/dashboardSettings');
+const {normalizeStoredAnswer}=require('../utils/storedAnswer');
+const parseQuestions=value=>typeof value==='string'?JSON.parse(value):value||[];
+const flattenQuestions=items=>items.flatMap(q=>[q,...flattenQuestions(q.questions||[]),...flattenQuestions(q.subQuestions||[])]);
+router.get('/dashboard/forms',verifyToken,async(req,res)=>{
+  const params=[];
+  let sql='SELECT id,title,status,questions FROM forms WHERE organization_id IS NOT NULL';
+  if(req.organizationContext!=='all'){sql+=' AND organization_id=?';params.push(req.organizationContext);}
+  const [rows]=await db.query(sql+' ORDER BY id DESC',params);
+  res.json(rows.map(f=>({...f,questions:parseQuestions(f.questions)})));
 });
-
-// 4. บันทึกการตั้งค่าหน้า Dashboard
-router.post("/dashboard-settings/settings", verifyToken, async (req, res) => {
-  try {
-    const role_id = 1;
-    const { formId, charts } = req.body;
-
-    const sql = `
-            INSERT INTO dashboard_settings (role_id, last_selected_form_id, active_charts)
-            VALUES (?, ?, ?)
-            ON DUPLICATE KEY UPDATE
-                last_selected_form_id = VALUES(last_selected_form_id),
-                active_charts = VALUES(active_charts)
-        `;
-
-    await db.query(sql, [role_id, formId || null, JSON.stringify(charts)]);
-    res.json({ message: "บันทึกการตั้งค่า Dashboard สำเร็จ!" });
-  } catch (err) {
-    console.error(
-      "POST Dashboard Settings Error:",
-      require("../utils/safeError").safeError(err),
-    );
-    res.status(500).json({ error: "เกิดข้อผิดพลาดในการบันทึกข้อมูล" });
-  }
+router.get('/dashboard-settings/settings',verifyToken,async(req,res)=>{
+  if(typeof req.organizationContext!=='number')return res.json({last_selected_form_id:null,active_charts:{}});
+  const [rows]=await db.query('SELECT * FROM dashboard_settings WHERE role_id=?',[1]);
+  res.json(readWorkspace(rows[0],req.organizationContext));
 });
-
-// 5. ข้อมูลกราฟ (Chart) ดึงคำตอบจริงจาก DB
-router.get("/charts/:formId/:questionId", verifyToken, async (req, res) => {
-  try {
-    const { formId, questionId } = req.params;
-    const { startDate, endDate } = req.query;
-
-    let sql = `
-      SELECT fa.response_id, fa.question_title, fa.answer_value, fr.summary_data, fr.organization_id
-      FROM form_answers fa
-      JOIN form_responses fr ON fa.response_id = fr.id
-      WHERE fa.form_id = ? AND fa.question_id = ?
-    `;
-    const params = [formId, questionId];
-    const scope = organizationWhere("fr.organization_id", req);
-    sql += scope.sql;
-    params.push(...scope.params);
-
-    sql = addDateRange(sql, params, "fr.submitted_at", startDate, endDate);
-
-    const [rows] = await db.query(sql, params);
-    // ✅ รวมคำตอบต่อ 1 คนก่อน
-    const grouped = {};
-
-    rows.forEach((r) => {
-      // ตรวจสอบว่า summary_data มีค่ามาจริงไหม
-      if (!grouped[r.response_id]) {
-        // 🟢 จุดที่ 1: ถอดรหัส summary_data ก่อนเก็บลงใน Object
-        const decryptedSummary = decryptSummaryData(
-          r.summary_data,
-          safeDecrypt,
-          r.organization_id,
-        );
-
-        grouped[r.response_id] = {
-          answers: [],
-          summary: decryptedSummary, // เก็บค่าที่ถอดรหัสแล้ว
-        };
-      }
-      const value = require("../utils/storedAnswer").normalizeStoredAnswer(
-        r.answer_value,
-        r.question_title,
-        safeDecrypt,
-        r.organization_id,
-      );
-
-      grouped[r.response_id].answers.push(value);
-    });
-
-    const result = Object.values(grouped).map((data) => {
-      const firstAnswer = data.answers[0];
-      let label = "";
-
-      // 1. จัดการข้อมูลที่เป็น Array (เช่น Checkbox)
-      if (typeof firstAnswer === "object" && firstAnswer !== null) {
-        label = "กลุ่มข้อมูลพฤติกรรม/สรุปผล";
-      } else {
-        label = firstAnswer ? String(firstAnswer).trim() : "ไม่ระบุ";
-      }
-
-      return {
-        name: label,
-        value: 1,
-        summary_data: data.summary,
-      };
-    });
-
-    // ส่งผลลัพธ์กลับไปเป็น Array ของ Object ที่มี summary_data ติดไปด้วย
-    res.json(result);
-  } catch (err) {
-    console.error(
-      "Chart API Error:",
-      require("../utils/safeError").safeError(err),
-    );
-    res.status(500).json({ message: "error" });
+router.post('/dashboard-settings/settings',verifyToken,async(req,res)=>{
+  if(typeof req.organizationContext!=='number')return res.status(422).json({message:'กรุณาเลือกหน่วยงานก่อนบันทึกกราฟ'});
+  const {formId,charts}=req.body||{};
+  if(!charts||typeof charts!=='object'||Array.isArray(charts)||Object.keys(charts).length>200)return res.status(422).json({message:'การตั้งค่ากราฟไม่ถูกต้อง'});
+  const types=['pie','bar','donut','line','horizontal','table'];
+  const clean={};
+  const chartIds=new Set();
+  for(const [id,list] of Object.entries(charts)){
+    if(!/^\d+$/.test(id)||!Array.isArray(list)||list.length>100)return res.status(422).json({message:'ข้อมูลแบบฟอร์มหรือกราฟไม่ถูกต้อง'});
+    // Empty legacy groups carry no chart definitions and need no form access.
+    if(!list.length)continue;
+    const [[form]]=await db.query('SELECT questions FROM forms WHERE id=? AND organization_id=?',[id,req.organizationContext]);
+    if(!form)return res.status(422).json({message:'ไม่พบแบบฟอร์มในหน่วยงานที่เลือก'});
+    const ids=new Set(flattenQuestions(parseQuestions(form.questions)).map(q=>String(q.id)));
+    clean[id]=[];
+    for(const c of list){
+      if(c && chartIds.has(c.id))return res.status(422).json({message:'รหัสกราฟซ้ำ กรุณาโหลดหน้าใหม่'});
+      if(!c||typeof c.id!=='string'||!c.id||typeof c.title!=='string'||!c.title.trim()||c.title.length>160||!types.includes(c.type)||!ids.has(String(c.question))||!['answer','result'].includes(c.mode||'answer')||!['count','sum','average'].includes(c.aggregation||'count')||!['desc','asc','label','original'].includes(c.sort||'desc')||!['','day','month'].includes(c.groupBy||''))return res.status(422).json({message:'รายละเอียดกราฟไม่ถูกต้อง กรุณาตรวจสอบคำถามและรูปแบบ'});
+      if((c.mode==='result'&&['sum','average'].includes(c.aggregation))||(['pie','donut'].includes(c.type)&&['sum','average'].includes(c.aggregation)))return res.status(422).json({message:'วิธีคำนวณไม่เหมาะกับรูปแบบกราฟ'});
+      clean[id].push({id:c.id,title:c.title.trim(),question:String(c.question),formId:id,type:c.type,mode:c.mode||'answer',aggregation:c.aggregation||'count',sort:c.sort||'desc',includeEmpty:Boolean(c.includeEmpty),answerPath:typeof c.answerPath==='string'?c.answerPath.slice(0,200):'',position:Number.isSafeInteger(c.position)?c.position:0,groupBy:c.groupBy||''});
+      chartIds.add(c.id);
+    }
   }
+  const connection=await db.getConnection();
+  try{
+    await connection.beginTransaction();
+    await connection.query('INSERT IGNORE INTO dashboard_settings (role_id,organization_id,last_selected_form_id,active_charts) VALUES (?,?,NULL,?)',[1,req.organizationContext,'{}']);
+    const [rows]=await connection.query('SELECT * FROM dashboard_settings WHERE role_id=? FOR UPDATE',[1]);
+    const merged=mergeWorkspace(rows[0],req.organizationContext,{last_selected_form_id:formId||null,active_charts:clean});
+    await connection.query('UPDATE dashboard_settings SET active_charts=? WHERE role_id=?',[JSON.stringify(merged),1]);
+    await connection.commit();res.json({message:'บันทึกกราฟสำเร็จ'});
+  }catch(error){await connection.rollback();throw error;}finally{connection.release();}
+});
+router.get('/charts/:formId/:questionId',verifyToken,async(req,res)=>{
+  const {formId,questionId}=req.params,{startDate,endDate}=req.query;
+  if((startDate&&!isDateInput(startDate))||(endDate&&!isDateInput(endDate))||(startDate&&endDate&&startDate>endDate))return res.status(422).json({message:'ช่วงวันที่ไม่ถูกต้อง'});
+  const formParams=[formId];let formSql='SELECT questions FROM forms WHERE id=?';
+  if(req.organizationContext!=='all'){formSql+=' AND organization_id=?';formParams.push(req.organizationContext);}
+  const [[form]]=await db.query(formSql,formParams);
+  if(!form||!flattenQuestions(parseQuestions(form.questions)).some(q=>String(q.id)===questionId))return res.status(404).json({message:'ไม่พบแบบฟอร์มหรือคำถามในขอบเขตสิทธิ์'});
+  let sql=`SELECT fa.response_id,fa.question_title,fa.answer_value,fr.summary_data,fr.organization_id,DATE_FORMAT(fr.submitted_at,'%Y-%m-%d') AS submitted_date FROM form_answers fa JOIN form_responses fr ON fa.response_id=fr.id WHERE fa.form_id=? AND fr.form_id=? AND fa.question_id=?`;
+  const params=[formId,formId,questionId],scope=organizationWhere('fr.organization_id',req);sql+=scope.sql;params.push(...scope.params);
+  sql=addDateRange(sql,params,'fr.submitted_at',startDate,endDate);
+  const [rows]=await db.query(sql,params),grouped=new Map();
+  for(const row of rows){
+    const answer=normalizeStoredAnswer(row.answer_value,row.question_title,safeDecrypt,row.organization_id);
+    if(grouped.has(row.response_id))continue;
+    const summary=decryptSummaryData(row.summary_data,safeDecrypt,row.organization_id)||{};
+    const result=(summary.score_results||[]).find(r=>String(r.question_id??r.questionId??r.id)===questionId);
+    grouped.set(row.response_id,{answer,name:answer,value:1,submitted_date:row.submitted_date,result:result?.label||summary[`${questionId}_label`]||summary[`${questionId}_result`]||null});
+  }
+  res.set('Cache-Control','no-store');res.json([...grouped.values()]);
 });
 
 // ==========================================
@@ -419,7 +370,7 @@ router.get("/dashboard/recent", verifyToken, async (req, res) => {
 
     const decryptedRows = rows.map((r) => decryptCaseResponse(r, safeDecrypt));
 
-    res.json(decryptedRows);
+    res.json(await require("../services/latestActivity").attachCaseActivities(db, decryptedRows));
   } catch (err) {
     console.error(
       "Dashboard Recent Error:",

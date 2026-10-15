@@ -1,3 +1,7 @@
+import SearchableSelect from '../../components/SearchableSelect';
+import { toDisplayText } from '../../utils/textPresentation.js';
+import MasterSelect, {useMasterOptions} from "../../components/MasterSelect";
+import { usePageExport } from "../../components/ExcelExport";
 import { useState, useEffect, useMemo } from "react";
 import CaseTable from "../../components/case/CaseTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
@@ -170,18 +174,18 @@ function getRiskLevel(summary_data) {
 function FilterSelect({ label, value, onChange, options, className = "" }) {
   return (
     <label className={`cw-field ${className}`}>
-      <span>{label}</span>
-      <select
+      <span>{toDisplayText(label)}</span>
+      <SearchableSelect
         className="cw-select"
         value={value}
         onChange={(event) => onChange(event.target.value)}
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
-            {opt.label}
+            {toDisplayText(opt.label)}
           </option>
         ))}
-      </select>
+      </SearchableSelect>
     </label>
   );
 }
@@ -200,6 +204,7 @@ const STATUS_ORDER = [
 const NEW_CASE = "__new";
 
 function CreateCaseModal({ onClose, onSave, clinics = [] }) {
+  const facultyOptions=useMasterOptions("faculty",FACULTIES.map((label,index)=>({code:String(index),label})));
   const [formData, setFormData] = useState({
     prefix: "",
     citizenId: "",
@@ -345,17 +350,13 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
               <div className="scd-form-group">
                 <label htmlFor="create-case-field-2">คำนำหน้า</label>
 
-                <select
+                <MasterSelect category="prefix" labelValues fallback={["นาย","นาง","นางสาว","อื่นๆ"].map(label=>({code:label,label}))}
                   id="create-case-field-2"
                   value={formData.prefix}
                   onChange={(e) => handleChange("prefix", e.target.value)}
                 >
                   <option value="">เลือกคำนำหน้า</option>
-                  <option value="นาย">นาย</option>
-                  <option value="นาง">นาง</option>
-                  <option value="นางสาว">นางสาว</option>
-                  <option value="อื่นๆ">อื่นๆ</option>
-                </select>
+                </MasterSelect>
               </div>
 
               <div className="scd-form-group">
@@ -385,25 +386,25 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
               <div className="scd-form-group">
                 <label htmlFor="create-case-field-5">สำนักวิชา</label>
 
-                <select
+                <SearchableSelect
                   id="create-case-field-5"
                   value={formData.faculty}
                   onChange={(e) => handleChange("faculty", e.target.value)}
                 >
                   <option value="">เลือกสำนักวิชา</option>
 
-                  {FACULTIES.map((f) => (
+                  {facultyOptions.map(({label:f}) => (
                     <option key={f} value={f}>
                       {f}
                     </option>
                   ))}
-                </select>
+                </SearchableSelect>
               </div>
 
               <div className="scd-form-group">
                 <label htmlFor="create-case-field-6">คลินิก</label>
 
-                <select
+                <SearchableSelect
                   id="create-case-field-6"
                   value={formData.clinicType}
                   onChange={(e) => handleChange("clinicType", e.target.value)}
@@ -414,13 +415,13 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
                       {c.name}
                     </option>
                   ))}
-                </select>
+                </SearchableSelect>
               </div>
 
               <div className="scd-form-group">
                 <label htmlFor="create-case-field-7">ระดับความเสี่ยง</label>
 
-                <select
+                <SearchableSelect
                   id="create-case-field-7"
                   value={formData.riskLevel}
                   onChange={(e) => handleChange("riskLevel", e.target.value)}
@@ -432,32 +433,13 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
                       </option>
                     ),
                   )}
-                </select>
+                </SearchableSelect>
               </div>
 
               <div className="scd-form-group">
                 <label htmlFor="create-case-field-8">สถานะเคส</label>
 
-                <select
-                  id="create-case-field-8"
-                  value={formData.status}
-                  onChange={(e) => handleChange("status", e.target.value)}
-                >
-                  <option value="รอติดต่อ (รอดำเนินการ)">
-                    รอติดต่อ (รอดำเนินการ)
-                  </option>
-                  <option value="นัดหมายสำเร็จ">นัดหมายสำเร็จ</option>
-                  <option value="ติดต่อไม่ได้ / ไม่รับสาย">
-                    ติดต่อไม่ได้ / ไม่รับสาย
-                  </option>
-                  <option value="ขอเลื่อนนัด">ขอเลื่อนนัด</option>
-                  <option value="อยู่ระหว่างติดตามต่อเนื่อง">
-                    อยู่ระหว่างติดตามต่อเนื่อง
-                  </option>
-                  <option value="ปฏิเสธบริการ">ปฏิเสธบริการ</option>
-                  <option value="ส่งต่อผู้เชี่ยวชาญ">ส่งต่อผู้เชี่ยวชาญ</option>
-                  <option value="ปิดเคสเรียบร้อย">ปิดเคสเรียบร้อย</option>
-                </select>
+                <MasterSelect category="case_statuses" labelValues id="create-case-field-8" value={formData.status} onChange={(e)=>handleChange("status",e.target.value)}><option value="">เลือกสถานะ</option></MasterSelect>
               </div>
             </div>
           </div>
@@ -766,6 +748,7 @@ export default function CaseData() {
     return prioritizeCases(rows, "master");
   }, [scopedData, statusFilter, tableViewMode]);
 
+  usePageExport({title:"ข้อมูลเคส",sources:[{resource:"responses",id:selectedFormId,filters:{startDate,endDate},ids:filteredData.map(r=>r.id)}],disabled:!selectedFormId||isLoading});
   useEffect(() => {
     if (
       statusFilter &&
@@ -917,7 +900,7 @@ export default function CaseData() {
           <div className="cw-header-text">
             <h1 title={pageTitle}>
               {pageTitle}
-              {cInfo && <span className="cw-clinic-tag">{cInfo.text}</span>}
+              {cInfo && <span className="cw-clinic-tag">{toDisplayText(cInfo.text)}</span>}
             </h1>
             <p>ระบบจัดการข้อมูลและติดตามเคสผู้รับบริการ</p>
           </div>
@@ -959,7 +942,7 @@ export default function CaseData() {
           {tableViewMode === "master" && statusCounts.length > 0 && isPhone && (
             <label className="cw-field cw-status-select">
               <span>สถานะเคส</span>
-              <select
+              <SearchableSelect
                 className="cw-select"
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value)}
@@ -970,7 +953,7 @@ export default function CaseData() {
                     {status === NEW_CASE ? "เคสใหม่" : status} ({count})
                   </option>
                 ))}
-              </select>
+              </SearchableSelect>
             </label>
           )}
           {tableViewMode === "master" &&
@@ -1070,8 +1053,7 @@ export default function CaseData() {
                 <fieldset className="cw-columns">
                   <legend>คอลัมน์ที่แสดง ({visibleColumns.length})</legend>
                   {allDynamicQuestions.map((q) => {
-                    const cleanTitle = q.title
-                      .replace(/<[^>]+>/g, "")
+                    const cleanTitle = toDisplayText(q.title)
                       .replace(/&nbsp;/gi, " ")
                       .replace(/\s+/g, " ")
                       .trim();

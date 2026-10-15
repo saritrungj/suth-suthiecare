@@ -1,0 +1,151 @@
+/* ================= MODAL ================= */
+
+.form-modal {
+  width: 720px;
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+/* ================= HEADER ================= */
+
+:where(.form-modal) .modal-header {
+  padding: 24px;
+  background: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+:where(.form-modal) .close-btn {
+  border: none;
+  background: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* ================= BODY ================= */
+
+:where(.form-modal) .form-body {
+  background: #fff1eb;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* ================= ROW ================= */
+
+:where(.form-modal) .form-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+:where(.form-modal) label {
+  font-size: 20px;
+  min-width: 180px;
+}
+
+/* ================= INPUT ================= */
+
+:where(.form-modal) input,
+:where(.form-modal) select {
+  border: none;
+  background: #d9d9d9;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 18px;
+}
+
+:where(.form-modal) .short-input {
+  width: 160px;
+  text-align: center;
+}
+
+:where(.form-modal) .date-input {
+  width: 260px;
+}
+
+/* ================= SERVICE TAG ================= */
+
+:where(.form-modal) .service-tags {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+:where(.form-modal) .tag {
+  border: none;
+  background: #000;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 14px;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+:where(.form-modal) .tag.active {
+  opacity: 1;
+}
+
+/* ================= RISK ================= */
+
+:where(.form-modal) .risk-group {
+  display: flex;
+  gap: 16px;
+}
+
+:where(.form-modal) .risk {
+  border: none;
+  padding: 12px 24px;
+  border-radius: 16px;
+  font-size: 18px;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+/* urgent */
+:where(.form-modal) .risk.urgent.active {
+  background: #ff6b6b;
+  color: white;
+  opacity: 1;
+}
+
+/* warning */
+:where(.form-modal) .risk.warning.active {
+  background: #f2cd6b;
+  color: white;
+  opacity: 1;
+}
+
+/* normal */
+:where(.form-modal) .risk.normal.active {
+  background: #8fd19e;
+  color: white;
+  opacity: 1;
+}
+
+/* ================= ACTION ================= */
+
+:where(.form-modal) .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 14px;
+  padding: 20px;
+  background: #ffffff;
+}
+
+:where(.form-modal) .form-actions button {
+  padding: 12px 22px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+}
+
+:where(.form-modal) .save {
+  background: #356768;
+  color: white;
+  font-weight: 600;
+}

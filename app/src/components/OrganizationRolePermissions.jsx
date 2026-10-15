@@ -1,3 +1,5 @@
+import SearchableSelect from './SearchableSelect';
+import { toDisplayText } from '../utils/textPresentation.js';
 import { useEffect, useRef, useState } from "react";
 import { FiRefreshCw, FiSave } from "react-icons/fi";
 import { PERMISSION_GROUPS } from "../permissions/permissionRegistry";
@@ -14,6 +16,7 @@ import {
 
 const actions = {
   view: "ดูข้อมูล",
+  manage: "จัดการ",
   create: "สร้าง",
   update: "แก้ไข",
   delete: "ลบ",
@@ -119,7 +122,7 @@ export default function OrganizationRolePermissions({ organization, roles }) {
       <div className="settings-toolbar">
         <label className="settings-field">
           บทบาทที่ตั้งสิทธิ์{" "}
-          <select
+          <SearchableSelect
             value={roleId}
             disabled={busy}
             onChange={(event) => setRoleId(event.target.value)}
@@ -130,7 +133,7 @@ export default function OrganizationRolePermissions({ organization, roles }) {
                 {role.name}
               </option>
             ))}
-          </select>
+          </SearchableSelect>
         </label>
         {state && (
           <span className="settings-count">
@@ -169,7 +172,7 @@ export default function OrganizationRolePermissions({ organization, roles }) {
                   disabled={busy}
                   className="settings-permission-row"
                 >
-                  <legend>{group.label}</legend>
+                  <legend>{toDisplayText(group.label)}</legend>
                   <div className="settings-permission-options">
                     {group.actions.map((action) => {
                       const key = `${group.id}.${action}`;

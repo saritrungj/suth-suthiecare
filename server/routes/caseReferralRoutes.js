@@ -111,6 +111,10 @@ router.get("/", async (req, res) => {
       : "source_organization_id";
   const params = [req.organizationContext];
   let where = ` WHERE r.${column}=?`;
+  if(req.schoolSubjectScope){
+    where += " AND (r.source_response_id IN (?) OR r.source_master_case_id IN (?))";
+    params.push(req.schoolSubjectScope.responseIds.length?req.schoolSubjectScope.responseIds:[0],req.schoolSubjectScope.masterIds.length?req.schoolSubjectScope.masterIds:[0]);
+  }
   if (req.query.status) {
     where += " AND r.status=?";
     params.push(req.query.status);

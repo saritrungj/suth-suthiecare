@@ -1,3 +1,6 @@
+import SearchableSelect from '../../../../components/SearchableSelect';
+import { toDisplayText } from '../../../../utils/textPresentation.js';
+import MasterSelect from "../../../../components/MasterSelect";
 import React, { useState, useEffect } from "react";
 import {
   FaCog,
@@ -247,7 +250,7 @@ const PublishSettingsModal = ({
             >
               ประเภทคลินิก
             </label>
-            <select
+            <SearchableSelect
               value={clinicType}
               onChange={(e) => setClinicType(e.target.value)}
               style={{
@@ -264,7 +267,7 @@ const PublishSettingsModal = ({
                   {c.name}
                 </option>
               ))}
-            </select>
+            </SearchableSelect>
           </div>
 
           {/* หมวดสุขภาพ: ใช้แยกผลในแฟ้มนักเรียน (สุขภาพจิต / สุขภาพกาย) */}
@@ -279,7 +282,7 @@ const PublishSettingsModal = ({
             >
               หมวดสุขภาพ
             </label>
-            <select
+            <SearchableSelect
               id="form-health-domain"
               value={healthDomain}
               onChange={(e) => setHealthDomain(e.target.value)}
@@ -295,7 +298,7 @@ const PublishSettingsModal = ({
               <option value="mental">สุขภาพจิต</option>
               <option value="physical">สุขภาพกาย</option>
               <option value="general">สุขภาพทั่วไป</option>
-            </select>
+            </SearchableSelect>
             <small style={{ color: "#64748b", fontSize: "12.5px" }}>
               ใช้แยกผลแบบประเมินในแฟ้มสุขภาพนักเรียน (หน่วยงานโรงเรียน)
             </small>
@@ -312,20 +315,7 @@ const PublishSettingsModal = ({
             >
               สถานะฟอร์มปัจจุบัน
             </label>
-            <select
-              value={formStatus}
-              onChange={(e) => setFormStatus(e.target.value)}
-              style={{
-                padding: "10px",
-                borderRadius: "8px",
-                border: "1px solid #cbd5e1",
-                fontSize: "14.5px",
-                outline: "none",
-              }}
-            >
-              <option value="draft">ฉบับร่าง (ยังไม่เผยแพร่)</option>
-              <option value="published">เผยแพร่ (พร้อมใช้งาน)</option>
-            </select>
+            <MasterSelect style={{minHeight:"44px",padding:"10px 12px",border:"1px solid var(--suth-control-line)",borderRadius:"10px",font:"inherit"}} category="publication_status" allowedCodes={["draft","published"]} value={formStatus} onChange={(e)=>setFormStatus(e.target.value)} fallback={[{code:"draft",label:"แบบร่าง"},{code:"published",label:"เผยแพร่ (พร้อมใช้งาน)"}]} />
           </div>
 
           {/* 4. ตั้งเวลาเปิด-ปิด */}
@@ -507,7 +497,7 @@ const PublishSettingsModal = ({
                       color: "#0f172a",
                     }}
                   >
-                    {opt.label}
+                    {toDisplayText(opt.label)}
                   </div>
                   <div
                     style={{

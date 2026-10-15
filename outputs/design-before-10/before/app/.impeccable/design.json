@@ -1,0 +1,747 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-06T06:39:27.989Z",
+  "title": "Design System: Suthie Care",
+  "extensions": {
+    "colorMeta": {
+      "action": {
+        "role": "primary",
+        "displayName": "Burnt Action Orange",
+        "canonical": "#c45428",
+        "tonalRamp": [
+          "#2b0000",
+          "#530000",
+          "#7e1000",
+          "#ab3000",
+          "#d55325",
+          "#f97b52",
+          "#ffa580",
+          "#ffd0ae"
+        ],
+        "cssVar": "--suth-action"
+      },
+      "action-hover": {
+        "role": "primary",
+        "displayName": "Ember",
+        "canonical": "#a94320",
+        "tonalRamp": [
+          "#270000",
+          "#4d0200",
+          "#762001",
+          "#a03d1e",
+          "#c85e3f",
+          "#ed8464",
+          "#ffac8f",
+          "#ffd5bb"
+        ],
+        "cssVar": "--suth-action-hover"
+      },
+      "action-ink": {
+        "role": "primary",
+        "displayName": "Orange Ink",
+        "canonical": "#a9430b",
+        "tonalRamp": [
+          "#270000",
+          "#4d0200",
+          "#752100",
+          "#a03e06",
+          "#c85f30",
+          "#ed8559",
+          "#ffad86",
+          "#ffd7b3"
+        ],
+        "cssVar": "--suth-action-ink"
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Suthie Orange",
+        "canonical": "#fe6e35",
+        "tonalRamp": [
+          "#2a0000",
+          "#510000",
+          "#7b1900",
+          "#a73700",
+          "#d15900",
+          "#f58040",
+          "#ffaa73",
+          "#ffd4a4"
+        ],
+        "cssVar": "--suth-accent"
+      },
+      "on-action": {
+        "role": "neutral",
+        "displayName": "On Action White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ],
+        "cssVar": "--suth-on-action"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Harbor Ink",
+        "canonical": "#1f2f3f",
+        "tonalRamp": [
+          "#020c18",
+          "#172636",
+          "#334455",
+          "#526375",
+          "#728598",
+          "#94a7bb",
+          "#b8cce0",
+          "#ddf1ff"
+        ],
+        "cssVar": "--suth-ink"
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Slate Ink",
+        "canonical": "#344a5f",
+        "tonalRamp": [
+          "#010c1a",
+          "#142738",
+          "#2e4459",
+          "#4d647a",
+          "#6d859c",
+          "#8fa8c0",
+          "#b3cce6",
+          "#daf2ff"
+        ],
+        "cssVar": "--suth-ink-2"
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Fog Slate",
+        "canonical": "#526578",
+        "tonalRamp": [
+          "#020c18",
+          "#162736",
+          "#324456",
+          "#506376",
+          "#718599",
+          "#93a8bc",
+          "#b7cce2",
+          "#dcf1ff"
+        ],
+        "cssVar": "--suth-muted"
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Clinic Grey",
+        "canonical": "#faf7f3",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#242527",
+          "#404244",
+          "#606164",
+          "#818285",
+          "#a3a5a8",
+          "#c7c9cc",
+          "#edeff1"
+        ],
+        "cssVar": "--suth-canvas"
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ],
+        "cssVar": "--suth-surface"
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "Mist",
+        "canonical": "#f3f6f8",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#232527",
+          "#404244",
+          "#5f6263",
+          "#808384",
+          "#a3a5a7",
+          "#c7c9cb",
+          "#eceff1"
+        ],
+        "cssVar": "--suth-surface-2"
+      },
+      "surface-hover": {
+        "role": "neutral",
+        "displayName": "Warm Paper",
+        "canonical": "#fffaf6",
+        "tonalRamp": [
+          "#0e0a08",
+          "#282421",
+          "#45413e",
+          "#64605d",
+          "#86817e",
+          "#a9a4a0",
+          "#cdc8c4",
+          "#f2ede9"
+        ],
+        "cssVar": "--suth-surface-hover"
+      },
+      "tint": {
+        "role": "neutral",
+        "displayName": "Apricot Tint",
+        "canonical": "#fff4ec",
+        "tonalRamp": [
+          "#100a05",
+          "#2b231d",
+          "#49403a",
+          "#685f58",
+          "#8a8079",
+          "#ada39b",
+          "#d1c7bf",
+          "#f7ece4"
+        ],
+        "cssVar": "--suth-tint"
+      },
+      "tint-strong": {
+        "role": "neutral",
+        "displayName": "Apricot Strong",
+        "canonical": "#ffeadc",
+        "tonalRamp": [
+          "#140802",
+          "#302117",
+          "#4f3e33",
+          "#6f5d51",
+          "#917e72",
+          "#b4a194",
+          "#d9c5b7",
+          "#ffeadc"
+        ],
+        "cssVar": "--suth-tint-strong"
+      },
+      "tint-line": {
+        "role": "neutral",
+        "displayName": "Apricot Line",
+        "canonical": "#f5c3a3",
+        "tonalRamp": [
+          "#1b0400",
+          "#3b1c04",
+          "#5d371d",
+          "#815639",
+          "#a47759",
+          "#c9997a",
+          "#ecbea1",
+          "#ffe5ca"
+        ],
+        "cssVar": "--suth-tint-line"
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "#d8e0e7",
+        "tonalRamp": [
+          "#070c10",
+          "#20262b",
+          "#3c4349",
+          "#5b6268",
+          "#7c838a",
+          "#9fa6ad",
+          "#c2cad1",
+          "#e8f0f7"
+        ],
+        "cssVar": "--suth-line"
+      },
+      "line-soft": {
+        "role": "neutral",
+        "displayName": "Soft Rule",
+        "canonical": "#e8edf1",
+        "tonalRamp": [
+          "#080c0e",
+          "#222628",
+          "#3f4346",
+          "#5e6265",
+          "#7e8387",
+          "#a1a6a9",
+          "#c5cace",
+          "#eaeff3"
+        ],
+        "cssVar": "--suth-line-soft"
+      },
+      "control-line": {
+        "role": "neutral",
+        "displayName": "Control Stroke",
+        "canonical": "#afbdc7",
+        "tonalRamp": [
+          "#040c13",
+          "#1c272e",
+          "#38444c",
+          "#57636c",
+          "#77848e",
+          "#9aa7b1",
+          "#bdcbd6",
+          "#e2f1fb"
+        ],
+        "cssVar": "--suth-control-line"
+      },
+      "danger": {
+        "role": "tertiary",
+        "displayName": "Alarm Red",
+        "canonical": "#b42318",
+        "tonalRamp": [
+          "#2d0000",
+          "#560000",
+          "#810000",
+          "#af261b",
+          "#da4a3b",
+          "#fe7462",
+          "#ffa08d",
+          "#ffcbb9"
+        ],
+        "cssVar": "--suth-danger"
+      },
+      "danger-tint": {
+        "role": "tertiary",
+        "displayName": "Alarm Red Tint",
+        "canonical": "#fef2f2",
+        "tonalRamp": [
+          "#100909",
+          "#2b2323",
+          "#493f3f",
+          "#685e5e",
+          "#8a7f7f",
+          "#ada2a2",
+          "#d1c6c6",
+          "#f7ebeb"
+        ],
+        "cssVar": "--suth-danger-tint"
+      },
+      "danger-line": {
+        "role": "tertiary",
+        "displayName": "Alarm Red Line",
+        "canonical": "#f2c6c3",
+        "tonalRamp": [
+          "#190404",
+          "#381c1b",
+          "#5a3735",
+          "#7c5654",
+          "#9f7774",
+          "#c39996",
+          "#e8bdba",
+          "#ffe4e1"
+        ],
+        "cssVar": "--suth-danger-line"
+      },
+      "warning": {
+        "role": "tertiary",
+        "displayName": "Amber",
+        "canonical": "#9a4a07",
+        "tonalRamp": [
+          "#230000",
+          "#470f00",
+          "#6e2b00",
+          "#964807",
+          "#bd6932",
+          "#e18d59",
+          "#ffb586",
+          "#ffddb3"
+        ],
+        "cssVar": "--suth-warning"
+      },
+      "warning-tint": {
+        "role": "tertiary",
+        "displayName": "Amber Tint",
+        "canonical": "#fff3e0",
+        "tonalRamp": [
+          "#110a01",
+          "#2c2415",
+          "#4a4031",
+          "#6a604f",
+          "#8b8170",
+          "#afa392",
+          "#d3c8b5",
+          "#f9edda"
+        ],
+        "cssVar": "--suth-warning-tint"
+      },
+      "warning-line": {
+        "role": "tertiary",
+        "displayName": "Amber Line",
+        "canonical": "#fed7aa",
+        "tonalRamp": [
+          "#180600",
+          "#371f00",
+          "#593b13",
+          "#7b5a30",
+          "#9e7b51",
+          "#c39e72",
+          "#e6c299",
+          "#ffe8c3"
+        ],
+        "cssVar": "--suth-warning-line"
+      },
+      "success": {
+        "role": "tertiary",
+        "displayName": "Field Green",
+        "canonical": "#17663a",
+        "tonalRamp": [
+          "#001200",
+          "#003010",
+          "#05502a",
+          "#267245",
+          "#4b9465",
+          "#6fb887",
+          "#9adbae",
+          "#c5ffd6"
+        ],
+        "cssVar": "--suth-success"
+      },
+      "success-tint": {
+        "role": "tertiary",
+        "displayName": "Field Green Tint",
+        "canonical": "#e4f6eb",
+        "tonalRamp": [
+          "#030e08",
+          "#1b2921",
+          "#37463d",
+          "#56665c",
+          "#77877d",
+          "#99aaa0",
+          "#bdcec4",
+          "#e2f4e9"
+        ],
+        "cssVar": "--suth-success-tint"
+      },
+      "neutral-tint": {
+        "role": "neutral",
+        "displayName": "Neutral Tint",
+        "canonical": "#eef2f6",
+        "tonalRamp": [
+          "#090b0e",
+          "#222528",
+          "#3f4246",
+          "#5e6265",
+          "#7f8386",
+          "#a2a5a9",
+          "#c6cacd",
+          "#ebeff3"
+        ],
+        "cssVar": "--suth-neutral-tint"
+      },
+      "info": {
+        "role": "secondary",
+        "displayName": "Clinical Blue",
+        "canonical": "#1d5c8c",
+        "tonalRamp": [
+          "#000b26",
+          "#002749",
+          "#0a456f",
+          "#286696",
+          "#4b88bb",
+          "#6fabe0",
+          "#99d0ff",
+          "#c3f5ff"
+        ]
+      },
+      "info-tint": {
+        "role": "secondary",
+        "displayName": "Clinical Blue Tint",
+        "canonical": "#e7f2fb",
+        "tonalRamp": [
+          "#050c12",
+          "#1e262d",
+          "#3a434a",
+          "#59636a",
+          "#7a848c",
+          "#9ca7af",
+          "#c0cbd3",
+          "#e5f0f9"
+        ]
+      },
+      "risk-dot-high": {
+        "role": "tertiary",
+        "displayName": "Risk Dot High",
+        "canonical": "#d92d20",
+        "tonalRamp": [
+          "#310000",
+          "#5b0000",
+          "#880000",
+          "#b70903",
+          "#e43a2b",
+          "#ff6a57",
+          "#ff9884",
+          "#ffc6b2"
+        ]
+      },
+      "risk-dot-medium": {
+        "role": "tertiary",
+        "displayName": "Risk Dot Medium",
+        "canonical": "#f79009",
+        "tonalRamp": [
+          "#270000",
+          "#4c0600",
+          "#742500",
+          "#9f4300",
+          "#c76400",
+          "#eb8a14",
+          "#ffb25e",
+          "#ffdb93"
+        ]
+      },
+      "risk-dot-low": {
+        "role": "tertiary",
+        "displayName": "Risk Dot Low",
+        "canonical": "#12b76a",
+        "tonalRamp": [
+          "#001500",
+          "#003401",
+          "#00561a",
+          "#007a34",
+          "#009e53",
+          "#39c177",
+          "#75e4a0",
+          "#a8ffca"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page titles; 1.3rem at 760px and below."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Person name at the top of the case drawer."
+      },
+      "title-sm": {
+        "displayName": "Title Small",
+        "purpose": "Section titles inside a work surface."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Table cells, inputs, button labels (700)."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels, table headers (800), pills, counts, meta."
+      },
+      "numeric": {
+        "displayName": "Numeric",
+        "purpose": "Tabular figures for IDs, counts, Buddhist-era dates, pagination."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card-rest",
+        "value": "0 6px 16px rgba(21, 40, 61, 0.08)",
+        "purpose": "White work surfaces on the canvas (desktop only)."
+      },
+      {
+        "name": "pressed-segment",
+        "value": "0 1px 3px rgba(21, 40, 61, 0.14)",
+        "purpose": "Selected mode-switch segment."
+      },
+      {
+        "name": "menu",
+        "value": "0 12px 32px rgba(15, 23, 42, 0.16)",
+        "purpose": "Dropdown menus in the drawer toolbar."
+      },
+      {
+        "name": "drawer",
+        "value": "-18px 0 48px rgba(15, 23, 42, 0.18)",
+        "purpose": "Case drawer edge over the scrim (desktop only)."
+      },
+      {
+        "name": "focus-ring",
+        "value": "0 0 0 3px #c2410c",
+        "purpose": "Wrapped controls (search, date range) on focus-within; elsewhere a 3px outline offset 2px."
+      },
+      {
+        "name": "current-step-halo",
+        "value": "0 0 0 3px #ffeadc",
+        "purpose": "Ring around the current step marker."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Drawer slide-in (260ms, 32px)."
+      },
+      {
+        "name": "state-transition",
+        "value": "160ms ease-out",
+        "purpose": "Button, chip and icon-button color and border changes."
+      },
+      {
+        "name": "row-hover",
+        "value": "120ms ease-out",
+        "purpose": "Queue row background on hover."
+      },
+      {
+        "name": "scrim-fade",
+        "value": "160ms ease-out",
+        "purpose": "Drawer overlay fade."
+      },
+      {
+        "name": "skeleton-pulse",
+        "value": "1.1s ease-in-out infinite alternate",
+        "purpose": "Loading bars pulse to 45% opacity. All motion is removed under prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "760px",
+        "purpose": "At or below: card queue, full-screen drawer, 44px controls, no surface shadow."
+      }
+    ],
+    "scrim": {
+      "value": "rgba(15, 23, 42, 0.32)",
+      "purpose": "Behind the case drawer."
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Burnt action orange with white text; one per header or drawer foot.",
+      "html": "<button class=\"ds-btn-primary\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z\"/><polyline points=\"17 21 17 13 7 13 7 21\"/><polyline points=\"7 3 7 8 15 8\"/></svg>บันทึกการดำเนินการ</button>",
+      "css": ":host{--suth-font:\"Sarabun\",\"Noto Sans Thai\",system-ui,sans-serif;--suth-action:#c2410c;--suth-action-hover:#9a3412;--suth-action-ink:#a9430b;--suth-accent:#f47932;--suth-focus:#c2410c;--suth-on-action:#fff;--suth-ink:#1f2f3f;--suth-ink-2:#344a5f;--suth-muted:#526578;--suth-canvas:#f5f7fa;--suth-surface:#fff;--suth-surface-2:#f3f6f8;--suth-tint:#fff4ec;--suth-tint-strong:#ffeadc;--suth-tint-line:#f5c3a3;--suth-line:#d8e0e7;--suth-line-soft:#e8edf1;--suth-control-line:#afbdc7;--suth-danger:#b42318;--suth-danger-tint:#fef2f2;--suth-warning:#9a4a07;--suth-warning-tint:#fff3e0;--suth-success:#17663a;--suth-success-tint:#e4f6eb;--suth-neutral-tint:#eef2f6;--suth-radius:10px;--suth-radius-lg:14px;--suth-shadow-card:0 6px 16px rgba(21,40,61,.08);} .ds-btn-primary{min-height:44px;padding:10px 16px;display:inline-flex;align-items:center;gap:8px;border-radius:var(--suth-radius);font-family:var(--suth-font);font-size:.95rem;font-weight:700;cursor:pointer;transition:background-color 160ms ease-out,border-color 160ms ease-out,color 160ms ease-out;border:1px solid var(--suth-action);background:var(--suth-action);color:var(--suth-on-action);}.ds-btn-primary:hover{border-color:var(--suth-action-hover);background:var(--suth-action-hover);}.ds-btn-primary:focus-visible{outline:3px solid var(--suth-focus);outline-offset:2px;}.ds-btn-primary:disabled{opacity:.5;cursor:not-allowed;}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "White with a control-stroke border; turns orange ink on hover. Export and drawer tool menus.",
+      "html": "<button class=\"ds-btn-secondary\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><polyline points=\"7 10 12 15 17 10\"/><line x1=\"12\" y1=\"15\" x2=\"12\" y2=\"3\"/></svg>Export Excel</button>",
+      "css": ":host{--suth-font:\"Sarabun\",\"Noto Sans Thai\",system-ui,sans-serif;--suth-action:#c2410c;--suth-action-hover:#9a3412;--suth-action-ink:#a9430b;--suth-accent:#f47932;--suth-focus:#c2410c;--suth-on-action:#fff;--suth-ink:#1f2f3f;--suth-ink-2:#344a5f;--suth-muted:#526578;--suth-canvas:#f5f7fa;--suth-surface:#fff;--suth-surface-2:#f3f6f8;--suth-tint:#fff4ec;--suth-tint-strong:#ffeadc;--suth-tint-line:#f5c3a3;--suth-line:#d8e0e7;--suth-line-soft:#e8edf1;--suth-control-line:#afbdc7;--suth-danger:#b42318;--suth-danger-tint:#fef2f2;--suth-warning:#9a4a07;--suth-warning-tint:#fff3e0;--suth-success:#17663a;--suth-success-tint:#e4f6eb;--suth-neutral-tint:#eef2f6;--suth-radius:10px;--suth-radius-lg:14px;--suth-shadow-card:0 6px 16px rgba(21,40,61,.08);} .ds-btn-secondary{min-height:44px;padding:10px 16px;display:inline-flex;align-items:center;gap:8px;border-radius:var(--suth-radius);font-family:var(--suth-font);font-size:.95rem;font-weight:700;cursor:pointer;transition:background-color 160ms ease-out,border-color 160ms ease-out,color 160ms ease-out;border:1px solid var(--suth-control-line);background:var(--suth-surface);color:var(--suth-ink-2);}.ds-btn-secondary:hover{border-color:var(--suth-action);color:var(--suth-action-ink);}.ds-btn-secondary:focus-visible{outline:3px solid var(--suth-focus);outline-offset:2px;}"
+    },
+    {
+      "name": "Icon Button",
+      "kind": "button",
+      "refersTo": "button-icon",
+      "description": "40px square (44px on phones) for close and prev/next; always aria-labelled.",
+      "html": "<button class=\"ds-icon-btn\" aria-label=\"ปิดหน้าต่าง\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><line x1=\"18\" y1=\"6\" x2=\"6\" y2=\"18\"/><line x1=\"6\" y1=\"6\" x2=\"18\" y2=\"18\"/></svg></button>",
+      "css": ":host{--suth-font:\"Sarabun\",\"Noto Sans Thai\",system-ui,sans-serif;--suth-action:#c2410c;--suth-action-hover:#9a3412;--suth-action-ink:#a9430b;--suth-accent:#f47932;--suth-focus:#c2410c;--suth-on-action:#fff;--suth-ink:#1f2f3f;--suth-ink-2:#344a5f;--suth-muted:#526578;--suth-canvas:#f5f7fa;--suth-surface:#fff;--suth-surface-2:#f3f6f8;--suth-tint:#fff4ec;--suth-tint-strong:#ffeadc;--suth-tint-line:#f5c3a3;--suth-line:#d8e0e7;--suth-line-soft:#e8edf1;--suth-control-line:#afbdc7;--suth-danger:#b42318;--suth-danger-tint:#fef2f2;--suth-warning:#9a4a07;--suth-warning-tint:#fff3e0;--suth-success:#17663a;--suth-success-tint:#e4f6eb;--suth-neutral-tint:#eef2f6;--suth-radius:10px;--suth-radius-lg:14px;--suth-shadow-card:0 6px 16px rgba(21,40,61,.08);} .ds-icon-btn{width:40px;height:40px;padding:0;display:inline-grid;place-items:center;border:1px solid var(--suth-line);border-radius:var(--suth-radius);background:var(--suth-surface);color:var(--suth-ink-2);cursor:pointer;transition:border-color 160ms ease-out,color 160ms ease-out;}.ds-icon-btn:hover{border-color:var(--suth-action);color:var(--suth-action-ink);}.ds-icon-btn:focus-visible{outline:3px solid var(--suth-focus);outline-offset:2px;}"
+    },
+    {
+      "name": "Search Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "44px search with a leading icon; action-orange border and 3px ring on focus.",
+      "html": "<label class=\"ds-search\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" y1=\"21\" x2=\"16.65\" y2=\"16.65\"/></svg><input placeholder=\"ค้นหาชื่อ, Case ID หรือเลขบัตร\"></label>",
+      "css": ":host{--suth-font:\"Sarabun\",\"Noto Sans Thai\",system-ui,sans-serif;--suth-action:#c2410c;--suth-action-hover:#9a3412;--suth-action-ink:#a9430b;--suth-accent:#f47932;--suth-focus:#c2410c;--suth-on-action:#fff;--suth-ink:#1f2f3f;--suth-ink-2:#344a5f;--suth-muted:#526578;--suth-canvas:#f5f7fa;--suth-surface:#fff;--suth-surface-2:#f3f6f8;--suth-tint:#fff4ec;--suth-tint-strong:#ffeadc;--suth-tint-line:#f5c3a3;--suth-line:#d8e0e7;--suth-line-soft:#e8edf1;--suth-control-line:#afbdc7;--suth-danger:#b42318;--suth-danger-tint:#fef2f2;--suth-warning:#9a4a07;--suth-warning-tint:#fff3e0;--suth-success:#17663a;--suth-success-tint:#e4f6eb;--suth-neutral-tint:#eef2f6;--suth-radius:10px;--suth-radius-lg:14px;--suth-shadow-card:0 6px 16px rgba(21,40,61,.08);} .ds-search{min-height:44px;width:300px;padding:0 12px;display:flex;align-items:center;gap:8px;border:1px solid var(--suth-control-line);border-radius:var(--suth-radius);background:var(--suth-surface);color:var(--suth-muted);font-family:var(--suth-font);}.ds-search input{flex:1;min-width:0;min-height:42px;border:0;outline:none;background:transparent;color:var(--suth-ink);font:inherit;font-size:.95rem;}.ds-search input::placeholder{color:var(--suth-muted);opacity:1;}.ds-search:focus-within{border-color:var(--suth-action);box-shadow:0 0 0 3px var(--suth-focus);}"
+    },
+    {
+      "name": "Status Strip Chips",
+      "kind": "chip",
+      "refersTo": "status-chip",
+      "description": "Counted filter chips above the queue; the pressed chip fills Harbor Ink.",
+      "html": "<div class=\"ds-strip\"><button class=\"ds-chip\" aria-pressed=\"true\">ทั้งหมด <strong>7</strong></button><button class=\"ds-chip\" aria-pressed=\"false\">รอติดต่อ (รอดำเนินการ) <strong>1</strong></button><button class=\"ds-chip\" aria-pressed=\"false\"><span class=\"ds-dot\"></span>ความเสี่ยงสูง <strong>3</strong></button></div>",
+      "css": ":host{--suth-font:\"Sarabun\",\"Noto Sans Thai\",system-ui,sans-serif;--suth-action:#c2410c;--suth-action-hover:#9a3412;--suth-action-ink:#a9430b;--suth-accent:#f47932;--suth-focus:#c2410c;--suth-on-action:#fff;--suth-ink:#1f2f3f;--suth-ink-2:#344a5f;--suth-muted:#526578;--suth-canvas:#f5f7fa;--suth-surface:#fff;--suth-surface-2:#f3f6f8;--suth-tint:#fff4ec;--suth-tint-strong:#ffeadc;--suth-tint-line:#f5c3a3;--suth-line:#d8e0e7;--suth-line-soft:#e8edf1;--suth-control-line:#afbdc7;--suth-danger:#b42318;--suth-danger-tint:#fef2f2;--suth-warning:#9a4a07;--suth-warning-tint:#fff3e0;--suth-success:#17663a;--suth-success-tint:#e4f6eb;--suth-neutral-tint:#eef2f6;--suth-radius:10px;--suth-radius-lg:14px;--suth-shadow-card:0 6px 16px rgba(21,40,61,.08);} .ds-strip{display:flex;flex-wrap:wrap;gap:6px;font-family:var(--suth-font);}.ds-chip{min-height:40px;padding:6px 12px;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--suth-line);border-radius:999px;background:var(--suth-surface);color:var(--suth-ink-2);font:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:border-color 160ms ease-out,background-color 160ms ease-out;}.ds-chip:hover{border-color:var(--suth-tint-line);}.ds-chip strong{min-width:1.5em;padding:1px 7px;border-radius:999px;background:var(--suth-surface-2);color:var(--suth-ink);font-size:.82rem;font-variant-numeric:tabular-nums;text-align:center;}.ds-chip[aria-pressed=\"true\"]{border-color:var(--suth-ink);background:var(--suth-ink);color:#fff;}.ds-chip[aria-pressed=\"true\"] strong{background:rgba(255,255,255,.18);color:#fff;}.ds-dot{width:8px;height:8px;border-radius:50%;background:#d92d20;}.ds-chip:focus-visible{outline:3px solid var(--suth-focus);outline-offset:2px;}"
+    },
+    {
+      "name": "Risk Pills",
+      "kind": "chip",
+      "refersTo": "risk-pill-high",
+      "description": "Risk as icon shape + word + color; never color alone.",
+      "html": "<div class=\"ds-row\"><span class=\"ds-risk ds-risk--high\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"/><line x1=\"12\" y1=\"9\" x2=\"12\" y2=\"13\"/><line x1=\"12\" y1=\"17\" x2=\"12.01\" y2=\"17\"/></svg>สูง</span><span class=\"ds-risk ds-risk--medium\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"12\" y1=\"8\" x2=\"12\" y2=\"12\"/><line x1=\"12\" y1=\"16\" x2=\"12.01\" y2=\"16\"/></svg>ปานกลาง</span><span class=\"ds-risk ds-risk--low\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M22 11.08V12a10 10 0 1 1-5.93-9.14\"/><polyline points=\"22 4 12 14.01 9 11.01\"/></svg>ต่ำ</span></div>",
+      "css": ":host{--suth-font:\"Sarabun\",\"Noto Sans Thai\",system-ui,sans-serif;--suth-action:#c2410c;--suth-action-hover:#9a3412;--suth-action-ink:#a9430b;--suth-accent:#f47932;--suth-focus:#c2410c;--suth-on-action:#fff;--suth-ink:#1f2f3f;--suth-ink-2:#344a5f;--suth-muted:#526578;--suth-canvas:#f5f7fa;--suth-surface:#fff;--suth-surface-2:#f3f6f8;--suth-tint:#fff4ec;--suth-tint-strong:#ffeadc;--suth-tint-line:#f5c3a3;--suth-line:#d8e0e7;--suth-line-soft:#e8edf1;--suth-control-line:#afbdc7;--suth-danger:#b42318;--suth-danger-tint:#fef2f2;--suth-warning:#9a4a07;--suth-warning-tint:#fff3e0;--suth-success:#17663a;--suth-success-tint:#e4f6eb;--suth-neutral-tint:#eef2f6;--suth-radius:10px;--suth-radius-lg:14px;--suth-shadow-card:0 6px 16px rgba(21,40,61,.08);} .ds-row{display:flex;gap:8px;flex-wrap:wrap;font-family:var(--suth-font);}.ds-risk{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 8px;border-radius:999px;font-size:.82rem;line-height:1.45;white-space:nowrap;font-weight:800;}.ds-risk--high{background:var(--suth-danger-tint);color:var(--suth-danger);}.ds-risk--medium{background:var(--suth-warning-tint);color:var(--suth-warning);}.ds-risk--low{background:var(--suth-success-tint);color:var(--suth-success);}"
+    },
+    {
+      "name": "Status Pills",
+      "kind": "chip",
+      "refersTo": "status-pill-active",
+      "description": "Dot + verbatim status label in one of five tones.",
+      "html": "<div class=\"ds-row\"><span class=\"ds-status ds-status--waiting\">รอติดต่อ (รอดำเนินการ)</span><span class=\"ds-status ds-status--attention\">ติดต่อไม่ได้ / ไม่รับสาย</span><span class=\"ds-status ds-status--active\">อยู่ระหว่างติดตามต่อเนื่อง</span><span class=\"ds-status ds-status--closed\">ปิดเคสเรียบร้อย</span></div>",
+      "css": ":host{--suth-font:\"Sarabun\",\"Noto Sans Thai\",system-ui,sans-serif;--suth-action:#c2410c;--suth-action-hover:#9a3412;--suth-action-ink:#a9430b;--suth-accent:#f47932;--suth-focus:#c2410c;--suth-on-action:#fff;--suth-ink:#1f2f3f;--suth-ink-2:#344a5f;--suth-muted:#526578;--suth-canvas:#f5f7fa;--suth-surface:#fff;--suth-surface-2:#f3f6f8;--suth-tint:#fff4ec;--suth-tint-strong:#ffeadc;--suth-tint-line:#f5c3a3;--suth-line:#d8e0e7;--suth-line-soft:#e8edf1;--suth-control-line:#afbdc7;--suth-danger:#b42318;--suth-danger-tint:#fef2f2;--suth-warning:#9a4a07;--suth-warning-tint:#fff3e0;--suth-success:#17663a;--suth-success-tint:#e4f6eb;--suth-neutral-tint:#eef2f6;--suth-radius:10px;--suth-radius-lg:14px;--suth-shadow-card:0 6px 16px rgba(21,40,61,.08);} .ds-row{display:flex;gap:8px;flex-wrap:wrap;font-family:var(--suth-font);}.ds-status{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 8px;border-radius:999px;font-size:.82rem;line-height:1.45;white-space:nowrap;font-weight:700;}.ds-status::before{content:\"\";width:7px;height:7px;border-radius:50%;background:currentColor;}.ds-status--waiting{background:var(--suth-warning-tint);color:var(--suth-warning);}.ds-status--attention{background:var(--suth-danger-tint);color:var(--suth-danger);}.ds-status--active{background:#e7f2fb;color:#1d5c8c;}.ds-status--closed{background:var(--suth-neutral-tint);color:var(--suth-ink-2);}"
+    },
+    {
+      "name": "Mode Switch",
+      "kind": "nav",
+      "refersTo": "tab",
+      "description": "Segmented control between the follow-up queue and the answer table.",
+      "html": "<div class=\"ds-mode\"><button aria-pressed=\"true\">ภาพรวมเคสผู้ป่วย</button><button aria-pressed=\"false\">คำตอบแบบฟอร์ม</button></div>",
+      "css": ":host{--suth-font:\"Sarabun\",\"Noto Sans Thai\",system-ui,sans-serif;--suth-action:#c2410c;--suth-action-hover:#9a3412;--suth-action-ink:#a9430b;--suth-accent:#f47932;--suth-focus:#c2410c;--suth-on-action:#fff;--suth-ink:#1f2f3f;--suth-ink-2:#344a5f;--suth-muted:#526578;--suth-canvas:#f5f7fa;--suth-surface:#fff;--suth-surface-2:#f3f6f8;--suth-tint:#fff4ec;--suth-tint-strong:#ffeadc;--suth-tint-line:#f5c3a3;--suth-line:#d8e0e7;--suth-line-soft:#e8edf1;--suth-control-line:#afbdc7;--suth-danger:#b42318;--suth-danger-tint:#fef2f2;--suth-warning:#9a4a07;--suth-warning-tint:#fff3e0;--suth-success:#17663a;--suth-success-tint:#e4f6eb;--suth-neutral-tint:#eef2f6;--suth-radius:10px;--suth-radius-lg:14px;--suth-shadow-card:0 6px 16px rgba(21,40,61,.08);} .ds-mode{display:inline-flex;padding:3px;gap:2px;border:1px solid var(--suth-line);border-radius:12px;background:var(--suth-surface-2);font-family:var(--suth-font);}.ds-mode button{min-height:38px;padding:6px 14px;border:0;border-radius:9px;background:transparent;color:var(--suth-muted);font:inherit;font-size:.92rem;font-weight:700;cursor:pointer;}.ds-mode button:hover{color:var(--suth-ink);}.ds-mode button[aria-pressed=\"true\"]{background:var(--suth-surface);color:var(--suth-ink);box-shadow:0 1px 3px rgba(21,40,61,.14);}.ds-mode button:focus-visible{outline:3px solid var(--suth-focus);outline-offset:2px;}"
+    },
+    {
+      "name": "Case Drawer Step Rail and Tabs",
+      "kind": "custom",
+      "refersTo": "case-drawer",
+      "description": "Drawer header band: four numbered steps on Mist, then roving tabs with a Suthie Orange underline.",
+      "html": "<div class=\"ds-drawer\"><ol class=\"ds-steps\"><li><button class=\"ds-step is-done\"><span class=\"ds-mark\">1</span>ติดต่อ</button></li><li><button class=\"ds-step is-current\"><span class=\"ds-mark\">2</span>บันทึกติดตาม</button></li><li><button class=\"ds-step\"><span class=\"ds-mark\">3</span>นัด/ส่งต่อ</button></li><li><button class=\"ds-step\"><span class=\"ds-mark\">4</span>ปิดเคส</button></li></ol><div class=\"ds-tabs\" role=\"tablist\"><button class=\"ds-tab\" role=\"tab\" aria-selected=\"true\">ติดตาม</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">ข้อมูล</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">ประวัติ <small>3</small></button></div></div>",
+      "css": ":host{--suth-font:\"Sarabun\",\"Noto Sans Thai\",system-ui,sans-serif;--suth-action:#c2410c;--suth-action-hover:#9a3412;--suth-action-ink:#a9430b;--suth-accent:#f47932;--suth-focus:#c2410c;--suth-on-action:#fff;--suth-ink:#1f2f3f;--suth-ink-2:#344a5f;--suth-muted:#526578;--suth-canvas:#f5f7fa;--suth-surface:#fff;--suth-surface-2:#f3f6f8;--suth-tint:#fff4ec;--suth-tint-strong:#ffeadc;--suth-tint-line:#f5c3a3;--suth-line:#d8e0e7;--suth-line-soft:#e8edf1;--suth-control-line:#afbdc7;--suth-danger:#b42318;--suth-danger-tint:#fef2f2;--suth-warning:#9a4a07;--suth-warning-tint:#fff3e0;--suth-success:#17663a;--suth-success-tint:#e4f6eb;--suth-neutral-tint:#eef2f6;--suth-radius:10px;--suth-radius-lg:14px;--suth-shadow-card:0 6px 16px rgba(21,40,61,.08);} .ds-drawer{width:560px;max-width:100%;background:var(--suth-surface);font-family:var(--suth-font);color:var(--suth-ink);border:1px solid var(--suth-line);}.ds-steps{margin:0;padding:10px 20px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;border-bottom:1px solid var(--suth-line);background:var(--suth-surface-2);list-style:none;}.ds-step{width:100%;min-height:44px;padding:4px 6px;display:flex;align-items:center;gap:8px;border:0;border-radius:8px;background:transparent;color:var(--suth-muted);font:inherit;font-size:.85rem;font-weight:700;text-align:left;cursor:pointer;}.ds-step:hover{background:var(--suth-surface);color:var(--suth-ink);}.ds-mark{width:24px;height:24px;flex:none;display:grid;place-items:center;border:2px solid var(--suth-control-line);border-radius:50%;background:var(--suth-surface);color:var(--suth-ink-2);font-size:.75rem;font-weight:800;font-variant-numeric:tabular-nums;}.ds-step.is-done .ds-mark{border-color:var(--suth-success);background:var(--suth-success);color:#fff;}.ds-step.is-current{color:var(--suth-ink);}.ds-step.is-current .ds-mark{border-color:var(--suth-action);color:var(--suth-action-ink);box-shadow:0 0 0 3px var(--suth-tint-strong);}.ds-tabs{padding:0 20px;display:flex;gap:4px;border-bottom:1px solid var(--suth-line);}.ds-tab{min-height:44px;padding:8px 12px;display:inline-flex;align-items:center;gap:7px;border:0;border-bottom:3px solid transparent;background:transparent;color:var(--suth-muted);font:inherit;font-weight:700;cursor:pointer;}.ds-tab:hover{color:var(--suth-ink);}.ds-tab[aria-selected=\"true\"]{border-bottom-color:var(--suth-accent);color:var(--suth-action-ink);}.ds-tab small{min-width:1.5em;padding:0 6px;border-radius:999px;background:var(--suth-surface-2);color:var(--suth-ink-2);font-size:.75rem;text-align:center;}.ds-step:focus-visible{outline:3px solid var(--suth-focus);outline-offset:2px;}.ds-tab:focus-visible{outline:3px solid var(--suth-focus);outline-offset:-3px;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Follow-Up Ledger",
+    "overview": "Suthie Care is a working ledger for people who have to call someone back today. The page is a grey canvas carrying white work surfaces; inside them, information is ruled by 1px lines rather than boxed into tinted panels, numbers sit in tabular columns, and the only loud thing on screen is risk. The brand orange survives from the original app, but it has been split in two: a bright decorative orange that marks selection and progress, and a darker burnt action orange that carries white text at AA contrast.\n\nDensity is calm and operational, not dashboard-busy. A queue row shows a name, a case code, a risk pill and a status pill, and nothing else competes with them. Detail opens beside the list as a right-hand drawer, so staff never lose their place, and the drawer walks the follow-up as numbered steps. Phones get the same workflow, not a summary: rows become cards, the drawer goes full-screen, and every control grows to a 44px target.\n\nPrivacy is visual policy. Names, phone numbers and national IDs appear masked by default; dates appear in the Buddhist era. Neither is a styling choice to revisit per screen.",
+    "keyCharacteristics": [
+      "Grey canvas, white cards, 1px dividers; tint is for state, not for grouping.",
+      "Two oranges with separate jobs: decoration (#f47932) and white-text action (#c2410c).",
+      "Risk is always icon shape + word + color; status is always dot + verbatim word + color.",
+      "Tabular numerals on every ID, count and date; Buddhist-era dates.",
+      "Right-hand 560px case drawer with prev/next, a step rail, roving tabs and a sticky save.",
+      "44px controls on phones (at or below 760px); full-screen drawer and card queue."
+    ],
+    "rules": [
+      {
+        "name": "The Two Oranges Rule",
+        "body": "White text sits on Burnt Action Orange (#c2410c) or darker, never on Suthie Orange (#f47932). The bright orange marks; the burnt orange acts.",
+        "section": "colors"
+      },
+      {
+        "name": "The Never Color Alone Rule",
+        "body": "Risk pairs color with an icon (triangle high, circle-alert medium, check low, minus none) and a word; status pairs color with a dot and its verbatim label. A grayscale screenshot must still say who is at high risk.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tint Means State Rule",
+        "body": "Apricot tint marks the open or hovered thing. Grouping is done with 1px rules and whitespace, not tinted panels.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Ledger Rule",
+        "body": "Every number a person compares (case codes, counts, dates, page positions) uses tabular figures; date columns align right.",
+        "section": "typography"
+      },
+      {
+        "name": "The Weight Not Size Rule",
+        "body": "Hierarchy inside a surface comes from weight and ink color; the ramp tops out at 1.5rem.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Inside Rule",
+        "body": "Nothing inside a work surface or drawer casts a shadow except an open menu; inner structure is drawn with 1px rules.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use Burnt Action Orange (#c2410c) for any fill under white text, and Suthie Orange (#f47932) only for underlines, borders, dots and chart lines.",
+      "Do render risk with the shared risk pill (icon + word + color) and status with the status pill (dot + verbatim label); keep the eight status labels exactly as written.",
+      "Do give every control a 44px minimum at 760px and below, including icon buttons, chips, tabs, steps and date cells.",
+      "Do set IDs, counts and dates in tabular figures and show dates in the Buddhist era.",
+      "Do open case detail in the right-hand drawer beside the list, with prev/next, and keep the save action sticky at the drawer foot.",
+      "Do show focus as a 3px action-orange outline with a 2px offset.",
+      "Do separate content inside a surface with 1px Rule or Soft Rule lines."
+    ],
+    "donts": [
+      "Don't put white text on #f47932 or any lighter orange; it falls below 3:1.",
+      "Don't convey risk or status by color alone, and don't paraphrase or abbreviate a status label.",
+      "Don't wrap sections inside a surface in tinted boxes; Apricot tint means open, hovered or current.",
+      "Don't unmask names, phone numbers or national IDs in list or card views, or use real personal data in screenshots.",
+      "Don't introduce a second accent hue for headings or primary actions; the clinical blue belongs to the in-progress status family only.",
+      "Don't add shadows inside work surfaces or drawers other than an open menu."
+    ]
+  }
+}

@@ -164,82 +164,9 @@ router.put("/organizations/:id/notification-target", async (req, res) => {
     connection.release();
   }
 });
-router.get(
-  "/organizations/:id/members/:membershipId/data-permissions",
-  async (req, res) => {
-    try {
-      const [members] = await db.query(
-        "SELECT id,role_id,organization_id FROM organization_memberships WHERE id=? AND organization_id=?",
-        [req.params.membershipId, req.params.id],
-      );
-      if (!members[0]) throw httpError(404, "MEMBERSHIP_NOT_FOUND");
-      const role =
-        await require("../authorization/organizationPermissions").organizationRolePermissions(
-          db,
-          members[0].organization_id,
-          members[0].role_id,
-        );
-      const effective =
-        await require("../authorization/dataPermissions").membershipPermissions(
-          db,
-          members[0],
-          role,
-        );
-      res.json(
-        ["pii.view", "clinical.view"].map((permission_key) => ({
-          permission_key,
-          granted: effective.includes(permission_key),
-        })),
-      );
-    } catch (error) {
-      fail(res, error);
-    }
-  },
-);
-router.put(
-  "/organizations/:id/members/:membershipId/data-permissions",
-  async (req, res) => {
-    const connection = await db.getConnection();
-    try {
-      const permissions = req.body.permissions;
-      if (
-        !permissions ||
-        Object.keys(permissions).some(
-          (k) => !["pii.view", "clinical.view"].includes(k),
-        ) ||
-        Object.values(permissions).some((v) => typeof v !== "boolean")
-      )
-        throw httpError(422, "INVALID_DATA_PERMISSIONS");
-      await connection.beginTransaction();
-      const [members] = await connection.query(
-        "SELECT id FROM organization_memberships WHERE id=? AND organization_id=? FOR UPDATE",
-        [req.params.membershipId, req.params.id],
-      );
-      if (!members[0]) throw httpError(404, "MEMBERSHIP_NOT_FOUND");
-      for (const [key, value] of Object.entries(permissions))
-        await connection.query(
-          "INSERT INTO organization_membership_data_permissions (membership_id,permission_key,granted,source,updated_by) VALUES (?,?,?,'explicit',?) ON DUPLICATE KEY UPDATE granted=VALUES(granted),source='explicit',updated_by=VALUES(updated_by)",
-          [req.params.membershipId, key, value ? 1 : 0, req.user.id],
-        );
-      req.organizationContext = Number(req.params.id);
-      await requiredAudit(
-        req,
-        "data_permissions.update",
-        "membership",
-        req.params.membershipId,
-        {},
-        connection,
-      );
-      await connection.commit();
-      res.json({ success: true });
-    } catch (error) {
-      await connection.rollback();
-      fail(res, error);
-    } finally {
-      connection.release();
-    }
-  },
-);
+router.all('/organizations/:id/members/:membershipId/data-permissions', (_req,res) => {
+  res.status(410).json({code:'PRIVACY_SETTINGS_RETIRED'});
+});
 router.get("/organizations/:id/notification-events", async (req, res) => {
   try {
     await organization(db, req.params.id);

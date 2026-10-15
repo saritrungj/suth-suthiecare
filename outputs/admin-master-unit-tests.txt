@@ -1,0 +1,288 @@
+Scope: 2 of 3 workspace projects
+app test$ pnpm test:unit
+server test$ node --test test/*.test.js
+server test: ✔ extracts only the first name from a display name (13.4382ms)
+server test: ✔ structured first names keep their spelling without consuming a title-like prefix (0.657ms)
+server test: ✔ missing or already masked names cannot be revealed (0.6895ms)
+server test: ✔ revealing requires the existing PII permission even for case viewers (56.7345ms)
+server test: ✔ surname extraction excludes titles and first names (1.3816ms)
+server test: ◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+server test: ✔ last-name route discloses only the surname, enforces scope and PII rights, and fails closed on audit errors (951.7939ms)
+server test: ◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+server test: ✔ MySQL prevents duplicate open referrals across form responses of one case (2868.9951ms)
+server test: ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+server test: ✔ all referral routes require organization context (7.0165ms)
+server test: ✔ the public projection excludes all source identifiers and detailed answers (11.6721ms)
+server test: ✔ only the destination progresses a referral and only the pending source cancels (17.0391ms)
+server test: ✔ an unrelated organization cannot list, read or update a referral (792.9124ms)
+server test: ✔ case history includes referrals from the same master case and refuses foreign anchors (75.4254ms)
+server test: ✔ source and destination see the same status and deliberately shared note (85.8649ms)
+server test: ✔ outdated versions cannot overwrite the latest status (70.5427ms)
+server test: ✔ completion needs a summary and prevents later edits (68.1364ms)
+server test: Case referral failed: Error
+server test: ✔ an audit note failure rolls back the status update (60.9443ms)
+server test: ✔ creation only shares the allowed encrypted snapshot of an owned case (66.9203ms)
+server test: ✔ foreign source cases, same destination, inactive units and deep payloads are refused (187.8087ms)
+server test: ✔ view-only staff and all-organizations context cannot perform writes (61.1902ms)
+server test: ✔ closing a referral pair stops new referrals while existing participants retain history (113.8643ms)
+app test: $ node --test src/utils/*.test.js src/permissions/*.test.js src/pages/assessment/history/*.test.js src/pages/assessment/formView/*.test.js
+server test: ✔ trusted links only allow local and official HTTPS destinations (9.1625ms)
+server test: ✔ rich text strips executable HTML and untrusted backlinks (65.5456ms)
+server test: ✔ form content removes unsafe HTML and untrusted media (2.2077ms)
+server test: ◇ injected env (26) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+server test: ✔ decrypts sensitive case fields without exposing identity hashes (61.2569ms)
+server test: ◇ injected env (26) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+server test: ✔ exports every page and applies a selected order after collecting all pages (126.1133ms)
+server test: ✔ read permission alone cannot export and arbitrary routes are rejected (5.9889ms)
+server test: ✔ response exports continue offset pagination beyond the first 500 rows (10.5387ms)
+server test: ✔ deep export independently requires an authorized school role (0.6386ms)
+server test: ✔ credentials and ciphertext never appear even in an authorized deep export (0.7843ms)
+server test: ✔ business labels are exported under master rights without clinical or PII grants (22.9489ms)
+server test: ✔ own-profile exports retain the owned profile while stripping credentials (1.9232ms)
+server test: ✔ only published forms inside their publish window accept submissions (3.002ms)
+server test: ✔ only public forms accept a guest submission (1.4084ms)
+server test: ✔ form settings safely fall back for legacy or malformed values (0.4152ms)
+server test: ✔ health domain accepts mental, physical, general or nothing (0.5243ms)
+server test: ◇ injected env (26) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+server test: ✔ submits a hash-linked form and names it after the account (1730.5727ms)
+server test: ✔ accepts a public form submission without a patient session (64.6531ms)
+server test: ✔ blocks unauthenticated submission when login is strict or optional (46.2965ms)
+server test: ✔ rejects a submission to a draft form even by direct URL (21.2053ms)
+server test: ✔ a guest who consents is filed under their national ID (27.795ms)
+server test: ✔ an invalid consented national ID is rejected before anything is saved (16.9179ms)
+server test: ◇ injected env (26) from .env // tip: ⌘ enable debugging { debug: true }
+server test: ✔ activities use time then id and ignore invalid dates (5.3224ms)
+server test: ✔ case activities are batched and separated by organization and master (6.4649ms)
+server test: ✔ school activity selects actual latest assessment, physical record or referral (1.5369ms)
+server test: ✔ case list projection keeps activity metadata and excludes clinical details (3.4096ms)
+server test: ✔ empty queues do not query the database (0.8061ms)
+server test: ✔ manual entry source survives decryption and case-list projection (3.8062ms)
+server test: ✔ queue first names are metadata only and account names are a fallback (2.0851ms)
+server test: ✔ stores an empty non-null identity when only an identity hash is available (4.3499ms)
+server test: ✔ preserves the encrypted identity when one is available (0.81ms)
+server test: ◇ injected env (26) from .env // tip: ⌘ enable debugging { debug: true }
+server test: ✔ master categories, fixed codes and updates are constrained to the active organization (841.7119ms)
+app test: ✔ keeps form login and result-display modes distinct (6.1053ms)
+app test: ✔ builds a live result from the same scoring rule used for submission (8.7401ms)
+app test: ✔ updates a scored group when its sub-question answers change (0.6523ms)
+app test: ✔ does not show a result before a scored question has an answer (0.3422ms)
+app test: ✔ removes national ID questions from legacy forms before rendering (0.566ms)
+app test: ✔ keeps the national ID question unless the account already has one (0.8363ms)
+app test: ✔ prefills empty name and phone fields from the account (1.1429ms)
+app test: ✔ sends a national ID only when its PDPA consent was given (1.3552ms)
+app test: ✔ empty object answers use a visible fallback instead of an empty table (1.889ms)
+app test: ✔ non-empty structured answers remain table data (0.4922ms)
+app test: ✔ system workspace enters any compatible unit without requiring membership (4.9154ms)
+app test: ✔ system admin can select every active organization without memberships (4.4227ms)
+app test: ✔ system admin discards a stale organization context (0.572ms)
+app test: ✔ only system administrators can choose all or an organization outside memberships (1.3656ms)
+app test: ✔ regular users can select only organizations from active memberships (0.7918ms)
+app test: ✔ a member can view shared management menus only in their active organization (0.5025ms)
+app test: ✔ groups selectable sub-units under their main organization (0.8776ms)
+app test: ✔ reads the active organization type, null for all (0.4887ms)
+server test: ◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+server test: ⚠️ decrypt failed (Error); returning value as-is. len=2947
+server test: ⚠️ decrypt failed (Error); returning value as-is. len=968
+server test: ⚠️ decrypt failed (Error); returning value as-is. len=603
+server test: ⚠️ decrypt failed (Error); returning value as-is. len=2947
+server test: ⚠️ decrypt failed (Error); returning value as-is. len=968
+server test: ⚠️ decrypt failed (Error); returning value as-is. len=603
+app test: ✔ normalises legacy user permission rows and applies view/manage levels (2.9785ms)
+app test: ✔ full control grants both view and manage access (0.5016ms)
+app test: ✔ system admin sees every module regardless of selected unit type or membership permissions (14.9672ms)
+app test: ✔ admin sees permitted unit menus but cannot gain main system menus from unit permissions (1.6512ms)
+app test: ✔ staff navigation follows unit permissions independently of system role (1.2874ms)
+app test: ✔ user management visibility changes with the selected unit's permissions (0.9899ms)
+app test: ✔ unit roles and an incomplete profile cannot infer a system administrator (0.9539ms)
+app test: ✔ a custom account role can use its membership permissions without system authority (0.5891ms)
+app test: ✔ admin home uses permitted unit pages instead of the system staff/admin label (3.2585ms)
+app test: ✔ the authoritative system role wins over the legacy account role (1.069ms)
+app test: ✔ only the current guest flow may claim a draft and logout clears all drafts (61.7003ms)
+app test: ✔ a draft older than four hours cannot be claimed (1.0175ms)
+app test: ✔ defaults to the first day of the current month through today (50.3689ms)
+app test: ✔ includes both boundary dates regardless of the time of submission (1.635ms)
+app test: ✔ uses created/updated timestamp when submitted_at is unavailable (3.6734ms)
+app test: ✔ parses MySQL timestamps as local calendar values and normalises reversed ranges (0.6211ms)
+app test: ✔ uses Bangkok calendar days even when the browser timezone differs (2.0471ms)
+app test: ✔ related records retain every row and an explicit parent reference (5.8354ms)
+server test: ✔ local MySQL master categories support scoped reads, creates, updates and private templates with rollback (9285.9706ms)
+app test: ✔ xlsx round trip retains Thai text, text codes and more than one page of records (4765.8226ms)
+server test: ✔ a main organization chooses the type of its sub-units (4.1895ms)
+server test: ✔ a sub-unit inherits the type of its main organization (0.6451ms)
+server test: ✔ a legacy unit without a parent keeps a type of its own (0.438ms)
+server test: ✔ member ids must be unique positive integers (0.4906ms)
+server test: ✔ unit permissions use both organization and role with no shared/system fallback (6.2805ms)
+server test: ✔ unit permission updates isolate units, require system authority, detect conflicts and roll back audit failure (498.4781ms)
+server test: ✔ accepts passwords meeting every rule at both length bounds (7.513ms)
+server test: ✔ rejects passwords missing a rule (3.1479ms)
+server test: ◇ injected env (26) from .env // tip: ⌘ suppress logs { quiet: true }
+server test: ✔ accepts and normalises Thai patient names (13.1163ms)
+server test: ✔ rejects empty, overly long, and unsafe patient names (1.7086ms)
+server test: ✔ finds a legacy patient phone from assessment history (6.6163ms)
+server test: ✔ does not return an invalid historical phone (0.5852ms)
+server test: ✔ an imported account must change its password before using the portal (75.6011ms)
+server test: ✔ the password change route itself is allowed (2.831ms)
+server test: ✔ a normal account passes (6.259ms)
+app test: ✔ accepts a password meeting every rule (6.9824ms)
+app test: ✔ rejects passwords missing a rule (0.6938ms)
+app test: ✔ does not count Thai characters as symbols (2.0597ms)
+app test: ✔ reports which rules are unmet (6.7873ms)
+app test: ✔ patient session stores, publishes, and clears login state (34.7024ms)
+app test: ✔ parses quoted CSV fields, doubled quotes, CRLF and a BOM (9.9336ms)
+app test: ✔ detects semicolon separated files (0.7588ms)
+app test: ✔ maps Thai and English headers and reports unknown or missing ones (4.1647ms)
+app test: ✔ reads exceljs cell values as text (0.9762ms)
+app test: ✔ teacher workbook mapping preserves codes and assigns the explicit school role and room (7.1498ms)
+app test: ✔ shows an API date in the Buddhist era (7.5018ms)
+app test: ✔ inserts slashes while typing (0.6007ms)
+app test: ✔ parses a Buddhist or Christian year into an API date (2.9449ms)
+app test: ✔ rejects incomplete, impossible and future dates (2.6647ms)
+app test: ℹ tests 51
+app test: ℹ suites 0
+app test: ℹ pass 51
+app test: ℹ fail 0
+app test: ℹ cancelled 0
+app test: ℹ skipped 0
+app test: ℹ todo 0
+app test: ℹ duration_ms 7252.3603
+app test: Done
+server test: ✔ isolated MySQL schema, idempotent migration, JSON roundtrip and single-use race (28307.168ms)
+server test: ◇ injected env (26) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+server test: ✔ normalizes a dashed national ID and rejects a bad checksum (12.4566ms)
+server test: ✔ an account without an ID adopts the consented national ID (12.7555ms)
+server test: ✔ the account's own ID wins over a different ID typed into the form (2.1037ms)
+server test: ✔ merges a guest person into the account person with the same ID (3.0331ms)
+server test: ✔ a guest without a national ID has no person (0.6918ms)
+server test: ◇ injected env (24) from .env // tip: ⌘ suppress logs { quiet: true }
+server test: ✔ private JSON preserves all scalar and compound types with fresh IVs (18.7538ms)
+server test: ✔ wrong key, edited ciphertext, wrong owner and unknown versions fail closed (18.6188ms)
+server test: ✔ rotation reads a prior key while the active key changes (3.2819ms)
+server test: ✔ DTO hides hashes, private storage, unknown case fields and unauthorized health (37.6702ms)
+server test: ✔ context-bound field and school measurements reject copied data and retired plaintext (42.346ms)
+server test: ◇ injected env (26) from .env // tip: ⌘ enable debugging { debug: true }
+server test: ✔ full disclosure and exports stop when mandatory audit storage is unavailable (430.8408ms)
+server test: ◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+server test: ✔ case logs derive the master from the scoped response and reject forged master/foreign keys (10.8139ms)
+server test: ✔ required audit failure rolls back the complete log transaction (2.6336ms)
+server test: ✔ appointments cannot combine two otherwise accessible unrelated cases (0.8734ms)
+server test: ✔ invitation validates login, receiver, expiry, revocation, reuse and binding without consuming on open (2.9635ms)
+server test: ◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+server test: ◇ injected env (0) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+server test: ✔ cached form visibility never shares draft entries with a member lacking form permission (384.0927ms)
+server test: ✔ counts cache includes owner and visibility and query verifies the response/form owner relationship (113.6704ms)
+server test: ◇ injected env (26) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+server test: ✔ expired patient cookie is cleared for guest flow while required login still rejects it (2.9445ms)
+server test: ✔ guest flow cannot bypass CSRF or origin errors by discarding the active account (0.8135ms)
+server test: ◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+server test: ✔ lookup aliases read only the authorized organization and never create defaults (804.9635ms)
+server test: ✔ lookup writes ignore supplied owner and foreign records stay inaccessible (506.6741ms)
+server test: ✔ private files require authentication, an explicit allowlist and a durable audit (645.8152ms)
+server test: ✔ history edits reject a foreign response and old AES link endpoints are gone (181.726ms)
+server test: ✔ migration keeps types, is idempotent, quarantines missing owners, and does not clear by default (19.3647ms)
+server test: ✔ notice approval cannot change content or legal basis under an existing version (110.43ms)
+server test: ✔ new notice approval preserves the complete immutable version before publishing it (4.3248ms)
+server test: ◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+server test: ✔ no target means no fallback, minimal notification has no supplied patient details (18.4236ms)
+server test: ◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+server test: (node:2472) Warning: Accessing non-existent property 'verifyChallenge' of module exports inside circular dependency
+server test: (Use `node --trace-warnings ...` to show where the warning was created)
+server test: (node:2472) Warning: Accessing non-existent property 'resendChallenge' of module exports inside circular dependency
+server test: Staff login failed:  Error
+server test: ✔ every production staff account needs OTP, including trusted-device cookies; provider failure has no bypass (1201.2654ms)
+server test: ✔ membership denial overrides its role template without granting a wider record scope (11.0571ms)
+server test: ✔ role change removes only migrated grants and recalculates from proven new-role access (56.9094ms)
+server test: ◇ injected env (0) from .env // tip: ⌘ enable debugging { debug: true }
+server test: ✔ cleanup quarantines legacy changes made after the encrypted backfill (57.103ms)
+server test: ✔ quota aggregation decrypts scoped answers and only exposes server-defined options (15.0398ms)
+server test: ✔ lists minimize PII and full answers preserve literal envelope-looking strings (5.8193ms)
+server test: ✔ opaque session sets the right cookie, stores hashes, and returns only CSRF (13.2163ms)
+server test: ✔ production cookies are secure host-only and staff cannot bypass OTP (1.5958ms)
+server test: ✔ privacy telemetry has bounded dimensions and cannot retain supplied PII or tokens (59.8643ms)
+server test: ✔ dashboard statistic endpoint requires an active organization context (12.0766ms)
+server test: ✔ public form submission does not require an organization context (0.8825ms)
+server test: ✔ help-center reads use the active organization when staff is signed in (0.694ms)
+server test: ✔ school module routes always run inside the active organization (0.2982ms)
+server test: ✔ reads high, medium and normal risk from score colours and labels (3.4094ms)
+server test: ✔ finds score results under either key and keeps the higher risk (2.8062ms)
+server test: ◇ injected env (26) from .env // tip: ⌘ suppress logs { quiet: true }
+server test: ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+server test: ✔ saves a form with the default 'general' clinic type using the active organization (1873.6554ms)
+server test: ✔ saves a form when the admin's active organization is 'all' but the clinic resolves one organization (26.9566ms)
+server test: ◇ injected env (26) from .env // tip: ⌘ suppress logs { quiet: true }
+server test: ✔ physical admin API and exports return only physical data and reject insight routes (549.9144ms)
+server test: ◇ injected env (26) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+server test: ✔ imported-account email onboarding uses the authenticated owner and stored unverified address (2456.2064ms)
+server test: ◇ injected env (26) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+server test: ✔ builds the username from the school code and student code (2.4419ms)
+server test: ✔ reads Thai and Gregorian birth dates and Thai gender words (5.3599ms)
+server test: ✔ prepares a valid row and generates its username (12.807ms)
+server test: ✔ lists every problem of an invalid row (1.8017ms)
+server test: ✔ keeps a valid national ID digits-only and an explicit username (2.4422ms)
+server test: ✔ temporary passwords always satisfy the password policy (132.8033ms)
+server test: ✔ insight endpoints deny before private reads and encrypt permitted optional data (687.7842ms)
+server test: ◇ injected env (26) from .env // tip: ⌘ suppress logs { quiet: true }
+server test: ✔ generic case APIs and writes cannot bypass a homeroom boundary (1184.1559ms)
+server test: ✔ role revocation and classroom removal take effect on the next API request (279.1835ms)
+server test: ✔ subject restriction is included in SQL before pagination or aggregation (3.1612ms)
+server test: ✔ admin and other teachers cannot gain insights through clinical permissions (3.9345ms)
+server test: ✔ homeroom role is limited to its assigned homeroom and current school (0.7845ms)
+server test: ✔ counselor and admin general access stop at their school (4.8648ms)
+server test: ✔ only the five current enrollment values can be written or imported (0.6188ms)
+server test: ◇ injected env (26) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+server test: ✔ school surname disclosure excludes first names and respects PII and classroom scope (1316.7479ms)
+server test: ✔ refuses an organization that is not a school (111.3753ms)
+server test: ✔ refuses the all-organizations context (58.2297ms)
+server test: ✔ a teacher without students.view only sees their own classrooms (133.52ms)
+server test: ✔ staff who are neither teachers nor permitted get no students (102.0836ms)
+server test: ✔ health access requires a stable role, never a classroom assignment alone (1.2608ms)
+server test: ✔ the school sub-unit is the school: created on first use with a generated code (136.277ms)
+server test: ✔ a room added without a name gets the next number in its grade and year (168.7377ms)
+server test: ◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+server test: ✔ MySQL school lists, details and exports match the scoped student count (4769.234ms)
+server test: ◇ injected env (0) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+server test: ✔ local MySQL runs screening, teacher onboarding, enrollment history and retention with rollback (3358.3264ms)
+server test: ◇ injected env (26) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+server test: ✔ school role matrix separates physical data, mental insights and boarder scope (5.9529ms)
+server test: ✔ risk triggers inspect the specified row, survive low totals and ignore inactive rules (10.8345ms)
+server test: ✔ date filters reject impossible dates, reverse ranges and SQL input (4.0768ms)
+server test: ✔ student onboarding validates email, optional initial password and independent boarding status (9.0442ms)
+server test: ✔ rescreen completion rejects another student response and denies physical-only staff before writes (904.1874ms)
+server test: ✔ general school risk summary returns only allowed fields and configured care advice (118.5662ms)
+server test: ✔ screening progress counts actual responses within the round, organization and classroom scope (23.2782ms)
+server test: ✔ promotion validates all destinations before any enrollment write (58.6971ms)
+server test: ✔ retention counts from graduation, excludes holds, and preview performs no archive writes (126.8364ms)
+server test: ✔ keeps MySQL-decoded scalar JSON answers instead of replacing them (32.8136ms)
+server test: ✔ decrypts sensitive scalar answers after normalizing JSON storage (0.8121ms)
+server test: ✔ preserves array and object answers (3.8484ms)
+server test: ◇ injected env (26) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+server test: ✔ creates a person and an account-owned Master Case for a new account (11.8511ms)
+server test: ✔ adopts an unlinked legacy Master Case with the account identity hash (3.8498ms)
+server test: ✔ a guest with a consented national ID returns to the same person's open case (6.8354ms)
+server test: ✔ a guest without a national ID stays anonymous (1.599ms)
+server test: ✔ refuses a national ID that already belongs to another account (6.2242ms)
+server test: ◇ injected env (26) from .env // tip: ⌘ suppress logs { quiet: true }
+server test: ✔ labels old records without an account as legacy and unlinked (4.4768ms)
+server test: ✔ does not expose an account as linked when its record has been deleted (4.0679ms)
+server test: ◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+server test: ✔ system administrator with legacy staff role can create, edit and delete system users (3273.269ms)
+server test: ◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+server test: ✔ staff system role remains separate from a privileged organization role (565.4043ms)
+server test: ✔ admin system role does not inherit main management authority from the unit (33.0933ms)
+server test: ✔ a modern system administrator is recognized regardless of the legacy account role (32.3817ms)
+server test: ✔ unknown legacy account roles do not silently become administrators or staff (27.4894ms)
+server test: ✔ admin and staff cannot request all organizations or a foreign unit even with a privileged unit role (227.6926ms)
+server test: ✔ only a system administrator can use the all-organizations context (26.4011ms)
+server test: ◇ injected env (26) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+server test: ✔ telegram dispatch returns immediately while notification continues (8.4187ms)
+server test: ✔ accepts a long Unicode full name and normalises whitespace (2.6792ms)
+server test: ✔ rejects a full name longer than 255 Unicode characters (1.1884ms)
+server test: ✔ requires an email and a password that meet account policy (0.5955ms)
+server test: ℹ tests 168
+server test: ℹ suites 0
+server test: ℹ pass 168
+server test: ℹ fail 0
+server test: ℹ cancelled 0
+server test: ℹ skipped 0
+server test: ℹ todo 0
+server test: ℹ duration_ms 31510.3237
+server test: Done

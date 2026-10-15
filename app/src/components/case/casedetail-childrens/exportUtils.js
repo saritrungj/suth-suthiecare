@@ -1,14 +1,10 @@
+import { toDisplayText } from '../../../utils/textPresentation.js';
 // src/components/case/casedetail-childrens/exportUtils.js
 //โค้ดสร้างรายงาน PDF
 
 // 1. ฟังก์ชันทำความสะอาด HTML
 export const stripHtml = (html) =>
-  html
-    ? String(html)
-        .replace(/<[^>]+>/g, "")
-        .replace(/&nbsp;/g, " ")
-        .trim()
-    : "";
+  toDisplayText(html);
 
 // 2. ฟังก์ชันจัดรูปแบบคำตอบ
 export const formatAnswer = (ans) => {

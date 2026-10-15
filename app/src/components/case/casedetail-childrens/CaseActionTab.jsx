@@ -1,3 +1,5 @@
+import SearchableSelect from '../../SearchableSelect';
+import { toDisplayText } from '../../../utils/textPresentation.js';
 import React, { useState } from "react";
 import {
   FaArchive,
@@ -162,14 +164,8 @@ export default function CaseActionTab(props) {
           pointerEvents: masterCaseInfo?.status === "Closed" ? "none" : "auto",
         }}
       >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "12px",
-            alignItems: "start",
-          }}
-        >
+        <h3 className="cw-action-heading">สถานะและผู้รับผิดชอบ</h3>
+        <div className="cw-action-fields">
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div className="cdm-status-header-row">
               <label className="cdm-form-label" htmlFor="case-staff-select">
@@ -190,7 +186,7 @@ export default function CaseActionTab(props) {
             </div>
 
             {!isManagingStaff ? (
-              <select
+              <SearchableSelect
                 id="case-staff-select"
                 className="cdm-form-input"
                 value={selectedStaff || ""}
@@ -205,7 +201,7 @@ export default function CaseActionTab(props) {
                     {staff.fullname}
                   </option>
                 ))}
-              </select>
+              </SearchableSelect>
             ) : (
               <div className="cdm-service-manage-box">
                 <div className="cdm-service-list">
@@ -268,7 +264,7 @@ export default function CaseActionTab(props) {
               </button>
             </div>
             {!isManagingStatus ? (
-              <select
+              <SearchableSelect
                 id="case-status-select"
                 className="cdm-form-input"
                 value={status}
@@ -282,7 +278,7 @@ export default function CaseActionTab(props) {
                     {opt.name}
                   </option>
                 ))}
-              </select>
+              </SearchableSelect>
             ) : (
               <div className="cdm-service-manage-box">
                 <div className="cdm-service-list">
@@ -399,13 +395,13 @@ export default function CaseActionTab(props) {
                             {systemOriginal &&
                               systemOriginal.label !== currentRisk?.label && (
                                 <div className="cdm-dynamic-risk-system-note">
-                                  (ผลคำนวณเดิม: {systemOriginal.label})
+                                  (ผลคำนวณเดิม: {toDisplayText(systemOriginal.label)})
                                 </div>
                               )}
                           </div>
                         ) : (
                           <div className="cdm-dynamic-risk-edit-box">
-                            <select
+                            <SearchableSelect
                               className="cdm-form-input"
                               style={{ height: "36px", marginBottom: "8px" }}
                               value={tempRiskChange.label}
@@ -421,10 +417,10 @@ export default function CaseActionTab(props) {
                               </option>
                               {fr.rules.map((rule, idx) => (
                                 <option key={idx} value={rule.label}>
-                                  {rule.label}
+                                  {toDisplayText(rule.label)}
                                 </option>
                               ))}
-                            </select>
+                            </SearchableSelect>
                             <input
                               type="text"
                               className="cdm-form-input"
@@ -488,6 +484,18 @@ export default function CaseActionTab(props) {
           </div>
         )}
 
+      </div>
+
+      {/* 🟢 ส่วนบันทึกการติดตาม (Redesigned) */}
+      <div
+        id="case-step-note"
+        className="cdm-tracking-box"
+        style={{
+          opacity: masterCaseInfo?.status === "Closed" ? 0.5 : 1,
+          pointerEvents: masterCaseInfo?.status === "Closed" ? "none" : "auto",
+        }}
+      >
+        <h3 className="cw-action-heading">ประเมินและบันทึกติดตาม</h3>
         {!showRiskSection ? (
           <div
             style={{
@@ -584,7 +592,7 @@ export default function CaseActionTab(props) {
                       color: "inherit",
                     }}
                   >
-                    {opt.label}
+                    {toDisplayText(opt.label)}
                   </span>
                 </label>
               ))}
@@ -610,11 +618,9 @@ export default function CaseActionTab(props) {
             />
           </div>
         )}
-      </div>
-
       {clinicType === "sti" && (
         <div
-          className="cdm-management-box"
+          className="cw-clinical-fields"
           style={{
             background: "#fff1f2",
             border: "1px solid #fecdd3",
@@ -807,15 +813,6 @@ export default function CaseActionTab(props) {
         </div>
       )}
 
-      {/* 🟢 ส่วนบันทึกการติดตาม (Redesigned) */}
-      <div
-        id="case-step-note"
-        className="cdm-tracking-box"
-        style={{
-          opacity: masterCaseInfo?.status === "Closed" ? 0.5 : 1,
-          pointerEvents: masterCaseInfo?.status === "Closed" ? "none" : "auto",
-        }}
-      >
         <div className="cdm-tracking-header">
           <h4 className="cdm-tracking-title">
             <FaPencilAlt /> บันทึกการติดตาม
@@ -830,7 +827,7 @@ export default function CaseActionTab(props) {
         </div>
 
         {!activeTemplate && (
-          <select
+          <SearchableSelect
             className="cdm-tpl-selector"
             aria-label="เลือกชุดคำถามหรือแบบฟอร์มติดตาม"
             onChange={(e) => {
@@ -845,10 +842,10 @@ export default function CaseActionTab(props) {
             {Array.isArray(templates) &&
               templates.map((tpl) => (
                 <option key={tpl.id} value={tpl.id}>
-                  {tpl.label}
+                  {toDisplayText(tpl.label)}
                 </option>
               ))}
-          </select>
+          </SearchableSelect>
         )}
 
         {activeTemplate && (
@@ -871,14 +868,14 @@ export default function CaseActionTab(props) {
 
                 {/* 🟢 เพิ่ม title={activeTemplate.label} ตรงนี้ เพื่อให้แสดงชื่อเต็มตอนเมาส์ชี้ */}
                 <span
-                  title={activeTemplate.label}
+                  title={toDisplayText(activeTemplate.label)}
                   style={{
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                   }}
                 >
-                  {activeTemplate.label}
+                  {toDisplayText(activeTemplate.label)}
                 </span>
               </h4>
 
@@ -925,7 +922,7 @@ export default function CaseActionTab(props) {
                         <span className="cdm-q-num-badge">
                           {templateDisplayNums[q.id]}
                         </span>
-                        <span>{q.title}</span>
+                        <span>{toDisplayText(q.title)}</span>
                       </div>
 
                       {q.hasAmount && (
@@ -1076,6 +1073,7 @@ export default function CaseActionTab(props) {
           pointerEvents: masterCaseInfo?.status === "Closed" ? "none" : "auto",
         }}
       >
+        <h3 className="cw-action-heading">นัดหมายครั้งถัดไป</h3>
         <label className="cdm-appoint-toggle">
           <input
             type="checkbox"
@@ -1122,7 +1120,7 @@ export default function CaseActionTab(props) {
               </button>
             </div>
             {!isManagingService ? (
-              <select
+              <SearchableSelect
                 className="cdm-form-input"
                 value={selectedServiceId}
                 onChange={(e) => setSelectedServiceId(e.target.value)}
@@ -1135,7 +1133,7 @@ export default function CaseActionTab(props) {
                     {s.name}
                   </option>
                 ))}
-              </select>
+              </SearchableSelect>
             ) : (
               <div
                 className="cdm-service-manage-box"

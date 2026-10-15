@@ -83,6 +83,7 @@ test("public navbars stay visible and usable on mobile and tablet", async ({
 
     await page.goto("/");
     const landingNav = page.locator(".sut2-nav");
+    // The restored design uses a transparent navbar over the homepage hero.
     await expect(landingNav).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
     await expect(landingNav).toHaveCSS("background-image", "none");
     await expect(landingNav).toHaveCSS("box-shadow", "none");

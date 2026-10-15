@@ -1,0 +1,37 @@
+[WebServer] (node:34048) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 24 tests using 1 worker
+
+(node:13076) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [phone] › e2e\interface-consistency.spec.js:29:1 › styles and alignment survive switching through real menus (4.9s)
+  ok  2 [phone] › e2e\interface-consistency.spec.js:46:1 › management dialogs share focus, close placement, scrolling and focus return (7.7s)
+  ok  3 [phone] › e2e\interface-consistency.spec.js:71:1 › a failed staff save preserves the form and opens a reachable confirmation above it (3.0s)
+  ok  4 [phone] › e2e\interface-consistency.spec.js:98:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown (1.7s)
+  ok  5 [phone] › e2e\interface-consistency.spec.js:110:1 › default assessment and editor use the brand while an authored theme is preserved (2.7s)
+  ok  6 [phone] › e2e\interface-consistency.spec.js:121:1 › banner upload is keyboard accessible and the cropped preview fits a narrow modal (1.6s)
+  ok  7 [phone] › e2e\interface-consistency.spec.js:135:1 › a case confirmation owns focus and Escape returns to the still-open case drawer (2.1s)
+  ok  8 [phone] › e2e\interface-consistency.spec.js:158:1 › question option actions are discoverable with touch and keyboard without overflowing (1.7s)
+(node:37328) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  9 [tablet] › e2e\interface-consistency.spec.js:29:1 › styles and alignment survive switching through real menus (5.0s)
+  ok 10 [tablet] › e2e\interface-consistency.spec.js:46:1 › management dialogs share focus, close placement, scrolling and focus return (6.7s)
+  ok 11 [tablet] › e2e\interface-consistency.spec.js:71:1 › a failed staff save preserves the form and opens a reachable confirmation above it (3.4s)
+  ok 12 [tablet] › e2e\interface-consistency.spec.js:98:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown (2.0s)
+  ok 13 [tablet] › e2e\interface-consistency.spec.js:110:1 › default assessment and editor use the brand while an authored theme is preserved (2.8s)
+  ok 14 [tablet] › e2e\interface-consistency.spec.js:121:1 › banner upload is keyboard accessible and the cropped preview fits a narrow modal (2.0s)
+  ok 15 [tablet] › e2e\interface-consistency.spec.js:135:1 › a case confirmation owns focus and Escape returns to the still-open case drawer (2.1s)
+  ok 16 [tablet] › e2e\interface-consistency.spec.js:158:1 › question option actions are discoverable with touch and keyboard without overflowing (1.8s)
+(node:23932) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 17 [desktop] › e2e\interface-consistency.spec.js:29:1 › styles and alignment survive switching through real menus (2.2s)
+  ok 18 [desktop] › e2e\interface-consistency.spec.js:46:1 › management dialogs share focus, close placement, scrolling and focus return (6.8s)
+  ok 19 [desktop] › e2e\interface-consistency.spec.js:71:1 › a failed staff save preserves the form and opens a reachable confirmation above it (3.7s)
+  ok 20 [desktop] › e2e\interface-consistency.spec.js:98:1 › dropdowns inside dialogs stay anchored and Escape closes only the dropdown (1.9s)
+  ok 21 [desktop] › e2e\interface-consistency.spec.js:110:1 › default assessment and editor use the brand while an authored theme is preserved (2.7s)
+  ok 22 [desktop] › e2e\interface-consistency.spec.js:121:1 › banner upload is keyboard accessible and the cropped preview fits a narrow modal (2.0s)
+  ok 23 [desktop] › e2e\interface-consistency.spec.js:135:1 › a case confirmation owns focus and Escape returns to the still-open case drawer (2.2s)
+  ok 24 [desktop] › e2e\interface-consistency.spec.js:158:1 › question option actions are discoverable with touch and keyboard without overflowing (1.6s)
+
+  24 passed (1.3m)

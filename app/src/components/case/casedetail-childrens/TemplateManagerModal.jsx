@@ -1,3 +1,5 @@
+import SearchableSelect from '../../SearchableSelect';
+import { toDisplayText } from '../../../utils/textPresentation.js';
 import "./TemplateManagerModal.css";
 import React, { useState, useEffect, useCallback } from "react";
 import { FaCog, FaTimes, FaPlus, FaTrashAlt, FaSave } from "react-icons/fa";
@@ -219,7 +221,7 @@ export default function TemplateManagerModal({
                   className={`cdm-tpl-sidebar-item ${editingTplId === tpl.id ? "active" : ""}`}
                   onClick={() => handleEditClick(tpl)}
                 >
-                  <span className="cdm-tpl-item-label">{tpl.label}</span>
+                  <span className="cdm-tpl-item-label">{toDisplayText(tpl.label)}</span>
                   <button
                     type="button"
                     onClick={(e) => {
@@ -304,7 +306,7 @@ export default function TemplateManagerModal({
                         }}
                       />
 
-                      <select
+                      <SearchableSelect
                         style={{ width: "180px" }}
                         value={q.type}
                         onChange={(e) => {
@@ -316,7 +318,7 @@ export default function TemplateManagerModal({
                         <option value="text">พิมพ์ตอบ (Text)</option>
                         <option value="radio">เลือกตอบ (Radio)</option>
                         <option value="header">เฉพาะหัวข้อ (Header)</option>
-                      </select>
+                      </SearchableSelect>
 
                       <button
                         type="button"
@@ -347,7 +349,7 @@ export default function TemplateManagerModal({
                         >
                           อยู่ภายใต้หัวข้อ:
                         </span>
-                        <select
+                        <SearchableSelect
                           style={{
                             fontSize: "13px",
                             padding: "6px 10px",
@@ -381,7 +383,7 @@ export default function TemplateManagerModal({
                                 </option>
                               ),
                           )}
-                        </select>
+                        </SearchableSelect>
                       </div>
 
                       {/* เพิ่มช่องจำนวน / หมายเหตุ */}

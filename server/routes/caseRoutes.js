@@ -899,6 +899,8 @@ router.post("/cases", verifyToken, async (req, res) => {
       hashedIdentity = hmacHash(fallbackId);
     }
     const summary = JSON.parse(JSON.stringify(data.summary_data || {}));
+    // Preserve the manual entry source across reloads without a schema change.
+    summary.case_source = "walkin";
 
     // A walk-in case belongs to the organization that owns the selected form.
     // Without this the record is invisible to every organization-scoped view.
@@ -1084,13 +1086,59 @@ router.get("/forms/:id/responses-v2", verifyToken, async (req, res) => {
       decryptCaseResponse(r, safeDecrypt),
     );
 
-    res.json(parsedResponses);
+    res.json(await require("../services/latestActivity").attachCaseActivities(db, parsedResponses));
   } catch (error) {
     console.error(
       "Error fetching responses:",
       require("../utils/safeError").safeError(error),
     );
     res.status(500).json({ message: "Error fetching responses" });
+  }
+});
+
+router.get("/cases/:id/first-name", verifyToken, requirePermission("Case Management", "view"), require("../utils/caseFirstName").requirePii, async (req, res) => {
+  try {
+    if (!/^[1-9]\d*$/.test(req.params.id) || !Number.isSafeInteger(Number(req.params.id)))
+      return res.status(422).json({ message: "รหัสเคสไม่ถูกต้อง" });
+    const scope = organizationWhere("fr.organization_id", req);
+    const [rows] = await db.query(
+      `SELECT fr.id,fr.organization_id,fr.summary_data,pa.first_name_encrypted AS account_first_name
+         FROM form_responses fr LEFT JOIN patient_accounts pa ON pa.id=fr.patient_account_id
+        WHERE fr.id=?${scope.sql} LIMIT 1`,
+      [req.params.id, ...scope.params],
+    );
+    if (!rows.length) return res.status(404).json({ message: "ไม่พบเคส" });
+    const row = rows[0];
+    const summary = decryptSummaryData(row.summary_data, safeDecrypt, row.organization_id);
+    const { firstNameOf } = require("../utils/caseFirstName");
+    const accountName = row.account_first_name ? require("../utils/privateField").readField(row.account_first_name, "patient_accounts", "first_name_encrypted", null) : null;
+    res.set("Cache-Control", "no-store");
+    res.json({ first_name: firstNameOf(summary.display_name || summary.name) || firstNameOf(accountName, true) });
+  } catch (error) {
+    res.status(503).json({ message: "ไม่สามารถเปิดดูชื่อได้" });
+  }
+});
+
+router.get("/cases/:id/last-name", verifyToken, requirePermission("Case Management", "view"), require("../utils/caseFirstName").requirePii, async (req, res) => {
+  try {
+    if (!/^[1-9]\d*$/.test(req.params.id) || !Number.isSafeInteger(Number(req.params.id)))
+      return res.status(422).json({ message: "รหัสเคสไม่ถูกต้อง" });
+    const scope = organizationWhere("fr.organization_id", req);
+    const [rows] = await db.query(
+      `SELECT fr.id,fr.organization_id,fr.summary_data,pa.last_name_encrypted AS account_last_name
+         FROM form_responses fr LEFT JOIN patient_accounts pa ON pa.id=fr.patient_account_id
+        WHERE fr.id=?${scope.sql} LIMIT 1`,
+      [req.params.id, ...scope.params],
+    );
+    if (!rows.length) return res.status(404).json({ message: "ไม่พบเคส" });
+    const row = rows[0];
+    const summary = decryptSummaryData(row.summary_data, safeDecrypt, row.organization_id);
+    const { lastNameOf } = require("../utils/caseFirstName");
+    const accountName = row.account_last_name ? require("../utils/privateField").readField(row.account_last_name, "patient_accounts", "last_name_encrypted", null) : null;
+    res.set("Cache-Control", "no-store");
+    res.json({ last_name: lastNameOf(summary.display_name || summary.name) || lastNameOf(accountName, true) });
+  } catch (error) {
+    res.status(503).json({ message: "ไม่สามารถเปิดดูชื่อได้" });
   }
 });
 
@@ -1129,7 +1177,7 @@ router.get("/all-cases", verifyToken, async (req, res) => {
       decryptCaseResponse(r, safeDecrypt),
     );
 
-    res.json(parsedResponses);
+    res.json(await require("../services/latestActivity").attachCaseActivities(db, parsedResponses));
   } catch (error) {
     console.error(
       "Error fetching cases:",

@@ -65,7 +65,7 @@ export default function PatientChangePassword() {
         new_password: form.password,
       });
       setPatientSession(null, response.data.user);
-      navigate(returnTo, { replace: true });
+      navigate(response.data.user?.email && !response.data.user?.email_verified ? `/account/verify-email?returnTo=${encodeURIComponent(returnTo)}` : returnTo, { replace: true });
     } catch (requestError) {
       setError(
         requestError.response?.data?.message ||

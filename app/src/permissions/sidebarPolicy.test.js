@@ -45,9 +45,9 @@ const visible = (authorization, permissions, overrides = {}) =>
     .filter((item) => item.type !== "header")
     .map((item) => item.key);
 
-test("system admin sees every module regardless of selected unit type or membership permissions", () => {
+test("system admin sees every module only in the all-organizations overview", () => {
   const authorization = { is_system_admin: true, user: { role_id: 3 } };
-  assert.deepEqual(visible(authorization, []), [
+  assert.deepEqual(visible(authorization, [], { activeOrganization: "all" }), [
     "dashboard",
     "cases",
     "forms",
@@ -71,8 +71,18 @@ test("system admin sees every module regardless of selected unit type or members
     visible(authorization, [], { organizationType: "school" }).includes(
       "schedule",
     ),
-    true,
+    false,
   );
+  const hospital = visible(authorization, [], { activeOrganization: "1", organizationType: "hospital" });
+  assert.ok(hospital.includes("schedule"));
+  assert.equal(hospital.includes("school-students"), false);
+  assert.ok(hospital.includes("organizations") && hospital.includes("users"));
+  const school = visible(authorization, [], { activeOrganization: "2", organizationType: "school" });
+  assert.ok(school.includes("school-students"));
+  assert.equal(school.includes("schedule"), false);
+  assert.ok(school.includes("organizations") && school.includes("users"));
+  // A null/loading type must not imply permission to display all unit types.
+  assert.equal(visible(authorization, []).includes("school-students"), false);
 });
 
 test("admin sees permitted unit menus but cannot gain main system menus from unit permissions", () => {

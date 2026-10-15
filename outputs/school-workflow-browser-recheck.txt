@@ -1,0 +1,18 @@
+[WebServer] (node:16320) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:58884) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 6 tests using 1 worker
+
+(node:42780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › e2e\school-management.spec.js:336:3 › school organization › the case list of a school organization is the student health view (2.3s)
+  ok 2 [desktop-chromium] › e2e\school-management.spec.js:431:3 › school activity layout at 1440px (5.4s)
+  ok 3 [desktop-chromium] › e2e\school-management.spec.js:431:3 › school activity layout at 768px (5.3s)
+  ok 4 [desktop-chromium] › e2e\school-management.spec.js:431:3 › school activity layout at 390px (4.6s)
+  ok 5 [desktop-chromium] › e2e\school-management.spec.js:456:1 › editing a physical record refreshes the school queue and student file (5.6s)
+  ok 6 [desktop-chromium] › e2e\school-management.spec.js:492:1 › school case first name is visible and the eye toggles only the surname (2.7s)
+
+  6 passed (32.1s)

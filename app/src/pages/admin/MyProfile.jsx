@@ -1,3 +1,4 @@
+import { toDisplayText } from '../../utils/textPresentation.js';
 import { authSession, setAuthSession } from "../../utils/authSession";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -36,7 +37,7 @@ const PasswordInput = ({ id, label, value, onChange, autoComplete, hint }) => {
   const [visible, setVisible] = useState(false);
   return (
     <div className="profile-field">
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id}>{toDisplayText(label)}</label>
       <div className="profile-password">
         <input
           id={id}

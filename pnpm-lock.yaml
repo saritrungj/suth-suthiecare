@@ -62,6 +62,9 @@ importers:
       dompurify:
         specifier: ^3.2.6
         version: 3.4.14
+      entities:
+        specifier: ^8.1.0
+        version: 8.1.0
       exceljs:
         specifier: ^4.4.0
         version: 4.4.0
@@ -77,6 +80,9 @@ importers:
       i18next-browser-languagedetector:
         specifier: ^8.2.1
         version: 8.2.1
+      marked:
+        specifier: ^18.1.1
+        version: 18.1.1
       react:
         specifier: ^19.2.4
         version: 19.2.8
@@ -206,6 +212,15 @@ importers:
         version: 4.8.3(supports-color@8.1.1)
 
 packages:
+  marked@18.1.1:
+    resolution: {integrity: sha512-zEGgrtUG8crk+TrMacJSVABU4DYDDkS8uqgU3ohrn/2fW9C2AEfUrO3m6IhpIpQpl7YcVpiXXC9cSMWDANT3dg==}
+    engines: {node: '>= 20'}
+    hasBin: true
+
+  entities@8.1.0:
+    resolution: {integrity: sha512-kxL7msIffSuh9aaFAMD7rxAIuTRMAHMeBtgHW2yUdWw732ZNh4MehkF2gdjvtdmikkaIP9bFDDJOPlsvm7avrA==}
+    engines: {node: '>=20.19.0'}
+
   "@adobe/css-tools@4.5.0":
     resolution:
       {
@@ -4715,6 +4730,10 @@ packages:
     engines: { node: ">= 10" }
 
 snapshots:
+  marked@18.1.1: {}
+
+  entities@8.1.0: {}
+
   "@adobe/css-tools@4.5.0": {}
 
   "@axe-core/playwright@4.13.0(playwright-core@1.62.1)":

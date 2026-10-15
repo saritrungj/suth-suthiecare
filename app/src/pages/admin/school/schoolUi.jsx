@@ -1,3 +1,6 @@
+import SearchableSelect from '../../../components/SearchableSelect';
+import { toDisplayText } from '../../../utils/textPresentation.js';
+import {useMasterOptions} from "../../../components/MasterSelect";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useDialogFocus } from "../../../components/useDialogFocus";
@@ -31,9 +34,19 @@ export const GENDER_LABELS = { male: "ชาย", female: "หญิง", other:
 export const STUDENT_STATUS_LABELS = {
   active: "กำลังศึกษา",
   graduated: "จบการศึกษา",
+  on_leave: "ลาพัก",
+  withdrawn: "ลาออก",
+  waived: "สละสิทธิ์",
   transferred: "ย้ายโรงเรียน",
   inactive: "ปิดใช้งาน",
 };
+
+export function useStudentStatusLabels(){
+ const options=useMasterOptions("student_status",Object.entries(STUDENT_STATUS_LABELS).filter(([code])=>!["inactive","transferred"].includes(code)).map(([code,label])=>({code,label})));
+ const labels=Object.fromEntries(options.map(o=>[o.code,o.label]));
+ for(const [code,label] of Object.entries(STUDENT_STATUS_LABELS))if(!Object.hasOwn(labels,code))labels[code]=label;
+ return labels;
+}
 
 export const TEACHER_ROLE_LABELS = {
   homeroom: "ครูประจำชั้น",
@@ -43,8 +56,8 @@ export const TEACHER_ROLE_LABELS = {
 
 // Current Thai academic year: a new year starts in mid-May.
 export const currentAcademicYear = () => {
-  const now = new Date();
-  return now.getFullYear() + 543 - (now.getMonth() < 4 ? 1 : 0);
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Bangkok', year: 'numeric', month: 'numeric' }).formatToParts(new Date()).map(p => [p.type, p.value]));
+  return Number(parts.year) + 543 - (Number(parts.month) < 5 ? 1 : 0);
 };
 
 export const formatThaiDate = (value) => {
@@ -87,11 +100,12 @@ const RISK_PILL_LEVEL = {
 
 // Risk as icon shape + word + color, the same pill as the case lists.
 export function RiskBadge({ risk }) {
+  const options=useMasterOptions("risk_level",Object.entries(RISK_LABELS).map(([code,label])=>({code,label})));
   if (!risk) return <span className="sch-badge">-</span>;
   return (
     <RiskPill
       level={RISK_PILL_LEVEL[risk] || "none"}
-      label={RISK_LABELS[risk] || risk}
+      label={options.find(o=>o.code===risk)?.label || RISK_LABELS[risk] || risk}
     />
   );
 }
@@ -103,7 +117,7 @@ export function SearchField({ label, placeholder, value, onChange }) {
   return (
     <label className="sch-search-group">
       <FiSearch className="sch-filter-icon" aria-hidden="true" />
-      <span className="sr-only">{label}</span>
+      <span className="sr-only">{toDisplayText(label)}</span>
       <input
         type="search"
         placeholder={placeholder}
@@ -118,14 +132,14 @@ export function SearchField({ label, placeholder, value, onChange }) {
 export function BarSelect({ label, value, onChange, disabled, children }) {
   return (
     <label className="sch-bar-select">
-      <span className="sr-only">{label}</span>
-      <select
+      <span className="sr-only">{toDisplayText(label)}</span>
+      <SearchableSelect
         value={value}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
       >
         {children}
-      </select>
+      </SearchableSelect>
     </label>
   );
 }
@@ -134,10 +148,10 @@ export function BarSelect({ label, value, onChange, disabled, children }) {
 export function MenuSelect({ label, value, onChange, children }) {
   return (
     <label className="sch-native-filter">
-      <span>{label}</span>
-      <select value={value} onChange={(event) => onChange(event.target.value)}>
+      <span>{toDisplayText(label)}</span>
+      <SearchableSelect value={value} onChange={(event) => onChange(event.target.value)}>
         {children}
-      </select>
+      </SearchableSelect>
     </label>
   );
 }
@@ -254,7 +268,7 @@ export function TableScroll({ label, children, className = "" }) {
       className={`sch-table-wrap ${className}`}
       tabIndex={0}
       role="region"
-      aria-label={label}
+      aria-label={toDisplayText(label)}
     >
       {children}
     </div>
@@ -352,7 +366,7 @@ export function ThaiDateField({
   return (
     <div className={className}>
       <label htmlFor={inputId}>
-        {label}
+        {toDisplayText(label)}
         {required && <RequiredMark />}
       </label>
       <input
@@ -445,7 +459,7 @@ export function Pagination({ pagination, onPage, onLimit }) {
     <footer className="sch-pagination">
       <div className="sch-pagination-info">
         <span>แสดง</span>
-        <select
+        <SearchableSelect
           value={limit}
           onChange={(event) => onLimit(Number(event.target.value))}
           aria-label="จำนวนรายการต่อหน้า"
@@ -455,7 +469,7 @@ export function Pagination({ pagination, onPage, onLimit }) {
               {size}
             </option>
           ))}
-        </select>
+        </SearchableSelect>
         <span>จากทั้งหมด {total.toLocaleString("th-TH")} รายการ</span>
       </div>
       <div className="sch-pagination-controls">

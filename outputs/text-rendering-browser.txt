@@ -1,0 +1,176 @@
+
+Running 84 tests using 1 worker
+
+  ok  1 [desktop-chromium] › e2e\assessment-result.spec.js:27:1 › assessment result renders one non-overlapping body per result (1.9s)
+  ok  2 [desktop-chromium] › e2e\assessment-result.spec.js:45:1 › successful submission closes loading dialog and opens result (4.6s)
+  ok  3 [desktop-chromium] › e2e\case-person-timeline.spec.js:106:3 › person history survives a later successful case request (3.7s)
+  ok  4 [desktop-chromium] › e2e\case-person-timeline.spec.js:106:3 › person history survives a later failed case request (3.5s)
+  ok  5 [desktop-chromium] › e2e\case-person-timeline.spec.js:127:1 › uses the current case history when the person timeline fails (3.1s)
+  ok  6 [desktop-chromium] › e2e\case-person-timeline.spec.js:138:3 › case activity layout at 1440px (6.5s)
+  ok  7 [desktop-chromium] › e2e\case-person-timeline.spec.js:138:3 › case activity layout at 768px (5.9s)
+  ok  8 [desktop-chromium] › e2e\case-person-timeline.spec.js:138:3 › case activity layout at 390px (5.8s)
+  ok  9 [desktop-chromium] › e2e\case-person-timeline.spec.js:179:1 › saving a follow-up refreshes the activity without resetting the queue (5.1s)
+  ok 10 [desktop-chromium] › e2e\case-person-timeline.spec.js:204:1 › activity fallback identifies forms and walk-in records and exposes long titles (6.6s)
+  ok 11 [desktop-chromium] › e2e\case-person-timeline.spec.js:223:1 › surname reveal keeps the first name visible and can be hidden again (3.4s)
+  ok 12 [desktop-chromium] › e2e\case-person-timeline.spec.js:260:1 › surname reveal retries a failed request without opening case details (3.0s)
+  ok 13 [desktop-chromium] › e2e\case-person-timeline.spec.js:273:1 › case viewers without PII permission do not have a name reveal control (4.2s)
+  ok 14 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route / renders without a runtime exception (1.9s)
+  ok 15 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /login renders without a runtime exception (1.3s)
+  ok 16 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /help-center renders without a runtime exception (1.2s)
+  ok 17 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /history renders without a runtime exception (1.2s)
+  ok 18 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /account/login renders without a runtime exception (1.2s)
+  ok 19 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /account/register renders without a runtime exception (1.2s)
+  ok 20 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /account/change-password renders without a runtime exception (1.2s)
+  ok 21 [desktop-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /__unknown__ renders without a runtime exception (1.1s)
+  ok 22 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/dashboard renders without a runtime exception (1.3s)
+  ok 23 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/forms renders without a runtime exception (1.2s)
+  ok 24 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/forms/create renders without a runtime exception (1.3s)
+  ok 25 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/schedule renders without a runtime exception (1.4s)
+  ok 26 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/cases renders without a runtime exception (1.6s)
+  ok 27 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/roles renders without a runtime exception (1.3s)
+  ok 28 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/users renders without a runtime exception (1.2s)
+  ok 29 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/members renders without a runtime exception (1.5s)
+  ok 30 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/risk-cases renders without a runtime exception (1.4s)
+  ok 31 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/banner renders without a runtime exception (1.8s)
+  ok 32 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/clinics renders without a runtime exception (1.6s)
+  ok 33 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/help-center renders without a runtime exception (1.5s)
+  ok 34 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/organizations renders without a runtime exception (1.3s)
+  ok 35 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school renders without a runtime exception (1.6s)
+  ok 36 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/students renders without a runtime exception (1.4s)
+  ok 37 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/students/import renders without a runtime exception (1.4s)
+  ok 38 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/teachers renders without a runtime exception (1.3s)
+  ok 39 [desktop-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/types renders without a runtime exception (1.6s)
+  ok 40 [desktop-chromium] › e2e\text-rendering.spec.js:9:1 › assessment renders encoded formatting, lists and comparison operators without changing answers (2.2s)
+  ok 41 [desktop-chromium] › e2e\text-rendering.spec.js:29:1 › rich rendering strips encoded executable HTML and retains intended formatting (1.2s)
+  x  42 [desktop-chromium] › e2e\text-rendering.spec.js:44:1 › landing form titles and descriptions contain readable content (12.8s)
+  ok 43 [mobile-chromium] › e2e\assessment-result.spec.js:27:1 › assessment result renders one non-overlapping body per result (1.7s)
+  ok 44 [mobile-chromium] › e2e\assessment-result.spec.js:45:1 › successful submission closes loading dialog and opens result (4.8s)
+  ok 45 [mobile-chromium] › e2e\case-person-timeline.spec.js:106:3 › person history survives a later successful case request (3.9s)
+  ok 46 [mobile-chromium] › e2e\case-person-timeline.spec.js:106:3 › person history survives a later failed case request (3.6s)
+  ok 47 [mobile-chromium] › e2e\case-person-timeline.spec.js:127:1 › uses the current case history when the person timeline fails (3.2s)
+  -  48 [mobile-chromium] › e2e\case-person-timeline.spec.js:138:3 › case activity layout at 1440px
+  -  49 [mobile-chromium] › e2e\case-person-timeline.spec.js:138:3 › case activity layout at 768px
+  -  50 [mobile-chromium] › e2e\case-person-timeline.spec.js:138:3 › case activity layout at 390px
+  ok 51 [mobile-chromium] › e2e\case-person-timeline.spec.js:179:1 › saving a follow-up refreshes the activity without resetting the queue (5.6s)
+  ok 52 [mobile-chromium] › e2e\case-person-timeline.spec.js:204:1 › activity fallback identifies forms and walk-in records and exposes long titles (7.1s)
+  ok 53 [mobile-chromium] › e2e\case-person-timeline.spec.js:223:1 › surname reveal keeps the first name visible and can be hidden again (3.3s)
+  ok 54 [mobile-chromium] › e2e\case-person-timeline.spec.js:260:1 › surname reveal retries a failed request without opening case details (3.2s)
+  ok 55 [mobile-chromium] › e2e\case-person-timeline.spec.js:273:1 › case viewers without PII permission do not have a name reveal control (4.4s)
+  -  56 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route / renders without a runtime exception
+  -  57 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /login renders without a runtime exception
+  -  58 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /help-center renders without a runtime exception
+  -  59 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /history renders without a runtime exception
+  -  60 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /account/login renders without a runtime exception
+  -  61 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /account/register renders without a runtime exception
+  -  62 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /account/change-password renders without a runtime exception
+  -  63 [mobile-chromium] › e2e\route-smoke.spec.js:42:5 › declared route smoke checks › public route /__unknown__ renders without a runtime exception
+  -  64 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/dashboard renders without a runtime exception
+  -  65 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/forms renders without a runtime exception
+  -  66 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/forms/create renders without a runtime exception
+  -  67 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/schedule renders without a runtime exception
+  -  68 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/cases renders without a runtime exception
+  -  69 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/roles renders without a runtime exception
+  -  70 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/users renders without a runtime exception
+  -  71 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/members renders without a runtime exception
+  -  72 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/risk-cases renders without a runtime exception
+  -  73 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/banner renders without a runtime exception
+  -  74 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/clinics renders without a runtime exception
+  -  75 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/help-center renders without a runtime exception
+  -  76 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/organizations renders without a runtime exception
+  -  77 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school renders without a runtime exception
+  -  78 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/students renders without a runtime exception
+  -  79 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/students/import renders without a runtime exception
+  -  80 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/teachers renders without a runtime exception
+  -  81 [mobile-chromium] › e2e\route-smoke.spec.js:61:5 › declared route smoke checks › admin route /admin/school/types renders without a runtime exception
+  ok 82 [mobile-chromium] › e2e\text-rendering.spec.js:9:1 › assessment renders encoded formatting, lists and comparison operators without changing answers (2.3s)
+  ok 83 [mobile-chromium] › e2e\text-rendering.spec.js:29:1 › rich rendering strips encoded executable HTML and retains intended formatting (1.2s)
+  x  84 [mobile-chromium] › e2e\text-rendering.spec.js:44:1 › landing form titles and descriptions contain readable content (13.4s)
+
+
+  1) [desktop-chromium] › e2e\text-rendering.spec.js:44:1 › landing form titles and descriptions contain readable content 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'แบบประเมิน สุขภาพ & การดูแล', exact: true }).first()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByRole('heading', { name: 'แบบประเมิน สุขภาพ & การดูแล', exact: true }).first()
+
+
+      45 |  await page.route('**/api/forms',route=>route.fulfill({json:[{id:101,title:'แบบประเมิน **สุขภาพ** &amp; การดูแล',description:'สำหรับคะแนน **&gt;** 10',clinic_type:'general',status:'published'}]}));
+      46 |  await page.goto('/');
+    > 47 |  await expect(page.getByRole('heading',{name:'แบบประเมิน สุขภาพ & การดูแล',exact:true}).first()).toBeVisible();
+         |                                                                                                  ^
+      48 |  await expect(page.getByText('สำหรับคะแนน > 10',{exact:true}).first()).toBeVisible();
+      49 | });
+      50 |
+        at D:\github-clone\suth-suthiecare\app\e2e\text-rendering.spec.js:47:98
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\text-rendering-landing-for-85cdb-ns-contain-readable-content-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\text-rendering-landing-for-85cdb-ns-contain-readable-content-desktop-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\text-rendering-landing-for-85cdb-ns-contain-readable-content-desktop-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\text-rendering-landing-for-85cdb-ns-contain-readable-content-desktop-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\text-rendering-landing-for-85cdb-ns-contain-readable-content-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [mobile-chromium] › e2e\text-rendering.spec.js:44:1 › landing form titles and descriptions contain readable content 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'แบบประเมิน สุขภาพ & การดูแล', exact: true }).first()
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByRole('heading', { name: 'แบบประเมิน สุขภาพ & การดูแล', exact: true }).first()
+
+
+      45 |  await page.route('**/api/forms',route=>route.fulfill({json:[{id:101,title:'แบบประเมิน **สุขภาพ** &amp; การดูแล',description:'สำหรับคะแนน **&gt;** 10',clinic_type:'general',status:'published'}]}));
+      46 |  await page.goto('/');
+    > 47 |  await expect(page.getByRole('heading',{name:'แบบประเมิน สุขภาพ & การดูแล',exact:true}).first()).toBeVisible();
+         |                                                                                                  ^
+      48 |  await expect(page.getByText('สำหรับคะแนน > 10',{exact:true}).first()).toBeVisible();
+      49 | });
+      50 |
+        at D:\github-clone\suth-suthiecare\app\e2e\text-rendering.spec.js:47:98
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\text-rendering-landing-for-85cdb-ns-contain-readable-content-mobile-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\text-rendering-landing-for-85cdb-ns-contain-readable-content-mobile-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\text-rendering-landing-for-85cdb-ns-contain-readable-content-mobile-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\text-rendering-landing-for-85cdb-ns-contain-readable-content-mobile-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\text-rendering-landing-for-85cdb-ns-contain-readable-content-mobile-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [desktop-chromium] › e2e\text-rendering.spec.js:44:1 › landing form titles and descriptions contain readable content 
+    [mobile-chromium] › e2e\text-rendering.spec.js:44:1 › landing form titles and descriptions contain readable content 
+  29 skipped
+  53 passed (3.0m)

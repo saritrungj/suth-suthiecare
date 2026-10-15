@@ -1,3 +1,4 @@
+import { toDisplayText } from '../../utils/textPresentation.js';
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -54,7 +55,7 @@ export default function LegalPage({ kind }) {
         </nav>
 
         <article className="legal-doc">
-          <h1>{doc.title}</h1>
+          <h1>{toDisplayText(doc.title)}</h1>
           <p className="legal-updated">{doc.updated}</p>
           <p className="legal-intro">{doc.intro}</p>
 
@@ -63,7 +64,7 @@ export default function LegalPage({ kind }) {
             <ol>
               {doc.sections.map((section) => (
                 <li key={section.id}>
-                  <a href={`#${section.id}`}>{section.title}</a>
+                  <a href={`#${section.id}`}>{toDisplayText(section.title)}</a>
                 </li>
               ))}
             </ol>
@@ -71,7 +72,7 @@ export default function LegalPage({ kind }) {
 
           {doc.sections.map((section) => (
             <section key={section.id} id={section.id}>
-              <h2>{section.title}</h2>
+              <h2>{toDisplayText(section.title)}</h2>
               {section.body?.map((text) => (
                 <p key={text}>{text}</p>
               ))}
@@ -87,7 +88,7 @@ export default function LegalPage({ kind }) {
               ))}
               {section.link && (
                 <p>
-                  <Link to={section.link.to}>{section.link.label}</Link>
+                  <Link to={section.link.to}>{toDisplayText(section.link.label)}</Link>
                 </p>
               )}
             </section>

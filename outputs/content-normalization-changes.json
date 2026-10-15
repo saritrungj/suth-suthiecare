@@ -1,0 +1,230 @@
+[
+  {
+    "file": "app\\src\\components\\appointment\\AppointmentDetailModal.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 2
+  },
+  {
+    "file": "app\\src\\components\\appointment\\AppointmentTable.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\components\\case\\casedetail-childrens\\CaseActionTab.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 4
+  },
+  {
+    "file": "app\\src\\components\\case\\casedetail-childrens\\CaseLeftPanel.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 3
+  },
+  {
+    "file": "app\\src\\components\\case\\casedetail-childrens\\CaseModals.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 2
+  },
+  {
+    "file": "app\\src\\components\\case\\casedetail-childrens\\exportUtils.js",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\components\\case\\casedetail-childrens\\TemplateManagerModal.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\components\\case\\CaseDetailModal.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\components\\case\\CaseDrawer.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\components\\case\\CaseTable.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\components\\case\\ExportExcelModal.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\components\\ManagementSettings.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\components\\OrganizationRolePermissions.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\components\\Sidebar.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 6
+  },
+  {
+    "file": "app\\src\\pages\\admin\\Appointment.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 2
+  },
+  {
+    "file": "app\\src\\pages\\admin\\CaseData.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\pages\\admin\\dashboard.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\pages\\admin\\forms\\builder-components\\PublishSettingsModal.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\pages\\admin\\forms\\builder-components\\SortableQuestion.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\pages\\admin\\forms\\FormManager.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 3
+  },
+  {
+    "file": "app\\src\\pages\\admin\\forms\\FormPreview.jsx",
+    "plain": true,
+    "rich": true,
+    "replacements": 10
+  },
+  {
+    "file": "app\\src\\pages\\admin\\MasterData.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 2
+  },
+  {
+    "file": "app\\src\\pages\\admin\\RiskCases.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 2
+  },
+  {
+    "file": "app\\src\\pages\\admin\\RolesPermissions.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\pages\\admin\\school\\StudentDetailModal.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 2
+  },
+  {
+    "file": "app\\src\\pages\\assessment\\formView\\formUtils.js",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\pages\\assessment\\formView\\FormView.jsx",
+    "plain": true,
+    "rich": true,
+    "replacements": 4
+  },
+  {
+    "file": "app\\src\\pages\\assessment\\formView\\InteractiveResultPanel.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 2
+  },
+  {
+    "file": "app\\src\\pages\\assessment\\formView\\QuestionRenderer.jsx",
+    "plain": false,
+    "rich": true,
+    "replacements": 9
+  },
+  {
+    "file": "app\\src\\pages\\assessment\\history\\ClinicDetail.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\pages\\assessment\\history\\HistoryResult.jsx",
+    "plain": false,
+    "rich": true,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\pages\\helpCenter\\ClinicHelpDetail.jsx",
+    "plain": true,
+    "rich": true,
+    "replacements": 4
+  },
+  {
+    "file": "app\\src\\pages\\helpCenter\\HelpCenterUser.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 2
+  },
+  {
+    "file": "app\\src\\pages\\legal\\LegalPage.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 4
+  },
+  {
+    "file": "app\\src\\pages\\patient\\PatientLogin.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\pages\\result\\AssessmentResult.jsx",
+    "plain": true,
+    "rich": true,
+    "replacements": 3
+  },
+  {
+    "file": "app\\src\\pages\\sutlanding\\ClinicFormPicker.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  },
+  {
+    "file": "app\\src\\pages\\sutlanding\\SutLanding2.jsx",
+    "plain": true,
+    "rich": false,
+    "replacements": 1
+  }
+]

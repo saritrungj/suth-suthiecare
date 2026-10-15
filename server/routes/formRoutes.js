@@ -727,15 +727,7 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
         .json({ message: "เลขบัตรประชาชนไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง" });
 
     await connection.beginTransaction();
-    const [purposes] = await connection.query(
-      "SELECT purpose,legal_basis,notice_version FROM pdpa_processing_purposes WHERE form_id=? AND organization_id=? AND approved_at IS NOT NULL",
-      [formId, form.organization_id],
-    );
-    const processingPurpose = purposes[0];
-    if (process.env.NODE_ENV === "production" && !processingPurpose)
-      throw Object.assign(new Error("PROCESSING_PURPOSE_REQUIRED"), {
-        status: 503,
-      });
+    const processingPurpose = await require('../services/privacyNoticeService').getProcessingNotice(connection, formId, form.organization_id);
     if (
       processingPurpose?.legal_basis === "consent" &&
       (req.body.processing_consent !== true ||
@@ -777,6 +769,16 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
 
     // โคลน summaryData เพื่อนำไปเข้ารหัส
     const dbSummary = JSON.parse(JSON.stringify(summaryData || {}));
+    // Clients cannot inject or suppress a school risk override. Evaluate
+    // the approved rule against the actual submitted answers on the server.
+    delete dbSummary.school_risk_override;
+    if(Array.isArray(dbSummary.score_results)) dbSummary.score_results=dbSummary.score_results.filter(r=>r.question_id!=='school_risk_trigger');
+    const [schoolTriggers] = await connection.query(`SELECT DISTINCT tr.id,tr.question_id,tr.answer_path,tr.answer_value,tr.enabled FROM school_risk_triggers tr JOIN schools s ON s.id=tr.school_id JOIN school_students ss ON ss.school_id=s.id WHERE tr.form_id=? AND tr.enabled=1 AND s.organization_id=? AND ss.archived_at IS NULL AND ss.status='active' AND (ss.person_id=? OR ss.patient_account_id=?)`,[formId,form.organization_id,owner.personId||0,owner.patientAccountId||0]);
+    const schoolOverride = require('../utils/schoolWorkflows').evaluateRiskTriggers(schoolTriggers,answers);
+    if (schoolOverride) {
+      dbSummary.school_risk_override = schoolOverride;
+      dbSummary.score_results = [...(Array.isArray(dbSummary.score_results)?dbSummary.score_results:[]),{question_id:'school_risk_trigger',title:'เกณฑ์รายข้อที่โรงเรียนกำหนด',label:'เสี่ยงสูง',color:'#d93025',score:null,advice:''}];
+    }
     // A logged-in submitter is known: when the form asked no name (or phone),
     // record the account's own so every case view can show who submitted.
     const accountName = req.patient ? patientAccountName(req.patient) : "";
@@ -924,6 +926,7 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
       message: "บันทึกคำตอบสำเร็จ",
       responseId,
       masterCaseId: owner.masterCaseId,
+      ...(schoolOverride ? {score_results:dbSummary.score_results} : {}),
     });
   } catch (err) {
     await connection.rollback();
@@ -961,7 +964,7 @@ router.get(
           : 0;
 
       let sql =
-        "SELECT fr.*, pa.username AS patient_username, pa.first_name_encrypted AS patient_first_name_encrypted, pa.last_name_encrypted AS patient_last_name_encrypted FROM form_responses fr LEFT JOIN patient_accounts pa ON pa.id = fr.patient_account_id WHERE fr.form_id = ?";
+        "SELECT fr.*, f.title AS form_title, pa.username AS patient_username, pa.first_name_encrypted AS patient_first_name_encrypted, pa.last_name_encrypted AS patient_last_name_encrypted FROM form_responses fr JOIN forms f ON f.id=fr.form_id AND f.organization_id=fr.organization_id LEFT JOIN patient_accounts pa ON pa.id = fr.patient_account_id WHERE fr.form_id = ?";
       const params = [req.params.id];
       const scope = organizationWhere("fr.organization_id", req);
       sql += scope.sql;
@@ -996,7 +999,7 @@ router.get(
         }),
       );
 
-      res.json(decryptedRows);
+      res.json(await require("../services/latestActivity").attachCaseActivities(db, decryptedRows));
     } catch (err) {
       console.error(require("../utils/safeError").safeError(err));
       res.status(500).json({ message: "เกิดข้อผิดพลาดในการดึงข้อมูลคำตอบ" });

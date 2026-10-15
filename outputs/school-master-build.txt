@@ -1,0 +1,63 @@
+$ vite build
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 935 modules transformed.
+rendering chunks...
+computing gzip size...
+build/index.html                                  4.26 kB │ gzip:   1.12 kB
+build/assets/logoSUTH-C61czE0q.png               59.02 kB
+build/assets/bg-health-CF5F11bm.jpg             656.44 kB
+build/assets/login-image-auic4EU3.png         1,296.91 kB
+build/assets/02-ChbMj7n0.png                  1,306.70 kB
+build/assets/01-B43erMv6.png                  1,308.00 kB
+build/assets/03-DuAF39By.png                  1,473.24 kB
+build/assets/act.suth-qG5EZz1V.png            1,632.43 kB
+build/assets/vitalcare-FsGwXx1b.png           1,632.84 kB
+build/assets/bg-new-CxDf2QPd.jpg              5,286.88 kB
+build/assets/style-TQr5uM8s.css                 509.90 kB │ gzip:  90.34 kB
+build/assets/HistorySearch-DRBswolJ.js            0.43 kB │ gzip:   0.31 kB
+build/assets/CaseReferrals-Dqq78pHn.js            0.90 kB │ gzip:   0.45 kB
+build/assets/SchoolDashboard-DWmg9vEr.js          2.07 kB │ gzip:   0.95 kB
+build/assets/useMediaQuery-DJMke3l3.js            2.26 kB │ gzip:   1.05 kB
+build/assets/FileSaver.min-CEAjJoko.js            3.02 kB │ gzip:   1.47 kB
+build/assets/MasterData-CtzdFLkb.js               5.54 kB │ gzip:   1.99 kB
+build/assets/SchoolTypes-yzZ3anDM.js              5.75 kB │ gzip:   2.08 kB
+build/assets/CaseTable-DoncztoD.js                5.95 kB │ gzip:   2.30 kB
+build/assets/SchoolRoles-DxLQ6M1T.js              5.98 kB │ gzip:   1.75 kB
+build/assets/ClinicDetail-BZZMmyVt.js             6.35 kB │ gzip:   2.26 kB
+build/assets/RolesPermissions-HJEqAfqA.js         6.52 kB │ gzip:   2.26 kB
+build/assets/CaseReferralPanel-BcnKeLKw.js        6.67 kB │ gzip:   2.58 kB
+build/assets/CaseDrawer-BRBZUQ95.js               6.97 kB │ gzip:   3.02 kB
+build/assets/MyProfile-4lJ4DrQ-.js                8.18 kB │ gzip:   2.41 kB
+build/assets/school-DEfrR7eC.js                   8.86 kB │ gzip:   3.60 kB
+build/assets/TeacherList-C7kp9jU5.js              9.55 kB │ gzip:   3.05 kB
+build/assets/SchoolCaseData-CacNfVr3.js           9.75 kB │ gzip:   3.26 kB
+build/assets/RiskCases-CZ4ZZ7Ip.js               10.80 kB │ gzip:   4.08 kB
+build/assets/CaseReferrals-D6VamI-m.js           10.86 kB │ gzip:   3.46 kB
+build/assets/AdminLayout-BXMyiF5b.js             11.73 kB │ gzip:   3.74 kB
+build/assets/AssessmentResult-DATSk6RL.js        11.87 kB │ gzip:   4.16 kB
+build/assets/SchoolStructure-Cb-W071p.js         12.79 kB │ gzip:   3.80 kB
+build/assets/StudentList-CKy3-Tza.js             15.05 kB │ gzip:   4.51 kB
+build/assets/FormManager-CBtP8coo.js             18.17 kB │ gzip:   5.00 kB
+build/assets/StudentImport-CNblreqt.js           20.09 kB │ gzip:   6.42 kB
+build/assets/StudentDetailModal-B5sjX2Uc.js      25.46 kB │ gzip:   6.94 kB
+build/assets/CaseData-oSdxIeK0.js                28.00 kB │ gzip:   8.81 kB
+build/assets/StudentHealthCharts-CypsGSrr.js     28.70 kB │ gzip:   9.28 kB
+build/assets/UserManagement-C53aFeL2.js          31.90 kB │ gzip:   8.07 kB
+build/assets/FormView-TOQwa5ui.js                41.50 kB │ gzip:  12.69 kB
+build/assets/BannerManagement-BIXsqvBh.js        42.32 kB │ gzip:  12.12 kB
+build/assets/HistoryResult-CQZ2Tsw-.js           46.63 kB │ gzip:  13.75 kB
+build/assets/caseDateFilter-Da730MfE.js          88.36 kB │ gzip:  23.49 kB
+build/assets/FormBuilder-DBhWGlU5.js             99.86 kB │ gzip:  24.44 kB
+build/assets/dashboard-Cp_ZMMWq.js              107.17 kB │ gzip:  28.53 kB
+build/assets/index-BWoa3cNl.js                  111.18 kB │ gzip:  30.56 kB
+build/assets/Appointment-pUF0uKmM.js            249.23 kB │ gzip:  75.14 kB
+build/assets/CartesianChart-BCRQ_8ma.js         352.61 kB │ gzip: 104.06 kB
+build/assets/index-CNtflBrT.js                  901.37 kB │ gzip: 264.65 kB
+build/assets/exceljs.min-CVEwCRSq.js            936.99 kB │ gzip: 270.75 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 7.41s

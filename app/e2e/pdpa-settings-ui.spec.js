@@ -35,6 +35,8 @@ const organizations = [
   },
 ];
 async function setup(page, received = {}, options = {}) {
+  received.deprecatedRequests=[];
+  page.on('request',req=>{if(/\/pdpa\/|\/patient\/privacy\/|\/data-permissions/.test(req.url()))received.deprecatedRequests.push(req.url());});
   await mockAdminApi(page);
   await page.addInitScript(() => {
     document.cookie = "suth_staff_session=synthetic-session; path=/";
@@ -170,7 +172,7 @@ test("new management sections follow the existing controls on desktop and mobile
     path: `../outputs/pdpa/evidence/ui-role-${testInfo.project.name}.png`,
   });
   const settings = page.getByRole("region", {
-    name: "การตั้งค่าความปลอดภัยและ PDPA",
+    name: "การส่งต่อและการแจ้งเตือน",
   });
   await settings
     .locator("summary")
@@ -194,13 +196,13 @@ test("new management sections follow the existing controls on desktop and mobile
   ).toBe(true);
 });
 
-test("settings save independently, preserve other edits, and report the retention preview", async ({
+test("service settings save independently without privacy configuration", async ({
   page,
 }, testInfo) => {
   const received = {};
   await setup(page, received);
   const settings = page.getByRole("region", {
-    name: "การตั้งค่าความปลอดภัยและ PDPA",
+    name: "การส่งต่อและการแจ้งเตือน",
   });
   const panel = (title) =>
     settings
@@ -228,59 +230,14 @@ test("settings save independently, preserve other edits, and report the retentio
   await expect
     .poll(() => received.notification)
     .toEqual({ destination: "-100123456", enabled: true, verified: true });
-  const member = panel("สิทธิ์ข้อมูลละเอียด");
-  await member.locator("summary").click();
-  await member.getByRole("button", { name: "ตรวจสิทธิ์", exact: true }).click();
-  await expect(
-    member.getByRole("checkbox", { name: "เปิดข้อมูลส่วนบุคคลเต็ม" }),
-  ).toBeChecked();
-  await member.getByRole("checkbox", { name: "เปิดข้อมูลสุขภาพ" }).check();
-  await member
-    .getByRole("button", { name: "บันทึกสิทธิ์", exact: true })
-    .click();
-  await expect
-    .poll(() => received.member)
-    .toEqual({ permissions: { "pii.view": true, "clinical.view": true } });
-  const purpose = panel("วัตถุประสงค์และประกาศ");
-  await purpose.locator("summary").click();
-  await purpose
-    .getByRole("combobox", { name: "ฟอร์ม", exact: true })
-    .selectOption("101");
-  await purpose.getByLabel("รหัสวัตถุประสงค์").fill("demo");
-  await purpose.getByLabel("รุ่นประกาศ").fill("v1");
-  await purpose
-    .getByRole("combobox", {
-      name: "ฐานการประมวลผลที่ผู้รับผิดชอบยืนยัน",
-      exact: true,
-    })
-    .selectOption("consent");
-  await purpose
-    .getByLabel("ข้อความประกาศ")
-    .fill("ประกาศสาธิตสำหรับตรวจหน้าจอ ไม่มีข้อมูลผู้รับบริการจริง");
-  await purpose.getByRole("checkbox", { name: "ผู้รับผิดชอบ PDPA" }).check();
-  await purpose
-    .getByRole("button", { name: "บันทึกประกาศ" })
-    .scrollIntoViewIfNeeded();
-  await page.screenshot({
-    path: `../outputs/pdpa/evidence/ui-purpose-${testInfo.project.name}.png`,
-  });
-  await purpose.getByRole("button", { name: "บันทึกประกาศ" }).click();
-  await expect.poll(() => received.purpose?.notice_version).toBe("v1");
-  const requests = panel("คำขอใช้สิทธิ");
-  await requests.locator("summary").click();
-  await expect(requests.getByText("รอตรวจสอบตัวตน")).toBeVisible();
-  const retention = panel("อายุเก็บข้อมูล");
-  await retention.locator("summary").click();
-  await retention.getByRole("button", { name: "ตรวจรายการโดยไม่ลบ" }).click();
-  await expect(retention.getByRole("status")).toContainText(
-    "พบ 12 รายการตามนโยบาย ยังไม่ได้ลบข้อมูล",
-  );
+  for(const title of ['สิทธิ์ข้อมูลละเอียดรายสมาชิก','วัตถุประสงค์และประกาศความเป็นส่วนตัว','คำขอใช้สิทธิ','อายุเก็บข้อมูลและการตรวจรายการก่อนลบ']) await expect(settings.getByText(title,{exact:true})).toHaveCount(0);
+  expect(received.deprecatedRequests).toEqual([]);
 });
 
 test("a failed section does not block the other settings", async ({ page }) => {
   await setup(page, {}, { notificationFailure: true });
   const settings = page.getByRole("region", {
-    name: "การตั้งค่าความปลอดภัยและ PDPA",
+    name: "การส่งต่อและการแจ้งเตือน",
   });
   await settings
     .locator("summary")
@@ -301,90 +258,15 @@ test("a failed section does not block the other settings", async ({ page }) => {
   ).toBeEnabled();
 });
 
-test("patient requests retain input on failure and show readable status after retry", async ({
-  page,
-}, testInfo) => {
-  await mockPublicApi(page);
-  await page.addInitScript(() => {
-    document.cookie = "suth_patient_session=synthetic-session; path=/";
-    localStorage.setItem("i18nextLng", "th");
-  });
-  await page.route("**/api/patient/history", (route) =>
-    route.fulfill({
-      json: {
-        success: true,
-        profile: { id: 1, display_name: "บัญชีสาธิต", status: "active" },
-        masterCases: [],
-        responses: [],
-      },
-    }),
-  );
-  await page.route("**/api/patient/privacy/organizations", (route) =>
-    route.fulfill({ json: [organizations[1]] }),
-  );
-  let fail = true,
-    received;
-  await page.route("**/api/patient/privacy/requests", (route) => {
-    if (route.request().method() === "POST") {
-      if (fail)
-        return route.fulfill({ status: 503, json: { code: "UNAVAILABLE" } });
-      received = route.request().postDataJSON();
-      return route.fulfill({ status: 201, json: { id: 7 } });
-    }
-    return route.fulfill({
-      json: fail
-        ? []
-        : [
-            {
-              id: 7,
-              request_type: "access",
-              status: "submitted",
-              created_at: "2026-10-03",
-            },
-          ],
-    });
-  });
-  await page.goto("/history/result");
-  const section = page.getByRole("region", {
-    name: "คำขอเกี่ยวกับข้อมูลส่วนบุคคล",
-  });
-  await section.locator("summary").click();
-  await section
-    .getByRole("combobox", { name: "หน่วยงาน", exact: true })
-    .selectOption("1");
-  await section
-    .getByRole("textbox", { name: /^รายละเอียด/ })
-    .fill("ขอข้อมูลสาธิต");
-  await section.getByRole("button", { name: "ส่งคำขอ", exact: true }).click();
-  await expect(section.getByRole("alert")).toContainText("ส่งคำขอไม่สำเร็จ");
-  await expect(
-    section.getByRole("textbox", { name: /^รายละเอียด/ }),
-  ).toHaveValue("ขอข้อมูลสาธิต");
-  fail = false;
-  await section.getByRole("button", { name: "ส่งคำขอ", exact: true }).click();
-  await expect
-    .poll(() => received)
-    .toEqual({
-      organization_id: 1,
-      request_type: "access",
-      detail: "ขอข้อมูลสาธิต",
-    });
-  await expect(section.getByText("รอตรวจสอบตัวตน")).toBeVisible();
-  await section.evaluate((element) =>
-    element.scrollIntoView({ block: "start" }),
-  );
-  await page.screenshot({
-    path: `../outputs/pdpa/evidence/ui-patient-${testInfo.project.name}.png`,
-  });
-  expect(
-    (await new AxeBuilder({ page }).include(".patient-privacy").analyze())
-      .violations,
-  ).toEqual([]);
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= window.innerWidth,
-    ),
-  ).toBe(true);
+test("patient history has no privacy request settings or API calls", async ({page}) => {
+ await mockPublicApi(page);
+ await page.addInitScript(()=>{document.cookie='suth_patient_session=synthetic-session; path=/';localStorage.setItem('i18nextLng','th');});
+ const requests=[];page.on('request',req=>{if(req.url().includes('/patient/privacy/'))requests.push(req.url());});
+ await page.route('**/api/patient/history',route=>route.fulfill({json:{success:true,profile:{id:1,display_name:'บัญชีสาธิต',status:'active'},masterCases:[],responses:[]}}));
+ await page.goto('/history/result');
+ await expect(page.locator('.hr-layout')).toBeVisible();
+ await expect(page.getByRole('region',{name:'คำขอเกี่ยวกับข้อมูลส่วนบุคคล'})).toHaveCount(0);
+ expect(requests).toEqual([]);
 });
 
 test("privacy notice sits with the form and consent remains keyboard accessible", async ({
@@ -495,7 +377,7 @@ test("patient-visible case note uses the existing case workspace controls", asyn
     return route.fallback();
   });
   await page.goto("/admin/cases");
-  await page.getByRole("button", { name: "บัญชีสาธิต", exact: true }).click();
+  await page.getByRole("button", { name: /MC-0010/ }).click();
   await page
     .getByRole("tab", { name: /จัดการ|ติดตาม|ดำเนินการ/ })
     .first()

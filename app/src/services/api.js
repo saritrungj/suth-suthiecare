@@ -110,6 +110,7 @@ export const patientRegisterApi = (data) =>
   patientApi.post("/patient-auth/register", data);
 export const verifyPatientEmailApi = (data) =>
   patientApi.post("/patient-auth/email/verify", data);
+export const requestPatientOnboardingEmailApi = () => patientApi.post('/patient-auth/email/onboarding/request');
 export const resendPatientEmailApi = (data) =>
   patientApi.post("/patient-auth/email/resend", data);
 export const requestPatientPasswordRecoveryApi = (data) =>
@@ -198,6 +199,10 @@ export const updateStudentPhysicalRecord = (id, data) =>
 export const deleteStudentPhysicalRecord = (id) =>
   api.delete(`/school/physical-records/${id}`);
 export const getSchoolCases = (params) => api.get("/school/cases", { params });
+export const getCaseFirstName = (id, school = false) =>
+  api.get(school ? `/school/students/${id}/first-name` : `/cases/${id}/first-name`);
+export const getCaseLastName = (id, school = false) =>
+  api.get(school ? `/school/students/${id}/last-name` : `/cases/${id}/last-name`);
 
 // ── Dashboard ──
 export const getDashboardSummary = () => api.get("/dashboard/summary");
@@ -436,36 +441,10 @@ export const getNotificationTarget = (id) =>
   api.get(`/organizations/${id}/notification-target`);
 export const setNotificationTarget = (id, body) =>
   api.put(`/organizations/${id}/notification-target`, body);
-export const getMemberDataPermissions = (org, id) =>
-  api.get(`/organizations/${org}/members/${id}/data-permissions`);
-export const setMemberDataPermissions = (org, id, permissions) =>
-  api.put(`/organizations/${org}/members/${id}/data-permissions`, {
-    permissions,
-  });
 export const exportCaseData = (id, format) =>
   api.post(`/cases/${id}/export-data`, { format });
 export const exportStudentData = (ids) =>
   api.post("/school/students/export-data", { ids });
-export const getRightsOrganizations = () =>
-  patientApi.get("/patient/privacy/organizations");
-export const getMyRightsRequests = () =>
-  patientApi.get("/patient/privacy/requests");
-export const createRightsRequest = (body) =>
-  patientApi.post("/patient/privacy/requests", body);
-export const getPdpaRequests = (org) =>
-  api.get("/pdpa/requests", { params: { organization_id: org } });
-export const updatePdpaRequest = (id, body) =>
-  api.patch(`/pdpa/requests/${id}`, body);
-export const getProcessingPurposes = (org) =>
-  api.get(`/pdpa/organizations/${org}/purposes`);
-export const setProcessingPurpose = (org, form, body) =>
-  api.put(`/pdpa/organizations/${org}/purposes/${form}`, body);
-export const getRetentionPolicies = (org) =>
-  api.get(`/pdpa/organizations/${org}/retention`);
-export const setRetentionPolicy = (org, body) =>
-  api.put(`/pdpa/organizations/${org}/retention`, body);
-export const previewRetention = (org) =>
-  api.post(`/pdpa/organizations/${org}/retention/dry-run`);
 export const getOrganizationRolePermissions = (org, role) =>
   api.get(`/organizations/${org}/roles/${role}/permissions`);
 export const saveOrganizationRolePermissions = (org, role, body) =>

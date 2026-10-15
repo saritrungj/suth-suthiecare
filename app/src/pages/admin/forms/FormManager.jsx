@@ -1,3 +1,6 @@
+import SearchableSelect from '../../../components/SearchableSelect';
+import { toDisplayText } from '../../../utils/textPresentation.js';
+import { usePageExport } from "../../../components/ExcelExport";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -90,7 +93,7 @@ const CustomDropdown = ({
               className={`fm-select-option ${String(value) === String(opt.value) ? "selected" : ""}`}
               onClick={() => onChange(opt.value)}
             >
-              {opt.label}
+              {toDisplayText(opt.label)}
             </div>
           ))}
         </div>
@@ -225,6 +228,7 @@ const FormManager = () => {
     return matchSearch && matchClinic && matchStatus;
   });
 
+  usePageExport({title:"แบบประเมิน",sources:[{resource:"forms",ids:filteredForms.map(r=>r.id)}]});
   const handleToggleMenu = (e, formId) => {
     e.stopPropagation();
     setOpenMenuId(openMenuId === formId ? null : formId);
@@ -426,7 +430,7 @@ const FormManager = () => {
       await fetchForms();
       showToast(
         <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <FaCopy /> ทำสำเนา "{form.title}" เรียบร้อยแล้ว
+          <FaCopy /> ทำสำเนา "{toDisplayText(form.title)}" เรียบร้อยแล้ว
         </span>,
       );
     } catch (error) {
@@ -578,7 +582,7 @@ const FormManager = () => {
                         gap: "4px",
                       }}
                     >
-                      {clinicInfo.text}
+                      {toDisplayText(clinicInfo.text)}
                       {clinicInfo.isDeleted && (
                         <div
                           title="คลินิกของฟอร์มนี้เกิดปัญหาหรือถูกลบออก กรุณาเลือกใหม่อีกครั้ง"
@@ -706,7 +710,7 @@ const FormManager = () => {
                   </div>
 
                   <div className="fm-card-body">
-                    <h3>{form.title || "ชื่อฟอร์ม"}</h3>
+                    <h3>{toDisplayText(form.title || "ชื่อฟอร์ม")}</h3>
                     <p className="fm-last-opened">
                       แก้ไขล่าสุด {form.lastOpenedDate || "วว/ดด/ปป"}
                     </p>
@@ -967,7 +971,7 @@ const FormManager = () => {
             aria-label="เปลี่ยนคลินิกของแบบประเมิน"
           >
             <h3>เปลี่ยนประเภทคลินิก</h3>
-            <select
+            <SearchableSelect
               className="fm-modal-input"
               style={{
                 padding: "10px",
@@ -992,7 +996,7 @@ const FormManager = () => {
                   {c.name}
                 </option>
               ))}
-            </select>
+            </SearchableSelect>
             <div className="fm-modal-actions" style={{ marginTop: "20px" }}>
               <button
                 className="fm-btn-cancel"

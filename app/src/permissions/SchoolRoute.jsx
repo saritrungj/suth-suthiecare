@@ -1,10 +1,15 @@
 import { Navigate } from "react-router-dom";
 import { usePermissions } from "./PermissionsProvider";
+import OrganizationWorkspace from "./OrganizationWorkspace";
 
 // Guards a school-module page. The active organization must be a school
 // organization, and the caller needs the given /school/access flag (the API
-// grants teachers their classrooms without a role permission).
+// restricts insight access by stable role and assigned classrooms).
 export default function SchoolRoute({ check, children }) {
+  return <OrganizationWorkspace type="school"><SchoolAccessRoute check={check}>{children}</SchoolAccessRoute></OrganizationWorkspace>;
+}
+
+function SchoolAccessRoute({ check, children }) {
   const { loading, activeOrganizationType, schoolAccess, schoolAccessLoading } =
     usePermissions();
   if (loading || (activeOrganizationType === "school" && schoolAccessLoading))

@@ -48,7 +48,9 @@ Thumbs.db
 !/app/e2e/helpers/*.js
 DEPLOY.md
 CONTEXT.md
-/docs
+/docs/*
+!/docs/school-implementation-plan.md
+!/docs/school-workflows.md
 PATIENT_ACCOUNT_IDENTITY_PLAN.md
 PATIENT_HISTORY_AUTH_PLAN.md
 *.yaml

@@ -1,0 +1,95 @@
+/* Shared interaction states. Authored assessment colors and clinical risk
+   meanings stay with their own components. */
+:is(.admin-shell,.suth-dialog,.patient-auth-page,.hc-user-page,.hr-page,.clinic-detail-page,.legal-page,.status-page)
+  :is(button,a[href],input,select,textarea,[tabindex="0"]):focus-visible {
+  outline: 3px solid var(--suth-focus); outline-offset: 2px;
+}
+:is(.admin-shell,.suth-dialog) button:disabled {
+  opacity: .55; cursor: not-allowed; transform: none !important; box-shadow: none;
+}
+.suth-dialog :is(button,a[href]):focus-visible { outline: 3px solid var(--suth-focus) !important; outline-offset: 2px !important; box-shadow: none !important; }
+.suth-button.suth-button { white-space: normal; overflow-wrap: anywhere; text-align: center; }
+.suth-button.suth-button:active:not(:disabled) { background: var(--suth-tint-strong); }
+.suth-button.suth-button--primary:active:not(:disabled) { background: var(--suth-action-hover); color: var(--suth-on-action); }
+.suth-button.suth-button--danger:active:not(:disabled) { background: var(--suth-danger); color: var(--suth-on-action); }
+.suth-table.suth-table :is(th,td) { vertical-align: middle; }
+.admin-shell :is(.sfb-option-row,.sfb-grid-item-row,.sfb-question-image-preview,.sfb-option-image-preview):focus-within
+  :is(.sfb-btn-remove-opt,.sfb-btn-add-image-opt,.sfb-btn-remove-image) { opacity: 1; }
+.admin-shell .sfb-opt-input.sfb-editable { min-width: 0; }
+.admin-shell .sfb-builder-container { height: 100%; min-height: 0; overflow: hidden; }
+.admin-shell .sfb-builder-header { flex: 0 0 auto; position: relative !important; }
+.admin-shell .sfb-form-content { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.admin-shell .sfb-action-icons { flex-wrap: wrap; gap: 8px; min-width: 0; }
+.admin-shell .sfb-icon-group { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 6px 8px; border: 1px solid transparent; border-radius: var(--suth-radius); background: transparent; font: inherit; }
+.admin-shell .sfb-icon-group:hover:not(:disabled) { background: var(--suth-tint); color: var(--suth-action-ink); }
+.admin-shell .sfb-icon-group :is(p,span) { margin: 0; font-size: 12px; line-height: 1.4; }
+@media (min-width:1025px) { .admin-shell .sfb-floating-toolbar { top: 16px; } }
+@media (max-width:768px) {
+  .admin-shell :is(.sfb-header-left,.sfb-header-actions) { flex: 0 0 auto; }
+  .admin-shell .sfb-action-icons { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); width: 100%; }
+  .admin-shell .sfb-header-actions { width: 100%; }
+  .admin-shell .sfb-option-row { flex-wrap: wrap !important; }
+  .admin-shell .sfb-option-row > .sfb-opt-input-wrapper { flex: 1 1 calc(100% - 32px); }
+  .admin-shell .sfb-option-actions { flex: 0 0 auto; margin-left: auto; }
+}
+@media (max-width:1024px) {
+  .admin-shell .sfb-floating-toolbar { justify-content: flex-start; gap: 8px; overflow-x: auto; overscroll-behavior-inline: contain; }
+  .admin-shell .sfb-floating-toolbar > button { flex: 0 0 auto; justify-content: center; min-width: 44px; min-height: 44px; }
+  .admin-shell .sfb-floating-toolbar > div { flex: 0 0 1px; }
+}
+.suth-dialog :is(input,select,textarea):where(:not([type="checkbox"],[type="radio"],[type="range"],[type="file"],[type="hidden"],[type="color"])) {
+  min-width: 0; max-width: 100%; min-height: var(--suth-control-h);
+  border: 1px solid var(--suth-control-line); border-radius: var(--suth-radius);
+  background: var(--suth-surface); color: var(--suth-ink); padding: 8px 12px;
+  font-family: var(--suth-font); font-size: var(--suth-text-body); line-height: 1.5;
+}
+.suth-dialog :is(input,textarea)::placeholder { color: var(--suth-muted); opacity: 1; }
+.suth-dialog :is(input,select,textarea):disabled { background: var(--suth-surface-2); color: var(--suth-muted); cursor: not-allowed; }
+.suth-dialog :is(input,select,textarea)[aria-invalid="true"] { border-color: var(--suth-danger); }
+.suth-dialog input:is([type="radio"],[type="checkbox"]) { accent-color: var(--suth-action); }
+.suth-dialog :is(.adm-password-wrapper,.sum-member-password) { min-width: 0; }
+.suth-dialog :is(.adm-password-wrapper,.sum-member-password) > input { width: 100%; padding-right: 56px; }
+.suth-dialog :is(.adm-password-wrapper,.sum-member-password) > button { width: 44px; height: 44px; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+.suth-dialog--legacy :is(.abm-close-btn-custom,.ebm-close-btn) { top: 20px !important; right: 24px !important; }
+.suth-dialog--legacy :is(.adm-header-title,.crm-header-title) { flex: 1; min-width: 0; }
+.suth-dialog--legacy :is(.adm-header-title,.crm-header-title) h3 { overflow-wrap: anywhere; }
+.suth-dialog .abm-upload-area > span { color: var(--suth-action-ink); }
+.suth-dialog .adm-status-btn.active { background: var(--suth-success); color: var(--suth-on-action); }
+.suth-dialog .adm-status-btn.inactive { background: var(--suth-danger); color: var(--suth-on-action); }
+.suth-dialog--legacy.sum-member-modal > form { min-height: 0; overflow-y: auto; }
+.suth-dialog--legacy :is(.adm-footer,.crm-footer,.sum-member-modal__footer,.eem-modal-footer) button { min-height: 44px !important; }
+.suth-dialog--legacy :is(.sfb-section-info,.crm-module-title) { min-width: 0; overflow-wrap: anywhere; }
+.suth-dialog--legacy :is(.sfb-section-actions,.crm-permission-checkboxes) { flex-wrap: wrap; }
+.suth-dialog--legacy.ui-modal { --suth-dialog-width: 1000px; }
+.suth-dialog.fc-editor { width: min(1000px,100%); }
+.suth-dialog.fc-editor > :is(header,footer) { flex: 0 0 auto; }
+.suth-dialog .hc-switch:has(input:focus-visible) { outline: 3px solid var(--suth-focus); outline-offset: 2px; }
+/* Native confirmation dialogs share the action palette; an explicit inline
+   danger color continues to win over these defaults. */
+div.swal2-container .swal2-popup { font-family: var(--suth-font); }
+div.swal2-container .swal2-confirm { background-color: var(--suth-action); color: var(--suth-on-action); }
+div.swal2-container .swal2-cancel { background-color: var(--suth-muted); color: var(--suth-on-action); }
+div.swal2-container button.swal2-styled { min-height: 44px; }
+div.swal2-container :is(.swal2-styled,.swal2-close):focus-visible { outline: 3px solid var(--suth-focus); outline-offset: 2px; box-shadow: none; }
+div.swal2-container .swal2-close { min-width: 44px; min-height: 44px; }
+div.swal2-container .swal2-title { padding-inline: 48px; overflow-wrap: anywhere; }
+@media (hover:hover) {
+  div.swal2-container .swal2-styled:hover:not(:disabled) { box-shadow: inset 0 0 0 100px rgb(0 0 0 / 8%); }
+}
+@media (pointer:coarse) {
+  .admin-shell :is(.sfb-btn-remove-opt,.sfb-btn-add-image-opt,.sfb-btn-remove-sub-opt,.sfb-btn-remove-rule,.sfb-btn-remove-image) { opacity: 1; visibility: visible; min-width: 44px; min-height: 44px; }
+  .suth-dialog .hc-switch { height: 44px; min-height: 44px; }
+  .suth-dialog .hc-switch .hc-slider { top: 10px; bottom: 10px; }
+}
+@media (max-width:760px) {
+  .suth-dialog :is(input,select,textarea):where(:not([type="checkbox"],[type="radio"],[type="range"],[type="file"],[type="hidden"],[type="color"])) { font-size: 16px; }
+  .suth-dialog--legacy > :is(.adm-header,.abm-header,.ebm-header,.crm-header,.sum-member-modal__header,.eem-modal-header,.scd-create-case-header,.cdm-interactive-header,.hr-modal-header,.modal-header) { padding: 16px !important; }
+  .suth-dialog--legacy > :is(.abm-header,.ebm-header) { padding-right: 76px !important; }
+  .suth-dialog--legacy :is(.abm-close-btn-custom,.ebm-close-btn) { top: 16px !important; right: 16px !important; }
+  .suth-dialog--legacy :is(.crm-role-info-grid,.sum-member-form-grid) { grid-template-columns: minmax(0,1fr); }
+  .suth-dialog--legacy .sum-member-field { grid-column: auto; }
+  .suth-dialog--legacy > :is(.adm-footer,.abm-footer,.ebm-footer,.crm-footer,.eem-modal-footer,.sfb-modal-footer) { padding-bottom: max(16px,env(safe-area-inset-bottom)) !important; }
+}
+.suth-dialog :is(.abm-upload-area,.ebm-upload-area) { position: relative; overflow: hidden; }
+.suth-dialog .suth-file-picker { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.suth-dialog :is(.abm-upload-area,.ebm-upload-area):focus-within { outline: 3px solid var(--suth-focus); outline-offset: 2px; }

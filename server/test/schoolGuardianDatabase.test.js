@@ -1,0 +1,66 @@
+require('../config/env');
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const express = require('express');
+const { randomUUID } = require('node:crypto');
+
+test('local MySQL guardian account creation, credentials, scoped reads and revocation with rollback', { skip: process.env.SCHOOL_DB_TESTS !== '1', timeout: 30000 }, async () => {
+  assert.ok(['127.0.0.1', 'localhost', '::1'].includes(process.env.DB_HOST));
+  const pool = require('../config/db'), connection = await pool.getConnection();
+  let server;
+  try {
+    await connection.beginTransaction();
+    const [[actor]] = await connection.query("SELECT id FROM users WHERE role_id=1 AND status='active' LIMIT 1");
+    const [children] = await connection.query('SELECT ss.id,ss.school_id,s.organization_id FROM school_students ss JOIN schools s ON s.id=ss.school_id WHERE ss.archived_at IS NULL ORDER BY ss.school_id,ss.id LIMIT 2');
+    assert.ok(actor && children.length === 2, 'Requires local synthetic school fixtures');
+    const child = children[0];
+    const query = connection.query.bind(connection);
+    const db = { query, getConnection: async () => ({ query, beginTransaction: () => connection.query('SAVEPOINT guardian_action'), commit: () => connection.query('RELEASE SAVEPOINT guardian_action'), rollback: () => connection.query('ROLLBACK TO SAVEPOINT guardian_action'), release() {} }) };
+    require.cache[require.resolve('../config/db')] = { exports: db };
+    delete require.cache[require.resolve('../utils/pdpaAudit')];
+    delete require.cache[require.resolve('../routes/schoolInsightRoutes')];
+    let access = { isSystemAdmin: true }, user = actor;
+    const app = express(); app.use(express.json());
+    app.use((req, res, next) => { req.user = user; req.schoolAccess = access; req.organizationContext = child.organization_id; req.authorization = { isSystemAdmin: access.isSystemAdmin }; next(); });
+    app.use(require('../routes/schoolInsightRoutes'));
+    server = app.listen(0, '127.0.0.1'); await new Promise(resolve => server.once('listening', resolve));
+    const url = `http://127.0.0.1:${server.address().port}`;
+    const suffix = randomUUID().slice(0, 8);
+    const input = { username: 'guardian_' + suffix, name: 'ผู้ปกครองจำลอง', email: `guardian_${suffix}@example.test`, password: 'Synthetic-Test-901!', school_id: child.school_id, student_ids: [child.id] };
+    const create = () => fetch(url + '/guardian-accounts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) });
+    const response = await create();
+    assert.equal(response.status, 201, await response.clone().text());
+    const account = await response.json();
+    assert.equal(account.password, undefined);
+    const [[stored]] = await query('SELECT * FROM users WHERE id=?', [account.id]);
+    assert.ok(await require('bcryptjs').compare(input.password, stored.password));
+    assert.ok(!stored.name.includes(input.name));
+    assert.equal(stored.email, null); assert.ok(stored.email_encrypted);
+    assert.equal((await create()).status, 409);
+    const [[membership]] = await query('SELECT om.*,r.name role_name FROM organization_memberships om JOIN roles r ON r.id=om.role_id WHERE om.user_id=?', [account.id]);
+    membership.organization_type = 'school';
+    const { membershipPermissions } = require('../authorization/dataPermissions');
+    const permissions = new Set(await membershipPermissions(db, membership, []));
+    const { loadSchoolAccess, canSeeStudent, canViewStudentHealth } = require('../utils/schoolAccess');
+    const req = { user: { id: account.id }, organizationContext: child.organization_id, authorization: { membership, permissions } };
+    access = await loadSchoolAccess(db, req); user = req.user;
+    assert.equal(access.isGuardian, true);
+    assert.equal(Boolean(canSeeStudent(access, child)), true);
+    assert.equal(Boolean(canSeeStudent(access, children[1])), false);
+    assert.equal((await fetch(url + `/students/${child.id}/insights`)).status, 200);
+    assert.equal((await fetch(url + `/students/${children[1].id}/insights`)).status, 404);
+    assert.equal((await create()).status, 403);
+    access = { isSystemAdmin: true }; user = actor;
+    const assign = body => fetch(url + '/staff-roles', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ school_id: child.school_id, user_id: account.id, role_code: 'guardian', status: 'active', ...body }) });
+    assert.equal((await assign({ student_ids: [2147483647] })).status, 422);
+    assert.equal(canViewStudentHealth(await loadSchoolAccess(db, req), child), true);
+    assert.equal((await assign({ student_ids: [child.id] })).status, 200);
+    await query("UPDATE school_student_guardians SET status='inactive' WHERE user_id=?", [account.id]);
+    assert.equal(canViewStudentHealth(await loadSchoolAccess(db, req), child), false);
+    assert.equal((await assign({ status: 'inactive', student_ids: [] })).status, 200);
+    assert.deepEqual(await membershipPermissions(db, membership, ['students.view', 'master_data.manage']), []);
+  } finally {
+    if (server) await new Promise(resolve => server.close(resolve));
+    await connection.rollback(); connection.release(); await pool.end();
+  }
+});

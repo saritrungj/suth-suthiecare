@@ -1,0 +1,26 @@
+[
+  {
+    "screen": "phone",
+    "routes": 42,
+    "overflow": 0,
+    "clipped": 0,
+    "runtime": 0,
+    "unexpectedPaths": 0
+  },
+  {
+    "screen": "tablet",
+    "routes": 42,
+    "overflow": 0,
+    "clipped": 0,
+    "runtime": 0,
+    "unexpectedPaths": 0
+  },
+  {
+    "screen": "desktop",
+    "routes": 42,
+    "overflow": 0,
+    "clipped": 0,
+    "runtime": 0,
+    "unexpectedPaths": 0
+  }
+]

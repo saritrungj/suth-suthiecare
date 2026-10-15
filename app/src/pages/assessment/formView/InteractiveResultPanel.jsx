@@ -1,3 +1,4 @@
+import { toDisplayText } from '../../../utils/textPresentation.js';
 import { FiActivity, FiCheckCircle, FiInfo, FiLock } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
@@ -49,20 +50,20 @@ export default function InteractiveResultPanel({
               <div className="assessment-live-result__heading">
                 <div>
                   <span>{t("form_view.interactive_current_status")}</span>
-                  <h3>{result.label}</h3>
+                  <h3>{toDisplayText(result.label)}</h3>
                 </div>
                 <div className="assessment-live-result__score">
                   <strong>{formatScore(result.score)}</strong>
                   <span>{t("form_view.interactive_score")}</span>
                 </div>
               </div>
-              <p className="assessment-live-result__title">{result.title}</p>
+              <p className="assessment-live-result__title">{toDisplayText(result.title)}</p>
               {result.advice && (
                 <div className="assessment-live-result__advice">
                   <FiCheckCircle aria-hidden="true" />
                   <div>
                     <strong>{t("form_view.interactive_advice")}</strong>
-                    <p>{result.advice}</p>
+                    <p>{toDisplayText(result.advice)}</p>
                   </div>
                 </div>
               )}

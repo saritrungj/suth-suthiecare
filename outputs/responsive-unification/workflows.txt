@@ -1,0 +1,46 @@
+[WebServer] (node:37448) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] $ vite "--host" "127.0.0.1" "--port" "4173"
+[WebServer] (node:33528) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 32 tests using 1 worker
+
+(node:24164) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › e2e\assessment-result.spec.js:27:1 › assessment result renders one non-overlapping body per result (3.3s)
+  ok  2 [desktop-chromium] › e2e\assessment-result.spec.js:45:1 › successful submission closes loading dialog and opens result (4.3s)
+  ok  3 [desktop-chromium] › e2e\auth.spec.js:4:1 › admin route redirects unauthenticated users to login (2.2s)
+  ok  4 [desktop-chromium] › e2e\auth.spec.js:12:1 › login validates required fields and toggles password visibility (2.1s)
+  ok  5 [desktop-chromium] › e2e\auth.spec.js:28:1 › successful login uses the cookie session without storing an access token (5.3s)
+  ok  6 [desktop-chromium] › e2e\component-system.spec.js:29:1 › shared components stay consistent across real admin workspaces (1.0m)
+  ok  7 [desktop-chromium] › e2e\component-system.spec.js:64:1 › clinic dialog shares input and keyboard behavior with school dialogs (1.6s)
+  ok  8 [desktop-chromium] › e2e\component-system.spec.js:74:1 › shared school dialog validates, traps focus, and returns to its opener (2.5s)
+  ok  9 [desktop-chromium] › e2e\public-flows.spec.js:9:1 › history requires patient login before loading any record (1.3s)
+  ok 10 [desktop-chromium] › e2e\public-flows.spec.js:20:1 › patient authentication keeps the selected language across login and register (2.0s)
+  ok 11 [desktop-chromium] › e2e\public-flows.spec.js:38:1 › patient login can continue to the protected history route (2.2s)
+  ok 12 [desktop-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (6.1s)
+  ok 13 [desktop-chromium] › e2e\public-flows.spec.js:101:1 › history hero shows the currently signed-in patient profile (1.8s)
+  ok 14 [desktop-chromium] › e2e\public-flows.spec.js:147:1 › homepage navbar shows the signed-in patient and can log out (2.8s)
+  ok 15 [desktop-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code (3.9s)
+  ok 16 [desktop-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit (6.1s)
+(node:38976) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 17 [mobile-chromium] › e2e\assessment-result.spec.js:27:1 › assessment result renders one non-overlapping body per result (3.5s)
+  ok 18 [mobile-chromium] › e2e\assessment-result.spec.js:45:1 › successful submission closes loading dialog and opens result (6.2s)
+  ok 19 [mobile-chromium] › e2e\auth.spec.js:4:1 › admin route redirects unauthenticated users to login (2.3s)
+  ok 20 [mobile-chromium] › e2e\auth.spec.js:12:1 › login validates required fields and toggles password visibility (2.3s)
+  ok 21 [mobile-chromium] › e2e\auth.spec.js:28:1 › successful login uses the cookie session without storing an access token (7.0s)
+  ok 22 [mobile-chromium] › e2e\component-system.spec.js:29:1 › shared components stay consistent across real admin workspaces (46.9s)
+  ok 23 [mobile-chromium] › e2e\component-system.spec.js:64:1 › clinic dialog shares input and keyboard behavior with school dialogs (2.0s)
+  ok 24 [mobile-chromium] › e2e\component-system.spec.js:74:1 › shared school dialog validates, traps focus, and returns to its opener (3.1s)
+  ok 25 [mobile-chromium] › e2e\public-flows.spec.js:9:1 › history requires patient login before loading any record (1.8s)
+  ok 26 [mobile-chromium] › e2e\public-flows.spec.js:20:1 › patient authentication keeps the selected language across login and register (1.8s)
+  ok 27 [mobile-chromium] › e2e\public-flows.spec.js:38:1 › patient login can continue to the protected history route (1.6s)
+  ok 28 [mobile-chromium] › e2e\public-flows.spec.js:69:1 › public navbars stay visible and usable on mobile and tablet (10.6s)
+  ok 29 [mobile-chromium] › e2e\public-flows.spec.js:101:1 › history hero shows the currently signed-in patient profile (2.3s)
+  ok 30 [mobile-chromium] › e2e\public-flows.spec.js:147:1 › homepage navbar shows the signed-in patient and can log out (4.0s)
+  ok 31 [mobile-chromium] › e2e\public-flows.spec.js:207:1 › register creates a patient account and activates it with the email code (4.1s)
+  ok 32 [mobile-chromium] › e2e\public-flows.spec.js:262:1 › assessment stays public but preserves the draft and requires login to submit (6.5s)
+
+  32 passed (3.8m)

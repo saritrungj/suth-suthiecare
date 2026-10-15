@@ -1,0 +1,94 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@100..900&family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
+:root {
+  font-family: "Sarabun", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--suth-canvas, #faf7f3);
+  color: var(--suth-ink, #1f2f3f);
+  /* ลบ display:flex และ place-items:center ออก — ตัวการทำให้ไม่เต็มจอ */
+}
+
+a {
+  font-weight: 500;
+  color: var(--suth-action-ink, #a9430b);
+  text-decoration: inherit;
+}
+a:hover {
+  color: var(--suth-action-hover, #a94320);
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 12px;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+}
+button:hover {
+  border-color: var(--suth-action, #c45428);
+}
+button:focus,
+button:focus-visible {
+  outline: 3px solid var(--suth-focus, #c45428);
+  outline-offset: 2px;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* กดด้วยเมาส์จะไม่มีเส้น แต่ถ้ากด Tab ด้วยคีย์บอร์ดจะมีเส้น */
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* แก้ไขที่ตัวแปรของ SweetAlert2 โดยตรง */
+div.swal2-container .swal2-popup {
+  border-radius: 12px;
+}
+
+/* ปรับความโค้งของปุ่มทั้งหมด */
+div.swal2-container button.swal2-styled {
+  border-radius: 12px;
+}

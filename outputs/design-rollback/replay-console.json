@@ -1,0 +1,88 @@
+{
+  "events": 70,
+  "errors": [
+    [
+      "2026-10-15T05:08:16.493Z",
+      "script",
+      "script failed outputs/component-unification/clean-button-overrides.cjs on { line: 32, column: 23, index: 1561 },\n  pos: 1561,\n  syntaxPlugin: undefined\n}\n\nNode.js v26.7.0\n app\\src\\components\\ui\\index.jsx Unexpected token (32:23)\n"
+    ],
+    [
+      "2026-10-15T06:06:46.218Z",
+      "patch",
+      "context app/src/components/AddAdminModal.jsx \"import { DialogFrame } from './ui/index.jsx';\""
+    ]
+  ],
+  "scripts": [
+    [
+      "2026-10-15T04:56:20.437Z",
+      "outputs/component-unification/migrate.cjs",
+      0,
+      "{\"files\":46,\"components\":{\"PageHeader\":14,\"FilterBar\":9,\"TextInput\":86,\"Button\":188,\"DataTable\":26,\"TextArea\":16}}\n",
+      ""
+    ],
+    [
+      "2026-10-15T04:58:22.623Z",
+      "outputs/component-unification/migrate-surfaces.cjs",
+      0,
+      "ace\":3,\"Badge\":1}},{\"file\":\"app\\\\src\\\\pages\\\\admin\\\\school\\\\StudentList.jsx\",\"counts\":{\"Surface\":1,\"Badge\":2}},{\"file\":\"app\\\\src\\\\pages\\\\admin\\\\school\\\\TeacherList.jsx\",\"counts\":{\"Surface\":1,\"Badge\":1}},{\"file\":\"app\\\\src\\\\pages\\\\admin\\\\UserManagement.jsx\",\"counts\":{\"SelectionGroup\":1,\"Surface\":1}}]\n",
+      ""
+    ],
+    [
+      "2026-10-15T04:58:55.178Z",
+      "outputs/component-unification/clean-styles.cjs",
+      0,
+      "{\"files\":13,\"removed\":181}\n",
+      ""
+    ],
+    [
+      "2026-10-15T05:08:16.493Z",
+      "outputs/component-unification/clean-button-overrides.cjs",
+      1,
+      "",
+      "r\\lib\\index.js:4683:28)\n    at JSXParserMixin.jsxParseOpeningElementAt (D:\\github-clone\\suth-suthiecare\\node_modules\\.pnpm\\@babel+parser@7.29.8\\node_modules\\@babel\\parser\\lib\\index.js:4678:17)\n    at JSXParserMixin.jsxParseElementAt (D:\\github-clone\\suth-suthiecare\\node_modules\\.pnpm\\@babel+parser@7.29.8\\node_modules\\@babel\\parser\\lib\\index.js:4702:33)\n    at JSXParserMixin.jsxParseElement (D:\\github-clone\\suth-suthiecare\\node_modules\\.pnpm\\@babel+parser@7.29.8\\node_modules\\@babel\\parser\\lib\\index.js:4765:17) {\n  code: 'BABEL_PARSER_SYNTAX_ERROR',\n  reasonCode: 'UnexpectedToken',\n  loc: Position { line: 32, column: 23, index: 1561 },\n  pos: 1561,\n  syntaxPlugin: undefined\n}\n\nNode.js v26.7.0\n"
+    ],
+    [
+      "2026-10-15T05:59:21.109Z",
+      "outputs/interface-consistency/css-inventory.mjs",
+      0,
+      ",\n  {\n    \"path\": \"app/src/pages/result/AssessmentResult.css\",\n    \"count\": 1\n  },\n  {\n    \"path\": \"app/src/styles/case-workspace.css\",\n    \"count\": 1\n  },\n  {\n    \"path\": \"app/src/styles/layout-system.css\",\n    \"count\": 1\n  },\n  {\n    \"path\": \"app/src/styles/modal-system.css\",\n    \"count\": 1\n  }\n]\n",
+      ""
+    ],
+    [
+      "2026-10-15T06:01:25.839Z",
+      "outputs/interface-consistency/migrate-dialogs.mjs",
+      0,
+      "rens/CaseModals.jsx: 4\napp/src/pages/admin/CaseData.jsx: 1\napp/src/pages/admin/forms/builder-components/PublishSettingsModal.jsx: 1\napp/src/pages/admin/forms/builder-components/MoveSectionModal.jsx: 1\napp/src/pages/assessment/history/HistoryResult.jsx: 1\napp/src/pages/admin/HelpCenterManager.jsx: 3\n",
+      ""
+    ],
+    [
+      "2026-10-15T06:04:01.125Z",
+      "outputs/interface-consistency/scope-page-css.mjs",
+      0,
+      "app/src/pages/admin/RiskCases.css\napp/src/pages/admin/dashboard.css\napp/src/pages/admin/HelpCenterManager.css\napp/src/components/appointment/AppointmentFormModal.css\napp/src/components/appointment/AppointmentDetailModal.css\n",
+      ""
+    ],
+    [
+      "2026-10-15T06:07:22.600Z",
+      "outputs/interface-consistency/align-confirm-colors.mjs",
+      0,
+      "8 files use the shared confirm color\n",
+      ""
+    ],
+    [
+      "2026-10-15T06:08:25.521Z",
+      "outputs/interface-consistency/align-confirm-colors.mjs",
+      0,
+      "0 files use the shared confirm color\n",
+      ""
+    ],
+    [
+      "2026-10-15T06:29:13.075Z",
+      "outputs/interface-consistency/finish-builder.mjs",
+      0,
+      "",
+      ""
+    ]
+  ],
+  "changed": 110
+}
