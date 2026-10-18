@@ -93,6 +93,16 @@ export async function mockResponsiveApi(page, { organizationId = 1 } = {}) {
     const req = route.request(),
       p = new URL(req.url()).pathname.replace(/^\/api/, "");
     const send = (json) => route.fulfill({ json });
+    // Mirror the server: an anonymous session probe answers 204, not 401.
+    const session = p.match(/^\/session\/(staff|patient)$/);
+    if (
+      session &&
+      !req.headers().cookie?.includes(`suth_${session[1]}_session=`)
+    )
+      return route.fulfill({
+        status: new URL(req.url()).searchParams.has("probe") ? 204 : 401,
+        body: "",
+      });
     if (p === "/me/authorization")
       return send({
         user: { id: 1, username: "layout-admin", role_id: 1 },

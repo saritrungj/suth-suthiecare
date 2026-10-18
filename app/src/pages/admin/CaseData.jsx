@@ -423,7 +423,7 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
                   onChange={(e) => handleChange("clinicType", e.target.value)}
                 >
                   <option value="general">ทั่วไป</option>
-                  {clinics.map((c) => (
+                  {clinics.filter((c) => c.slug !== "general").map((c) => (
                     <option key={c.slug} value={c.slug}>
                       {c.name}
                     </option>
@@ -1098,7 +1098,9 @@ export default function CaseData({ initialRisk = "" }) {
                 options={[
                   { value: "all", label: "ทุกคลินิก" },
                   { value: "general", label: "ทั่วไป" },
-                  ...clinics.map((c) => ({ value: c.slug, label: c.name })),
+                  ...clinics
+                    .filter((c) => c.slug !== "general")
+                    .map((c) => ({ value: c.slug, label: c.name })),
                 ]}
               />
               <FilterSelect

@@ -2,6 +2,14 @@ export async function mockPublicApi(page) {
   await page.route("**/api/**", async (route) => {
     const request = route.request();
     const { pathname } = new URL(request.url());
+    // Mirror the server: an anonymous session probe answers 204, not 401.
+    const session = pathname.match(/\/api\/session\/(staff|patient)$/);
+    if (
+      session &&
+      new URL(request.url()).searchParams.has("probe") &&
+      !request.headers().cookie?.includes(`suth_${session[1]}_session=`)
+    )
+      return route.fulfill({ status: 204, body: "" });
 
     if (pathname.endsWith("/api/session/patient"))
       return route.fulfill({
@@ -86,6 +94,14 @@ export async function mockAdminApi(page) {
   await page.route("**/api/**", async (route) => {
     const request = route.request();
     const { pathname } = new URL(request.url());
+    // Mirror the server: an anonymous session probe answers 204, not 401.
+    const session = pathname.match(/\/api\/session\/(staff|patient)$/);
+    if (
+      session &&
+      new URL(request.url()).searchParams.has("probe") &&
+      !request.headers().cookie?.includes(`suth_${session[1]}_session=`)
+    )
+      return route.fulfill({ status: 204, body: "" });
 
     if (pathname.endsWith("/api/login")) {
       return route.fulfill({

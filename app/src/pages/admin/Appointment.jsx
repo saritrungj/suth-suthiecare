@@ -575,7 +575,9 @@ export default function Appointment() {
                   options={[
                     { value: "", label: "ทุกคลินิก (All)" },
                     { value: "general", label: "ทั่วไป" },
-                    ...clinics.map((c) => ({ value: c.slug, label: c.name })),
+                    ...clinics
+                      .filter((c) => c.slug !== "general")
+                      .map((c) => ({ value: c.slug, label: c.name })),
                   ]}
                 />
               </FilterField>

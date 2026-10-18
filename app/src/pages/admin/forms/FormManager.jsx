@@ -522,7 +522,7 @@ const FormManager = () => {
                             label: `ทุกคลินิก (${forms.length})`,
                           },
                           { value: "general", label: "ทั่วไป" },
-                          ...clinics.map((c) => ({
+                          ...clinics.filter((c) => c.slug !== "general").map((c) => ({
                             value: c.slug,
                             label: c.name,
                           })),
@@ -980,7 +980,7 @@ const FormManager = () => {
               }
             >
               <option value="general">ทั่วไป (ใช้ร่วมกัน)</option>
-              {clinics.map((c) => (
+              {clinics.filter((c) => c.slug !== "general").map((c) => (
                 <option key={c.slug} value={c.slug}>
                   {c.name}
                 </option>

@@ -51,10 +51,12 @@ export async function bootstrapAuth() {
   await Promise.all(
     ["staff", "patient"].map(async (type) => {
       try {
-        const response = await fetch(`${base}/session/${type}`, {
+        // ?probe: the server answers 204 when there is no session cookie.
+        const response = await fetch(`${base}/session/${type}?probe`, {
           credentials: "include",
         });
-        if (!response.ok) return setAuthSession(type, null);
+        if (!response.ok || response.status === 204)
+          return setAuthSession(type, null);
         const data = await response.json();
         setAuthSession(type, data.user, data.csrf_token);
       } catch {

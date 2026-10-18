@@ -278,7 +278,7 @@ const PublishSettingsModal = ({
               }}
             >
               <option value="general">ทั่วไป (ใช้ร่วมกัน)</option>
-              {clinics.map((c) => (
+              {clinics.filter((c) => c.slug !== "general").map((c) => (
                 <option key={c.slug} value={c.slug}>
                   {c.name}
                 </option>
