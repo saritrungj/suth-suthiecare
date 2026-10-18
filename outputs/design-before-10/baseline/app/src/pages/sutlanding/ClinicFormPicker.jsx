@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -22,7 +22,9 @@ const POPULAR_LIMIT = 3;
 const GROUP_LIMIT = 3;
 const PAGE_SIZE = 12;
 
-function stripHtml(html) { return toDisplayText(html); }
+function stripHtml(html) {
+  return toDisplayText(html);
+}
 
 function Highlight({ text, query }) {
   text = toDisplayText(text);

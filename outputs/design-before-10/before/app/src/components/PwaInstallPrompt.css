@@ -116,7 +116,7 @@
 
   .pwa-install__button {
     padding: 10px 12px;
-    font-size: .875rem;
+    font-size: 0.875rem;
   }
 
   .pwa-install__button svg {
@@ -128,5 +128,13 @@
   }
 }
 
-.pwa-install :is(button):focus-visible { outline: 3px solid var(--suth-focus); outline-offset: 3px; }
-@media (max-width: 480px) { .pwa-install__actions { grid-column: 1 / -1; justify-content: flex-end; } }
+.pwa-install :is(button):focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 3px;
+}
+@media (max-width: 480px) {
+  .pwa-install__actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+}

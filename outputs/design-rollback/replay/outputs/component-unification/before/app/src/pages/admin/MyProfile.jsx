@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { authSession, setAuthSession } from "../../utils/authSession";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

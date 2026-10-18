@@ -3,6 +3,10 @@ const {
   physicalRecord,
   bloodType,
 } = require("../utils/schoolPrivateData");
+const {
+  deactivateSchoolTeacher,
+  upsertSchoolTeacher,
+} = require("../utils/schoolTeachers");
 const { sealText, fieldContext } = require("../utils/privateData");
 // routes/schoolRoutes.js — school organizations: schools, grade levels,
 // classrooms, teachers, students (with their accounts) and student health.
@@ -21,6 +25,7 @@ const {
   canViewStudentHealth,
   canUpdateStudentHealth,
   canViewPhysicalHealth,
+  canHealthAction,
   publicAccess,
 } = require("../utils/schoolAccess");
 const {
@@ -43,7 +48,10 @@ const {
 } = require("../utils/riskLevel");
 
 const router = express.Router();
-const { currentAcademicYear, validAcademicYear } = require('../utils/academicYear');
+const {
+  currentAcademicYear,
+  validAcademicYear,
+} = require("../utils/academicYear");
 
 const safeDecrypt = (value) => {
   if (!value) return "";
@@ -89,20 +97,26 @@ router.use(async (req, res, next) => {
   if (!orgs[0] || orgs[0].org_type !== "school")
     return fail(res, 422, "หน่วยงานที่เลือกไม่ใช่หน่วยงานประเภทโรงเรียน");
   req.schoolAccess ||= await loadSchoolAccess(db, req);
-  if(req.schoolAccess.isGuardian && !['GET','HEAD'].includes(req.method))return fail(res,403,'ผู้ปกครองมีสิทธิ์ดูข้อมูลเท่านั้น');
+  if (req.schoolAccess.isGuardian && !["GET", "HEAD"].includes(req.method))
+    return fail(res, 403, "ผู้ปกครองมีสิทธิ์ดูข้อมูลเท่านั้น");
   return next();
 });
 
+const { need, denyUnless } = require("../authorization/can");
 const allow = (check, message = "คุณไม่มีสิทธิ์ดำเนินการนี้") =>
   function allowSchoolAction(req, res, next) {
     return check(req.schoolAccess) ? next() : fail(res, 403, message);
   };
 
-const canWriteSchool = (req,schoolId) => ['GET','HEAD'].includes(req.method) || req.schoolAccess.isSystemAdmin || !req.schoolAccess.adminSchoolIds?.length || req.schoolAccess.adminSchoolIds.includes(Number(schoolId));
+const canWriteSchool = (req, schoolId) =>
+  ["GET", "HEAD"].includes(req.method) ||
+  req.schoolAccess.isSystemAdmin ||
+  !req.schoolAccess.adminSchoolIds?.length ||
+  req.schoolAccess.adminSchoolIds.includes(Number(schoolId));
 
 async function schoolInOrganization(req, schoolId) {
   const id = positiveId(schoolId);
-  if (!id || !canWriteSchool(req,id)) return null;
+  if (!id || !canWriteSchool(req, id)) return null;
   const [rows] = await db.query(
     "SELECT * FROM schools WHERE id = ? AND organization_id = ? LIMIT 1",
     [id, req.organizationContext],
@@ -116,7 +130,7 @@ async function gradeInOrganization(req, gradeId) {
       WHERE g.id = ? AND s.organization_id = ? LIMIT 1`,
     [positiveId(gradeId), req.organizationContext],
   );
-  return rows[0] && canWriteSchool(req,rows[0].school_id) ? rows[0] : null;
+  return rows[0] && canWriteSchool(req, rows[0].school_id) ? rows[0] : null;
 }
 
 async function classroomInOrganization(req, classroomId) {
@@ -125,7 +139,7 @@ async function classroomInOrganization(req, classroomId) {
       WHERE c.id = ? AND s.organization_id = ? LIMIT 1`,
     [positiveId(classroomId), req.organizationContext],
   );
-  return rows[0] && canWriteSchool(req,rows[0].school_id) ? rows[0] : null;
+  return rows[0] && canWriteSchool(req, rows[0].school_id) ? rows[0] : null;
 }
 
 async function teacherInOrganization(req, teacherId) {
@@ -134,7 +148,7 @@ async function teacherInOrganization(req, teacherId) {
       WHERE t.id = ? AND s.organization_id = ? LIMIT 1`,
     [positiveId(teacherId), req.organizationContext],
   );
-  return rows[0] && canWriteSchool(req,rows[0].school_id) ? rows[0] : null;
+  return rows[0] && canWriteSchool(req, rows[0].school_id) ? rows[0] : null;
 }
 
 const duplicate = (error) => error?.code === "ER_DUP_ENTRY";
@@ -390,28 +404,54 @@ router.get(
   },
 );
 
-router.get('/schools/:id/academic-years', allow(a => a.canViewSchool), async (req, res) => {
-  const school = await schoolInOrganization(req, req.params.id);
-  if (!school) return fail(res, 404, 'ไม่พบโรงเรียน');
-  const current = currentAcademicYear();
-  const [rows] = await db.query(`SELECT academic_year FROM school_academic_years WHERE school_id = ? AND academic_year >= ? UNION SELECT academic_year FROM school_classrooms WHERE school_id = ? AND academic_year >= ? UNION SELECT ? AS academic_year ORDER BY academic_year DESC`, [school.id, current - 10, school.id, current - 10, current]);
-  res.json({ current_year: current, minimum_year: current - 10, years: rows.map(r => Number(r.academic_year)) });
-});
-router.post('/schools/:id/academic-years', allow(a => a.canCreateSchool), async (req, res) => {
-  const school = await schoolInOrganization(req, req.params.id);
-  if (!school) return fail(res, 404, 'ไม่พบโรงเรียน');
-  if (!validAcademicYear(req.body.academic_year)) return fail(res, 422, `เพิ่มย้อนหลังได้ไม่เกิน 10 ปี (ตั้งแต่ ${currentAcademicYear() - 10}) และต้องเป็น พ.ศ. 4 หลัก`);
-  try {
-    await db.query('INSERT INTO school_academic_years (school_id, academic_year) VALUES (?, ?)', [school.id, Number(req.body.academic_year)]);
-    res.status(201).json({ academic_year: Number(req.body.academic_year) });
-  } catch (error) {
-    if (duplicate(error)) return fail(res, 409, 'มีปีการศึกษานี้แล้ว');
-    throw error;
-  }
-});
+router.get(
+  "/schools/:id/academic-years",
+  allow((a) => a.canViewSchool),
+  async (req, res) => {
+    const school = await schoolInOrganization(req, req.params.id);
+    if (!school) return fail(res, 404, "ไม่พบโรงเรียน");
+    const current = currentAcademicYear();
+    const [rows] = await db.query(
+      `SELECT academic_year FROM school_academic_years WHERE school_id = ? AND academic_year >= ? UNION SELECT academic_year FROM school_classrooms WHERE school_id = ? AND academic_year >= ? UNION SELECT ? AS academic_year ORDER BY academic_year DESC`,
+      [school.id, current - 10, school.id, current - 10, current],
+    );
+    res.json({
+      current_year: current,
+      minimum_year: current - 10,
+      years: rows.map((r) => Number(r.academic_year)),
+    });
+  },
+);
+router.post(
+  "/schools/:id/academic-years",
+  allow((a) => a.canCreateSchool),
+  async (req, res) => {
+    const school = await schoolInOrganization(req, req.params.id);
+    if (!school) return fail(res, 404, "ไม่พบโรงเรียน");
+    if (!validAcademicYear(req.body.academic_year))
+      return fail(
+        res,
+        422,
+        `เพิ่มย้อนหลังได้ไม่เกิน 10 ปี (ตั้งแต่ ${currentAcademicYear() - 10}) และต้องเป็น พ.ศ. 4 หลัก`,
+      );
+    try {
+      await db.query(
+        "INSERT INTO school_academic_years (school_id, academic_year) VALUES (?, ?)",
+        [school.id, Number(req.body.academic_year)],
+      );
+      res.status(201).json({ academic_year: Number(req.body.academic_year) });
+    } catch (error) {
+      if (duplicate(error)) return fail(res, 409, "มีปีการศึกษานี้แล้ว");
+      throw error;
+    }
+  },
+);
 async function registeredAcademicYear(schoolId, year) {
   if (Number(year) === currentAcademicYear()) return true;
-  const [rows] = await db.query('SELECT 1 FROM school_academic_years WHERE school_id = ? AND academic_year = ? UNION SELECT 1 FROM school_classrooms WHERE school_id = ? AND academic_year = ? LIMIT 1', [schoolId, year, schoolId, year]);
+  const [rows] = await db.query(
+    "SELECT 1 FROM school_academic_years WHERE school_id = ? AND academic_year = ? UNION SELECT 1 FROM school_classrooms WHERE school_id = ? AND academic_year = ? LIMIT 1",
+    [schoolId, year, schoolId, year],
+  );
   return Boolean(rows[0]);
 }
 
@@ -425,10 +465,10 @@ function classroomPayload(body = {}) {
   const status = body.status || "active";
   if (name.length > 50) return { error: "ชื่อห้องเรียนยาวเกินไป" };
   if (!positiveId(body.grade_level_id)) return { error: "กรุณาเลือกชั้นปี" };
-  if (
-    !validAcademicYear(body.academic_year)
-  )
-    return { error: `ปีการศึกษาต้องเป็น พ.ศ. 4 หลัก ย้อนหลังได้ไม่เกิน 10 ปี (ตั้งแต่ ${currentAcademicYear() - 10})` };
+  if (!validAcademicYear(body.academic_year))
+    return {
+      error: `ปีการศึกษาต้องเป็น พ.ศ. 4 หลัก ย้อนหลังได้ไม่เกิน 10 ปี (ตั้งแต่ ${currentAcademicYear() - 10})`,
+    };
   if (capacity !== null && (!Number.isInteger(capacity) || capacity < 0))
     return { error: "จำนวนที่นั่งไม่ถูกต้อง" };
   if (!STATUSES.includes(status)) return { error: "สถานะไม่ถูกต้อง" };
@@ -451,7 +491,8 @@ router.post(
     if (!school) return fail(res, 404, "ไม่พบโรงเรียน");
     const payload = classroomPayload(req.body);
     if (payload.error) return fail(res, 422, payload.error);
-    if (!(await registeredAcademicYear(school.id, payload.value.academic_year))) return fail(res, 422, 'กรุณาเพิ่มปีการศึกษาในข้อมูลหลักก่อน');
+    if (!(await registeredAcademicYear(school.id, payload.value.academic_year)))
+      return fail(res, 422, "กรุณาเพิ่มปีการศึกษาในข้อมูลหลักก่อน");
     const grade = await gradeInOrganization(req, payload.value.grade_level_id);
     if (!grade || grade.school_id !== school.id)
       return fail(res, 422, "ชั้นปีไม่อยู่ในโรงเรียนนี้");
@@ -490,7 +531,13 @@ router.put(
     if (!classroom) return fail(res, 404, "ไม่พบห้องเรียน");
     const payload = classroomPayload(req.body);
     if (payload.error) return fail(res, 422, payload.error);
-    if (!(await registeredAcademicYear(classroom.school_id, payload.value.academic_year))) return fail(res, 422, 'กรุณาเพิ่มปีการศึกษาในข้อมูลหลักก่อน');
+    if (
+      !(await registeredAcademicYear(
+        classroom.school_id,
+        payload.value.academic_year,
+      ))
+    )
+      return fail(res, 422, "กรุณาเพิ่มปีการศึกษาในข้อมูลหลักก่อน");
     if (!payload.value.name) return fail(res, 422, "กรุณาระบุชื่อห้องเรียน");
     const grade = await gradeInOrganization(req, payload.value.grade_level_id);
     if (!grade || grade.school_id !== classroom.school_id)
@@ -533,7 +580,8 @@ router.delete(
 // Replaces the teachers of a classroom: [{ teacher_id, role }].
 router.put(
   "/classrooms/:id/teachers",
-  allow((a) => a.canUpdateSchool),
+  // Placing teachers in a classroom is "assign" on the roles page.
+  allow((a) => a.isSystemAdmin || a.canAssignSchool),
   async (req, res) => {
     const classroom = await classroomInOrganization(req, req.params.id);
     if (!classroom) return fail(res, 404, "ไม่พบห้องเรียน");
@@ -581,7 +629,9 @@ router.put(
 );
 
 // ── Teacher and student types ────────────────────────────────────────────
-function typeRoutes(path, table, usedIn, label) {
+// Read-only here for the teacher and student pages; items are edited in
+// master data (teacher_types / student_types) under master_data.* rights.
+function typeRoutes(path, table, usedIn) {
   router.get(
     `/${path}`,
     allow((a) => a.canViewSchool),
@@ -594,103 +644,16 @@ function typeRoutes(path, table, usedIn, label) {
       res.json(rows);
     },
   );
-
-  const payload = (body = {}) => {
-    const name = text(body.name);
-    const status = body.status || "active";
-    if (!name || name.length > 100) return { error: `กรุณาระบุชื่อ${label}` };
-    if (!STATUSES.includes(status)) return { error: "สถานะไม่ถูกต้อง" };
-    return {
-      value: {
-        name,
-        description: optionalText(body.description),
-        sort_order: Number(body.sort_order) || 0,
-        status,
-      },
-    };
-  };
-
-  router.post(
-    `/${path}`,
-    allow((a) => a.canCreateSchool),
-    async (req, res) => {
-      const body = payload(req.body);
-      if (body.error) return fail(res, 422, body.error);
-      try {
-        const { name, description, sort_order, status } = body.value;
-        const [result] = await db.query(
-          `INSERT INTO ${table} (organization_id, name, description, sort_order, status) VALUES (?, ?, ?, ?, ?)`,
-          [req.organizationContext, name, description, sort_order, status],
-        );
-        res.status(201).json({ id: result.insertId });
-      } catch (error) {
-        if (duplicate(error)) return fail(res, 409, `มี${label}ชื่อนี้แล้ว`);
-        throw error;
-      }
-    },
-  );
-
-  router.put(
-    `/${path}/:id`,
-    allow((a) => a.canUpdateSchool),
-    async (req, res) => {
-      const body = payload(req.body);
-      if (body.error) return fail(res, 422, body.error);
-      try {
-        const { name, description, sort_order, status } = body.value;
-        const [result] = await db.query(
-          `UPDATE ${table} SET name = ?, description = ?, sort_order = ?, status = ? WHERE id = ? AND organization_id = ?`,
-          [
-            name,
-            description,
-            sort_order,
-            status,
-            positiveId(req.params.id),
-            req.organizationContext,
-          ],
-        );
-        if (!result.affectedRows) return fail(res, 404, `ไม่พบ${label}`);
-        res.json({ success: true });
-      } catch (error) {
-        if (duplicate(error)) return fail(res, 409, `มี${label}ชื่อนี้แล้ว`);
-        throw error;
-      }
-    },
-  );
-
-  router.delete(
-    `/${path}/:id`,
-    allow((a) => a.canDeleteSchool),
-    async (req, res) => {
-      const id = positiveId(req.params.id);
-      const [used] = await db.query(
-        `SELECT 1 FROM ${usedIn.table} WHERE ${usedIn.column} = ? LIMIT 1`,
-        [id],
-      );
-      if (used.length)
-        return fail(res, 409, `ลบไม่ได้ เพราะยังมีผู้ใช้${label}นี้อยู่`);
-      const [result] = await db.query(
-        `DELETE FROM ${table} WHERE id = ? AND organization_id = ?`,
-        [id, req.organizationContext],
-      );
-      if (!result.affectedRows) return fail(res, 404, `ไม่พบ${label}`);
-      res.json({ success: true });
-    },
-  );
 }
 
-typeRoutes(
-  "teacher-types",
-  "school_teacher_types",
-  { table: "school_teachers", column: "teacher_type_id" },
-  "ประเภทครู",
-);
-typeRoutes(
-  "student-types",
-  "school_student_types",
-  { table: "school_students", column: "student_type_id" },
-  "ประเภทนักเรียน",
-);
+typeRoutes("teacher-types", "school_teacher_types", {
+  table: "school_teachers",
+  column: "teacher_type_id",
+});
+typeRoutes("student-types", "school_student_types", {
+  table: "school_students",
+  column: "student_type_id",
+});
 
 async function typeInOrganization(req, table, id, currentId = null) {
   if (id === null || id === undefined || id === "") return { id: null };
@@ -785,7 +748,7 @@ router.get(
       `SELECT u.id, u.username, u.name, u.email
          FROM organization_memberships om JOIN users u ON u.id = om.user_id
         WHERE om.organization_id = ? AND om.status = 'active' AND u.status = 'active'
-          AND u.id NOT IN (SELECT user_id FROM school_teachers WHERE school_id = ?)
+          AND u.id NOT IN (SELECT user_id FROM school_teachers WHERE school_id = ? AND status = 'active')
         ORDER BY u.username`,
       [req.organizationContext, school.id],
     );
@@ -800,7 +763,11 @@ router.get(
   },
 );
 
-async function teacherPayload(req, body = {}, { creating, currentTypeId = null }) {
+async function teacherPayload(
+  req,
+  body = {},
+  { creating, currentTypeId = null },
+) {
   const status = body.status || "active";
   if (!STATUSES.includes(status)) return { error: "สถานะไม่ถูกต้อง" };
   const type = await typeInOrganization(
@@ -844,9 +811,10 @@ router.post(
     const payload = await teacherPayload(req, req.body, { creating: true });
     if (payload.error) return fail(res, 422, payload.error);
     const v = payload.value;
-    // Staff who already teach at this school are skipped, not duplicated.
+    // Staff who already teach at this school are skipped, not duplicated;
+    // former teachers (inactive rows) are reactivated.
     const [existing] = await db.query(
-      "SELECT user_id FROM school_teachers WHERE school_id = ? AND user_id IN (?)",
+      "SELECT user_id FROM school_teachers WHERE school_id = ? AND user_id IN (?) AND status = 'active'",
       [v.school_id, v.user_ids],
     );
     const skipped = existing.map((row) => row.user_id);
@@ -861,26 +829,25 @@ router.post(
     try {
       await connection.beginTransaction();
       for (const userId of toAdd) {
-        const [result] = await connection.query(
-          "INSERT INTO school_teachers (school_id, user_id, teacher_type_id, employee_code, position, phone_encrypted, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
-          [
-            v.school_id,
+        ids.push(
+          await upsertSchoolTeacher(connection, {
+            schoolId: v.school_id,
             userId,
-            v.teacher_type_id,
-            single ? v.employee_code : null,
-            v.position,
-            single && v.phone
-              ? require("../utils/privateField").writeField(
-                  v.phone,
-                  "school_teachers",
-                  "phone_encrypted",
-                  req.organizationContext,
-                )
-              : null,
-            v.status,
-          ],
+            teacherTypeId: v.teacher_type_id,
+            employeeCode: single ? v.employee_code : null,
+            position: v.position,
+            phoneEncrypted:
+              single && v.phone
+                ? require("../utils/privateField").writeField(
+                    v.phone,
+                    "school_teachers",
+                    "phone_encrypted",
+                    req.organizationContext,
+                  )
+                : null,
+            status: v.status,
+          }),
         );
-        ids.push(result.insertId);
       }
       await connection.commit();
     } catch (error) {
@@ -905,7 +872,10 @@ router.put(
   async (req, res) => {
     const teacher = await teacherInOrganization(req, req.params.id);
     if (!teacher) return fail(res, 404, "ไม่พบครู");
-    const payload = await teacherPayload(req, req.body, { creating: false, currentTypeId: teacher.teacher_type_id });
+    const payload = await teacherPayload(req, req.body, {
+      creating: false,
+      currentTypeId: teacher.teacher_type_id,
+    });
     if (payload.error) return fail(res, 422, payload.error);
     const v = payload.value;
     await db.query(
@@ -942,7 +912,10 @@ router.delete(
   async (req, res) => {
     const teacher = await teacherInOrganization(req, req.params.id);
     if (!teacher) return fail(res, 404, "ไม่พบครู");
-    await db.query("DELETE FROM school_teachers WHERE id = ?", [teacher.id]);
+    await deactivateSchoolTeacher(db, {
+      schoolId: teacher.school_id,
+      userId: teacher.user_id,
+    });
     await audit(req, {
       action: "school.delete",
       targetType: "teacher",
@@ -1013,7 +986,10 @@ const publicStudent = (row, org) => ({
   status: row.status,
   is_boarder: Boolean(Number(row.is_boarder || 0)),
   graduated_on: dateOnly(row.graduated_on),
-  status_label: row.status_label || require("../utils/studentStatus").labels[row.status] || row.status,
+  status_label:
+    row.status_label ||
+    require("../utils/studentStatus").labels[row.status] ||
+    row.status,
   person_id: row.person_id,
   patient_account_id: row.patient_account_id,
   username: row.username || null,
@@ -1043,7 +1019,8 @@ async function scopedStudents(req, filters = {}) {
     add("ss.classroom_id = ?", positiveId(filters.classroom_id));
   if (positiveId(filters.student_type_id))
     add("ss.student_type_id = ?", positiveId(filters.student_type_id));
-  if (["0","1"].includes(String(filters.is_boarder))) add("ss.is_boarder = ?", Number(filters.is_boarder));
+  if (["0", "1"].includes(String(filters.is_boarder)))
+    add("ss.is_boarder = ?", Number(filters.is_boarder));
   if (STUDENT_STATUSES.includes(filters.status))
     add("ss.status = ?", filters.status);
   const scope = studentScopeClause(req.schoolAccess, "ss");
@@ -1097,21 +1074,41 @@ async function loadStudent(req, id) {
   };
 }
 
-router.get("/students/:id/first-name", allow((a) => a.canViewStudents), require("../utils/caseFirstName").requirePii, async (req, res) => {
-  const found = await loadStudent(req, req.params.id);
-  if (!found || !canSeeStudent(req.schoolAccess, found.raw))
-    return fail(res, 404, "ไม่พบนักเรียน");
-  res.set("Cache-Control", "no-store");
-  res.json({ first_name: require("../utils/caseFirstName").firstNameOf(found.student.first_name, true) });
-});
+router.get(
+  "/students/:id/first-name",
+  allow((a) => a.canViewStudents),
+  require("../utils/caseFirstName").requirePii,
+  async (req, res) => {
+    const found = await loadStudent(req, req.params.id);
+    if (!found || !canSeeStudent(req.schoolAccess, found.raw))
+      return fail(res, 404, "ไม่พบนักเรียน");
+    res.set("Cache-Control", "no-store");
+    res.json({
+      first_name: require("../utils/caseFirstName").firstNameOf(
+        found.student.first_name,
+        true,
+      ),
+    });
+  },
+);
 
-router.get("/students/:id/last-name", allow((a) => a.canViewStudents), require("../utils/caseFirstName").requirePii, async (req, res) => {
-  const found = await loadStudent(req, req.params.id);
-  if (!found || !canSeeStudent(req.schoolAccess, found.raw))
-    return fail(res, 404, "ไม่พบนักเรียน");
-  res.set("Cache-Control", "no-store");
-  res.json({ last_name: require("../utils/caseFirstName").lastNameOf(found.student.last_name, true) });
-});
+router.get(
+  "/students/:id/last-name",
+  allow((a) => a.canViewStudents),
+  require("../utils/caseFirstName").requirePii,
+  async (req, res) => {
+    const found = await loadStudent(req, req.params.id);
+    if (!found || !canSeeStudent(req.schoolAccess, found.raw))
+      return fail(res, 404, "ไม่พบนักเรียน");
+    res.set("Cache-Control", "no-store");
+    res.json({
+      last_name: require("../utils/caseFirstName").lastNameOf(
+        found.student.last_name,
+        true,
+      ),
+    });
+  },
+);
 
 router.post(
   "/students/export-data",
@@ -1166,8 +1163,13 @@ router.get(
       return fail(res, 404, "ไม่พบนักเรียน");
     const mental = canViewStudentHealth(req.schoolAccess, found.student);
     const physical = canViewPhysicalHealth(req.schoolAccess, found.student);
-    res.json({ ...found.student, can_view_health: mental || physical, can_update_health: !req.schoolAccess.isGuardian && physical,
-      can_view_mental: mental, can_view_physical: physical });
+    res.json({
+      ...found.student,
+      can_view_health: mental || physical,
+      can_update_health: !req.schoolAccess.isGuardian && physical,
+      can_view_mental: mental,
+      can_view_physical: physical,
+    });
   },
 );
 
@@ -1226,11 +1228,17 @@ async function resolveStructure(
 // Whether a new account can be created (or an existing one linked) for a row.
 async function accountProblem(connection, row) {
   if (row.email) {
-    const [[owner]]=await connection.query('SELECT id FROM patient_accounts WHERE email_hash=? OR (email_hash IS NULL AND email=?)',[require('../utils/accountEmail').lookup(row.email),row.email]);
+    const [[owner]] = await connection.query(
+      "SELECT id FROM patient_accounts WHERE email_hash=? OR (email_hash IS NULL AND email=?)",
+      [require("../utils/accountEmail").lookup(row.email), row.email],
+    );
     if (owner) {
-      if(!row.national_id)return 'อีเมลนี้มีบัญชีแล้ว กรุณาตรวจสอบบัญชีเดิม';
-      const [[person]]=await connection.query('SELECT id FROM persons WHERE identity_hash=? AND patient_account_id=?',[nationalIdHash(row.national_id),owner.id]);
-      if(!person)return 'อีเมลนี้เป็นของบัญชีอื่น กรุณาตรวจสอบข้อมูล';
+      if (!row.national_id) return "อีเมลนี้มีบัญชีแล้ว กรุณาตรวจสอบบัญชีเดิม";
+      const [[person]] = await connection.query(
+        "SELECT id FROM persons WHERE identity_hash=? AND patient_account_id=?",
+        [nationalIdHash(row.national_id), owner.id],
+      );
+      if (!person) return "อีเมลนี้เป็นของบัญชีอื่น กรุณาตรวจสอบข้อมูล";
     }
   }
   const [taken] = await connection.query(
@@ -1334,8 +1342,8 @@ async function provisionAccount(connection, { row, existingAccountId }) {
         "patient_accounts",
         "last_name_encrypted",
       ),
-      require('../utils/accountEmail').encode(row.email,'patient_accounts'),
-      row.email ? require('../utils/accountEmail').lookup(row.email) : null,
+      require("../utils/accountEmail").encode(row.email, "patient_accounts"),
+      row.email ? require("../utils/accountEmail").lookup(row.email) : null,
     ],
   );
   const person = await resolvePerson({
@@ -1392,6 +1400,7 @@ const studentValues = (row, { classroomId, studentTypeId, organizationId }) => [
 router.post(
   "/students/import",
   allow((a) => a.canCreateStudents),
+  need("pii.create"),
   async (req, res) => {
     const {
       school_id: schoolId,
@@ -1412,9 +1421,13 @@ router.post(
       return fail(res, 422, "ตัวเลือกเมื่อพบข้อมูลซ้ำไม่ถูกต้อง");
     const academicYear = Number(academicYearInput);
     if (!validAcademicYear(academicYearInput))
-      return fail(res, 422, `ปีการศึกษาต้องเป็น พ.ศ. 4 หลัก ย้อนหลังได้ไม่เกิน 10 ปี (ตั้งแต่ ${currentAcademicYear() - 10})`);
+      return fail(
+        res,
+        422,
+        `ปีการศึกษาต้องเป็น พ.ศ. 4 หลัก ย้อนหลังได้ไม่เกิน 10 ปี (ตั้งแต่ ${currentAcademicYear() - 10})`,
+      );
     if (!(await registeredAcademicYear(school.id, academicYear)))
-      return fail(res, 422, 'กรุณาเพิ่มปีการศึกษาในข้อมูลหลักก่อน');
+      return fail(res, 422, "กรุณาเพิ่มปีการศึกษาในข้อมูลหลักก่อน");
     if (onDuplicate === "update" && !req.schoolAccess.canUpdateStudents)
       return fail(res, 403, "ไม่มีสิทธิ์แก้ไขข้อมูลนักเรียนเดิม");
 
@@ -1511,7 +1524,13 @@ router.post(
                       last_name_encrypted = ?, nickname_encrypted = ?, gender = ?, birth_date_encrypted = ?,
                       person_id = ?, patient_account_id = ?, status = ?
                 WHERE id = ?`,
-              [...values, account.personId, account.accountId, row.status || existing[0].status, existing[0].id],
+              [
+                ...values,
+                account.personId,
+                account.accountId,
+                row.status || existing[0].status,
+                existing[0].id,
+              ],
             );
             result.status = "updated";
           } else {
@@ -1531,9 +1550,23 @@ router.post(
             );
             result.status = account.linked ? "linked" : "created";
           }
-          await connection.query('UPDATE school_students SET is_boarder=COALESCE(?,is_boarder) WHERE school_id=? AND student_code=?',[row.is_boarder,school.id,row.student_code]);
-          if (existing[0] && Number(existing[0].classroom_id) !== Number(structure.classroom.id))
-            await connection.query('INSERT INTO school_enrollment_history (student_id,from_classroom_id,to_classroom_id,changed_by) VALUES (?,?,?,?)',[existing[0].id,existing[0].classroom_id,structure.classroom.id,req.user.id]);
+          await connection.query(
+            "UPDATE school_students SET is_boarder=COALESCE(?,is_boarder) WHERE school_id=? AND student_code=?",
+            [row.is_boarder, school.id, row.student_code],
+          );
+          if (
+            existing[0] &&
+            Number(existing[0].classroom_id) !== Number(structure.classroom.id)
+          )
+            await connection.query(
+              "INSERT INTO school_enrollment_history (student_id,from_classroom_id,to_classroom_id,changed_by) VALUES (?,?,?,?)",
+              [
+                existing[0].id,
+                existing[0].classroom_id,
+                structure.classroom.id,
+                req.user.id,
+              ],
+            );
           if (account.password) result.password = account.password;
           else if (account.linked) {
             const [[linked]] = await connection.query(
@@ -1590,6 +1623,7 @@ router.post(
 router.post(
   "/students",
   allow((a) => a.canCreateStudents),
+  need("pii.create"),
   async (req, res) => {
     const body = req.body || {};
     const school = await schoolInOrganization(req, body.school_id);
@@ -1673,9 +1707,33 @@ router.put(
   allow((a) => a.canUpdateStudents),
   async (req, res) => {
     const found = await loadStudent(req, req.params.id);
-    if (!found || !canSeeStudent(req.schoolAccess, found.student) || !canWriteSchool(req,found.student.school_id))
+    if (
+      !found ||
+      !canSeeStudent(req.schoolAccess, found.student) ||
+      !canWriteSchool(req, found.student.school_id)
+    )
       return fail(res, 404, "ไม่พบนักเรียน");
     const body = req.body || {};
+    // Names need pii.update; moving to another classroom is students -> assign.
+    const identityChanged = [
+      "prefix",
+      "first_name",
+      "last_name",
+      "nickname",
+    ].some(
+      (key) =>
+        body[key] !== undefined &&
+        String(body[key] ?? "").trim() !==
+          String(found.student[key] ?? "").trim(),
+    );
+    if (identityChanged && denyUnless(req, res, "pii.update")) return;
+    if (
+      body.classroom_id !== undefined &&
+      Number(body.classroom_id || 0) !==
+        Number(found.student.classroom_id || 0) &&
+      !(req.schoolAccess.isSystemAdmin || req.schoolAccess.canAssignStudents)
+    )
+      return fail(res, 403, "ไม่มีสิทธิ์ย้ายห้องเรียนของนักเรียน");
     const classroom = body.classroom_id
       ? await classroomInOrganization(req, body.classroom_id)
       : null;
@@ -1699,7 +1757,10 @@ router.put(
         ? found.student.classroom_id
         : classroom?.id || null;
     const status = body.status || found.student.status;
-    if (!CURRENT_STUDENT_STATUSES.includes(status) && status !== found.student.status)
+    if (
+      !CURRENT_STUDENT_STATUSES.includes(status) &&
+      status !== found.student.status
+    )
       return fail(res, 422, "สถานะนักเรียนไม่ถูกต้อง");
     const { row, errors } = prepareImportRow(
       {
@@ -1715,29 +1776,43 @@ router.put(
     if (body.gender && !GENDERS.includes(body.gender))
       errors.push("เพศไม่ถูกต้อง");
     if (errors.length) return fail(res, 422, errors.join(", "));
-    const enrollmentConnection=await db.getConnection();
+    const enrollmentConnection = await db.getConnection();
     try {
-    await enrollmentConnection.beginTransaction();
-    await enrollmentConnection.query(
-      `UPDATE school_students SET classroom_id = ?, student_type_id = ?, prefix = ?, first_name_encrypted = ?,
+      await enrollmentConnection.beginTransaction();
+      await enrollmentConnection.query(
+        `UPDATE school_students SET classroom_id = ?, student_type_id = ?, prefix = ?, first_name_encrypted = ?,
               last_name_encrypted = ?, nickname_encrypted = ?, gender = ?, birth_date_encrypted = ?, status = ?
         WHERE id = ?`,
-      [
-        ...studentValues(
-          { ...row, gender: body.gender || row.gender },
-          {
+        [
+          ...studentValues(
+            { ...row, gender: body.gender || row.gender },
+            {
+              classroomId,
+              studentTypeId: type.id,
+              organizationId: req.organizationContext,
+            },
+          ),
+          status,
+          found.student.id,
+        ],
+      );
+      if (Number(classroomId) !== Number(found.student.classroom_id))
+        await enrollmentConnection.query(
+          "INSERT INTO school_enrollment_history (student_id,from_classroom_id,to_classroom_id,changed_by) VALUES (?,?,?,?)",
+          [
+            found.student.id,
+            found.student.classroom_id,
             classroomId,
-            studentTypeId: type.id,
-            organizationId: req.organizationContext,
-          },
-        ),
-        status,
-        found.student.id,
-      ],
-    );
-    if(Number(classroomId)!==Number(found.student.classroom_id)) await enrollmentConnection.query('INSERT INTO school_enrollment_history (student_id,from_classroom_id,to_classroom_id,changed_by) VALUES (?,?,?,?)',[found.student.id,found.student.classroom_id,classroomId,req.user.id]);
-    await enrollmentConnection.commit();
-    } catch(error) { await enrollmentConnection.rollback(); throw error; } finally { enrollmentConnection.release(); }
+            req.user.id,
+          ],
+        );
+      await enrollmentConnection.commit();
+    } catch (error) {
+      await enrollmentConnection.rollback();
+      throw error;
+    } finally {
+      enrollmentConnection.release();
+    }
     await audit(req, {
       action: "students.update",
       targetType: "student",
@@ -1756,9 +1831,14 @@ router.put(
 router.delete(
   "/students/:id",
   allow((a) => a.canDeleteStudents),
+  need("pii.delete"),
   async (req, res) => {
     const found = await loadStudent(req, req.params.id);
-    if (!found || !canSeeStudent(req.schoolAccess, found.student) || !canWriteSchool(req,found.student.school_id))
+    if (
+      !found ||
+      !canSeeStudent(req.schoolAccess, found.student) ||
+      !canWriteSchool(req, found.student.school_id)
+    )
       return fail(res, 404, "ไม่พบนักเรียน");
     // Enrollment state does not control whether a linked account can sign in.
     if (found.student.patient_account_id)
@@ -1782,7 +1862,11 @@ router.post(
   allow((a) => a.canUpdateStudents),
   async (req, res) => {
     const found = await loadStudent(req, req.params.id);
-    if (!found || !canSeeStudent(req.schoolAccess, found.student) || !canWriteSchool(req,found.student.school_id))
+    if (
+      !found ||
+      !canSeeStudent(req.schoolAccess, found.student) ||
+      !canWriteSchool(req, found.student.school_id)
+    )
       return fail(res, 404, "ไม่พบนักเรียน");
     if (!found.student.patient_account_id)
       return fail(res, 409, "นักเรียนคนนี้ยังไม่มีบัญชีผู้ใช้");
@@ -1847,7 +1931,9 @@ async function assessmentsOf(req, student) {
       clinic_type: row.clinic_type,
       submitted_at: row.submitted_at,
       status: row.status,
-      risk: record.summary_data?.school_risk_override?.level || riskLevelOf(scoreResults),
+      risk:
+        record.summary_data?.school_risk_override?.level ||
+        riskLevelOf(scoreResults),
       score_results: scoreResults,
     };
   });
@@ -1858,7 +1944,13 @@ router.get(
   allow((a) => a.canViewStudents),
   async (req, res) => {
     const found = await loadStudent(req, req.params.id);
-    if (!found || !(canViewStudentHealth(req.schoolAccess, found.student) || canViewPhysicalHealth(req.schoolAccess, found.student)))
+    if (
+      !found ||
+      !(
+        canViewStudentHealth(req.schoolAccess, found.student) ||
+        canViewPhysicalHealth(req.schoolAccess, found.student)
+      )
+    )
       return fail(res, 404, "ไม่พบข้อมูลสุขภาพของนักเรียน");
     const [profiles] = await db.query(
       "SELECT * FROM school_student_health_profiles WHERE student_id = ?",
@@ -1871,13 +1963,40 @@ router.get(
     );
     const mental = canViewStudentHealth(req.schoolAccess, found.student);
     const physical = canViewPhysicalHealth(req.schoolAccess, found.student);
-    const assessments = (await assessmentsOf(req, found.student)).filter(a => a.health_domain === 'physical' ? physical : mental);
-    const activities = mental ? await require("../services/latestActivity").schoolActivities(db, req.organizationContext, [found.student]) : new Map();
+    const assessments = (await assessmentsOf(req, found.student)).filter((a) =>
+      a.health_domain === "physical" ? physical : mental,
+    );
+    const activities = mental
+      ? await require("../services/latestActivity").schoolActivities(
+          db,
+          req.organizationContext,
+          [found.student],
+        )
+      : new Map();
     res.json({
       latest_activity: activities.get(found.student.id) || null,
       student: found.student,
-      can_update: !req.schoolAccess.isGuardian && physical,
-      can_view_mental: mental, can_view_physical: physical,
+      // Per-action health rights from the roles page, within physical scope.
+      can_update: canHealthAction(
+        req.schoolAccess,
+        "update",
+        found.student,
+        true,
+      ),
+      can_create: canHealthAction(
+        req.schoolAccess,
+        "create",
+        found.student,
+        true,
+      ),
+      can_delete: canHealthAction(
+        req.schoolAccess,
+        "delete",
+        found.student,
+        true,
+      ),
+      can_view_mental: mental,
+      can_view_physical: physical,
       profile: {
         blood_type: bloodType(profile, req.organizationContext),
         chronic_conditions: require("../utils/privateField").readField(
@@ -1948,7 +2067,10 @@ router.put(
   allow((a) => a.canViewStudents),
   async (req, res) => {
     const found = await loadStudent(req, req.params.id);
-    if (!found || !canViewPhysicalHealth(req.schoolAccess, found.student))
+    if (
+      !found ||
+      !canHealthAction(req.schoolAccess, "update", found.student, true)
+    )
       return fail(res, 403, "คุณไม่มีสิทธิ์บันทึกข้อมูลสุขภาพของนักเรียนคนนี้");
     const body = req.body || {};
     const bloodType = body.blood_type || "unknown";
@@ -2058,7 +2180,8 @@ function physicalPayload(body = {}) {
     "vision_right",
   ].some((key) => value[key] !== null);
   if (
-    !measured && !value.fitness &&
+    !measured &&
+    !value.fitness &&
     value.hearing_left === "not_tested" &&
     value.hearing_right === "not_tested"
   )
@@ -2095,7 +2218,10 @@ router.post(
   allow((a) => a.canViewStudents),
   async (req, res) => {
     const found = await loadStudent(req, req.params.id);
-    if (!found || !canViewPhysicalHealth(req.schoolAccess, found.student))
+    if (
+      !found ||
+      !canHealthAction(req.schoolAccess, "create", found.student, true)
+    )
       return fail(res, 403, "คุณไม่มีสิทธิ์บันทึกข้อมูลสุขภาพของนักเรียนคนนี้");
     const payload = physicalPayload(req.body);
     if (payload.error) return fail(res, 422, payload.error);
@@ -2137,6 +2263,8 @@ router.put(
   async (req, res) => {
     const record = await recordInScope(req, req.params.id);
     if (!record) return fail(res, 404, "ไม่พบบันทึกการตรวจ");
+    if (!(req.schoolAccess.isSystemAdmin || req.schoolAccess.health?.update))
+      return fail(res, 403, "คุณไม่มีสิทธิ์แก้ไขผลตรวจร่างกาย");
     const payload = physicalPayload(req.body);
     if (payload.error) return fail(res, 422, payload.error);
     await db.query(
@@ -2160,6 +2288,8 @@ router.delete(
   async (req, res) => {
     const record = await recordInScope(req, req.params.id);
     if (!record) return fail(res, 404, "ไม่พบบันทึกการตรวจ");
+    if (!(req.schoolAccess.isSystemAdmin || req.schoolAccess.health?.delete))
+      return fail(res, 403, "คุณไม่มีสิทธิ์ลบผลตรวจร่างกาย");
     await db.query("DELETE FROM school_student_physical_records WHERE id = ?", [
       record.id,
     ]);
@@ -2188,8 +2318,12 @@ router.get(
         ...req.query,
         status: req.query.status || "active",
       })
-    ).filter((student) => canViewStudentHealth(req.schoolAccess, student) || canViewPhysicalHealth(req.schoolAccess, student));
-    require('../utils/schoolWorkflows').dateWindow(req.query);
+    ).filter(
+      (student) =>
+        canViewStudentHealth(req.schoolAccess, student) ||
+        canViewPhysicalHealth(req.schoolAccess, student),
+    );
+    require("../utils/schoolWorkflows").dateWindow(req.query);
     const personIds = students.map((s) => s.person_id).filter(Boolean);
     const accountIds = students
       .map((s) => s.patient_account_id)
@@ -2221,8 +2355,16 @@ router.get(
           (row.person_id && byPerson.get(row.person_id)) ||
           (row.patient_account_id && byAccount.get(row.patient_account_id));
         if (!student) continue;
-        if (row.health_domain === 'mental' && !canViewStudentHealth(req.schoolAccess,student)) continue;
-        if (row.health_domain === 'physical' && !canViewPhysicalHealth(req.schoolAccess,student)) continue;
+        if (
+          row.health_domain === "mental" &&
+          !canViewStudentHealth(req.schoolAccess, student)
+        )
+          continue;
+        if (
+          row.health_domain === "physical" &&
+          !canViewPhysicalHealth(req.schoolAccess, student)
+        )
+          continue;
         const entry = latest.get(student.id) || {};
         if (entry[row.health_domain]) continue;
         const summary = decryptCaseResponse(
@@ -2235,7 +2377,8 @@ router.get(
           form_id: row.form_id,
           form_title: row.form_title,
           submitted_at: row.submitted_at,
-          risk: summary?.school_risk_override?.level || riskLevelOf(scoreResults),
+          risk:
+            summary?.school_risk_override?.level || riskLevelOf(scoreResults),
           label: scoreResults[0]?.label || null,
           score: scoreResults[0]?.score ?? null,
         };
@@ -2266,7 +2409,14 @@ router.get(
     const domain = ["mental", "physical"].includes(req.query.domain)
       ? req.query.domain
       : null;
-    const activities = await require("../services/latestActivity").schoolActivities(db, req.organizationContext, students.filter(student => canViewStudentHealth(req.schoolAccess,student)));
+    const activities =
+      await require("../services/latestActivity").schoolActivities(
+        db,
+        req.organizationContext,
+        students.filter((student) =>
+          canViewStudentHealth(req.schoolAccess, student),
+        ),
+      );
     let items = students.map((student) => {
       const entry = latest.get(student.id) || {};
       const risks = (domain ? [entry[domain]] : [entry.mental, entry.physical])

@@ -1,0 +1,744 @@
+@import "../../styles/tokens.css";
+
+/* Dashboard kit: the friendlier, rounder corner of Suthie Care. Same orange,
+   same ink, same risk words; softer radii, icon bubbles and Pee Hom. */
+.dz-page {
+  --dz-radius: var(--suth-radius-card);
+  --dz-radius-sm: var(--suth-radius-inner);
+  --dz-shadow: var(--suth-shadow-soft);
+  --dz-shadow-hover: var(--suth-shadow-hover);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: max-content;
+  align-content: start;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: clamp(1rem, 3vw, 2.25rem);
+  font-family: var(--suth-font);
+  color: var(--suth-ink);
+}
+
+/* The page's own scroll area inside the admin layout. */
+.dz-surface,
+.admin-page.dz-surface {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  background: var(--suth-canvas);
+}
+
+.dz-page ::selection {
+  background: var(--suth-tint-strong);
+  color: var(--suth-ink);
+}
+
+.dz-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ── Greeting band ─────────────────────────────────────────── */
+.dz-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: clamp(1.1rem, 2.6vw, 1.75rem) clamp(1.1rem, 3vw, 2rem);
+  border-radius: var(--suth-radius-hero);
+  background: radial-gradient(
+      120% 140% at 100% 0%,
+      var(--suth-tint-strong) 0%,
+      transparent 55%
+    ),
+    linear-gradient(135deg, var(--suth-surface-hover) 0%, var(--suth-tint) 100%);
+  border: 1px solid var(--suth-tint-strong);
+  overflow: hidden;
+}
+
+.dz-hero__text {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.dz-hero__hello {
+  margin: 0;
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  color: var(--suth-action-ink);
+}
+
+.dz-hero__hello span {
+  color: var(--suth-ink-2);
+  font-weight: 600;
+}
+
+.dz-hero__title {
+  margin: 0;
+  font-size: var(--suth-fs-hero);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.dz-hero .org-scope {
+  margin: 0;
+}
+
+.dz-hero__note {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  justify-self: start;
+  margin: 4px 0 0;
+  padding: 7px 14px;
+  border-radius: var(--suth-radius-pill);
+  background: color-mix(in srgb, var(--suth-surface) 85%, transparent);
+  border: 1px solid var(--suth-tint-strong);
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  color: var(--suth-ink-2);
+}
+
+.dz-hero__note.tone-alert {
+  color: var(--suth-danger);
+  border-color: var(--suth-danger-line);
+  background: var(--suth-surface);
+}
+
+.dz-hero__note.tone-warn {
+  color: var(--suth-warning);
+  border-color: var(--suth-warning-line);
+  background: var(--suth-surface);
+}
+
+.dz-hero__note.tone-clear {
+  color: var(--suth-success);
+  border-color: var(--suth-success-line);
+}
+
+.dz-hero__note svg {
+  width: 16px;
+  height: 16px;
+}
+
+.dz-hero__moods {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1.4vw, 16px);
+  margin-right: clamp(0px, 2vw, 16px);
+}
+
+.dz-mood {
+  display: grid;
+  place-items: center;
+  width: clamp(72px, 8vw, 96px);
+  aspect-ratio: 1;
+  border-radius: 46% 54% 52% 48% / 55% 45% 55% 45%;
+  background: var(--suth-surface);
+  box-shadow: 0 12px 26px -12px color-mix(in srgb, var(--suth-action) 45%, transparent);
+  font-family:
+    "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+  font-size: var(--suth-fs-display-lg);
+  line-height: 1;
+  opacity: 0.45;
+  filter: saturate(0.4);
+  scale: 0.82;
+  animation: dzBob 4.5s var(--suth-ease-out) infinite;
+  transition:
+    opacity 300ms var(--suth-ease-out),
+    scale 300ms var(--suth-ease-out),
+    filter 300ms var(--suth-ease-out);
+}
+
+.dz-mood.is-sad {
+  animation-delay: -2.25s;
+}
+
+.dz-mood.is-on {
+  opacity: 1;
+  filter: none;
+  scale: 1;
+}
+
+.dz-mood.is-sad.is-on {
+  box-shadow: 0 12px 26px -12px color-mix(in srgb, var(--suth-danger) 40%, transparent);
+}
+
+@keyframes dzBob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(2deg);
+  }
+}
+
+/* Compact band used as the page header on every other admin page. */
+.dz-hero.dz-hero--compact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px 20px;
+  padding: clamp(1rem, 2.2vw, 1.4rem) clamp(1.1rem, 2.6vw, 1.75rem);
+  border-radius: var(--suth-radius-card);
+  font-family: var(--suth-font);
+  color: var(--suth-ink);
+}
+
+.dz-hero--compact .dz-hero__title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+
+.dz-hero--compact .dz-hero__text {
+  flex: 1 1 420px;
+  gap: 6px;
+}
+
+.dz-hero__desc {
+  max-width: 68ch;
+  margin: 0;
+  font-size: var(--suth-fs-body);
+  line-height: 1.55;
+  color: var(--suth-ink-2);
+}
+
+.dz-hero__actions {
+  flex: 0 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@media (max-width: 760px) {
+  .dz-hero__title {
+    font-size: var(--suth-fs-title);
+  }
+
+  .dz-hero.dz-hero--compact {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    border-radius: var(--suth-radius-inner);
+  }
+
+  /* In a column the 420px basis would become a height. */
+  .dz-hero--compact .dz-hero__text {
+    flex: 0 0 auto;
+  }
+
+  .dz-hero__actions {
+    justify-content: stretch;
+  }
+
+  .dz-hero__actions > * {
+    flex: 1 1 auto;
+  }
+}
+
+/* ── Toolbar & date range ──────────────────────────────────── */
+.dz-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 14px 20px;
+  padding: 14px 18px;
+  border-radius: var(--suth-radius-card);
+  background: var(--suth-surface);
+  box-shadow: var(--suth-shadow-soft);
+}
+
+.dz-field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.dz-field__label,
+.dz-range__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--suth-fs-label);
+  font-weight: 700;
+  color: var(--suth-ink-2);
+}
+
+.dz-range {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.dz-range__label {
+  flex-basis: 100%;
+}
+
+.dz-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface-2);
+}
+
+.dz-pill {
+  min-height: 36px;
+  padding: 6px 14px;
+  border: 0;
+  border-radius: var(--suth-radius-pill);
+  background: transparent;
+  font: inherit;
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  color: var(--suth-ink-2);
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--suth-ease-out),
+    color 160ms var(--suth-ease-out),
+    box-shadow 160ms var(--suth-ease-out);
+}
+
+.dz-pill:hover {
+  color: var(--suth-action-ink);
+  background: var(--suth-surface);
+}
+
+.dz-pill[aria-pressed="true"] {
+  background: var(--suth-action);
+  color: var(--suth-on-action);
+  box-shadow: 0 4px 10px -4px color-mix(in srgb, var(--suth-action) 70%, transparent);
+}
+
+.dz-pill:focus-visible,
+.dz-kpi.is-link:focus-visible,
+.dz-org:focus-visible,
+.dz-link:focus-visible {
+  outline: 3px solid var(--suth-focus, var(--suth-action));
+  outline-offset: 2px;
+}
+
+.dz-dates {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Sits beside the 44px preset track, so the field matches its height. */
+.dz-dates .tdp-trigger {
+  min-height: 44px;
+}
+
+.dz-dates.is-custom .tdp-trigger {
+  border-color: var(--suth-action);
+  background: var(--suth-tint);
+  color: var(--suth-ink);
+}
+
+.dz-dates__sep {
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  color: var(--suth-muted);
+}
+
+/* ── Count tiles ───────────────────────────────────────────── */
+.dz-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 176px), 1fr));
+  gap: 14px;
+}
+
+.dz-kpi {
+  --tone: var(--suth-ink-2);
+  --tone-bg: var(--suth-neutral-tint);
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "icon label"
+    "icon value"
+    "hint hint";
+  align-items: center;
+  column-gap: 14px;
+  row-gap: 2px;
+  padding: 16px 18px;
+  border: 1px solid transparent;
+  border-radius: var(--suth-radius-card);
+  background: var(--suth-surface);
+  box-shadow: var(--suth-shadow-soft);
+  font: inherit;
+  text-align: left;
+  color: var(--suth-ink);
+  transition:
+    transform 200ms var(--suth-ease-out),
+    box-shadow 200ms var(--suth-ease-out);
+}
+
+.dz-kpi.is-link {
+  cursor: pointer;
+}
+
+.dz-kpi.is-link:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--suth-shadow-hover);
+}
+
+.dz-kpi.tone-danger {
+  --tone: var(--suth-danger);
+  --tone-bg: var(--suth-danger-tint);
+}
+.dz-kpi.tone-warning {
+  --tone: var(--suth-warning);
+  --tone-bg: var(--suth-warning-tint);
+}
+.dz-kpi.tone-info {
+  --tone: var(--suth-info);
+  --tone-bg: var(--suth-info-tint);
+}
+.dz-kpi.tone-success {
+  --tone: var(--suth-success);
+  --tone-bg: var(--suth-success-tint);
+}
+.dz-kpi.tone-brand {
+  --tone: var(--suth-action-ink);
+  --tone-bg: var(--suth-tint-strong);
+}
+.dz-kpi.tone-teal {
+  --tone: var(--suth-success);
+  --tone-bg: var(--suth-line-soft);
+}
+
+.dz-kpi.is-urgent:not(.is-clear) {
+  background: var(--tone-bg);
+  border-color: color-mix(in srgb, var(--tone) 22%, transparent);
+}
+
+.dz-kpi.is-clear {
+  --tone: var(--suth-success);
+  --tone-bg: var(--suth-success-tint);
+}
+
+.dz-kpi__icon {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--suth-radius-panel);
+  background: var(--tone-bg);
+  color: var(--tone);
+}
+
+.dz-kpi.is-urgent:not(.is-clear) .dz-kpi__icon {
+  background: var(--suth-surface);
+}
+
+.dz-kpi__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.dz-kpi__label {
+  grid-area: label;
+  align-self: end;
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--suth-ink-2);
+}
+
+.dz-kpi__value {
+  grid-area: value;
+  align-self: start;
+  font-size: var(--suth-fs-display);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--suth-ink);
+}
+
+.dz-kpi.is-urgent:not(.is-clear) .dz-kpi__value {
+  color: var(--tone);
+}
+
+.dz-kpi__value small {
+  margin-left: 6px;
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  letter-spacing: 0;
+  color: var(--suth-muted);
+}
+
+.dz-kpi__hint {
+  grid-area: hint;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--suth-line);
+  font-size: var(--suth-fs-label);
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--suth-muted);
+}
+
+.dz-kpi.is-clear .dz-kpi__hint {
+  color: var(--suth-success);
+}
+
+.dz-skeleton {
+  grid-area: value;
+  display: block;
+  width: 72px;
+  height: 2rem;
+  border-radius: var(--suth-radius);
+  background: var(--suth-line-soft);
+  animation: dzPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes dzPulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ── Sections ──────────────────────────────────────────────── */
+.dz-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  min-width: 0;
+  padding: clamp(1rem, 2.2vw, 1.4rem);
+  border-radius: var(--suth-radius-card);
+  background: var(--suth-surface);
+  box-shadow: var(--suth-shadow-soft);
+}
+
+.dz-section--bare {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.dz-section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px 16px;
+}
+
+.dz-section__title {
+  margin: 0;
+  font-size: var(--suth-fs-section);
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--suth-ink);
+}
+
+.dz-section__desc {
+  margin: 2px 0 0;
+  max-width: 68ch;
+  font-size: var(--suth-fs-sm);
+  line-height: 1.5;
+  color: var(--suth-muted);
+}
+
+.dz-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid var(--suth-tint-line);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-tint);
+  font: inherit;
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  color: var(--suth-action-ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--suth-ease-out),
+    transform 160ms var(--suth-ease-out);
+}
+
+.dz-link:hover {
+  background: var(--suth-tint-strong);
+}
+
+.dz-link svg {
+  transition: transform 160ms var(--suth-ease-out);
+}
+
+.dz-link:hover svg {
+  transform: translateX(3px);
+}
+
+.dz-empty {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 28px 16px;
+  border: 1px dashed var(--suth-control-line);
+  border-radius: var(--suth-radius-inner);
+  text-align: center;
+  color: var(--suth-muted);
+}
+
+.dz-empty strong {
+  color: var(--suth-ink);
+}
+
+.dz-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 1px solid var(--suth-danger-line);
+  border-radius: var(--suth-radius-inner);
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
+  font-weight: 700;
+}
+
+.dz-error button {
+  min-height: 36px;
+  padding: 4px 14px;
+  border: 1px solid var(--suth-danger-line);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  font: inherit;
+  font-weight: 700;
+  color: var(--suth-danger);
+  cursor: pointer;
+}
+
+/* Shared panels rendered inside a dashboard page. */
+.dz-page .fc-workspace {
+  margin: 0;
+  padding: clamp(1rem, 2.2vw, 1.4rem);
+  border-radius: var(--suth-radius-card);
+  background: var(--suth-surface);
+  box-shadow: var(--suth-shadow-soft);
+}
+
+.dz-page .fc-workspace h2 {
+  font-size: var(--suth-fs-section);
+  font-weight: 800;
+}
+
+.dz-page .fc-card {
+  border-radius: var(--suth-radius-panel);
+}
+
+/* ── Phones ────────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .dz-page {
+    gap: 14px;
+    padding: 14px 12px 24px;
+  }
+
+  .dz-hero {
+    grid-template-columns: minmax(0, 1fr) 56px;
+    border-radius: var(--suth-radius-card);
+  }
+
+  .dz-hero__moods {
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;
+    align-self: start;
+  }
+
+  .dz-mood {
+    width: 56px;
+    font-size: var(--suth-fs-display);
+  }
+
+  .dz-toolbar {
+    padding: 12px;
+  }
+
+  .dz-pills {
+    width: 100%;
+    border-radius: var(--suth-radius-panel);
+  }
+
+  .dz-pill {
+    flex: 1 1 auto;
+    min-height: 44px;
+  }
+
+  .dz-dates {
+    width: 100%;
+  }
+
+  .dz-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .dz-kpi {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "icon"
+      "label"
+      "value"
+      "hint";
+    padding: 14px;
+    row-gap: 4px;
+  }
+
+  .dz-kpi__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--suth-radius-icon);
+    margin-bottom: 4px;
+  }
+
+  .dz-kpi__value {
+    font-size: var(--suth-fs-hero);
+  }
+
+  .dz-link {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dz-mood,
+  .dz-skeleton {
+    animation: none;
+  }
+
+  .dz-kpi,
+  .dz-link,
+  .dz-link svg,
+  .dz-pill {
+    transition: none;
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Radar,
   RadarChart,
@@ -58,6 +58,23 @@ export default function SystemEvaluationWidget() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isListLoading, setIsListLoading] = useState(false);
+  const viewAllRef = useRef(null);
+  const closeRef = useRef(null);
+
+  // Keyboard users land on the close button, leave with Escape and return to "ดูทั้งหมด".
+  useEffect(() => {
+    if (!isModalOpen) return undefined;
+    const opener = viewAllRef.current;
+    closeRef.current?.focus();
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") setIsModalOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      opener?.focus();
+    };
+  }, [isModalOpen]);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -99,27 +116,27 @@ export default function SystemEvaluationWidget() {
     {
       name: "ภาพรวม",
       score: Number(stats.avg_overall).toFixed(2),
-      fill: "#ff3b3b",
+      fill: "var(--suth-danger)",
     },
     {
       name: "ใช้งานง่าย",
       score: Number(stats.avg_access).toFixed(2),
-      fill: "#3399ff",
+      fill: "var(--suth-chart-blue)",
     },
     {
       name: "เนื้อหา",
       score: Number(stats.avg_content).toFixed(2),
-      fill: "#ff66cc",
+      fill: "var(--suth-chart-purple)",
     },
     {
       name: "ความรวดเร็ว",
       score: Number(stats.avg_speed).toFixed(2),
-      fill: "#33cc66",
+      fill: "var(--suth-chart-teal)",
     },
     {
       name: "ความสวยงาม",
       score: Number(stats.avg_ui).toFixed(2),
-      fill: "#ffcc00",
+      fill: "var(--suth-action)",
     },
   ];
 
@@ -174,10 +191,11 @@ export default function SystemEvaluationWidget() {
   ];
 
   const getSusColor = (score) => {
-    if (score >= 80) return "#10b981";
-    if (score >= 68) return "#3b82f6";
-    if (score >= 51) return "#f59e0b";
-    return "#ef4444";
+    // Darker shades keep the SUS colour legible as text (WCAG AA).
+    if (score >= 80) return "var(--suth-success)";
+    if (score >= 68) return "var(--suth-info)";
+    if (score >= 51) return "var(--suth-warning)";
+    return "var(--suth-danger)";
   };
 
   const calculateLikertAvg = (item) => {
@@ -201,10 +219,10 @@ export default function SystemEvaluationWidget() {
   return (
     <div
       style={{
-        background: "#fff",
-        borderRadius: "16px",
+        background: "var(--suth-surface)",
+        borderRadius: "var(--suth-radius-panel)",
         padding: "24px",
-        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)",
+        boxShadow: "0 4px 6px -1px rgba(31, 47, 63, 0.05)",
         marginBottom: "24px",
       }}
     >
@@ -220,30 +238,30 @@ export default function SystemEvaluationWidget() {
       >
         <h2
           style={{
-            fontSize: "20px",
+            fontSize: "var(--suth-fs-title)",
             fontWeight: "700",
-            color: "#1e293b",
+            color: "var(--suth-ink)",
             display: "flex",
             alignItems: "center",
             gap: "8px",
             margin: 0,
           }}
         >
-          <FiStar color="#f59e0b" /> สรุปผลการประเมินระบบ
+          <FiStar color="var(--suth-action)" /> สรุปผลการประเมินระบบ
         </h2>
         <span
           style={{
-            fontSize: "14px",
-            color: "#64748b",
-            background: "#f8fafc",
-            border: "1px solid #e2e8f0",
+            fontSize: "var(--suth-fs-sm)",
+            color: "var(--suth-muted)",
+            background: "var(--suth-surface-2)",
+            border: "1px solid var(--suth-line)",
             padding: "6px 16px",
-            borderRadius: "20px",
+            borderRadius: "var(--suth-radius-card)",
             fontWeight: "600",
           }}
         >
           จำนวนผู้ประเมินทั้งหมด{" "}
-          <span style={{ color: "#3b82f6", fontSize: "16px" }}>
+          <span style={{ color: "var(--suth-info)", fontSize: "var(--suth-fs-md)" }}>
             {stats.total_votes}
           </span>{" "}
           คน
@@ -261,8 +279,8 @@ export default function SystemEvaluationWidget() {
         {/* 🟢 คอลัมน์ที่ 1: กราฟแท่ง Likert */}
         <div
           style={{
-            border: "1px solid #e2e8f0",
-            borderRadius: "12px",
+            border: "1px solid var(--suth-line)",
+            borderRadius: "var(--suth-radius)",
             padding: "20px",
             display: "flex",
             flexDirection: "column",
@@ -271,16 +289,16 @@ export default function SystemEvaluationWidget() {
         >
           <h3
             style={{
-              fontSize: "16px",
+              fontSize: "var(--suth-fs-md)",
               fontWeight: "700",
-              color: "#334155",
+              color: "var(--suth-ink-2)",
               marginBottom: "10px",
               display: "flex",
               alignItems: "center",
               gap: "6px",
             }}
           >
-            <FiBarChart2 color="#8b5cf6" /> ความพึงพอใจ 5 ด้าน
+            <FiBarChart2 color="var(--suth-chart-purple)" /> ความพึงพอใจ 5 ด้าน
           </h3>
           <div
             style={{
@@ -299,22 +317,22 @@ export default function SystemEvaluationWidget() {
                 <CartesianGrid
                   strokeDasharray="3 3"
                   horizontal={false}
-                  stroke="#e2e8f0"
+                  stroke="var(--suth-line-soft)"
                 />
                 <XAxis
                   type="number"
                   domain={[0, 5]}
                   ticks={[0, 1, 2, 3, 4, 5]}
-                  tick={{ fill: "#64748b", fontSize: 12 }}
+                  tick={{ fill: "var(--suth-muted)", fontSize: 12 }}
                 />
                 <YAxis
                   dataKey="name"
                   type="category"
                   width={80}
-                  tick={{ fill: "#334155", fontSize: 12, fontWeight: 500 }}
+                  tick={{ fill: "var(--suth-ink-2)", fontSize: 12, fontWeight: 500 }}
                 />
                 <Tooltip
-                  cursor={{ fill: "#f1f5f9" }}
+                  cursor={{ fill: "var(--suth-control-line)" }}
                   formatter={(value) => [`${value} / 5.0`, "คะแนนเฉลี่ย"]}
                 />
                 <Bar dataKey="score" radius={[0, 4, 4, 0]} barSize={22}>
@@ -330,8 +348,8 @@ export default function SystemEvaluationWidget() {
         {/* 🟢 คอลัมน์ที่ 2: คะแนน SUS และ กราฟใยแมงมุม */}
         <div
           style={{
-            border: "1px solid #e2e8f0",
-            borderRadius: "12px",
+            border: "1px solid var(--suth-line)",
+            borderRadius: "var(--suth-radius)",
             padding: "20px",
             display: "flex",
             flexDirection: "column",
@@ -342,9 +360,9 @@ export default function SystemEvaluationWidget() {
         >
           <h3
             style={{
-              fontSize: "16px",
+              fontSize: "var(--suth-fs-md)",
               fontWeight: "700",
-              color: "#334155",
+              color: "var(--suth-ink-2)",
               marginBottom: "10px",
               display: "flex",
               alignItems: "center",
@@ -359,14 +377,16 @@ export default function SystemEvaluationWidget() {
             <div
               className="ui-modal__header"
               style={{
-                fontSize: "38px",
+                fontSize: "var(--suth-fs-display)",
                 fontWeight: "800",
                 color: getSusColor(stats.avg_sus),
                 lineHeight: "1.2",
               }}
             >
               {Number(stats.avg_sus).toFixed(1)}{" "}
-              <span style={{ fontSize: "14px", color: "#94a3b8" }}>/ 100</span>
+              <span style={{ fontSize: "var(--suth-fs-sm)", color: "var(--suth-muted)" }}>
+                / 100
+              </span>
             </div>
           </div>
           <div
@@ -379,21 +399,21 @@ export default function SystemEvaluationWidget() {
           >
             <ResponsiveContainer width="100%" height={220}>
               <RadarChart cx="50%" cy="50%" outerRadius="60%" data={radarData}>
-                <PolarGrid stroke="#e2e8f0" />
+                <PolarGrid stroke="var(--suth-line-soft)" />
                 <PolarAngleAxis
                   dataKey="subject"
-                  tick={{ fill: "#475569", fontSize: 10, fontWeight: 600 }}
+                  tick={{ fill: "var(--suth-ink-2)", fontSize: 10, fontWeight: 600 }}
                 />
                 <PolarRadiusAxis
                   angle={30}
                   domain={[0, 4]}
-                  tick={{ fontSize: 10, fill: "#94a3b8" }}
+                  tick={{ fontSize: 10, fill: "var(--suth-muted)" }}
                 />
                 <Radar
                   name="คะแนนแปลงสเกล (เต็ม 4)"
                   dataKey="value"
-                  stroke="#8b5cf6"
-                  fill="#8b5cf6"
+                  stroke="var(--suth-chart-purple)"
+                  fill="var(--suth-chart-purple)"
                   fillOpacity={0.4}
                 />
                 <Tooltip />
@@ -405,8 +425,8 @@ export default function SystemEvaluationWidget() {
         {/* 🟢 คอลัมน์ที่ 3: ฟีดข้อเสนอแนะล่าสุด + ปุ่มดูทั้งหมด */}
         <div
           style={{
-            border: "1px solid #e2e8f0",
-            borderRadius: "12px",
+            border: "1px solid var(--suth-line)",
+            borderRadius: "var(--suth-radius)",
             padding: "20px",
             display: "flex",
             flexDirection: "column",
@@ -422,24 +442,25 @@ export default function SystemEvaluationWidget() {
           >
             <h3
               style={{
-                fontSize: "16px",
+                fontSize: "var(--suth-fs-md)",
                 fontWeight: "700",
-                color: "#334155",
+                color: "var(--suth-ink-2)",
                 display: "flex",
                 alignItems: "center",
                 gap: "6px",
                 margin: 0,
               }}
             >
-              <FiMessageSquare color="#0ea5e9" /> ข้อเสนอแนะล่าสุด
+              <FiMessageSquare color="var(--suth-info)" /> ข้อเสนอแนะล่าสุด
             </h3>
             <button
+              ref={viewAllRef}
               onClick={() => setIsModalOpen(true)}
               style={{
                 background: "none",
                 border: "none",
-                color: "#3b82f6",
-                fontSize: "13px",
+                color: "var(--suth-info)",
+                fontSize: "var(--suth-fs-label)",
                 cursor: "pointer",
                 fontWeight: "600",
                 display: "flex",
@@ -464,17 +485,17 @@ export default function SystemEvaluationWidget() {
                 <div
                   key={idx}
                   style={{
-                    background: "#f8fafc",
+                    background: "var(--suth-surface-2)",
                     padding: "12px",
-                    borderRadius: "8px",
+                    borderRadius: "var(--suth-radius)",
                     marginBottom: "10px",
-                    borderLeft: "4px solid #0ea5e9",
+                    borderLeft: "1px solid var(--suth-line)",
                   }}
                 >
                   <div
                     style={{
-                      fontSize: "14px",
-                      color: "#334155",
+                      fontSize: "var(--suth-fs-sm)",
+                      color: "var(--suth-ink-2)",
                       fontStyle: "italic",
                       lineHeight: "1.5",
                     }}
@@ -483,8 +504,8 @@ export default function SystemEvaluationWidget() {
                   </div>
                   <div
                     style={{
-                      fontSize: "12px",
-                      color: "#94a3b8",
+                      fontSize: "var(--suth-fs-caption)",
+                      color: "var(--suth-muted)",
                       marginTop: "8px",
                       textAlign: "right",
                     }}
@@ -501,7 +522,7 @@ export default function SystemEvaluationWidget() {
               <div
                 style={{
                   textAlign: "center",
-                  color: "#94a3b8",
+                  color: "var(--suth-muted)",
                   marginTop: "60px",
                 }}
               >
@@ -521,7 +542,7 @@ export default function SystemEvaluationWidget() {
             left: 0,
             width: "100%",
             height: "100%",
-            background: "rgba(0,0,0,0.5)",
+            background: "rgba(31, 47, 63, 0.5)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -529,11 +550,14 @@ export default function SystemEvaluationWidget() {
           }}
         >
           <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="system-evaluation-modal-title"
             style={{
-              background: "#fff",
+              background: "var(--suth-surface)",
               width: "90%",
               maxWidth: "1000px",
-              borderRadius: "16px",
+              borderRadius: "var(--suth-radius-panel)",
               padding: "24px",
               display: "flex",
               flexDirection: "column",
@@ -550,19 +574,24 @@ export default function SystemEvaluationWidget() {
             >
               <h2
                 id="system-evaluation-modal-title"
-                style={{ margin: 0, fontSize: "20px", color: "#1e293b" }}
+                style={{
+                  margin: 0,
+                  fontSize: "var(--suth-fs-title)",
+                  color: "var(--suth-ink)",
+                }}
               >
                 รายการการประเมินทั้งหมด
               </h2>
               <button
+                ref={closeRef}
                 className="ui-modal__close"
                 onClick={() => setIsModalOpen(false)}
                 aria-label="ปิดหน้าต่าง"
                 style={{
                   background: "none",
                   border: "none",
-                  fontSize: "24px",
-                  color: "#64748b",
+                  fontSize: "var(--suth-fs-hero)",
+                  color: "var(--suth-muted)",
                   cursor: "pointer",
                 }}
               >
@@ -572,6 +601,9 @@ export default function SystemEvaluationWidget() {
 
             <div
               className="ui-modal__body"
+              tabIndex={0}
+              role="region"
+              aria-label="ตารางผลการประเมินระบบ"
               style={{ overflowX: "auto", flex: 1 }}
             >
               {isListLoading ? (
@@ -579,50 +611,33 @@ export default function SystemEvaluationWidget() {
                   style={{
                     textAlign: "center",
                     padding: "40px",
-                    color: "#64748b",
+                    color: "var(--suth-muted)",
                   }}
                 >
                   กำลังโหลดข้อมูล...
                 </div>
               ) : (
                 <table
-                  style={{
-                    width: "100%",
-                    borderCollapse: "collapse",
-                    fontSize: "14px",
-                    textAlign: "left",
-                  }}
+                  className="admin-data-table"
+                  aria-label="ข้อมูลผลการประเมินระบบ"
                 >
                   <thead>
-                    <tr
-                      style={{
-                        background: "#f1f5f9",
-                        color: "#475569",
-                        borderBottom: "2px solid #e2e8f0",
-                      }}
-                    >
-                      <th style={{ padding: "12px" }}>วันที่ประเมิน</th>
-                      <th style={{ padding: "12px" }}>
-                        พึงพอใจเฉลี่ย (Likert)
-                      </th>
-                      <th style={{ padding: "12px" }}>คะแนน SUS</th>
-                      <th style={{ padding: "12px" }}>
-                        ข้อเสนอแนะ / ความคิดเห็น
-                      </th>
+                    <tr>
+                      <th>วันที่ประเมิน</th>
+                      <th>พึงพอใจเฉลี่ย (Likert)</th>
+                      <th>คะแนน SUS</th>
+                      <th>ข้อเสนอแนะ / ความคิดเห็น</th>
                     </tr>
                   </thead>
                   <tbody>
                     {listData.length > 0 ? (
                       listData.map((item) => (
-                        <tr
-                          key={item.id}
-                          style={{ borderBottom: "1px solid #e2e8f0" }}
-                        >
+                        <tr key={item.id}>
                           <td
                             style={{
                               padding: "12px",
                               whiteSpace: "nowrap",
-                              color: "#64748b",
+                              color: "var(--suth-muted)",
                             }}
                           >
                             {new Date(item.created_at).toLocaleString("th-TH", {
@@ -634,12 +649,12 @@ export default function SystemEvaluationWidget() {
                             style={{
                               padding: "12px",
                               fontWeight: "600",
-                              color: "#f59e0b",
+                              color: "var(--suth-action-ink)",
                             }}
                           >
                             {calculateLikertAvg(item)}{" "}
                             <span
-                              style={{ color: "#94a3b8", fontSize: "12px" }}
+                              style={{ color: "var(--suth-muted)", fontSize: "var(--suth-fs-caption)" }}
                             >
                               / 5.0
                             </span>
@@ -653,11 +668,16 @@ export default function SystemEvaluationWidget() {
                           >
                             {Number(item.sus_total_score).toFixed(1)}
                           </td>
-                          <td style={{ padding: "12px", color: "#334155" }}>
+                          <td
+                            style={{
+                              padding: "12px",
+                              color: "var(--suth-ink-2)",
+                            }}
+                          >
                             {item.suggestions ? (
                               `"${item.suggestions}"`
                             ) : (
-                              <span style={{ color: "#cbd5e1" }}>
+                              <span style={{ color: "var(--suth-muted)" }}>
                                 - ไม่มีข้อเสนอแนะ -
                               </span>
                             )}
@@ -671,7 +691,7 @@ export default function SystemEvaluationWidget() {
                           style={{
                             textAlign: "center",
                             padding: "30px",
-                            color: "#94a3b8",
+                            color: "var(--suth-muted)",
                           }}
                         >
                           ไม่พบข้อมูล
@@ -691,7 +711,7 @@ export default function SystemEvaluationWidget() {
                 alignItems: "center",
                 gap: "16px",
                 marginTop: "20px",
-                borderTop: "1px solid #e2e8f0",
+                borderTop: "1px solid var(--suth-line)",
                 paddingTop: "16px",
               }}
             >
@@ -703,10 +723,14 @@ export default function SystemEvaluationWidget() {
                   alignItems: "center",
                   gap: "4px",
                   padding: "8px 16px",
-                  borderRadius: "8px",
-                  border: "1px solid #cbd5e1",
-                  background: currentPage === 1 ? "#f8fafc" : "#fff",
-                  color: currentPage === 1 ? "#94a3b8" : "#334155",
+                  borderRadius: "var(--suth-radius)",
+                  border: "1px solid var(--suth-control-line)",
+                  background:
+                    currentPage === 1 ? "var(--suth-surface-2)" : "var(--suth-surface)",
+                  color:
+                    currentPage === 1
+                      ? "var(--suth-muted)"
+                      : "var(--suth-ink-2)",
                   cursor: currentPage === 1 ? "not-allowed" : "pointer",
                 }}
               >
@@ -714,8 +738,8 @@ export default function SystemEvaluationWidget() {
               </button>
               <span
                 style={{
-                  fontSize: "14px",
-                  color: "#475569",
+                  fontSize: "var(--suth-fs-sm)",
+                  color: "var(--suth-ink-2)",
                   fontWeight: "500",
                 }}
               >
@@ -731,16 +755,16 @@ export default function SystemEvaluationWidget() {
                   alignItems: "center",
                   gap: "4px",
                   padding: "8px 16px",
-                  borderRadius: "8px",
-                  border: "1px solid #cbd5e1",
+                  borderRadius: "var(--suth-radius)",
+                  border: "1px solid var(--suth-control-line)",
                   background:
                     currentPage === totalPages || totalPages === 0
-                      ? "#f8fafc"
-                      : "#fff",
+                      ? "var(--suth-surface-2)"
+                      : "var(--suth-surface)",
                   color:
                     currentPage === totalPages || totalPages === 0
-                      ? "#94a3b8"
-                      : "#334155",
+                      ? "var(--suth-muted)"
+                      : "var(--suth-ink-2)",
                   cursor:
                     currentPage === totalPages || totalPages === 0
                       ? "not-allowed"

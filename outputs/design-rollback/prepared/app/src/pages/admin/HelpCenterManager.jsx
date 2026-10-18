@@ -1,5 +1,5 @@
-import SearchableSelect from '../../components/SearchableSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import SearchableSelect from "../../components/SearchableSelect";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import MasterSelect from "../../components/MasterSelect";
 import { usePageExport } from "../../components/ExcelExport";
 import React, { useState, useEffect, useCallback, useRef } from "react";
@@ -536,7 +536,23 @@ export default function HelpCenterManager() {
       })
     : [];
 
-  usePageExport({title:"ศูนย์ช่วยเหลือ",sources:[{resource:"faqs",filters:{clinic_id:filterClinic,status:filterStatus,search:searchQuery},ids:sortedFaqs.map(r=>r.faq_id)},...(catSelectedClinic?[{resource:"faq_categories",id:catSelectedClinic}]:[])]});
+  usePageExport({
+    title: "ศูนย์ช่วยเหลือ",
+    sources: [
+      {
+        resource: "faqs",
+        filters: {
+          clinic_id: filterClinic,
+          status: filterStatus,
+          search: searchQuery,
+        },
+        ids: sortedFaqs.map((r) => r.faq_id),
+      },
+      ...(catSelectedClinic
+        ? [{ resource: "faq_categories", id: catSelectedClinic }]
+        : []),
+    ],
+  });
   const totalItems = sortedFaqs.length;
   const totalPages = Math.ceil(totalItems / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -677,7 +693,18 @@ export default function HelpCenterManager() {
               <label style={{ fontSize: "13px", color: "#64748b" }}>
                 สถานะ
               </label>
-              <MasterSelect category="publication_status" value={filterStatus} onChange={(e)=>setFilterStatus(e.target.value)} fallback={[{code:"published",label:"เผยแพร่"},{code:"draft",label:"ร่าง"},{code:"hidden",label:"ซ่อน"}]}><option value="">สถานะทั้งหมด</option></MasterSelect>
+              <MasterSelect
+                category="publication_status"
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                fallback={[
+                  { code: "published", label: "เผยแพร่" },
+                  { code: "draft", label: "ร่าง" },
+                  { code: "hidden", label: "ซ่อน" },
+                ]}
+              >
+                <option value="">สถานะทั้งหมด</option>
+              </MasterSelect>
             </div>
           </FilterDropdown>
 
@@ -786,7 +813,10 @@ export default function HelpCenterManager() {
                               size={16}
                             />
                           </td>
-                          <td className="hc-col-question" title={toDisplayText(faq.question)}>
+                          <td
+                            className="hc-col-question"
+                            title={toDisplayText(faq.question)}
+                          >
                             {faq.question && faq.question.length > 60
                               ? faq.question.substring(0, 60) + "..."
                               : faq.question}
@@ -1364,7 +1394,19 @@ export default function HelpCenterManager() {
                     <label>
                       สถานะการแสดงผล <span className="hc-required">*</span>
                     </label>
-                    <MasterSelect category="publication_status" required value={faqForm.status} onChange={(e)=>setFaqForm({...faqForm,status:e.target.value})} fallback={[{code:"published",label:"เผยแพร่"},{code:"draft",label:"ร่าง"},{code:"hidden",label:"ซ่อน"}]} />
+                    <MasterSelect
+                      category="publication_status"
+                      required
+                      value={faqForm.status}
+                      onChange={(e) =>
+                        setFaqForm({ ...faqForm, status: e.target.value })
+                      }
+                      fallback={[
+                        { code: "published", label: "เผยแพร่" },
+                        { code: "draft", label: "ร่าง" },
+                        { code: "hidden", label: "ซ่อน" },
+                      ]}
+                    />
                   </div>
                 </div>
                 <div className="hc-form-group">

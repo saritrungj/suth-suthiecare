@@ -1,11 +1,6 @@
-import { toDisplayText } from '../utils/textPresentation.js';
+import { toDisplayText } from "../utils/textPresentation.js";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  FiBell,
-  FiGitMerge,
-  FiRefreshCw,
-  FiSave,
-} from "react-icons/fi";
+import { FiBell, FiGitMerge, FiRefreshCw, FiSave } from "react-icons/fi";
 import {
   getReferralDestinationsConfig,
   setReferralDestinationsConfig,
@@ -22,10 +17,7 @@ import {
 
 const list = (value) => (Array.isArray(value) ? value : []);
 const initialResource = () => ({ loading: true, error: false, data: null });
-const RESOURCE_KEYS = [
-  "referrals",
-  "notification",
-];
+const RESOURCE_KEYS = ["referrals", "notification"];
 const buttonClass = "settings-button settings-button--primary";
 
 export default function OrganizationServiceSettings({
@@ -75,7 +67,6 @@ export default function OrganizationServiceSettings({
                   .map((item) => Number(item.destination_organization_id)),
               );
             if (key === "notification") setEnabled(Boolean(value?.enabled));
-
           } catch {
             if (current === generation.current)
               setResources((previous) => ({

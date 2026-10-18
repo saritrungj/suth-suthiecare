@@ -1,6 +1,6 @@
-import SchoolManagementNav from './SchoolManagementNav';
-import SearchableSelect from '../../../components/SearchableSelect';
-import {usePageExport} from "../../../components/ExcelExport";
+import SchoolManagementNav from "./SchoolManagementNav";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { usePageExport } from "../../../components/ExcelExport";
 import { useCallback, useEffect, useState } from "react";
 import { FiEdit2, FiPlus, FiTrash2, FiUserCheck } from "react-icons/fi";
 import {
@@ -30,6 +30,10 @@ import {
   SearchField,
 } from "./schoolUi";
 import StaffCheckboxPicker from "../../../components/StaffCheckboxPicker";
+import TablePagination from "../../../components/table/TablePagination";
+import usePagedRows from "../../../components/table/usePagedRows";
+import DataPanel from "../../../components/table/DataPanel";
+import ResultSummary from "../../../components/table/ResultSummary";
 import "./school.css";
 
 export default function TeacherList() {
@@ -40,6 +44,9 @@ export default function TeacherList() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
+  const { pageRows, pagination, setPage, setLimit } = usePagedRows(rows, {
+    resetKeys: [filters.teacher_type_id, filters.search],
+  });
 
   useEffect(() => {
     getSchoolTypes("teacher-types")
@@ -47,7 +54,13 @@ export default function TeacherList() {
       .catch(() => setTeacherTypes([]));
   }, []);
 
-  usePageExport({title:"ครู",sources:[{resource:"teachers",filters:{...filters,school_id:schoolId}}],disabled:loading});
+  usePageExport({
+    title: "ครู",
+    sources: [
+      { resource: "teachers", filters: { ...filters, school_id: schoolId } },
+    ],
+    disabled: loading,
+  });
   const load = useCallback(async () => {
     setLoading(true);
     try {
@@ -110,8 +123,9 @@ export default function TeacherList() {
               <FiPlus aria-hidden="true" /> เพิ่มครู
             </button>
           )}
-        </PageHeader><SchoolManagementNav />
-        <section className="sch-card">
+        </PageHeader>
+        <SchoolManagementNav />
+        <DataPanel className="sch-card">
           <div className="sch-filter-bar">
             <SearchField
               label="ค้นหาครู"
@@ -134,8 +148,22 @@ export default function TeacherList() {
               ))}
             </BarSelect>
           </div>
+          <ResultSummary
+            loading={loading}
+            pagination={pagination}
+            chips={[
+              {
+                key: "type",
+                label: "ประเภทครู",
+                value: teacherTypes.find(
+                  (t) => String(t.id) === String(filters.teacher_type_id),
+                )?.name,
+                onRemove: () => setFilters({ ...filters, teacher_type_id: "" }),
+              },
+            ]}
+          />
           <TableScroll label="ตารางรายชื่อครู">
-            <table className="sch-table">
+            <table className="sch-table admin-data-table">
               <thead>
                 <tr>
                   <th>ครู</th>
@@ -156,7 +184,7 @@ export default function TeacherList() {
                     hint="เพิ่มครูจากบัญชีเจ้าหน้าที่ที่เป็นสมาชิกของหน่วยงานนี้"
                   />
                 ) : (
-                  rows.map((teacher) => (
+                  pageRows.map((teacher) => (
                     <tr key={teacher.id}>
                       <td>
                         <span className="sch-name">{teacher.name}</span>
@@ -198,7 +226,7 @@ export default function TeacherList() {
                           {teacher.status === "active" ? "ใช้งาน" : "ปิดใช้งาน"}
                         </span>
                       </td>
-                      <td>
+                      <td className="is-actions">
                         <div className="sch-row-actions">
                           {access?.can_update_school && (
                             <button
@@ -228,10 +256,18 @@ export default function TeacherList() {
               </tbody>
             </table>
           </TableScroll>
+          <TablePagination
+            page={pagination.page}
+            totalPages={pagination.total_pages}
+            total={pagination.total}
+            limit={pagination.limit}
+            onPage={setPage}
+            onLimit={setLimit}
+          />
           <p className="sch-muted sch-table-note">
             กำหนดห้องที่ครูดูแลได้ที่เมนู &quot;ชั้นปีและห้องเรียน&quot;
           </p>
-        </section>
+        </DataPanel>
         {editing && (
           <TeacherFormModal
             initial={editing}
@@ -378,7 +414,11 @@ function TeacherFormModal({ initial, teacherTypes, onClose, onSaved }) {
           >
             <option value="">ไม่ระบุ</option>
             {teacherTypes
-              .filter((type) => type.status === "active" || String(type.id) === String(initial.teacher_type_id))
+              .filter(
+                (type) =>
+                  type.status === "active" ||
+                  String(type.id) === String(initial.teacher_type_id),
+              )
               .map((type) => (
                 <option key={type.id} value={type.id}>
                   {type.name}

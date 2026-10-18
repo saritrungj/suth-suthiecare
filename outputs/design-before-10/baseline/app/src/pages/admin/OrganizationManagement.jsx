@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { usePageExport } from "../../components/ExcelExport";
 import OrganizationServiceSettings from "../../components/OrganizationServiceSettings";
 import OrganizationRolePermissions from "../../components/OrganizationRolePermissions";
@@ -46,7 +46,15 @@ export default function OrganizationManagement() {
   const [roles, setRoles] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   // "view" an existing organization, or create a "main" one or a "unit".
-  usePageExport({title:"หน่วยงาน",sources:[{resource:"organizations"},...(selectedId?[{resource:"organization_members",id:selectedId}]:[])]});
+  usePageExport({
+    title: "หน่วยงาน",
+    sources: [
+      { resource: "organizations" },
+      ...(selectedId
+        ? [{ resource: "organization_members", id: selectedId }]
+        : []),
+    ],
+  });
   const [mode, setMode] = useState("view");
   const [form, setForm] = useState(blankForm);
   const [members, setMembers] = useState([]);

@@ -1,5 +1,5 @@
-import SearchableSelect from '../../SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import SearchableSelect from "../../SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import React, { useState } from "react";
 import {
   FaArchive,
@@ -15,6 +15,7 @@ import {
 } from "react-icons/fa";
 import { FiCalendar } from "react-icons/fi";
 import Swal from "sweetalert2";
+import ThaiDatePicker from "../../ThaiDatePicker";
 
 export default function CaseActionTab(props) {
   const {
@@ -133,23 +134,23 @@ export default function CaseActionTab(props) {
       {masterCaseInfo?.status === "Closed" && (
         <div
           style={{
-            background: "#f8fafc",
-            border: "1px solid #cbd5e1",
+            background: "var(--suth-surface-2)",
+            border: "1px solid var(--suth-control-line)",
             padding: "16px",
-            borderRadius: "8px",
+            borderRadius: "var(--suth-radius)",
             marginBottom: "20px",
             textAlign: "center",
-            color: "#64748b",
+            color: "var(--suth-muted)",
           }}
         >
           <FaArchive
             size={24}
-            style={{ marginBottom: "8px", color: "#94a3b8" }}
+            style={{ marginBottom: "8px", color: "var(--suth-muted)" }}
           />
-          <h4 style={{ margin: "0 0 4px 0", color: "#334155" }}>
+          <h4 style={{ margin: "0 0 4px 0", color: "var(--suth-ink-2)" }}>
             เคสนี้ถูกปิดไปแล้ว (Closed Case)
           </h4>
-          <p style={{ margin: 0, fontSize: "13px" }}>
+          <p style={{ margin: 0, fontSize: "var(--suth-fs-label)" }}>
             คุณไม่สามารถเพิ่มนัดหมายใหม่ หรือเปลี่ยนสถานะได้
             แต่ยังคงดูประวัติย้อนหลังได้
           </p>
@@ -219,7 +220,7 @@ export default function CaseActionTab(props) {
                             showCancelButton: true,
                             confirmButtonText: "ลบ",
                             cancelButtonText: "ยกเลิก",
-                            confirmButtonColor: "#ef4444",
+                            confirmButtonColor: "var(--suth-risk-dot-high)",
                           }).then((result) => {
                             if (result.isConfirmed) {
                               handleDeleteStaff(opt.id);
@@ -330,7 +331,7 @@ export default function CaseActionTab(props) {
                       display: "flex",
                       alignItems: "center",
                       gap: "6px",
-                      color: "#0f766e",
+                      color: "var(--suth-success)",
                       marginBottom: "8px",
                     }}
                   >
@@ -395,7 +396,8 @@ export default function CaseActionTab(props) {
                             {systemOriginal &&
                               systemOriginal.label !== currentRisk?.label && (
                                 <div className="cdm-dynamic-risk-system-note">
-                                  (ผลคำนวณเดิม: {toDisplayText(systemOriginal.label)})
+                                  (ผลคำนวณเดิม:{" "}
+                                  {toDisplayText(systemOriginal.label)})
                                 </div>
                               )}
                           </div>
@@ -426,7 +428,7 @@ export default function CaseActionTab(props) {
                               className="cdm-form-input"
                               style={{
                                 height: "36px",
-                                fontSize: "13px",
+                                fontSize: "var(--suth-fs-label)",
                                 marginBottom: "8px",
                               }}
                               placeholder="ระบุเหตุผลที่เปลี่ยนระดับความเสี่ยง (จำเป็น)..."
@@ -448,7 +450,7 @@ export default function CaseActionTab(props) {
                                       icon: "warning",
                                       title: "ข้อมูลไม่ครบถ้วน",
                                       text: "กรุณาระบุเหตุผลการเปลี่ยนระดับความเสี่ยง",
-                                      confirmButtonColor: "#3085d6",
+                                      confirmButtonColor: "var(--suth-action-pressed)",
                                     });
                                   }
                                   const newRule = fr.rules.find(
@@ -483,7 +485,6 @@ export default function CaseActionTab(props) {
             )}
           </div>
         )}
-
       </div>
 
       {/* 🟢 ส่วนบันทึกการติดตาม (Redesigned) */}
@@ -501,7 +502,7 @@ export default function CaseActionTab(props) {
             style={{
               marginTop: "20px",
               paddingTop: "16px",
-              borderTop: "1px dashed #cbd5e1",
+              borderTop: "1px dashed var(--suth-control-line)",
               textAlign: "center",
             }}
           >
@@ -520,7 +521,10 @@ export default function CaseActionTab(props) {
                 marginTop: formRules.length > 0 ? "16px" : "24px",
                 marginBottom: "8px",
                 paddingTop: formRules.length > 0 ? "0" : "16px",
-                borderTop: formRules.length > 0 ? "none" : "1px dashed #cbd5e1",
+                borderTop:
+                  formRules.length > 0
+                    ? "none"
+                    : "1px dashed var(--suth-control-line)",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "flex-start",
@@ -531,7 +535,7 @@ export default function CaseActionTab(props) {
                   className="cdm-form-label"
                   style={{
                     marginBottom: "2px",
-                    color: "#0f172a",
+                    color: "var(--suth-ink)",
                     display: "flex",
                     alignItems: "center",
                     gap: "6px",
@@ -539,7 +543,7 @@ export default function CaseActionTab(props) {
                 >
                   ระดับความเสี่ยงภาพรวมของเคสนี้
                 </label>
-                <span style={{ fontSize: "12px", color: "#64748b" }}>
+                <span style={{ fontSize: "var(--suth-fs-caption)", color: "var(--suth-muted)" }}>
                   * ประเมินโดยเจ้าหน้าที่
                   (การปรับแก้ตรงนี้จะไม่กระทบผลคะแนนเดิมของฟอร์ม)
                 </span>
@@ -550,9 +554,9 @@ export default function CaseActionTab(props) {
                 style={{
                   background: "none",
                   border: "none",
-                  color: "#94a3b8",
+                  color: "var(--suth-muted)",
                   cursor: "pointer",
-                  fontSize: "13px",
+                  fontSize: "var(--suth-fs-label)",
                   display: "flex",
                   alignItems: "center",
                   gap: "4px",
@@ -571,10 +575,10 @@ export default function CaseActionTab(props) {
                   key={opt.label}
                   className="cdm-risk-item"
                   style={{
-                    border: `1px solid ${riskLevel === opt.label ? opt.color : "#d1d5db"}`,
+                    border: `1px solid ${riskLevel === opt.label ? opt.color : "var(--suth-control-line)"}`,
                     background:
-                      riskLevel === opt.label ? `${opt.color}20` : "#fff",
-                    color: "#000",
+                      riskLevel === opt.label ? `${opt.color}20` : "var(--suth-surface)",
+                    color: "var(--suth-ink)",
                   }}
                 >
                   <input
@@ -618,200 +622,206 @@ export default function CaseActionTab(props) {
             />
           </div>
         )}
-      {clinicType === "sti" && (
-        <div
-          className="cw-clinical-fields"
-          style={{
-            background: "#fff1f2",
-            border: "1px solid #fecdd3",
-            opacity: masterCaseInfo?.status === "Closed" ? 0.5 : 1,
-            pointerEvents:
-              masterCaseInfo?.status === "Closed" ? "none" : "auto",
-          }}
-        >
-          <h4
+        {clinicType === "sti" && (
+          <div
+            className="cw-clinical-fields"
             style={{
-              color: "#be185d",
-              margin: "0 0 16px 0",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              fontSize: "15px",
+              background: "var(--suth-danger-tint)",
+              border: "1px solid var(--suth-danger-line)",
+              opacity: masterCaseInfo?.status === "Closed" ? 0.5 : 1,
+              pointerEvents:
+                masterCaseInfo?.status === "Closed" ? "none" : "auto",
             }}
           >
-            🩸 บันทึกผลทางคลินิก (เฉพาะโรคติดต่อทางเพศสัมพันธ์)
-          </h4>
-
-          <div style={{ marginBottom: "16px" }}>
-            <label className="cdm-form-label" style={{ color: "#9d174d" }}>
-              ผลเจาะเลือด
-            </label>
-            <div
+            <h4
               style={{
+                color: "var(--suth-danger)",
+                margin: "0 0 16px 0",
                 display: "flex",
-                gap: "16px",
-                marginTop: "6px",
-                flexWrap: "wrap",
+                alignItems: "center",
+                gap: "8px",
+                fontSize: "var(--suth-fs-body)",
               }}
             >
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                }}
-              >
-                <input
-                  type="radio"
-                  value="none"
-                  name="blood_test"
-                  checked={(clinicalData.blood_test || "none") === "none"}
-                  onChange={(e) =>
-                    setClinicalData({
-                      ...clinicalData,
-                      blood_test: e.target.value,
-                    })
-                  }
-                  style={{ accentColor: "#be185d" }}
-                />
-                ยังไม่มีข้อมูล
-              </label>
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                }}
-              >
-                <input
-                  type="radio"
-                  value="negative"
-                  name="blood_test"
-                  checked={clinicalData.blood_test === "negative"}
-                  onChange={(e) =>
-                    setClinicalData({
-                      ...clinicalData,
-                      blood_test: e.target.value,
-                    })
-                  }
-                  style={{ accentColor: "#be185d" }}
-                />
-                <span style={{ color: "#10b981", fontWeight: "bold" }}>
-                  Negative
-                </span>
-              </label>
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                }}
-              >
-                <input
-                  type="radio"
-                  value="positive"
-                  name="blood_test"
-                  checked={clinicalData.blood_test === "positive"}
-                  onChange={(e) =>
-                    setClinicalData({
-                      ...clinicalData,
-                      blood_test: e.target.value,
-                    })
-                  }
-                  style={{ accentColor: "#be185d" }}
-                />
-                <span style={{ color: "#ef4444", fontWeight: "bold" }}>
-                  Positive
-                </span>
-              </label>
-            </div>
-          </div>
+              🩸 บันทึกผลทางคลินิก (เฉพาะโรคติดต่อทางเพศสัมพันธ์)
+            </h4>
 
-          <div>
-            <label className="cdm-form-label" style={{ color: "#9d174d" }}>
-              การรับยา PrEP
-            </label>
-            <div
-              style={{
-                display: "flex",
-                gap: "16px",
-                marginTop: "6px",
-                flexWrap: "wrap",
-              }}
-            >
-              <label
+            <div style={{ marginBottom: "16px" }}>
+              <label className="cdm-form-label" style={{ color: "var(--suth-danger)" }}>
+                ผลเจาะเลือด
+              </label>
+              <div
                 style={{
                   display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  cursor: "pointer",
-                  fontSize: "14px",
+                  gap: "16px",
+                  marginTop: "6px",
+                  flexWrap: "wrap",
                 }}
               >
-                <input
-                  type="radio"
-                  value="none"
-                  name="prep"
-                  checked={(clinicalData.prep || "none") === "none"}
-                  onChange={(e) =>
-                    setClinicalData({ ...clinicalData, prep: e.target.value })
-                  }
-                  style={{ accentColor: "#be185d" }}
-                />
-                ไม่ได้รับ
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    cursor: "pointer",
+                    fontSize: "var(--suth-fs-sm)",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    value="none"
+                    name="blood_test"
+                    disabled={props.rights?.clinicalCreate === false}
+                    checked={(clinicalData.blood_test || "none") === "none"}
+                    onChange={(e) =>
+                      setClinicalData({
+                        ...clinicalData,
+                        blood_test: e.target.value,
+                      })
+                    }
+                    style={{ accentColor: "var(--suth-danger)" }}
+                  />
+                  ยังไม่มีข้อมูล
+                </label>
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    cursor: "pointer",
+                    fontSize: "var(--suth-fs-sm)",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    value="negative"
+                    name="blood_test"
+                    disabled={props.rights?.clinicalCreate === false}
+                    checked={clinicalData.blood_test === "negative"}
+                    onChange={(e) =>
+                      setClinicalData({
+                        ...clinicalData,
+                        blood_test: e.target.value,
+                      })
+                    }
+                    style={{ accentColor: "var(--suth-danger)" }}
+                  />
+                  <span style={{ color: "var(--suth-success)", fontWeight: "bold" }}>
+                    Negative
+                  </span>
+                </label>
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    cursor: "pointer",
+                    fontSize: "var(--suth-fs-sm)",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    value="positive"
+                    name="blood_test"
+                    disabled={props.rights?.clinicalCreate === false}
+                    checked={clinicalData.blood_test === "positive"}
+                    onChange={(e) =>
+                      setClinicalData({
+                        ...clinicalData,
+                        blood_test: e.target.value,
+                      })
+                    }
+                    style={{ accentColor: "var(--suth-danger)" }}
+                  />
+                  <span style={{ color: "var(--suth-danger)", fontWeight: "bold" }}>
+                    Positive
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label className="cdm-form-label" style={{ color: "var(--suth-danger)" }}>
+                การรับยา PrEP
               </label>
-              <label
+              <div
                 style={{
                   display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  cursor: "pointer",
-                  fontSize: "14px",
+                  gap: "16px",
+                  marginTop: "6px",
+                  flexWrap: "wrap",
                 }}
               >
-                <input
-                  type="radio"
-                  value="prep_with_blood"
-                  name="prep"
-                  checked={clinicalData.prep === "prep_with_blood"}
-                  onChange={(e) =>
-                    setClinicalData({ ...clinicalData, prep: e.target.value })
-                  }
-                  style={{ accentColor: "#be185d" }}
-                />
-                รับยา (เจาะเลือดที่นี่)
-              </label>
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                }}
-              >
-                <input
-                  type="radio"
-                  value="prep_without_blood"
-                  name="prep"
-                  checked={clinicalData.prep === "prep_without_blood"}
-                  onChange={(e) =>
-                    setClinicalData({ ...clinicalData, prep: e.target.value })
-                  }
-                  style={{ accentColor: "#be185d" }}
-                />
-                รับยา (มีประวัติตรวจแล้ว)
-              </label>
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    cursor: "pointer",
+                    fontSize: "var(--suth-fs-sm)",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    value="none"
+                    name="prep"
+                    disabled={props.rights?.clinicalCreate === false}
+                    checked={(clinicalData.prep || "none") === "none"}
+                    onChange={(e) =>
+                      setClinicalData({ ...clinicalData, prep: e.target.value })
+                    }
+                    style={{ accentColor: "var(--suth-danger)" }}
+                  />
+                  ไม่ได้รับ
+                </label>
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    cursor: "pointer",
+                    fontSize: "var(--suth-fs-sm)",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    value="prep_with_blood"
+                    name="prep"
+                    disabled={props.rights?.clinicalCreate === false}
+                    checked={clinicalData.prep === "prep_with_blood"}
+                    onChange={(e) =>
+                      setClinicalData({ ...clinicalData, prep: e.target.value })
+                    }
+                    style={{ accentColor: "var(--suth-danger)" }}
+                  />
+                  รับยา (เจาะเลือดที่นี่)
+                </label>
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    cursor: "pointer",
+                    fontSize: "var(--suth-fs-sm)",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    value="prep_without_blood"
+                    name="prep"
+                    disabled={props.rights?.clinicalCreate === false}
+                    checked={clinicalData.prep === "prep_without_blood"}
+                    onChange={(e) =>
+                      setClinicalData({ ...clinicalData, prep: e.target.value })
+                    }
+                    style={{ accentColor: "var(--suth-danger)" }}
+                  />
+                  รับยา (มีประวัติตรวจแล้ว)
+                </label>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
         <div className="cdm-tracking-header">
           <h4 className="cdm-tracking-title">
@@ -855,10 +865,10 @@ export default function CaseActionTab(props) {
                 {/* 🟢 เพิ่ม flexShrink: 0 ไม่ให้ไอคอนโดนบีบ */}
                 <div
                   style={{
-                    background: "#ccfbf1",
-                    color: "#0f766e",
+                    background: "var(--suth-success-tint)",
+                    color: "var(--suth-success)",
                     padding: "8px",
-                    borderRadius: "10px",
+                    borderRadius: "var(--suth-radius)",
                     display: "flex",
                     flexShrink: 0,
                   }}
@@ -942,9 +952,9 @@ export default function CaseActionTab(props) {
                           {q.amountUnit && (
                             <span
                               style={{
-                                fontSize: "13px",
+                                fontSize: "var(--suth-fs-label)",
                                 fontWeight: "700",
-                                color: "#64748b",
+                                color: "var(--suth-muted)",
                               }}
                             >
                               {q.amountUnit}
@@ -1001,7 +1011,7 @@ export default function CaseActionTab(props) {
                           className="cdm-text-ans-input cdm-comment-input"
                           style={{
                             marginTop: "10px",
-                            background: "#fffbeb",
+                            background: "var(--suth-tint)",
                             borderStyle: "dashed",
                           }}
                           placeholder="รายละเอียดเพิ่มเติม (หมายเหตุ)..."
@@ -1024,7 +1034,7 @@ export default function CaseActionTab(props) {
               type="button"
               className="cdm-btn-unified-save"
               onClick={finalizeTemplate}
-              style={{ marginTop: "20px", background: "#0f766e" }}
+              style={{ marginTop: "20px", background: "var(--suth-success)" }}
             >
               <FaCheckSquare size={16} /> บันทึกลงตารางสรุป
             </button>
@@ -1048,14 +1058,14 @@ export default function CaseActionTab(props) {
             </span>
           </label>
           <label className="cdm-general-note-label">
-            <FaPencilAlt color="#94a3b8" /> บันทึกรายละเอียดการติดตาม
+            <FaPencilAlt color="var(--suth-muted)" /> บันทึกรายละเอียดการติดตาม
             (เพิ่มเติม)
           </label>
           <textarea
             className="cdm-form-input"
             style={{
               minHeight: "80px",
-              background: "#f8fafc",
+              background: "var(--suth-surface-2)",
               marginBottom: "0",
             }}
             placeholder="ระบุรายละเอียดการติดตาม หรือสรุปอาการในครั้งนี้..."
@@ -1074,7 +1084,10 @@ export default function CaseActionTab(props) {
         }}
       >
         <h3 className="cw-action-heading">นัดหมายครั้งถัดไป</h3>
-        <label className="cdm-appoint-toggle">
+        <label
+          className="cdm-appoint-toggle"
+          hidden={props.rights?.appointmentCreate === false}
+        >
           <input
             type="checkbox"
             checked={isAppointing}
@@ -1099,11 +1112,11 @@ export default function CaseActionTab(props) {
               </div>
               <div style={{ flex: 1 }}>
                 <label className="cdm-form-label">วันที่และเวลา</label>
-                <input
-                  type="datetime-local"
-                  className="cdm-form-input"
+                <ThaiDatePicker
+                  label="วันที่และเวลานัด"
+                  withTime
                   value={tempDate}
-                  onChange={(e) => setTempDate(e.target.value)}
+                  onChange={setTempDate}
                 />
               </div>
             </div>
@@ -1156,8 +1169,8 @@ export default function CaseActionTab(props) {
                           autoFocus
                           style={{
                             padding: "2px 6px",
-                            border: "1px solid #cbd5e1",
-                            borderRadius: "4px",
+                            border: "1px solid var(--suth-control-line)",
+                            borderRadius: "var(--suth-radius-sm)",
                             width: "70%",
                           }}
                         />

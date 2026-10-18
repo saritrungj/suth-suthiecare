@@ -1,7 +1,7 @@
-/* Shared action-button contract: brand orange with accessible white text. */
+/* Shared action-button contract: brand orange with white text. */
 :root {
-  --suth-brand-orange: #f47932;
-  --suth-brand-orange-hover: #ea580c;
+  --suth-brand-orange: var(--suth-action);
+  --suth-brand-orange-hover: var(--suth-action-hover);
 }
 
 :is(
@@ -25,7 +25,7 @@
   background: var(--suth-brand-orange) !important;
   border-color: var(--suth-brand-orange) !important;
   border-style: solid !important;
-  color: #ffffff !important;
+  color: var(--suth-on-action) !important;
 }
 
 :is(
@@ -48,7 +48,7 @@
   ):hover:not(:disabled) {
   background: var(--suth-brand-orange-hover) !important;
   border-color: var(--suth-brand-orange-hover) !important;
-  color: #ffffff !important;
+  color: var(--suth-on-action) !important;
 }
 
 :is(
@@ -71,4 +71,126 @@
   )
   > * {
   color: inherit !important;
+}
+
+/* Primary: remaining admin save/confirm buttons share the orange fill. */
+:is(
+  .btn-primary,
+  .cdm-btn-confirm,
+  .cdm-btn-confirm-sm,
+  .cdm-service-add-row button,
+  .cdm-btn-save-tpl,
+  .sfb-btn-save,
+  .hc-btn-search
+) {
+  min-height: var(--suth-button-h);
+  border: 1px solid var(--suth-action) !important;
+  border-radius: var(--suth-radius) !important;
+  background: var(--suth-action) !important;
+  color: var(--suth-on-action) !important;
+  font-family: var(--suth-font);
+  font-weight: 700;
+  box-shadow: none !important;
+}
+:is(
+    .btn-primary,
+    .cdm-btn-confirm,
+    .cdm-btn-confirm-sm,
+    .cdm-service-add-row button,
+    .cdm-btn-save-tpl,
+    .sfb-btn-save,
+    .hc-btn-search
+  ):hover:not(:disabled) {
+  border-color: var(--suth-action-hover) !important;
+  background: var(--suth-action-hover) !important;
+  transform: none;
+}
+
+/* Secondary: var(--suth-surface), control stroke, quiet ink; hover warms to orange ink. */
+:is(.btn-secondary, .btn-cancel, .cdm-btn-cancel, .cdm-btn-cancel-sm) {
+  min-height: var(--suth-button-h);
+  border: 1px solid var(--suth-control-line) !important;
+  border-radius: var(--suth-radius) !important;
+  background: var(--suth-surface) !important;
+  color: var(--suth-ink-2) !important;
+  font-family: var(--suth-font);
+  font-weight: 700;
+  box-shadow: none !important;
+}
+:is(.btn-secondary, .btn-cancel, .cdm-btn-cancel, .cdm-btn-cancel-sm):hover:not(
+    :disabled
+  ) {
+  border-color: var(--suth-action) !important;
+  color: var(--suth-action-ink) !important;
+}
+
+/* Danger: confirm-delete buttons; white on the danger red keeps AA. */
+.btn-confirm {
+  min-height: var(--suth-button-h);
+  border: 1px solid var(--suth-danger);
+  border-radius: var(--suth-radius);
+  background: var(--suth-danger);
+  color: var(--suth-on-action);
+  font-family: var(--suth-font);
+  font-weight: 700;
+}
+
+/* Row actions: icon-sized edit/delete buttons in tables and cards. */
+:is(.cm-btn-edit, .bn-btn-edit, .sum-actions button) {
+  border-color: var(--suth-control-line);
+  color: var(--suth-ink-2);
+}
+:is(.cm-btn-edit, .bn-btn-edit, .sum-actions button):hover:not(:disabled) {
+  border-color: var(--suth-action);
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
+}
+:is(.cm-btn-delete, .bn-delete-btn) {
+  border-color: var(--suth-danger-line);
+  color: var(--suth-danger);
+}
+:is(.cm-btn-delete, .bn-delete-btn):hover:not(:disabled) {
+  border-color: var(--suth-danger);
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
+}
+
+/* One focus ring for every button contract above. */
+:is(
+  .btn-primary,
+  .btn-secondary,
+  .btn-cancel,
+  .btn-confirm,
+  .cdm-btn-confirm,
+  .cdm-btn-cancel,
+  .cm-btn-edit,
+  .cm-btn-delete,
+  .bn-btn-edit,
+  .bn-delete-btn
+):focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 2px;
+}
+
+/* Pressed: orange primary buttons darken further than hover. */
+:is(
+    .bm-add-btn,
+    .cm-btn-add,
+    .sum-add-btn,
+    .btn-add,
+    .hc-btn-add,
+    .fm-btn-add-form,
+    .add-btn,
+    .srp-create-btn,
+    .btn-primary,
+    .cdm-btn-confirm,
+    .adm-btn-save,
+    .abm-btn-save,
+    .ebm-btn-save,
+    .cm-btn-save,
+    .hc-btn-save,
+    .fm-btn-save
+  ):active:not(:disabled) {
+  border-color: var(--suth-action-pressed) !important;
+  background: var(--suth-action-pressed) !important;
 }

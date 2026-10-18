@@ -1,21 +1,279 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
-import {useEffect,useState} from 'react';
-import api from '../../../services/api';
-import {PageHeader,TableScroll} from './schoolUi';
-import {usePageExport} from '../../../components/ExcelExport';
-import './school.css';
-export default function SchoolRoles(){
- const [data,setData]=useState(null),[form,setForm]=useState({school_id:'',user_id:'',role_code:'other',status:'active'}),[error,setError]=useState(''),[saving,setSaving]=useState(false),[notice,setNotice]=useState('');
- usePageExport({title:'บทบาทโรงเรียน',sources:[{resource:'school_roles'}]});
- const load=async()=>{const {data}=await api.get('/school/staff-roles');setData(data);setForm(old=>({...old,school_id:old.school_id||String(data.schools[0]?.id||'')}));};
- useEffect(()=>{load().catch(e=>setError(e.response?.data?.message||'โหลดบทบาทไม่สำเร็จ'));},[]);
- const save=async e=>{e.preventDefault();if(saving)return;setSaving(true);setError('');setNotice('');try{await api.put('/school/staff-roles',{...form,school_id:Number(form.school_id),user_id:Number(form.user_id)});await load();setNotice('บันทึกบทบาทเรียบร้อยแล้ว');}catch(e){setError(e.response?.data?.message||'บันทึกบทบาทไม่สำเร็จ');}finally{setSaving(false);}};
- const set=key=>e=>setForm({...form,[key]:e.target.value});
- return <div className="sch-wrapper"><main className="sch-page"><PageHeader title="บทบาทและสิทธิ์โรงเรียน" description="บทบาทแยกจากประเภทครู และใช้กำหนดขอบเขตข้อมูลนักเรียน"/>
-  <section className="sch-card"><h2>ขอบเขตของแต่ละบทบาท</h2><TableScroll label="สิทธิ์แต่ละบทบาท"><table className="sch-table"><thead><tr><th>บทบาท</th><th>ขอบเขตข้อมูล</th><th>ข้อมูลเชิงลึก</th><th>ส่งออก</th></tr></thead><tbody><tr><td>Admin</td><td>ทั้งโรงเรียน จัดการครู นักเรียน และข้อมูลหลัก</td><td>ไม่เห็น</td><td>ข้อมูลทั่วไป</td></tr><tr><td>ครูแนะแนว</td><td>ทั้งโรงเรียน</td><td>อ่านและแก้ไข</td><td>ข้อมูลทั่วไปและเชิงลึก</td></tr><tr><td>ครูประจำชั้น</td><td>ห้องที่รับผิดชอบ</td><td>อ่านและแก้ไข</td><td>เฉพาะห้องที่รับผิดชอบ</td></tr><tr><td>ครูอื่น</td><td>ตามสิทธิ์ที่ได้รับ</td><td>ไม่เห็น</td><td>ตามสิทธิ์ทั่วไป</td></tr><tr><td>แอดมินสุขภาพจิต</td><td>ทั้งโรงเรียน จัดการเจ้าหน้าที่และข้อมูลทั่วไป</td><td>สุขภาพจิตและสุขภาพกาย</td><td>ตามสิทธิ์ส่งออกที่ได้รับ</td></tr><tr><td>แอดมินสุขภาพกาย</td><td>ทั้งโรงเรียน</td><td>เฉพาะสุขภาพกาย</td><td>ตามสิทธิ์ส่งออกที่ได้รับ</td></tr><tr><td>เจ้าหน้าที่หอพัก</td><td>เฉพาะนักเรียนหอพักในโรงเรียนที่รับผิดชอบ</td><td>ไม่เห็น</td><td>ตามสิทธิ์ส่งออกที่ได้รับ</td></tr></tbody></table></TableScroll>
-  <p className="sch-muted">System Admin เข้าถึงข้อมูลทุกหน่วยงานได้ ครูประจำชั้นต้องได้รับมอบหมายห้องในหน้าโครงสร้างโรงเรียนด้วย</p></section>
-  {error&&<div className="sch-card"><p className="sch-error" role="alert">{error}</p><button type="button" className="sch-btn-secondary" disabled={saving} onClick={()=>{setError('');load().catch(e=>setError(e.response?.data?.message||'โหลดบทบาทไม่สำเร็จ'));}}>โหลดใหม่</button></div>}{!data&&!error&&<p role="status">กำลังโหลด…</p>}
-  {data&&<><section className="sch-card">{notice&&<p role="status">{notice}</p>}<form className="sch-management-form" onSubmit={save}><h2>กำหนดบทบาทสมาชิก</h2><label className="sch-field">โรงเรียน<select disabled={saving} aria-label="โรงเรียน" required value={form.school_id} onChange={set('school_id')}><option value="">เลือกโรงเรียน</option>{data.schools.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select></label><label className="sch-field">สมาชิก<select disabled={saving} aria-label="สมาชิก" required value={form.user_id} onChange={set('user_id')}><option value="">เลือกสมาชิก</option>{data.members.map(m=><option key={m.id} value={m.id}>{m.username}</option>)}</select></label><label className="sch-field">บทบาท<select disabled={saving} aria-label="บทบาท" value={form.role_code} onChange={set('role_code')}>{Object.entries(data.role_labels).map(([code,label])=><option key={code} value={code}>{toDisplayText(label)}</option>)}</select></label><label className="sch-field">สถานะ<select disabled={saving} aria-label="สถานะ" value={form.status} onChange={set('status')}><option value="active">ใช้งาน</option><option value="inactive">ถอนบทบาท</option></select></label><button className="sch-btn sch-btn-primary" disabled={saving}>{saving?'กำลังบันทึก…':'บันทึกบทบาท'}</button></form></section>
-  <section className="sch-card"><h2>บทบาทสมาชิก</h2><TableScroll label="บทบาทสมาชิก"><table className="sch-table"><thead><tr><th>โรงเรียน</th><th>สมาชิก</th><th>บทบาท</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody>{!data.roles.length&&<tr><td colSpan={5}>ยังไม่มีบทบาทสมาชิก กำหนดบทบาทจากแบบฟอร์มด้านบน</td></tr>}{data.roles.map(r=><tr key={`${r.school_id}-${r.user_id}`}><td>{data.schools.find(s=>s.id===r.school_id)?.name}</td><td>{data.members.find(m=>m.id===r.user_id)?.username||r.user_id}</td><td>{data.role_labels[r.role_code]}</td><td>{r.status==='active'?'ใช้งาน':'ถอนบทบาท'}</td><td><button type="button" disabled={saving} className="sch-btn sch-btn-secondary" onClick={()=>setForm({school_id:String(r.school_id),user_id:String(r.user_id),role_code:r.role_code,status:r.status})}>แก้ไข</button></td></tr>)}</tbody></table></TableScroll></section></>}
- </main></div>;
+import { toDisplayText } from "../../../utils/textPresentation.js";
+import { useEffect, useState } from "react";
+import api from "../../../services/api";
+import { PageHeader, TableScroll } from "./schoolUi";
+import { usePageExport } from "../../../components/ExcelExport";
+import "./school.css";
+export default function SchoolRoles() {
+  const [data, setData] = useState(null),
+    [form, setForm] = useState({
+      school_id: "",
+      user_id: "",
+      role_code: "other",
+      status: "active",
+    }),
+    [error, setError] = useState(""),
+    [saving, setSaving] = useState(false),
+    [notice, setNotice] = useState("");
+  usePageExport({
+    title: "บทบาทโรงเรียน",
+    sources: [{ resource: "school_roles" }],
+  });
+  const load = async () => {
+    const { data } = await api.get("/school/staff-roles");
+    setData(data);
+    setForm((old) => ({
+      ...old,
+      school_id: old.school_id || String(data.schools[0]?.id || ""),
+    }));
+  };
+  useEffect(() => {
+    load().catch((e) =>
+      setError(e.response?.data?.message || "โหลดบทบาทไม่สำเร็จ"),
+    );
+  }, []);
+  const save = async (e) => {
+    e.preventDefault();
+    if (saving) return;
+    setSaving(true);
+    setError("");
+    setNotice("");
+    try {
+      await api.put("/school/staff-roles", {
+        ...form,
+        school_id: Number(form.school_id),
+        user_id: Number(form.user_id),
+      });
+      await load();
+      setNotice("บันทึกบทบาทเรียบร้อยแล้ว");
+    } catch (e) {
+      setError(e.response?.data?.message || "บันทึกบทบาทไม่สำเร็จ");
+    } finally {
+      setSaving(false);
+    }
+  };
+  const set = (key) => (e) => setForm({ ...form, [key]: e.target.value });
+  return (
+    <div className="sch-wrapper">
+      <main className="sch-page">
+        <PageHeader
+          title="บทบาทและสิทธิ์โรงเรียน"
+          description="บทบาทแยกจากประเภทครู และใช้กำหนดขอบเขตข้อมูลนักเรียน"
+        />
+        <section className="sch-card">
+          <h2>ขอบเขตของแต่ละบทบาท</h2>
+          <TableScroll label="สิทธิ์แต่ละบทบาท">
+            <table className="sch-table">
+              <thead>
+                <tr>
+                  <th>บทบาท</th>
+                  <th>ขอบเขตข้อมูล</th>
+                  <th>ข้อมูลเชิงลึก</th>
+                  <th>ส่งออก</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Admin</td>
+                  <td>ทั้งโรงเรียน จัดการครู นักเรียน และข้อมูลหลัก</td>
+                  <td>ไม่เห็น</td>
+                  <td>ข้อมูลทั่วไป</td>
+                </tr>
+                <tr>
+                  <td>ครูแนะแนว</td>
+                  <td>ทั้งโรงเรียน</td>
+                  <td>อ่านและแก้ไข</td>
+                  <td>ข้อมูลทั่วไปและเชิงลึก</td>
+                </tr>
+                <tr>
+                  <td>ครูประจำชั้น</td>
+                  <td>ห้องที่รับผิดชอบ</td>
+                  <td>อ่านและแก้ไข</td>
+                  <td>เฉพาะห้องที่รับผิดชอบ</td>
+                </tr>
+                <tr>
+                  <td>ครูอื่น</td>
+                  <td>ตามสิทธิ์ที่ได้รับ</td>
+                  <td>ไม่เห็น</td>
+                  <td>ตามสิทธิ์ทั่วไป</td>
+                </tr>
+                <tr>
+                  <td>แอดมินสุขภาพจิต</td>
+                  <td>ทั้งโรงเรียน จัดการเจ้าหน้าที่และข้อมูลทั่วไป</td>
+                  <td>สุขภาพจิตและสุขภาพกาย</td>
+                  <td>ตามสิทธิ์ส่งออกที่ได้รับ</td>
+                </tr>
+                <tr>
+                  <td>แอดมินสุขภาพกาย</td>
+                  <td>ทั้งโรงเรียน</td>
+                  <td>เฉพาะสุขภาพกาย</td>
+                  <td>ตามสิทธิ์ส่งออกที่ได้รับ</td>
+                </tr>
+                <tr>
+                  <td>เจ้าหน้าที่หอพัก</td>
+                  <td>เฉพาะนักเรียนหอพักในโรงเรียนที่รับผิดชอบ</td>
+                  <td>ไม่เห็น</td>
+                  <td>ตามสิทธิ์ส่งออกที่ได้รับ</td>
+                </tr>
+              </tbody>
+            </table>
+          </TableScroll>
+          <p className="sch-muted">
+            System Admin เข้าถึงข้อมูลทุกหน่วยงานได้
+            ครูประจำชั้นต้องได้รับมอบหมายห้องในหน้าโครงสร้างโรงเรียนด้วย
+          </p>
+        </section>
+        {error && (
+          <div className="sch-card">
+            <p className="sch-error" role="alert">
+              {error}
+            </p>
+            <button
+              type="button"
+              className="sch-btn-secondary"
+              disabled={saving}
+              onClick={() => {
+                setError("");
+                load().catch((e) =>
+                  setError(e.response?.data?.message || "โหลดบทบาทไม่สำเร็จ"),
+                );
+              }}
+            >
+              โหลดใหม่
+            </button>
+          </div>
+        )}
+        {!data && !error && <p role="status">กำลังโหลด…</p>}
+        {data && (
+          <>
+            <section className="sch-card">
+              {notice && <p role="status">{notice}</p>}
+              <form className="sch-management-form" onSubmit={save}>
+                <h2>กำหนดบทบาทสมาชิก</h2>
+                <label className="sch-field">
+                  โรงเรียน
+                  <select
+                    disabled={saving}
+                    aria-label="โรงเรียน"
+                    required
+                    value={form.school_id}
+                    onChange={set("school_id")}
+                  >
+                    <option value="">เลือกโรงเรียน</option>
+                    {data.schools.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="sch-field">
+                  สมาชิก
+                  <select
+                    disabled={saving}
+                    aria-label="สมาชิก"
+                    required
+                    value={form.user_id}
+                    onChange={set("user_id")}
+                  >
+                    <option value="">เลือกสมาชิก</option>
+                    {data.members.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.username}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="sch-field">
+                  บทบาท
+                  <select
+                    disabled={saving}
+                    aria-label="บทบาท"
+                    value={form.role_code}
+                    onChange={set("role_code")}
+                  >
+                    {Object.entries(data.role_labels).map(([code, label]) => (
+                      <option key={code} value={code}>
+                        {toDisplayText(label)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="sch-field">
+                  สถานะ
+                  <select
+                    disabled={saving}
+                    aria-label="สถานะ"
+                    value={form.status}
+                    onChange={set("status")}
+                  >
+                    <option value="active">ใช้งาน</option>
+                    <option value="inactive">ถอนบทบาท</option>
+                  </select>
+                </label>
+                <button className="sch-btn sch-btn-primary" disabled={saving}>
+                  {saving ? "กำลังบันทึก…" : "บันทึกบทบาท"}
+                </button>
+              </form>
+            </section>
+            <section className="sch-card">
+              <h2>บทบาทสมาชิก</h2>
+              <TableScroll label="บทบาทสมาชิก">
+                <table className="sch-table">
+                  <thead>
+                    <tr>
+                      <th>โรงเรียน</th>
+                      <th>สมาชิก</th>
+                      <th>บทบาท</th>
+                      <th>สถานะ</th>
+                      <th>จัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {!data.roles.length && (
+                      <tr>
+                        <td colSpan={5}>
+                          ยังไม่มีบทบาทสมาชิก กำหนดบทบาทจากแบบฟอร์มด้านบน
+                        </td>
+                      </tr>
+                    )}
+                    {data.roles.map((r) => (
+                      <tr key={`${r.school_id}-${r.user_id}`}>
+                        <td>
+                          {data.schools.find((s) => s.id === r.school_id)?.name}
+                        </td>
+                        <td>
+                          {data.members.find((m) => m.id === r.user_id)
+                            ?.username || r.user_id}
+                        </td>
+                        <td>{data.role_labels[r.role_code]}</td>
+                        <td>{r.status === "active" ? "ใช้งาน" : "ถอนบทบาท"}</td>
+                        <td>
+                          <button
+                            type="button"
+                            disabled={saving}
+                            className="sch-btn sch-btn-secondary"
+                            onClick={() =>
+                              setForm({
+                                school_id: String(r.school_id),
+                                user_id: String(r.user_id),
+                                role_code: r.role_code,
+                                status: r.status,
+                              })
+                            }
+                          >
+                            แก้ไข
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </TableScroll>
+            </section>
+          </>
+        )}
+      </main>
+    </div>
+  );
 }

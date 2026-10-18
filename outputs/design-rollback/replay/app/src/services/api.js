@@ -110,7 +110,8 @@ export const patientRegisterApi = (data) =>
   patientApi.post("/patient-auth/register", data);
 export const verifyPatientEmailApi = (data) =>
   patientApi.post("/patient-auth/email/verify", data);
-export const requestPatientOnboardingEmailApi = () => patientApi.post('/patient-auth/email/onboarding/request');
+export const requestPatientOnboardingEmailApi = () =>
+  patientApi.post("/patient-auth/email/onboarding/request");
 export const resendPatientEmailApi = (data) =>
   patientApi.post("/patient-auth/email/resend", data);
 export const requestPatientPasswordRecoveryApi = (data) =>
@@ -200,9 +201,13 @@ export const deleteStudentPhysicalRecord = (id) =>
   api.delete(`/school/physical-records/${id}`);
 export const getSchoolCases = (params) => api.get("/school/cases", { params });
 export const getCaseFirstName = (id, school = false) =>
-  api.get(school ? `/school/students/${id}/first-name` : `/cases/${id}/first-name`);
+  api.get(
+    school ? `/school/students/${id}/first-name` : `/cases/${id}/first-name`,
+  );
 export const getCaseLastName = (id, school = false) =>
-  api.get(school ? `/school/students/${id}/last-name` : `/cases/${id}/last-name`);
+  api.get(
+    school ? `/school/students/${id}/last-name` : `/cases/${id}/last-name`,
+  );
 
 // ── Dashboard ──
 export const getDashboardSummary = () => api.get("/dashboard/summary");

@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { usePageExport } from "../../components/ExcelExport";
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import AppointmentTable from "../../components/appointment/AppointmentTable";
@@ -405,7 +405,16 @@ export default function Appointment() {
   };
 
   /* ================= UI ================= */
-  usePageExport({title:"นัดหมาย",sources:[{resource:"appointments",filters:{startDate,endDate},ids:filteredAppointments.map(r=>r.appointment_id||r.id)}]});
+  usePageExport({
+    title: "นัดหมาย",
+    sources: [
+      {
+        resource: "appointments",
+        filters: { startDate, endDate },
+        ids: filteredAppointments.map((r) => r.appointment_id || r.id),
+      },
+    ],
+  });
 
   return (
     <div className="apt-admin-layout">

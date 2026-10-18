@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import React from "react";
 import {
   FaShareSquare,
@@ -20,36 +20,36 @@ const getClinicStyling = (type) => {
     case "general":
       return {
         icon: <FaGlobe size={18} />,
-        color: "#64748b",
-        bg: "#f1f5f9",
+        color: "var(--suth-muted)",
+        bg: "var(--suth-surface-2)",
         label: "ทั่วไป",
       };
     case "teenager":
       return {
         icon: <FaUsers size={18} />,
-        color: "#0284c7",
-        bg: "#e0f2fe",
+        color: "var(--suth-info)",
+        bg: "var(--suth-info-tint)",
         label: "คลินิกวัยรุ่น",
       };
     case "behavior":
       return {
         icon: <FaBrain size={18} />,
-        color: "#16a34a",
-        bg: "#dcfce3",
+        color: "var(--suth-success)",
+        bg: "var(--suth-success-tint)",
         label: "คลินิกพฤติกรรม",
       };
     case "sti":
       return {
         icon: <FaSyringe size={18} />,
-        color: "#be185d",
-        bg: "#fce7f3",
+        color: "var(--suth-danger)",
+        bg: "var(--suth-danger-tint)",
         label: "คลินิกโรคติดต่อฯ",
       };
     default:
       return {
         icon: <FaHeartbeat size={18} />,
-        color: "#64748b",
-        bg: "#f1f5f9",
+        color: "var(--suth-muted)",
+        bg: "var(--suth-surface-2)",
         label: "ทั่วไป",
       };
   }
@@ -85,7 +85,7 @@ export default function CaseModals({
       {showFollowupModal && (
         <div
           className="cdm-sub-modal-overlay"
-          style={{ zIndex: 999999 }}
+          style={{ zIndex: "var(--z-modal-nested)" }}
           onClick={() => setShowFollowupModal(false)}
           role="presentation"
         >
@@ -108,11 +108,11 @@ export default function CaseModals({
               <h3
                 style={{
                   margin: 0,
-                  color: "#1e40af",
+                  color: "var(--suth-info)",
                   display: "flex",
                   alignItems: "center",
                   gap: "10px",
-                  fontSize: "20px",
+                  fontSize: "var(--suth-fs-title)",
                 }}
               >
                 <FaShareSquare /> ส่งแบบประเมินให้คนไข้
@@ -122,20 +122,20 @@ export default function CaseModals({
                 style={{
                   position: "static",
                   padding: "4px",
-                  background: "#f1f5f9",
+                  background: "var(--suth-surface-2)",
                   borderRadius: "50%",
                 }}
                 onClick={() => setShowFollowupModal(false)}
                 aria-label="ปิดหน้าต่าง"
               >
-                <FaTimes color="#64748b" />
+                <FaTimes color="var(--suth-muted)" />
               </button>
             </div>
 
             <p
               style={{
-                color: "#64748b",
-                fontSize: "14px",
+                color: "var(--suth-muted)",
+                fontSize: "var(--suth-fs-sm)",
                 marginBottom: "20px",
                 lineHeight: "1.5",
               }}
@@ -168,12 +168,12 @@ export default function CaseModals({
                         display: "flex",
                         alignItems: "center",
                         padding: "12px 16px",
-                        borderRadius: "12px",
+                        borderRadius: "var(--suth-radius)",
                         cursor: "pointer",
                         border: isSelected
                           ? `2px solid ${style.color}`
-                          : "1px solid #e2e8f0",
-                        backgroundColor: isSelected ? style.bg : "#ffffff",
+                          : "1px solid var(--suth-line-soft)",
+                        backgroundColor: isSelected ? style.bg : "var(--suth-surface)",
                         boxShadow: isSelected
                           ? `0 4px 12px ${style.color}20`
                           : "none",
@@ -188,9 +188,9 @@ export default function CaseModals({
                           justifyContent: "center",
                           minWidth: "42px",
                           height: "42px",
-                          borderRadius: "10px",
+                          borderRadius: "var(--suth-radius)",
                           backgroundColor: style.color,
-                          color: "white",
+                          color: "var(--suth-on-action)",
                           marginRight: "16px",
                           boxShadow: `0 4px 10px ${style.color}40`,
                         }}
@@ -203,8 +203,8 @@ export default function CaseModals({
                         <div
                           style={{
                             fontWeight: "700",
-                            color: "#1e293b",
-                            fontSize: "15px",
+                            color: "var(--suth-ink)",
+                            fontSize: "var(--suth-fs-body)",
                             lineHeight: "1.2",
                           }}
                         >
@@ -213,7 +213,7 @@ export default function CaseModals({
                         {/* 🟢 เรียกใช้ style.label ตรงๆ โดยไม่ต้องใส่คำว่าคลินิกนำหน้าแล้ว */}
                         <div
                           style={{
-                            fontSize: "13px",
+                            fontSize: "var(--suth-fs-label)",
                             color: style.color,
                             fontWeight: "600",
                             marginTop: "4px",
@@ -232,7 +232,7 @@ export default function CaseModals({
                             alignItems: "center",
                             gap: "6px",
                             fontWeight: "bold",
-                            fontSize: "14px",
+                            fontSize: "var(--suth-fs-sm)",
                           }}
                         >
                           <FaCheckCircle size={18} /> เลือก
@@ -243,7 +243,7 @@ export default function CaseModals({
                             width: "20px",
                             height: "20px",
                             borderRadius: "50%",
-                            border: "2px solid #cbd5e1",
+                            border: "2px solid var(--suth-control-line)",
                           }}
                         />
                       )}
@@ -255,10 +255,10 @@ export default function CaseModals({
                   style={{
                     padding: "30px",
                     textAlign: "center",
-                    color: "#94a3b8",
-                    background: "#f8fafc",
-                    borderRadius: "12px",
-                    border: "1px dashed #cbd5e1",
+                    color: "var(--suth-muted)",
+                    background: "var(--suth-surface-2)",
+                    borderRadius: "var(--suth-radius)",
+                    border: "1px dashed var(--suth-control-line)",
                   }}
                 >
                   ไม่พบแบบฟอร์มที่เปิดใช้งาน
@@ -270,17 +270,17 @@ export default function CaseModals({
             {followupLink && (
               <div
                 style={{
-                  background: "#eff6ff",
+                  background: "var(--suth-surface-2)",
                   padding: "16px",
-                  borderRadius: "12px",
-                  border: "1px solid #bfdbfe",
+                  borderRadius: "var(--suth-radius)",
+                  border: "1px solid var(--suth-info-line)",
                   animation: "dbFadeInUp 0.3s ease",
                 }}
               >
                 <label
                   style={{
-                    fontSize: "13px",
-                    color: "#1e40af",
+                    fontSize: "var(--suth-fs-label)",
+                    color: "var(--suth-info)",
                     fontWeight: "bold",
                     display: "block",
                     marginBottom: "8px",
@@ -296,31 +296,31 @@ export default function CaseModals({
                     style={{
                       flex: 1,
                       padding: "10px 12px",
-                      borderRadius: "8px",
-                      border: "1px solid #93c5fd",
-                      fontSize: "13px",
-                      background: "#fff",
-                      color: "#334155",
+                      borderRadius: "var(--suth-radius)",
+                      border: "1px solid var(--suth-info-line)",
+                      fontSize: "var(--suth-fs-label)",
+                      background: "var(--suth-surface)",
+                      color: "var(--suth-ink-2)",
                     }}
                   />
                   <button
                     onClick={copyFollowupLink}
                     style={{
-                      background: "#2563eb",
-                      color: "#fff",
+                      background: "var(--suth-action-pressed)",
+                      color: "var(--suth-on-action)",
                       border: "none",
-                      borderRadius: "8px",
+                      borderRadius: "var(--suth-radius)",
                       padding: "0 16px",
                       cursor: "pointer",
                       display: "flex",
                       alignItems: "center",
                       gap: "6px",
                       fontWeight: "bold",
-                      fontSize: "14px",
+                      fontSize: "var(--suth-fs-sm)",
                       transition: "background 0.2s",
                     }}
-                    onMouseOver={(e) => (e.target.style.background = "#1d4ed8")}
-                    onMouseOut={(e) => (e.target.style.background = "#2563eb")}
+                    onMouseOver={(e) => (e.target.style.background = "var(--suth-action-ink)")}
+                    onMouseOut={(e) => (e.target.style.background = "var(--suth-action-pressed)")}
                   >
                     <FaLink /> คัดลอก
                   </button>
@@ -334,7 +334,7 @@ export default function CaseModals({
       {showCloseCaseConfirm && (
         <div
           className="cdm-sub-modal-overlay"
-          style={{ zIndex: 999999 }}
+          style={{ zIndex: "var(--z-modal-nested)" }}
           onClick={() => setShowCloseCaseConfirm(false)}
           role="presentation"
         >
@@ -345,12 +345,12 @@ export default function CaseModals({
             aria-modal="true"
             aria-label="ยืนยันสิ้นสุดการรักษา"
           >
-            <FaArchive size={48} color="#dc2626" />
+            <FaArchive size={48} color="var(--suth-danger)" />
             <h3 style={{ marginTop: "16px" }}>ยืนยันสิ้นสุดการรักษา?</h3>
             <p
               style={{
-                fontSize: "14px",
-                color: "#64748b",
+                fontSize: "var(--suth-fs-sm)",
+                color: "var(--suth-muted)",
                 marginBottom: "24px",
               }}
             >
@@ -370,7 +370,7 @@ export default function CaseModals({
               </button>
               <button
                 className="cdm-btn-confirm"
-                style={{ background: "#dc2626" }}
+                style={{ background: "var(--suth-risk-dot-high)" }}
                 onClick={handleCloseMasterCase}
                 disabled={isDeleting}
               >
@@ -384,7 +384,7 @@ export default function CaseModals({
       {showSelectModal && (
         <div
           className="cdm-sub-modal-overlay"
-          style={{ zIndex: 999999 }}
+          style={{ zIndex: "var(--z-modal-nested)" }}
           onClick={() => setShowSelectModal(false)}
           role="presentation"
         >
@@ -412,7 +412,7 @@ export default function CaseModals({
                 style={{
                   paddingBottom: "10px",
                   marginBottom: "10px",
-                  color: "#334155",
+                  color: "var(--suth-ink-2)",
                   border: "none",
                 }}
               >
@@ -447,7 +447,7 @@ export default function CaseModals({
       {showDeleteConfirm && (
         <div
           className="cdm-sub-modal-overlay"
-          style={{ zIndex: 999999 }}
+          style={{ zIndex: "var(--z-modal-nested)" }}
           onClick={() => setShowDeleteConfirm(false)}
           role="presentation"
         >
@@ -458,12 +458,12 @@ export default function CaseModals({
             aria-modal="true"
             aria-label="ยืนยันลบแบบฟอร์ม"
           >
-            <FaExclamationTriangle size={48} color="#ef4444" />
+            <FaExclamationTriangle size={48} color="var(--suth-danger)" />
             <h3 style={{ marginTop: "16px" }}>ยืนยันลบแบบฟอร์มนี้ทิ้ง?</h3>
             <p
               style={{
-                fontSize: "14px",
-                color: "#64748b",
+                fontSize: "var(--suth-fs-sm)",
+                color: "var(--suth-muted)",
                 marginBottom: "24px",
               }}
             >
@@ -482,7 +482,7 @@ export default function CaseModals({
               </button>
               <button
                 className="cdm-btn-confirm"
-                style={{ background: "#ef4444" }}
+                style={{ background: "var(--suth-risk-dot-high)" }}
                 onClick={handleDeleteCase}
                 disabled={isDeleting}
               >

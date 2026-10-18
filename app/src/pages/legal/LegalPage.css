@@ -1,8 +1,8 @@
 .legal-page {
   min-height: 100vh;
-  background: #f4f6f8;
-  color: #1e293b;
-  font-family: Sarabun, system-ui, sans-serif;
+  background: var(--suth-surface-2);
+  color: var(--suth-ink);
+  font-family: var(--suth-font);
 }
 .legal-header {
   position: sticky;
@@ -13,14 +13,14 @@
   justify-content: space-between;
   gap: 1rem;
   padding: 0.75rem max(1rem, calc((100% - 52rem) / 2));
-  background: #fff;
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--suth-surface);
+  border-bottom: 1px solid var(--suth-line-soft);
 }
 .legal-brand {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  color: #1e293b;
+  color: var(--suth-ink);
   font-weight: 700;
   text-decoration: none;
 }
@@ -37,12 +37,12 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  color: #475569;
-  font-size: 0.9375rem;
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-body);
   text-decoration: none;
 }
 .legal-back:hover {
-  color: #c2410c;
+  color: var(--suth-action-ink);
 }
 .legal-tabs {
   display: flex;
@@ -53,22 +53,22 @@
 .legal-tabs a {
   flex: 0 0 auto;
   padding: 0.5rem 1rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 999px;
-  background: #fff;
-  color: #475569;
+  border: 1px solid var(--suth-line-soft);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
   font-weight: 600;
   text-decoration: none;
 }
 .legal-tabs a[aria-current="page"] {
-  border-color: #f47932;
-  background: #fff3eb;
-  color: #c2410c;
+  border-color: var(--suth-action);
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
 }
 .legal-doc {
   padding: clamp(1.25rem, 4vw, 2.5rem);
   border-radius: 1rem;
-  background: #fff;
+  background: var(--suth-surface);
   box-shadow: 0 1px 3px rgb(15 23 42 / 0.06);
   line-height: 1.75;
 }
@@ -79,8 +79,8 @@
 }
 .legal-updated {
   margin: 0.35rem 0 1.25rem;
-  color: #64748b;
-  font-size: 0.875rem;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-sm);
 }
 .legal-intro {
   margin: 0 0 1.5rem;
@@ -89,11 +89,11 @@
   margin-bottom: 2rem;
   padding: 1rem 1.25rem;
   border-radius: 0.75rem;
-  background: #f8fafc;
+  background: var(--suth-canvas);
 }
 .legal-toc h2 {
   margin: 0 0 0.5rem;
-  font-size: 1rem;
+  font-size: var(--suth-fs-md);
 }
 .legal-toc ol {
   margin: 0;
@@ -107,7 +107,7 @@
 }
 .legal-toc a,
 .legal-doc section a {
-  color: #c2410c;
+  color: var(--suth-action-ink);
 }
 .legal-doc section {
   scroll-margin-top: 5rem;
@@ -117,7 +117,7 @@
 }
 .legal-doc section h2 {
   margin: 0 0 0.5rem;
-  font-size: 1.125rem;
+  font-size: var(--suth-fs-section);
 }
 .legal-doc section p {
   margin: 0 0 0.6rem;

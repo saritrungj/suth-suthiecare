@@ -1,21 +1,20 @@
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
-import {useMasterOptions} from "../../../components/MasterSelect";
+import SearchableSelect from "../../../components/SearchableSelect";
+import TablePagination, {
+  PAGE_SIZES,
+} from "../../../components/table/TablePagination";
+import { toDisplayText } from "../../../utils/textPresentation.js";
+import { useMasterOptions } from "../../../components/MasterSelect";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useDialogFocus } from "../../../components/useDialogFocus";
 import { useMediaQuery } from "../../../components/useMediaQuery";
 import { RiskPill } from "../../../components/case/CaseDrawer";
-import {
-  FiChevronLeft,
-  FiChevronRight,
-  FiInbox,
-  FiSearch,
-  FiX,
-} from "react-icons/fi";
+import { FiInbox, FiSearch, FiX } from "react-icons/fi";
 import FilterDropdown from "../../../components/FilterDropdown";
 import { getSchools } from "../../../services/api";
 import { usePermissions } from "../../../permissions/PermissionsProvider";
+import { PageHero } from "../../../components/dashboard/DashboardKit";
+import ThaiDatePicker from "../../../components/ThaiDatePicker";
 import {
   isoToThai,
   maskThaiDate,
@@ -41,11 +40,17 @@ export const STUDENT_STATUS_LABELS = {
   inactive: "ปิดใช้งาน",
 };
 
-export function useStudentStatusLabels(){
- const options=useMasterOptions("student_status",Object.entries(STUDENT_STATUS_LABELS).filter(([code])=>!["inactive","transferred"].includes(code)).map(([code,label])=>({code,label})));
- const labels=Object.fromEntries(options.map(o=>[o.code,o.label]));
- for(const [code,label] of Object.entries(STUDENT_STATUS_LABELS))if(!Object.hasOwn(labels,code))labels[code]=label;
- return labels;
+export function useStudentStatusLabels() {
+  const options = useMasterOptions(
+    "student_status",
+    Object.entries(STUDENT_STATUS_LABELS)
+      .filter(([code]) => !["inactive", "transferred"].includes(code))
+      .map(([code, label]) => ({ code, label })),
+  );
+  const labels = Object.fromEntries(options.map((o) => [o.code, o.label]));
+  for (const [code, label] of Object.entries(STUDENT_STATUS_LABELS))
+    if (!Object.hasOwn(labels, code)) labels[code] = label;
+  return labels;
 }
 
 export const TEACHER_ROLE_LABELS = {
@@ -56,7 +61,15 @@ export const TEACHER_ROLE_LABELS = {
 
 // Current Thai academic year: a new year starts in mid-May.
 export const currentAcademicYear = () => {
-  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Bangkok', year: 'numeric', month: 'numeric' }).formatToParts(new Date()).map(p => [p.type, p.value]));
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Bangkok",
+      year: "numeric",
+      month: "numeric",
+    })
+      .formatToParts(new Date())
+      .map((p) => [p.type, p.value]),
+  );
   return Number(parts.year) + 543 - (Number(parts.month) < 5 ? 1 : 0);
 };
 
@@ -100,12 +113,17 @@ const RISK_PILL_LEVEL = {
 
 // Risk as icon shape + word + color, the same pill as the case lists.
 export function RiskBadge({ risk }) {
-  const options=useMasterOptions("risk_level",Object.entries(RISK_LABELS).map(([code,label])=>({code,label})));
+  const options = useMasterOptions(
+    "risk_level",
+    Object.entries(RISK_LABELS).map(([code, label]) => ({ code, label })),
+  );
   if (!risk) return <span className="sch-badge">-</span>;
   return (
     <RiskPill
       level={RISK_PILL_LEVEL[risk] || "none"}
-      label={options.find(o=>o.code===risk)?.label || RISK_LABELS[risk] || risk}
+      label={
+        options.find((o) => o.code === risk)?.label || RISK_LABELS[risk] || risk
+      }
     />
   );
 }
@@ -149,7 +167,10 @@ export function MenuSelect({ label, value, onChange, children }) {
   return (
     <label className="sch-native-filter">
       <span>{toDisplayText(label)}</span>
-      <SearchableSelect value={value} onChange={(event) => onChange(event.target.value)}>
+      <SearchableSelect
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      >
         {children}
       </SearchableSelect>
     </label>
@@ -158,15 +179,16 @@ export function MenuSelect({ label, value, onChange, children }) {
 
 export { FilterDropdown };
 
+// Page header for school and master-data pages: the shared compact
+// greeting band from the dashboard kit.
 export function PageHeader({ title, description, children }) {
   return (
-    <header className="sch-header">
-      <div>
-        <h1>{title}</h1>
-        {description && <p>{description}</p>}
-      </div>
-      {children && <div className="sch-header-actions">{children}</div>}
-    </header>
+    <PageHero
+      className="sch-header"
+      title={title}
+      description={description}
+      actions={children}
+    />
   );
 }
 
@@ -369,29 +391,44 @@ export function ThaiDateField({
         {toDisplayText(label)}
         {required && <RequiredMark />}
       </label>
-      <input
-        ref={inputRef}
-        id={inputId}
-        inputMode="numeric"
-        autoComplete="off"
-        placeholder="วว/ดด/ปปปป"
-        maxLength={10}
-        value={text}
-        required={required}
-        aria-required={required || undefined}
-        aria-invalid={showError || undefined}
-        aria-describedby={showError ? `${errorId} ${hintId}` : hintId}
-        onChange={(event) => {
-          const next = maskThaiDate(event.target.value);
-          setText(next);
-          const result = parseThaiDate(next, { allowFuture });
-          const iso = result.error ? "" : result.iso;
-          lastIso.current = iso;
-          onChange(iso);
-        }}
-        onBlur={() => setTouched(true)}
-        onInvalid={() => setTouched(true)}
-      />
+      <span className="sch-date-input">
+        <input
+          ref={inputRef}
+          id={inputId}
+          inputMode="numeric"
+          autoComplete="off"
+          placeholder="วว/ดด/ปปปป"
+          maxLength={10}
+          value={text}
+          required={required}
+          aria-required={required || undefined}
+          aria-invalid={showError || undefined}
+          aria-describedby={showError ? `${errorId} ${hintId}` : hintId}
+          onChange={(event) => {
+            const next = maskThaiDate(event.target.value);
+            setText(next);
+            const result = parseThaiDate(next, { allowFuture });
+            const iso = result.error ? "" : result.iso;
+            lastIso.current = iso;
+            onChange(iso);
+          }}
+          onBlur={() => setTouched(true)}
+          onInvalid={() => setTouched(true)}
+        />
+        <ThaiDatePicker
+          iconOnly
+          label={toDisplayText(label)}
+          value={parsed.error ? "" : parsed.iso || ""}
+          allowFuture={allowFuture}
+          align="end"
+          onChange={(iso) => {
+            setText(isoToThai(iso));
+            lastIso.current = iso;
+            setTouched(true);
+            onChange(iso);
+          }}
+        />
+      </span>
       <small className="sch-field-hint" id={hintId}>
         ปีพุทธศักราช เช่น 31/05/2556
       </small>
@@ -452,49 +489,24 @@ export function useSchools() {
   return { schools, loading, error, schoolId, setSchoolId, reload };
 }
 
-export function Pagination({ pagination, onPage, onLimit }) {
-  if (!pagination || !pagination.total) return null;
-  const { page, total_pages: totalPages, total, limit } = pagination;
+// School lists share the one table pagination (10 by default, the same
+// page sizes as every other management table).
+export function Pagination({
+  pagination,
+  onPage,
+  onLimit,
+  pageSizes = PAGE_SIZES,
+}) {
+  if (!pagination) return null;
   return (
-    <footer className="sch-pagination">
-      <div className="sch-pagination-info">
-        <span>แสดง</span>
-        <SearchableSelect
-          value={limit}
-          onChange={(event) => onLimit(Number(event.target.value))}
-          aria-label="จำนวนรายการต่อหน้า"
-        >
-          {[20, 50, 100].map((size) => (
-            <option key={size} value={size}>
-              {size}
-            </option>
-          ))}
-        </SearchableSelect>
-        <span>จากทั้งหมด {total.toLocaleString("th-TH")} รายการ</span>
-      </div>
-      <div className="sch-pagination-controls">
-        <button
-          type="button"
-          className="sch-page-btn"
-          onClick={() => onPage(page - 1)}
-          disabled={page <= 1}
-          aria-label="หน้าก่อนหน้า"
-        >
-          <FiChevronLeft aria-hidden="true" />
-        </button>
-        <span>
-          หน้า <strong>{page}</strong> จาก {Math.max(totalPages, 1)}
-        </span>
-        <button
-          type="button"
-          className="sch-page-btn"
-          onClick={() => onPage(page + 1)}
-          disabled={page >= totalPages}
-          aria-label="หน้าถัดไป"
-        >
-          <FiChevronRight aria-hidden="true" />
-        </button>
-      </div>
-    </footer>
+    <TablePagination
+      page={pagination.page}
+      totalPages={pagination.total_pages}
+      total={pagination.total}
+      limit={pagination.limit}
+      onPage={onPage}
+      onLimit={onLimit}
+      pageSizes={pageSizes}
+    />
   );
 }

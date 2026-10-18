@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -362,7 +362,7 @@ export default function HelpCenterUser() {
                             {toDisplayText(faq.question)}
                           </span>
                         </div>
-                        <FiChevronRight style={{ color: "#94a3b8" }} />
+                        <FiChevronRight style={{ color: "var(--suth-muted)" }} />
                       </div>
                     </div>
                   ))

@@ -1,6 +1,6 @@
-import IconSelect from '../../../components/IconSelect';
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import IconSelect from "../../../components/IconSelect";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import { usePageExport } from "../../../components/ExcelExport";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -43,7 +43,9 @@ import {
 } from "react-icons/fa";
 
 // 🟢 Component สำหรับ Dropdown
-const CustomDropdown = props => <IconSelect {...props} className="fm-custom-select" />;
+const CustomDropdown = (props) => (
+  <IconSelect {...props} className="fm-custom-select" />
+);
 
 const FormManager = () => {
   const { activeOrganization, authorization } = usePermissions();
@@ -171,7 +173,10 @@ const FormManager = () => {
     return matchSearch && matchClinic && matchStatus;
   });
 
-  usePageExport({title:"แบบประเมิน",sources:[{resource:"forms",ids:filteredForms.map(r=>r.id)}]});
+  usePageExport({
+    title: "แบบประเมิน",
+    sources: [{ resource: "forms", ids: filteredForms.map((r) => r.id) }],
+  });
   const handleToggleMenu = (e, formId) => {
     e.stopPropagation();
     setOpenMenuId(openMenuId === formId ? null : formId);

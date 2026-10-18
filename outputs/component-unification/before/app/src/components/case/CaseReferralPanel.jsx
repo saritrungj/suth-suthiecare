@@ -1,4 +1,4 @@
-import SearchableSelect from '../SearchableSelect';
+import SearchableSelect from "../SearchableSelect";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiArrowUpRight, FiRefreshCw } from "react-icons/fi";

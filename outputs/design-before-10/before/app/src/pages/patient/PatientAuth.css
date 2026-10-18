@@ -694,13 +694,44 @@
   }
 }
 
-.patient-email-verification { width:min(100%,480px); margin:auto; padding:clamp(20px,5vw,32px); background:var(--surface,#fff); border-radius:14px; display:grid; gap:16px; }
-.patient-email-verification form { display:grid; gap:16px; }
-.patient-email-verification label { display:grid; gap:8px; }
-.patient-email-verification input { min-height:44px; padding:10px 12px; border:1px solid var(--control-line,#afbdc7); border-radius:10px; }
-.patient-email-verification button { min-height:44px; padding:10px 16px; background:var(--action,#c2410c); color:#fff; border:0; border-radius:10px; }
-.patient-email-verification button:disabled { opacity:.65; cursor:wait; }
-.patient-email-verification a { color:var(--action-ink,#a9430b); }
+.patient-email-verification {
+  width: min(100%, 480px);
+  margin: auto;
+  padding: clamp(20px, 5vw, 32px);
+  background: var(--surface, #fff);
+  border-radius: 14px;
+  display: grid;
+  gap: 16px;
+}
+.patient-email-verification form {
+  display: grid;
+  gap: 16px;
+}
+.patient-email-verification label {
+  display: grid;
+  gap: 8px;
+}
+.patient-email-verification input {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--control-line, #afbdc7);
+  border-radius: 10px;
+}
+.patient-email-verification button {
+  min-height: 44px;
+  padding: 10px 16px;
+  background: var(--action, #c2410c);
+  color: #fff;
+  border: 0;
+  border-radius: 10px;
+}
+.patient-email-verification button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+.patient-email-verification a {
+  color: var(--action-ink, #a9430b);
+}
 
 @media (max-width: 350px) {
   .patient-login-heading-icon {

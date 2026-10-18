@@ -1,5 +1,5 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
-import {ExportButton} from "../ExcelExport";
+import { toDisplayText } from "../../utils/textPresentation.js";
+import { ExportButton } from "../ExcelExport";
 import CaseActivity, { responseActivity, logActivity } from "./CaseActivity";
 import { exportCaseData } from "../../services/api";
 import "./CaseDetailModal.css";
@@ -533,7 +533,9 @@ export default function CaseDetailModal({
           detail: log.detail,
         })),
       );
-      const apptRes = await getCaseAppointments(targetId, targetType).catch(() => ({ data: [] }));
+      const apptRes = await getCaseAppointments(targetId, targetType).catch(
+        () => ({ data: [] }),
+      );
       setAppointmentNo(apptRes.data.length + 1);
       await fetchServicesList();
       return activity;
@@ -1618,7 +1620,10 @@ export default function CaseDetailModal({
         </>
       }
     >
-      <ExportButton sources={[{resource:"case",id:data.id}]} title="รายละเอียดเคส" />
+      <ExportButton
+        sources={[{ resource: "case", id: data.id }]}
+        title="รายละเอียดเคส"
+      />
       <CaseActivity full activity={latestActivity} />
       {tabPanels[activeTab]}
     </CaseDrawer>

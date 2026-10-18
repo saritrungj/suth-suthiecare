@@ -7,7 +7,9 @@
   box-sizing: border-box;
 }
 
-.ar-page { font-family: "Sarabun", sans-serif; }
+.ar-page {
+  font-family: "Sarabun", sans-serif;
+}
 
 /* ─── PAGE ─── */
 .ar-page {
@@ -62,7 +64,9 @@
   padding: 8px 16px;
   border-radius: 12px;
   cursor: pointer;
-  transition: background-color 180ms ease-out, color 180ms ease-out;
+  transition:
+    background-color 180ms ease-out,
+    color 180ms ease-out;
   font-family: inherit;
   white-space: nowrap; /* กัน text ตัดบรรทัดบนจอเล็ก */
 }
@@ -296,7 +300,9 @@
   font-weight: 700;
   border-radius: 12px;
   cursor: pointer;
-  transition: background-color 180ms ease-out, color 180ms ease-out;
+  transition:
+    background-color 180ms ease-out,
+    color 180ms ease-out;
   border: none;
   color: #fff;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -561,7 +567,9 @@
     padding: 12px !important;
     margin-bottom: 10px !important;
   }
-  .suth-evaluation-dialog .swal2-html-container div[style*="display:flex"]::-webkit-scrollbar {
+  .suth-evaluation-dialog
+    .swal2-html-container
+    div[style*="display:flex"]::-webkit-scrollbar {
     display: none;
   }
   .suth-evaluation-dialog .swal2-html-container label {
@@ -704,7 +712,7 @@
     min-width: 0 !important;
   }
   .suth-evaluation-dialog .swal2-confirm,
-.suth-evaluation-dialog .swal2-cancel {
+  .suth-evaluation-dialog .swal2-cancel {
     flex: 1 !important;
     padding: 12px 5px !important;
     font-size: 14px !important;
@@ -730,34 +738,113 @@
   overflow-y: auto;
   padding: 24px 16px !important;
 }
-.suth-evaluation-dialog .evaluation-content { text-align: left; max-height: 55dvh; overflow-y: auto; overflow-x: hidden; }
-.suth-evaluation-dialog .evaluation-scale { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 4px; margin-top: 12px; }
-.suth-evaluation-dialog .evaluation-scale label { display: flex; flex-direction: column; justify-content: center; min-width: 0; min-height: 44px; gap: 6px; text-align: center; }
-.suth-evaluation-dialog .evaluation-labels-wrap span { min-width: 0 !important; max-width: 48%; overflow-wrap: anywhere; }
-@media (max-width:480px) {
-  .suth-evaluation-dialog .swal2-html-container { margin-inline: 0 !important; }
-  .suth-evaluation-dialog .evaluation-content > div { padding: 12px !important; border-top: 0 !important; box-shadow: none !important; }
-  .suth-evaluation-dialog .evaluation-content > div > div:has(.evaluation-scale) { padding: 12px 0 !important; border: 0 !important; border-bottom: 1px solid var(--suth-line) !important; border-radius: 0 !important; box-shadow: none !important; }
+.suth-evaluation-dialog .evaluation-content {
+  text-align: left;
+  max-height: 55dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.suth-evaluation-dialog .evaluation-scale {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  margin-top: 12px;
+}
+.suth-evaluation-dialog .evaluation-scale label {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  min-height: 44px;
+  gap: 6px;
+  text-align: center;
+}
+.suth-evaluation-dialog .evaluation-labels-wrap span {
+  min-width: 0 !important;
+  max-width: 48%;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 480px) {
+  .suth-evaluation-dialog .swal2-html-container {
+    margin-inline: 0 !important;
+  }
+  .suth-evaluation-dialog .evaluation-content > div {
+    padding: 12px !important;
+    border-top: 0 !important;
+    box-shadow: none !important;
+  }
+  .suth-evaluation-dialog
+    .evaluation-content
+    > div
+    > div:has(.evaluation-scale) {
+    padding: 12px 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--suth-line) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
 }
 
-.ar-page :is(button,a):focus-visible, .suth-evaluation-dialog :is(button,input,textarea):focus-visible { outline: 3px solid #b94d10; outline-offset: 3px; }
-.ar-page :is(.ar-btn,.ar-btn-close) { min-height: 44px; }
-.ar-page .ar-actions { flex-wrap: wrap; }
-.ar-page :is(.ar-hero-title,.ar-level-badge,.ar-card-title) { overflow-wrap: anywhere; }
-.ar-page .ar-result-card:hover { transform: none; }
-.ar-page .ar-result-card:hover .ar-visual__frame img { transform: none; }
-.ar-page .ar-result-card__head > div { min-width: 0; }
-.ar-page .ar-visual { box-shadow: none; }
-.suth-evaluation-dialog .evaluation-scale input { accent-color: #b94d10; }
-.suth-evaluation-dialog .swal2-close { min-height: 44px; min-width: 44px; }
+.ar-page :is(button, a):focus-visible,
+.suth-evaluation-dialog :is(button, input, textarea):focus-visible {
+  outline: 3px solid #b94d10;
+  outline-offset: 3px;
+}
+.ar-page :is(.ar-btn, .ar-btn-close) {
+  min-height: 44px;
+}
+.ar-page .ar-actions {
+  flex-wrap: wrap;
+}
+.ar-page :is(.ar-hero-title, .ar-level-badge, .ar-card-title) {
+  overflow-wrap: anywhere;
+}
+.ar-page .ar-result-card:hover {
+  transform: none;
+}
+.ar-page .ar-result-card:hover .ar-visual__frame img {
+  transform: none;
+}
+.ar-page .ar-result-card__head > div {
+  min-width: 0;
+}
+.ar-page .ar-visual {
+  box-shadow: none;
+}
+.suth-evaluation-dialog .evaluation-scale input {
+  accent-color: #b94d10;
+}
+.suth-evaluation-dialog .swal2-close {
+  min-height: 44px;
+  min-width: 44px;
+}
 @media (max-width: 480px) {
-  .ar-page .ar-nav { padding-inline: 12px; gap: 8px; }
-  .ar-page .ar-nav__actions { gap: 6px !important; }
-  .ar-page .ar-nav__logo { max-width: 105px !important; height: 56px; }
-  .ar-page .ar-success-hero { padding: 24px 16px; }
-  .ar-page .ar-visual__frame { min-height: 100px; }
-  .ar-page .ar-visual__frame img { width: 90px; }
+  .ar-page .ar-nav {
+    padding-inline: 12px;
+    gap: 8px;
+  }
+  .ar-page .ar-nav__actions {
+    gap: 6px !important;
+  }
+  .ar-page .ar-nav__logo {
+    max-width: 105px !important;
+    height: 56px;
+  }
+  .ar-page .ar-success-hero {
+    padding: 24px 16px;
+  }
+  .ar-page .ar-visual__frame {
+    min-height: 100px;
+  }
+  .ar-page .ar-visual__frame img {
+    width: 90px;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ar-page *, .suth-evaluation-dialog * { animation: none !important; transition: none !important; opacity: 1; }
+  .ar-page *,
+  .suth-evaluation-dialog * {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1;
+  }
 }

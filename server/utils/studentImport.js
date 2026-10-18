@@ -76,7 +76,10 @@ function buildUsername(schoolCode, studentCode) {
 function prepareImportRow(raw = {}, { schoolCode } = {}) {
   const errors = [];
   const row = {
-    status: raw.status == null || raw.status === "" ? null : require("./studentStatus").normalizeStudentStatus(raw.status),
+    status:
+      raw.status == null || raw.status === ""
+        ? null
+        : require("./studentStatus").normalizeStudentStatus(raw.status),
     student_code: text(raw.student_code),
     prefix: text(raw.prefix) || null,
     first_name: text(raw.first_name),
@@ -90,14 +93,34 @@ function prepareImportRow(raw = {}, { schoolCode } = {}) {
     national_id: null,
     username: text(raw.username).toLowerCase() || null,
     email: text(raw.email).toLowerCase() || null,
-    initial_password: raw.initial_password == null || raw.initial_password === '' ? null : String(raw.initial_password),
-    is_boarder: raw.is_boarder == null || raw.is_boarder === '' ? null : ['1','true','ใช่','หอพัก'].includes(text(raw.is_boarder).toLowerCase()) ? 1 : ['0','false','ไม่ใช่','ไปกลับ'].includes(text(raw.is_boarder).toLowerCase()) ? 0 : undefined,
+    initial_password:
+      raw.initial_password == null || raw.initial_password === ""
+        ? null
+        : String(raw.initial_password),
+    is_boarder:
+      raw.is_boarder == null || raw.is_boarder === ""
+        ? null
+        : ["1", "true", "ใช่", "หอพัก"].includes(
+              text(raw.is_boarder).toLowerCase(),
+            )
+          ? 1
+          : ["0", "false", "ไม่ใช่", "ไปกลับ"].includes(
+                text(raw.is_boarder).toLowerCase(),
+              )
+            ? 0
+            : undefined,
   };
 
   if (raw.status && !row.status) errors.push("สถานะนักเรียนไม่ถูกต้อง");
-  if (row.email && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.email) || row.email.length>254)) errors.push('อีเมลไม่ถูกต้อง');
-  if (row.initial_password && !isStrongPassword(row.initial_password)) errors.push('รหัสผ่านตั้งต้นไม่ผ่านนโยบายรหัสผ่าน');
-  if (row.is_boarder === undefined) errors.push('สถานะหอพักไม่ถูกต้อง (ใช่/ไม่ใช่)');
+  if (
+    row.email &&
+    (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(row.email) || row.email.length > 254)
+  )
+    errors.push("อีเมลไม่ถูกต้อง");
+  if (row.initial_password && !isStrongPassword(row.initial_password))
+    errors.push("รหัสผ่านตั้งต้นไม่ผ่านนโยบายรหัสผ่าน");
+  if (row.is_boarder === undefined)
+    errors.push("สถานะหอพักไม่ถูกต้อง (ใช่/ไม่ใช่)");
   if (!row.student_code) errors.push("ไม่มีรหัสนักเรียน");
   else if (!STUDENT_CODE_PATTERN.test(row.student_code))
     errors.push("รหัสนักเรียนมีอักขระที่ไม่รองรับ (ไม่เกิน 32 ตัว)");

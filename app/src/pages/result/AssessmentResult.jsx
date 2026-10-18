@@ -1,5 +1,5 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
-import { toSafeHtml } from '../../utils/richText.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
+import { toSafeHtml } from "../../utils/richText.js";
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -22,6 +22,7 @@ import { buildAssessmentResultSections } from "./assessmentResultUtils";
 // 🟢 1. แก้บัค: นำเข้า api ให้ถูกต้อง
 import api from "../../services/api";
 import Swal from "sweetalert2";
+import { DEFAULT_RESULT_COLOR } from "../admin/forms/formThemePalette";
 
 // 🟢 ฟังก์ชันผู้ช่วย: แปลงสี HEX เป็น RGB
 const hexToRgbArray = (hex) => {
@@ -49,8 +50,8 @@ const getLevelConfig = (result, t) => {
       advice: [
         t ? t("assessment_result.advice") : "ไม่มีคำแนะนำเพิ่มเติมในขณะนี้",
       ],
-      color: "#2d7d81",
-      textColor: "#2d7d81",
+      color: "var(--suth-care)",
+      textColor: DEFAULT_RESULT_COLOR,
       rgb: "45, 125, 129",
       colorBg: "rgba(45, 125, 129, 0.08)",
       colorBorder: "rgba(45, 125, 129, 0.25)",
@@ -60,12 +61,12 @@ const getLevelConfig = (result, t) => {
     };
   }
 
-  const hexCriteriaColor = result.color || "#2d7d81";
+  const hexCriteriaColor = result.color || DEFAULT_RESULT_COLOR;
   const rgbString = hexToRgbArray(hexCriteriaColor).join(", ");
   const lowerColor = hexCriteriaColor.toLowerCase();
 
   const isTooBright = isColorTooBright(hexCriteriaColor);
-  const readableTextColor = isTooBright ? "#2d7d81" : hexCriteriaColor;
+  const readableTextColor = isTooBright ? DEFAULT_RESULT_COLOR : hexCriteriaColor;
 
   let visualImage = riskLow;
   if (
@@ -178,7 +179,7 @@ export default function AssessmentResult() {
         text: t("assessment_result.eval_thanks_desc"),
         icon: "success",
         confirmButtonText: t("assessment_result.ok"),
-        confirmButtonColor: "#7c3aed",
+        confirmButtonColor: "var(--suth-info)",
       });
       return;
     }
@@ -187,9 +188,9 @@ export default function AssessmentResult() {
         ${[1, 2, 3, 4, 5]
           .map(
             (v) => `
-          <label style="text-align:center; flex:1; cursor:pointer display:flex; flex-direction:column; align-items:center; gap:6px;">
+          <label style="text-align:center; flex:1; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:6px;">
             <input type="radio" name="${name}" value="${v}" style="margin:0"/>
-            <div style="font-size:12px font-weight:600; color:#475569;">${v}</div>
+            <div style="font-size:var(--suth-fs-caption); font-weight:600; color:var(--suth-ink-2);">${v}</div>
           </label>
         `,
           )
@@ -202,7 +203,7 @@ export default function AssessmentResult() {
     `;
 
     const renderQuestionBox = (index, text, name) => `
-      <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px; margin-bottom:12px; box-shadow:0 2px 6px rgba(0,0,0,0.05)">
+      <div style="background:var(--suth-surface-2); border-radius:var(--suth-radius-panel); padding:16px; margin-bottom:12px;">
         <p style="font-weight:600">${index}. ${text}</p>
         ${renderScale(name)}
       </div>
@@ -225,7 +226,7 @@ export default function AssessmentResult() {
       return questions
         .map(
           (q, i) => `
-        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px; margin-bottom:12px; box-shadow:0 2px 6px rgba(0,0,0,0.05)">
+        <div style="background:var(--suth-surface-2); border-radius:var(--suth-radius-panel); padding:16px; margin-bottom:12px;">
           <p style="font-weight:600">${i + 1}. ${q}</p>
           ${renderScale(`sus${i + 1}`)}
         </div>
@@ -240,9 +241,9 @@ export default function AssessmentResult() {
       showCloseButton: true,
       closeButtonHtml: "✕",
       html: `
-        <div style="text-align:left; max-height:450px; overflow:auto overflow-x:hidden;">
+        <div style="text-align:left; max-height:450px; overflow-y:auto; overflow-x:hidden;">
          
-        <div style="background:#fff; border-radius:12px; padding:20px; margin-bottom:15px; border-top:6px solid #7c3aed; box-shadow:0 4px 12px rgba(0,0,0,0.06)">
+        <div style="background:var(--suth-surface); border:1px solid var(--suth-line); border-radius:var(--suth-radius-card); padding:20px; margin-bottom:16px;">
             <h3 style="margin-bottom:15px"> ${t("assessment_result.eval_part1")}</h3>
             ${renderQuestionBox(1, t("assessment_result.eval_q1"), "q1")}
             ${renderQuestionBox(2, t("assessment_result.eval_q2"), "q2")}
@@ -251,19 +252,19 @@ export default function AssessmentResult() {
             ${renderQuestionBox(5, t("assessment_result.eval_q5"), "q5")}
           </div>
 
-          <div style="background:#fff; border-radius:12px; padding:20px; border-top:6px solid #6366f1; box-shadow:0 4px 12px rgba(0,0,0,0.06)">
+          <div style="background:var(--suth-surface); border:1px solid var(--suth-line); border-radius:var(--suth-radius-card); padding:20px;">
             <h3 style="margin-bottom:15px"> ${t("assessment_result.eval_part2")}</h3>
             ${renderSUS()}
           </div>
 
-          <div style="margin-top:20px; background:#fff; border-radius:12px; padding:20px; border-top:6px solid #10b981; box-shadow:0 4px 12px rgba(0,0,0,0.06)">
+          <div style="margin-top:20px; background:var(--suth-surface); border:1px solid var(--suth-line); border-radius:var(--suth-radius-card); padding:20px;">
             <p><b> ${t("assessment_result.eval_comment")}</b></p>
-            <textarea id="comment" class="swal2-textarea" placeholder="${t("assessment_result.eval_placeholder")}" style="height:80px; width: 250px; font-size:14px; padding:10px; margin-right:10px; border-radius:10px; box-sizing: border-box;"></textarea>
+            <textarea id="comment" class="swal2-textarea" placeholder="${t("assessment_result.eval_placeholder")}" style="height:80px; width:100%; margin:8px 0 0; font-size:var(--suth-fs-md); padding:10px; border-radius:var(--suth-radius); box-sizing:border-box;"></textarea>
           </div>
         </div>
       `,
       confirmButtonText: t("assessment_result.eval_submit"),
-      confirmButtonColor: "#7c3aed",
+      confirmButtonColor: "var(--suth-info)",
       preConfirm: () => {
         const getRadio = (name) => {
           const el = document.querySelector(`input[name="${name}"]:checked`);
@@ -372,7 +373,7 @@ export default function AssessmentResult() {
             html: `
               <p>${t("assessment_result.eval_success_desc")}</p>
             `,
-            confirmButtonColor: "#10b981",
+            confirmButtonColor: "var(--suth-risk-dot-low)",
           });
         } catch (error) {
           Swal.fire(
@@ -409,18 +410,18 @@ export default function AssessmentResult() {
         <div
           className="ar-success-hero"
           style={{
-            backgroundColor: isSaved ? "#ecfdf5" : "#f8fafc",
-            borderColor: isSaved ? "#10b981" : "#e2e8f0",
+            backgroundColor: isSaved ? "var(--suth-surface-2)" : "var(--suth-canvas)",
+            borderColor: isSaved ? "var(--suth-success-line)" : "var(--suth-line-soft)",
           }}
         >
           <div
             className="ar-success-icon"
-            style={{ backgroundColor: isSaved ? "#10b981" : "#3b82f6" }}
+            style={{ backgroundColor: isSaved ? "var(--suth-risk-dot-low)" : "var(--suth-info)" }}
           >
             {isSaved ? (
-              <FiCheckCircle size={40} color="#fff" />
+              <FiCheckCircle size={40} color="var(--suth-on-action)" />
             ) : (
-              <FiCheck size={40} color="#fff" />
+              <FiCheck size={40} color="var(--suth-on-action)" />
             )}
           </div>
           <h2 className="ar-hero-title">
@@ -428,7 +429,7 @@ export default function AssessmentResult() {
               ? t("assessment_result.hero_saved_title")
               : t("assessment_result.hero_done_title")}
           </h2>
-          <p className="ar-hero-subtitle" style={{ color: "#475569" }}>
+          <p className="ar-hero-subtitle" style={{ color: "var(--suth-ink-2)" }}>
             {isSaved ? (
               t("assessment_result.hero_saved_desc")
             ) : results.length > 0 ? (
@@ -459,7 +460,7 @@ export default function AssessmentResult() {
                   advice: t("assessment_result.total_score_advice", {
                     count: res.partCount,
                   }),
-                  color: "#2563eb",
+                  color: "var(--suth-info)",
                 }
               : res;
             const level = getLevelConfig(totalResult, t);
@@ -479,21 +480,24 @@ export default function AssessmentResult() {
                       className="ar-level-badge"
                       style={{ color: level.textColor }}
                     >
-                      <FiActivity size={24} /> <span>{toDisplayText(level.label)}</span>
+                      <FiActivity size={24} />{" "}
+                      <span>{toDisplayText(level.label)}</span>
                     </div>
                     <p className="ar-card-title">
-                      {toDisplayText(isTotal
-                        ? t("assessment_result.total_score_summary", {
-                            count: res.partCount,
-                          })
-                        : res.title ||
-                          t("assessment_result.score_section", {
-                            index:
-                              index +
-                              (displayResults[0]?.displayKind === "total"
-                                ? 0
-                                : 1),
-                          }))}
+                      {toDisplayText(
+                        isTotal
+                          ? t("assessment_result.total_score_summary", {
+                              count: res.partCount,
+                            })
+                          : res.title ||
+                              t("assessment_result.score_section", {
+                                index:
+                                  index +
+                                  (displayResults[0]?.displayKind === "total"
+                                    ? 0
+                                    : 1),
+                              }),
+                      )}
                     </p>
 
                     <div
@@ -505,7 +509,7 @@ export default function AssessmentResult() {
                     >
                       <span
                         className="ar-score__label"
-                        style={{ color: "#64748b" }}
+                        style={{ color: "var(--suth-muted)" }}
                       >
                         {t("assessment_result.score")}
                       </span>
@@ -537,7 +541,10 @@ export default function AssessmentResult() {
 
                     <ul className="ar-advice__list">
                       {level.advice.map((a, i) => (
-                        <li key={i} dangerouslySetInnerHTML={{__html:toSafeHtml(a)}} />
+                        <li
+                          key={i}
+                          dangerouslySetInnerHTML={{ __html: toSafeHtml(a) }}
+                        />
                       ))}
                     </ul>
                   </div>
@@ -556,7 +563,10 @@ export default function AssessmentResult() {
                         background: `radial-gradient(circle at 50% 50%, rgba(${level.rgb}, 0.25), transparent 70%)`,
                       }}
                     >
-                      <img src={level.visualImage} alt={toDisplayText(level.label)} />
+                      <img
+                        src={level.visualImage}
+                        alt={toDisplayText(level.label)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -579,8 +589,8 @@ export default function AssessmentResult() {
             <button
               className="ar-btn"
               style={{
-                background: isColorTooBright(results[0]?.color || "#2d7d81")
-                  ? "#2d7d81"
+                background: isColorTooBright(results[0]?.color || "var(--suth-info)")
+                  ? "var(--suth-info)"
                   : getLevelConfig(results[0]).color,
                 display: "flex",
                 gap: "8px",
@@ -597,7 +607,7 @@ export default function AssessmentResult() {
           <button
             className="ar-btn"
             style={{
-              background: "#7c3aed",
+              background: "var(--suth-info)",
               display: "flex",
               gap: "8px",
               alignItems: "center",

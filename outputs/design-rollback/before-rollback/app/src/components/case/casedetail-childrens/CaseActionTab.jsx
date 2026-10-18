@@ -1,6 +1,6 @@
-import { Button as UiButton } from '../../ui/index.jsx';
-import SearchableSelect from '../../SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { Button as UiButton } from "../../ui/index.jsx";
+import SearchableSelect from "../../SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import React, { useState } from "react";
 import {
   FaArchive,
@@ -396,7 +396,8 @@ export default function CaseActionTab(props) {
                             {systemOriginal &&
                               systemOriginal.label !== currentRisk?.label && (
                                 <div className="cdm-dynamic-risk-system-note">
-                                  (ผลคำนวณเดิม: {toDisplayText(systemOriginal.label)})
+                                  (ผลคำนวณเดิม:{" "}
+                                  {toDisplayText(systemOriginal.label)})
                                 </div>
                               )}
                           </div>
@@ -440,7 +441,8 @@ export default function CaseActionTab(props) {
                               }
                             />
                             <div style={{ display: "flex", gap: "8px" }}>
-                              <UiButton variant="primary"
+                              <UiButton
+                                variant="primary"
                                 type="button"
                                 className="cdm-btn-confirm-sm"
                                 onClick={() => {
@@ -466,7 +468,8 @@ export default function CaseActionTab(props) {
                               >
                                 ยืนยัน
                               </UiButton>
-                              <UiButton variant="secondary"
+                              <UiButton
+                                variant="secondary"
                                 type="button"
                                 className="cdm-btn-cancel-sm"
                                 onClick={() => setEditingRiskId(null)}
@@ -484,7 +487,6 @@ export default function CaseActionTab(props) {
             )}
           </div>
         )}
-
       </div>
 
       {/* 🟢 ส่วนบันทึกการติดตาม (Redesigned) */}
@@ -506,7 +508,8 @@ export default function CaseActionTab(props) {
               textAlign: "center",
             }}
           >
-            <UiButton variant="secondary"
+            <UiButton
+              variant="secondary"
               type="button"
               className="cdm-btn cdm-btn-outline"
               onClick={() => setShowRiskSection(true)}
@@ -619,200 +622,200 @@ export default function CaseActionTab(props) {
             />
           </div>
         )}
-      {clinicType === "sti" && (
-        <div
-          className="cw-clinical-fields"
-          style={{
-            background: "#fff1f2",
-            border: "1px solid #fecdd3",
-            opacity: masterCaseInfo?.status === "Closed" ? 0.5 : 1,
-            pointerEvents:
-              masterCaseInfo?.status === "Closed" ? "none" : "auto",
-          }}
-        >
-          <h4
+        {clinicType === "sti" && (
+          <div
+            className="cw-clinical-fields"
             style={{
-              color: "#be185d",
-              margin: "0 0 16px 0",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              fontSize: "15px",
+              background: "#fff1f2",
+              border: "1px solid #fecdd3",
+              opacity: masterCaseInfo?.status === "Closed" ? 0.5 : 1,
+              pointerEvents:
+                masterCaseInfo?.status === "Closed" ? "none" : "auto",
             }}
           >
-            🩸 บันทึกผลทางคลินิก (เฉพาะโรคติดต่อทางเพศสัมพันธ์)
-          </h4>
-
-          <div style={{ marginBottom: "16px" }}>
-            <label className="cdm-form-label" style={{ color: "#9d174d" }}>
-              ผลเจาะเลือด
-            </label>
-            <div
+            <h4
               style={{
+                color: "#be185d",
+                margin: "0 0 16px 0",
                 display: "flex",
-                gap: "16px",
-                marginTop: "6px",
-                flexWrap: "wrap",
+                alignItems: "center",
+                gap: "8px",
+                fontSize: "15px",
               }}
             >
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                }}
-              >
-                <input
-                  type="radio"
-                  value="none"
-                  name="blood_test"
-                  checked={(clinicalData.blood_test || "none") === "none"}
-                  onChange={(e) =>
-                    setClinicalData({
-                      ...clinicalData,
-                      blood_test: e.target.value,
-                    })
-                  }
-                  style={{ accentColor: "#be185d" }}
-                />
-                ยังไม่มีข้อมูล
-              </label>
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                }}
-              >
-                <input
-                  type="radio"
-                  value="negative"
-                  name="blood_test"
-                  checked={clinicalData.blood_test === "negative"}
-                  onChange={(e) =>
-                    setClinicalData({
-                      ...clinicalData,
-                      blood_test: e.target.value,
-                    })
-                  }
-                  style={{ accentColor: "#be185d" }}
-                />
-                <span style={{ color: "#10b981", fontWeight: "bold" }}>
-                  Negative
-                </span>
-              </label>
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                }}
-              >
-                <input
-                  type="radio"
-                  value="positive"
-                  name="blood_test"
-                  checked={clinicalData.blood_test === "positive"}
-                  onChange={(e) =>
-                    setClinicalData({
-                      ...clinicalData,
-                      blood_test: e.target.value,
-                    })
-                  }
-                  style={{ accentColor: "#be185d" }}
-                />
-                <span style={{ color: "#ef4444", fontWeight: "bold" }}>
-                  Positive
-                </span>
-              </label>
-            </div>
-          </div>
+              🩸 บันทึกผลทางคลินิก (เฉพาะโรคติดต่อทางเพศสัมพันธ์)
+            </h4>
 
-          <div>
-            <label className="cdm-form-label" style={{ color: "#9d174d" }}>
-              การรับยา PrEP
-            </label>
-            <div
-              style={{
-                display: "flex",
-                gap: "16px",
-                marginTop: "6px",
-                flexWrap: "wrap",
-              }}
-            >
-              <label
+            <div style={{ marginBottom: "16px" }}>
+              <label className="cdm-form-label" style={{ color: "#9d174d" }}>
+                ผลเจาะเลือด
+              </label>
+              <div
                 style={{
                   display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  cursor: "pointer",
-                  fontSize: "14px",
+                  gap: "16px",
+                  marginTop: "6px",
+                  flexWrap: "wrap",
                 }}
               >
-                <input
-                  type="radio"
-                  value="none"
-                  name="prep"
-                  checked={(clinicalData.prep || "none") === "none"}
-                  onChange={(e) =>
-                    setClinicalData({ ...clinicalData, prep: e.target.value })
-                  }
-                  style={{ accentColor: "#be185d" }}
-                />
-                ไม่ได้รับ
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    value="none"
+                    name="blood_test"
+                    checked={(clinicalData.blood_test || "none") === "none"}
+                    onChange={(e) =>
+                      setClinicalData({
+                        ...clinicalData,
+                        blood_test: e.target.value,
+                      })
+                    }
+                    style={{ accentColor: "#be185d" }}
+                  />
+                  ยังไม่มีข้อมูล
+                </label>
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    value="negative"
+                    name="blood_test"
+                    checked={clinicalData.blood_test === "negative"}
+                    onChange={(e) =>
+                      setClinicalData({
+                        ...clinicalData,
+                        blood_test: e.target.value,
+                      })
+                    }
+                    style={{ accentColor: "#be185d" }}
+                  />
+                  <span style={{ color: "#10b981", fontWeight: "bold" }}>
+                    Negative
+                  </span>
+                </label>
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    value="positive"
+                    name="blood_test"
+                    checked={clinicalData.blood_test === "positive"}
+                    onChange={(e) =>
+                      setClinicalData({
+                        ...clinicalData,
+                        blood_test: e.target.value,
+                      })
+                    }
+                    style={{ accentColor: "#be185d" }}
+                  />
+                  <span style={{ color: "#ef4444", fontWeight: "bold" }}>
+                    Positive
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label className="cdm-form-label" style={{ color: "#9d174d" }}>
+                การรับยา PrEP
               </label>
-              <label
+              <div
                 style={{
                   display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  cursor: "pointer",
-                  fontSize: "14px",
+                  gap: "16px",
+                  marginTop: "6px",
+                  flexWrap: "wrap",
                 }}
               >
-                <input
-                  type="radio"
-                  value="prep_with_blood"
-                  name="prep"
-                  checked={clinicalData.prep === "prep_with_blood"}
-                  onChange={(e) =>
-                    setClinicalData({ ...clinicalData, prep: e.target.value })
-                  }
-                  style={{ accentColor: "#be185d" }}
-                />
-                รับยา (เจาะเลือดที่นี่)
-              </label>
-              <label
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                }}
-              >
-                <input
-                  type="radio"
-                  value="prep_without_blood"
-                  name="prep"
-                  checked={clinicalData.prep === "prep_without_blood"}
-                  onChange={(e) =>
-                    setClinicalData({ ...clinicalData, prep: e.target.value })
-                  }
-                  style={{ accentColor: "#be185d" }}
-                />
-                รับยา (มีประวัติตรวจแล้ว)
-              </label>
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    value="none"
+                    name="prep"
+                    checked={(clinicalData.prep || "none") === "none"}
+                    onChange={(e) =>
+                      setClinicalData({ ...clinicalData, prep: e.target.value })
+                    }
+                    style={{ accentColor: "#be185d" }}
+                  />
+                  ไม่ได้รับ
+                </label>
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    value="prep_with_blood"
+                    name="prep"
+                    checked={clinicalData.prep === "prep_with_blood"}
+                    onChange={(e) =>
+                      setClinicalData({ ...clinicalData, prep: e.target.value })
+                    }
+                    style={{ accentColor: "#be185d" }}
+                  />
+                  รับยา (เจาะเลือดที่นี่)
+                </label>
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    value="prep_without_blood"
+                    name="prep"
+                    checked={clinicalData.prep === "prep_without_blood"}
+                    onChange={(e) =>
+                      setClinicalData({ ...clinicalData, prep: e.target.value })
+                    }
+                    style={{ accentColor: "#be185d" }}
+                  />
+                  รับยา (มีประวัติตรวจแล้ว)
+                </label>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
         <div className="cdm-tracking-header">
           <h4 className="cdm-tracking-title">
@@ -1021,11 +1024,12 @@ export default function CaseActionTab(props) {
                 })}
             </div>
 
-            <UiButton variant="primary"
+            <UiButton
+              variant="primary"
               type="button"
               className="cdm-btn-unified-save"
               onClick={finalizeTemplate}
-              style={{marginTop: "20px"}}
+              style={{ marginTop: "20px" }}
             >
               <FaCheckSquare size={16} /> บันทึกลงตารางสรุป
             </UiButton>
@@ -1207,7 +1211,12 @@ export default function CaseActionTab(props) {
       {/* 🟢 ห่อปุ่มบันทึกด้วย Wrapper เพื่อให้มันสามารถติดหนึบ (Sticky) ด้านล่างสุดได้บนมือถือ */}
       {masterCaseInfo?.status !== "Closed" && (
         <div className="cdm-sticky-save-wrapper">
-          <UiButton variant="primary" type="submit" className="cdm-btn-unified-save" onClick={handleSaveAll}>
+          <UiButton
+            variant="primary"
+            type="submit"
+            className="cdm-btn-unified-save"
+            onClick={handleSaveAll}
+          >
             <FaSave size={18} /> บันทึกการดำเนินการทั้งหมด
           </UiButton>
         </div>

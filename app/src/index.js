@@ -8,6 +8,8 @@ import "./styles/case-workspace.css";
 import "./styles/modal-system.css";
 import "./styles/button-system.css";
 import "./styles/filter-system.css";
+import "./styles/data-table-system.css";
+import "./styles/kit-system.css";
 import { registerServiceWorker } from "./pwa/registerServiceWorker.js";
 
 registerServiceWorker();

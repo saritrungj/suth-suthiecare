@@ -1,7 +1,8 @@
+const { upsertSchoolTeacher } = require("../utils/schoolTeachers");
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const db = require("../config/db");
-const { canManageSchool } = require("../utils/schoolAccess");
+const { canManageStaffAt } = require("../utils/schoolAccess");
 const { validateUserInput } = require("../utils/userValidation");
 const {
   generateTemporaryPassword,
@@ -18,7 +19,7 @@ router.post("/teachers/import", async (req, res) => {
     "SELECT id FROM schools WHERE id=? AND organization_id=?",
     [school_id, req.organizationContext],
   );
-  if (!school || !canManageSchool(req.schoolAccess, school.id))
+  if (!school || !canManageStaffAt(req.schoolAccess, school.id, "create"))
     return res
       .status(403)
       .json({ message: "ไม่มีสิทธิ์นำเข้าครูของโรงเรียนนี้" });
@@ -154,14 +155,11 @@ router.post("/teachers/import", async (req, res) => {
             [userId, req.organizationContext, baseRole.id],
           );
         }
-        await connection.query(
-          "INSERT INTO school_teachers (school_id,user_id,employee_code,status) VALUES (?,?,?,'active') ON DUPLICATE KEY UPDATE status='active',employee_code=VALUES(employee_code)",
-          [
-            school.id,
-            userId,
-            String(raw.employee_code || "").slice(0, 50) || null,
-          ],
-        );
+        await upsertSchoolTeacher(connection, {
+          schoolId: school.id,
+          userId,
+          employeeCode: String(raw.employee_code || "").slice(0, 50) || null,
+        });
         await connection.query(
           "INSERT INTO school_staff_roles (school_id,user_id,role_code,status,updated_by) VALUES (?,?,?,'active',?) ON DUPLICATE KEY UPDATE role_code=VALUES(role_code),status='active',updated_by=VALUES(updated_by)",
           [school.id, userId, role, req.user.id],

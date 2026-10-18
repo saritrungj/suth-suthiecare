@@ -1,7 +1,14 @@
-import { Surface as UiSurface, Badge as UiBadge } from '../../../components/ui/index.jsx';
-import { Button as UiButton, DataTable as UiDataTable, TextInput as UiTextInput } from '../../../components/ui/index.jsx';
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import {
+  Surface as UiSurface,
+  Badge as UiBadge,
+} from "../../../components/ui/index.jsx";
+import {
+  Button as UiButton,
+  DataTable as UiDataTable,
+  TextInput as UiTextInput,
+} from "../../../components/ui/index.jsx";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import { useCallback, useEffect, useState } from "react";
 import { FiEdit2, FiPlus, FiTrash2 } from "react-icons/fi";
 import {
@@ -98,14 +105,19 @@ function TypePanel({ kind, title, hint }) {
   };
 
   return (
-    <UiSurface as="section" className="sch-card" aria-labelledby={`${kind}-title`}>
+    <UiSurface
+      as="section"
+      className="sch-card"
+      aria-labelledby={`${kind}-title`}
+    >
       <div className="sch-card-head">
         <div>
           <h2 id={`${kind}-title`}>{title}</h2>
           <span className="sch-muted">{hint}</span>
         </div>
         {access?.can_create_school && (
-          <UiButton variant="primary"
+          <UiButton
+            variant="primary"
             type="button"
             className="sch-btn"
             onClick={() =>
@@ -151,7 +163,9 @@ function TypePanel({ kind, title, hint }) {
                   <td>
                     <div className="sch-row-actions">
                       {access?.can_update_school && (
-                        <UiButton variant="secondary" size="icon"
+                        <UiButton
+                          variant="secondary"
+                          size="icon"
                           type="button"
                           className="sch-icon-btn"
                           aria-label={`แก้ไข ${row.name}`}
@@ -161,7 +175,9 @@ function TypePanel({ kind, title, hint }) {
                         </UiButton>
                       )}
                       {access?.can_delete_school && (
-                        <UiButton variant="danger" size="icon"
+                        <UiButton
+                          variant="danger"
+                          size="icon"
                           type="button"
                           className="sch-icon-btn sch-danger"
                           aria-label={`ลบ ${row.name}`}
@@ -224,10 +240,16 @@ function TypeModal({ kind, title, initial, onClose, onSaved }) {
       onClose={onClose}
       footer={
         <>
-          <UiButton variant="secondary" type="button" className="sch-btn-secondary" onClick={onClose}>
+          <UiButton
+            variant="secondary"
+            type="button"
+            className="sch-btn-secondary"
+            onClick={onClose}
+          >
             ยกเลิก
           </UiButton>
-          <UiButton variant="primary"
+          <UiButton
+            variant="primary"
             type="submit"
             form={`${kind}-form`}
             className="sch-btn"

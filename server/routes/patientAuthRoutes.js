@@ -180,14 +180,32 @@ router.post("/register", authLimiter, async (req, res) => {
   }
 });
 
-router.post('/email/onboarding/request',otpLimiter,verifyPatientTokenAllowingPasswordChange,async(req,res)=>{
-  const [[account]]=await db.query("SELECT * FROM patient_accounts WHERE id=? AND status='active'",[req.patient.id]);
-  const email=accountEmail.decode(account,'patient_accounts');
-  if(!email)return res.status(422).json({message:'บัญชีนี้ยังไม่มีอีเมล กรุณาติดต่อโรงเรียน'});
-  if(account.email_verified_at)return res.status(409).json({message:'อีเมลได้รับการยืนยันแล้ว'});
-  const challenge=await createChallenge(db,{accountType:'patient',accountId:account.id,email,purpose:'email_verification',authVersion:Number(account.auth_version||0)});
-  res.json({success:true,...challenge});
-});
+router.post(
+  "/email/onboarding/request",
+  otpLimiter,
+  verifyPatientTokenAllowingPasswordChange,
+  async (req, res) => {
+    const [[account]] = await db.query(
+      "SELECT * FROM patient_accounts WHERE id=? AND status='active'",
+      [req.patient.id],
+    );
+    const email = accountEmail.decode(account, "patient_accounts");
+    if (!email)
+      return res
+        .status(422)
+        .json({ message: "บัญชีนี้ยังไม่มีอีเมล กรุณาติดต่อโรงเรียน" });
+    if (account.email_verified_at)
+      return res.status(409).json({ message: "อีเมลได้รับการยืนยันแล้ว" });
+    const challenge = await createChallenge(db, {
+      accountType: "patient",
+      accountId: account.id,
+      email,
+      purpose: "email_verification",
+      authVersion: Number(account.auth_version || 0),
+    });
+    res.json({ success: true, ...challenge });
+  },
+);
 router.post("/email/verify", otpLimiter, async (req, res) => {
   try {
     const result = await verifyChallenge(db, {

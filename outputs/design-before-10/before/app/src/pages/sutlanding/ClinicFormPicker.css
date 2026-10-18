@@ -759,5 +759,10 @@
   }
 }
 
-.cfp :is(button, select):focus-visible { outline: 3px solid var(--suth-focus); outline-offset: 3px; }
-.cfp-sort select { min-height: 44px; }
+.cfp :is(button, select):focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 3px;
+}
+.cfp-sort select {
+  min-height: 44px;
+}

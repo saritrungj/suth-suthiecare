@@ -1,5 +1,5 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
-import { toSafeHtml } from '../../../utils/richText.js';
+import { toDisplayText } from "../../../utils/textPresentation.js";
+import { toSafeHtml } from "../../../utils/richText.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
@@ -29,6 +29,7 @@ import { getPrivacyNotice } from "../../../services/api";
 import "../../admin/forms/styles/FormPreview.css";
 import LanguageSwitcher from "../../../components/LanguageSwitcher.jsx";
 import FormPrivacyNotice from "../../../components/FormPrivacyNotice.jsx";
+import { OrganizationScope } from "../../../components/OrganizationScope";
 
 // 🟢 นำเข้า Component และ Helper ที่แยกออกไป
 import {
@@ -48,6 +49,7 @@ import {
 } from "./formUtils";
 import QuestionRenderer from "./QuestionRenderer";
 import InteractiveResultPanel from "./InteractiveResultPanel";
+import { DEFAULT_FORM_THEME } from "../../admin/forms/formThemePalette";
 import { useTranslation } from "react-i18next";
 import { translateTextSmart } from "../../../utils/translator";
 
@@ -120,7 +122,7 @@ const FormView = () => {
         icon: "error",
         title: t("form_view.draft_save_error_title"),
         text: t("form_view.draft_save_error_desc"),
-        confirmButtonColor: "#f47932",
+        confirmButtonColor: "var(--suth-action)",
       });
       return;
     }
@@ -388,7 +390,7 @@ const FormView = () => {
             icon: "warning",
             title: "ข้อมูลผิดพลาด",
             text: "ข้อมูลแบบร่างมีความเสียหาย ไม่สามารถแสดงตัวอย่างได้",
-            confirmButtonColor: "#f59e0b",
+            confirmButtonColor: "var(--suth-risk-dot-medium)",
           }).then(() => {
             navigate(-1);
           });
@@ -807,13 +809,13 @@ const FormView = () => {
         icon: "question",
         showCloseButton: true,
         showCancelButton: true,
-        confirmButtonColor: "#3b82f6",
-        cancelButtonColor: "#ef4444",
+        confirmButtonColor: "var(--suth-info)",
+        cancelButtonColor: "var(--suth-risk-dot-high)",
         confirmButtonText: t("assessment_result.agree"),
         cancelButtonText: t("assessment_result.decline"),
         width: "500px",
         padding: "2.5em",
-        background: "#ffffff",
+        background: "var(--suth-surface)",
         customClass: {
           popup: "assessment-consent-dialog",
         },
@@ -837,7 +839,8 @@ const FormView = () => {
           ...payload,
           ...(urlToken ? { invitation_token: urlToken } : {}),
         });
-        if(Array.isArray(submitted.data?.score_results)) submittedResults=submitted.data.score_results;
+        if (Array.isArray(submitted.data?.score_results))
+          submittedResults = submitted.data.score_results;
       } catch (submitError) {
         setIsSubmitting(false);
         if (submitError.response?.status === 401) {
@@ -854,7 +857,7 @@ const FormView = () => {
             text:
               submitError.response?.data?.message ||
               t("assessment_result.send_error_desc"),
-            confirmButtonColor: "#ef4444",
+            confirmButtonColor: "var(--suth-risk-dot-high)",
           });
           return;
         }
@@ -862,7 +865,7 @@ const FormView = () => {
           icon: "error",
           title: t("assessment_result.send_error"),
           text: t("assessment_result.send_error_desc"),
-          confirmButtonColor: "#ef4444",
+          confirmButtonColor: "var(--suth-risk-dot-high)",
         });
         return;
       }
@@ -911,7 +914,7 @@ const FormView = () => {
   const hasInteractiveResults =
     totalScoredTargets > 0 && shouldShowRealtimeResults(resultDisplayMode);
   const bannerType = theme.bannerType || "none";
-  const bannerBgColor = theme.bannerBgColor || "#4285f4";
+  const bannerBgColor = theme.bannerBgColor || DEFAULT_FORM_THEME.bannerBgColor;
   const headerImage = theme.headerImage || null;
   const bannerText = theme.bannerText || "";
   const bannerTextAlign = theme.bannerTextAlign || "center";
@@ -921,7 +924,7 @@ const FormView = () => {
       <div className="preview-loading">
         <div style={{ textAlign: "center" }}>
           <div className="spinner"></div>
-          <p style={{ marginTop: "16px", color: "#64748b" }}>
+          <p style={{ marginTop: "16px", color: "var(--suth-muted)" }}>
             {isVerifyingToken
               ? "กำลังตรวจสอบความปลอดภัยของลิงก์..."
               : "กำลังเตรียมแบบประเมิน..."}
@@ -943,22 +946,22 @@ const FormView = () => {
     <div
       className="preview-page form-view-page"
       style={{
-        "--theme-color": theme.color || "#673ab7",
-        "--bg-color": theme.bg || "#f0f2f5",
+        "--theme-color": theme.color || DEFAULT_FORM_THEME.color,
+        "--bg-color": theme.bg || DEFAULT_FORM_THEME.bg,
       }}
     >
       {isPreviewMode && (
         <div
           style={{
-            background: "#ff9800",
-            color: "#fff",
+            background: "var(--suth-accent)",
+            color: "var(--suth-on-action)",
             textAlign: "center",
             padding: "8px 15px",
             position: "sticky",
             top: 0,
             zIndex: 10000,
             fontWeight: "bold",
-            fontSize: "14px",
+            fontSize: "var(--suth-fs-sm)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -1081,13 +1084,22 @@ const FormView = () => {
         >
           <form className="preview-form" onSubmit={(e) => e.preventDefault()}>
             <div className="preview-step-intro">
+              {formData.organization_name && currentStep === 0 && (
+                <OrganizationScope
+                  compact
+                  prefix="จัดทำโดย"
+                  name={formData.organization_name}
+                  orgType={formData.organization_type || "hospital"}
+                />
+              )}
               <h2
                 className="preview-step-intro__title"
                 dangerouslySetInnerHTML={{
-                  __html:
-                    toSafeHtml(translatedStep?.title ||
-                    stepData?.title ||
-                    "ส่วนที่ไม่มีชื่อ"),
+                  __html: toSafeHtml(
+                    translatedStep?.title ||
+                      stepData?.title ||
+                      "ส่วนที่ไม่มีชื่อ",
+                  ),
                 }}
               />
               {(translatedStep?.desc || stepData?.desc) && (
@@ -1147,8 +1159,8 @@ const FormView = () => {
                     {t("form_view.pdpa_desc")}
                     <span
                       style={{
-                        fontSize: "12px",
-                        color: "#9aa0a6",
+                        fontSize: "var(--suth-fs-caption)",
+                        color: "var(--suth-muted)",
                         fontStyle: "italic",
                       }}
                     >
@@ -1177,7 +1189,7 @@ const FormView = () => {
                           <div className="pdpa-check-circle">
                             {consents[q.id] === true && <FiCheck />}
                           </div>
-                          <span style={{ fontWeight: "600", fontSize: "15px" }}>
+                          <span style={{ fontWeight: "600", fontSize: "var(--suth-fs-body)" }}>
                             {t("form_view.pdpa_ack")}
                           </span>
                         </label>
@@ -1197,8 +1209,8 @@ const FormView = () => {
                     text: t("form_view.clear_form_confirm_desc"),
                     icon: "warning",
                     showCancelButton: true,
-                    confirmButtonColor: "#d93025",
-                    cancelButtonColor: "#64748b",
+                    confirmButtonColor: "var(--suth-risk-dot-high)",
+                    cancelButtonColor: "var(--suth-muted)",
                     confirmButtonText: t("form_view.clear_form_yes"),
                     cancelButtonText: t("form_view.clear_form_cancel"),
                   }).then((result) => {
@@ -1290,16 +1302,16 @@ const FormView = () => {
             width: "48px",
             height: "48px",
             borderRadius: "50%",
-            background: theme.color || "#673ab7",
-            color: "#fff",
+            background: theme.color || DEFAULT_FORM_THEME.color,
+            color: "var(--suth-on-action)",
             border: "none",
             padding: "0",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
-            fontSize: "22px",
+            boxShadow: "0 4px 16px rgba(31, 47, 63, 0.2)",
+            fontSize: "var(--suth-fs-title)",
             lineHeight: "1",
             overflow: "visible",
             zIndex: 999,

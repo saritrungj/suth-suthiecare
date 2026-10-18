@@ -1,6 +1,6 @@
-import { Button as UiButton } from '../ui/index.jsx';
-import { toDisplayText } from '../../utils/textPresentation.js';
-import {ExportButton} from "../ExcelExport";
+import { Button as UiButton } from "../ui/index.jsx";
+import { toDisplayText } from "../../utils/textPresentation.js";
+import { ExportButton } from "../ExcelExport";
 import CaseActivity, { responseActivity, logActivity } from "./CaseActivity";
 import { exportCaseData } from "../../services/api";
 import "./CaseDetailModal.css";
@@ -534,7 +534,9 @@ export default function CaseDetailModal({
           detail: log.detail,
         })),
       );
-      const apptRes = await getCaseAppointments(targetId, targetType).catch(() => ({ data: [] }));
+      const apptRes = await getCaseAppointments(targetId, targetType).catch(
+        () => ({ data: [] }),
+      );
       setAppointmentNo(apptRes.data.length + 1);
       await fetchServicesList();
       return activity;
@@ -1417,7 +1419,8 @@ export default function CaseDetailModal({
       tools={
         <>
           <div className="cw-menu" ref={manageMenuRef}>
-            <UiButton variant="secondary"
+            <UiButton
+              variant="secondary"
               type="button"
               className="cw-btn-secondary"
               aria-haspopup="true"
@@ -1477,7 +1480,8 @@ export default function CaseDetailModal({
             )}
           </div>
           <div className="cw-menu" ref={exportMenuRef}>
-            <UiButton variant="secondary"
+            <UiButton
+              variant="secondary"
               type="button"
               className="cw-btn-secondary"
               aria-haspopup="true"
@@ -1619,7 +1623,10 @@ export default function CaseDetailModal({
         </>
       }
     >
-      <ExportButton sources={[{resource:"case",id:data.id}]} title="รายละเอียดเคส" />
+      <ExportButton
+        sources={[{ resource: "case", id: data.id }]}
+        title="รายละเอียดเคส"
+      />
       <CaseActivity full activity={latestActivity} />
       {tabPanels[activeTab]}
     </CaseDrawer>

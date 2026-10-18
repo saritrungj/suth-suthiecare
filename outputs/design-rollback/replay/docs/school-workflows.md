@@ -4,15 +4,15 @@ Implementation plan: [school-implementation-plan.md](school-implementation-plan.
 
 ## Access
 
-| Stable school role | Student scope | Allowed health data |
-|---|---|---|
-| `admin` | Assigned school | General roster and minimal mental-risk summary; no clinical details |
-| `mental_admin` | Assigned school | Mental and physical records, family insights, guidance and case/referral work; school administration |
-| `physical_admin` | Assigned school | Physical records/assessments only; no mental-risk summary, family insights, guidance or generic case/history bypass |
-| `counselor` | Assigned school | Mental and physical records, family insights, guidance and case/referral work |
-| `homeroom` | Assigned homeroom/co-homeroom classrooms | Mental and physical records for those students |
-| `other` | Assigned classrooms | Minimal risk summary and school-configured care advice |
-| `dorm_staff` | Boarders in assigned school | Minimal risk summary and school-configured care advice |
+| Stable school role | Student scope                            | Allowed health data                                                                                                 |
+| ------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `admin`            | Assigned school                          | General roster and minimal mental-risk summary; no clinical details                                                 |
+| `mental_admin`     | Assigned school                          | Mental and physical records, family insights, guidance and case/referral work; school administration                |
+| `physical_admin`   | Assigned school                          | Physical records/assessments only; no mental-risk summary, family insights, guidance or generic case/history bypass |
+| `counselor`        | Assigned school                          | Mental and physical records, family insights, guidance and case/referral work                                       |
+| `homeroom`         | Assigned homeroom/co-homeroom classrooms | Mental and physical records for those students                                                                      |
+| `other`            | Assigned classrooms                      | Minimal risk summary and school-configured care advice                                                              |
+| `dorm_staff`       | Boarders in assigned school              | Minimal risk summary and school-configured care advice                                                              |
 
 Classroom assignments and stable roles are both needed for homeroom insight access. A teacher type label does not grant access. Role revocation applies on the next request. Physical-only exports reuse the same domain checks as normal reads. No legacy account is automatically assigned a new clinical role.
 

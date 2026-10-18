@@ -1,13 +1,13 @@
 .patient-auth-page {
-  --patient-orange: #f47932;
-  --patient-orange-hover: #e56822;
-  --patient-orange-text: #a9430b;
-  --patient-navy: #15283d;
-  --patient-navy-soft: #213b55;
-  --patient-ink: #1f2f3f;
-  --patient-muted: #526578;
-  --patient-line: #d8e0e7;
-  --patient-surface: #f7f9fb;
+  --patient-orange: var(--suth-action);
+  --patient-orange-hover: var(--suth-action-hover);
+  --patient-orange-text: var(--suth-action);
+  --patient-navy: var(--suth-ink);
+  --patient-navy-soft: var(--suth-ink);
+  --patient-ink: var(--suth-ink);
+  --patient-muted: var(--suth-muted);
+  --patient-line: var(--suth-line);
+  --patient-surface: var(--suth-canvas);
   --patient-text-sm: 0.875rem;
   --patient-text-base: 1rem;
   --patient-text-title: 1.5rem;
@@ -20,7 +20,7 @@
   justify-content: center;
   background: var(--patient-surface);
   color: var(--patient-ink);
-  font-family: "Sarabun", "Noto Sans Thai", system-ui, sans-serif;
+  font-family: var(--suth-font);
 }
 
 .patient-auth-page * {
@@ -36,8 +36,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  border-radius: 10px;
-  color: #334a60;
+  border-radius: var(--suth-radius);
+  color: var(--suth-ink-2);
   font-size: var(--patient-text-sm);
   font-weight: 700;
   text-decoration: none;
@@ -47,8 +47,8 @@
 }
 
 .patient-auth-home:hover {
-  background: #e9eef3;
-  color: var(--patient-orange-text);
+  background: var(--suth-line-soft);
+  color: var(--suth-action-ink);
 }
 
 .patient-login-shell {
@@ -57,9 +57,9 @@
   display: grid;
   grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr);
   overflow: hidden;
-  border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0 12px 36px rgba(21, 40, 61, 0.12);
+  border-radius: var(--suth-radius-panel);
+  background: var(--suth-surface);
+  box-shadow: 0 12px 36px rgba(31, 47, 63, 0.12);
 }
 
 .patient-login-intro {
@@ -68,7 +68,7 @@
   display: flex;
   flex-direction: column;
   background: var(--patient-navy);
-  color: #f7fbff;
+  color: var(--suth-on-action);
   overflow: hidden;
 }
 
@@ -89,15 +89,15 @@
 
 .patient-login-kicker {
   margin: 0 0 12px;
-  color: #ffb487;
+  color: var(--suth-action);
   font-size: var(--patient-text-sm);
   font-weight: 700;
 }
 
 .patient-login-intro h2 {
   margin: 0;
-  color: #ffffff;
-  font-size: 2.25rem;
+  color: var(--suth-on-action);
+  font-size: var(--suth-fs-display);
   line-height: 1.2;
   letter-spacing: -0.025em;
   text-wrap: balance;
@@ -106,7 +106,7 @@
 .patient-login-intro-copy > p:last-child {
   max-width: 48ch;
   margin: 18px 0 0;
-  color: #cfdae4;
+  color: var(--suth-control-line);
   font-size: var(--patient-text-base);
   line-height: 1.65;
   text-wrap: pretty;
@@ -126,14 +126,14 @@
   grid-template-columns: 24px minmax(0, 1fr);
   align-items: center;
   gap: 12px;
-  color: #e4edf5;
+  color: color-mix(in srgb, var(--suth-on-action) 78%, transparent);
   font-size: var(--patient-text-sm);
   line-height: 1.55;
 }
 
 .patient-login-benefit svg {
-  color: #ff9c62;
-  font-size: 20px;
+  color: var(--suth-action-ink);
+  font-size: var(--suth-fs-title);
 }
 
 .patient-login-form-panel {
@@ -157,8 +157,8 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.25rem;
   border: 1px solid var(--patient-line);
-  border-radius: 0.625rem;
-  background: #eef3f5;
+  border-radius: var(--suth-radius);
+  background: var(--suth-neutral-tint);
 }
 
 .patient-login-role-switcher button {
@@ -169,7 +169,7 @@
   background: transparent;
   color: var(--patient-muted);
   font: inherit;
-  font-size: 0.875rem;
+  font-size: var(--suth-fs-sm);
   font-weight: 700;
   cursor: pointer;
   transition:
@@ -184,12 +184,12 @@
 
 .patient-login-role-switcher button.is-active {
   background: var(--patient-navy);
-  color: #ffffff;
-  box-shadow: 0 2px 4px rgba(16, 38, 56, 0.16);
+  color: var(--suth-on-action);
+  box-shadow: 0 2px 4px rgba(31, 47, 63, 0.16);
 }
 
 .patient-login-role-switcher button:focus-visible {
-  outline: 3px solid rgba(244, 121, 50, 0.38);
+  outline: 3px solid color-mix(in srgb, var(--suth-action) 38%, transparent);
   outline-offset: 2px;
 }
 
@@ -199,10 +199,10 @@
   flex: 0 0 46px;
   display: grid;
   place-items: center;
-  border-radius: 12px;
-  background: #fff0e7;
-  color: var(--patient-orange-text);
-  font-size: 21px;
+  border-radius: var(--suth-radius);
+  background: var(--suth-danger-tint);
+  color: var(--suth-action-ink);
+  font-size: var(--suth-fs-title);
 }
 
 .patient-login-heading h1,
@@ -235,7 +235,7 @@
 }
 
 .patient-auth-field label {
-  color: #263a4d;
+  color: var(--suth-ink);
   font-size: var(--patient-text-sm);
   font-weight: 700;
 }
@@ -244,9 +244,9 @@
   width: 100%;
   min-height: 50px;
   padding: 12px 14px;
-  border: 1px solid #bcc8d3;
-  border-radius: 10px;
-  background: #ffffff;
+  border: 1px solid var(--suth-control-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
   color: var(--patient-ink);
   font: inherit;
   font-size: var(--patient-text-base);
@@ -256,22 +256,22 @@
 }
 
 .patient-auth-field input::placeholder {
-  color: #667789;
+  color: var(--suth-muted);
   opacity: 1;
 }
 
 .patient-auth-field input:hover:not(:disabled) {
-  border-color: #8797a7;
+  border-color: var(--suth-control-line);
 }
 
 .patient-auth-field input:focus-visible {
   border-color: var(--patient-orange-text);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(244, 121, 50, 0.22);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--suth-action) 22%, transparent);
 }
 
 .patient-auth-field input:disabled {
-  background: #edf1f4;
+  background: var(--suth-neutral-tint);
   cursor: not-allowed;
 }
 
@@ -293,10 +293,10 @@
   display: grid;
   place-items: center;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--suth-radius-sm);
   background: transparent;
-  color: #536679;
-  font-size: 20px;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-title);
 }
 
 .patient-password-rules {
@@ -318,15 +318,15 @@
 .patient-password-rules svg {
   flex: 0 0 auto;
   margin-top: 3px;
-  color: #b42318;
+  color: var(--suth-danger);
 }
 
 .patient-password-rules li.is-met {
-  color: #1d6b3f;
+  color: var(--suth-success);
 }
 
 .patient-password-rules li.is-met svg {
-  color: #1d6b3f;
+  color: var(--suth-success);
 }
 
 .patient-password-rules .sr-only {
@@ -342,7 +342,7 @@
 }
 
 .patient-password-toggle:hover {
-  background: #edf1f4;
+  background: var(--suth-neutral-tint);
   color: var(--patient-ink);
 }
 
@@ -352,7 +352,7 @@
 .patient-auth-button:focus-visible,
 .patient-password-help a:focus-visible,
 .patient-password-help button:focus-visible {
-  outline: 3px solid rgba(244, 121, 50, 0.34);
+  outline: 3px solid color-mix(in srgb, var(--suth-action) 34%, transparent);
   outline-offset: 2px;
 }
 
@@ -369,9 +369,9 @@
   display: inline-flex;
   align-items: center;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--suth-radius-sm);
   background: transparent;
-  color: var(--patient-orange-text);
+  color: var(--suth-action-ink);
   font: inherit;
   font-size: var(--patient-text-sm);
   font-weight: 700;
@@ -384,13 +384,13 @@
 
 .patient-password-help a:hover,
 .patient-password-help button:hover {
-  color: var(--patient-orange-hover);
+  color: var(--suth-action-ink);
   text-decoration-thickness: 2px;
 }
 
 .patient-password-help-dialog {
-  border-radius: 12px;
-  font-family: "Sarabun", system-ui, sans-serif;
+  border-radius: var(--suth-radius);
+  font-family: var(--suth-font);
 }
 
 .patient-line-qr-dialog {
@@ -424,9 +424,9 @@
   justify-content: center;
   gap: 9px;
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--suth-radius);
   background: var(--patient-orange);
-  color: #fff;
+  color: var(--suth-on-action);
   font: inherit;
   font-size: var(--patient-text-base);
   font-weight: 800;
@@ -453,8 +453,8 @@
 .patient-auth-spinner {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(50, 24, 10, 0.28);
-  border-top-color: #32180a;
+  border: 2px solid color-mix(in srgb, var(--suth-ink) 28%, transparent);
+  border-top-color: var(--suth-ink);
   border-radius: 50%;
   animation: patient-auth-spin 700ms linear infinite;
 }
@@ -466,9 +466,9 @@
   grid-template-columns: 20px minmax(0, 1fr);
   align-items: start;
   gap: 9px;
-  border-radius: 10px;
-  background: #fff1f1;
-  color: #8c2020;
+  border-radius: var(--suth-radius);
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
   font-size: var(--patient-text-sm);
   line-height: 1.5;
 }
@@ -484,10 +484,10 @@
   grid-template-columns: 20px minmax(0, 1fr);
   align-items: start;
   gap: 9px;
-  border: 1px solid #93c9a7;
-  border-radius: 10px;
-  background: #eff9f2;
-  color: #185c38;
+  border: 1px solid var(--suth-care-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-care-surface);
+  color: var(--suth-success);
   font-size: var(--patient-text-sm);
   font-weight: 700;
   line-height: 1.5;
@@ -495,7 +495,7 @@
 
 .patient-auth-notice svg {
   margin-top: 2px;
-  color: #14713f;
+  color: var(--suth-success);
 }
 
 .patient-login-page .patient-login-register {
@@ -506,8 +506,8 @@
   align-items: center;
   gap: 8px 16px;
   border: 1px solid var(--patient-line);
-  border-radius: 10px;
-  background: #f6f8f7;
+  border-radius: var(--suth-radius);
+  background: var(--suth-canvas);
   color: var(--patient-muted);
   font-size: var(--patient-text-base);
 }
@@ -529,7 +529,7 @@
   justify-content: center;
   border: 0;
   background: transparent;
-  color: var(--patient-orange-text);
+  color: var(--suth-action-ink);
   font: inherit;
   font-weight: 800;
   text-align: center;
@@ -539,13 +539,13 @@
 }
 
 .patient-auth-link:hover {
-  color: #7c3108;
+  color: var(--suth-warning);
 }
 
 .patient-login-privacy {
   max-width: 46ch;
   margin: 8px auto 0;
-  color: #667789;
+  color: var(--suth-muted);
   font-size: var(--patient-text-sm);
   line-height: 1.5;
   text-align: center;
@@ -555,9 +555,9 @@
 .patient-auth-card {
   width: min(100%, 520px);
   padding: clamp(24px, 5vw, 44px);
-  border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0 12px 36px rgba(21, 40, 61, 0.12);
+  border-radius: var(--suth-radius-panel);
+  background: var(--suth-surface);
+  box-shadow: 0 12px 36px rgba(31, 47, 63, 0.12);
 }
 
 .patient-auth-card form {
@@ -607,7 +607,7 @@
   }
 
   .patient-login-intro h2 {
-    font-size: 1.875rem;
+    font-size: var(--suth-fs-display);
   }
 
   .patient-login-intro-copy > p:last-child,
@@ -625,17 +625,17 @@
   .patient-auth-page {
     padding-right: max(12px, env(safe-area-inset-right));
     padding-left: max(12px, env(safe-area-inset-left));
-    background: #ffffff;
+    background: var(--suth-surface);
   }
 
   .patient-auth-home span {
-    font-size: 0.9rem;
+    font-size: var(--suth-fs-sm);
   }
 
   .patient-login-shell,
   .patient-auth-card {
     width: 100%;
-    border-radius: 12px;
+    border-radius: var(--suth-radius);
     box-shadow: none;
   }
 
@@ -645,11 +645,11 @@
 
   .patient-login-kicker {
     margin-bottom: 7px;
-    font-size: 0.84rem;
+    font-size: var(--suth-fs-label);
   }
 
   .patient-login-intro h2 {
-    font-size: 1.75rem;
+    font-size: var(--suth-fs-display);
     line-height: 1.35;
   }
 
@@ -693,13 +693,44 @@
   }
 }
 
-.patient-email-verification { width:min(100%,480px); margin:auto; padding:clamp(20px,5vw,32px); background:var(--surface,#fff); border-radius:14px; display:grid; gap:16px; }
-.patient-email-verification form { display:grid; gap:16px; }
-.patient-email-verification label { display:grid; gap:8px; }
-.patient-email-verification input { min-height:44px; padding:10px 12px; border:1px solid var(--control-line,#afbdc7); border-radius:10px; }
-.patient-email-verification button { min-height:44px; padding:10px 16px; background:var(--action,#c2410c); color:#fff; border:0; border-radius:10px; }
-.patient-email-verification button:disabled { opacity:.65; cursor:wait; }
-.patient-email-verification a { color:var(--action-ink,#a9430b); }
+.patient-email-verification {
+  width: min(100%, 480px);
+  margin: auto;
+  padding: clamp(20px, 5vw, 32px);
+  background: var(--surface, var(--suth-surface));
+  border-radius: var(--suth-radius-icon);
+  display: grid;
+  gap: 16px;
+}
+.patient-email-verification form {
+  display: grid;
+  gap: 16px;
+}
+.patient-email-verification label {
+  display: grid;
+  gap: 8px;
+}
+.patient-email-verification input {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--control-line, var(--suth-control-line));
+  border-radius: var(--suth-radius);
+}
+.patient-email-verification button {
+  min-height: 44px;
+  padding: 10px 16px;
+  background: var(--action, var(--suth-action));
+  color: var(--suth-on-action);
+  border: 0;
+  border-radius: var(--suth-radius);
+}
+.patient-email-verification button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+.patient-email-verification a {
+  color: var(--action-ink, var(--suth-action-ink));
+}
 
 @media (max-width: 350px) {
   .patient-login-heading-icon {
@@ -733,19 +764,18 @@
 
 /* Civic authentication layout shared by patient history and registration. */
 .patient-civic-auth-page {
-  --patient-civic-paper: #f3f5f3;
-  --patient-civic-grid: rgba(24, 49, 73, 0.075);
+  --patient-civic-paper: var(--suth-surface-2);
+  --patient-civic-grid: rgba(31, 47, 63, 0.07);
   position: relative;
   isolation: isolate;
   overflow-x: hidden;
   background-color: var(--patient-civic-paper);
-  background-image:
-    linear-gradient(var(--patient-civic-grid) 1px, transparent 1px),
+  background-image: linear-gradient(var(--patient-civic-grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--patient-civic-grid) 1px, transparent 1px),
     linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.82),
-      rgba(226, 232, 231, 0.38)
+      color-mix(in srgb, var(--suth-surface) 82%, transparent),
+      color-mix(in srgb, var(--suth-line-soft) 38%, transparent)
     );
   background-size:
     48px 48px,
@@ -759,8 +789,8 @@
 
 .patient-civic-auth-page .patient-auth-home {
   z-index: 4;
-  border: 1px solid rgba(24, 49, 73, 0.12);
-  background: rgba(243, 245, 243, 0.9);
+  border: 1px solid rgba(31, 47, 63, 0.12);
+  background: color-mix(in srgb, var(--suth-surface-2) 90%, transparent);
   color: var(--patient-navy);
   backdrop-filter: blur(8px);
 }
@@ -775,10 +805,10 @@
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  border: 1px solid rgba(24, 49, 73, 0.14);
-  border-radius: 10px;
-  background: rgba(243, 245, 243, 0.9);
-  box-shadow: 0 2px 8px rgba(16, 38, 56, 0.05);
+  border: 1px solid rgba(31, 47, 63, 0.14);
+  border-radius: var(--suth-radius);
+  background: color-mix(in srgb, var(--suth-surface-2) 90%, transparent);
+  box-shadow: 0 2px 8px rgba(31, 47, 63, 0.05);
   backdrop-filter: blur(8px);
 }
 
@@ -787,11 +817,11 @@
   min-height: 36px;
   padding: 6px 10px;
   border: 0;
-  border-radius: 7px;
+  border-radius: var(--suth-radius-sm);
   background: transparent;
-  color: #526578;
+  color: var(--suth-muted);
   font: inherit;
-  font-size: 0.86rem;
+  font-size: var(--suth-fs-sm);
   font-weight: 750;
   cursor: pointer;
   transition:
@@ -800,42 +830,40 @@
 }
 
 .patient-language-switcher button:hover:not(.is-active) {
-  background: #e6ebec;
+  background: var(--suth-line-soft);
   color: var(--patient-navy);
 }
 
 .patient-language-switcher button.is-active {
   background: var(--patient-navy);
-  color: #f7faf9;
+  color: var(--suth-on-action);
 }
 
 .patient-language-switcher button:focus-visible {
-  outline: 3px solid rgba(244, 121, 50, 0.34);
+  outline: 3px solid color-mix(in srgb, var(--suth-action) 34%, transparent);
   outline-offset: 2px;
 }
 
 .patient-civic-shell {
   position: relative;
-  border: 1px solid rgba(24, 49, 73, 0.15);
-  border-radius: 12px;
-  box-shadow:
-    0 2px 4px rgba(16, 38, 56, 0.04),
-    0 24px 60px rgba(16, 38, 56, 0.1);
+  border: 1px solid rgba(31, 47, 63, 0.15);
+  border-radius: var(--suth-radius);
+  box-shadow: 0 2px 4px rgba(31, 47, 63, 0.04),
+    0 24px 60px rgba(31, 47, 63, 0.1);
 }
 
 .patient-civic-intro {
-  background-color: #102638;
-  background-image:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.035), transparent 44%),
+  background-color: var(--suth-ink);
+  background-image: linear-gradient(145deg, color-mix(in srgb, var(--suth-surface) 4%, transparent), transparent 44%),
     repeating-linear-gradient(
       115deg,
       transparent 0 44px,
-      rgba(255, 255, 255, 0.025) 45px 46px
+      color-mix(in srgb, var(--suth-surface) 3%, transparent) 45px 46px
     );
 }
 
 .patient-civic-auth-page .patient-login-kicker {
-  color: #ffc39e;
+  color: var(--suth-action);
   letter-spacing: 0.045em;
 }
 
@@ -845,31 +873,31 @@
 
 .patient-civic-auth-page .patient-login-benefit {
   min-height: 58px;
-  border-top: 1px solid rgba(220, 231, 238, 0.13);
+  border-top: 1px solid color-mix(in srgb, var(--suth-line) 13%, transparent);
 }
 
 .patient-civic-auth-page .patient-login-benefit:last-child {
-  border-bottom: 1px solid rgba(220, 231, 238, 0.13);
+  border-bottom: 1px solid color-mix(in srgb, var(--suth-line) 13%, transparent);
 }
 
 .patient-civic-auth-page .patient-login-heading-icon,
 .patient-civic-auth-page .patient-auth-field input,
 .patient-civic-auth-page .patient-auth-button {
-  border-radius: 8px;
+  border-radius: var(--suth-radius-sm);
 }
 
 .patient-civic-auth-page .patient-login-heading-icon {
-  border: 1px solid #f4d4c1;
-  background: #fff7f1;
+  border: 1px solid var(--suth-warning-line);
+  background: var(--suth-tint);
 }
 
 .patient-civic-auth-page .patient-auth-field input {
-  border-color: #afbdc7;
-  background: #fbfcfb;
+  border-color: var(--suth-control-line);
+  background: var(--suth-surface);
 }
 
 .patient-civic-auth-page .patient-auth-button {
-  box-shadow: 0 7px 18px rgba(169, 67, 11, 0.16);
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--suth-danger) 16%, transparent);
 }
 
 .patient-register-page {
@@ -911,14 +939,14 @@
 .patient-register-section legend {
   padding: 0;
   color: var(--patient-navy);
-  font-size: 1rem;
+  font-size: var(--suth-fs-md);
   font-weight: 800;
 }
 
 .patient-register-section > p {
   margin: 5px 0 16px;
   color: var(--patient-muted);
-  font-size: 0.86rem;
+  font-size: var(--suth-fs-sm);
   line-height: 1.5;
 }
 
@@ -939,8 +967,8 @@
 
 .patient-optional-label {
   margin-left: 7px;
-  color: #6c7e8e;
-  font-size: 0.78rem;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-caption);
   font-weight: 500;
 }
 
@@ -960,7 +988,7 @@
   gap: 5px 8px;
   border-top: 1px solid var(--patient-line);
   color: var(--patient-muted);
-  font-size: 0.95rem;
+  font-size: var(--suth-fs-body);
 }
 
 @media (max-width: 899px) {
@@ -987,7 +1015,7 @@
   .patient-register-intro .patient-login-intro-copy > p:last-child {
     display: block;
     margin-top: 12px;
-    font-size: 0.92rem;
+    font-size: var(--suth-fs-body);
     line-height: 1.6;
   }
 
@@ -1010,7 +1038,7 @@
 @media (max-width: 480px) {
   .patient-civic-auth-page {
     padding-top: max(76px, calc(54px + env(safe-area-inset-top)));
-    background-color: #edf1f0;
+    background-color: var(--suth-neutral-tint);
     background-image:
       linear-gradient(var(--patient-civic-grid) 1px, transparent 1px),
       linear-gradient(90deg, var(--patient-civic-grid) 1px, transparent 1px);
@@ -1030,9 +1058,9 @@
   }
 
   .patient-civic-shell {
-    border: 1px solid rgba(24, 49, 73, 0.13);
-    border-radius: 10px;
-    box-shadow: 0 16px 40px rgba(16, 38, 56, 0.09);
+    border: 1px solid rgba(31, 47, 63, 0.13);
+    border-radius: var(--suth-radius);
+    box-shadow: 0 16px 40px rgba(31, 47, 63, 0.09);
   }
 
   .patient-register-intro {
@@ -1068,9 +1096,8 @@
 
 /* Use the original system artwork only on the history sign-in screen. */
 .patient-login-page.patient-civic-auth-page {
-  background-color: #edf2ef;
-  background-image:
-    linear-gradient(rgba(243, 246, 244, 0.78), rgba(231, 237, 234, 0.86)),
+  background-color: var(--suth-neutral-tint);
+  background-image: linear-gradient(color-mix(in srgb, var(--suth-surface-2) 78%, transparent), color-mix(in srgb, var(--suth-line-soft) 86%, transparent)),
     url("../../assets/login-image.png");
   background-size: cover;
   background-position: center;
@@ -1094,8 +1121,8 @@
   grid-template-columns: 24px minmax(0, 1fr);
   gap: 7px;
   align-items: center;
-  color: #667789;
-  font-size: 0.75rem;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-caption);
   font-weight: 700;
 }
 
@@ -1104,20 +1131,20 @@
   height: 24px;
   display: grid;
   place-items: center;
-  border: 1px solid #aebdca;
+  border: 1px solid var(--suth-control-line);
   border-radius: 50%;
-  font-size: 0.75rem;
+  font-size: var(--suth-fs-caption);
 }
 
 .patient-recovery-progress .is-current,
 .patient-recovery-progress .is-complete {
-  color: var(--patient-orange-text);
+  color: var(--suth-action-ink);
 }
 
 .patient-recovery-progress .is-current b,
 .patient-recovery-progress .is-complete b {
   border-color: var(--patient-orange);
-  background: #fff0e7;
+  background: var(--suth-danger-tint);
 }
 
 .patient-recovery-heading {
@@ -1133,16 +1160,16 @@
   flex: 0 0 42px;
   display: grid;
   place-items: center;
-  border-radius: 12px;
-  background: #fff0e7;
-  color: var(--patient-orange-text);
-  font-size: 20px;
+  border-radius: var(--suth-radius);
+  background: var(--suth-danger-tint);
+  color: var(--suth-action-ink);
+  font-size: var(--suth-fs-title);
 }
 
 .patient-recovery-heading h2 {
   margin: 0;
   color: var(--patient-ink);
-  font-size: 1.25rem;
+  font-size: var(--suth-fs-title);
   line-height: 1.3;
 }
 
@@ -1165,15 +1192,11 @@
   width: min(48px, 13vw);
   min-height: 54px;
   padding: 0;
-  border: 1px solid #aab9c6;
-  border-radius: 10px;
-  background: #fff;
+  border: 1px solid var(--suth-control-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
   color: var(--patient-navy);
-  font:
-    700 1.35rem/1 "Sarabun",
-    "Noto Sans Thai",
-    system-ui,
-    sans-serif;
+  font: 700 1.35rem/1 var(--suth-font);
   text-align: center;
   transition:
     border-color 160ms ease-out,
@@ -1188,7 +1211,7 @@
 .patient-otp-inputs input:focus-visible {
   outline: 0;
   border-color: var(--patient-orange-text);
-  box-shadow: 0 0 0 3px rgba(244, 121, 50, 0.25);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--suth-action) 25%, transparent);
 }
 
 .patient-recovery-result {
@@ -1196,22 +1219,22 @@
   gap: 14px;
   align-items: center;
   padding: 16px;
-  border: 1px solid #c9d5df;
-  border-radius: 12px;
-  background: #f7fafc;
-  color: #314a5f;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-canvas);
+  color: var(--suth-ink-2);
   font-size: var(--patient-text-sm);
   line-height: 1.55;
 }
 
 .patient-recovery-result.is-success {
-  border-color: #9ec5ae;
-  background: #f2faf5;
+  border-color: var(--suth-care-line);
+  background: var(--suth-care-surface);
 }
 
 .patient-recovery-result.is-success > svg {
-  background: #e2f4e9;
-  color: #206a43;
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
 }
 
 .patient-recovery-result p {
@@ -1283,8 +1306,7 @@
 
 @media (max-width: 480px) {
   .patient-login-page.patient-civic-auth-page {
-    background-image:
-      linear-gradient(rgba(243, 246, 244, 0.82), rgba(231, 237, 234, 0.9)),
+    background-image: linear-gradient(color-mix(in srgb, var(--suth-surface-2) 82%, transparent), color-mix(in srgb, var(--suth-line-soft) 90%, transparent)),
       url("../../assets/login-image.png");
   }
 }

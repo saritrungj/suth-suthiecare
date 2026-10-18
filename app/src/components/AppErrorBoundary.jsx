@@ -30,7 +30,7 @@ export default class AppErrorBoundary extends React.Component {
           placeItems: "center",
           padding: "2rem",
           textAlign: "center",
-          fontFamily: "Sarabun, system-ui, sans-serif",
+          fontFamily: "var(--suth-font)",
         }}
       >
         <div>

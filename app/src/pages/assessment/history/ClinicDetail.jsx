@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -47,7 +47,7 @@ export default function ClinicDetail() {
     return {
       score: result?.score || 0,
       label: result?.label || "-",
-      color: result?.color || "#3b82f6",
+      color: result?.color || "var(--suth-info)",
       date: r.submitted_at,
     };
   });
@@ -116,8 +116,11 @@ export default function ClinicDetail() {
           ? "No Change"
           : "ไม่มีการเปลี่ยนแปลง";
 
-  const latestLabel =
-    !graphData.length ? (currentLang === "en" ? "No assessment yet" : "ยังไม่มีผลประเมิน") : clinicType === "behavior"
+  const latestLabel = !graphData.length
+    ? currentLang === "en"
+      ? "No assessment yet"
+      : "ยังไม่มีผลประเมิน"
+    : clinicType === "behavior"
       ? latestValue < 18.5
         ? currentLang === "en"
           ? "Underweight"
@@ -159,7 +162,13 @@ export default function ClinicDetail() {
               <span>({latestLabel})</span>
             </div>
 
-            <div className="hero-trend">{graphData.length > 1 ? trendText : currentLang === "en" ? "More assessments are needed to show a trend" : "ต้องมีผลประเมินเพิ่มเติมเพื่อแสดงแนวโน้ม"}</div>
+            <div className="hero-trend">
+              {graphData.length > 1
+                ? trendText
+                : currentLang === "en"
+                  ? "More assessments are needed to show a trend"
+                  : "ต้องมีผลประเมินเพิ่มเติมเพื่อแสดงแนวโน้ม"}
+            </div>
           </div>
         </div>
       </div>
@@ -193,7 +202,13 @@ export default function ClinicDetail() {
           </div>
 
           <div className="hr-trend-chart">
-            {!graphData.length && <p className="empty-timeline">{currentLang === "en" ? "No assessment data yet" : "ยังไม่มีข้อมูลผลประเมิน"}</p>}
+            {!graphData.length && (
+              <p className="empty-timeline">
+                {currentLang === "en"
+                  ? "No assessment data yet"
+                  : "ยังไม่มีข้อมูลผลประเมิน"}
+              </p>
+            )}
             {graphData.map((item, i) => {
               const value =
                 clinicType === "behavior"
@@ -210,7 +225,7 @@ export default function ClinicDetail() {
                     className="hr-trend-bar"
                     style={{
                       height: `${Math.max(heightPct * 1.8, 4)}px`,
-                      background: item.color || "#22c55e",
+                      background: item.color || "var(--suth-success)",
                     }}
                   >
                     <span className="hr-trend-val">{value}</span>
@@ -218,10 +233,13 @@ export default function ClinicDetail() {
 
                   <div className="hr-trend-date">
                     {item.date
-                      ? new Date(item.date).toLocaleDateString(currentLang === "en" ? "en-GB" : "th-TH", {
-                          month: "short",
-                          day: "numeric",
-                        })
+                      ? new Date(item.date).toLocaleDateString(
+                          currentLang === "en" ? "en-GB" : "th-TH",
+                          {
+                            month: "short",
+                            day: "numeric",
+                          },
+                        )
                       : "-"}
                   </div>
 
@@ -235,7 +253,7 @@ export default function ClinicDetail() {
                     <div
                       className="risk-label"
                       style={{
-                        color: item.color || "#22c55e",
+                        color: item.color || "var(--suth-success)",
                       }}
                     >
                       {toDisplayText(item.label)}
@@ -323,7 +341,17 @@ export default function ClinicDetail() {
                 </div>
               </div>
 
-              <button className="timeline-btn" onClick={() => navigate("/history/result", { state: { expandResponseId: item.case_id || item.response_id || item.id } })}>
+              <button
+                className="timeline-btn"
+                onClick={() =>
+                  navigate("/history/result", {
+                    state: {
+                      expandResponseId:
+                        item.case_id || item.response_id || item.id,
+                    },
+                  })
+                }
+              >
                 {currentLang === "en" ? "View More" : "ดูเพิ่มเติม"}
               </button>
             </div>

@@ -1,13 +1,89 @@
-.organization-workspace { display:flex; flex-direction:column; flex:1; min-height:0; min-width:0; overflow:hidden; }
-.organization-workspace-empty { display:grid; place-items:center; flex:1; min-width:0; overflow:auto; padding:clamp(1rem,3vw,2.5rem); background:var(--suth-canvas); color:var(--suth-ink); font-family:var(--suth-font); }
-.organization-workspace-notice { width:100%; max-width:640px; padding:clamp(24px,5vw,48px); border:1px solid var(--suth-line); border-radius:var(--suth-radius-lg); background:var(--suth-surface); }
-.organization-workspace-icon { width:32px; height:32px; color:var(--suth-action); margin-bottom:20px; }
-.organization-workspace-notice h1 { font-size:clamp(1.35rem,3vw,1.5rem); line-height:1.5; margin:0 0 12px; text-wrap:balance; }
-.organization-workspace-notice p { color:var(--suth-muted); line-height:1.8; margin:0 0 24px; overflow-wrap:anywhere; }
-.organization-workspace-action { display:inline-flex; align-items:center; justify-content:center; gap:12px; min-height:44px; padding:10px 18px; border-radius:var(--suth-radius); background:var(--suth-action); color:var(--suth-on-action); text-decoration:none; }
-.organization-workspace-action:hover { background:var(--suth-action-hover); color:var(--suth-on-action); }
-.organization-workspace-action:focus-visible { outline:2px solid var(--suth-focus); outline-offset:4px; }
-.guardian-student-option { display:flex; align-items:center; gap:12px; min-height:44px; cursor:pointer; }
-.guardian-student-option input { width:20px; height:20px; accent-color:var(--suth-action); }
-.guardian-students-fieldset { min-width:0; margin:8px 0 0; padding:16px; border:1px solid var(--suth-line); border-radius:var(--suth-radius); }
-.guardian-students-fieldset legend { padding:0 8px; color:var(--suth-ink); font-weight:600; }
+.organization-workspace {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+.organization-workspace-empty {
+  display: grid;
+  place-items: center;
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  padding: clamp(1rem, 3vw, 2.5rem);
+  background: var(--suth-canvas);
+  color: var(--suth-ink);
+  font-family: var(--suth-font);
+}
+.organization-workspace-notice {
+  width: 100%;
+  max-width: 640px;
+  padding: clamp(24px, 5vw, 48px);
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius-lg);
+  background: var(--suth-surface);
+}
+.organization-workspace-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--suth-action);
+  margin-bottom: 20px;
+}
+.organization-workspace-notice h1 {
+  font-size: clamp(1.35rem, 3vw, 1.5rem);
+  line-height: 1.5;
+  margin: 0 0 12px;
+  text-wrap: balance;
+}
+.organization-workspace-notice p {
+  color: var(--suth-muted);
+  line-height: 1.8;
+  margin: 0 0 24px;
+  overflow-wrap: anywhere;
+}
+.organization-workspace-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: var(--suth-radius);
+  background: var(--suth-action);
+  color: var(--suth-on-action);
+  text-decoration: none;
+}
+.organization-workspace-action:hover {
+  background: var(--suth-action-hover);
+  color: var(--suth-on-action);
+}
+.organization-workspace-action:focus-visible {
+  outline: 2px solid var(--suth-focus);
+  outline-offset: 4px;
+}
+.guardian-student-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.guardian-student-option input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--suth-action);
+}
+.guardian-students-fieldset {
+  min-width: 0;
+  margin: 8px 0 0;
+  padding: 16px;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
+}
+.guardian-students-fieldset legend {
+  padding: 0 8px;
+  color: var(--suth-ink);
+  font-weight: 600;
+}

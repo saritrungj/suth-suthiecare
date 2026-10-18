@@ -1,39 +1,401 @@
-import SearchableSelect from './SearchableSelect';
-import {useEffect,useMemo,useRef,useState} from 'react';
-import {createPortal} from 'react-dom';
-import {FiX} from 'react-icons/fi';
-import api from '../services/api';
-import {toDisplayText} from '../utils/textPresentation';
-import {aggregateChart,chartQuestions} from '../utils/chartAggregation';
-import FormChartView from './FormChartView';
-import './FormChartWorkspace.css';
-const defaults={title:'',formId:'',question:'',type:'bar',mode:'answer',aggregation:'count',sort:'desc',includeEmpty:false,answerPath:'',groupBy:''};
-export default function AddChartModal({isOpen,onClose,onSave,forms=[],initialChart,formId,startDate,endDate}) {
- const [config,setConfig]=useState(defaults),[rows,setRows]=useState([]),[loading,setLoading]=useState(false),[error,setError]=useState(''),[saving,setSaving]=useState(false);
- const dialog=useRef(null),form=forms.find(f=>String(f.id)===String(config.formId));
- const questions=useMemo(()=>chartQuestions(form?.questions||[]),[form]);
- const question=questions.find(q=>String(q.id)===String(config.question));
- const data=useMemo(()=>aggregateChart(rows,config,question),[rows,config,question]);
- const patch=update=>setConfig(old=>({...old,...update}));
- useEffect(()=>{if(!isOpen)return;setConfig({...defaults,formId:String(formId||forms[0]?.id||''),...initialChart});setError('');const previous=document.activeElement,overflow=document.body.style.overflow;document.body.style.overflow='hidden';dialog.current?.querySelector('input')?.focus();return()=>{document.body.style.overflow=overflow;previous?.focus();};},[isOpen,initialChart]);
- useEffect(()=>{let alive=true;setRows([]);setError('');if(!isOpen||!config.formId||!config.question){setLoading(false);return;}setLoading(true);api.get(`/charts/${encodeURIComponent(config.formId)}/${encodeURIComponent(config.question)}`,{params:{startDate,endDate}}).then(r=>{if(alive)setRows(r.data);}).catch(e=>{if(alive)setError(e.response?.data?.message||'โหลดข้อมูลไม่สำเร็จ กรุณาลองเลือกคำถามอีกครั้ง');}).finally(()=>{if(alive)setLoading(false);});return()=>{alive=false;};},[isOpen,config.formId,config.question,startDate,endDate]);
- if(!isOpen)return null;
- const keydown=e=>{if(e.key==='Escape'&&!saving){e.stopPropagation();onClose();}if(e.key==='Tab'){const controls=[...dialog.current.querySelectorAll('button:not(:disabled),input,select,summary,[tabindex="0"]')],first=controls[0],last=controls.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}}};
- const save=async e=>{e.preventDefault();setSaving(true);setError('');try{await onSave({...config,title:config.title.trim(),id:initialChart?.id||crypto.randomUUID()});onClose();}catch{setError('บันทึกกราฟไม่สำเร็จ ข้อมูลที่แก้ไขยังอยู่ กรุณาลองอีกครั้ง');}finally{setSaving(false);}};
- return createPortal(<div className="fc-overlay"><form className="fc-editor" ref={dialog} role="dialog" aria-modal="true" aria-label={initialChart?'แก้ไขกราฟ':'สร้างกราฟจากแบบฟอร์ม'} onKeyDown={keydown} onSubmit={save}>
- <header><div><h2 id="fc-editor-title">{initialChart?'แก้ไขกราฟ':'สร้างกราฟจากแบบฟอร์ม'}</h2><p>กำหนดข้อมูลและตรวจสอบผลก่อนบันทึก</p></div><button type="button" onClick={onClose} disabled={saving} aria-label="ปิดหน้าต่าง"><FiX/></button></header>
- <div className="fc-editor-body"><fieldset disabled={saving}><legend className="fc-sr">ตั้งค่ากราฟ</legend>
- <label>ชื่อกราฟ<input required maxLength={160} autoFocus value={config.title} onChange={e=>patch({title:e.target.value})}/></label>
- <label>แบบฟอร์ม<SearchableSelect aria-label="แบบฟอร์ม" required value={config.formId} onChange={e=>patch({formId:e.target.value,question:'',answerPath:''})}><option value="">เลือกแบบฟอร์ม</option>{forms.map(f=><option key={f.id} value={f.id}>{toDisplayText(f.title)}{f.status==='draft'?' (ฉบับร่าง)':''}</option>)}</SearchableSelect></label>
- <label>คำถาม<SearchableSelect aria-label="คำถาม" required value={config.question} onChange={e=>{const q=questions.find(q=>String(q.id)===e.target.value);patch({question:e.target.value,answerPath:'',title:config.title||toDisplayText(q?.title||q?.label||q?.question_text)});}}><option value="">เลือกคำถาม</option>{questions.map(q=><option key={q.id} value={q.id}>{toDisplayText(q.title||q.label||q.question_text)||`คำถาม ${q.id}`}</option>)}</SearchableSelect></label>
- <label>ส่วนของคำตอบ<SearchableSelect aria-label="ส่วนของคำตอบ" value={config.answerPath||''} onChange={e=>patch({answerPath:e.target.value})}><option value="">ทุกส่วนของคำตอบ</option>{[...new Set(rows.flatMap(r=>r.answer&&typeof r.answer==='object'&&!Array.isArray(r.answer)?Object.keys(r.answer):[]))].map(key=><option key={key} value={key}>{toDisplayText(question?.rows?.[key]||question?.subQuestions?.find(q=>String(q.id)===key)?.title||key)}</option>)}</SearchableSelect></label>
- <label>ข้อมูลที่สรุป<SearchableSelect aria-label="ข้อมูลที่สรุป" value={config.mode} onChange={e=>patch({mode:e.target.value,aggregation:'count'})}><option value="answer">คำตอบแบบฟอร์ม</option><option value="result">ผลสรุปคะแนนของคำถาม</option></SearchableSelect></label>
- <label>วิธีคำนวณ<SearchableSelect aria-label="วิธีคำนวณ" value={config.aggregation} onChange={e=>patch({aggregation:e.target.value,...(e.target.value!=='count'?{type:'bar'}:{})})}><option value="count">นับจำนวนคำตอบ</option><option value="sum" disabled={config.mode==='result'}>ผลรวมค่าตัวเลข</option><option value="average" disabled={config.mode==='result'}>ค่าเฉลี่ยตัวเลข</option></SearchableSelect></label>
- <label>รูปแบบ<SearchableSelect aria-label="รูปแบบ" value={config.type} onChange={e=>patch({type:e.target.value})}><option value="bar">กราฟแท่งแนวตั้ง</option><option value="horizontal">กราฟแท่งแนวนอน</option><option value="pie" disabled={config.aggregation!=='count'}>กราฟวงกลม</option><option value="donut" disabled={config.aggregation!=='count'}>กราฟโดนัท</option><option value="line">กราฟเส้น</option><option value="table">ตารางข้อมูล</option></SearchableSelect></label>
- <label>จัดกลุ่มตาม<SearchableSelect aria-label="จัดกลุ่มตาม" value={config.groupBy||''} onChange={e=>patch({groupBy:e.target.value,sort:e.target.value?'label':'desc'})}><option value="">คำตอบ / ผลสรุป</option><option value="day">วันที่ส่งคำตอบ</option><option value="month">เดือนที่ส่งคำตอบ</option></SearchableSelect></label>
- <label>เรียงลำดับ<SearchableSelect aria-label="เรียงลำดับ" value={config.sort} onChange={e=>patch({sort:e.target.value})}><option value="desc">ค่ามากไปน้อย</option><option value="asc">ค่าน้อยไปมาก</option><option value="label">ชื่อคำตอบ</option><option value="original">ลำดับข้อมูลเดิม</option></SearchableSelect></label>
- <label className="fc-check"><input type="checkbox" checked={config.includeEmpty} onChange={e=>patch({includeEmpty:e.target.checked})}/>รวมคำตอบว่างเป็น “ไม่ระบุ”</label>
- </fieldset><section className="fc-preview" aria-label="ตัวอย่างกราฟ"><h3>{config.title||'ตัวอย่างกราฟ'}</h3><p className="fc-hint">{startDate||'เริ่มต้น'} ถึง {endDate||'ปัจจุบัน'} · {rows.length.toLocaleString('th-TH')} ชุดคำตอบ</p>{loading?<p role="status">กำลังโหลดตัวอย่าง…</p>:config.question?<FormChartView data={data} type={config.type} title={config.title} aggregation={config.aggregation}/>:<p className="fc-empty">เลือกแบบฟอร์มและคำถามเพื่อดูตัวอย่าง</p>}<p className="fc-hint">แบบเลือกหลายข้อ: นับแต่ละตัวเลือกครั้งเดียวต่อชุดคำตอบ · ตาราง: แยกตามแถว<br/>ผลรวมและค่าเฉลี่ยใช้เฉพาะคำตอบที่เป็นตัวเลข ไม่รวมค่าว่าง · เมื่อจัดกลุ่มตามเวลา จะนับชุดคำตอบครั้งเดียว</p></section></div>
- {error&&<p className="fc-error" role="alert">{error}</p>}<footer><button type="button" onClick={onClose} disabled={saving}>ยกเลิก</button><button className="fc-primary" type="submit" disabled={saving||loading||!question||!config.title.trim()}>{saving?'กำลังบันทึก…':'บันทึกกราฟ'}</button></footer>
- </form></div>,document.body);
+import SearchableSelect from "./SearchableSelect";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { FiX } from "react-icons/fi";
+import api from "../services/api";
+import { toDisplayText } from "../utils/textPresentation";
+import { aggregateChart, chartQuestions } from "../utils/chartAggregation";
+import FormChartView from "./FormChartView";
+import "./FormChartWorkspace.css";
+const defaults = {
+  title: "",
+  formId: "",
+  question: "",
+  type: "bar",
+  mode: "answer",
+  aggregation: "count",
+  sort: "desc",
+  includeEmpty: false,
+  answerPath: "",
+  groupBy: "",
+};
+export default function AddChartModal({
+  isOpen,
+  onClose,
+  onSave,
+  forms = [],
+  initialChart,
+  formId,
+  startDate,
+  endDate,
+}) {
+  const [config, setConfig] = useState(defaults),
+    [rows, setRows] = useState([]),
+    [loading, setLoading] = useState(false),
+    [error, setError] = useState(""),
+    [saving, setSaving] = useState(false);
+  const dialog = useRef(null),
+    form = forms.find((f) => String(f.id) === String(config.formId));
+  const questions = useMemo(
+    () => chartQuestions(form?.questions || []),
+    [form],
+  );
+  const question = questions.find(
+    (q) => String(q.id) === String(config.question),
+  );
+  const data = useMemo(
+    () => aggregateChart(rows, config, question),
+    [rows, config, question],
+  );
+  const patch = (update) => setConfig((old) => ({ ...old, ...update }));
+  useEffect(() => {
+    if (!isOpen) return;
+    setConfig({
+      ...defaults,
+      formId: String(formId || forms[0]?.id || ""),
+      ...initialChart,
+    });
+    setError("");
+    const previous = document.activeElement,
+      overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    dialog.current?.querySelector("input")?.focus();
+    return () => {
+      document.body.style.overflow = overflow;
+      previous?.focus();
+    };
+  }, [isOpen, initialChart]);
+  useEffect(() => {
+    let alive = true;
+    setRows([]);
+    setError("");
+    if (!isOpen || !config.formId || !config.question) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    api
+      .get(
+        `/charts/${encodeURIComponent(config.formId)}/${encodeURIComponent(config.question)}`,
+        { params: { startDate, endDate } },
+      )
+      .then((r) => {
+        if (alive) setRows(r.data);
+      })
+      .catch((e) => {
+        if (alive)
+          setError(
+            e.response?.data?.message ||
+              "โหลดข้อมูลไม่สำเร็จ กรุณาลองเลือกคำถามอีกครั้ง",
+          );
+      })
+      .finally(() => {
+        if (alive) setLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [isOpen, config.formId, config.question, startDate, endDate]);
+  if (!isOpen) return null;
+  const keydown = (e) => {
+    if (e.key === "Escape" && !saving) {
+      e.stopPropagation();
+      onClose();
+    }
+    if (e.key === "Tab") {
+      const controls = [
+          ...dialog.current.querySelectorAll(
+            'button:not(:disabled),input,select,summary,[tabindex="0"]',
+          ),
+        ],
+        first = controls[0],
+        last = controls.at(-1);
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last?.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first?.focus();
+      }
+    }
+  };
+  const save = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setError("");
+    try {
+      await onSave({
+        ...config,
+        title: config.title.trim(),
+        id: initialChart?.id || crypto.randomUUID(),
+      });
+      onClose();
+    } catch {
+      setError("บันทึกกราฟไม่สำเร็จ ข้อมูลที่แก้ไขยังอยู่ กรุณาลองอีกครั้ง");
+    } finally {
+      setSaving(false);
+    }
+  };
+  return createPortal(
+    <div className="fc-overlay">
+      <form
+        className="fc-editor"
+        ref={dialog}
+        role="dialog"
+        aria-modal="true"
+        aria-label={initialChart ? "แก้ไขกราฟ" : "สร้างกราฟจากแบบฟอร์ม"}
+        onKeyDown={keydown}
+        onSubmit={save}
+      >
+        <header>
+          <div>
+            <h2 id="fc-editor-title">
+              {initialChart ? "แก้ไขกราฟ" : "สร้างกราฟจากแบบฟอร์ม"}
+            </h2>
+            <p>กำหนดข้อมูลและตรวจสอบผลก่อนบันทึก</p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={saving}
+            aria-label="ปิดหน้าต่าง"
+          >
+            <FiX />
+          </button>
+        </header>
+        <div className="fc-editor-body">
+          <fieldset disabled={saving}>
+            <legend className="fc-sr">ตั้งค่ากราฟ</legend>
+            <label>
+              ชื่อกราฟ
+              <input
+                required
+                maxLength={160}
+                autoFocus
+                value={config.title}
+                onChange={(e) => patch({ title: e.target.value })}
+              />
+            </label>
+            <label>
+              แบบฟอร์ม
+              <SearchableSelect
+                aria-label="แบบฟอร์ม"
+                required
+                value={config.formId}
+                onChange={(e) =>
+                  patch({
+                    formId: e.target.value,
+                    question: "",
+                    answerPath: "",
+                  })
+                }
+              >
+                <option value="">เลือกแบบฟอร์ม</option>
+                {forms.map((f) => (
+                  <option key={f.id} value={f.id}>
+                    {toDisplayText(f.title)}
+                    {f.status === "draft" ? " (ฉบับร่าง)" : ""}
+                  </option>
+                ))}
+              </SearchableSelect>
+            </label>
+            <label>
+              คำถาม
+              <SearchableSelect
+                aria-label="คำถาม"
+                required
+                value={config.question}
+                onChange={(e) => {
+                  const q = questions.find(
+                    (q) => String(q.id) === e.target.value,
+                  );
+                  patch({
+                    question: e.target.value,
+                    answerPath: "",
+                    title:
+                      config.title ||
+                      toDisplayText(q?.title || q?.label || q?.question_text),
+                  });
+                }}
+              >
+                <option value="">เลือกคำถาม</option>
+                {questions.map((q) => (
+                  <option key={q.id} value={q.id}>
+                    {toDisplayText(q.title || q.label || q.question_text) ||
+                      `คำถาม ${q.id}`}
+                  </option>
+                ))}
+              </SearchableSelect>
+            </label>
+            <label>
+              ส่วนของคำตอบ
+              <SearchableSelect
+                aria-label="ส่วนของคำตอบ"
+                value={config.answerPath || ""}
+                onChange={(e) => patch({ answerPath: e.target.value })}
+              >
+                <option value="">ทุกส่วนของคำตอบ</option>
+                {[
+                  ...new Set(
+                    rows.flatMap((r) =>
+                      r.answer &&
+                      typeof r.answer === "object" &&
+                      !Array.isArray(r.answer)
+                        ? Object.keys(r.answer)
+                        : [],
+                    ),
+                  ),
+                ].map((key) => (
+                  <option key={key} value={key}>
+                    {toDisplayText(
+                      question?.rows?.[key] ||
+                        question?.subQuestions?.find(
+                          (q) => String(q.id) === key,
+                        )?.title ||
+                        key,
+                    )}
+                  </option>
+                ))}
+              </SearchableSelect>
+            </label>
+            <label>
+              ข้อมูลที่สรุป
+              <SearchableSelect
+                aria-label="ข้อมูลที่สรุป"
+                value={config.mode}
+                onChange={(e) =>
+                  patch({ mode: e.target.value, aggregation: "count" })
+                }
+              >
+                <option value="answer">คำตอบแบบฟอร์ม</option>
+                <option value="result">ผลสรุปคะแนนของคำถาม</option>
+              </SearchableSelect>
+            </label>
+            <label>
+              วิธีคำนวณ
+              <SearchableSelect
+                aria-label="วิธีคำนวณ"
+                value={config.aggregation}
+                onChange={(e) =>
+                  patch({
+                    aggregation: e.target.value,
+                    ...(e.target.value !== "count" ? { type: "bar" } : {}),
+                  })
+                }
+              >
+                <option value="count">นับจำนวนคำตอบ</option>
+                <option value="sum" disabled={config.mode === "result"}>
+                  ผลรวมค่าตัวเลข
+                </option>
+                <option value="average" disabled={config.mode === "result"}>
+                  ค่าเฉลี่ยตัวเลข
+                </option>
+              </SearchableSelect>
+            </label>
+            <label>
+              รูปแบบ
+              <SearchableSelect
+                aria-label="รูปแบบ"
+                value={config.type}
+                onChange={(e) => patch({ type: e.target.value })}
+              >
+                <option value="bar">กราฟแท่งแนวตั้ง</option>
+                <option value="horizontal">กราฟแท่งแนวนอน</option>
+                <option value="pie" disabled={config.aggregation !== "count"}>
+                  กราฟวงกลม
+                </option>
+                <option value="donut" disabled={config.aggregation !== "count"}>
+                  กราฟโดนัท
+                </option>
+                <option value="line">กราฟเส้น</option>
+                <option value="table">ตารางข้อมูล</option>
+              </SearchableSelect>
+            </label>
+            <label>
+              จัดกลุ่มตาม
+              <SearchableSelect
+                aria-label="จัดกลุ่มตาม"
+                value={config.groupBy || ""}
+                onChange={(e) =>
+                  patch({
+                    groupBy: e.target.value,
+                    sort: e.target.value ? "label" : "desc",
+                  })
+                }
+              >
+                <option value="">คำตอบ / ผลสรุป</option>
+                <option value="day">วันที่ส่งคำตอบ</option>
+                <option value="month">เดือนที่ส่งคำตอบ</option>
+              </SearchableSelect>
+            </label>
+            <label>
+              เรียงลำดับ
+              <SearchableSelect
+                aria-label="เรียงลำดับ"
+                value={config.sort}
+                onChange={(e) => patch({ sort: e.target.value })}
+              >
+                <option value="desc">ค่ามากไปน้อย</option>
+                <option value="asc">ค่าน้อยไปมาก</option>
+                <option value="label">ชื่อคำตอบ</option>
+                <option value="original">ลำดับข้อมูลเดิม</option>
+              </SearchableSelect>
+            </label>
+            <label className="fc-check">
+              <input
+                type="checkbox"
+                checked={config.includeEmpty}
+                onChange={(e) => patch({ includeEmpty: e.target.checked })}
+              />
+              รวมคำตอบว่างเป็น “ไม่ระบุ”
+            </label>
+          </fieldset>
+          <section className="fc-preview" aria-label="ตัวอย่างกราฟ">
+            <h3>{config.title || "ตัวอย่างกราฟ"}</h3>
+            <p className="fc-hint">
+              {startDate || "เริ่มต้น"} ถึง {endDate || "ปัจจุบัน"} ·{" "}
+              {rows.length.toLocaleString("th-TH")} ชุดคำตอบ
+            </p>
+            {loading ? (
+              <p role="status">กำลังโหลดตัวอย่าง…</p>
+            ) : config.question ? (
+              <FormChartView
+                data={data}
+                type={config.type}
+                title={config.title}
+                aggregation={config.aggregation}
+              />
+            ) : (
+              <p className="fc-empty">เลือกแบบฟอร์มและคำถามเพื่อดูตัวอย่าง</p>
+            )}
+            <p className="fc-hint">
+              แบบเลือกหลายข้อ: นับแต่ละตัวเลือกครั้งเดียวต่อชุดคำตอบ · ตาราง:
+              แยกตามแถว
+              <br />
+              ผลรวมและค่าเฉลี่ยใช้เฉพาะคำตอบที่เป็นตัวเลข ไม่รวมค่าว่าง ·
+              เมื่อจัดกลุ่มตามเวลา จะนับชุดคำตอบครั้งเดียว
+            </p>
+          </section>
+        </div>
+        {error && (
+          <p className="fc-error" role="alert">
+            {error}
+          </p>
+        )}
+        <footer>
+          <button type="button" onClick={onClose} disabled={saving}>
+            ยกเลิก
+          </button>
+          <button
+            className="fc-primary"
+            type="submit"
+            disabled={saving || loading || !question || !config.title.trim()}
+          >
+            {saving ? "กำลังบันทึก…" : "บันทึกกราฟ"}
+          </button>
+        </footer>
+      </form>
+    </div>,
+    document.body,
+  );
 }

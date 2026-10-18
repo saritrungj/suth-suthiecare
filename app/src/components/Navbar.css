@@ -8,10 +8,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  border-bottom: 1px solid #d8e0e7;
-  background: #fbfcfd;
-  color: #1f2f3f;
-  font-family: "Sarabun", "Noto Sans Thai", system-ui, sans-serif;
+  border-bottom: 1px solid var(--suth-line);
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+  font-family: var(--suth-font);
 }
 
 .main-nav__brand {
@@ -28,7 +28,7 @@
 }
 
 .main-nav__brand:hover .main-nav__brand-copy strong {
-  color: #a9430b;
+  color: var(--suth-action-ink);
 }
 
 .main-nav__logo-frame {
@@ -61,8 +61,8 @@
 }
 
 .main-nav__brand-copy strong {
-  color: #1f2f3f;
-  font-size: 1rem;
+  color: var(--suth-ink);
+  font-size: var(--suth-fs-md);
   font-weight: 800;
   letter-spacing: -0.01em;
   transition: color 180ms ease-out;
@@ -70,8 +70,8 @@
 
 .main-nav__brand-copy small {
   overflow: hidden;
-  color: #5c6f80;
-  font-size: 0.75rem;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-caption);
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -96,12 +96,12 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  border: 1px solid #bcc8d3;
+  border: 1px solid var(--suth-control-line);
   border-radius: 0.5rem;
-  background: #ffffff;
-  color: #41566a;
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
   font: inherit;
-  font-size: 0.875rem;
+  font-size: var(--suth-fs-sm);
   font-weight: 700;
   line-height: 1;
   cursor: pointer;
@@ -112,14 +112,14 @@
 }
 
 .main-nav__back:hover {
-  border-color: #a9430b;
-  background: #fff7f1;
-  color: #8d3809;
+  border-color: var(--suth-action);
+  background: var(--suth-tint);
+  color: var(--suth-warning);
 }
 
 .main-nav__brand:focus-visible,
 .main-nav__back:focus-visible {
-  outline: 3px solid rgba(244, 121, 50, 0.34);
+  outline: 3px solid color-mix(in srgb, var(--suth-action) 34%, transparent);
   outline-offset: 2px;
 }
 

@@ -1,0 +1,66 @@
+[
+  {
+    "path": "/admin/dashboard",
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "tags": [
+          "cat.color",
+          "wcag2aa",
+          "wcag143",
+          "TTv5",
+          "TT13.c",
+          "EN-301-549",
+          "EN-9.1.4.3",
+          "ACT",
+          "RGAAv4",
+          "RGAA-3.2.1"
+        ],
+        "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "helpUrl": "https://dequeuniversity.com/rules/axe/4.13/color-contrast?application=playwright",
+        "nodes": [
+          {
+            "any": [
+              {
+                "id": "color-contrast",
+                "data": {
+                  "fgColor": "#ffffff",
+                  "bgColor": "#ff8a3d",
+                  "contrastRatio": 2.34,
+                  "fontSize": "10.6pt (14.08px)",
+                  "fontWeight": "bold",
+                  "messageKey": null,
+                  "expectedContrastRatio": "4.5:1"
+                },
+                "relatedNodes": [
+                  {
+                    "html": "<button type=\"button\" class=\"dz-pill\" aria-pressed=\"true\">เดือนนี้</button>",
+                    "target": [".dz-pill[type=\"button\"]:nth-child(3)"]
+                  }
+                ],
+                "impact": "serious",
+                "message": "Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 10.6pt (14.08px), font weight: bold). Expected contrast ratio of 4.5:1"
+              }
+            ],
+            "all": [],
+            "none": [],
+            "impact": "serious",
+            "html": "<button type=\"button\" class=\"dz-pill\" aria-pressed=\"true\">เดือนนี้</button>",
+            "target": [".dz-pill[type=\"button\"]:nth-child(3)"],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 10.6pt (14.08px), font weight: bold). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "path": "/admin/cases",
+    "violations": []
+  },
+  {
+    "path": "/admin/risk-cases",
+    "violations": []
+  }
+]

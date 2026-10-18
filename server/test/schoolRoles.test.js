@@ -1,41 +1,168 @@
-const test=require('node:test');
-const assert=require('node:assert/strict');
-const {loadSchoolAccess,canViewStudentHealth,canSeeStudent,studentScopeClause}=require('../utils/schoolAccess');
-const {current,normalizeStudentStatus}=require('../utils/studentStatus');
-async function access(role,rooms=[{classroom_id:10,school_id:2,role:'homeroom'}],permissions=[]){
- return loadSchoolAccess({query:async(sql)=>{
-  if(sql.includes('FROM school_staff_roles'))return [[...(role?[{school_id:2,role_code:role}]:[])]];
-  if(sql.includes('FROM school_teachers'))return [[{id:5,school_id:2}]];
-  if(sql.includes('FROM school_classroom_teachers'))return [rooms];
-  throw Error('Unexpected query');
- }},{user:{id:1},organizationContext:7,authorization:{permissions:new Set(permissions)}});
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const {
+  loadSchoolAccess,
+  canViewStudentHealth,
+  canViewPhysicalHealth,
+  canSeeStudent,
+  studentScopeClause,
+  canManageStaffAt,
+  canManageWorkflowsAt,
+} = require("../utils/schoolAccess");
+const { current, normalizeStudentStatus } = require("../utils/studentStatus");
+const { presets } = require("../authorization/schoolRolePermissions");
+const { expandManage } = require("../authorization/permissionMatrix");
+// The unit role is configured like the school role's preset (what the migration writes);
+// manage expands as in membershipPermissions, then denied keys are removed.
+async function access(
+  role,
+  rooms = [{ classroom_id: 10, school_id: 2, role: "homeroom" }],
+  permissions = [],
+  denied = [],
+) {
+  return loadSchoolAccess(
+    {
+      query: async (sql) => {
+        if (sql.includes("FROM school_staff_roles"))
+          return [[...(role ? [{ school_id: 2, role_code: role }] : [])]];
+        if (sql.includes("FROM school_teachers"))
+          return [[{ id: 5, school_id: 2 }]];
+        if (sql.includes("FROM school_classroom_teachers")) return [rooms];
+        throw Error("Unexpected query");
+      },
+    },
+    {
+      user: { id: 1 },
+      organizationContext: 7,
+      authorization: {
+        permissions: new Set(
+          [
+            ...expandManage([
+              ...permissions,
+              ...(role ? presets[role] || [] : []),
+            ]),
+          ].filter((k) => !denied.includes(k)),
+        ),
+      },
+    },
+  );
 }
-test('admin and other teachers cannot gain insights through clinical permissions',async()=>{
- for(const role of ['admin','other',null]){
-  const a=await access(role,undefined,['clinical.view','student_health.view','student_health.update']);
-  assert.equal(canViewStudentHealth(a,{school_id:2,classroom_id:10}),false);
-  assert.equal(a.canExportStudents,role==='admin');
- }
+test("admin and other teachers cannot gain insights through clinical permissions", async () => {
+  for (const role of ["admin", "other", null]) {
+    const a = await access(role, undefined, [
+      "clinical.view",
+      "student_health.view",
+      "student_health.update",
+    ]);
+    assert.equal(
+      canViewStudentHealth(a, { school_id: 2, classroom_id: 10 }),
+      false,
+    );
+    assert.equal(a.canExportStudents, role === "admin");
+  }
 });
-test('homeroom role is limited to its assigned homeroom and current school',async()=>{
- const a=await access('homeroom',[{classroom_id:10,school_id:2,role:'homeroom'},{classroom_id:11,school_id:2,role:'counselor'},{classroom_id:12,school_id:3,role:'homeroom'}],['students.view']);
- assert.equal(a.canViewAllStudents,false);
- assert.equal(canViewStudentHealth(a,{school_id:2,classroom_id:10}),true);
- assert.equal(canViewStudentHealth(a,{school_id:2,classroom_id:11}),false);
- assert.equal(canViewStudentHealth(a,{school_id:3,classroom_id:12}),false);
- assert.equal(canViewStudentHealth(await access('homeroom',[]),{school_id:2,classroom_id:10}),false);
+test("homeroom role is limited to its assigned homeroom and current school", async () => {
+  const a = await access(
+    "homeroom",
+    [
+      { classroom_id: 10, school_id: 2, role: "homeroom" },
+      { classroom_id: 11, school_id: 2, role: "counselor" },
+      { classroom_id: 12, school_id: 3, role: "homeroom" },
+    ],
+    ["students.view"],
+  );
+  assert.equal(a.canViewAllStudents, false);
+  assert.equal(
+    canViewStudentHealth(a, { school_id: 2, classroom_id: 10 }),
+    true,
+  );
+  assert.equal(
+    canViewStudentHealth(a, { school_id: 2, classroom_id: 11 }),
+    false,
+  );
+  assert.equal(
+    canViewStudentHealth(a, { school_id: 3, classroom_id: 12 }),
+    false,
+  );
+  assert.equal(
+    canViewStudentHealth(await access("homeroom", []), {
+      school_id: 2,
+      classroom_id: 10,
+    }),
+    false,
+  );
 });
-test('counselor and admin general access stop at their school',async()=>{
- for(const role of ['counselor','admin']){
-  const a=await access(role,[]);
-  assert.equal(Boolean(canSeeStudent(a,{school_id:2,classroom_id:30})),true);
-  assert.equal(Boolean(canSeeStudent(a,{school_id:3,classroom_id:30})),false);
-  assert.deepEqual(studentScopeClause(a).params,[[2]]);
-  assert.equal(canViewStudentHealth(a,{school_id:2,classroom_id:null}),role==='counselor');
- }
+test("counselor and admin general access stop at their school", async () => {
+  for (const role of ["counselor", "admin"]) {
+    const a = await access(role, []);
+    assert.equal(
+      Boolean(canSeeStudent(a, { school_id: 2, classroom_id: 30 })),
+      true,
+    );
+    assert.equal(
+      Boolean(canSeeStudent(a, { school_id: 3, classroom_id: 30 })),
+      false,
+    );
+    assert.deepEqual(studentScopeClause(a).params, [[2]]);
+    assert.equal(
+      canViewStudentHealth(a, { school_id: 2, classroom_id: null }),
+      role === "counselor",
+    );
+  }
 });
-test('only the five current enrollment values can be written or imported',()=>{
- assert.equal(current.length,5);
- for(const [input,expected] of [['ลาพัก','on_leave'],['ลาออก','withdrawn'],['สละสิทธิ์','waived'],['active','active']])assert.equal(normalizeStudentStatus(input),expected);
- for(const input of ['inactive','transferred','unknown'])assert.equal(normalizeStudentStatus(input),undefined);
+test("only the five current enrollment values can be written or imported", () => {
+  assert.equal(current.length, 5);
+  for (const [input, expected] of [
+    ["ลาพัก", "on_leave"],
+    ["ลาออก", "withdrawn"],
+    ["สละสิทธิ์", "waived"],
+    ["active", "active"],
+  ])
+    assert.equal(normalizeStudentStatus(input), expected);
+  for (const input of ["inactive", "transferred", "unknown"])
+    assert.equal(normalizeStudentStatus(input), undefined);
+});
+test("an explicit clinical.view denial removes school health access for every health role", async () => {
+  const student = { school_id: 2, classroom_id: 10 };
+  for (const role of [
+    "counselor",
+    "mental_admin",
+    "homeroom",
+    "physical_admin",
+  ]) {
+    const allowed = await access(role);
+    assert.equal(
+      canViewStudentHealth(allowed, student) ||
+        canViewPhysicalHealth(allowed, student),
+      true,
+      role,
+    );
+    const denied = await access(role, undefined, [], ["clinical.view"]);
+    assert.equal(denied.canClinical, false, role);
+    assert.equal(denied.canMental, false, role);
+    assert.equal(denied.canPhysical, false, role);
+    assert.equal(canViewStudentHealth(denied, student), false, role);
+    assert.equal(canViewPhysicalHealth(denied, student), false, role);
+    assert.equal(Boolean(canSeeStudent(denied, student)), true, role);
+  }
+});
+
+test("unit rights grant staff and workflow management without a school admin role", async () => {
+  const plain = await access(null, []);
+  assert.equal(plain.canManageStaff, false);
+  assert.equal(plain.canManageWorkflows, false);
+  assert.equal(canManageStaffAt(plain, 2), false);
+  assert.equal(canManageWorkflowsAt(plain, 2), false);
+  const staff = await access(null, [], ["school_staff.manage"]);
+  assert.equal(staff.canManageStaff, true);
+  assert.equal(canManageStaffAt(staff, 2), true);
+  assert.equal(canManageWorkflowsAt(staff, 2), false);
+  const workflows = await access(null, [], ["school_workflows.manage"]);
+  assert.equal(workflows.canManageWorkflows, true);
+  assert.equal(canManageWorkflowsAt(workflows, 2), true);
+  assert.equal(canManageStaffAt(workflows, 2), false);
+  // The school admin role keeps both through its preset.
+  const admin = await access("admin", []);
+  assert.equal(canManageStaffAt(admin, 2), true);
+  assert.equal(canManageWorkflowsAt(admin, 2), true);
 });

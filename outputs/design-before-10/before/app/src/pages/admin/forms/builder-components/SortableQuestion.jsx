@@ -1,5 +1,5 @@
-import SearchableSelect from '../../../../components/SearchableSelect';
-import { toDisplayText } from '../../../../utils/textPresentation.js';
+import SearchableSelect from "../../../../components/SearchableSelect";
+import { toDisplayText } from "../../../../utils/textPresentation.js";
 import React, { useState, useRef, useEffect } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -106,8 +106,21 @@ const QUESTION_TYPES = [
 ];
 
 const CustomTypeSelector = ({ value, onChange }) => (
-  <SearchableSelect className="sfb-custom-select-trigger" aria-label="ประเภทคำถาม" value={value} onChange={event => onChange(event.target.value)}>
-    {QUESTION_TYPES.map(group => <optgroup key={group.group} label={group.group}>{group.options.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</optgroup>)}
+  <SearchableSelect
+    className="sfb-custom-select-trigger"
+    aria-label="ประเภทคำถาม"
+    value={value}
+    onChange={(event) => onChange(event.target.value)}
+  >
+    {QUESTION_TYPES.map((group) => (
+      <optgroup key={group.group} label={group.group}>
+        {group.options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </optgroup>
+    ))}
   </SearchableSelect>
 );
 

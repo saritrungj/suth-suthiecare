@@ -1,6 +1,6 @@
-import IconSelect from '../../../components/IconSelect';
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import IconSelect from "../../../components/IconSelect";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import { usePageExport } from "../../../components/ExcelExport";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -43,7 +43,9 @@ import {
 } from "react-icons/fa";
 
 // 🟢 Component สำหรับ Dropdown
-const CustomDropdown = props => <IconSelect {...props} className="fm-custom-select" />;
+const CustomDropdown = (props) => (
+  <IconSelect {...props} className="fm-custom-select" />
+);
 
 const FormManager = () => {
   const { activeOrganization, authorization } = usePermissions();
@@ -171,7 +173,10 @@ const FormManager = () => {
     return matchSearch && matchClinic && matchStatus;
   });
 
-  usePageExport({title:"แบบประเมิน",sources:[{resource:"forms",ids:filteredForms.map(r=>r.id)}]});
+  usePageExport({
+    title: "แบบประเมิน",
+    sources: [{ resource: "forms", ids: filteredForms.map((r) => r.id) }],
+  });
   const handleToggleMenu = (e, formId) => {
     e.stopPropagation();
     setOpenMenuId(openMenuId === formId ? null : formId);
@@ -652,7 +657,14 @@ const FormManager = () => {
                   </div>
 
                   <div className="fm-card-body">
-                    <h3><Link className="fm-card-edit-link" to={`/admin/forms/edit/${form.id}`}>{toDisplayText(form.title || "ชื่อฟอร์ม")}</Link></h3>
+                    <h3>
+                      <Link
+                        className="fm-card-edit-link"
+                        to={`/admin/forms/edit/${form.id}`}
+                      >
+                        {toDisplayText(form.title || "ชื่อฟอร์ม")}
+                      </Link>
+                    </h3>
                     <p className="fm-last-opened">
                       แก้ไขล่าสุด {form.lastOpenedDate || "วว/ดด/ปป"}
                     </p>
@@ -668,21 +680,29 @@ const FormManager = () => {
                       className="fm-card-menu-btn"
                       aria-label={`จัดการฟอร์ม ${toDisplayText(form.title || "ชื่อฟอร์ม")}`}
                       aria-expanded={openMenuId === form.id}
-                      aria-controls={openMenuId === form.id ? `form-actions-${form.id}` : undefined}
+                      aria-controls={
+                        openMenuId === form.id
+                          ? `form-actions-${form.id}`
+                          : undefined
+                      }
                       onClick={(e) => handleToggleMenu(e, form.id)}
                     >
                       ⋮
                     </button>
 
                     {openMenuId === form.id && (
-                      <div className="fm-dropdown-menu" id={`form-actions-${form.id}`} ref={menuRef}
+                      <div
+                        className="fm-dropdown-menu"
+                        id={`form-actions-${form.id}`}
+                        ref={menuRef}
                         onKeyDown={(event) => {
                           if (event.key === "Escape") {
                             event.preventDefault();
                             event.currentTarget.previousElementSibling?.focus();
                             setOpenMenuId(null);
                           }
-                        }}>
+                        }}
+                      >
                         <button
                           onClick={(e) => handleToggleStatus(e, form)}
                           style={{
@@ -776,7 +796,9 @@ const FormManager = () => {
               className="fm-form-card fm-add-empty-card"
               onClick={() => navigate("/admin/forms/create")}
             >
-              <span className="fm-plus-icon" aria-hidden="true">+</span>
+              <span className="fm-plus-icon" aria-hidden="true">
+                +
+              </span>
               <span>สร้างฟอร์มใหม่</span>
             </button>
           </section>

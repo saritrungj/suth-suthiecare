@@ -149,8 +149,8 @@ export default function AddBannerModal({ onClose, onSave }) {
                   position: "relative",
                   width: "100%",
                   height: "350px",
-                  background: "#1e293b",
-                  borderRadius: "12px",
+                  background: "var(--suth-ink)",
+                  borderRadius: "var(--suth-radius)",
                   overflow: "hidden",
                 }}
               >
@@ -208,9 +208,9 @@ export default function AddBannerModal({ onClose, onSave }) {
                         width: "420px",
                         height: "315px",
                         objectFit: "cover",
-                        borderRadius: "12px",
-                        border: "2px solid #2563eb",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                        borderRadius: "var(--suth-radius)",
+                        border: "2px solid var(--suth-info)",
+                        boxShadow: "0 4px 12px rgba(31, 47, 63, 0.1)",
                         display: "block",
                         marginBottom: "12px",
                       }}

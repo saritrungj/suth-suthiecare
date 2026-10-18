@@ -1480,13 +1480,39 @@ button.sch-tile.is-active {
 }
 
 /* School workflow controls use the existing work surface and touch targets. */
-.sch-workflow-nav { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 20px; }
-.sch-workflow-nav button { min-height:44px; }
-.sch-workflow-mappings { display:grid; gap:12px; margin-block:16px; }
-.sch-workflow-nav + .sch-card > h2:not(:first-child) { margin-top:32px; }
-.sch-workflow-nav + .sch-card > .sch-form-grid { margin-block:16px 24px; }
-.sch-workflow-nav + .sch-card > .sch-table-scroll { margin-top:16px; }
-@media(max-width:760px) { .sch-workflow-nav { flex-wrap:nowrap; overflow-x:auto; padding-bottom:8px; } .sch-workflow-nav button { flex:0 0 auto; } }
+.sch-workflow-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 20px;
+}
+.sch-workflow-nav button {
+  min-height: 44px;
+}
+.sch-workflow-mappings {
+  display: grid;
+  gap: 12px;
+  margin-block: 16px;
+}
+.sch-workflow-nav + .sch-card > h2:not(:first-child) {
+  margin-top: 32px;
+}
+.sch-workflow-nav + .sch-card > .sch-form-grid {
+  margin-block: 16px 24px;
+}
+.sch-workflow-nav + .sch-card > .sch-table-scroll {
+  margin-top: 16px;
+}
+@media (max-width: 760px) {
+  .sch-workflow-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .sch-workflow-nav button {
+    flex: 0 0 auto;
+  }
+}
 /* School-scoped shared components retain AA colors and intrinsic badges. */
 .sch-page {
   --suth-filter-muted: var(--suth-muted);
@@ -1541,10 +1567,35 @@ body:has(:is(.sch-wrapper, .org-wrapper)) .swal2-container {
 }
 
 /* Shared management forms keep related fields legible on phones and laptops. */
-.sch-management-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 24px; margin: 24px 0 32px; }
-.sch-management-form h2, .sch-management-form .sch-actions, .sch-management-form .sch-field:has(textarea) { grid-column: 1 / -1; }
-.sch-management-form .sch-field { margin: 0; }
-.sch-management-form > button { justify-self: start; align-self: end; }
-.sch-management-form .sch-actions { display: flex; flex-wrap: wrap; gap: 12px; }
-body:has(.cw-drawer-overlay) .sch-pagination { visibility: hidden; }
-@media (max-width: 767px) { .sch-management-form { grid-template-columns: minmax(0, 1fr); gap: 16px; } }
+.sch-management-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 24px;
+  margin: 24px 0 32px;
+}
+.sch-management-form h2,
+.sch-management-form .sch-actions,
+.sch-management-form .sch-field:has(textarea) {
+  grid-column: 1 / -1;
+}
+.sch-management-form .sch-field {
+  margin: 0;
+}
+.sch-management-form > button {
+  justify-self: start;
+  align-self: end;
+}
+.sch-management-form .sch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+body:has(.cw-drawer-overlay) .sch-pagination {
+  visibility: hidden;
+}
+@media (max-width: 767px) {
+  .sch-management-form {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+}

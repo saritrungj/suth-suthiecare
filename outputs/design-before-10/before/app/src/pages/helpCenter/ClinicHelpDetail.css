@@ -612,10 +612,31 @@
   }
 }
 
-.hc-clinic-detail-wrapper { background: var(--suth-canvas); color: var(--suth-ink); padding-bottom: 1px; }
-.hc-clinic-detail-wrapper :is(button, a, [tabindex]):focus-visible { outline: 3px solid var(--suth-focus); outline-offset: 3px; }
-.hc-nested-cat-header, .hc-sub-question-item { min-height: 44px; width: 100%; text-align: left; font-family: inherit; }
-.hc-clinic-text-block { min-width: 0; }
-.hc-clinic-detail-hero h1 { overflow-wrap: anywhere; }
-.hc-clinic-internal-search-box input::placeholder { color: var(--suth-muted); }
-.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content { overflow-wrap: anywhere; }
+.hc-clinic-detail-wrapper {
+  background: var(--suth-canvas);
+  color: var(--suth-ink);
+  padding-bottom: 1px;
+}
+.hc-clinic-detail-wrapper :is(button, a, [tabindex]):focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 3px;
+}
+.hc-nested-cat-header,
+.hc-sub-question-item {
+  min-height: 44px;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+.hc-clinic-text-block {
+  min-width: 0;
+}
+.hc-clinic-detail-hero h1 {
+  overflow-wrap: anywhere;
+}
+.hc-clinic-internal-search-box input::placeholder {
+  color: var(--suth-muted);
+}
+.hc-clinic-main-content-pane .hc-faq-answer.suth-rich-content {
+  overflow-wrap: anywhere;
+}

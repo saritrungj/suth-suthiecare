@@ -1,5 +1,6 @@
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import SearchableSelect from "../../../components/SearchableSelect";
+import { useModuleActions } from "../../../permissions/useModuleActions";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import GuardianStudents from "./GuardianStudents";
 import MasterSelect from "../../../components/MasterSelect";
 import { usePageExport } from "../../../components/ExcelExport";
@@ -56,6 +57,9 @@ import {
 } from "./schoolUi";
 import StudentDetailModal from "./StudentDetailModal";
 import "./school.css";
+import { DEFAULT_PAGE_SIZE } from "../../../components/table/TablePagination";
+import DataPanel from "../../../components/table/DataPanel";
+import ResultSummary from "../../../components/table/ResultSummary";
 
 const emptyFilters = {
   grade_id: "",
@@ -63,23 +67,29 @@ const emptyFilters = {
   student_type_id: "",
   status: "active",
   search: "",
-  is_boarder: '',
+  is_boarder: "",
 };
 
 export default function StudentList() {
   const { schoolAccess } = usePermissions();
-  return schoolAccess?.is_guardian ? <GuardianStudents /> : <StaffStudentList />;
+  return schoolAccess?.is_guardian ? (
+    <GuardianStudents />
+  ) : (
+    <StaffStudentList />
+  );
 }
 function StaffStudentList() {
-  const statusLabels=useStudentStatusLabels();
+  const statusLabels = useStudentStatusLabels();
   const { schoolAccess: access } = usePermissions();
+  // Adding or removing students records or removes who they are (PII rights).
+  const piiRights = useModuleActions("pii");
   const { schoolId } = useSchools();
   const [filters, setFilters] = useState(emptyFilters);
   const [grades, setGrades] = useState([]);
   const [classrooms, setClassrooms] = useState([]);
   const [studentTypes, setStudentTypes] = useState([]);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(DEFAULT_PAGE_SIZE);
   const [result, setResult] = useState({ data: [], pagination: null });
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
@@ -167,9 +177,9 @@ function StaffStudentList() {
       await Swal.fire({
         icon: "success",
         title: "รหัสผ่านชั่วคราว",
-        html: `<p>ชื่อผู้ใช้ <b>${escapeHtml(data.username)}</b></p><p style="font-size:1.4rem;font-family:monospace;letter-spacing:2px">${escapeHtml(data.password)}</p><p style="color:#b45309">แสดงครั้งเดียวเท่านั้น กรุณาจดหรือส่งให้นักเรียนก่อนปิดหน้าต่าง</p>`,
+        html: `<p>ชื่อผู้ใช้ <b>${escapeHtml(data.username)}</b></p><p style="font-size:var(--suth-fs-title);font-family:ui-monospace, 'Cascadia Mono', Consolas, monospace;letter-spacing:2px">${escapeHtml(data.password)}</p><p style="color:var(--suth-warning)">แสดงครั้งเดียวเท่านั้น กรุณาจดหรือส่งให้นักเรียนก่อนปิดหน้าต่าง</p>`,
         confirmButtonText: "บันทึกแล้ว",
-        confirmButtonColor: "#c2410c",
+        confirmButtonColor: "var(--suth-action)",
         allowOutsideClick: false,
       });
       await load();
@@ -197,7 +207,13 @@ function StaffStudentList() {
     }
   };
 
-  usePageExport({title:"นักเรียน",sources:[{resource:"students",filters:{...filters,school_id:schoolId}}],disabled:loading});
+  usePageExport({
+    title: "นักเรียน",
+    sources: [
+      { resource: "students", filters: { ...filters, school_id: schoolId } },
+    ],
+    disabled: loading,
+  });
   const students = result.data || [];
   // Previous/next inside the student file follow this page of the list.
   const viewingIndex = students.findIndex((student) => student.id === viewing);
@@ -227,12 +243,9 @@ function StaffStudentList() {
               : "นักเรียนในห้องที่คุณดูแล คลิกชื่อเพื่อดูข้อมูลสุขภาพจิตและสุขภาพกาย"
           }
         >
-          {access?.can_create_students && (
+          {access?.can_create_students && piiRights.create && (
             <>
-              <Link
-                className="sch-btn-secondary"
-                to="/admin/school/students/import"
-              >
+              <Link className="sch-btn-secondary" to="/admin/school/import">
                 <FiUpload aria-hidden="true" /> นำเข้าจาก Excel/CSV
               </Link>
               <button
@@ -247,7 +260,7 @@ function StaffStudentList() {
           )}
         </PageHeader>
 
-        <section className="sch-card">
+        <DataPanel className="sch-card">
           <div className="sch-filter-bar">
             <SearchField
               label="ค้นหานักเรียน"
@@ -283,10 +296,21 @@ function StaffStudentList() {
             </BarSelect>
             <FilterDropdown
               activeCount={
-                [filters.student_type_id, filters.status !== "active"].filter(
-                  Boolean,
-                ).length
+                [
+                  filters.student_type_id,
+                  filters.status !== emptyFilters.status ? "status" : "",
+                  filters.is_boarder,
+                ].filter(Boolean).length
               }
+              onClear={() => {
+                setPage(1);
+                setFilters((current) => ({
+                  ...current,
+                  student_type_id: "",
+                  status: emptyFilters.status,
+                  is_boarder: "",
+                }));
+              }}
             >
               <MenuSelect
                 label="ประเภทนักเรียน"
@@ -312,9 +336,82 @@ function StaffStudentList() {
                   </option>
                 ))}
               </MenuSelect>
-              <MenuSelect label="ที่พัก" value={filters.is_boarder} onChange={value=>updateFilter('is_boarder',value)}><option value="">ทุกประเภทที่พัก</option><option value="1">นักเรียนหอพัก</option><option value="0">ไปกลับ</option></MenuSelect>
+              <MenuSelect
+                label="ที่พัก"
+                value={filters.is_boarder}
+                onChange={(value) => updateFilter("is_boarder", value)}
+              >
+                <option value="">ทุกประเภทที่พัก</option>
+                <option value="1">นักเรียนหอพัก</option>
+                <option value="0">ไปกลับ</option>
+              </MenuSelect>
             </FilterDropdown>
           </div>
+
+          <ResultSummary
+            loading={loading}
+            pagination={result.pagination}
+            chips={[
+              {
+                key: "grade",
+                label: "ชั้นปี",
+                value: grades.find(
+                  (g) => String(g.id) === String(filters.grade_id),
+                )?.name,
+                onRemove: () => updateFilter("grade_id", ""),
+              },
+              {
+                key: "room",
+                label: "ห้อง",
+                value: (() => {
+                  const room = classrooms.find(
+                    (c) => String(c.id) === String(filters.classroom_id),
+                  );
+                  return room ? `${room.grade_name} ห้อง ${room.name}` : "";
+                })(),
+                onRemove: () => updateFilter("classroom_id", ""),
+              },
+              {
+                key: "type",
+                label: "ประเภท",
+                value: studentTypes.find(
+                  (t) => String(t.id) === String(filters.student_type_id),
+                )?.name,
+                onRemove: () => updateFilter("student_type_id", ""),
+              },
+              {
+                key: "status",
+                label: "สถานะ",
+                value:
+                  filters.status === emptyFilters.status
+                    ? ""
+                    : filters.status
+                      ? toDisplayText(
+                          statusLabels[filters.status] || filters.status,
+                        )
+                      : "ทุกสถานะ",
+                onRemove: () => updateFilter("status", emptyFilters.status),
+              },
+              {
+                key: "boarder",
+                label: "ที่พัก",
+                value:
+                  filters.is_boarder === "1"
+                    ? "นักเรียนหอพัก"
+                    : filters.is_boarder === "0"
+                      ? "ไปกลับ"
+                      : "",
+                onRemove: () => updateFilter("is_boarder", ""),
+              },
+            ]}
+            onClearAll={() => {
+              setPage(1);
+              setFilters((current) => ({
+                ...emptyFilters,
+                search: current.search,
+              }));
+            }}
+          />
 
           {loadError && (
             <p className="sch-error" role="alert">
@@ -326,7 +423,7 @@ function StaffStudentList() {
           )}
 
           <TableScroll label="ตารางรายชื่อนักเรียน">
-            <table className="sch-table">
+            <table className="sch-table admin-data-table">
               <thead>
                 <tr>
                   <th>รหัส</th>
@@ -383,10 +480,12 @@ function StaffStudentList() {
                         <span
                           className={`sch-badge status-${student.status === "active" ? "active" : "inactive"}`}
                         >
-                          {student.status_label || statusLabels[student.status] || STUDENT_STATUS_LABELS[student.status]}
+                          {student.status_label ||
+                            statusLabels[student.status] ||
+                            STUDENT_STATUS_LABELS[student.status]}
                         </span>
                       </td>
-                      <td>
+                      <td className="is-actions">
                         <div className="sch-row-actions">
                           <button
                             type="button"
@@ -419,6 +518,7 @@ function StaffStudentList() {
                             </>
                           )}
                           {access?.can_delete_students &&
+                            piiRights.delete &&
                             student.account_status !== "disabled" && (
                               <button
                                 type="button"
@@ -445,7 +545,7 @@ function StaffStudentList() {
               setPage(1);
             }}
           />
-        </section>
+        </DataPanel>
 
         {viewing && (
           <StudentDetailModal
@@ -472,6 +572,11 @@ function StaffStudentList() {
 
 function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
   const isNew = !initial.id;
+  // Editing names needs PII update; moving class needs students -> assign.
+  const { schoolAccess } = usePermissions();
+  const piiRights = useModuleActions("pii");
+  const lockIdentity = !isNew && !piiRights.update;
+  const lockClassroom = !isNew && !schoolAccess?.can_assign_students;
   const [form, setForm] = useState({
     school_id: initial.school_id || "",
     classroom_id: initial.classroom_id || "",
@@ -518,9 +623,9 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
           await Swal.fire({
             icon: "success",
             title: "สร้างนักเรียนและบัญชีแล้ว",
-            html: `<p>ชื่อผู้ใช้ <b>${escapeHtml(data.username)}</b></p><p style="font-size:1.4rem;font-family:monospace;letter-spacing:2px">${escapeHtml(data.password)}</p><p style="color:#b45309">รหัสผ่านชั่วคราวแสดงครั้งเดียว นักเรียนต้องเปลี่ยนรหัสเมื่อเข้าสู่ระบบครั้งแรก</p>`,
+            html: `<p>ชื่อผู้ใช้ <b>${escapeHtml(data.username)}</b></p><p style="font-size:var(--suth-fs-title);font-family:ui-monospace, 'Cascadia Mono', Consolas, monospace;letter-spacing:2px">${escapeHtml(data.password)}</p><p style="color:var(--suth-warning)">รหัสผ่านชั่วคราวแสดงครั้งเดียว นักเรียนต้องเปลี่ยนรหัสเมื่อเข้าสู่ระบบครั้งแรก</p>`,
             confirmButtonText: "บันทึกแล้ว",
-            confirmButtonColor: "#c2410c",
+            confirmButtonColor: "var(--suth-action)",
             allowOutsideClick: false,
           });
         else
@@ -591,6 +696,7 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
           </span>
           <SearchableSelect
             required={isNew}
+            disabled={lockClassroom}
             value={form.classroom_id}
             onChange={set("classroom_id")}
             {...(isNew ? bind("classroom_id", "กรุณาเลือกชั้น/ห้อง") : {})}
@@ -612,7 +718,11 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
           >
             <option value="">ไม่ระบุ</option>
             {studentTypes
-              .filter((type) => type.status === "active" || String(type.id) === String(initial.student_type_id))
+              .filter(
+                (type) =>
+                  type.status === "active" ||
+                  String(type.id) === String(initial.student_type_id),
+              )
               .map((type) => (
                 <option key={type.id} value={type.id}>
                   {type.name}
@@ -622,7 +732,19 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
         </label>
         <label className="sch-field">
           คำนำหน้า
-          <MasterSelect category="prefix" labelValues value={form.prefix} onChange={set("prefix")} fallback={["ด.ช.","ด.ญ.","นาย","นางสาว"].map(label=>({code:label,label}))}><option value="">ไม่ระบุ</option></MasterSelect>
+          <MasterSelect
+            category="prefix"
+            labelValues
+            value={form.prefix}
+            disabled={lockIdentity}
+            onChange={set("prefix")}
+            fallback={["ด.ช.", "ด.ญ.", "นาย", "นางสาว"].map((label) => ({
+              code: label,
+              label,
+            }))}
+          >
+            <option value="">ไม่ระบุ</option>
+          </MasterSelect>
         </label>
         <label className="sch-field">
           <span>
@@ -633,6 +755,7 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
             required
             maxLength={100}
             value={form.first_name}
+            disabled={lockIdentity}
             onChange={set("first_name")}
             {...bind("first_name", "กรุณากรอกชื่อ")}
           />
@@ -647,6 +770,7 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
             required
             maxLength={100}
             value={form.last_name}
+            disabled={lockIdentity}
             onChange={set("last_name")}
             {...bind("last_name", "กรุณากรอกนามสกุล")}
           />
@@ -657,12 +781,23 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
           <input
             maxLength={100}
             value={form.nickname}
+            disabled={lockIdentity}
             onChange={set("nickname")}
           />
         </label>
         <label className="sch-field">
           เพศ
-          <MasterSelect category="gender" value={form.gender} onChange={set("gender")} fallback={Object.entries(GENDER_LABELS).map(([code,label])=>({code,label}))}><option value="">ไม่ระบุ</option></MasterSelect>
+          <MasterSelect
+            category="gender"
+            value={form.gender}
+            onChange={set("gender")}
+            fallback={Object.entries(GENDER_LABELS).map(([code, label]) => ({
+              code,
+              label,
+            }))}
+          >
+            <option value="">ไม่ระบุ</option>
+          </MasterSelect>
         </label>
         <ThaiDateField
           label="วันเกิด"
@@ -689,12 +824,19 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
             />
           </label>
         )}
-        {(
+        {
           <label className="sch-field">
             สถานะ
-            <MasterSelect category="student_status" value={form.status} onChange={set("status")} fallback={Object.entries(STUDENT_STATUS_LABELS).filter(([code])=>!["transferred","inactive"].includes(code)).map(([code,label])=>({code,label}))} />
+            <MasterSelect
+              category="student_status"
+              value={form.status}
+              onChange={set("status")}
+              fallback={Object.entries(STUDENT_STATUS_LABELS)
+                .filter(([code]) => !["transferred", "inactive"].includes(code))
+                .map(([code, label]) => ({ code, label }))}
+            />
           </label>
-        )}
+        }
       </form>
     </SchoolModal>
   );

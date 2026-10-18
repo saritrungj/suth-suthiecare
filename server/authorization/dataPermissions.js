@@ -1,19 +1,14 @@
 const KEYS = ["pii.view", "clinical.view"];
+// The unit role's rights on the roles page are the only source. School roles
+// only decide scope; guardians keep their fixed read-only set.
 async function membershipPermissions(db, membership, roleKeys) {
-  const result = new Set(roleKeys);
-  const school=await require('./schoolRolePermissions').schoolRolePermissions(db,membership);
-  if(school.guardian)result.clear();
-  for(const key of school)result.add(key);
-  const [rows] = await db.query(
-    'SELECT permission_key,granted,source FROM organization_membership_data_permissions WHERE membership_id=? ORDER BY source="explicit" ASC',
-    [membership.id],
+  const { expandManage } = require("./permissionMatrix");
+  const school = await require("./schoolRolePermissions").schoolRolePermissions(
+    db,
+    membership,
   );
-  for (const row of rows)
-    if (KEYS.includes(row.permission_key)) {
-      if (Number(row.granted) === 1) result.add(row.permission_key);
-      else result.delete(row.permission_key);
-    }
-  return [...result];
+  if (school.guardian) return [...expandManage(school)];
+  return [...expandManage(roleKeys)];
 }
 async function resetMigratedGrants(db, membershipId, roleId, organizationId) {
   await db.query(

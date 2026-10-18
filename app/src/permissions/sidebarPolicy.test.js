@@ -22,7 +22,11 @@ const items = [
     orgTypes: ["school"],
     schoolCheck: (access) => access?.can_view_students,
   },
-  { key: "patient-members", module: "User Management" },
+  {
+    key: "patient-members",
+    module: "User Management",
+    hideForSystemAdmin: true,
+  },
   { type: "header", key: "system", system: true },
   {
     key: "organizations",
@@ -30,6 +34,7 @@ const items = [
     systemAdminOnly: true,
   },
   { key: "users", systemAdminOnly: true },
+  { key: "system-patient-members", systemAdminOnly: true },
   { key: "roles", systemAdminOnly: true },
   { key: "banner", module: "Content Management", systemAdminOnly: true },
   { type: "header", key: "account" },
@@ -53,9 +58,9 @@ test("system admin sees every module only in the all-organizations overview", ()
     "forms",
     "schedule",
     "school-students",
-    "patient-members",
     "organizations",
     "users",
+    "system-patient-members",
     "roles",
     "banner",
     "profile",
@@ -73,14 +78,23 @@ test("system admin sees every module only in the all-organizations overview", ()
     ),
     false,
   );
-  const hospital = visible(authorization, [], { activeOrganization: "1", organizationType: "hospital" });
+  const hospital = visible(authorization, [], {
+    activeOrganization: "1",
+    organizationType: "hospital",
+  });
   assert.ok(hospital.includes("schedule"));
   assert.equal(hospital.includes("school-students"), false);
   assert.ok(hospital.includes("organizations") && hospital.includes("users"));
-  const school = visible(authorization, [], { activeOrganization: "2", organizationType: "school" });
+  const school = visible(authorization, [], {
+    activeOrganization: "2",
+    organizationType: "school",
+  });
   assert.ok(school.includes("school-students"));
   assert.equal(school.includes("schedule"), false);
   assert.ok(school.includes("organizations") && school.includes("users"));
+  // Patient accounts are managed system-wide from the system section only.
+  assert.ok(hospital.includes("system-patient-members"));
+  assert.equal(hospital.includes("patient-members"), false);
   // A null/loading type must not imply permission to display all unit types.
   assert.equal(visible(authorization, []).includes("school-students"), false);
 });

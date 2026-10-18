@@ -3,68 +3,35 @@
 ============================================================ */
 
 .aptt-wrapper-card {
-  background: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
+  background: var(--suth-surface);
+  border-radius: var(--suth-radius-card);
+  box-shadow: var(--suth-shadow-soft);
+  padding: clamp(0.75rem, 1.6vw, 1rem);
   margin-top: 20px;
   width: 100%;
 }
 
-/* 🟢 เปิดให้เลื่อนซ้าย-ขวาบนมือถือได้อย่างอิสระ */
+/* Scrolls sideways inside the card; the frame comes from
+   styles/data-table-system.css like every other admin table. */
 .aptt-scroll-container {
   width: 100%;
   overflow-x: auto !important;
   overflow-y: hidden;
-  -webkit-overflow-scrolling: touch; /* ให้เลื่อนบนมือถือลื่นขึ้น */
+  -webkit-overflow-scrolling: touch;
 }
 
-/* 🟢 บังคับความกว้างขั้นต่ำ ป้องกันคอลัมน์บีบกันจนเละบนจอมือถือ */
 .aptt-main-table {
-  font-family: Sarabun;
+  font-family: var(--suth-font);
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
   table-layout: auto;
   min-width: 1300px;
 }
 
-/* หัวตาราง (Header) */
-.aptt-main-table th {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  padding: 18px 16px;
-  background: #f47932;
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 14.5px;
-  white-space: nowrap;
-  text-align: center;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.aptt-main-table th:first-child {
-  border-top-left-radius: 20px;
-}
-.aptt-main-table th:last-child {
-  border-top-right-radius: 20px;
-  border-right: none;
-}
-
-/* เนื้อหาตาราง */
+/* Head and cells share the dashboard table look; this table centres its
+   short columns, and the name and note columns read from the left. */
+.aptt-main-table th,
 .aptt-main-table td {
-  padding: 18px 16px;
-  color: #4b5563;
-  font-size: 14px;
-  border-bottom: 1px solid #ececec;
-  border-right: 1px solid #fcfcfc;
-  vertical-align: middle;
   text-align: center;
-}
-
-.aptt-main-table td:last-child {
-  border-right: none;
 }
 
 /* ================= จัดการความกว้างและสไตล์เฉพาะคอลัมน์ ================= */
@@ -96,8 +63,8 @@
 .aptt-name-btn {
   background: transparent;
   border: none;
-  color: #1967d2;
-  font-size: 14.5px;
+  color: var(--suth-action-ink);
+  font-size: var(--suth-fs-sm);
   font-weight: 600;
   font-family: inherit;
   text-decoration: underline;
@@ -106,13 +73,14 @@
   transition: color 0.2s;
 }
 .aptt-name-btn:hover {
-  color: #11468f;
+  color: var(--suth-action-pressed);
+  text-decoration-thickness: 2px;
 }
 
 .aptt-status-tag {
   padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12.5px;
+  border-radius: var(--suth-radius-panel);
+  font-size: var(--suth-fs-caption);
   font-weight: bold;
   display: inline-block;
   white-space: nowrap;
@@ -120,51 +88,115 @@
 
 .aptt-risk-tag {
   padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12.5px;
+  border-radius: var(--suth-radius-lg);
+  font-size: var(--suth-fs-caption);
   font-weight: 700;
   display: inline-block;
   white-space: nowrap;
 }
+.aptt-status-tag.is-success {
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
+}
+.aptt-status-tag.is-danger {
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
+}
+.aptt-status-tag.is-warning {
+  background: var(--suth-warning-tint);
+  color: var(--suth-warning);
+}
+.aptt-status-tag.is-neutral {
+  background: var(--suth-neutral-tint);
+  color: var(--suth-ink-2);
+}
+
+/* Queue actions: two quiet pills, green to confirm, red to cancel. */
+.aptt-acts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.aptt-act {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: var(--suth-radius-pill);
+  font: inherit;
+  font-size: var(--suth-fs-label);
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--suth-ease-out),
+    transform 160ms var(--suth-ease-out);
+}
+.aptt-act:hover {
+  transform: translateY(-1px);
+}
+.aptt-act--ok {
+  background: var(--suth-success-tint);
+  border-color: color-mix(in srgb, var(--suth-success) 22%, transparent);
+  color: var(--suth-success);
+}
+.aptt-act--ok:hover {
+  background: color-mix(in srgb, var(--suth-success) 14%, var(--suth-surface));
+}
+.aptt-act--cancel {
+  background: var(--suth-danger-tint);
+  border-color: var(--suth-danger-line);
+  color: var(--suth-danger);
+}
+.aptt-act--cancel:hover {
+  background: color-mix(in srgb, var(--suth-danger) 12%, var(--suth-surface));
+}
+.aptt-act:focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .aptt-act {
+    transition: none;
+  }
+}
+
 .aptt-risk-high {
-  background: #fee2e2;
-  color: #b91c1c;
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
 }
 .aptt-risk-medium {
-  background: #fef3c7;
-  color: #b45309;
+  background: var(--suth-warning-tint);
+  color: var(--suth-warning);
 }
 .aptt-risk-low {
-  background: #dcfce7;
-  color: #15803d;
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
 }
 
 /* ================= Hover Effect & Scrollbar ================= */
-.aptt-main-table tr:hover td {
-  background: #fff2eb;
-  transition: background-color 0.2s;
-}
 
 .aptt-scroll-container::-webkit-scrollbar {
   height: 12px;
 }
 .aptt-scroll-container::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 10px;
+  background: var(--suth-surface-2);
+  border-radius: var(--suth-radius);
   margin: 0 10px; /* ไม่ให้ scrollbar ชิดขอบซ้ายขวาเกินไป */
 }
 .aptt-scroll-container::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 10px;
-  border: 3px solid #f1f5f9;
+  background-color: var(--suth-control-line);
+  border-radius: var(--suth-radius);
+  border: 3px solid var(--suth-line-soft);
   background-clip: content-box;
 }
 
 /* ================= Skeleton ================= */
 .aptt-skeleton-box {
   height: 20px;
-  background: #e3e3e3;
-  border-radius: 4px;
+  background: var(--suth-line-soft);
+  border-radius: var(--suth-radius-xs);
   animation: aptt-pulse 1.3s infinite;
 }
 @keyframes aptt-pulse {
@@ -183,21 +215,23 @@
 .aptt-col-action {
   position: sticky !important;
   right: 0;
-  background: #ffffff; /* ป้องกันเนื้อหาอื่นทะลุมาให้เห็น */
-  z-index: 5;
-  border-left: 1px solid #e2e8f0;
-  box-shadow: -4px 0px 10px rgba(0, 0, 0, 0.04); /* เพิ่มเงาด้านซ้ายให้ดูมีมิติลอยอยู่ */
+  background: var(--suth-surface); /* ป้องกันเนื้อหาอื่นทะลุมาให้เห็น */
+  z-index: calc(var(--z-sticky) - 1);
+  border-left: 1px solid var(--suth-line-soft);
+  box-shadow: -4px 0px 10px rgba(31, 47, 63, 0.04); /* เพิ่มเงาด้านซ้ายให้ดูมีมิติลอยอยู่ */
   text-align: center;
 }
 
 /* หัวตารางของจัดการคิว (ต้องลอยอยู่บนสุด) */
 .aptt-main-table th.aptt-col-action {
-  z-index: 15 !important; /* ต้องอยู่เหนือ Header ปกติและเซลล์ปกติ */
+  z-index: calc(
+    var(--z-sticky) + 1
+  ) !important; /* ต้องอยู่เหนือ Header ปกติและเซลล์ปกติ */
 }
 
 /* ทำให้สีพื้นหลังเปลี่ยนตามเวลามีการ Hover แถว (ป้องกันสีขาวโดด) */
 .aptt-main-table tr:hover td.aptt-col-action {
-  background: #fff2eb !important;
+  background: var(--suth-surface-hover) !important;
 }
 
 /* 🟢 ป้องกันไม่ให้รหัส Case ID โดนบีบจนขึ้นบรรทัดใหม่ */
@@ -217,17 +251,17 @@
 .aptt-empty-state {
   padding: 60px 20px !important;
   text-align: center;
-  color: #f47932;
+  color: var(--suth-action-ink);
   font-weight: 600;
-  font-size: 15px;
-  background: #ffffff;
+  font-size: var(--suth-fs-body);
+  background: var(--suth-surface);
 }
 
 .aptt-spinner {
   width: 44px;
   height: 44px;
-  border: 4px solid #ffe6d5;
-  border-top: 4px solid #f47932;
+  border: 4px solid var(--suth-tint-strong);
+  border-top: 1px solid var(--suth-line);
   border-radius: 50%;
   animation: tableSpin 1s linear infinite;
   margin: 0 auto 16px auto;
@@ -240,4 +274,12 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* ── Kit shape (moved here from kit-system.css) ─────────────── */
+.admin-shell .aptt-wrapper-card {
+  border-color: transparent;
+  border-radius: var(--suth-radius-card);
+  background: var(--suth-surface);
+  box-shadow: var(--suth-shadow-soft);
 }

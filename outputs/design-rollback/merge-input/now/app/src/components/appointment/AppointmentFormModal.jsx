@@ -1,4 +1,4 @@
-import { DialogFrame } from '../ui/index.jsx';
+import { DialogFrame } from "../ui/index.jsx";
 import "./AppointmentFormModal.css";
 import { useState, useEffect } from "react";
 
@@ -85,120 +85,121 @@ export default function AppointmentFormModal({
   };
 
   return (
-    <DialogFrame className="form-modal"
-        aria-label={appointment ? "แก้ไขนัดหมาย" : "เพิ่มนัดหมาย"} onClose={onClose}>
-        <div className="modal-header">
-          <div>
-            <h3>{appointment ? "แก้ไขนัดหมาย" : "เพิ่มนัดหมาย"}</h3>
-            <p>Case ID: {user?.caseId}</p>
-          </div>
-
-          <button
-            className="close-btn"
-            onClick={onClose}
-            aria-label="ปิดหน้าต่าง"
-          >
-            ✕
-          </button>
+    <DialogFrame
+      className="form-modal"
+      aria-label={appointment ? "แก้ไขนัดหมาย" : "เพิ่มนัดหมาย"}
+      onClose={onClose}
+    >
+      <div className="modal-header">
+        <div>
+          <h3>{appointment ? "แก้ไขนัดหมาย" : "เพิ่มนัดหมาย"}</h3>
+          <p>Case ID: {user?.caseId}</p>
         </div>
 
-        <div className="form-body">
-          <div className="form-row">
-            <label>นัดหมายครั้งที่:</label>
+        <button
+          className="close-btn"
+          onClick={onClose}
+          aria-label="ปิดหน้าต่าง"
+        >
+          ✕
+        </button>
+      </div>
 
-            <input
-              className="short-input"
-              list="appointment-list"
-              value={appointmentNo}
-              onChange={(e) => setAppointmentNo(e.target.value)}
-              placeholder="เลือกหรือพิมพ์"
-            />
-
-            <datalist id="appointment-list">
-              <option value="1" />
-              <option value="2" />
-              <option value="3" />
-              <option value="4" />
-              <option value="5" />
-            </datalist>
-          </div>
+      <div className="form-body">
+        <div className="form-row">
+          <label>นัดหมายครั้งที่:</label>
 
           <input
-            type="datetime-local"
-            className="date-input"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+            className="short-input"
+            list="appointment-list"
+            value={appointmentNo}
+            onChange={(e) => setAppointmentNo(e.target.value)}
+            placeholder="เลือกหรือพิมพ์"
           />
 
-          <input
-            value={staff}
-            onChange={(e) => setStaff(e.target.value)}
-            placeholder="เจ้าหน้าที่"
-          />
-
-          <div className="form-section">
-            <label>ประเภทบริการ</label>
-
-            <div className="service-tags">
-              {services.map((s) => (
-                <button
-                  key={s}
-                  className={
-                    selectedServices.includes(s) ? "tag active" : "tag"
-                  }
-                  onClick={() => toggleService(s)}
-                  type="button"
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="form-section">
-            <label>ความเสี่ยง</label>
-
-            <div className="risk-group">
-              <button
-                type="button"
-                className={`risk urgent ${risk === "urgent" ? "active" : ""}`}
-                onClick={() => setRisk("urgent")}
-              >
-                เร่งด่วน
-              </button>
-
-              <button
-                type="button"
-                className={`risk warning ${risk === "warning" ? "active" : ""}`}
-                onClick={() => setRisk("warning")}
-              >
-                เฝ้าระวัง
-              </button>
-
-              <button
-                type="button"
-                className={`risk normal ${risk === "normal" ? "active" : ""}`}
-                onClick={() => setRisk("normal")}
-              >
-                ปกติ
-              </button>
-            </div>
-          </div>
-
-          <input
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="xxxx"
-          />
+          <datalist id="appointment-list">
+            <option value="1" />
+            <option value="2" />
+            <option value="3" />
+            <option value="4" />
+            <option value="5" />
+          </datalist>
         </div>
 
-        <div className="form-actions">
-          <button onClick={onClose}>ยกเลิก</button>
+        <input
+          type="datetime-local"
+          className="date-input"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
 
-          <button type="button" className="save" onClick={handleSave}>
-            บันทึกการนัดหมาย
-          </button>
+        <input
+          value={staff}
+          onChange={(e) => setStaff(e.target.value)}
+          placeholder="เจ้าหน้าที่"
+        />
+
+        <div className="form-section">
+          <label>ประเภทบริการ</label>
+
+          <div className="service-tags">
+            {services.map((s) => (
+              <button
+                key={s}
+                className={selectedServices.includes(s) ? "tag active" : "tag"}
+                onClick={() => toggleService(s)}
+                type="button"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
         </div>
-      </DialogFrame>
+
+        <div className="form-section">
+          <label>ความเสี่ยง</label>
+
+          <div className="risk-group">
+            <button
+              type="button"
+              className={`risk urgent ${risk === "urgent" ? "active" : ""}`}
+              onClick={() => setRisk("urgent")}
+            >
+              เร่งด่วน
+            </button>
+
+            <button
+              type="button"
+              className={`risk warning ${risk === "warning" ? "active" : ""}`}
+              onClick={() => setRisk("warning")}
+            >
+              เฝ้าระวัง
+            </button>
+
+            <button
+              type="button"
+              className={`risk normal ${risk === "normal" ? "active" : ""}`}
+              onClick={() => setRisk("normal")}
+            >
+              ปกติ
+            </button>
+          </div>
+        </div>
+
+        <input
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          placeholder="xxxx"
+        />
+      </div>
+
+      <div className="form-actions">
+        <button onClick={onClose}>ยกเลิก</button>
+
+        <button type="button" className="save" onClick={handleSave}>
+          บันทึกการนัดหมาย
+        </button>
+      </div>
+    </DialogFrame>
   );
 }

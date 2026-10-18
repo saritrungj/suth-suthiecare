@@ -13,6 +13,8 @@ const {
   canSeeStudent,
 } = require("../utils/schoolAccess");
 const { prepareImportRow } = require("../utils/studentImport");
+const { presets } = require("../authorization/schoolRolePermissions");
+const { ACTIONS } = require("../authorization/permissionMatrix");
 
 test("school role matrix separates physical data, mental insights and boarder scope", async () => {
   const db = {
@@ -33,7 +35,8 @@ test("school role matrix separates physical data, mental insights and boarder sc
     const access = await loadSchoolAccess(db, {
       user: { id: 3 },
       organizationContext: 7,
-      authorization: { permissions: new Set() },
+      // Real snapshots carry the role preset (see membershipPermissions).
+      authorization: { permissions: new Set(presets[role]) },
     });
     const ss = { school_id: 2, classroom_id: 10, is_boarder: 1 };
     assert.equal(canViewStudentHealth(access, ss), role === "mental_admin");
@@ -183,6 +186,11 @@ const admin = {
   canViewAllStudents: false,
   canViewStudents: true,
   canViewRisk: true,
+  // Unit role rights from the roles page (school admin preset after migration).
+  canAssignStudents: true,
+  workflows: Object.fromEntries(ACTIONS.map((action) => [action, true])),
+  staff: Object.fromEntries(ACTIONS.map((action) => [action, true])),
+  health: Object.fromEntries(ACTIONS.map((action) => [action, true])),
 };
 test("rescreen completion rejects another student response and denies physical-only staff before writes", async () => {
   for (const mental of [true, false]) {
@@ -241,6 +249,7 @@ test("rescreen completion rejects another student response and denies physical-o
 });
 test("general school risk summary returns only allowed fields and configured care advice", async () => {
   const { sealJson, fieldContext } = require("../utils/privateData");
+  const { writeField } = require("../utils/privateField");
   await withApp(
     async (sql, params) => {
       if (
@@ -255,7 +264,21 @@ test("general school risk summary returns only allowed fields and configured car
               id: 1,
               school_id: 2,
               student_code: "001",
+              prefix: "เด็กชาย",
+              first_name_encrypted: writeField(
+                "สมชาย",
+                "school_students",
+                "first_name_encrypted",
+                7,
+              ),
+              last_name_encrypted: writeField(
+                "ใจดี",
+                "school_students",
+                "last_name_encrypted",
+                7,
+              ),
               classroom_id: 10,
+              grade_name: "ม.1",
               classroom_name: "1/1",
               is_boarder: 1,
             },
@@ -305,6 +328,8 @@ test("general school risk summary returns only allowed fields and configured car
         [
           "id",
           "student_code",
+          "student_name",
+          "grade_name",
           "classroom_name",
           "is_boarder",
           "risk_status",
@@ -312,12 +337,16 @@ test("general school risk summary returns only allowed fields and configured car
           "care_advice",
         ].sort(),
       );
+      assert.equal(data[0].student_name, "เด็กชาย สมชาย ใจดี");
+      assert.equal(data[0].grade_name, "ม.1");
+      assert.equal(data[0].classroom_name, "1/1");
       assert.equal(data[0].risk_status, "high");
       assert.equal(data[0].care_advice, "คำแนะนำที่โรงเรียนยืนยัน");
     },
   );
 });
 test("screening progress counts actual responses within the round, organization and classroom scope", async () => {
+  const { writeField } = require("../utils/privateField");
   const access = {
     ...admin,
     adminSchoolIds: [],
@@ -347,8 +376,46 @@ test("screening progress counts actual responses within the round, organization 
         assert.deepEqual(params, [7, 8, "2026-11-02", "2026-11-15", 2, [10]]);
         return [
           [
-            { id: 1, completed_on: "2026-11-03" },
-            { id: 2, completed_on: null },
+            {
+              id: 1,
+              student_code: "0001",
+              prefix: "เด็กชาย",
+              first_name_encrypted: writeField(
+                "สมชาย",
+                "school_students",
+                "first_name_encrypted",
+                7,
+              ),
+              last_name_encrypted: writeField(
+                "ใจดี",
+                "school_students",
+                "last_name_encrypted",
+                7,
+              ),
+              grade_name: "ม.1",
+              classroom_name: "1/1",
+              completed_on: "2026-11-03",
+            },
+            {
+              id: 2,
+              student_code: "0002",
+              prefix: "เด็กหญิง",
+              first_name_encrypted: writeField(
+                "สมหญิง",
+                "school_students",
+                "first_name_encrypted",
+                7,
+              ),
+              last_name_encrypted: writeField(
+                "สุขใจ",
+                "school_students",
+                "last_name_encrypted",
+                7,
+              ),
+              grade_name: "ม.1",
+              classroom_name: "1/1",
+              completed_on: null,
+            },
           ],
         ];
       }
@@ -361,6 +428,10 @@ test("screening progress counts actual responses within the round, organization 
       const body = await response.json();
       assert.equal(body.completed, 1);
       assert.equal(body.outstanding, 1);
+      assert.equal(body.data[1].student_name, "เด็กหญิง สมหญิง สุขใจ");
+      assert.equal(body.data[1].grade_name, "ม.1");
+      assert.equal(body.data[1].classroom_name, "1/1");
+      assert.equal(body.data[1].first_name_encrypted, undefined);
     },
   );
 });

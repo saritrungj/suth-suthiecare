@@ -1,8 +1,9 @@
-import AcademicYearSelect from './AcademicYearSelect';
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import AcademicYearSelect from "./AcademicYearSelect";
+import { useModuleActions } from "../../../permissions/useModuleActions";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import { usePageExport } from "../../../components/ExcelExport";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   FiArrowLeft,
@@ -23,6 +24,8 @@ import {
   currentAcademicYear,
   useSchools,
 } from "./schoolUi";
+import { usePermissions } from "../../../permissions/PermissionsProvider";
+import { TeacherImport } from "./SchoolWorkflows";
 import "./school.css";
 
 const BATCH_SIZE = 100;
@@ -43,11 +46,16 @@ async function runBatches(payload, rows, onProgress) {
   const results = [];
   for (let offset = 0; offset < rows.length; offset += BATCH_SIZE) {
     let data;
-    try { ({data} = await importSchoolStudents({
-      ...payload,
-      rows: rows.slice(offset, offset + BATCH_SIZE),
-      row_offset: offset,
-    })); } catch(error) { error.partialResults=results; throw error; }
+    try {
+      ({ data } = await importSchoolStudents({
+        ...payload,
+        rows: rows.slice(offset, offset + BATCH_SIZE),
+        row_offset: offset,
+      }));
+    } catch (error) {
+      error.partialResults = results;
+      throw error;
+    }
     results.push(...data.results);
     onProgress(Math.min(rows.length, offset + BATCH_SIZE));
   }
@@ -55,6 +63,7 @@ async function runBatches(payload, rows, onProgress) {
 }
 
 export default function StudentImport() {
+  const { schoolAccess: access } = usePermissions();
   const { schools, schoolId } = useSchools();
   const school = schools.find((item) => String(item.id) === String(schoolId));
   const [academicYear, setAcademicYear] = useState(
@@ -72,6 +81,20 @@ export default function StudentImport() {
   const [onlyProblems, setOnlyProblems] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
   const inputRef = useRef(null);
+  // Students: create + PII create; teachers: school staff -> create (roles page).
+  const piiRights = useModuleActions("pii");
+  const canImportStudents = Boolean(
+    access?.can_create_students && piiRights.create,
+  );
+  const canImportTeachers = Boolean(access?.staff_actions?.create);
+  const [mode, setMode] = useState(canImportStudents ? "students" : "teachers");
+
+  useEffect(() => {
+    if (mode === "students" && !canImportStudents && canImportTeachers)
+      setMode("teachers");
+    if (mode === "teachers" && !canImportTeachers && canImportStudents)
+      setMode("students");
+  }, [mode, canImportStudents, canImportTeachers]);
 
   const step = final ? 3 : busy && preview ? 2 : preview ? 1 : 0;
   const options = {
@@ -137,7 +160,7 @@ export default function StudentImport() {
       );
       setFinal(results);
     } catch (err) {
-      if(err.partialResults?.length)setFinal(err.partialResults);
+      if (err.partialResults?.length) setFinal(err.partialResults);
       await showErrorAlert({
         error: err,
         title: "นำเข้าไม่สำเร็จ",
@@ -164,7 +187,17 @@ export default function StudentImport() {
     ? shown.filter((item) => item.status === "error")
     : shown;
 
-  usePageExport({title:"ผลนำเข้านักเรียน",sources:[],localSheets:[{resource:"import_results",data:rowsToShow.map(({password,...row})=>row)}],disabled:busy});
+  usePageExport({
+    title: "ผลนำเข้านักเรียน",
+    sources: [],
+    localSheets: [
+      {
+        resource: "import_results",
+        data: rowsToShow.map(({ password, ...row }) => row),
+      },
+    ],
+    disabled: busy,
+  });
   const saveCredentials = async () => {
     await downloadCredentialsWorkbook(final, school?.name);
     setDownloaded(true);
@@ -174,301 +207,366 @@ export default function StudentImport() {
     <div className="sch-wrapper">
       <main className="sch-page">
         <PageHeader
-          title="นำเข้านักเรียนจาก Excel / CSV"
-          description="ระบบจะสร้างข้อมูลนักเรียนและบัญชีผู้ใช้ให้นักเรียนทุกคน พร้อมรหัสผ่านชั่วคราวที่นักเรียนต้องเปลี่ยนเมื่อเข้าสู่ระบบครั้งแรก"
+          title="นำเข้าข้อมูลโรงเรียน"
+          description="นำเข้ารายชื่อนักเรียนหรือครูจาก Excel / CSV ตรวจสอบข้อมูลก่อนบันทึก และดาวน์โหลดไฟล์ต้นแบบของแต่ละประเภท"
         >
-          <Link className="sch-btn-secondary" to="/admin/school/students">
-            <FiArrowLeft aria-hidden="true" /> กลับไปรายชื่อนักเรียน
+          <Link
+            className="sch-btn-secondary"
+            to={
+              mode === "teachers"
+                ? "/admin/school/teachers"
+                : "/admin/school/students"
+            }
+          >
+            <FiArrowLeft aria-hidden="true" /> กลับไปรายชื่อ
+            {mode === "teachers" ? "ครู" : "นักเรียน"}
           </Link>
         </PageHeader>
 
-        <ol className="sch-steps" aria-label="ขั้นตอนการนำเข้า">
-          {STEPS.map((label, index) => (
-            <li key={label} aria-current={index === step ? "step" : undefined}>
-              {index + 1}. {toDisplayText(label)}
-            </li>
-          ))}
-        </ol>
+        <nav className="sch-import-tabs" aria-label="ประเภทข้อมูลนำเข้า">
+          {canImportStudents && (
+            <button
+              type="button"
+              className={mode === "students" ? "is-active" : ""}
+              aria-current={mode === "students" ? "page" : undefined}
+              onClick={() => setMode("students")}
+            >
+              นักเรียน
+            </button>
+          )}
+          {canImportTeachers && (
+            <button
+              type="button"
+              className={mode === "teachers" ? "is-active" : ""}
+              aria-current={mode === "teachers" ? "page" : undefined}
+              onClick={() => setMode("teachers")}
+            >
+              ครู
+            </button>
+          )}
+        </nav>
 
-        {!final && (
-          <section className="sch-card" aria-labelledby="import-setup-title">
-            <h2 id="import-setup-title">ตั้งค่าการนำเข้า</h2>
-            <div className="sch-form-grid">
-              <label className="sch-field">
-                ปีการศึกษาของห้องเรียน (พ.ศ.)
-                <AcademicYearSelect schoolId={schoolId} value={academicYear} disabled={busy} onChange={event => { setAcademicYear(event.target.value); setPreview(null); }} />
-              </label>
-              <label className="sch-field">
-                เมื่อพบรหัสนักเรียนที่มีอยู่แล้ว
-                <SearchableSelect
-                  value={onDuplicate}
-                  onChange={(event) => {
-                    setOnDuplicate(event.target.value);
-                    setPreview(null);
-                  }}
+        {mode === "students" && canImportStudents && (
+          <>
+            <ol className="sch-steps" aria-label="ขั้นตอนการนำเข้า">
+              {STEPS.map((label, index) => (
+                <li
+                  key={label}
+                  aria-current={index === step ? "step" : undefined}
                 >
-                  <option value="skip">ข้าม (ไม่แก้ไขข้อมูลเดิม)</option>
-                  <option value="update">อัปเดตข้อมูลและห้องเรียน</option>
-                </SearchableSelect>
-              </label>
-              <label className="sch-check sch-full">
-                <input
-                  type="checkbox"
-                  checked={createMissing}
-                  onChange={(event) => {
-                    setCreateMissing(event.target.checked);
-                    setPreview(null);
-                  }}
-                />
-                <span>
-                  สร้างชั้นปีและห้องเรียนที่ยังไม่มีในระบบให้อัตโนมัติ
-                  (ตามชื่อในไฟล์ ปีการศึกษา {academicYear || "-"})
-                </span>
-              </label>
-            </div>
+                  {index + 1}. {toDisplayText(label)}
+                </li>
+              ))}
+            </ol>
 
-            <div className="sch-stack-top">
-              <div
-                className={`sch-dropzone ${dragging ? "is-dragging" : ""}`}
-                onDragOver={(event) => {
-                  event.preventDefault();
-                  setDragging(true);
-                }}
-                onDragLeave={() => setDragging(false)}
-                onDrop={(event) => {
-                  event.preventDefault();
-                  setDragging(false);
-                  chooseFile(event.dataTransfer.files?.[0]);
-                }}
+            {!final && (
+              <section
+                className="sch-card"
+                aria-labelledby="import-setup-title"
               >
-                <FiUploadCloud size={32} aria-hidden="true" />
-                <strong>
-                  {file ? file.name : "ลากไฟล์มาวางที่นี่ หรือเลือกไฟล์"}
-                </strong>
-                <span className="sch-muted">
-                  รองรับ .xlsx และ .csv (UTF-8) แถวแรกต้องเป็นหัวคอลัมน์
-                </span>
-                <div className="sch-button-row sch-button-row--center">
-                  <label className="sch-btn sch-file-btn">
-                    <FiFileText aria-hidden="true" /> เลือกไฟล์
-                    <input
-                      ref={inputRef}
-                      type="file"
-                      accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                      className="sch-file-input"
-                      onChange={(event) => chooseFile(event.target.files?.[0])}
+                <h2 id="import-setup-title">ตั้งค่าการนำเข้า</h2>
+                <div className="sch-form-grid">
+                  <label className="sch-field">
+                    ปีการศึกษาของห้องเรียน (พ.ศ.)
+                    <AcademicYearSelect
+                      schoolId={schoolId}
+                      value={academicYear}
+                      disabled={busy}
+                      onChange={(event) => {
+                        setAcademicYear(event.target.value);
+                        setPreview(null);
+                      }}
                     />
                   </label>
-                  <button
-                    type="button"
-                    className="sch-btn-secondary"
-                    onClick={downloadImportTemplate}
-                  >
-                    <FiDownload aria-hidden="true" /> ดาวน์โหลดแบบฟอร์ม
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {parsed && (
-              <div className="sch-stack-top sch-stack">
-                <p>
-                  พบนักเรียน <strong>{parsed.rows.length}</strong> แถว
-                </p>
-                {parsed.missingRequired.length > 0 && (
-                  <p className="sch-error" role="alert">
-                    ไม่พบคอลัมน์ที่จำเป็น: {parsed.missingRequired.join(", ")}{" "}
-                    กรุณาใช้หัวคอลัมน์ตามแบบฟอร์ม
-                  </p>
-                )}
-                {parsed.unknownHeaders.length > 0 && (
-                  <p className="sch-warning">
-                    คอลัมน์ที่ระบบไม่รู้จักจะไม่ถูกนำเข้า:{" "}
-                    {parsed.unknownHeaders.join(", ")}
-                  </p>
-                )}
-                <div>
-                  <button
-                    type="button"
-                    className="sch-btn"
-                    disabled={
-                      busy ||
-                      !schoolId ||
-                      academicYear.length !== 4 ||
-                      parsed.missingRequired.length > 0
-                    }
-                    onClick={check}
-                  >
-                    {busy && !preview ? "กำลังตรวจสอบ..." : "ตรวจสอบข้อมูล"}
-                  </button>
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-
-        {busy && parsed && (
-          <section className="sch-card" aria-live="polite">
-            <p className="sch-progress-label">
-              {preview ? "กำลังนำเข้า" : "กำลังตรวจสอบ"} {progress} /{" "}
-              {parsed.rows.length} แถว
-            </p>
-            <div
-              className="sch-progress"
-              role="progressbar"
-              aria-valuemin={0}
-              aria-valuemax={parsed.rows.length}
-              aria-valuenow={progress}
-            >
-              <span
-                style={{
-                  transform: `scaleX(${parsed.rows.length ? progress / parsed.rows.length : 0})`,
-                }}
-              />
-            </div>
-          </section>
-        )}
-
-        {shown.length > 0 && !busy && (
-          <section className="sch-card" aria-labelledby="import-result-title">
-            <div className="sch-card-head">
-              <h2 id="import-result-title">
-                {final ? "ผลการนำเข้า" : "ผลการตรวจสอบ (ยังไม่บันทึก)"}
-              </h2>
-              <label className="sch-check">
-                <input
-                  type="checkbox"
-                  checked={onlyProblems}
-                  onChange={(event) => setOnlyProblems(event.target.checked)}
-                />
-                <span>แสดงเฉพาะแถวที่มีปัญหา ({problems})</span>
-              </label>
-            </div>
-            <div className="sch-tiles">
-              {Object.entries(summary).map(([status, count]) => (
-                <div
-                  key={status}
-                  className={`sch-tile ${status === "error" ? "risk-high" : status === "skipped" ? "risk-medium" : "risk-normal"}`}
-                >
-                  <span>{STATUS_LABELS[status] || status}</span>
-                  <strong>{count}</strong>
-                </div>
-              ))}
-            </div>
-
-            {final ? (
-              <div className="sch-stack sch-stack-bottom">
-                {newPasswords > 0 && (
-                  <p className="sch-warning" role="alert">
-                    มีรหัสผ่านชั่วคราว {newPasswords} บัญชี
-                    แสดงเพียงครั้งเดียวในหน้านี้
-                    กรุณาดาวน์โหลดไฟล์บัญชีนักเรียนก่อนออกจากหน้า
-                    และเก็บไฟล์อย่างปลอดภัย
-                  </p>
-                )}
-                <div className="sch-button-row">
-                  <button
-                    type="button"
-                    className="sch-btn"
-                    onClick={saveCredentials}
-                  >
-                    <FiDownload aria-hidden="true" /> ดาวน์โหลดบัญชีนักเรียน
-                    (Excel)
-                  </button>
-                  <button
-                    type="button"
-                    className="sch-btn-secondary"
-                    disabled={newPasswords > 0 && !downloaded}
-                    title={
-                      newPasswords > 0 && !downloaded
-                        ? "ดาวน์โหลดบัญชีนักเรียนก่อน"
-                        : undefined
-                    }
-                    onClick={reset}
-                  >
-                    นำเข้าไฟล์อื่น
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="sch-button-row sch-stack-bottom">
-                <button
-                  type="button"
-                  className="sch-btn"
-                  disabled={!importable}
-                  onClick={apply}
-                >
-                  นำเข้า {importable} คน
-                  {problems ? ` (ข้ามแถวที่มีปัญหา ${problems} แถว)` : ""}
-                </button>
-                <button
-                  type="button"
-                  className="sch-btn-secondary"
-                  onClick={reset}
-                >
-                  เลือกไฟล์ใหม่
-                </button>
-              </div>
-            )}
-
-            <TableScroll
-              label={final ? "ตารางผลการนำเข้า" : "ตารางผลการตรวจสอบ"}
-            >
-              <table className="sch-table">
-                <thead>
-                  <tr>
-                    <th className="sch-num">แถว</th>
-                    <th>รหัส</th>
-                    <th>ชื่อ</th>
-                    <th>ชั้น/ห้อง</th>
-                    <th>ชื่อผู้ใช้</th>
-                    {final && <th>รหัสผ่านชั่วคราว</th>}
-                    <th>ผล</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rowsToShow.map((item) => (
-                    <tr
-                      key={item.row}
-                      className={item.status === "error" ? "sch-row-error" : ""}
+                  <label className="sch-field">
+                    เมื่อพบรหัสนักเรียนที่มีอยู่แล้ว
+                    <SearchableSelect
+                      value={onDuplicate}
+                      onChange={(event) => {
+                        setOnDuplicate(event.target.value);
+                        setPreview(null);
+                      }}
                     >
-                      <td className="sch-num">{item.row + 1}</td>
-                      <td>{item.student_code || "-"}</td>
-                      <td>{item.name || "-"}</td>
-                      <td>
-                        {item.grade || "-"} ห้อง {item.classroom || "-"}
-                      </td>
-                      <td>{item.username || "-"}</td>
-                      {final && (
-                        <td className="sch-code">{item.password || "-"}</td>
-                      )}
-                      <td>
-                        <span
-                          className={`sch-badge ${item.status === "error" ? "risk-high" : item.status === "skipped" ? "risk-medium" : "risk-normal"}`}
-                        >
-                          {STATUS_LABELS[item.status] || item.status}
-                        </span>
-                        {item.errors?.length > 0 && (
-                          <ul className="sch-errors">
-                            {item.errors.map((message) => (
-                              <li key={message}>{message}</li>
-                            ))}
-                          </ul>
-                        )}
-                        {item.notes?.length > 0 && (
-                          <span className="sch-sub">
-                            {item.notes.join(" ")}
-                          </span>
-                        )}
-                      </td>
-                    </tr>
+                      <option value="skip">ข้าม (ไม่แก้ไขข้อมูลเดิม)</option>
+                      <option value="update">อัปเดตข้อมูลและห้องเรียน</option>
+                    </SearchableSelect>
+                  </label>
+                  <label className="sch-check sch-full">
+                    <input
+                      type="checkbox"
+                      checked={createMissing}
+                      onChange={(event) => {
+                        setCreateMissing(event.target.checked);
+                        setPreview(null);
+                      }}
+                    />
+                    <span>
+                      สร้างชั้นปีและห้องเรียนที่ยังไม่มีในระบบให้อัตโนมัติ
+                      (ตามชื่อในไฟล์ ปีการศึกษา {academicYear || "-"})
+                    </span>
+                  </label>
+                </div>
+
+                <div className="sch-stack-top">
+                  <div
+                    className={`sch-dropzone ${dragging ? "is-dragging" : ""}`}
+                    onDragOver={(event) => {
+                      event.preventDefault();
+                      setDragging(true);
+                    }}
+                    onDragLeave={() => setDragging(false)}
+                    onDrop={(event) => {
+                      event.preventDefault();
+                      setDragging(false);
+                      chooseFile(event.dataTransfer.files?.[0]);
+                    }}
+                  >
+                    <FiUploadCloud size={32} aria-hidden="true" />
+                    <strong>
+                      {file ? file.name : "ลากไฟล์มาวางที่นี่ หรือเลือกไฟล์"}
+                    </strong>
+                    <span className="sch-muted">
+                      รองรับ .xlsx และ .csv (UTF-8) แถวแรกต้องเป็นหัวคอลัมน์
+                    </span>
+                    <div className="sch-button-row sch-button-row--center">
+                      <label className="sch-btn sch-file-btn">
+                        <FiFileText aria-hidden="true" /> เลือกไฟล์
+                        <input
+                          ref={inputRef}
+                          type="file"
+                          accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                          className="sch-file-input"
+                          onChange={(event) =>
+                            chooseFile(event.target.files?.[0])
+                          }
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        className="sch-btn-secondary"
+                        onClick={downloadImportTemplate}
+                      >
+                        <FiDownload aria-hidden="true" /> ดาวน์โหลดแบบฟอร์ม
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {parsed && (
+                  <div className="sch-stack-top sch-stack">
+                    <p>
+                      พบนักเรียน <strong>{parsed.rows.length}</strong> แถว
+                    </p>
+                    {parsed.missingRequired.length > 0 && (
+                      <p className="sch-error" role="alert">
+                        ไม่พบคอลัมน์ที่จำเป็น:{" "}
+                        {parsed.missingRequired.join(", ")}{" "}
+                        กรุณาใช้หัวคอลัมน์ตามแบบฟอร์ม
+                      </p>
+                    )}
+                    {parsed.unknownHeaders.length > 0 && (
+                      <p className="sch-warning">
+                        คอลัมน์ที่ระบบไม่รู้จักจะไม่ถูกนำเข้า:{" "}
+                        {parsed.unknownHeaders.join(", ")}
+                      </p>
+                    )}
+                    <div>
+                      <button
+                        type="button"
+                        className="sch-btn"
+                        disabled={
+                          busy ||
+                          !schoolId ||
+                          academicYear.length !== 4 ||
+                          parsed.missingRequired.length > 0
+                        }
+                        onClick={check}
+                      >
+                        {busy && !preview ? "กำลังตรวจสอบ..." : "ตรวจสอบข้อมูล"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </section>
+            )}
+
+            {busy && parsed && (
+              <section className="sch-card" aria-live="polite">
+                <p className="sch-progress-label">
+                  {preview ? "กำลังนำเข้า" : "กำลังตรวจสอบ"} {progress} /{" "}
+                  {parsed.rows.length} แถว
+                </p>
+                <div
+                  className="sch-progress"
+                  role="progressbar"
+                  aria-valuemin={0}
+                  aria-valuemax={parsed.rows.length}
+                  aria-valuenow={progress}
+                >
+                  <span
+                    style={{
+                      transform: `scaleX(${parsed.rows.length ? progress / parsed.rows.length : 0})`,
+                    }}
+                  />
+                </div>
+              </section>
+            )}
+
+            {shown.length > 0 && !busy && (
+              <section
+                className="sch-card"
+                aria-labelledby="import-result-title"
+              >
+                <div className="sch-card-head">
+                  <h2 id="import-result-title">
+                    {final ? "ผลการนำเข้า" : "ผลการตรวจสอบ (ยังไม่บันทึก)"}
+                  </h2>
+                  <label className="sch-check">
+                    <input
+                      type="checkbox"
+                      checked={onlyProblems}
+                      onChange={(event) =>
+                        setOnlyProblems(event.target.checked)
+                      }
+                    />
+                    <span>แสดงเฉพาะแถวที่มีปัญหา ({problems})</span>
+                  </label>
+                </div>
+                <div className="sch-tiles">
+                  {Object.entries(summary).map(([status, count]) => (
+                    <div
+                      key={status}
+                      className={`sch-tile ${status === "error" ? "risk-high" : status === "skipped" ? "risk-medium" : "risk-normal"}`}
+                    >
+                      <span>{STATUS_LABELS[status] || status}</span>
+                      <strong>{count}</strong>
+                    </div>
                   ))}
-                </tbody>
-              </table>
-            </TableScroll>
-            <p className="sch-muted">
-              เลขแถวนับตามไฟล์ (แถวที่ 1 คือหัวคอลัมน์)
-            </p>
+                </div>
+
+                {final ? (
+                  <div className="sch-stack sch-stack-bottom">
+                    {newPasswords > 0 && (
+                      <p className="sch-warning" role="alert">
+                        มีรหัสผ่านชั่วคราว {newPasswords} บัญชี
+                        แสดงเพียงครั้งเดียวในหน้านี้
+                        กรุณาดาวน์โหลดไฟล์บัญชีนักเรียนก่อนออกจากหน้า
+                        และเก็บไฟล์อย่างปลอดภัย
+                      </p>
+                    )}
+                    <div className="sch-button-row">
+                      <button
+                        type="button"
+                        className="sch-btn"
+                        onClick={saveCredentials}
+                      >
+                        <FiDownload aria-hidden="true" /> ดาวน์โหลดบัญชีนักเรียน
+                        (Excel)
+                      </button>
+                      <button
+                        type="button"
+                        className="sch-btn-secondary"
+                        disabled={newPasswords > 0 && !downloaded}
+                        title={
+                          newPasswords > 0 && !downloaded
+                            ? "ดาวน์โหลดบัญชีนักเรียนก่อน"
+                            : undefined
+                        }
+                        onClick={reset}
+                      >
+                        นำเข้าไฟล์อื่น
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="sch-button-row sch-stack-bottom">
+                    <button
+                      type="button"
+                      className="sch-btn"
+                      disabled={!importable}
+                      onClick={apply}
+                    >
+                      นำเข้า {importable} คน
+                      {problems ? ` (ข้ามแถวที่มีปัญหา ${problems} แถว)` : ""}
+                    </button>
+                    <button
+                      type="button"
+                      className="sch-btn-secondary"
+                      onClick={reset}
+                    >
+                      เลือกไฟล์ใหม่
+                    </button>
+                  </div>
+                )}
+
+                <TableScroll
+                  label={final ? "ตารางผลการนำเข้า" : "ตารางผลการตรวจสอบ"}
+                >
+                  <table className="sch-table admin-data-table">
+                    <thead>
+                      <tr>
+                        <th className="sch-num">แถว</th>
+                        <th>รหัส</th>
+                        <th>ชื่อ</th>
+                        <th>ชั้น/ห้อง</th>
+                        <th>ชื่อผู้ใช้</th>
+                        {final && <th>รหัสผ่านชั่วคราว</th>}
+                        <th>ผล</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rowsToShow.map((item) => (
+                        <tr
+                          key={item.row}
+                          className={
+                            item.status === "error" ? "sch-row-error" : ""
+                          }
+                        >
+                          <td className="sch-num">{item.row + 1}</td>
+                          <td>{item.student_code || "-"}</td>
+                          <td>{item.name || "-"}</td>
+                          <td>
+                            {item.grade || "-"} ห้อง {item.classroom || "-"}
+                          </td>
+                          <td>{item.username || "-"}</td>
+                          {final && (
+                            <td className="sch-code">{item.password || "-"}</td>
+                          )}
+                          <td>
+                            <span
+                              className={`sch-badge ${item.status === "error" ? "risk-high" : item.status === "skipped" ? "risk-medium" : "risk-normal"}`}
+                            >
+                              {STATUS_LABELS[item.status] || item.status}
+                            </span>
+                            {item.errors?.length > 0 && (
+                              <ul className="sch-errors">
+                                {item.errors.map((message) => (
+                                  <li key={message}>{message}</li>
+                                ))}
+                              </ul>
+                            )}
+                            {item.notes?.length > 0 && (
+                              <span className="sch-sub">
+                                {item.notes.join(" ")}
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </TableScroll>
+                <p className="sch-muted">
+                  เลขแถวนับตามไฟล์ (แถวที่ 1 คือหัวคอลัมน์)
+                </p>
+              </section>
+            )}
+          </>
+        )}
+
+        {mode === "teachers" && canImportTeachers && (
+          <section className="sch-import-panel" aria-label="นำเข้าครู">
+            <TeacherImport schoolId={schoolId} />
           </section>
         )}
       </main>

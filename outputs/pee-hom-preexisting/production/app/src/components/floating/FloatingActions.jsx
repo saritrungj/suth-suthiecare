@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  FiArrowUp,
-  FiHeart,
-  FiHelpCircle,
-} from "react-icons/fi";
+import { FiArrowUp, FiHeart, FiHelpCircle } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import "./FloatingActions.css";

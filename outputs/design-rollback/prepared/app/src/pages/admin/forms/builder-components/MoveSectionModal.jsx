@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../../../utils/textPresentation.js';
+import { toDisplayText } from "../../../../utils/textPresentation.js";
 import React from "react";
 import { FaGripVertical, FaChevronUp, FaChevronDown } from "react-icons/fa";
 
@@ -21,7 +21,9 @@ const MoveSectionModal = ({ isOpen, onClose, sections, onMoveSection }) => {
                 <FaGripVertical />
               </div>
               <div className="sfb-section-info">
-                <strong>{toDisplayText(sec.title || "ส่วนที่ไม่มีชื่อ")}</strong>
+                <strong>
+                  {toDisplayText(sec.title || "ส่วนที่ไม่มีชื่อ")}
+                </strong>
                 <span>
                   ส่วนที่ {index + 1} จาก {sections.length}
                 </span>

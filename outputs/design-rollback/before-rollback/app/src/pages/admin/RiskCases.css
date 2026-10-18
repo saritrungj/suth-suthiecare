@@ -340,11 +340,15 @@
 }
 
 /* ไอคอนหมุนเมื่อเปิดเมนู */
-:where(.admin-wrapper2) .rc-custom-select[style*="zIndex: 999"] .rc-dropdown-icon {
+:where(.admin-wrapper2)
+  .rc-custom-select[style*="zIndex: 999"]
+  .rc-dropdown-icon {
   transform: rotate(180deg);
   color: #e53935;
 }
-:where(.admin-wrapper2) .rc-custom-select[style*="zIndex: 999"] .rc-filter-icon {
+:where(.admin-wrapper2)
+  .rc-custom-select[style*="zIndex: 999"]
+  .rc-filter-icon {
   color: #e53935;
 }
 

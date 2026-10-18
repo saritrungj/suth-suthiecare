@@ -1,6 +1,10 @@
-import { Surface as UiSurface } from '../../components/ui/index.jsx';
-import { PageHeader as UiPageHeader, Button as UiButton, TextInput as UiTextInput } from '../../components/ui/index.jsx';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { Surface as UiSurface } from "../../components/ui/index.jsx";
+import {
+  PageHeader as UiPageHeader,
+  Button as UiButton,
+  TextInput as UiTextInput,
+} from "../../components/ui/index.jsx";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { usePageExport } from "../../components/ExcelExport";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -56,7 +60,13 @@ export default function RolesPermissions() {
       ),
     [],
   );
-  usePageExport({title:"บทบาทและสิทธิ์",sources:[{resource:"roles"},...(selected?[{resource:"role_permissions",id:selected}]:[])]});
+  usePageExport({
+    title: "บทบาทและสิทธิ์",
+    sources: [
+      { resource: "roles" },
+      ...(selected ? [{ resource: "role_permissions", id: selected }] : []),
+    ],
+  });
   const selectedRole = roles.find((role) => role.id === selected);
   const load = async () => {
     try {
@@ -155,7 +165,9 @@ export default function RolesPermissions() {
             <span className="srp-permission-count" aria-live="polite">
               <strong>{permissions.size}</strong> จาก {allKeys.length} สิทธิ์
             </span>
-            <UiButton variant="primary" type="submit"
+            <UiButton
+              variant="primary"
+              type="submit"
               className="srp-create-btn"
               onClick={save}
               disabled={!selected || saving}

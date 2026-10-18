@@ -8,19 +8,19 @@ All custom modal families use DialogFrame, or Dialog composed from it. The exist
 
 ## Checks
 
-| Check | Result | Evidence |
-| --- | --- | --- |
-| New interaction scenarios at 320, 900 and 1440px | 24 passed | `browser-verified.txt` |
-| Editor controls after the final wrapping/target adjustments | 3 passed | `toolbar-confirm.txt` |
-| Landscape editor/dialog and wide dashboard confirmation | 1 passed | `landscape-confirm.txt` |
-| Route matrix: 42 routes × 3 viewports | No page overflow, clipped workspace, runtime error or unexpected redirect | `route-matrix-summary.json`, `routes-final.txt` |
-| Route scenarios including import/feedback and landscape | 7 passed; 2 intentional duplicate-project skips | `routes-final.txt` |
-| Existing case, graph, school, component, auth and public flows | 67 distinct scenarios passed across the main run and recheck; 3 intentional skips | `regression.txt`, `regression-recheck.txt` |
-| Affected graph/search/navigation regression recheck | 16 passed | `regression-recheck.txt` |
-| Existing unit suite | 70 passed | `unit.txt` |
-| Production build and SearchableSelect source check | Passed | `build-final.txt` |
-| Mechanical scan of shared component/interaction surfaces | No findings | `design-scan-final.json` |
-| Diff whitespace check on edited source | Passed | Terminal check |
+| Check                                                          | Result                                                                            | Evidence                                        |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------- |
+| New interaction scenarios at 320, 900 and 1440px               | 24 passed                                                                         | `browser-verified.txt`                          |
+| Editor controls after the final wrapping/target adjustments    | 3 passed                                                                          | `toolbar-confirm.txt`                           |
+| Landscape editor/dialog and wide dashboard confirmation        | 1 passed                                                                          | `landscape-confirm.txt`                         |
+| Route matrix: 42 routes × 3 viewports                          | No page overflow, clipped workspace, runtime error or unexpected redirect         | `route-matrix-summary.json`, `routes-final.txt` |
+| Route scenarios including import/feedback and landscape        | 7 passed; 2 intentional duplicate-project skips                                   | `routes-final.txt`                              |
+| Existing case, graph, school, component, auth and public flows | 67 distinct scenarios passed across the main run and recheck; 3 intentional skips | `regression.txt`, `regression-recheck.txt`      |
+| Affected graph/search/navigation regression recheck            | 16 passed                                                                         | `regression-recheck.txt`                        |
+| Existing unit suite                                            | 70 passed                                                                         | `unit.txt`                                      |
+| Production build and SearchableSelect source check             | Passed                                                                            | `build-final.txt`                               |
+| Mechanical scan of shared component/interaction surfaces       | No findings                                                                       | `design-scan-final.json`                        |
+| Diff whitespace check on edited source                         | Passed                                                                            | Terminal check                                  |
 
 The initial main regression run had two navigation timeouts while waiting for unrelated page assets. Those checks now wait for DOM readiness and verify the visible UI; both passed in the 16-case recheck. Vite ignores generated browser traces to avoid a Windows file-watch lock while tests write them.
 

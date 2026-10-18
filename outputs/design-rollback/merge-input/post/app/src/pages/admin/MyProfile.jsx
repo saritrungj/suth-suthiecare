@@ -1,6 +1,9 @@
-import { Surface as UiSurface } from '../../components/ui/index.jsx';
-import { PageHeader as UiPageHeader, TextInput as UiTextInput } from '../../components/ui/index.jsx';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { Surface as UiSurface } from "../../components/ui/index.jsx";
+import {
+  PageHeader as UiPageHeader,
+  TextInput as UiTextInput,
+} from "../../components/ui/index.jsx";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { authSession, setAuthSession } from "../../utils/authSession";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

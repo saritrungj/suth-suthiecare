@@ -74,14 +74,14 @@ test("public navbars stay visible and usable on mobile and tablet", async ({
     { width: 820, height: 1180 },
   ]) {
     await page.setViewportSize(viewport);
-    await page.goto("/help-center", {waitUntil:"domcontentloaded"});
+    await page.goto("/help-center", { waitUntil: "domcontentloaded" });
 
     await expect(page.locator(".main-nav__logo-frame")).toBeVisible();
     await expect(
       page.getByRole("button", { name: "กลับหน้าหลัก" }),
     ).toBeVisible();
 
-    await page.goto("/", {waitUntil:"domcontentloaded"});
+    await page.goto("/", { waitUntil: "domcontentloaded" });
     const landingNav = page.locator(".sut2-nav");
     await expect(landingNav).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
     await expect(landingNav).toHaveCSS("background-image", "none");

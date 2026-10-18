@@ -1,9 +1,17 @@
-import { DialogFrame } from '../../components/ui/index.jsx';
-import { SelectionGroup as UiSelectionGroup, Surface as UiSurface } from '../../components/ui/index.jsx';
-import { Button as UiButton, TextInput as UiTextInput, TextArea as UiTextArea, PageHeader as UiPageHeader } from '../../components/ui/index.jsx';
-import SearchableSelect from '../../components/SearchableSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
-import MasterSelect, {useMasterOptions} from "../../components/MasterSelect";
+import { DialogFrame } from "../../components/ui/index.jsx";
+import {
+  SelectionGroup as UiSelectionGroup,
+  Surface as UiSurface,
+} from "../../components/ui/index.jsx";
+import {
+  Button as UiButton,
+  TextInput as UiTextInput,
+  TextArea as UiTextArea,
+  PageHeader as UiPageHeader,
+} from "../../components/ui/index.jsx";
+import SearchableSelect from "../../components/SearchableSelect";
+import { toDisplayText } from "../../utils/textPresentation.js";
+import MasterSelect, { useMasterOptions } from "../../components/MasterSelect";
 import { usePageExport } from "../../components/ExcelExport";
 import { useState, useEffect, useMemo } from "react";
 import CaseTable from "../../components/case/CaseTable";
@@ -207,7 +215,10 @@ const STATUS_ORDER = [
 const NEW_CASE = "__new";
 
 function CreateCaseModal({ onClose, onSave, clinics = [] }) {
-  const facultyOptions=useMasterOptions("faculty",FACULTIES.map((label,index)=>({code:String(index),label})));
+  const facultyOptions = useMasterOptions(
+    "faculty",
+    FACULTIES.map((label, index) => ({ code: String(index), label })),
+  );
   const [formData, setFormData] = useState({
     prefix: "",
     citizenId: "",
@@ -312,164 +323,194 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
   };
 
   return (
-    <DialogFrame className="scd-create-case-modal"
-        aria-label="สร้างเคสใหม่" onClose={onClose}>
-        <div className="scd-create-case-header">
-          <div>
-            <h2>เพิ่มเคส Walk-in</h2>
-            <p>กรณีผู้รับบริการไม่ได้ตอบแบบสอบถาม</p>
-          </div>
-
-          <UiButton variant="secondary" size="icon" type="submit"
-            className="scd-close-btn"
-            onClick={onClose}
-            aria-label="ปิดหน้าต่าง"
-          />
+    <DialogFrame
+      className="scd-create-case-modal"
+      aria-label="สร้างเคสใหม่"
+      onClose={onClose}
+    >
+      <div className="scd-create-case-header">
+        <div>
+          <h2>เพิ่มเคส Walk-in</h2>
+          <p>กรณีผู้รับบริการไม่ได้ตอบแบบสอบถาม</p>
         </div>
 
-        <div className="scd-create-case-body">
-          {/* SECTION 1 */}
-          <div className="scd-form-section">
-            <div className="scd-section-title">ข้อมูลผู้รับบริการ</div>
+        <UiButton
+          variant="secondary"
+          size="icon"
+          type="submit"
+          className="scd-close-btn"
+          onClick={onClose}
+          aria-label="ปิดหน้าต่าง"
+        />
+      </div>
 
-            <div className="scd-form-grid">
-              <div className="scd-form-group">
-                <label htmlFor="create-case-field-1">เลขบัตรประชาชน</label>
+      <div className="scd-create-case-body">
+        {/* SECTION 1 */}
+        <div className="scd-form-section">
+          <div className="scd-section-title">ข้อมูลผู้รับบริการ</div>
 
-                <UiTextInput
-                  id="create-case-field-1"
-                  type="text"
-                  placeholder="กรอกเลขบัตรประชาชน"
-                  value={formData.citizenId}
-                  onChange={(e) => handleChange("citizenId", e.target.value)}
-                />
-              </div>
+          <div className="scd-form-grid">
+            <div className="scd-form-group">
+              <label htmlFor="create-case-field-1">เลขบัตรประชาชน</label>
 
-              <div className="scd-form-group">
-                <label htmlFor="create-case-field-2">คำนำหน้า</label>
-
-                <MasterSelect category="prefix" labelValues fallback={["นาย","นาง","นางสาว","อื่นๆ"].map(label=>({code:label,label}))}
-                  id="create-case-field-2"
-                  value={formData.prefix}
-                  onChange={(e) => handleChange("prefix", e.target.value)}
-                >
-                  <option value="">เลือกคำนำหน้า</option>
-                </MasterSelect>
-              </div>
-
-              <div className="scd-form-group">
-                <label htmlFor="create-case-field-3">ชื่อ - นามสกุล</label>
-
-                <UiTextInput
-                  id="create-case-field-3"
-                  type="text"
-                  placeholder="กรอกชื่อผู้รับบริการ"
-                  value={formData.name}
-                  onChange={(e) => handleChange("name", e.target.value)}
-                />
-              </div>
-
-              <div className="scd-form-group">
-                <label htmlFor="create-case-field-4">เบอร์โทร</label>
-
-                <UiTextInput
-                  id="create-case-field-4"
-                  type="text"
-                  placeholder="กรอกเบอร์โทรศัพท์"
-                  value={formData.phone}
-                  onChange={(e) => handleChange("phone", e.target.value)}
-                />
-              </div>
-
-              <div className="scd-form-group">
-                <label htmlFor="create-case-field-5">สำนักวิชา</label>
-
-                <SearchableSelect
-                  id="create-case-field-5"
-                  value={formData.faculty}
-                  onChange={(e) => handleChange("faculty", e.target.value)}
-                >
-                  <option value="">เลือกสำนักวิชา</option>
-
-                  {facultyOptions.map(({label:f}) => (
-                    <option key={f} value={f}>
-                      {f}
-                    </option>
-                  ))}
-                </SearchableSelect>
-              </div>
-
-              <div className="scd-form-group">
-                <label htmlFor="create-case-field-6">คลินิก</label>
-
-                <SearchableSelect
-                  id="create-case-field-6"
-                  value={formData.clinicType}
-                  onChange={(e) => handleChange("clinicType", e.target.value)}
-                >
-                  <option value="general">ทั่วไป</option>
-                  {clinics.map((c) => (
-                    <option key={c.slug} value={c.slug}>
-                      {c.name}
-                    </option>
-                  ))}
-                </SearchableSelect>
-              </div>
-
-              <div className="scd-form-group">
-                <label htmlFor="create-case-field-7">ระดับความเสี่ยง</label>
-
-                <SearchableSelect
-                  id="create-case-field-7"
-                  value={formData.riskLevel}
-                  onChange={(e) => handleChange("riskLevel", e.target.value)}
-                >
-                  {(CLINIC_RISK_OPTIONS[formData.clinicType] || []).map(
-                    (risk) => (
-                      <option key={risk} value={risk}>
-                        {risk}
-                      </option>
-                    ),
-                  )}
-                </SearchableSelect>
-              </div>
-
-              <div className="scd-form-group">
-                <label htmlFor="create-case-field-8">สถานะเคส</label>
-
-                <MasterSelect category="case_statuses" labelValues id="create-case-field-8" value={formData.status} onChange={(e)=>handleChange("status",e.target.value)}><option value="">เลือกสถานะ</option></MasterSelect>
-              </div>
-            </div>
-          </div>
-
-          {/* SECTION 2 */}
-          <div className="scd-form-section">
-            <div className="scd-section-title">รายละเอียดเพิ่มเติม</div>
-
-            <div className="scd-form-group scd-full-width">
-              <label htmlFor="create-case-field-9">หมายเหตุ</label>
-
-              <UiTextArea
-                id="create-case-field-9"
-                rows="5"
-                placeholder="บันทึกรายละเอียดเพิ่มเติม..."
-                value={formData.note}
-                onChange={(e) => handleChange("note", e.target.value)}
+              <UiTextInput
+                id="create-case-field-1"
+                type="text"
+                placeholder="กรอกเลขบัตรประชาชน"
+                value={formData.citizenId}
+                onChange={(e) => handleChange("citizenId", e.target.value)}
               />
             </div>
+
+            <div className="scd-form-group">
+              <label htmlFor="create-case-field-2">คำนำหน้า</label>
+
+              <MasterSelect
+                category="prefix"
+                labelValues
+                fallback={["นาย", "นาง", "นางสาว", "อื่นๆ"].map((label) => ({
+                  code: label,
+                  label,
+                }))}
+                id="create-case-field-2"
+                value={formData.prefix}
+                onChange={(e) => handleChange("prefix", e.target.value)}
+              >
+                <option value="">เลือกคำนำหน้า</option>
+              </MasterSelect>
+            </div>
+
+            <div className="scd-form-group">
+              <label htmlFor="create-case-field-3">ชื่อ - นามสกุล</label>
+
+              <UiTextInput
+                id="create-case-field-3"
+                type="text"
+                placeholder="กรอกชื่อผู้รับบริการ"
+                value={formData.name}
+                onChange={(e) => handleChange("name", e.target.value)}
+              />
+            </div>
+
+            <div className="scd-form-group">
+              <label htmlFor="create-case-field-4">เบอร์โทร</label>
+
+              <UiTextInput
+                id="create-case-field-4"
+                type="text"
+                placeholder="กรอกเบอร์โทรศัพท์"
+                value={formData.phone}
+                onChange={(e) => handleChange("phone", e.target.value)}
+              />
+            </div>
+
+            <div className="scd-form-group">
+              <label htmlFor="create-case-field-5">สำนักวิชา</label>
+
+              <SearchableSelect
+                id="create-case-field-5"
+                value={formData.faculty}
+                onChange={(e) => handleChange("faculty", e.target.value)}
+              >
+                <option value="">เลือกสำนักวิชา</option>
+
+                {facultyOptions.map(({ label: f }) => (
+                  <option key={f} value={f}>
+                    {f}
+                  </option>
+                ))}
+              </SearchableSelect>
+            </div>
+
+            <div className="scd-form-group">
+              <label htmlFor="create-case-field-6">คลินิก</label>
+
+              <SearchableSelect
+                id="create-case-field-6"
+                value={formData.clinicType}
+                onChange={(e) => handleChange("clinicType", e.target.value)}
+              >
+                <option value="general">ทั่วไป</option>
+                {clinics.map((c) => (
+                  <option key={c.slug} value={c.slug}>
+                    {c.name}
+                  </option>
+                ))}
+              </SearchableSelect>
+            </div>
+
+            <div className="scd-form-group">
+              <label htmlFor="create-case-field-7">ระดับความเสี่ยง</label>
+
+              <SearchableSelect
+                id="create-case-field-7"
+                value={formData.riskLevel}
+                onChange={(e) => handleChange("riskLevel", e.target.value)}
+              >
+                {(CLINIC_RISK_OPTIONS[formData.clinicType] || []).map(
+                  (risk) => (
+                    <option key={risk} value={risk}>
+                      {risk}
+                    </option>
+                  ),
+                )}
+              </SearchableSelect>
+            </div>
+
+            <div className="scd-form-group">
+              <label htmlFor="create-case-field-8">สถานะเคส</label>
+
+              <MasterSelect
+                category="case_statuses"
+                labelValues
+                id="create-case-field-8"
+                value={formData.status}
+                onChange={(e) => handleChange("status", e.target.value)}
+              >
+                <option value="">เลือกสถานะ</option>
+              </MasterSelect>
+            </div>
           </div>
         </div>
 
-        <div className="scd-create-case-footer">
-          <UiButton variant="secondary" type="submit" className="scd-cancel-btn" onClick={onClose}>
-            ยกเลิก
-          </UiButton>
+        {/* SECTION 2 */}
+        <div className="scd-form-section">
+          <div className="scd-section-title">รายละเอียดเพิ่มเติม</div>
 
-          <UiButton variant="primary" type="submit" className="scd-save-btn" onClick={handleSubmit}>
-            บันทึกเคส
-          </UiButton>
+          <div className="scd-form-group scd-full-width">
+            <label htmlFor="create-case-field-9">หมายเหตุ</label>
+
+            <UiTextArea
+              id="create-case-field-9"
+              rows="5"
+              placeholder="บันทึกรายละเอียดเพิ่มเติม..."
+              value={formData.note}
+              onChange={(e) => handleChange("note", e.target.value)}
+            />
+          </div>
         </div>
-      </DialogFrame>
+      </div>
+
+      <div className="scd-create-case-footer">
+        <UiButton
+          variant="secondary"
+          type="submit"
+          className="scd-cancel-btn"
+          onClick={onClose}
+        >
+          ยกเลิก
+        </UiButton>
+
+        <UiButton
+          variant="primary"
+          type="submit"
+          className="scd-save-btn"
+          onClick={handleSubmit}
+        >
+          บันทึกเคส
+        </UiButton>
+      </div>
+    </DialogFrame>
   );
 }
 
@@ -745,7 +786,18 @@ export default function CaseData() {
     return prioritizeCases(rows, "master");
   }, [scopedData, statusFilter, tableViewMode]);
 
-  usePageExport({title:"ข้อมูลเคส",sources:[{resource:"responses",id:selectedFormId,filters:{startDate,endDate},ids:filteredData.map(r=>r.id)}],disabled:!selectedFormId||isLoading});
+  usePageExport({
+    title: "ข้อมูลเคส",
+    sources: [
+      {
+        resource: "responses",
+        id: selectedFormId,
+        filters: { startDate, endDate },
+        ids: filteredData.map((r) => r.id),
+      },
+    ],
+    disabled: !selectedFormId || isLoading,
+  });
   useEffect(() => {
     if (
       statusFilter &&
@@ -897,12 +949,21 @@ export default function CaseData() {
           <div className="cw-header-text">
             <h1 title={pageTitle}>
               {pageTitle}
-              {cInfo && <span className="cw-clinic-tag">{toDisplayText(cInfo.text)}</span>}
+              {cInfo && (
+                <span className="cw-clinic-tag">
+                  {toDisplayText(cInfo.text)}
+                </span>
+              )}
             </h1>
             <p>ระบบจัดการข้อมูลและติดตามเคสผู้รับบริการ</p>
           </div>
           <div className="cw-header-actions">
-            <UiSelectionGroup as="div" className="cw-mode" role="group" aria-label="มุมมองรายการ">
+            <UiSelectionGroup
+              as="div"
+              className="cw-mode"
+              role="group"
+              aria-label="มุมมองรายการ"
+            >
               <button
                 type="button"
                 aria-pressed={tableViewMode === "master"}
@@ -918,14 +979,16 @@ export default function CaseData() {
                 <FiList aria-hidden="true" /> คำตอบแบบฟอร์ม
               </button>
             </UiSelectionGroup>
-            <UiButton variant="secondary"
+            <UiButton
+              variant="secondary"
               type="button"
               className="cw-btn-secondary"
               onClick={() => setIsExportModalOpen(true)}
             >
               <FiDownload aria-hidden="true" /> Export Excel
             </UiButton>
-            <UiButton variant="primary"
+            <UiButton
+              variant="primary"
               type="button"
               className="cw-btn"
               onClick={() => setIsCreateCaseModalOpen(true)}

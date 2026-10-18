@@ -1,8 +1,7 @@
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import MasterSelect from "../../../components/MasterSelect";
 import StudentInsights from "./StudentInsights";
-import { ExportButton } from "../../../components/ExcelExport";
 import {
   Suspense,
   lazy,
@@ -16,7 +15,18 @@ import CaseActivity from "../../../components/case/CaseActivity";
 import CaseDrawer from "../../../components/case/CaseDrawer";
 import CaseReferralPanel from "../../../components/case/CaseReferralPanel";
 import { usePermissions } from "../../../permissions/PermissionsProvider";
-import { FiEdit2, FiPlus, FiTrash2, FiUser, FiActivity, FiHeart, FiCornerUpRight } from "react-icons/fi";
+import {
+  FiEdit2,
+  FiPlus,
+  FiTrash2,
+  FiUser,
+  FiActivity,
+  FiHeart,
+  FiCornerUpRight,
+  FiLayers,
+  FiBookOpen,
+  FiKey,
+} from "react-icons/fi";
 import {
   createStudentPhysicalRecord,
   deleteStudentPhysicalRecord,
@@ -114,8 +124,29 @@ export default function StudentDetailModal({
     setError("");
     try {
       const basic = await getSchoolStudent(studentId);
-      const response = basic.data.can_view_health ? await getStudentHealth(studentId) : { data: { student: basic.data, can_update: false, assessments: { other: [] } } };
-      if (id === requestId.current) { setData({...response.data,can_view_mental:basic.data.can_view_mental ?? basic.data.can_view_health,can_view_physical:basic.data.can_view_physical ?? basic.data.can_view_health}); if (!basic.data.can_view_health || (initialTab === 'mental' && basic.data.can_view_mental === false)) setTab("general"); }
+      const response = basic.data.can_view_health
+        ? await getStudentHealth(studentId)
+        : {
+            data: {
+              student: basic.data,
+              can_update: false,
+              assessments: { other: [] },
+            },
+          };
+      if (id === requestId.current) {
+        setData({
+          ...response.data,
+          can_view_mental:
+            basic.data.can_view_mental ?? basic.data.can_view_health,
+          can_view_physical:
+            basic.data.can_view_physical ?? basic.data.can_view_health,
+        });
+        if (
+          !basic.data.can_view_health ||
+          (initialTab === "mental" && basic.data.can_view_mental === false)
+        )
+          setTab("general");
+      }
     } catch (err) {
       if (id === requestId.current)
         setError(
@@ -148,8 +179,32 @@ export default function StudentDetailModal({
           ? `รหัส ${student.student_code} · ${classroomLabel(student)}`
           : undefined
       }
+      badges={student && <StudentBadges data={data} />}
+      record={
+        data && <CaseActivity school full activity={data.latest_activity} />
+      }
+      exportSources={
+        data ? [{ resource: "student", id: studentId }] : undefined
+      }
+      exportTitle="ข้อมูลนักเรียน"
       nav={nav}
-      tabs={[...TABS.filter(t => t.id === 'general' || (t.id === 'mental' ? data?.can_view_mental : data?.can_view_physical)), ...(data?.can_view_mental ? [{ id: "insights", label: "ข้อมูลเชิงลึก", icon: FiUser }, ...(can("cases.view") ? [{ id: "referrals", label: "ส่งต่อ", icon: FiCornerUpRight }] : [])] : [])]}
+      tabs={[
+        ...TABS.filter(
+          (t) =>
+            t.id === "general" ||
+            (t.id === "mental"
+              ? data?.can_view_mental
+              : data?.can_view_physical),
+        ),
+        ...(data?.can_view_mental
+          ? [
+              { id: "insights", label: "ข้อมูลเชิงลึก", icon: FiLayers },
+              ...(can("cases.view")
+                ? [{ id: "referrals", label: "ส่งต่อ", icon: FiCornerUpRight }]
+                : []),
+            ]
+          : []),
+      ]}
       activeTab={tab}
       onTabChange={setTab}
       onClose={onClose}
@@ -166,18 +221,49 @@ export default function StudentDetailModal({
       )}
       {!loading && data && (
         <>
-          <ExportButton sources={[{resource:"student",id:studentId}]} title="ข้อมูลนักเรียน" />
-          <CaseActivity school full activity={data.latest_activity} />
-          {tab === "insights" && data.can_view_mental && <StudentInsights studentId={studentId} />}
+          {tab === "insights" && data.can_view_mental && (
+            <StudentInsights studentId={studentId} />
+          )}
           {tab === "general" && <GeneralTab data={data} />}
-          {tab === "physical" && data.can_view_physical && <PhysicalTab data={data} reload={reloadHealth} />}
-          {tab === "mental" && data.can_view_mental && <MentalTab data={data} />}
+          {tab === "physical" && data.can_view_physical && (
+            <PhysicalTab data={data} reload={reloadHealth} />
+          )}
+          {tab === "mental" && data.can_view_mental && (
+            <MentalTab data={data} />
+          )}
           {tab === "referrals" && data.can_view_mental && can("cases.view") && (
-            <StudentReferrals key={data.student.id} data={data} onUpdated={reloadHealth} />
+            <StudentReferrals
+              key={data.student.id}
+              data={data}
+              onUpdated={reloadHealth}
+            />
           )}
         </>
       )}
     </CaseDrawer>
+  );
+}
+
+// Header pills, matching the case drawer: the latest mental-health risk
+// (when the viewer may see it) and the student's enrolment status.
+function StudentBadges({ data }) {
+  const statusLabels = useStudentStatusLabels();
+  const { student } = data;
+  const latestMental = data.can_view_mental
+    ? [...(data.assessments?.mental || [])].sort(
+        (a, b) => new Date(b.submitted_at) - new Date(a.submitted_at),
+      )[0]
+    : null;
+  const status =
+    student.status_label ||
+    statusLabels[student.status] ||
+    STUDENT_STATUS_LABELS[student.status] ||
+    student.status;
+  return (
+    <>
+      {latestMental?.risk && <RiskBadge risk={latestMental.risk} />}
+      {status && <span className="cw-case-state">{status}</span>}
+    </>
   );
 }
 
@@ -188,23 +274,30 @@ function StudentReferrals({ data, onUpdated }) {
   const [selectedId, setSelectedId] = useState(assessments[0]?.id || "");
   return (
     <>
-      <label className="sch-label" htmlFor="student-referral-assessment">
-        แบบประเมินที่ใช้อ้างอิงการส่งต่อ
-      </label>
-      <SearchableSelect
-        className="sch-input"
-        id="student-referral-assessment"
-        value={selectedId}
-        onChange={(event) => setSelectedId(Number(event.target.value))}
-      >
-        {assessments.map((item) => (
-          <option key={item.id} value={item.id}>
-            {toDisplayText(item.form_title)} · {formatThaiDate(item.submitted_at)}
-          </option>
-        ))}
-      </SearchableSelect>
+      <div className="ref-source-field">
+        <label className="sch-label" htmlFor="student-referral-assessment">
+          แบบประเมินที่ใช้อ้างอิงการส่งต่อ
+        </label>
+        <SearchableSelect
+          className="sch-input"
+          id="student-referral-assessment"
+          value={selectedId}
+          onChange={(event) => setSelectedId(Number(event.target.value))}
+        >
+          {assessments.map((item) => (
+            <option key={item.id} value={item.id}>
+              {toDisplayText(item.form_title)} ·{" "}
+              {formatThaiDate(item.submitted_at)}
+            </option>
+          ))}
+        </SearchableSelect>
+      </div>
       {selectedId ? (
-        <CaseReferralPanel key={selectedId} sourceResponseId={selectedId} onUpdated={onUpdated} />
+        <CaseReferralPanel
+          key={selectedId}
+          sourceResponseId={selectedId}
+          onUpdated={onUpdated}
+        />
       ) : (
         <p className="sch-muted">
           ยังไม่มีแบบประเมินในหน่วยงานนี้สำหรับอ้างอิงการส่งต่อ
@@ -214,8 +307,42 @@ function StudentReferrals({ data, onUpdated }) {
   );
 }
 
+// Whole years between a birth date and today; null when unknown.
+function ageInYears(birthDate) {
+  const born = new Date(birthDate);
+  if (!birthDate || Number.isNaN(born.getTime())) return null;
+  const now = new Date();
+  let years = now.getFullYear() - born.getFullYear();
+  if (
+    now.getMonth() < born.getMonth() ||
+    (now.getMonth() === born.getMonth() && now.getDate() < born.getDate())
+  )
+    years -= 1;
+  return years >= 0 ? years : null;
+}
+
+// One labelled group of facts, read as label | value rows.
+function FactGroup({ title, icon: Icon, facts }) {
+  return (
+    <section className="sch-section cw-fact-group">
+      <h3>
+        <Icon aria-hidden="true" />
+        {title}
+      </h3>
+      <dl className="cw-facts">
+        {facts.map(([label, value]) => (
+          <div key={label}>
+            <dt>{label}</dt>
+            <dd>{value ?? "-"}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
+
 function GeneralTab({ data }) {
-  const statusLabels=useStudentStatusLabels();
+  const statusLabels = useStudentStatusLabels();
   const { student, assessments } = data;
   const accountStatus = student.username
     ? student.must_change_password
@@ -224,57 +351,65 @@ function GeneralTab({ data }) {
         ? "ใช้งานแล้ว"
         : "ปิดใช้งาน"
     : "ไม่มีบัญชี";
+  const accountTone = !student.username
+    ? "closed"
+    : student.must_change_password
+      ? "waiting"
+      : student.account_status === "active"
+        ? "active"
+        : "closed";
+  const age = ageInYears(student.birth_date);
   return (
     <>
-      <section className="sch-section">
-        <dl className="sch-info-grid">
-          <div>
-            <dt>ชื่อ-นามสกุล</dt>
-            <dd>{studentName(student)}</dd>
-          </div>
-          <div>
-            <dt>ชื่อเล่น</dt>
-            <dd>{student.nickname || "-"}</dd>
-          </div>
-          <div>
-            <dt>รหัสนักเรียน</dt>
-            <dd>{student.student_code}</dd>
-          </div>
-          <div>
-            <dt>ชั้น/ห้อง</dt>
-            <dd>
-              {classroomLabel(student)}
-              {student.academic_year
-                ? ` (ปีการศึกษา ${student.academic_year})`
-                : ""}
-            </dd>
-          </div>
-          <div>
-            <dt>ประเภทนักเรียน</dt>
-            <dd>{student.student_type_name || "-"}</dd>
-          </div>
-          <div>
-            <dt>เพศ</dt>
-            <dd>{GENDER_LABELS[student.gender] || "-"}</dd>
-          </div>
-          <div>
-            <dt>วันเกิด</dt>
-            <dd>{formatThaiDate(student.birth_date)}</dd>
-          </div>
-          <div>
-            <dt>สถานะ</dt>
-            <dd>{student.status_label || statusLabels[student.status] || STUDENT_STATUS_LABELS[student.status] || student.status}</dd>
-          </div>
-          <div>
-            <dt>ชื่อผู้ใช้</dt>
-            <dd>{student.username || "-"}</dd>
-          </div>
-          <div>
-            <dt>บัญชีผู้ใช้</dt>
-            <dd>{accountStatus}</dd>
-          </div>
-        </dl>
-      </section>
+      <FactGroup
+        title="ข้อมูลส่วนตัว"
+        icon={FiUser}
+        facts={[
+          ["ชื่อ-นามสกุล", studentName(student)],
+          ["ชื่อเล่น", student.nickname || "-"],
+          ["เพศ", GENDER_LABELS[student.gender] || "-"],
+          [
+            "วันเกิด",
+            student.birth_date
+              ? `${formatThaiDate(student.birth_date)}${age !== null ? ` (อายุ ${age} ปี)` : ""}`
+              : "-",
+          ],
+        ]}
+      />
+      <FactGroup
+        title="ข้อมูลการศึกษา"
+        icon={FiBookOpen}
+        facts={[
+          [
+            "รหัสนักเรียน",
+            <span className="cw-num">{student.student_code}</span>,
+          ],
+          ["ชั้น/ห้อง", classroomLabel(student)],
+          ["ปีการศึกษา", student.academic_year || "-"],
+          ["ประเภทนักเรียน", student.student_type_name || "-"],
+          [
+            "สถานะ",
+            student.status_label ||
+              statusLabels[student.status] ||
+              STUDENT_STATUS_LABELS[student.status] ||
+              student.status ||
+              "-",
+          ],
+        ]}
+      />
+      <FactGroup
+        title="บัญชีผู้ใช้"
+        icon={FiKey}
+        facts={[
+          ["ชื่อผู้ใช้", student.username || "-"],
+          [
+            "สถานะบัญชี",
+            <span className={`cw-status cw-status--${accountTone}`}>
+              <span className="cw-status-label">{accountStatus}</span>
+            </span>,
+          ],
+        ]}
+      />
       {assessments.other.length > 0 && (
         <section className="sch-section">
           <h3>แบบประเมินอื่น ๆ (ไม่ได้ระบุหมวดสุขภาพ)</h3>
@@ -325,7 +460,10 @@ function PhysicalTab({ data, reload }) {
     physical_records: records,
     assessments,
     can_update: canUpdate,
+    can_create: canCreate = canUpdate,
+    can_delete: canDelete = canUpdate,
   } = data;
+  const canManageRecords = canUpdate || canDelete;
   const [editingProfile, setEditingProfile] = useState(false);
   const [recordForm, setRecordForm] = useState(null);
   const latest = records[0];
@@ -387,7 +525,7 @@ function PhysicalTab({ data, reload }) {
             }}
           />
         ) : (
-          <dl className="sch-info-grid">
+          <dl className="cw-facts">
             <div>
               <dt>กรุ๊ปเลือด</dt>
               <dd>{BLOOD_LABELS[profile.blood_type] || "ไม่ทราบ"}</dd>
@@ -424,7 +562,7 @@ function PhysicalTab({ data, reload }) {
       <section className="sch-section">
         <div className="sch-card-head">
           <h3>ผลตรวจร่างกายล่าสุด</h3>
-          {canUpdate && (
+          {canCreate && (
             <button
               type="button"
               className="sch-btn"
@@ -492,7 +630,7 @@ function PhysicalTab({ data, reload }) {
             label="ประวัติการตรวจร่างกาย"
             className="sch-health-history"
           >
-            <table className="sch-table">
+            <table className="sch-table admin-data-table">
               <thead>
                 <tr>
                   <th>วันที่ตรวจ</th>
@@ -504,7 +642,7 @@ function PhysicalTab({ data, reload }) {
                   <th>การได้ยิน (ซ/ข)</th>
                   <th>สมรรถภาพกาย</th>
                   <th>หมายเหตุ</th>
-                  {canUpdate && (
+                  {canManageRecords && (
                     <th>
                       <span className="sr-only">จัดการ</span>
                     </th>
@@ -540,13 +678,16 @@ function PhysicalTab({ data, reload }) {
                       {HEARING_LABELS[record.hearing_right]}
                     </td>
                     <td data-label="สมรรถภาพกาย">{record.fitness || "-"}</td>
-                    <td data-label="หมายเหตุ">{toDisplayText(record.note || "-")}</td>
-                    {canUpdate && (
+                    <td data-label="หมายเหตุ">
+                      {toDisplayText(record.note || "-")}
+                    </td>
+                    {canManageRecords && (
                       <td>
                         <div className="sch-row-actions">
                           <button
                             type="button"
                             className="sch-icon-btn"
+                            hidden={!canUpdate}
                             aria-label={`แก้ไขผลตรวจวันที่ ${formatThaiDate(record.measured_at)}`}
                             onClick={() => setRecordForm({ ...record })}
                           >
@@ -555,6 +696,7 @@ function PhysicalTab({ data, reload }) {
                           <button
                             type="button"
                             className="sch-icon-btn sch-danger"
+                            hidden={!canDelete}
                             aria-label={`ลบผลตรวจวันที่ ${formatThaiDate(record.measured_at)}`}
                             onClick={() => removeRecord(record)}
                           >
@@ -615,7 +757,14 @@ function HealthProfileForm({ studentId, profile, onCancel, onSaved }) {
     <form className="sch-form-grid" onSubmit={save}>
       <label className="sch-field">
         กรุ๊ปเลือด
-        <MasterSelect category="blood_type" {...field("blood_type")} fallback={Object.entries(BLOOD_LABELS).map(([code,label])=>({code,label}))} />
+        <MasterSelect
+          category="blood_type"
+          {...field("blood_type")}
+          fallback={Object.entries(BLOOD_LABELS).map(([code, label]) => ({
+            code,
+            label,
+          }))}
+        />
       </label>
       <label className="sch-field">
         ผู้ติดต่อฉุกเฉิน
@@ -747,7 +896,16 @@ function PhysicalRecordForm({ studentId, initial, onClose, onSaved }) {
         {number("systolic", "ความดันตัวบน")}
         {number("diastolic", "ความดันตัวล่าง")}
         {number("pulse", "ชีพจร (ครั้ง/นาที)")}
-        <label className="sch-field sch-full">ผลสมรรถภาพกาย<textarea maxLength={4000} value={form.fitness} onChange={event=>setForm({...form,fitness:event.target.value})} /></label>
+        <label className="sch-field sch-full">
+          ผลสมรรถภาพกาย
+          <textarea
+            maxLength={4000}
+            value={form.fitness}
+            onChange={(event) =>
+              setForm({ ...form, fitness: event.target.value })
+            }
+          />
+        </label>
         <label className="sch-field">
           สายตาซ้าย
           <input
@@ -773,7 +931,17 @@ function PhysicalRecordForm({ studentId, initial, onClose, onSaved }) {
         {["hearing_left", "hearing_right"].map((key) => (
           <label className="sch-field" key={key}>
             {key === "hearing_left" ? "การได้ยินหูซ้าย" : "การได้ยินหูขวา"}
-            <MasterSelect category="hearing" fallback={Object.entries(HEARING_LABELS).map(([code,label])=>({code,label}))} value={form[key]} onChange={(event)=>setForm({...form,[key]:event.target.value})} />
+            <MasterSelect
+              category="hearing"
+              fallback={Object.entries(HEARING_LABELS).map(([code, label]) => ({
+                code,
+                label,
+              }))}
+              value={form[key]}
+              onChange={(event) =>
+                setForm({ ...form, [key]: event.target.value })
+              }
+            />
           </label>
         ))}
         <label className="sch-field sch-full">

@@ -35,8 +35,11 @@ const organizations = [
   },
 ];
 async function setup(page, received = {}, options = {}) {
-  received.deprecatedRequests=[];
-  page.on('request',req=>{if(/\/pdpa\/|\/patient\/privacy\/|\/data-permissions/.test(req.url()))received.deprecatedRequests.push(req.url());});
+  received.deprecatedRequests = [];
+  page.on("request", (req) => {
+    if (/\/pdpa\/|\/patient\/privacy\/|\/data-permissions/.test(req.url()))
+      received.deprecatedRequests.push(req.url());
+  });
   await mockAdminApi(page);
   await page.addInitScript(() => {
     document.cookie = "suth_staff_session=synthetic-session; path=/";
@@ -230,7 +233,13 @@ test("service settings save independently without privacy configuration", async 
   await expect
     .poll(() => received.notification)
     .toEqual({ destination: "-100123456", enabled: true, verified: true });
-  for(const title of ['สิทธิ์ข้อมูลละเอียดรายสมาชิก','วัตถุประสงค์และประกาศความเป็นส่วนตัว','คำขอใช้สิทธิ','อายุเก็บข้อมูลและการตรวจรายการก่อนลบ']) await expect(settings.getByText(title,{exact:true})).toHaveCount(0);
+  for (const title of [
+    "สิทธิ์ข้อมูลละเอียดรายสมาชิก",
+    "วัตถุประสงค์และประกาศความเป็นส่วนตัว",
+    "คำขอใช้สิทธิ",
+    "อายุเก็บข้อมูลและการตรวจรายการก่อนลบ",
+  ])
+    await expect(settings.getByText(title, { exact: true })).toHaveCount(0);
   expect(received.deprecatedRequests).toEqual([]);
 });
 
@@ -258,15 +267,34 @@ test("a failed section does not block the other settings", async ({ page }) => {
   ).toBeEnabled();
 });
 
-test("patient history has no privacy request settings or API calls", async ({page}) => {
- await mockPublicApi(page);
- await page.addInitScript(()=>{document.cookie='suth_patient_session=synthetic-session; path=/';localStorage.setItem('i18nextLng','th');});
- const requests=[];page.on('request',req=>{if(req.url().includes('/patient/privacy/'))requests.push(req.url());});
- await page.route('**/api/patient/history',route=>route.fulfill({json:{success:true,profile:{id:1,display_name:'บัญชีสาธิต',status:'active'},masterCases:[],responses:[]}}));
- await page.goto('/history/result');
- await expect(page.locator('.hr-layout')).toBeVisible();
- await expect(page.getByRole('region',{name:'คำขอเกี่ยวกับข้อมูลส่วนบุคคล'})).toHaveCount(0);
- expect(requests).toEqual([]);
+test("patient history has no privacy request settings or API calls", async ({
+  page,
+}) => {
+  await mockPublicApi(page);
+  await page.addInitScript(() => {
+    document.cookie = "suth_patient_session=synthetic-session; path=/";
+    localStorage.setItem("i18nextLng", "th");
+  });
+  const requests = [];
+  page.on("request", (req) => {
+    if (req.url().includes("/patient/privacy/")) requests.push(req.url());
+  });
+  await page.route("**/api/patient/history", (route) =>
+    route.fulfill({
+      json: {
+        success: true,
+        profile: { id: 1, display_name: "บัญชีสาธิต", status: "active" },
+        masterCases: [],
+        responses: [],
+      },
+    }),
+  );
+  await page.goto("/history/result");
+  await expect(page.locator(".hr-layout")).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "คำขอเกี่ยวกับข้อมูลส่วนบุคคล" }),
+  ).toHaveCount(0);
+  expect(requests).toEqual([]);
 });
 
 test("privacy notice sits with the form and consent remains keyboard accessible", async ({

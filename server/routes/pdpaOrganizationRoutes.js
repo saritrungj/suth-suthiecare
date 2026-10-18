@@ -164,9 +164,12 @@ router.put("/organizations/:id/notification-target", async (req, res) => {
     connection.release();
   }
 });
-router.all('/organizations/:id/members/:membershipId/data-permissions', (_req,res) => {
-  res.status(410).json({code:'PRIVACY_SETTINGS_RETIRED'});
-});
+router.all(
+  "/organizations/:id/members/:membershipId/data-permissions",
+  (_req, res) => {
+    res.status(410).json({ code: "PRIVACY_SETTINGS_RETIRED" });
+  },
+);
 router.get("/organizations/:id/notification-events", async (req, res) => {
   try {
     await organization(db, req.params.id);

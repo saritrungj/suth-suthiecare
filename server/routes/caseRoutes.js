@@ -9,6 +9,8 @@ const {
   requirePermission,
 } = require("../middleware/authMiddleware");
 const { organizationWhere } = require("../authorization/authorization");
+const { need } = require("../authorization/can");
+const { INITIAL_CASE_STATUS } = require("../utils/caseStatus");
 const rateLimit = require("express-rate-limit");
 const { clientIpKeyGenerator } = require("../utils/clientIp");
 const NodeCache = require("node-cache");
@@ -156,49 +158,63 @@ router.post("/cases/:id/logs", verifyToken, async (req, res) => {
 // ==========================================
 // 2. DELETE CASE
 // ==========================================
-router.delete("/cases/:id", verifyToken, async (req, res) => {
-  const conn = await db.getConnection();
-  try {
-    await conn.beginTransaction();
-    const id = req.params.id;
-    await require("../utils/operationalOwnership").responseOwner(
-      conn,
-      req,
-      id,
-      undefined,
-      true,
-    );
-    await conn.query("DELETE FROM form_answers WHERE response_id = ?", [id]);
-    await conn.query("DELETE FROM case_logs WHERE response_id = ?", [id]);
-    await conn.query("DELETE FROM appointments WHERE case_id = ?", [id]);
-    await conn.query("DELETE FROM form_responses WHERE id = ?", [id]);
-    await require("../utils/pdpaAudit").requiredAudit(
-      req,
-      "cases.delete",
-      "response",
-      id,
-      {},
-      conn,
-    );
-    await conn.commit();
-    res.json({ message: "ลบเคสสำเร็จ" });
-  } catch (err) {
-    await conn.rollback();
-    if (err.code === "ER_ROW_IS_REFERENCED_2")
-      return res.status(409).json({
-        message:
-          "เคสนี้มีประวัติส่งต่อหรือข้อมูลเชื่อมโยงอยู่ กรุณาใช้การปิดเคสเพื่อเก็บประวัติ",
-      });
-    res.status(err.status || 500).json({ message: "เกิดข้อผิดพลาดในการลบเคส" });
-  } finally {
-    conn.release();
-  }
-});
+// Deleting a case removes its assessment result too.
+router.delete(
+  "/cases/:id",
+  verifyToken,
+  need("clinical.delete"),
+  async (req, res) => {
+    const conn = await db.getConnection();
+    try {
+      await conn.beginTransaction();
+      const id = req.params.id;
+      await require("../utils/operationalOwnership").responseOwner(
+        conn,
+        req,
+        id,
+        undefined,
+        true,
+      );
+      await conn.query("DELETE FROM form_answers WHERE response_id = ?", [id]);
+      await conn.query("DELETE FROM case_logs WHERE response_id = ?", [id]);
+      await conn.query("DELETE FROM appointments WHERE case_id = ?", [id]);
+      await conn.query("DELETE FROM form_responses WHERE id = ?", [id]);
+      await require("../utils/pdpaAudit").requiredAudit(
+        req,
+        "cases.delete",
+        "response",
+        id,
+        {},
+        conn,
+      );
+      await conn.commit();
+      res.json({ message: "ลบเคสสำเร็จ" });
+    } catch (err) {
+      await conn.rollback();
+      if (err.code === "ER_ROW_IS_REFERENCED_2")
+        return res.status(409).json({
+          message:
+            "เคสนี้มีประวัติส่งต่อหรือข้อมูลเชื่อมโยงอยู่ กรุณาใช้การปิดเคสเพื่อเก็บประวัติ",
+        });
+      res
+        .status(err.status || 500)
+        .json({ message: "เกิดข้อผิดพลาดในการลบเคส" });
+    } finally {
+      conn.release();
+    }
+  },
+);
 
 // ==========================================
 // 3. APPOINTMENTS
 // ==========================================
 router.post("/appointments", verifyToken, async (req, res) => {
+  // Naming the responsible staff member is "assign".
+  if (
+    req.body?.staff_id &&
+    require("../authorization/can").denyUnless(req, res, "appointments.assign")
+  )
+    return;
   try {
     res
       .status(201)
@@ -332,6 +348,7 @@ router.patch(
   "/history/response/:id",
   verifyToken,
   requirePermission("Case Management", "manage"),
+  need("clinical.update"),
   async (req, res) => {
     try {
       const { field, value } = req.body;
@@ -406,6 +423,7 @@ router.patch(
   "/history/answer/:responseId/:questionId",
   verifyToken,
   requirePermission("Case Management", "manage"),
+  need("clinical.update"),
   async (req, res) => {
     try {
       const { responseId, questionId } = req.params;
@@ -712,58 +730,63 @@ router.post(["/generate-token", "/decode-token"], (_req, res) =>
 // ==========================================
 // 🎯 API 3: บันทึกข้อมูลทางคลินิก (ผลเลือด, PrEP)
 // ==========================================
-router.put("/master-cases/:id/clinical-data", verifyToken, async (req, res) => {
-  try {
-    const org = require("../utils/operationalOwnership").concreteOrganization(
-      req,
-    );
-    await require("../utils/operationalOwnership").ownedReference(
-      db,
-      "mastercases",
-      req.params.id,
-      org,
-    );
-    const { clinical_data } = req.body; // เป็น Object เช่น { blood_test: 'negative', prep: 'prep_with_blood' }
-    if (
-      !clinical_data ||
-      typeof clinical_data !== "object" ||
-      Array.isArray(clinical_data)
-    )
-      return res.status(422).json({ code: "INVALID_CLINICAL_DATA" });
-    await require("../utils/pdpaAudit").requiredAudit(
-      req,
-      "clinical.update",
-      "mastercase",
-      req.params.id,
-    );
-    await db.query(
-      "UPDATE mastercases SET clinical_data = ? WHERE id = ? AND organization_id=?",
-      [
-        JSON.stringify(
-          require("../utils/privateData").sealJson(
-            clinical_data,
-            require("../utils/privateData").fieldContext(
-              "mastercases",
-              "clinical_data",
-              req.organizationContext,
-            ),
-          ),
-        ),
+router.put(
+  "/master-cases/:id/clinical-data",
+  verifyToken,
+  need("clinical.create"),
+  async (req, res) => {
+    try {
+      const org = require("../utils/operationalOwnership").concreteOrganization(
+        req,
+      );
+      await require("../utils/operationalOwnership").ownedReference(
+        db,
+        "mastercases",
         req.params.id,
         org,
-      ],
-    );
-    res.json({ message: "บันทึกข้อมูลทางคลินิกสำเร็จ" });
-  } catch (error) {
-    console.error(
-      "Update clinical-data Error:",
-      require("../utils/safeError").safeError(error),
-    );
-    res
-      .status(error.status || 500)
-      .json({ code: error.code || "CLINICAL_UPDATE_FAILED" });
-  }
-});
+      );
+      const { clinical_data } = req.body; // เป็น Object เช่น { blood_test: 'negative', prep: 'prep_with_blood' }
+      if (
+        !clinical_data ||
+        typeof clinical_data !== "object" ||
+        Array.isArray(clinical_data)
+      )
+        return res.status(422).json({ code: "INVALID_CLINICAL_DATA" });
+      await require("../utils/pdpaAudit").requiredAudit(
+        req,
+        "clinical.update",
+        "mastercase",
+        req.params.id,
+      );
+      await db.query(
+        "UPDATE mastercases SET clinical_data = ? WHERE id = ? AND organization_id=?",
+        [
+          JSON.stringify(
+            require("../utils/privateData").sealJson(
+              clinical_data,
+              require("../utils/privateData").fieldContext(
+                "mastercases",
+                "clinical_data",
+                req.organizationContext,
+              ),
+            ),
+          ),
+          req.params.id,
+          org,
+        ],
+      );
+      res.json({ message: "บันทึกข้อมูลทางคลินิกสำเร็จ" });
+    } catch (error) {
+      console.error(
+        "Update clinical-data Error:",
+        require("../utils/safeError").safeError(error),
+      );
+      res
+        .status(error.status || 500)
+        .json({ code: error.code || "CLINICAL_UPDATE_FAILED" });
+    }
+  },
+);
 
 // 🟢 1. API ใหม่สำหรับอัปเดตสถานะนัดหมาย (Quick Action: เช็คอิน/ยกเลิก)
 router.patch("/appointments/:id/status", verifyToken, async (req, res) => {
@@ -771,6 +794,15 @@ router.patch("/appointments/:id/status", verifyToken, async (req, res) => {
     const { status } = req.body;
     if (!["Scheduled", "Completed", "Cancelled"].includes(status))
       return res.status(422).json({ code: "INVALID_APPOINTMENT_STATUS" });
+    // Cancelling an appointment is "delete"; other status changes are "update".
+    if (
+      require("../authorization/can").denyUnless(
+        req,
+        res,
+        status === "Cancelled" ? "appointments.delete" : "appointments.update",
+      )
+    )
+      return;
     await require("../utils/pdpaAudit").requiredAudit(
       req,
       "appointments.update",
@@ -858,7 +890,8 @@ router.put("/master-cases/:id/close", verifyToken, async (req, res) => {
 // ==========================================
 // CREATE WALK-IN CASE
 // ==========================================
-router.post("/cases", verifyToken, async (req, res) => {
+// A walk-in case records who the person is.
+router.post("/cases", verifyToken, need("pii.create"), async (req, res) => {
   let connection;
   try {
     const data = req.body;
@@ -908,7 +941,7 @@ router.post("/cases", verifyToken, async (req, res) => {
     connection = await db.getConnection();
     await connection.beginTransaction();
     const [formRows] = await connection.query(
-      "SELECT organization_id FROM forms WHERE id = ? LIMIT 1",
+      "SELECT organization_id,clinic_type FROM forms WHERE id = ? LIMIT 1",
       [formId],
     );
     if (!formRows.length)
@@ -946,17 +979,20 @@ router.post("/cases", verifyToken, async (req, res) => {
       organizationId,
     );
     if (
-      typeof (data.status || "รอดำเนินการ") !== "string" ||
+      typeof (data.status || INITIAL_CASE_STATUS) !== "string" ||
       typeof (data.risk_level || "ต่ำ") !== "string" ||
       (data.risk_level || "ต่ำ").length > 100
     )
       return res.status(422).json({ code: "INVALID_CASE_VALUES" });
     const [statuses] = await connection.query(
       "SELECT id FROM case_statuses WHERE organization_id=? AND name=? AND is_active=1 FOR UPDATE",
-      [organizationId, data.status || "รอดำเนินการ"],
+      [organizationId, data.status || INITIAL_CASE_STATUS],
     );
     if (!statuses.length)
-      return res.status(422).json({ code: "STATUS_NOT_IN_ORGANIZATION" });
+      return res.status(422).json({
+        code: "STATUS_NOT_IN_ORGANIZATION",
+        message: `ไม่พบสถานะ "${data.status || INITIAL_CASE_STATUS}" ที่เปิดใช้งานในหน่วยงานนี้ กรุณาเปิดใช้งานที่หน้าจัดการข้อมูลหลัก > สถานะเคส`,
+      });
     let personId = null;
     if (nationalId) {
       const [people] = await connection.query(
@@ -980,6 +1016,24 @@ router.post("/cases", verifyToken, async (req, res) => {
       )
         return res.status(422).json({ code: "MASTER_CASE_PERSON_MISMATCH" });
     }
+    // A walk-in needs a case file so the case window can book appointments and
+    // record clinical data: the known person's open file, else a new anonymous
+    // one. A staff-typed ID never creates a person record without consent.
+    let masterCaseId = data.master_case_id || null;
+    if (!masterCaseId) {
+      const owner =
+        await require("../utils/submissionIdentity").resolveGuestSubmissionOwner(
+          {
+            connection,
+            nationalId: personId ? nationalId : null,
+            clinicType:
+              formRows[0].clinic_type || data.clinic_type || "general",
+            organizationId,
+          },
+        );
+      masterCaseId = owner.masterCaseId;
+      personId = personId || owner.personId || null;
+    }
 
     const sql = `
       INSERT INTO form_responses (
@@ -1000,7 +1054,7 @@ router.post("/cases", verifyToken, async (req, res) => {
 
     const values = [
       formId,
-      data.master_case_id || null,
+      masterCaseId,
       personId,
       new Date(),
       require("../utils/privateField").writeField(
@@ -1020,7 +1074,7 @@ router.post("/cases", verifyToken, async (req, res) => {
           ),
         ),
       ),
-      data.status || "รอดำเนินการ",
+      data.status || INITIAL_CASE_STATUS,
       encrypt(
         data.risk_level || "ต่ำ",
         require("../utils/privateData").fieldContext(
@@ -1043,9 +1097,12 @@ router.post("/cases", verifyToken, async (req, res) => {
       connection,
     );
     await connection.commit();
+    // A walk-in case may name the member's faculty or status.
+    require("../services/memberType").refreshPersonAnswerQuietly(db, personId);
     res.status(201).json({
       success: true,
       id: result.insertId,
+      master_case_id: masterCaseId,
     });
   } catch (err) {
     if (connection) await connection.rollback();
@@ -1086,7 +1143,12 @@ router.get("/forms/:id/responses-v2", verifyToken, async (req, res) => {
       decryptCaseResponse(r, safeDecrypt),
     );
 
-    res.json(await require("../services/latestActivity").attachCaseActivities(db, parsedResponses));
+    res.json(
+      await require("../services/latestActivity").attachCaseActivities(
+        db,
+        parsedResponses,
+      ),
+    );
   } catch (error) {
     console.error(
       "Error fetching responses:",
@@ -1096,51 +1158,99 @@ router.get("/forms/:id/responses-v2", verifyToken, async (req, res) => {
   }
 });
 
-router.get("/cases/:id/first-name", verifyToken, requirePermission("Case Management", "view"), require("../utils/caseFirstName").requirePii, async (req, res) => {
-  try {
-    if (!/^[1-9]\d*$/.test(req.params.id) || !Number.isSafeInteger(Number(req.params.id)))
-      return res.status(422).json({ message: "รหัสเคสไม่ถูกต้อง" });
-    const scope = organizationWhere("fr.organization_id", req);
-    const [rows] = await db.query(
-      `SELECT fr.id,fr.organization_id,fr.summary_data,pa.first_name_encrypted AS account_first_name
+router.get(
+  "/cases/:id/first-name",
+  verifyToken,
+  requirePermission("Case Management", "view"),
+  require("../utils/caseFirstName").requirePii,
+  async (req, res) => {
+    try {
+      if (
+        !/^[1-9]\d*$/.test(req.params.id) ||
+        !Number.isSafeInteger(Number(req.params.id))
+      )
+        return res.status(422).json({ message: "รหัสเคสไม่ถูกต้อง" });
+      const scope = organizationWhere("fr.organization_id", req);
+      const [rows] = await db.query(
+        `SELECT fr.id,fr.organization_id,fr.summary_data,pa.first_name_encrypted AS account_first_name
          FROM form_responses fr LEFT JOIN patient_accounts pa ON pa.id=fr.patient_account_id
         WHERE fr.id=?${scope.sql} LIMIT 1`,
-      [req.params.id, ...scope.params],
-    );
-    if (!rows.length) return res.status(404).json({ message: "ไม่พบเคส" });
-    const row = rows[0];
-    const summary = decryptSummaryData(row.summary_data, safeDecrypt, row.organization_id);
-    const { firstNameOf } = require("../utils/caseFirstName");
-    const accountName = row.account_first_name ? require("../utils/privateField").readField(row.account_first_name, "patient_accounts", "first_name_encrypted", null) : null;
-    res.set("Cache-Control", "no-store");
-    res.json({ first_name: firstNameOf(summary.display_name || summary.name) || firstNameOf(accountName, true) });
-  } catch (error) {
-    res.status(503).json({ message: "ไม่สามารถเปิดดูชื่อได้" });
-  }
-});
+        [req.params.id, ...scope.params],
+      );
+      if (!rows.length) return res.status(404).json({ message: "ไม่พบเคส" });
+      const row = rows[0];
+      const summary = decryptSummaryData(
+        row.summary_data,
+        safeDecrypt,
+        row.organization_id,
+      );
+      const { firstNameOf } = require("../utils/caseFirstName");
+      const accountName = row.account_first_name
+        ? require("../utils/privateField").readField(
+            row.account_first_name,
+            "patient_accounts",
+            "first_name_encrypted",
+            null,
+          )
+        : null;
+      res.set("Cache-Control", "no-store");
+      res.json({
+        first_name:
+          firstNameOf(summary.display_name || summary.name) ||
+          firstNameOf(accountName, true),
+      });
+    } catch (error) {
+      res.status(503).json({ message: "ไม่สามารถเปิดดูชื่อได้" });
+    }
+  },
+);
 
-router.get("/cases/:id/last-name", verifyToken, requirePermission("Case Management", "view"), require("../utils/caseFirstName").requirePii, async (req, res) => {
-  try {
-    if (!/^[1-9]\d*$/.test(req.params.id) || !Number.isSafeInteger(Number(req.params.id)))
-      return res.status(422).json({ message: "รหัสเคสไม่ถูกต้อง" });
-    const scope = organizationWhere("fr.organization_id", req);
-    const [rows] = await db.query(
-      `SELECT fr.id,fr.organization_id,fr.summary_data,pa.last_name_encrypted AS account_last_name
+router.get(
+  "/cases/:id/last-name",
+  verifyToken,
+  requirePermission("Case Management", "view"),
+  require("../utils/caseFirstName").requirePii,
+  async (req, res) => {
+    try {
+      if (
+        !/^[1-9]\d*$/.test(req.params.id) ||
+        !Number.isSafeInteger(Number(req.params.id))
+      )
+        return res.status(422).json({ message: "รหัสเคสไม่ถูกต้อง" });
+      const scope = organizationWhere("fr.organization_id", req);
+      const [rows] = await db.query(
+        `SELECT fr.id,fr.organization_id,fr.summary_data,pa.last_name_encrypted AS account_last_name
          FROM form_responses fr LEFT JOIN patient_accounts pa ON pa.id=fr.patient_account_id
         WHERE fr.id=?${scope.sql} LIMIT 1`,
-      [req.params.id, ...scope.params],
-    );
-    if (!rows.length) return res.status(404).json({ message: "ไม่พบเคส" });
-    const row = rows[0];
-    const summary = decryptSummaryData(row.summary_data, safeDecrypt, row.organization_id);
-    const { lastNameOf } = require("../utils/caseFirstName");
-    const accountName = row.account_last_name ? require("../utils/privateField").readField(row.account_last_name, "patient_accounts", "last_name_encrypted", null) : null;
-    res.set("Cache-Control", "no-store");
-    res.json({ last_name: lastNameOf(summary.display_name || summary.name) || lastNameOf(accountName, true) });
-  } catch (error) {
-    res.status(503).json({ message: "ไม่สามารถเปิดดูชื่อได้" });
-  }
-});
+        [req.params.id, ...scope.params],
+      );
+      if (!rows.length) return res.status(404).json({ message: "ไม่พบเคส" });
+      const row = rows[0];
+      const summary = decryptSummaryData(
+        row.summary_data,
+        safeDecrypt,
+        row.organization_id,
+      );
+      const { lastNameOf } = require("../utils/caseFirstName");
+      const accountName = row.account_last_name
+        ? require("../utils/privateField").readField(
+            row.account_last_name,
+            "patient_accounts",
+            "last_name_encrypted",
+            null,
+          )
+        : null;
+      res.set("Cache-Control", "no-store");
+      res.json({
+        last_name:
+          lastNameOf(summary.display_name || summary.name) ||
+          lastNameOf(accountName, true),
+      });
+    } catch (error) {
+      res.status(503).json({ message: "ไม่สามารถเปิดดูชื่อได้" });
+    }
+  },
+);
 
 router.get("/cases/:id", verifyToken, async (req, res) => {
   try {
@@ -1177,7 +1287,12 @@ router.get("/all-cases", verifyToken, async (req, res) => {
       decryptCaseResponse(r, safeDecrypt),
     );
 
-    res.json(await require("../services/latestActivity").attachCaseActivities(db, parsedResponses));
+    res.json(
+      await require("../services/latestActivity").attachCaseActivities(
+        db,
+        parsedResponses,
+      ),
+    );
   } catch (error) {
     console.error(
       "Error fetching cases:",

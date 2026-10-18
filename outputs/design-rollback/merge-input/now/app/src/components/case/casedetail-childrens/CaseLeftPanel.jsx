@@ -1,6 +1,6 @@
-import { DataTable as UiDataTable } from '../../ui/index.jsx';
-import SearchableSelect from '../../SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { DataTable as UiDataTable } from "../../ui/index.jsx";
+import SearchableSelect from "../../SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import React, { useState } from "react";
 import { RiskPill } from "../CaseDrawer";
 import {
@@ -192,7 +192,9 @@ export default function CaseLeftPanel({
 
                 return (
                   <tr key={idx}>
-                    <td className="cdm-table-label">{toDisplayText(displayRowTitle)}</td>
+                    <td className="cdm-table-label">
+                      {toDisplayText(displayRowTitle)}
+                    </td>
                     <td className="cdm-table-value">
                       {Array.isArray(rowValue)
                         ? rowValue.join(", ")
@@ -331,7 +333,8 @@ export default function CaseLeftPanel({
                 {journeyResponses && journeyResponses.length > 0 ? (
                   journeyResponses.map((r, i) => (
                     <option key={r.id} value={r.id}>
-                      #{journeyResponses.length - i} {toDisplayText(r.form_title)} (
+                      #{journeyResponses.length - i}{" "}
+                      {toDisplayText(r.form_title)} (
                       {new Date(r.submitted_at).toLocaleDateString("th-TH")})
                     </option>
                   ))
@@ -364,7 +367,9 @@ export default function CaseLeftPanel({
                     {scoreResults.map((s, i) => (
                       <div key={i} className="cdm-score-card">
                         <div className="cdm-score-header">
-                          <span className="cdm-score-title">{toDisplayText(s.title)}</span>
+                          <span className="cdm-score-title">
+                            {toDisplayText(s.title)}
+                          </span>
                           <span className="cdm-score-value">{s.score}</span>
                         </div>
                         <div className="cdm-score-badge">

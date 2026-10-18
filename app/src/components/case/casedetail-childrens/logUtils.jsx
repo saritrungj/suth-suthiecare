@@ -30,8 +30,8 @@ const LongTextWrapper = ({ text }) => {
           style={{
             background: "none",
             border: "none",
-            color: "#2563eb",
-            fontSize: "12px",
+            color: "var(--suth-info)",
+            fontSize: "var(--suth-fs-caption)",
             cursor: "pointer",
             padding: "4px 0",
             fontWeight: "600",
@@ -75,9 +75,9 @@ export const renderLogDetail = (detail) => {
               key={idx}
               className="cdm-log-detail-highlight"
               style={{
-                backgroundColor: "#fce7f3",
-                color: "#be185d",
-                borderColor: "#fbcfe8",
+                backgroundColor: "var(--suth-danger-tint)",
+                color: "var(--suth-danger)",
+                borderColor: "var(--suth-danger-line)",
               }}
             >
               🩸 ผลเจาะเลือด: {match[1]} ➔ <strong>{match[2]}</strong>
@@ -92,9 +92,9 @@ export const renderLogDetail = (detail) => {
               key={idx}
               className="cdm-log-detail-highlight"
               style={{
-                backgroundColor: "#fce7f3",
-                color: "#be185d",
-                borderColor: "#fbcfe8",
+                backgroundColor: "var(--suth-danger-tint)",
+                color: "var(--suth-danger)",
+                borderColor: "var(--suth-danger-line)",
               }}
             >
               💊 การรับยา PrEP: {match[1]} ➔ <strong>{match[2]}</strong>
@@ -176,7 +176,7 @@ export const renderLogDetail = (detail) => {
         key={idx}
         style={{
           fontWeight: isHeader ? "700" : "400",
-          color: isHeader ? "#1e40af" : "#334155",
+          color: isHeader ? "var(--suth-info)" : "var(--suth-ink-2)",
           paddingLeft: isHeader ? "0" : "12px",
           marginTop: isHeader && idx > 0 ? "10px" : "2px",
           fontSize: isHeader ? "14.5px" : "14px",

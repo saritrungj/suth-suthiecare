@@ -1,5 +1,6 @@
-import SearchableSelect from './SearchableSelect';
-import {ExportButton} from "./ExcelExport";
+import SearchableSelect from "./SearchableSelect";
+import { useModuleActions } from "../permissions/useModuleActions";
+import { ExportButton } from "./ExcelExport";
 import { useEffect, useRef, useState } from "react";
 import { FiEye, FiEyeOff, FiKey, FiSave, FiX } from "react-icons/fi";
 
@@ -13,12 +14,24 @@ const initialForm = {
   password: "",
 };
 
-export default function PatientMemberModal({ member, onClose, onSave }) {
+export default function PatientMemberModal({
+  member,
+  onClose,
+  onSave,
+  requestConfig,
+}) {
+  // Roles page: names/phone need PII update, a new password "assign",
+  // and any status other than active "delete".
+  const memberRights = useModuleActions("patient_members");
+  const piiRights = useModuleActions("pii");
   const [form, setForm] = useState(() => ({ ...initialForm, ...member }));
   const [showPassword, setShowPassword] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const usernameRef = useRef(null);
+  const fullName = [member.first_name, member.last_name]
+    .filter(Boolean)
+    .join(" ");
 
   useEffect(() => {
     usernameRef.current?.focus();
@@ -78,9 +91,12 @@ export default function PatientMemberModal({ member, onClose, onSave }) {
         aria-labelledby="sum-member-modal-title"
       >
         <header className="sum-member-modal__header">
-          <div>
+          <div className="sum-member-modal__heading">
             <h2 id="sum-member-modal-title">แก้ไขข้อมูลผู้มารับบริการ</h2>
-            <p>ปรับข้อมูลบัญชี สถานะ หรือกำหนดรหัสผ่านใหม่</p>
+            <p className="sum-member-modal__subject">
+              <strong>{fullName || "ไม่ระบุชื่อ-นามสกุล"}</strong>
+              <span>{member.username}</span>
+            </p>
           </div>
           <button
             type="button"
@@ -92,114 +108,143 @@ export default function PatientMemberModal({ member, onClose, onSave }) {
           </button>
         </header>
 
-        <ExportButton sources={[{resource:"member",id:member.id}]} title="ข้อมูลผู้มารับบริการ" />
         <form onSubmit={submit} aria-busy={saving}>
-          {error && (
-            <div className="sum-member-modal__error" role="alert">
-              {error}
-            </div>
-          )}
-
-          <div className="sum-member-form-grid">
-            <label className="sum-member-field sum-member-field--wide">
-              <span>ชื่อผู้ใช้</span>
-              <input
-                ref={usernameRef}
-                value={form.username}
-                onChange={update("username")}
-                minLength={3}
-                maxLength={80}
-                autoComplete="off"
-                required
-              />
-              <small>ภาษาอังกฤษ ตัวเลข จุด ขีดกลาง หรือขีดล่าง</small>
-            </label>
-
-            <label className="sum-member-field">
-              <span>ชื่อ</span>
-              <input
-                value={form.first_name}
-                onChange={update("first_name")}
-                maxLength={100}
-                required
-              />
-            </label>
-            <label className="sum-member-field">
-              <span>นามสกุล</span>
-              <input
-                value={form.last_name}
-                onChange={update("last_name")}
-                maxLength={100}
-                required
-              />
-            </label>
-
-            <label className="sum-member-field">
-              <span>
-                หมายเลขโทรศัพท์ <em>(ไม่บังคับ)</em>
-              </span>
-              <input
-                value={form.phone}
-                onChange={updateDigits("phone", 10)}
-                inputMode="tel"
-                autoComplete="tel"
-                placeholder="08xxxxxxxx"
-              />
-              <small>กรอกหมายเลขโทรศัพท์มือถือ 10 หลัก เช่น 0812345678</small>
-            </label>
-            <label className="sum-member-field">
-              <span>อีเมล</span>
-              <input
-                type="email"
-                value={form.email}
-                onChange={update("email")}
-                maxLength={254}
-                autoComplete="email"
-                required
-              />
-              <small>
-                เมื่อเปลี่ยนอีเมล เจ้าหน้าที่จะยืนยันอีเมลให้อัตโนมัติ
-              </small>
-            </label>
-            <label className="sum-member-field">
-              <span>สถานะบัญชี</span>
-              <SearchableSelect value={form.status} onChange={update("status")}>
-                <option value="active">ใช้งานปกติ</option>
-                <option value="pending_verification">รอยืนยัน</option>
-                <option value="locked">ล็อกบัญชี</option>
-                <option value="disabled">ปิดการใช้งาน</option>
-              </SearchableSelect>
-            </label>
-
-            <label className="sum-member-field sum-member-field--wide">
-              <span>
-                <FiKey aria-hidden="true" /> รหัสผ่านใหม่{" "}
-                <em>(เว้นว่างหากไม่เปลี่ยน)</em>
-              </span>
-              <div className="sum-member-password">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={form.password}
-                  onChange={update("password")}
-                  minLength={8}
-                  maxLength={128}
-                  autoComplete="new-password"
-                  placeholder="อย่างน้อย 8 ตัวอักษร"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((current) => !current)}
-                  aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
-                  aria-pressed={showPassword}
-                >
-                  {showPassword ? <FiEyeOff /> : <FiEye />}
-                </button>
+          <div className="sum-member-modal__body">
+            {error && (
+              <div className="sum-member-modal__error" role="alert">
+                {error}
               </div>
-              <small>เมื่อบันทึก ระบบจะออกจากระบบบัญชีนี้ในทุกอุปกรณ์</small>
-            </label>
+            )}
+
+            <div className="sum-member-form-grid">
+              <label className="sum-member-field">
+                <span>ชื่อผู้ใช้</span>
+                <input
+                  ref={usernameRef}
+                  value={form.username}
+                  onChange={update("username")}
+                  minLength={3}
+                  maxLength={80}
+                  autoComplete="off"
+                  required
+                />
+                <small>ภาษาอังกฤษ ตัวเลข จุด ขีดกลาง หรือขีดล่าง</small>
+              </label>
+              <label className="sum-member-field">
+                <span>สถานะบัญชี</span>
+                <SearchableSelect
+                  value={form.status}
+                  onChange={update("status")}
+                >
+                  <option value="active">ใช้งานปกติ</option>
+                  <option
+                    value="pending_verification"
+                    disabled={!memberRights.delete}
+                  >
+                    รอยืนยัน
+                  </option>
+                  <option value="locked" disabled={!memberRights.delete}>
+                    ล็อกบัญชี
+                  </option>
+                  <option value="disabled" disabled={!memberRights.delete}>
+                    ปิดการใช้งาน
+                  </option>
+                </SearchableSelect>
+              </label>
+
+              <label className="sum-member-field">
+                <span>ชื่อ</span>
+                <input
+                  value={form.first_name}
+                  disabled={!piiRights.update}
+                  onChange={update("first_name")}
+                  maxLength={100}
+                  required
+                />
+              </label>
+              <label className="sum-member-field">
+                <span>นามสกุล</span>
+                <input
+                  value={form.last_name}
+                  disabled={!piiRights.update}
+                  onChange={update("last_name")}
+                  maxLength={100}
+                  required
+                />
+              </label>
+
+              <label className="sum-member-field">
+                <span>
+                  หมายเลขโทรศัพท์ <em>(ไม่บังคับ)</em>
+                </span>
+                <input
+                  value={form.phone}
+                  disabled={!piiRights.update}
+                  onChange={updateDigits("phone", 10)}
+                  inputMode="tel"
+                  autoComplete="tel"
+                  placeholder="08xxxxxxxx"
+                />
+                <small>กรอกหมายเลขโทรศัพท์มือถือ 10 หลัก เช่น 0812345678</small>
+              </label>
+              <label className="sum-member-field">
+                <span>อีเมล</span>
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={update("email")}
+                  maxLength={254}
+                  autoComplete="email"
+                  required
+                />
+                <small>
+                  เมื่อเปลี่ยนอีเมล เจ้าหน้าที่จะยืนยันอีเมลให้อัตโนมัติ
+                </small>
+              </label>
+
+              {memberRights.assign && (
+                <label className="sum-member-field sum-member-field--wide">
+                  <span>
+                    <FiKey aria-hidden="true" /> รหัสผ่านใหม่{" "}
+                    <em>(เว้นว่างหากไม่เปลี่ยน)</em>
+                  </span>
+                  <div className="sum-member-password">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={form.password}
+                      onChange={update("password")}
+                      minLength={8}
+                      maxLength={128}
+                      autoComplete="new-password"
+                      placeholder="อย่างน้อย 8 ตัวอักษร"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((current) => !current)}
+                      aria-label={
+                        showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"
+                      }
+                      aria-pressed={showPassword}
+                    >
+                      {showPassword ? <FiEyeOff /> : <FiEye />}
+                    </button>
+                  </div>
+                  <small>
+                    เมื่อบันทึก ระบบจะออกจากระบบบัญชีนี้ในทุกอุปกรณ์
+                  </small>
+                </label>
+              )}
+            </div>
           </div>
 
           <footer className="sum-member-modal__footer">
+            <div className="sum-member-modal__footer-start">
+              <ExportButton
+                sources={[{ resource: "member", id: member.id }]}
+                title="ข้อมูลผู้มารับบริการ"
+                requestConfig={requestConfig}
+              />
+            </div>
             <button
               className="sum-member-cancel"
               type="button"

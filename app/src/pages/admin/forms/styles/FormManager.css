@@ -50,87 +50,40 @@
 ========================================================= */
 .fm-admin-layout {
   display: flex;
-  min-height: 100%;
-  background-color: #f8fafc;
-  font-family: "Noto Sans Thai", sans-serif;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  background-color: var(--suth-canvas);
+  font-family: var(--suth-font);
 }
 
 .fm-main-content {
   flex: 1;
-  padding: 30px 40px;
-  background-color: #f8fafc;
+  width: 100%;
+  padding-bottom: clamp(1rem, 3vw, 2.25rem);
+  background-color: var(--suth-canvas);
   /* 🟢 ป้องกันการล้นจอ */
-  max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
-}
-
-.fm-content-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 25px 35px;
-  margin-bottom: 30px;
-  background: #ffffff;
-  border-left: 6px solid #f47932;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-}
-
-.fm-header-info {
-  min-width: 0;
-}
-
-.fm-content-header h2 {
-  font-family: "Noto Sans Thai", sans-serif;
-  font-size: 26px;
-  font-weight: 800;
-  margin: 0 0 6px;
-  color: #f47932;
-}
-
-.fm-header-hint {
-  margin: 0;
-  color: #64748b;
-  font-size: 13.5px;
-  font-weight: 500;
-  line-height: 1.6;
-}
-
-.fm-context-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 8px 0 0;
-  color: #0f4c5c;
-  font-family: "Noto Sans Thai", sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-}
-.fm-context-indicator span {
-  padding: 3px 8px;
-  color: #fff7ed;
-  background: #c2410c;
-  border-radius: 999px;
-  font-size: 11px;
-  letter-spacing: 0.01em;
 }
 
 /* =========================================================
    🟢 NEW ACTION BAR DESIGN (สะอาด & จัดกลุ่ม)
 ========================================================= */
 .fm-action-bar {
-  font-family: "Noto Sans Thai", sans-serif;
+  font-family: var(--suth-font);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding: 20px;
-  background: #ffffff;
-  border: 1px solid #f1f1f1;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  background: var(--suth-surface);
+  border: 1px solid var(--suth-line-soft);
+  border-radius: var(--suth-radius-panel);
+  box-shadow: 0 4px 20px rgba(31, 47, 63, 0.02);
   margin-bottom: 24px;
   flex-wrap: wrap;
 }
@@ -142,18 +95,18 @@
   max-width: 400px;
   display: flex;
   align-items: center;
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
+  background: var(--suth-surface);
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius-panel);
   padding: 0 16px;
-  height: 46px; /* 🟢 สูงเท่าหน้าตารางนัดหมาย */
+  height: var(--suth-control-h); /* 🟢 สูงเท่าหน้าตารางนัดหมาย */
   transition: all 0.2s ease;
   cursor: text;
 }
 
 .fm-search-group:focus-within {
-  border-color: #ea580c;
-  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.1);
+  border-color: var(--suth-action);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--suth-action) 10%, transparent);
 }
 
 .fm-search-group input {
@@ -161,13 +114,13 @@
   background: transparent;
   outline: none;
   width: 100%;
-  font-size: 14.5px;
-  color: #334155;
+  font-size: var(--suth-fs-sm);
+  color: var(--suth-ink-2);
   font-family: inherit;
 }
 
 .fm-search-group input::placeholder {
-  color: #94a3b8;
+  color: var(--suth-muted);
 }
 
 /* --- กลุ่มเครื่องมือขวามือ (ขวา) --- */
@@ -185,11 +138,11 @@
   position: relative;
   display: flex;
   align-items: center;
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
+  background: var(--suth-surface);
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius-panel);
   padding: 0 16px;
-  height: 46px; /* 🟢 สูงเท่าช่องค้นหา */
+  height: var(--suth-control-h); /* 🟢 สูงเท่าช่องค้นหา */
   cursor: pointer;
   user-select: none;
   transition: all 0.2s ease;
@@ -197,14 +150,14 @@
 }
 
 .fm-custom-select:hover {
-  border-color: #ea580c;
-  background-color: #fcfcfc;
+  border-color: var(--suth-action);
+  background-color: var(--suth-surface);
 }
 
 .fm-select-value {
   flex: 1;
-  font-size: 14.5px;
-  color: #334155;
+  font-size: var(--suth-fs-sm);
+  color: var(--suth-ink-2);
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
@@ -212,28 +165,28 @@
 }
 
 .fm-filter-icon {
-  color: #94a3b8;
+  color: var(--suth-muted);
   margin-right: 12px;
-  font-size: 16px;
+  font-size: var(--suth-fs-md);
   flex-shrink: 0;
   transition: color 0.2s;
 }
 
 .fm-dropdown-icon {
-  color: #94a3b8;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  font-size: 14px;
+  color: var(--suth-muted);
+  transition: transform 0.3s var(--suth-ease-out);
+  font-size: var(--suth-fs-sm);
   margin-left: 8px;
   flex-shrink: 0;
 }
 
 /* ไอคอนหมุนเมื่อเปิดเมนู */
-.fm-custom-select[style*="zIndex: 999"] .fm-dropdown-icon {
+.fm-custom-select.is-open .fm-dropdown-icon {
   transform: rotate(180deg);
-  color: #ea580c;
+  color: var(--suth-action-ink);
 }
-.fm-custom-select[style*="zIndex: 999"] .fm-filter-icon {
-  color: #ea580c;
+.fm-custom-select.is-open .fm-filter-icon {
+  color: var(--suth-action-ink);
 }
 
 /* 🟢 กล่องเมนูตัวเลือก (Dropdown Menu) */
@@ -242,14 +195,14 @@
   top: calc(100% + 8px);
   left: 0;
   width: 100%;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  background: var(--suth-surface);
+  border: 1px solid var(--suth-line-soft);
+  border-radius: var(--suth-radius-panel);
+  box-shadow: 0 10px 30px rgba(31, 47, 63, 0.12);
   max-height: 250px;
   overflow-y: auto;
   padding: 8px 0;
-  z-index: 1000;
+  z-index: var(--z-dropdown);
   transform-origin: top center;
   animation: fmPopIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -258,14 +211,14 @@
   width: 6px;
 }
 .fm-select-menu::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 10px;
+  background-color: var(--suth-control-line);
+  border-radius: var(--suth-radius);
 }
 
 .fm-select-option {
   padding: 12px 16px;
-  font-size: 14.5px;
-  color: #475569;
+  font-size: var(--suth-fs-sm);
+  color: var(--suth-ink-2);
   transition: all 0.2s ease;
   cursor: pointer;
   display: flex;
@@ -273,55 +226,39 @@
 }
 
 .fm-select-option:hover {
-  background: #fff7ed;
-  color: #ea580c;
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
   padding-left: 22px;
 }
 
 .fm-select-option.selected {
-  background: #fff7ed;
-  color: #ea580c;
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
   font-weight: 600;
-  border-left: 4px solid #ea580c;
+  border-left: 1px solid var(--suth-line);
   padding-left: 12px;
 }
 
 /* สลับมุมมอง (Grid/List) */
-.fm-view-toggle {
-  display: flex;
-  align-items: center;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 0 16px;
-  height: 46px;
-  gap: 12px;
-}
-
-.fm-toggle-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #64748b;
-}
 
 .fm-btn-add-form {
-  background: #f47932;
-  color: white;
+  background: var(--suth-action);
+  color: var(--suth-on-action);
   border: none;
   padding: 0 20px;
-  height: 46px;
-  border-radius: 12px;
-  font-size: 14.5px;
+  height: var(--suth-control-h);
+  border-radius: var(--suth-radius-panel);
+  font-size: var(--suth-fs-sm);
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(234, 88, 12, 0.2);
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--suth-action) 20%, transparent);
   transition: all 0.2s ease;
 }
 
 .fm-btn-add-form:hover {
-  background: #c2410c;
+  background: var(--suth-action);
   transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(234, 88, 12, 0.3);
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--suth-action) 30%, transparent);
 }
 
 /* =========================================================
@@ -329,26 +266,7 @@
 ========================================================= */
 @media (max-width: 768px) {
   .fm-main-content {
-    padding: 16px;
-  }
-
-  .fm-content-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
-    padding: 15px;
-  }
-
-  .fm-content-header h2 {
-    font-size: 20px;
-  }
-
-  .fm-header-hint {
-    font-size: 13px;
-  }
-
-  .fm-content-header .fm-btn-add-form {
-    width: 100%;
+    padding-bottom: 16px;
   }
 
   .fm-action-bar {
@@ -366,13 +284,8 @@
     flex-wrap: wrap;
     justify-content: space-between;
   }
-  .fm-custom-select-wrapper,
   .fm-view-toggle {
     flex: 1;
-  }
-  .fm-custom-select-header {
-    width: 100%;
-    justify-content: space-between;
   }
   .fm-btn-add-form {
     width: 100%;
@@ -388,9 +301,9 @@
 }
 
 .fm-form-card {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
+  background-color: var(--suth-surface);
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius-panel);
   display: flex;
   flex-direction: column;
   position: relative;
@@ -398,7 +311,7 @@
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
   overflow: visible;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px rgba(31, 47, 63, 0.04);
   /* 🟢 Animation ตอนโหลดการ์ดขึ้นมา */
   opacity: 0;
   animation: fmFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -426,21 +339,21 @@
 
 .fm-form-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-  border-color: #2d7d7d;
+  box-shadow: 0 12px 24px rgba(31, 47, 63, 0.08);
+  border-color: var(--suth-action);
 }
 
 .fm-card-image-box {
-  font-family: "Noto Sans Thai", sans-serif;
-  background: #f8f9fa;
+  font-family: var(--suth-font);
+  background: var(--suth-canvas);
   height: 140px;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--suth-line);
   overflow: hidden;
-  border-radius: 12px 12px 0 0;
+  border-radius: var(--suth-radius) var(--suth-radius) 0 0;
   position: relative;
 }
 
@@ -451,7 +364,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.02);
+  background: rgba(31, 47, 63, 0.02);
   z-index: 1;
   transition: background 0.3s;
 }
@@ -474,30 +387,30 @@
 .fm-img-placeholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%);
+  background: linear-gradient(135deg, var(--suth-line-soft) 0%, var(--suth-canvas) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .fm-img-placeholder::after {
   content: "📄";
-  font-size: 40px;
+  font-size: var(--suth-fs-display-lg);
   opacity: 0.2;
 }
 
 .fm-card-body {
   padding: 16px;
-  color: #333;
-  background: #ffffff;
+  color: var(--suth-ink);
+  background: var(--suth-surface);
   position: relative;
-  border-radius: 0 0 12px 12px;
+  border-radius: 0 0 var(--suth-radius) var(--suth-radius);
 }
 
 .fm-card-body h3 {
-  font-size: 16px;
+  font-size: var(--suth-fs-md);
   margin: 0 0 6px 0;
   font-weight: 600;
-  color: #202124;
+  color: var(--suth-ink);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -507,9 +420,9 @@
 }
 
 .fm-last-opened {
-  font-family: "Noto Sans Thai", sans-serif;
-  font-size: 13px;
-  color: #5f6368;
+  font-family: var(--suth-font);
+  font-size: var(--suth-fs-label);
+  color: var(--suth-muted);
   margin: 0;
 }
 
@@ -519,11 +432,11 @@
   margin-top: 6px;
   padding: 3px 8px;
   overflow: hidden;
-  color: #155e75;
-  background: #ecfeff;
-  border: 1px solid #a5f3fc;
-  border-radius: 999px;
-  font-size: 11px;
+  color: var(--suth-ink-2);
+  background: var(--suth-surface-2);
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius-pill);
+  font-size: var(--suth-fs-caption);
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -536,8 +449,8 @@
   right: 10px;
   background: transparent;
   border: none;
-  color: #5f6368;
-  font-size: 20px;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-title);
   cursor: pointer;
   width: 32px;
   height: 32px;
@@ -551,7 +464,7 @@
 
 .fm-card-menu-btn:hover {
   background-color: transparent;
-  color: #202124;
+  color: var(--suth-ink);
   transform: scale(1.5);
 }
 
@@ -559,10 +472,10 @@
    Card สำหรับสร้างฟอร์มใหม่ (Add New Form)
 --------------------------------------------------------- */
 .fm-add-empty-card {
-  font-family: "Noto Sans Thai", sans-serif;
-  background-color: #fafafa !important;
-  color: #2d7d7d !important;
-  border: 2px dashed #2d7d7d;
+  font-family: var(--suth-font);
+  background-color: var(--suth-canvas) !important;
+  color: var(--suth-action-ink) !important;
+  border: 2px dashed var(--suth-action);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -573,17 +486,17 @@
 }
 
 .fm-add-empty-card:hover {
-  background-color: #f0f7f7 !important;
+  background-color: var(--suth-surface-2) !important;
   border-style: solid;
   transform: translateY(-4px);
-  box-shadow: 0 10px 20px rgba(45, 125, 125, 0.1);
+  box-shadow: 0 10px 20px color-mix(in srgb, var(--suth-success) 10%, transparent);
 }
 
 .fm-plus-icon {
-  font-size: 48px;
+  font-size: var(--suth-fs-display-lg);
   margin-bottom: 8px;
   font-weight: 300;
-  color: #2d7d7d;
+  color: var(--suth-action-ink);
   transition: transform 0.3s ease;
 }
 
@@ -592,7 +505,7 @@
 }
 
 .fm-add-empty-card p {
-  font-size: 16px;
+  font-size: var(--suth-fs-md);
   font-weight: 600;
   margin: 0;
 }
@@ -620,8 +533,8 @@
   height: 100%;
   width: 100px;
   border-bottom: none;
-  border-right: 1px solid #e0e0e0;
-  border-radius: 12px 0 0 12px;
+  border-right: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius) 0 0 var(--suth-radius);
   flex-shrink: 0;
 }
 
@@ -663,7 +576,7 @@
 
 .fm-forms-container.list .fm-plus-icon {
   margin: 0;
-  font-size: 36px;
+  font-size: var(--suth-fs-display);
 }
 
 /* =========================================================
@@ -673,12 +586,12 @@
   position: absolute;
   top: 45px;
   right: 35px;
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  background: var(--suth-surface);
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius-panel);
+  box-shadow: 0 8px 24px rgba(31, 47, 63, 0.12);
   width: 180px;
-  z-index: 999;
+  z-index: var(--z-dropdown);
   display: flex;
   flex-direction: column;
   padding: 8px 0;
@@ -692,8 +605,8 @@
   border: none;
   text-align: left;
   padding: 10px 16px;
-  font-size: 14px;
-  color: #333;
+  font-size: var(--suth-fs-sm);
+  color: var(--suth-ink);
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s;
@@ -703,24 +616,24 @@
 }
 
 .fm-dropdown-menu button:hover {
-  background: #f8f9fa;
-  color: #2d7d7d;
+  background: var(--suth-canvas);
+  color: var(--suth-action-ink);
   padding-left: 20px;
 }
 
 .fm-dropdown-menu .fm-dropdown-divider {
   height: 1px;
-  background: #eee;
+  background: var(--suth-line-soft);
   margin: 4px 0;
 }
 
 .fm-dropdown-menu .fm-dropdown-danger {
-  color: #d93025;
+  color: var(--suth-danger);
 }
 
 .fm-dropdown-menu .fm-dropdown-danger:hover {
-  background: #fce8e6;
-  color: #c5221f;
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
   padding-left: 20px;
 }
 
@@ -738,24 +651,24 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(31, 47, 63, 0.5);
   backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: var(--z-modal);
   /* 🟢 Animation */
   opacity: 0;
   animation: fmFadeInUp 0.2s ease-out forwards;
 }
 
 .fm-modal-content {
-  background: white;
+  background: var(--suth-surface);
   padding: 30px;
-  border-radius: 16px;
+  border-radius: var(--suth-radius-lg);
   width: 100%;
   max-width: 420px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 40px rgba(31, 47, 63, 0.2);
   /* 🟢 Animation */
   transform: scale(0.95);
   animation: fmPopIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -763,16 +676,16 @@
 
 .fm-modal-content h3 {
   margin: 0 0 20px 0;
-  font-size: 20px;
-  color: #1e293b;
+  font-size: var(--suth-fs-title);
+  color: var(--suth-ink);
 }
 
 .fm-modal-input {
   width: 100%;
   padding: 12px 14px;
-  font-size: 15px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  font-size: var(--suth-fs-body);
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
   outline: none;
   font-family: inherit;
   margin-bottom: 24px;
@@ -780,8 +693,8 @@
 }
 
 .fm-modal-input:focus {
-  border-color: #2d7d7d;
-  box-shadow: 0 0 0 3px rgba(45, 125, 125, 0.1);
+  border-color: var(--suth-action);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--suth-success) 10%, transparent);
 }
 
 .fm-modal-actions {
@@ -792,9 +705,9 @@
 
 .fm-modal-actions button {
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: var(--suth-radius);
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--suth-fs-sm);
   cursor: pointer;
   border: none;
   font-family: inherit;
@@ -803,24 +716,24 @@
 
 .fm-modal-actions .fm-btn-cancel {
   background: transparent;
-  color: #64748b;
-  border: 1px solid #e2e8f0;
+  color: var(--suth-muted);
+  border: 1px solid var(--suth-line-soft);
 }
 
 .fm-modal-actions .fm-btn-cancel:hover {
-  background: #f1f5f9;
-  color: #1e293b;
+  background: var(--suth-surface-2);
+  color: var(--suth-ink);
 }
 
 .fm-modal-actions .fm-btn-save {
-  background: #2d7d7d;
-  color: white;
-  box-shadow: 0 2px 6px rgba(45, 125, 125, 0.2);
+  background: var(--suth-action);
+  color: var(--suth-on-action);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--suth-success) 20%, transparent);
 }
 
 .fm-modal-actions .fm-btn-save:hover {
-  background: #236565;
-  box-shadow: 0 4px 12px rgba(45, 125, 125, 0.3);
+  background: var(--suth-success);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--suth-success) 30%, transparent);
   transform: translateY(-1px);
 }
 
@@ -832,19 +745,19 @@
   bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #1e293b;
-  color: white;
+  background-color: var(--suth-ink);
+  color: var(--suth-on-action);
   padding: 14px 32px;
-  border-radius: 50px;
-  font-size: 15px;
+  border-radius: var(--suth-radius-pill);
+  font-size: var(--suth-fs-body);
   font-weight: 600;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  z-index: 10000;
+  box-shadow: 0 10px 30px rgba(31, 47, 63, 0.2);
+  z-index: var(--z-toast);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  animation: slideUpToast 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: slideUpToast 0.4s var(--suth-ease-out) forwards;
 }
 
 /* =========================================================
@@ -862,16 +775,16 @@
 .fm-loading-spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid #f1f5f9;
-  border-top: 4px solid #2d7d7d;
+  border: 4px solid var(--suth-line-soft);
+  border-top: 1px solid var(--suth-line);
   border-radius: 50%;
-  animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+  animation: spin 1s var(--suth-ease-out) infinite;
   margin-bottom: 20px;
 }
 
 .fm-loading-state p {
-  color: #64748b;
-  font-size: 16px;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-md);
   font-weight: 600;
   margin: 0;
   animation: pulseText 1.5s ease-in-out infinite;
@@ -902,7 +815,7 @@
 
 @media (max-width: 1024px) {
   .fm-main-content {
-    padding: 30px 40px;
+    padding-bottom: 30px;
   }
   .fm-search-group input {
     width: 250px;
@@ -918,7 +831,7 @@
   }
 
   .fm-main-content {
-    padding: 16px;
+    padding-bottom: 16px;
   }
 
   .fm-action-bar {
@@ -966,7 +879,7 @@
   .fm-forms-container.list .fm-card-image-box {
     width: 70px;
     height: 70px;
-    border-radius: 8px;
+    border-radius: var(--suth-radius);
     border: none;
     flex-shrink: 0;
   }
@@ -1015,5 +928,164 @@
   .fm-search-group input {
     width: 100%;
     box-sizing: border-box;
+  }
+}
+
+/* =========================================================
+   Forms grouped by the organization axis (clinic, health
+   domain, or organization). Groups are ruled, not boxed.
+========================================================= */
+.fm-groups {
+  display: grid;
+  gap: 32px;
+}
+
+.fm-group-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--suth-line);
+  font-family: var(--suth-font);
+  font-size: var(--suth-fs-section);
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--suth-ink);
+}
+
+.fm-group-count {
+  font-size: var(--suth-fs-sm);
+  font-weight: 600;
+  color: var(--suth-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.fm-group-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  color: var(--suth-warning);
+}
+
+.fm-empty-note {
+  margin: 0;
+  padding: 32px 16px;
+  border: 1px dashed var(--suth-control-line);
+  border-radius: var(--suth-radius-panel);
+  font-family: var(--suth-font);
+  text-align: center;
+  color: var(--suth-muted);
+}
+
+.fm-card-image-box {
+  position: relative;
+}
+
+.fm-card-pills {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  left: 10px;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.fm-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--suth-radius-pill);
+  border: 1px solid var(--suth-line);
+  background: var(--suth-surface);
+  font-family: var(--suth-font);
+  font-size: var(--suth-fs-caption);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--suth-ink-2);
+}
+
+.fm-pill svg {
+  width: 11px;
+  height: 11px;
+}
+
+.fm-pill--login {
+  background: var(--suth-warning-tint);
+  border-color: var(--suth-warning-line);
+  color: var(--suth-warning);
+}
+
+.fm-pill--status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.fm-pill--status.is-published {
+  background: var(--suth-success-tint);
+  border-color: transparent;
+  color: var(--suth-success);
+}
+
+.fm-pill--status.is-draft {
+  background: var(--suth-neutral-tint);
+  border-color: transparent;
+  color: var(--suth-ink-2);
+}
+
+.fm-dropdown-menu button {
+  align-items: center;
+  gap: 8px;
+}
+
+.fm-dropdown-menu button[hidden] {
+  display: none;
+}
+
+/* ── Kit shape (moved here from kit-system.css) ─────────────── */
+.admin-shell .fm-admin-layout,
+.admin-shell .fm-main-content {
+  background: var(--suth-canvas);
+}
+.admin-shell .fm-form-card {
+  border-color: transparent;
+  border-radius: var(--suth-radius-card);
+  background: var(--suth-surface);
+  box-shadow: var(--suth-shadow-soft);
+}
+@media (max-width: 760px) {
+  .admin-shell .fm-form-card {
+    border-radius: var(--suth-radius-inner);
+  }
+}
+
+/* Toolbar: the filter menu and the view switch sit side by side (moved from kit-system.css). */
+.admin-shell .fm-action-bar > .fm-action-tools {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.admin-shell .fm-view-toggle {
+  border-radius: var(--suth-radius-pill);
+}
+
+/* Phones: the card menu button reaches the 44px touch target. */
+@media (max-width: 760px) {
+  .fm-card-menu-btn {
+    min-width: 44px;
+    min-height: 44px;
   }
 }

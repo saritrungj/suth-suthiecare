@@ -4,7 +4,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(31, 47, 63, 0.5);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -15,10 +15,10 @@
 
 .ebm-premium-card {
   width: 580px;
-  background: #ffffff;
-  border-radius: 12px;
+  background: var(--suth-surface);
+  border-radius: var(--suth-radius-panel);
   overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 25px 50px -12px rgba(31, 47, 63, 0.25);
   position: relative;
   animation: ebm-slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -34,7 +34,7 @@
   width: 32px !important;
   height: 32px !important;
   border-radius: 50% !important;
-  background-color: #f1f5f9 !important;
+  background-color: var(--suth-surface-2) !important;
   border: none !important;
   display: flex !important;
   align-items: center !important;
@@ -61,8 +61,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #1e293b !important;
-  border-radius: 12px !important;
+  background-color: var(--suth-ink) !important;
+  border-radius: var(--suth-radius-panel) !important;
   transition: background-color 0.2s ease !important;
 }
 
@@ -74,32 +74,32 @@
 }
 
 .ebm-close-btn:hover {
-  background-color: #fee2e2 !important;
+  background-color: var(--suth-danger-tint) !important;
   transform: rotate(90deg) scale(1.1) !important;
 }
 
 .ebm-close-btn:hover .ebm-close-icon::before,
 .ebm-close-btn:hover .ebm-close-icon::after {
-  background-color: #ef4444 !important;
+  background-color: var(--suth-risk-dot-high) !important;
 }
 
 /* Header */
 .ebm-header {
   padding: 30px 35px 20px;
-  border-bottom: 1px solid #f1f5f9;
-  background: linear-gradient(to right, #ffffff, #f8fafc);
+  border-bottom: 1px solid var(--suth-line-soft);
+  background: linear-gradient(to right, var(--suth-surface), var(--suth-surface-2));
 }
 
 .ebm-header h3 {
   margin: 0;
-  font-size: 20px;
+  font-size: var(--suth-fs-title);
   font-weight: 800;
-  color: #1e293b;
+  color: var(--suth-ink);
 }
 .ebm-header p {
   margin: 5px 0 0;
-  font-size: 13px;
-  color: #64748b;
+  font-size: var(--suth-fs-label);
+  color: var(--suth-muted);
 }
 
 /* Body */
@@ -118,15 +118,15 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: var(--suth-fs-label);
   font-weight: 700;
-  color: #475569;
+  color: var(--suth-ink-2);
   margin-bottom: 10px;
   white-space: nowrap;
 }
 
 .ebm-icon {
-  color: #4a9b9f;
+  color: var(--suth-action-ink);
 }
 
 /* 🟢 Preview Boxes (อัปเดตสัดส่วน 4:3 เท่ากันเป๊ะ) */
@@ -135,10 +135,10 @@
   width: 100%;
   height: auto;
   aspect-ratio: 4 / 3; /* 🟢 บังคับสัดส่วน 4:3 */
-  border-radius: 12px;
+  border-radius: var(--suth-radius-panel);
   overflow: hidden;
-  border: 1px solid #e2e8f0;
-  background-color: #f8fafc;
+  border: 1px solid var(--suth-line-soft);
+  background-color: var(--suth-surface-2);
 }
 
 .ebm-current-preview img {
@@ -149,8 +149,8 @@
 }
 
 .ebm-upload-area {
-  border: 2px dashed #cbd5e1;
-  background: #f8fafc;
+  border: 2px dashed var(--suth-line);
+  background: var(--suth-surface-2);
   cursor: pointer;
   transition: 0.3s;
   display: flex;
@@ -159,13 +159,13 @@
 }
 
 .ebm-upload-area:hover {
-  border-color: #4a9b9f;
-  background: #f0f9f9;
+  border-color: var(--suth-action);
+  background: var(--suth-surface-2);
 }
 .ebm-upload-area.is-new {
-  border-color: #4a9b9f;
+  border-color: var(--suth-action);
   border-style: solid;
-  box-shadow: 0 0 0 4px rgba(74, 155, 159, 0.1);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--suth-info) 10%, transparent);
 }
 
 .ebm-preview-wrapper {
@@ -186,15 +186,15 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4);
-  color: #fff;
+  background: rgba(31, 47, 63, 0.4);
+  color: var(--suth-on-action);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   opacity: 0;
   transition: 0.3s;
-  font-size: 12px;
+  font-size: var(--suth-fs-caption);
   backdrop-filter: blur(2px);
 }
 
@@ -203,12 +203,12 @@
 }
 
 .ebm-placeholder {
-  color: #94a3b8;
+  color: var(--suth-muted);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
-  font-size: 12px;
+  font-size: var(--suth-fs-caption);
 }
 
 /* Input */
@@ -216,62 +216,62 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: var(--suth-fs-label);
   font-weight: 700;
-  color: #475569;
+  color: var(--suth-ink-2);
   margin-bottom: 8px;
 }
 .ebm-input {
   width: 100%;
   padding: 12px 16px;
-  border-radius: 12px;
-  border: 1.5px solid #e2e8f0;
-  background: #f8fafc;
-  font-size: 14px;
+  border-radius: var(--suth-radius-panel);
+  border: 1.5px solid var(--suth-line-soft);
+  background: var(--suth-surface-2);
+  font-size: var(--suth-fs-sm);
   transition: 0.2s;
   box-sizing: border-box;
 }
 .ebm-input:focus {
   outline: none;
-  border-color: #4a9b9f;
-  background: #fff;
-  box-shadow: 0 0 0 4px rgba(74, 155, 159, 0.1);
+  border-color: var(--suth-action);
+  background: var(--suth-surface);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--suth-info) 10%, transparent);
 }
 
 /* Footer */
 .ebm-footer {
   padding: 20px 35px 30px;
-  background: #f8fafc;
+  background: var(--suth-surface-2);
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 
 .ebm-btn-cancel {
-  background: #fff;
-  border: 1.5px solid #e2e8f0;
+  background: var(--suth-surface);
+  border: 1.5px solid var(--suth-line-soft);
   padding: 10px 20px;
-  border-radius: 12px;
+  border-radius: var(--suth-radius-panel);
   font-weight: 600;
-  color: #64748b;
+  color: var(--suth-muted);
   cursor: pointer;
 }
 
 .ebm-btn-save {
-  background: #4a9b9f;
-  color: #fff;
+  background: var(--suth-action);
+  color: var(--suth-on-action);
   border: none;
   padding: 10px 25px;
-  border-radius: 12px;
+  border-radius: var(--suth-radius-panel);
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(74, 155, 159, 0.3);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--suth-info) 30%, transparent);
   transition: 0.2s;
 }
 
 .ebm-btn-save:hover {
   transform: translateY(-2px);
-  background: #3a8589;
+  background: var(--suth-info);
 }
 
 /* Animations */

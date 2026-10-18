@@ -2,736 +2,522 @@
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 4,
-    "selectors": [
-      ".modal-overlay"
-    ]
+    "selectors": [".modal-overlay"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 18,
-    "selectors": [
-      "body.modal-open"
-    ]
+    "selectors": ["body.modal-open"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 25,
-    "selectors": [
-      ".modal-content"
-    ]
+    "selectors": [".modal-content"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 39,
-    "selectors": [
-      "select.form-control"
-    ]
+    "selectors": ["select.form-control"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 48,
-    "selectors": [
-      "select.form-control option"
-    ]
+    "selectors": ["select.form-control option"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 67,
-    "selectors": [
-      ".modal-header"
-    ]
+    "selectors": [".modal-header"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 77,
-    "selectors": [
-      ".modal-header h2"
-    ]
+    "selectors": [".modal-header h2"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 84,
-    "selectors": [
-      ".modal-header button"
-    ]
+    "selectors": [".modal-header button"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 93,
-    "selectors": [
-      ".modal-header button:hover"
-    ]
+    "selectors": [".modal-header button:hover"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 101,
-    "selectors": [
-      ".modal-body"
-    ]
+    "selectors": [".modal-body"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 162,
-    "selectors": [
-      "select.form-control"
-    ]
+    "selectors": ["select.form-control"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 212,
-    "selectors": [
-      ".modal-footer"
-    ]
+    "selectors": [".modal-footer"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 263,
-    "selectors": [
-      ".modal-content"
-    ]
+    "selectors": [".modal-content"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 272,
-    "selectors": [
-      ".modal-body"
-    ]
+    "selectors": [".modal-body"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 282,
-    "selectors": [
-      ".modal-footer"
-    ]
+    "selectors": [".modal-footer"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 322,
-    "selectors": [
-      ".modal-body"
-    ]
+    "selectors": [".modal-body"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 361,
-    "selectors": [
-      ".modal-content"
-    ]
+    "selectors": [".modal-content"]
   },
   {
     "path": "app/src/components/AddChartModal.css",
     "line": 367,
-    "selectors": [
-      ".modal-footer"
-    ]
+    "selectors": [".modal-footer"]
   },
   {
     "path": "app/src/components/appointment/AppointmentDetailModal.css",
     "line": 3,
-    "selectors": [
-      ".modal-overlay"
-    ]
+    "selectors": [".modal-overlay"]
   },
   {
     "path": "app/src/components/appointment/AppointmentDetailModal.css",
     "line": 26,
-    "selectors": [
-      ".modal-header"
-    ]
+    "selectors": [".modal-header"]
   },
   {
     "path": "app/src/components/appointment/AppointmentDetailModal.css",
     "line": 33,
-    "selectors": [
-      ".modal-header h3"
-    ]
+    "selectors": [".modal-header h3"]
   },
   {
     "path": "app/src/components/appointment/AppointmentDetailModal.css",
     "line": 37,
-    "selectors": [
-      ".close-btn"
-    ]
+    "selectors": [".close-btn"]
   },
   {
     "path": "app/src/components/appointment/AppointmentFormModal.css",
     "line": 12,
-    "selectors": [
-      ".modal-header"
-    ]
+    "selectors": [".modal-header"]
   },
   {
     "path": "app/src/components/appointment/AppointmentFormModal.css",
     "line": 21,
-    "selectors": [
-      ".close-btn"
-    ]
+    "selectors": [".close-btn"]
   },
   {
     "path": "app/src/components/appointment/AppointmentFormModal.css",
     "line": 30,
-    "selectors": [
-      ".form-body"
-    ]
+    "selectors": [".form-body"]
   },
   {
     "path": "app/src/components/appointment/AppointmentFormModal.css",
     "line": 40,
-    "selectors": [
-      ".form-row"
-    ]
+    "selectors": [".form-row"]
   },
   {
     "path": "app/src/components/appointment/AppointmentFormModal.css",
     "line": 46,
-    "selectors": [
-      "label"
-    ]
+    "selectors": ["label"]
   },
   {
     "path": "app/src/components/appointment/AppointmentFormModal.css",
     "line": 53,
-    "selectors": [
-      "input",
-      "select"
-    ]
+    "selectors": ["input", "select"]
   },
   {
     "path": "app/src/components/appointment/AppointmentFormModal.css",
     "line": 95,
-    "selectors": [
-      ".risk-group"
-    ]
+    "selectors": [".risk-group"]
   },
   {
     "path": "app/src/components/appointment/AppointmentFormModal.css",
     "line": 132,
-    "selectors": [
-      ".form-actions"
-    ]
+    "selectors": [".form-actions"]
   },
   {
     "path": "app/src/components/appointment/AppointmentFormModal.css",
     "line": 140,
-    "selectors": [
-      ".form-actions button"
-    ]
+    "selectors": [".form-actions button"]
   },
   {
     "path": "app/src/components/case/CaseDetailModal.css",
     "line": 391,
-    "selectors": [
-      "textarea.cdm-form-input"
-    ]
+    "selectors": ["textarea.cdm-form-input"]
   },
   {
     "path": "app/src/components/case/CaseDetailModal.css",
     "line": 1337,
-    "selectors": [
-      "textarea.cdm-form-input"
-    ]
+    "selectors": ["textarea.cdm-form-input"]
   },
   {
     "path": "app/src/components/case/CaseDetailModal.css",
     "line": 1541,
-    "selectors": [
-      "select.cdm-form-input"
-    ]
+    "selectors": ["select.cdm-form-input"]
   },
   {
     "path": "app/src/components/Sidebar.css",
     "line": 223,
-    "selectors": [
-      "button.menu-item"
-    ]
+    "selectors": ["button.menu-item"]
   },
   {
     "path": "app/src/components/Sidebar.css",
     "line": 406,
-    "selectors": [
-      "button.menu-item:focus",
-      "button.menu-item:focus-visible"
-    ]
+    "selectors": ["button.menu-item:focus", "button.menu-item:focus-visible"]
   },
   {
     "path": "app/src/components/Sidebar.css",
     "line": 410,
-    "selectors": [
-      "button.menu-item::-moz-focus-inner"
-    ]
+    "selectors": ["button.menu-item::-moz-focus-inner"]
   },
   {
     "path": "app/src/index.css",
     "line": 20,
-    "selectors": [
-      "html"
-    ]
+    "selectors": ["html"]
   },
   {
     "path": "app/src/index.css",
     "line": 25,
-    "selectors": [
-      "body"
-    ]
+    "selectors": ["body"]
   },
   {
     "path": "app/src/index.css",
     "line": 49,
-    "selectors": [
-      "button"
-    ]
+    "selectors": ["button"]
   },
   {
     "path": "app/src/index.css",
     "line": 57,
-    "selectors": [
-      "button:hover"
-    ]
+    "selectors": ["button:hover"]
   },
   {
     "path": "app/src/index.css",
     "line": 60,
-    "selectors": [
-      "button:focus",
-      "button:focus-visible"
-    ]
+    "selectors": ["button:focus", "button:focus-visible"]
   },
   {
     "path": "app/src/index.css",
     "line": 65,
-    "selectors": [
-      "body.modal-open"
-    ]
+    "selectors": ["body.modal-open"]
   },
   {
     "path": "app/src/index.css",
     "line": 81,
-    "selectors": [
-      "button:focus:not(:focus-visible)"
-    ]
+    "selectors": ["button:focus:not(:focus-visible)"]
   },
   {
     "path": "app/src/pages/admin/BannerManagement.css",
     "line": 169,
-    "selectors": [
-      "tr:hover .bm-empty-icon"
-    ]
+    "selectors": ["tr:hover .bm-empty-icon"]
   },
   {
     "path": "app/src/pages/admin/clinics/ClinicManager.css",
     "line": 516,
-    "selectors": [
-      "input:checked + .cm-slider"
-    ]
+    "selectors": ["input:checked + .cm-slider"]
   },
   {
     "path": "app/src/pages/admin/clinics/ClinicManager.css",
     "line": 520,
-    "selectors": [
-      "input:checked + .cm-slider:before"
-    ]
+    "selectors": ["input:checked + .cm-slider:before"]
   },
   {
     "path": "app/src/pages/admin/dashboard.css",
     "line": 6,
-    "selectors": [
-      "input",
-      "select",
-      "button"
-    ]
+    "selectors": ["input", "select", "button"]
   },
   {
     "path": "app/src/pages/admin/dashboard.css",
     "line": 470,
-    "selectors": [
-      ".btn-add"
-    ]
+    "selectors": [".btn-add"]
   },
   {
     "path": "app/src/pages/admin/dashboard.css",
     "line": 482,
-    "selectors": [
-      ".btn-add:hover"
-    ]
+    "selectors": [".btn-add:hover"]
   },
   {
     "path": "app/src/pages/admin/dashboard.css",
     "line": 827,
-    "selectors": [
-      ".modal-overlay"
-    ]
+    "selectors": [".modal-overlay"]
   },
   {
     "path": "app/src/pages/admin/dashboard.css",
     "line": 842,
-    "selectors": [
-      ".modal-actions"
-    ]
+    "selectors": [".modal-actions"]
   },
   {
     "path": "app/src/pages/admin/dashboard.css",
     "line": 847,
-    "selectors": [
-      ".btn-cancel"
-    ]
+    "selectors": [".btn-cancel"]
   },
   {
     "path": "app/src/pages/admin/dashboard.css",
     "line": 854,
-    "selectors": [
-      ".btn-confirm"
-    ]
+    "selectors": [".btn-confirm"]
   },
   {
     "path": "app/src/pages/admin/dashboard.css",
     "line": 975,
-    "selectors": [
-      ".btn-add"
-    ]
+    "selectors": [".btn-add"]
   },
   {
     "path": "app/src/pages/admin/forms/styles/FormPreview.css",
     "line": 712,
-    "selectors": [
-      "select.preview-input"
-    ]
+    "selectors": ["select.preview-input"]
   },
   {
     "path": "app/src/pages/admin/forms/styles/FormPreview.css",
     "line": 729,
-    "selectors": [
-      "select.preview-input:hover:not(:disabled)"
-    ]
+    "selectors": ["select.preview-input:hover:not(:disabled)"]
   },
   {
     "path": "app/src/pages/admin/forms/styles/FormPreview.css",
     "line": 733,
-    "selectors": [
-      "select.preview-input:focus"
-    ]
+    "selectors": ["select.preview-input:focus"]
   },
   {
     "path": "app/src/pages/admin/forms/styles/FormPreview.css",
     "line": 738,
-    "selectors": [
-      "select.preview-input:disabled"
-    ]
+    "selectors": ["select.preview-input:disabled"]
   },
   {
     "path": "app/src/pages/admin/forms/styles/FormPreview.css",
     "line": 964,
-    "selectors": [
-      "select.preview-input--error"
-    ]
+    "selectors": ["select.preview-input--error"]
   },
   {
     "path": "app/src/pages/admin/HelpCenterManager.css",
     "line": 576,
-    "selectors": [
-      "td button"
-    ]
+    "selectors": ["td button"]
   },
   {
     "path": "app/src/pages/admin/HelpCenterManager.css",
     "line": 586,
-    "selectors": [
-      "td button svg",
-      "td button i"
-    ]
+    "selectors": ["td button svg", "td button i"]
   },
   {
     "path": "app/src/pages/admin/HelpCenterManager.css",
     "line": 753,
-    "selectors": [
-      "input:checked + .hc-slider"
-    ]
+    "selectors": ["input:checked + .hc-slider"]
   },
   {
     "path": "app/src/pages/admin/HelpCenterManager.css",
     "line": 757,
-    "selectors": [
-      "input:checked + .hc-slider:before"
-    ]
+    "selectors": ["input:checked + .hc-slider:before"]
   },
   {
     "path": "app/src/pages/admin/HelpCenterManager.css",
     "line": 1000,
-    "selectors": [
-      ".page-btn"
-    ]
+    "selectors": [".page-btn"]
   },
   {
     "path": "app/src/pages/admin/HelpCenterManager.css",
     "line": 1015,
-    "selectors": [
-      ".page-btn:hover:not(:disabled)"
-    ]
+    "selectors": [".page-btn:hover:not(:disabled)"]
   },
   {
     "path": "app/src/pages/admin/HelpCenterManager.css",
     "line": 1021,
-    "selectors": [
-      ".page-btn:active:not(:disabled)"
-    ]
+    "selectors": [".page-btn:active:not(:disabled)"]
   },
   {
     "path": "app/src/pages/admin/HelpCenterManager.css",
     "line": 1026,
-    "selectors": [
-      ".page-btn:disabled"
-    ]
+    "selectors": [".page-btn:disabled"]
   },
   {
     "path": "app/src/pages/admin/HelpCenterManager.css",
     "line": 1193,
-    "selectors": [
-      ".page-btn"
-    ]
+    "selectors": [".page-btn"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 10,
-    "selectors": [
-      ".main-content"
-    ]
+    "selectors": [".main-content"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 143,
-    "selectors": [
-      ".filter-bar"
-    ]
+    "selectors": [".filter-bar"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 235,
-    "selectors": [
-      ".filter-bar > *:nth-child(1)"
-    ]
+    "selectors": [".filter-bar > *:nth-child(1)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 239,
-    "selectors": [
-      ".filter-bar > *:nth-child(2)"
-    ]
+    "selectors": [".filter-bar > *:nth-child(2)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 243,
-    "selectors": [
-      ".filter-bar > *:nth-child(3)"
-    ]
+    "selectors": [".filter-bar > *:nth-child(3)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 246,
-    "selectors": [
-      ".filter-bar > *:nth-child(4)"
-    ]
+    "selectors": [".filter-bar > *:nth-child(4)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 249,
-    "selectors": [
-      ".filter-bar > *:nth-child(5)"
-    ]
+    "selectors": [".filter-bar > *:nth-child(5)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 253,
-    "selectors": [
-      ".filter-bar > *:nth-child(6)"
-    ]
+    "selectors": [".filter-bar > *:nth-child(6)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 256,
-    "selectors": [
-      ".filter-bar > *:nth-child(7)"
-    ]
+    "selectors": [".filter-bar > *:nth-child(7)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 517,
-    "selectors": [
-      ".filter-bar"
-    ]
+    "selectors": [".filter-bar"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 522,
-    "selectors": [
-      ".filter-bar > *"
-    ]
+    "selectors": [".filter-bar > *"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 545,
-    "selectors": [
-      ".filter-bar"
-    ]
+    "selectors": [".filter-bar"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 550,
-    "selectors": [
-      ".filter-bar > *"
-    ]
+    "selectors": [".filter-bar > *"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 662,
-    "selectors": [
-      ".filter-bar"
-    ]
+    "selectors": [".filter-bar"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 666,
-    "selectors": [
-      ".table-box"
-    ]
+    "selectors": [".table-box"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 671,
-    "selectors": [
-      ".case-table tbody tr"
-    ]
+    "selectors": [".case-table tbody tr"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 675,
-    "selectors": [
-      ".case-table tbody tr:nth-child(1)"
-    ]
+    "selectors": [".case-table tbody tr:nth-child(1)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 678,
-    "selectors": [
-      ".case-table tbody tr:nth-child(2)"
-    ]
+    "selectors": [".case-table tbody tr:nth-child(2)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 681,
-    "selectors": [
-      ".case-table tbody tr:nth-child(3)"
-    ]
+    "selectors": [".case-table tbody tr:nth-child(3)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 684,
-    "selectors": [
-      ".case-table tbody tr:nth-child(4)"
-    ]
+    "selectors": [".case-table tbody tr:nth-child(4)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 687,
-    "selectors": [
-      ".case-table tbody tr:nth-child(5)"
-    ]
+    "selectors": [".case-table tbody tr:nth-child(5)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 690,
-    "selectors": [
-      ".case-table tbody tr:nth-child(6)"
-    ]
+    "selectors": [".case-table tbody tr:nth-child(6)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 693,
-    "selectors": [
-      ".case-table tbody tr:nth-child(7)"
-    ]
+    "selectors": [".case-table tbody tr:nth-child(7)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 696,
-    "selectors": [
-      ".case-table tbody tr:nth-child(8)"
-    ]
+    "selectors": [".case-table tbody tr:nth-child(8)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 699,
-    "selectors": [
-      ".case-table tbody tr:nth-child(9)"
-    ]
+    "selectors": [".case-table tbody tr:nth-child(9)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 702,
-    "selectors": [
-      ".case-table tbody tr:nth-child(10)"
-    ]
+    "selectors": [".case-table tbody tr:nth-child(10)"]
   },
   {
     "path": "app/src/pages/admin/RiskCases.css",
     "line": 705,
-    "selectors": [
-      ".case-table tbody tr:nth-child(n + 11)"
-    ]
+    "selectors": [".case-table tbody tr:nth-child(n + 11)"]
   },
   {
     "path": "app/src/pages/admin/school/school.css",
     "line": 835,
-    "selectors": [
-      "button.sch-tile"
-    ]
+    "selectors": ["button.sch-tile"]
   },
   {
     "path": "app/src/pages/admin/school/school.css",
     "line": 842,
-    "selectors": [
-      "button.sch-tile:hover"
-    ]
+    "selectors": ["button.sch-tile:hover"]
   },
   {
     "path": "app/src/pages/admin/school/school.css",
     "line": 846,
-    "selectors": [
-      "button.sch-tile.is-active"
-    ]
+    "selectors": ["button.sch-tile.is-active"]
   },
   {
     "path": "app/src/pages/admin/school/school.css",
     "line": 1570,
-    "selectors": [
-      "body:has(:is(.sch-wrapper, .org-wrapper)) .swal2-container"
-    ]
+    "selectors": ["body:has(:is(.sch-wrapper, .org-wrapper)) .swal2-container"]
   },
   {
     "path": "app/src/pages/admin/school/school.css",
     "line": 1580,
-    "selectors": [
-      "body:has(.cw-drawer-overlay) .sch-pagination"
-    ]
+    "selectors": ["body:has(.cw-drawer-overlay) .sch-pagination"]
   },
   {
     "path": "app/src/pages/result/AssessmentResult.css",
     "line": 11,
-    "selectors": [
-      "body"
-    ]
+    "selectors": ["body"]
   },
   {
     "path": "app/src/styles/case-workspace.css",
     "line": 1044,
-    "selectors": [
-      "body:has(.cw-drawer-overlay)"
-    ]
+    "selectors": ["body:has(.cw-drawer-overlay)"]
   },
   {
     "path": "app/src/styles/layout-system.css",
     "line": 41,
-    "selectors": [
-      "body .swal2-container"
-    ]
+    "selectors": ["body .swal2-container"]
   },
   {
     "path": "app/src/styles/modal-system.css",

@@ -844,13 +844,57 @@
   }
 }
 
-.hc-user-page :is(button, a, [tabindex]):focus-visible { outline: 3px solid var(--suth-focus); outline-offset: 3px; }
-.hc-user-search-wrapper:focus-within { outline: 2px solid var(--suth-focus); outline-offset: 3px; }
-.hc-user-search-wrapper input::placeholder { color: var(--suth-muted); }
-.hc-btn-view-clinic, .hc-link-more, .hc-user-empty-state button { min-height: 44px; }
-.hc-suggestion-item { width: 100%; border: 0; background: white; font: inherit; text-align: left; min-height: 48px; gap: 12px; }
-.hc-suggestion-info { min-width: 0; flex-wrap: wrap; }
-.hc-faq-question { width: 100%; border: 0; background: white; color: var(--suth-ink); font: inherit; text-align: left; gap: 16px; }
-.hc-faq-question svg { flex-shrink: 0; }
-.hc-user-clinic-grid-scroll { justify-content: flex-start; scrollbar-width: thin; scrollbar-color: var(--suth-tint-line) transparent; }
-@media (prefers-reduced-motion: reduce) { .hc-user-page *, .hc-clinic-detail-wrapper * { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+.hc-user-page :is(button, a, [tabindex]):focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 3px;
+}
+.hc-user-search-wrapper:focus-within {
+  outline: 2px solid var(--suth-focus);
+  outline-offset: 3px;
+}
+.hc-user-search-wrapper input::placeholder {
+  color: var(--suth-muted);
+}
+.hc-btn-view-clinic,
+.hc-link-more,
+.hc-user-empty-state button {
+  min-height: 44px;
+}
+.hc-suggestion-item {
+  width: 100%;
+  border: 0;
+  background: white;
+  font: inherit;
+  text-align: left;
+  min-height: 48px;
+  gap: 12px;
+}
+.hc-suggestion-info {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.hc-faq-question {
+  width: 100%;
+  border: 0;
+  background: white;
+  color: var(--suth-ink);
+  font: inherit;
+  text-align: left;
+  gap: 16px;
+}
+.hc-faq-question svg {
+  flex-shrink: 0;
+}
+.hc-user-clinic-grid-scroll {
+  justify-content: flex-start;
+  scrollbar-width: thin;
+  scrollbar-color: var(--suth-tint-line) transparent;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hc-user-page *,
+  .hc-clinic-detail-wrapper * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

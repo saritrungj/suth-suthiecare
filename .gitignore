@@ -51,6 +51,7 @@ CONTEXT.md
 /docs/*
 !/docs/school-implementation-plan.md
 !/docs/school-workflows.md
+!/docs/school-role-permission-analysis.md
 PATIENT_ACCOUNT_IDENTITY_PLAN.md
 PATIENT_HISTORY_AUTH_PLAN.md
 *.yaml

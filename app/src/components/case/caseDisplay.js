@@ -2,7 +2,7 @@
 // case drawer. Risk is read from the score colors and labels the form
 // builder writes (red/orange/green and the words สูง / ปานกลาง).
 
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 
 const HIGH_COLORS = [
   "d93025",

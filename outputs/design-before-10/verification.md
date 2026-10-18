@@ -5,6 +5,7 @@ Reference: local Git tree `5240990c98674e4bc339656286eea3a3eab50e7e`, captured o
 Functional changes were retained: server and authorization work, organization routing, academic-year and guardian controls, searchable options, history detail navigation, empty-data handling, and the dashboard list correction. The supporting styles for new school/guardian controls remain. A pre-existing dialog-role error on the evaluation chart was not reintroduced.
 
 Validation:
+
 - Production build passed.
 - Unit tests: 70 passed.
 - Desktop admin browser tests: 6 passed.

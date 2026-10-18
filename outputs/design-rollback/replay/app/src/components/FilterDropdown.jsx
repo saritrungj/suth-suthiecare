@@ -1,4 +1,4 @@
-import { toDisplayText } from '../utils/textPresentation.js';
+import { toDisplayText } from "../utils/textPresentation.js";
 import { FiChevronDown, FiSliders } from "react-icons/fi";
 
 /** Groups secondary filters without hiding the active, high-frequency controls. */

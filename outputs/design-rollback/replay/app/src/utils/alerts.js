@@ -1,8 +1,7 @@
 import Swal from "sweetalert2";
-import {themeToken as tokenColor} from '../styles/theme.js';
+import { themeToken as tokenColor } from "../styles/theme.js";
 
-
-const confirmColor = () => tokenColor('--suth-action', '#c45428');
+const confirmColor = () => tokenColor("--suth-action", "#c45428");
 
 export const getErrorMessage = (error, fallback = "กรุณาลองใหม่อีกครั้ง") =>
   error?.response?.data?.message || error?.message || fallback;
@@ -71,8 +70,10 @@ export const confirmAlert = async ({
     focusCancel: danger,
     confirmButtonText: confirmText,
     cancelButtonText: cancelText,
-    confirmButtonColor: danger ? tokenColor('--suth-danger', '#b42318') : confirmColor(),
-    cancelButtonColor: tokenColor('--suth-muted', '#526578'),
+    confirmButtonColor: danger
+      ? tokenColor("--suth-danger", "#b42318")
+      : confirmColor(),
+    cancelButtonColor: tokenColor("--suth-muted", "#526578"),
   });
   return result.isConfirmed;
 };

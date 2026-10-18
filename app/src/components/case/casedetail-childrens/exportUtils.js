@@ -1,10 +1,9 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { toDisplayText } from "../../../utils/textPresentation.js";
 // src/components/case/casedetail-childrens/exportUtils.js
 //โค้ดสร้างรายงาน PDF
 
 // 1. ฟังก์ชันทำความสะอาด HTML
-export const stripHtml = (html) =>
-  toDisplayText(html);
+export const stripHtml = (html) => toDisplayText(html);
 
 // 2. ฟังก์ชันจัดรูปแบบคำตอบ
 export const formatAnswer = (ans) => {
@@ -93,11 +92,11 @@ export const executeExportPDF = ({
         body { font-family: 'TH SarabunPSK', 'Angsana New', 'Sarabun', sans-serif; font-size: 14pt; margin: 0; color: #1e293b; background: #fff; }
         h2 { color: #1e40af; font-size: 18pt; border-bottom: 2px solid #1e40af; padding-bottom: 8px; margin-bottom: 12px; }
         .meta { font-size: 11pt; color: #64748b; margin-bottom: 18px; line-height: 1.8; }
-        .section-title { font-size: 13pt; font-weight: bold; color: #1e40af; margin-top: 18px; margin-bottom: 8px; border-left: 4px solid #3b82f6; padding-left: 10px; }
+        .section-title { font-size: 13pt; font-weight: bold; color: #1e40af; margin-top: 18px; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #bfdbfe; }
         .qa-block { margin-bottom: 8px; padding: 7px 12px; background: #f8fafc; border-radius: 5px; page-break-inside: avoid; }
         .qa-question { font-weight: bold; color: #334155; font-size: 13pt; }
         .qa-answer { color: #1e293b; font-size: 13pt; margin-left: 14px; margin-top: 3px; }
-        .score-block { background: #eff6ff; border: 1px solid #bfdbfe; border-left: 4px solid #3b82f6; padding: 10px 14px; border-radius: 6px; margin-top: 6px; page-break-inside: avoid; }
+        .score-block { background: #eff6ff; border: 1px solid #bfdbfe; padding: 10px 14px; border-radius: 6px; margin-top: 6px; page-break-inside: avoid; }
         .risk-overall { font-size: 14pt; font-weight: bold; color: #1e40af; margin-bottom: 6px; }
         .score-row { font-size: 12pt; margin-bottom: 3px; }
         .footer { margin-top: 28px; padding-top: 8px; border-top: 1px solid #e2e8f0; font-size: 10pt; color: #94a3b8; }

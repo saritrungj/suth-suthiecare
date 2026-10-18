@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {createPortal} from "react-dom";
+import { createPortal } from "react-dom";
 import "./SystemEvaluationWidget.css";
 import {
   Radar,
@@ -96,22 +96,39 @@ export default function SystemEvaluationWidget() {
     }
   }, [isModalOpen, currentPage]);
 
-  const modalRef=useRef(null);
-  useEffect(()=>{
-    if(!isModalOpen)return;
-    const previous=document.activeElement;
-    modalRef.current?.querySelector('button')?.focus();
-    const handleKey=event=>{
-      if(event.key==='Escape'){event.preventDefault();setIsModalOpen(false);}
-      if(event.key==='Tab'){
-        const buttons=[...modalRef.current.querySelectorAll('button:not(:disabled),[tabindex="0"]')],first=buttons[0],last=buttons.at(-1);
-        if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus();}
-        else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}
+  const modalRef = useRef(null);
+  useEffect(() => {
+    if (!isModalOpen) return;
+    const previous = document.activeElement;
+    modalRef.current?.querySelector("button")?.focus();
+    const handleKey = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setIsModalOpen(false);
+      }
+      if (event.key === "Tab") {
+        const buttons = [
+            ...modalRef.current.querySelectorAll(
+              'button:not(:disabled),[tabindex="0"]',
+            ),
+          ],
+          first = buttons[0],
+          last = buttons.at(-1);
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
       }
     };
-    document.addEventListener('keydown',handleKey);
-    return()=>{document.removeEventListener('keydown',handleKey);previous?.focus();};
-  },[isModalOpen]);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      previous?.focus();
+    };
+  }, [isModalOpen]);
 
   // 🟢 ข้อมูลสำหรับกราฟแท่ง Likert (แนวนอน)
   const likertData = [
@@ -273,7 +290,8 @@ export default function SystemEvaluationWidget() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
+          gridTemplateColumns:
+            "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
           gap: "24px",
           minWidth: 0,
         }}
@@ -335,7 +353,11 @@ export default function SystemEvaluationWidget() {
                   dataKey="name"
                   type="category"
                   width={80}
-                  tick={{ fill: "var(--suth-ink-2)", fontSize: 12, fontWeight: 500 }}
+                  tick={{
+                    fill: "var(--suth-ink-2)",
+                    fontSize: 12,
+                    fontWeight: 500,
+                  }}
                 />
                 <Tooltip
                   cursor={{ fill: "var(--suth-surface-2)" }}
@@ -390,7 +412,9 @@ export default function SystemEvaluationWidget() {
               }}
             >
               {Number(stats.avg_sus).toFixed(1)}{" "}
-              <span style={{ fontSize: "14px", color: "var(--suth-muted)" }}>/ 100</span>
+              <span style={{ fontSize: "14px", color: "var(--suth-muted)" }}>
+                / 100
+              </span>
             </div>
           </div>
           <div
@@ -406,7 +430,11 @@ export default function SystemEvaluationWidget() {
                 <PolarGrid stroke="var(--suth-line)" />
                 <PolarAngleAxis
                   dataKey="subject"
-                  tick={{ fill: "var(--suth-ink-2)", fontSize: 10, fontWeight: 600 }}
+                  tick={{
+                    fill: "var(--suth-ink-2)",
+                    fontSize: 10,
+                    fontWeight: 600,
+                  }}
                 />
                 <PolarRadiusAxis
                   angle={30}
@@ -455,7 +483,8 @@ export default function SystemEvaluationWidget() {
                 margin: 0,
               }}
             >
-              <FiMessageSquare color="var(--suth-chart-teal)" /> ข้อเสนอแนะล่าสุด
+              <FiMessageSquare color="var(--suth-chart-teal)" />{" "}
+              ข้อเสนอแนะล่าสุด
             </h3>
             <button
               className="se-view-all"
@@ -538,257 +567,286 @@ export default function SystemEvaluationWidget() {
       </div>
 
       {/* 🟢 Modal ตารางแสดงข้อมูลการประเมินทั้งหมด */}
-      {isModalOpen && createPortal(
-        <div
-          className="ui-modal-overlay se-overlay"
-          onMouseDown={event=>{if(event.target===event.currentTarget)setIsModalOpen(false);}}
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            background: "rgba(0,0,0,0.5)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 9999,
-          }}
-        >
+      {isModalOpen &&
+        createPortal(
           <div
-            className="ui-modal se-modal"
-            ref={modalRef}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="system-evaluation-modal-title"
+            className="ui-modal-overlay se-overlay"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) setIsModalOpen(false);
+            }}
             style={{
-              background: "var(--suth-surface)",
-              width: "90%",
-              maxWidth: "1000px",
-              borderRadius: "16px",
-              padding: "24px",
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              background: "rgba(0,0,0,0.5)",
               display: "flex",
-              flexDirection: "column",
-              maxHeight: "90vh",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 9999,
             }}
           >
             <div
-              className="ui-modal__header"
+              className="ui-modal se-modal"
+              ref={modalRef}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="system-evaluation-modal-title"
               style={{
+                background: "var(--suth-surface)",
+                width: "90%",
+                maxWidth: "1000px",
+                borderRadius: "16px",
+                padding: "24px",
                 display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "20px",
+                flexDirection: "column",
+                maxHeight: "90vh",
               }}
             >
-              <h2
-                id="system-evaluation-modal-title"
-                style={{ margin: 0, fontSize: "20px", color: "var(--suth-ink)" }}
-              >
-                รายการการประเมินทั้งหมด
-              </h2>
-              <button
-                className="ui-modal__close"
-                onClick={() => setIsModalOpen(false)}
-                aria-label="ปิดหน้าต่าง"
+              <div
+                className="ui-modal__header"
                 style={{
-                  background: "none",
-                  border: "none",
-                  fontSize: "24px",
-                  color: "var(--suth-muted)",
-                  cursor: "pointer",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "20px",
                 }}
               >
-                <FiX />
-              </button>
-            </div>
-
-            <div
-              className="ui-modal__body"
-              role="region"
-              aria-label="ข้อมูลการประเมินระบบ"
-              tabIndex={0}
-              style={{ overflowX: "auto", flex: 1 }}
-            >
-              {isListLoading ? (
-                <div
+                <h2
+                  id="system-evaluation-modal-title"
                   style={{
-                    textAlign: "center",
-                    padding: "40px",
+                    margin: 0,
+                    fontSize: "20px",
+                    color: "var(--suth-ink)",
+                  }}
+                >
+                  รายการการประเมินทั้งหมด
+                </h2>
+                <button
+                  className="ui-modal__close"
+                  onClick={() => setIsModalOpen(false)}
+                  aria-label="ปิดหน้าต่าง"
+                  style={{
+                    background: "none",
+                    border: "none",
+                    fontSize: "24px",
                     color: "var(--suth-muted)",
+                    cursor: "pointer",
                   }}
                 >
-                  กำลังโหลดข้อมูล...
-                </div>
-              ) : (
-                <table
-                  style={{
-                    width: "100%",
-                    borderCollapse: "collapse",
-                    fontSize: "14px",
-                    textAlign: "left",
-                  }}
-                >
-                  <thead>
-                    <tr
-                      style={{
-                        background: "var(--suth-surface-2)",
-                        color: "var(--suth-ink-2)",
-                        borderBottom: "1px solid var(--suth-line)",
-                      }}
-                    >
-                      <th style={{ padding: "12px" }}>วันที่ประเมิน</th>
-                      <th style={{ padding: "12px" }}>
-                        พึงพอใจเฉลี่ย (Likert)
-                      </th>
-                      <th style={{ padding: "12px" }}>คะแนน SUS</th>
-                      <th style={{ padding: "12px" }}>
-                        ข้อเสนอแนะ / ความคิดเห็น
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {listData.length > 0 ? (
-                      listData.map((item) => (
-                        <tr
-                          key={item.id}
-                          style={{ borderBottom: "1px solid var(--suth-line-soft)" }}
-                        >
-                          <td
+                  <FiX />
+                </button>
+              </div>
+
+              <div
+                className="ui-modal__body"
+                role="region"
+                aria-label="ข้อมูลการประเมินระบบ"
+                tabIndex={0}
+                style={{ overflowX: "auto", flex: 1 }}
+              >
+                {isListLoading ? (
+                  <div
+                    style={{
+                      textAlign: "center",
+                      padding: "40px",
+                      color: "var(--suth-muted)",
+                    }}
+                  >
+                    กำลังโหลดข้อมูล...
+                  </div>
+                ) : (
+                  <table
+                    style={{
+                      width: "100%",
+                      borderCollapse: "collapse",
+                      fontSize: "14px",
+                      textAlign: "left",
+                    }}
+                  >
+                    <thead>
+                      <tr
+                        style={{
+                          background: "var(--suth-surface-2)",
+                          color: "var(--suth-ink-2)",
+                          borderBottom: "1px solid var(--suth-line)",
+                        }}
+                      >
+                        <th style={{ padding: "12px" }}>วันที่ประเมิน</th>
+                        <th style={{ padding: "12px" }}>
+                          พึงพอใจเฉลี่ย (Likert)
+                        </th>
+                        <th style={{ padding: "12px" }}>คะแนน SUS</th>
+                        <th style={{ padding: "12px" }}>
+                          ข้อเสนอแนะ / ความคิดเห็น
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {listData.length > 0 ? (
+                        listData.map((item) => (
+                          <tr
+                            key={item.id}
                             style={{
-                              padding: "12px",
-                              whiteSpace: "nowrap",
+                              borderBottom: "1px solid var(--suth-line-soft)",
+                            }}
+                          >
+                            <td
+                              style={{
+                                padding: "12px",
+                                whiteSpace: "nowrap",
+                                color: "var(--suth-muted)",
+                              }}
+                            >
+                              {new Date(item.created_at).toLocaleString(
+                                "th-TH",
+                                {
+                                  dateStyle: "short",
+                                  timeStyle: "short",
+                                },
+                              )}
+                            </td>
+                            <td
+                              style={{
+                                padding: "12px",
+                                fontWeight: "600",
+                                color: "var(--suth-warning)",
+                              }}
+                            >
+                              {calculateLikertAvg(item)}{" "}
+                              <span
+                                style={{
+                                  color: "var(--suth-muted)",
+                                  fontSize: "12px",
+                                }}
+                              >
+                                / 5.0
+                              </span>
+                            </td>
+                            <td
+                              style={{
+                                padding: "12px",
+                                fontWeight: "600",
+                                color: getSusColor(item.sus_total_score),
+                              }}
+                            >
+                              {Number(item.sus_total_score).toFixed(1)}
+                            </td>
+                            <td
+                              style={{
+                                padding: "12px",
+                                color: "var(--suth-ink-2)",
+                              }}
+                            >
+                              {item.suggestions ? (
+                                `"${item.suggestions}"`
+                              ) : (
+                                <span
+                                  style={{ color: "var(--suth-control-line)" }}
+                                >
+                                  - ไม่มีข้อเสนอแนะ -
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan="4"
+                            style={{
+                              textAlign: "center",
+                              padding: "30px",
                               color: "var(--suth-muted)",
                             }}
                           >
-                            {new Date(item.created_at).toLocaleString("th-TH", {
-                              dateStyle: "short",
-                              timeStyle: "short",
-                            })}
-                          </td>
-                          <td
-                            style={{
-                              padding: "12px",
-                              fontWeight: "600",
-                              color: "var(--suth-warning)",
-                            }}
-                          >
-                            {calculateLikertAvg(item)}{" "}
-                            <span
-                              style={{ color: "var(--suth-muted)", fontSize: "12px" }}
-                            >
-                              / 5.0
-                            </span>
-                          </td>
-                          <td
-                            style={{
-                              padding: "12px",
-                              fontWeight: "600",
-                              color: getSusColor(item.sus_total_score),
-                            }}
-                          >
-                            {Number(item.sus_total_score).toFixed(1)}
-                          </td>
-                          <td style={{ padding: "12px", color: "var(--suth-ink-2)" }}>
-                            {item.suggestions ? (
-                              `"${item.suggestions}"`
-                            ) : (
-                              <span style={{ color: "var(--suth-control-line)" }}>
-                                - ไม่มีข้อเสนอแนะ -
-                              </span>
-                            )}
+                            ไม่พบข้อมูล
                           </td>
                         </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td
-                          colSpan="4"
-                          style={{
-                            textAlign: "center",
-                            padding: "30px",
-                            color: "var(--suth-muted)",
-                          }}
-                        >
-                          ไม่พบข้อมูล
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              )}
-            </div>
+                      )}
+                    </tbody>
+                  </table>
+                )}
+              </div>
 
-            {/* Pagination Controls */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "center",
-                gap: "16px",
-                marginTop: "20px",
-                borderTop: "1px solid var(--suth-line)",
-                paddingTop: "16px",
-              }}
-            >
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
+              {/* Pagination Controls */}
+              <div
                 style={{
                   display: "flex",
+                  justifyContent: "flex-end",
                   alignItems: "center",
-                  gap: "4px",
-                  padding: "8px 16px",
-                  borderRadius: "8px",
-                  border: "1px solid var(--suth-control-line)",
-                  background: currentPage === 1 ? "var(--suth-surface-2)" : "var(--suth-surface)",
-                  color: currentPage === 1 ? "var(--suth-muted)" : "var(--suth-ink-2)",
-                  cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                  gap: "16px",
+                  marginTop: "20px",
+                  borderTop: "1px solid var(--suth-line)",
+                  paddingTop: "16px",
                 }}
               >
-                <FiChevronLeft /> ก่อนหน้า
-              </button>
-              <span
-                style={{
-                  fontSize: "14px",
-                  color: "var(--suth-ink-2)",
-                  fontWeight: "500",
-                }}
-              >
-                หน้า {currentPage} จาก {totalPages || 1}
-              </span>
-              <button
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(totalPages, p + 1))
-                }
-                disabled={currentPage === totalPages || totalPages === 0}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "4px",
-                  padding: "8px 16px",
-                  borderRadius: "8px",
-                  border: "1px solid var(--suth-control-line)",
-                  background:
-                    currentPage === totalPages || totalPages === 0
-                      ? "var(--suth-surface-2)"
-                      : "var(--suth-surface)",
-                  color:
-                    currentPage === totalPages || totalPages === 0
-                      ? "var(--suth-muted)"
-                      : "var(--suth-ink-2)",
-                  cursor:
-                    currentPage === totalPages || totalPages === 0
-                      ? "not-allowed"
-                      : "pointer",
-                }}
-              >
-                ถัดไป <FiChevronRight />
-              </button>
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    padding: "8px 16px",
+                    borderRadius: "8px",
+                    border: "1px solid var(--suth-control-line)",
+                    background:
+                      currentPage === 1
+                        ? "var(--suth-surface-2)"
+                        : "var(--suth-surface)",
+                    color:
+                      currentPage === 1
+                        ? "var(--suth-muted)"
+                        : "var(--suth-ink-2)",
+                    cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                  }}
+                >
+                  <FiChevronLeft /> ก่อนหน้า
+                </button>
+                <span
+                  style={{
+                    fontSize: "14px",
+                    color: "var(--suth-ink-2)",
+                    fontWeight: "500",
+                  }}
+                >
+                  หน้า {currentPage} จาก {totalPages || 1}
+                </span>
+                <button
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    padding: "8px 16px",
+                    borderRadius: "8px",
+                    border: "1px solid var(--suth-control-line)",
+                    background:
+                      currentPage === totalPages || totalPages === 0
+                        ? "var(--suth-surface-2)"
+                        : "var(--suth-surface)",
+                    color:
+                      currentPage === totalPages || totalPages === 0
+                        ? "var(--suth-muted)"
+                        : "var(--suth-ink-2)",
+                    cursor:
+                      currentPage === totalPages || totalPages === 0
+                        ? "not-allowed"
+                        : "pointer",
+                  }}
+                >
+                  ถัดไป <FiChevronRight />
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      ,document.body)}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

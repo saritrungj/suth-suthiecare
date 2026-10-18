@@ -1,8 +1,17 @@
-import { Badge as UiBadge, Surface as UiSurface } from '../../../components/ui/index.jsx';
-import { Button as UiButton, PageHeader as UiPageHeader, DataTable as UiDataTable, TextInput as UiTextInput, TextArea as UiTextArea } from '../../../components/ui/index.jsx';
-import { Dialog, EmptyRow } from '../../../components/ui/index.jsx';
-import SearchableSelect from '../../../components/SearchableSelect';
-import {usePageExport} from "../../../components/ExcelExport";
+import {
+  Badge as UiBadge,
+  Surface as UiSurface,
+} from "../../../components/ui/index.jsx";
+import {
+  Button as UiButton,
+  PageHeader as UiPageHeader,
+  DataTable as UiDataTable,
+  TextInput as UiTextInput,
+  TextArea as UiTextArea,
+} from "../../../components/ui/index.jsx";
+import { Dialog, EmptyRow } from "../../../components/ui/index.jsx";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { usePageExport } from "../../../components/ExcelExport";
 import React, { useState, useEffect, useRef } from "react";
 import {
   getAllClinics,
@@ -149,14 +158,19 @@ function SortableRow({ clinic, onEdit, onDelete }) {
       </td>
       <td className="cm-col-actions">
         <div className="cm-actions">
-          <UiButton variant="secondary" size="icon" type="submit"
+          <UiButton
+            variant="secondary"
+            size="icon"
+            type="submit"
             className="cm-btn-edit"
             onClick={() => onEdit(clinic)}
             title="แก้ไข"
           >
             <FaEdit />
           </UiButton>
-          <UiButton variant="danger" type="submit"
+          <UiButton
+            variant="danger"
+            type="submit"
             className="cm-btn-delete"
             onClick={() => onDelete(clinic.id, clinic.name)}
             title="ลบ"
@@ -176,7 +190,7 @@ function ClinicManagerContent() {
   const { authorization, activeOrganization } = usePermissions();
   const isSystemAdmin = Boolean(authorization?.is_system_admin);
   const [clinics, setClinics] = useState([]);
-  usePageExport({title:"คลินิก",sources:[{resource:"clinics"}]});
+  usePageExport({ title: "คลินิก", sources: [{ resource: "clinics" }] });
   const [organizations, setOrganizations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -485,7 +499,12 @@ function ClinicManagerContent() {
               {activeOrganizationLabel}
             </p>
           </div>
-          <UiButton variant="primary" type="submit" className="cm-btn-add" onClick={() => handleOpenModal()}>
+          <UiButton
+            variant="primary"
+            type="submit"
+            className="cm-btn-add"
+            onClick={() => handleOpenModal()}
+          >
             <FaPlus /> เพิ่มคลินิกใหม่
           </UiButton>
         </UiPageHeader>
@@ -496,7 +515,13 @@ function ClinicManagerContent() {
             <p>กำลังโหลดข้อมูล...</p>
           </div>
         ) : (
-          <UiSurface as="div" className="cm-table-container" role="region" aria-label="ตารางคลินิก" tabIndex={0}>
+          <UiSurface
+            as="div"
+            className="cm-table-container"
+            role="region"
+            aria-label="ตารางคลินิก"
+            tabIndex={0}
+          >
             {isReordering && (
               <div className="cm-reorder-saving">
                 <span>💾 กำลังบันทึกลำดับ...</span>
@@ -545,182 +570,187 @@ function ClinicManagerContent() {
 
         {/* Modal (เหมือนเดิมทุกอย่าง) */}
         {isModalOpen && (
-          <Dialog title={editingClinic ? "แก้ไขคลินิก" : "เพิ่มคลินิกใหม่"}
+          <Dialog
+            title={editingClinic ? "แก้ไขคลินิก" : "เพิ่มคลินิกใหม่"}
             aria-label={editingClinic ? "แก้ไขคลินิก" : "เพิ่มคลินิก"}
-            size="small" onClose={handleCloseModal}>
-              <form onSubmit={handleSubmit}>
-                {isSystemAdmin && (
-                  <div className="cm-form-group cm-organization-field">
-                    <label htmlFor="clinic-organization">
-                      หน่วยงานเจ้าของ <span className="cm-required">*</span>
-                    </label>
-                    <SearchableSelect
-                      id="clinic-organization"
-                      name="organization_id"
-                      value={formData.organization_id}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">เลือกหน่วยงาน</option>
-                      {organizations.map((organization) => (
-                        <option key={organization.id} value={organization.id}>
-                          {organization.name} ({organization.code})
-                        </option>
-                      ))}
-                    </SearchableSelect>
-                    <small>
-                      ฟอร์มและข้อมูลคลินิกจะแสดงเฉพาะในขอบเขตหน่วยงานนี้
-                    </small>
-                  </div>
-                )}
-                <div className="cm-form-group">
-                  <label htmlFor="clinic-slug">
-                    รหัสอ้างอิง (Slug) <span className="cm-required">*</span>
+            size="small"
+            onClose={handleCloseModal}
+          >
+            <form onSubmit={handleSubmit}>
+              {isSystemAdmin && (
+                <div className="cm-form-group cm-organization-field">
+                  <label htmlFor="clinic-organization">
+                    หน่วยงานเจ้าของ <span className="cm-required">*</span>
                   </label>
-                  <UiTextInput
-                    id="clinic-slug"
-                    type="text"
-                    name="slug"
-                    value={formData.slug}
+                  <SearchableSelect
+                    id="clinic-organization"
+                    name="organization_id"
+                    value={formData.organization_id}
                     onChange={handleChange}
-                    placeholder="เช่น teenager, general"
                     required
-                    disabled={!!editingClinic}
-                  />
+                  >
+                    <option value="">เลือกหน่วยงาน</option>
+                    {organizations.map((organization) => (
+                      <option key={organization.id} value={organization.id}>
+                        {organization.name} ({organization.code})
+                      </option>
+                    ))}
+                  </SearchableSelect>
                   <small>
-                    ใช้เชื่อมโยงกับฟอร์มและระบบ
-                    (ห้ามซ้ำและแก้ไขไม่ได้หลังจากสร้าง)
+                    ฟอร์มและข้อมูลคลินิกจะแสดงเฉพาะในขอบเขตหน่วยงานนี้
                   </small>
                 </div>
+              )}
+              <div className="cm-form-group">
+                <label htmlFor="clinic-slug">
+                  รหัสอ้างอิง (Slug) <span className="cm-required">*</span>
+                </label>
+                <UiTextInput
+                  id="clinic-slug"
+                  type="text"
+                  name="slug"
+                  value={formData.slug}
+                  onChange={handleChange}
+                  placeholder="เช่น teenager, general"
+                  required
+                  disabled={!!editingClinic}
+                />
+                <small>
+                  ใช้เชื่อมโยงกับฟอร์มและระบบ
+                  (ห้ามซ้ำและแก้ไขไม่ได้หลังจากสร้าง)
+                </small>
+              </div>
+              <div className="cm-form-group">
+                <label htmlFor="clinic-name">
+                  ชื่อคลินิก (ภาษาไทย) <span className="cm-required">*</span>
+                </label>
+                <UiTextInput
+                  id="clinic-name"
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="เช่น คลินิกวัยรุ่น"
+                  required
+                />
+              </div>
+              <div className="cm-form-group">
+                <label htmlFor="clinic-name-en">ชื่อคลินิก (English)</label>
+                <UiTextInput
+                  id="clinic-name-en"
+                  type="text"
+                  name="name_en"
+                  value={formData.name_en}
+                  onChange={handleChange}
+                  placeholder="e.g. Teenager Clinic"
+                />
+              </div>
+              <div className="cm-form-group">
+                <label htmlFor="clinic-description">รายละเอียด</label>
+                <UiTextArea
+                  id="clinic-description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows="3"
+                ></UiTextArea>
+              </div>
+              <div className="cm-form-row">
                 <div className="cm-form-group">
-                  <label htmlFor="clinic-name">
-                    ชื่อคลินิก (ภาษาไทย) <span className="cm-required">*</span>
-                  </label>
-                  <UiTextInput
-                    id="clinic-name"
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    placeholder="เช่น คลินิกวัยรุ่น"
-                    required
+                  <label>รูปภาพโลโก้ (ไอคอน)</label>
+                  <div
+                    className="cm-img-preview-box"
+                    onClick={() => logoInputRef.current?.click()}
+                  >
+                    {formData.image ? (
+                      <img src={formData.image} alt="Logo" />
+                    ) : (
+                      <>
+                        <FaImage size={24} />
+                        <span>อัปโหลดโลโก้</span>
+                      </>
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    ref={logoInputRef}
+                    style={{ display: "none" }}
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(e, "image")}
                   />
                 </div>
                 <div className="cm-form-group">
-                  <label htmlFor="clinic-name-en">ชื่อคลินิก (English)</label>
-                  <UiTextInput
-                    id="clinic-name-en"
-                    type="text"
-                    name="name_en"
-                    value={formData.name_en}
-                    onChange={handleChange}
-                    placeholder="e.g. Teenager Clinic"
+                  <label>รูปภาพพื้นหลัง (หน้าเว็บ)</label>
+                  <div
+                    className="cm-img-preview-box cm-bg-premium"
+                    onClick={() => bgInputRef.current?.click()}
+                  >
+                    {formData.bg ? (
+                      <img src={formData.bg} alt="BG" />
+                    ) : (
+                      <>
+                        <FaImage size={24} />
+                        <span>อัปโหลดพื้นหลัง</span>
+                      </>
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    ref={bgInputRef}
+                    style={{ display: "none" }}
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(e, "bg")}
                   />
                 </div>
-                <div className="cm-form-group">
-                  <label htmlFor="clinic-description">รายละเอียด</label>
-                  <UiTextArea
-                    id="clinic-description"
-                    name="description"
-                    value={formData.description}
+              </div>
+              <div className="cm-form-group cm-toggle-group">
+                <label className="cm-toggle">
+                  <input
+                    type="checkbox"
+                    name="show_icon"
+                    checked={formData.show_icon === 1}
                     onChange={handleChange}
-                    rows="3"
-                  ></UiTextArea>
-                </div>
-                <div className="cm-form-row">
-                  <div className="cm-form-group">
-                    <label>รูปภาพโลโก้ (ไอคอน)</label>
-                    <div
-                      className="cm-img-preview-box"
-                      onClick={() => logoInputRef.current?.click()}
-                    >
-                      {formData.image ? (
-                        <img src={formData.image} alt="Logo" />
-                      ) : (
-                        <>
-                          <FaImage size={24} />
-                          <span>อัปโหลดโลโก้</span>
-                        </>
-                      )}
-                    </div>
-                    <input
-                      type="file"
-                      ref={logoInputRef}
-                      style={{ display: "none" }}
-                      accept="image/*"
-                      onChange={(e) => handleFileChange(e, "image")}
-                    />
-                  </div>
-                  <div className="cm-form-group">
-                    <label>รูปภาพพื้นหลัง (หน้าเว็บ)</label>
-                    <div
-                      className="cm-img-preview-box cm-bg-premium"
-                      onClick={() => bgInputRef.current?.click()}
-                    >
-                      {formData.bg ? (
-                        <img src={formData.bg} alt="BG" />
-                      ) : (
-                        <>
-                          <FaImage size={24} />
-                          <span>อัปโหลดพื้นหลัง</span>
-                        </>
-                      )}
-                    </div>
-                    <input
-                      type="file"
-                      ref={bgInputRef}
-                      style={{ display: "none" }}
-                      accept="image/*"
-                      onChange={(e) => handleFileChange(e, "bg")}
-                    />
-                  </div>
-                </div>
-                <div className="cm-form-group cm-toggle-group">
-                  <label className="cm-toggle">
-                    <input
-                      type="checkbox"
-                      name="show_icon"
-                      checked={formData.show_icon === 1}
-                      onChange={handleChange}
-                    />
-                    <span className="cm-slider"></span>
-                  </label>
-                  <span>แสดงไอคอนบนการ์ด</span>
-                </div>
-                <div className="cm-form-group cm-toggle-group">
-                  <label className="cm-toggle">
-                    <input
-                      type="checkbox"
-                      name="is_active"
-                      checked={formData.is_active === 1}
-                      onChange={handleChange}
-                    />
-                    <span className="cm-slider"></span>
-                  </label>
-                  <span>เปิดใช้งานคลินิกนี้</span>
-                </div>
-                <div className="cm-modal-actions">
-                  <UiButton variant="secondary"
-                    type="button"
-                    className="cm-btn-cancel"
-                    onClick={handleCloseModal}
-                    disabled={isSaving}
-                  >
-                    ยกเลิก
-                  </UiButton>
-                  <UiButton variant="primary"
-                    type="submit"
-                    className="cm-btn-save"
-                    disabled={isSaving}
-                  >
-                    {isSaving
-                      ? editingClinic
-                        ? "กำลังแก้ไข..."
-                        : "กำลังเพิ่ม..."
-                      : "บันทึกข้อมูล"}
-                  </UiButton>
-                </div>
-              </form>
+                  />
+                  <span className="cm-slider"></span>
+                </label>
+                <span>แสดงไอคอนบนการ์ด</span>
+              </div>
+              <div className="cm-form-group cm-toggle-group">
+                <label className="cm-toggle">
+                  <input
+                    type="checkbox"
+                    name="is_active"
+                    checked={formData.is_active === 1}
+                    onChange={handleChange}
+                  />
+                  <span className="cm-slider"></span>
+                </label>
+                <span>เปิดใช้งานคลินิกนี้</span>
+              </div>
+              <div className="cm-modal-actions">
+                <UiButton
+                  variant="secondary"
+                  type="button"
+                  className="cm-btn-cancel"
+                  onClick={handleCloseModal}
+                  disabled={isSaving}
+                >
+                  ยกเลิก
+                </UiButton>
+                <UiButton
+                  variant="primary"
+                  type="submit"
+                  className="cm-btn-save"
+                  disabled={isSaving}
+                >
+                  {isSaving
+                    ? editingClinic
+                      ? "กำลังแก้ไข..."
+                      : "กำลังเพิ่ม..."
+                    : "บันทึกข้อมูล"}
+                </UiButton>
+              </div>
+            </form>
           </Dialog>
         )}
       </main>

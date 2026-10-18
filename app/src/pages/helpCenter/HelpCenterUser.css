@@ -1,8 +1,8 @@
 .hc-user-page {
-  font-family: "Sarabun", sans-serif;
-  background-color: #ffffff;
+  font-family: var(--suth-font);
+  background-color: var(--suth-surface);
   min-height: 100vh;
-  color: #334155;
+  color: var(--suth-ink-2);
 }
 
 /* ── Loading State ── */
@@ -18,15 +18,15 @@
 .hc-user-loading-spinner {
   width: 45px;
   height: 45px;
-  border: 4px solid #f1f5f9;
-  border-top: 4px solid #f47932;
+  border: 4px solid var(--suth-line-soft);
+  border-top: 4px solid var(--suth-action);
   border-radius: 50%;
   animation: hcUserSpin 1s linear infinite;
 }
 
 .hc-user-loading-state p {
-  color: #64748b;
-  font-size: 16px;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-md);
   font-weight: 500;
   margin: 0;
 }
@@ -39,10 +39,10 @@
   justify-content: center;
   gap: 8px;
   padding: 40px 24px;
-  border: 1px dashed #cbd5e1;
-  border-radius: 18px;
-  background: #ffffff;
-  color: #64748b;
+  border: 1px dashed var(--suth-line);
+  border-radius: var(--suth-radius-panel);
+  background: var(--suth-surface);
+  color: var(--suth-muted);
   text-align: center;
 }
 
@@ -53,8 +53,8 @@
 }
 
 .hc-user-empty-state > svg {
-  font-size: 34px;
-  color: #f47932;
+  font-size: var(--suth-fs-display);
+  color: var(--suth-action-ink);
 }
 
 .hc-user-empty-state h2,
@@ -65,16 +65,16 @@
 
 .hc-user-empty-state h2,
 .hc-user-empty-state h3 {
-  color: #334155;
+  color: var(--suth-ink-2);
 }
 
 .hc-user-empty-state button {
   margin-top: 8px;
   padding: 9px 18px;
   border: 0;
-  border-radius: 10px;
-  background: #f47932;
-  color: #ffffff;
+  border-radius: var(--suth-radius);
+  background: var(--suth-action);
+  color: var(--suth-on-action);
   font: inherit;
   font-weight: 600;
   cursor: pointer;
@@ -100,7 +100,7 @@
   height: 80px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--suth-line-soft);
 }
 
 .hc-user-nav .hc-user-container {
@@ -117,7 +117,7 @@
 .hc-user-back {
   background: none;
   border: none;
-  color: #64748b;
+  color: var(--suth-muted);
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -129,11 +129,10 @@
    🎯 HERO SECTION: ปรับโทนเข้มทึบลุ่มลึก ถอดแบบจากหน้าเว็บหลัก มทส.
    ========================================================================== */
 .hc-user-hero {
-  background-image:
-    linear-gradient(
+  background-image: linear-gradient(
       135deg,
-      rgba(30, 41, 59, 0.85) 0%,
-      rgba(15, 23, 42, 0.75) 100%
+      rgba(31, 47, 63, 0.85) 0%,
+      rgba(31, 47, 63, 0.75) 100%
     ),
     url("../../assets/bg-health.jpg");
 
@@ -144,7 +143,7 @@
   padding: 100px 0 110px 0;
   text-align: center;
   border-radius: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid color-mix(in srgb, var(--suth-surface) 5%, transparent);
   position: relative;
   overflow: visible;
   z-index: 10;
@@ -155,17 +154,17 @@
 }
 
 .hc-user-hero h1 {
-  font-size: 38px;
+  font-size: var(--suth-fs-display);
   font-weight: 800;
   margin-bottom: 16px;
-  color: #f47932;
+  color: var(--suth-action-ink);
   letter-spacing: -0.5px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 2px 4px rgba(31, 47, 63, 0.2);
 }
 
 .hc-user-hero p {
-  font-size: 16.5px;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: var(--suth-fs-md);
+  color: color-mix(in srgb, var(--suth-on-action) 90%, transparent);
   max-width: 650px;
   margin: 0 auto 40px;
   line-height: 1.6;
@@ -176,32 +175,32 @@
    🎯 SEARCH INPUT & DROPDOWN (Google Layout Style - เวอร์ชันมินิมอลสีเทา)
    ========================================================================== */
 .hc-user-search-wrapper {
-  background: #ffffff;
+  background: var(--suth-surface);
   max-width: 620px;
   margin: 0 auto;
-  border-radius: 14px;
+  border-radius: var(--suth-radius-icon);
   display: flex;
   align-items: center;
   padding: 4px 20px;
-  border: 1.5px solid #cbd5e1;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+  border: 1.5px solid var(--suth-line);
+  box-shadow: 0 1px 2px rgba(31, 47, 63, 0.02);
   position: relative;
   z-index: 100;
   transition: border-color 0.15s ease;
 }
 
 .hc-user-search-wrapper:hover {
-  border-color: #94a3b8;
+  border-color: var(--suth-control-line);
 }
 
 .hc-user-search-wrapper.has-suggestions {
-  border-color: #94a3b8 !important;
-  border-radius: 14px 14px 0 0 !important;
-  border-bottom: 1px solid #f1f5f9;
+  border-color: var(--suth-control-line) !important;
+  border-radius: var(--suth-radius-icon) var(--suth-radius-icon) 0 0 !important;
+  border-bottom: 1px solid var(--suth-line-soft);
 }
 
 .hc-user-search-wrapper:focus-within:not(.has-suggestions) {
-  border-color: #f47932;
+  border-color: var(--suth-action);
 }
 
 .hc-user-search-wrapper input {
@@ -209,8 +208,8 @@
   outline: none;
   flex: 1;
   padding: 12px 10px;
-  font-size: 15.5px;
-  color: #0f172a;
+  font-size: var(--suth-fs-body);
+  color: var(--suth-ink);
   background: transparent;
 }
 
@@ -219,11 +218,11 @@
   top: 100%;
   left: 0;
   width: 100%;
-  background: #ffffff;
-  border: 1.5px solid #94a3b8;
+  background: var(--suth-surface);
+  border: 1.5px solid var(--suth-control-line);
   border-top: none;
-  border-radius: 0 0 14px 14px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  border-radius: 0 0 var(--suth-radius-icon) var(--suth-radius-icon);
+  box-shadow: 0 8px 24px rgba(31, 47, 63, 0.06);
   z-index: 99;
   max-height: 280px;
   overflow-y: auto;
@@ -241,7 +240,7 @@
 }
 
 .hc-suggestion-item:hover {
-  background-color: #f8fafc;
+  background-color: var(--suth-canvas);
 }
 
 .hc-suggestion-info {
@@ -252,36 +251,36 @@
 }
 
 .hc-suggestion-clinic-tag {
-  color: #475569;
+  color: var(--suth-ink-2);
   font-weight: 700;
-  font-size: 11px;
-  background: #f1f5f9;
+  font-size: var(--suth-fs-caption);
+  background: var(--suth-surface-2);
   padding: 2px 8px;
-  border-radius: 6px;
+  border-radius: var(--suth-radius-sm);
   white-space: nowrap;
 }
 
 .hc-suggestion-text {
-  font-size: 14.5px;
-  color: #1e293b;
+  font-size: var(--suth-fs-sm);
+  color: var(--suth-ink);
   font-weight: 500;
 }
 
 .hc-suggestion-arrow {
-  color: #cbd5e1;
-  font-size: 14px;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-sm);
 }
 
 .hc-suggestion-empty {
   padding: 20px;
   text-align: center;
-  color: #94a3b8;
-  font-size: 14.5px;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-sm);
 }
 
 .search-icon {
-  color: #f47932;
-  font-size: 20px;
+  color: var(--suth-action-ink);
+  font-size: var(--suth-fs-title);
 }
 
 /* SECTION HEADER */
@@ -305,15 +304,15 @@
   margin: 0;
 }
 .hc-header-title h2 {
-  font-size: 24px;
+  font-size: var(--suth-fs-hero);
   font-weight: 800;
-  color: #1e293b;
+  color: var(--suth-ink);
   margin: 0;
   line-height: 1.2;
 }
 .hc-header-icon {
-  font-size: 24px;
-  color: #f47932;
+  font-size: var(--suth-fs-hero);
+  color: var(--suth-action-ink);
   stroke-width: 2.5;
   margin-top: 2px;
   background: none !important;
@@ -331,9 +330,9 @@
   gap: 12px;
 }
 .hc-section-header p {
-  color: #64748b;
+  color: var(--suth-muted);
   margin: 0;
-  font-size: 15px;
+  font-size: var(--suth-fs-body);
   line-height: 1.4;
 }
 
@@ -347,23 +346,23 @@
 }
 .hc-link-more {
   background: none;
-  border: 1px solid #cbd5e1;
-  color: #1e40af;
+  border: 1px solid var(--suth-line);
+  color: var(--suth-info);
   font-weight: 700;
-  font-size: 16px;
+  font-size: var(--suth-fs-md);
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 8px 16px;
-  border-radius: 20px;
+  border-radius: var(--suth-radius-card);
   white-space: nowrap;
   transition: all 0.2s ease;
 }
 .hc-link-more:hover {
-  background-color: #eff6ff;
-  color: #1d4ed8;
-  border-color: #3b82f6;
+  background-color: var(--suth-surface-2);
+  color: var(--suth-info);
+  border-color: var(--suth-info);
 }
 .hc-slider-wrapper {
   position: relative;
@@ -417,13 +416,12 @@
 
 /* 🟢 โครงสร้างการ์ดหลักแบบ Grid */
 .hc-user-clinic-card {
-  background: #ffffff !important;
-  border-radius: 20px !important;
-  border: 1px solid #e2e8f0 !important;
+  background: var(--suth-surface) !important;
+  border-radius: var(--suth-radius-card) !important;
+  border: 1px solid var(--suth-line-soft) !important;
   padding: 28px 24px !important;
-  box-shadow:
-    0 10px 25px rgba(15, 23, 42, 0.03),
-    0 2px 4px rgba(0, 0, 0, 0.01) !important;
+  box-shadow: 0 10px 25px rgba(31, 47, 63, 0.03),
+    0 2px 4px rgba(31, 47, 63, 0.01) !important;
   transition:
     transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     box-shadow 0.3s ease,
@@ -439,13 +437,12 @@
 /* 🟢 โครงสร้างการ์ดในโหมดสไลด์แนวนอน */
 .hc-user-clinic-card-scroll {
   flex: 0 0 350px !important;
-  background: #ffffff !important;
-  border-radius: 20px !important;
-  border: 1px solid #e2e8f0 !important;
+  background: var(--suth-surface) !important;
+  border-radius: var(--suth-radius-card) !important;
+  border: 1px solid var(--suth-line-soft) !important;
   padding: 28px 24px !important;
-  box-shadow:
-    0 10px 25px rgba(15, 23, 42, 0.03),
-    0 2px 4px rgba(0, 0, 0, 0.01) !important;
+  box-shadow: 0 10px 25px rgba(31, 47, 63, 0.03),
+    0 2px 4px rgba(31, 47, 63, 0.01) !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: space-between !important;
@@ -460,10 +457,9 @@
 .hc-user-clinic-card:hover,
 .hc-user-clinic-card-scroll:hover {
   transform: translateY(-6px) !important;
-  border-color: #fed7aa !important;
-  box-shadow:
-    0 20px 35px rgba(244, 121, 50, 0.07),
-    0 4px 12px rgba(0, 0, 0, 0.02) !important;
+  border-color: var(--suth-warning-line) !important;
+  box-shadow: 0 20px 35px color-mix(in srgb, var(--suth-action) 7%, transparent),
+    0 4px 12px rgba(31, 47, 63, 0.02) !important;
 }
 
 .hc-card-main-content {
@@ -485,13 +481,13 @@
 .hc-card-logo-circle {
   width: 76px !important;
   height: 76px !important;
-  background: #ffffff !important;
+  background: var(--suth-surface) !important;
   border-radius: 50% !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06) !important;
-  border: 1px solid #f1f5f9 !important;
+  box-shadow: 0 4px 12px rgba(31, 47, 63, 0.06) !important;
+  border: 1px solid var(--suth-line-soft) !important;
   overflow: hidden !important;
   padding: 0 !important;
 }
@@ -507,12 +503,12 @@
 }
 
 .hc-card-text-container h3 {
-  font-size: 19px !important;
+  font-size: var(--suth-fs-section) !important;
   font-weight: 800 !important;
   line-height: 1.4 !important;
   text-align: left !important;
   margin: 0 !important;
-  color: #0f172a !important;
+  color: var(--suth-ink) !important;
   display: -webkit-box !important;
   -webkit-line-clamp: 2 !important;
   -webkit-box-orient: vertical !important;
@@ -522,13 +518,13 @@
 
 /* 🟢 ปุ่มกดแคปซูลสีส้มพาสเทลด้านล่างการ์ด */
 .hc-btn-view-clinic {
-  background: rgba(244, 121, 50, 0.05) !important;
-  border: 1px solid rgba(244, 121, 50, 0.1) !important;
-  color: #f47932 !important;
+  background: color-mix(in srgb, var(--suth-action) 5%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--suth-action) 10%, transparent) !important;
+  color: var(--suth-action-ink) !important;
   font-weight: 700 !important;
-  font-size: 13.5px !important;
+  font-size: var(--suth-fs-label) !important;
   padding: 6px 14px !important;
-  border-radius: 12px !important;
+  border-radius: var(--suth-radius) !important;
   cursor: pointer !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -539,9 +535,9 @@
 }
 
 .hc-btn-view-clinic:hover {
-  background: #f47932 !important;
-  color: #ffffff !important;
-  border-color: #f47932 !important;
+  background: var(--suth-action-hover) !important;
+  color: var(--suth-on-action) !important;
+  border-color: var(--suth-action) !important;
   transform: translateY(-1px) !important;
 }
 
@@ -552,12 +548,12 @@
   transform: translateY(-50%);
   width: 44px;
   height: 44px;
-  background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  color: #475569;
+  background-color: var(--suth-surface);
+  border: 1px solid var(--suth-line-soft);
+  color: var(--suth-ink-2);
   border-radius: 50%;
   z-index: 10;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 12px rgba(31, 47, 63, 0.06);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -566,15 +562,15 @@
 }
 
 .hc-slider-arrow:hover {
-  background-color: #f8fafc;
-  color: #0f172a;
-  border-color: #cbd5e1;
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.1);
+  background-color: var(--suth-canvas);
+  color: var(--suth-ink);
+  border-color: var(--suth-line);
+  box-shadow: 0 6px 16px rgba(31, 47, 63, 0.1);
 }
 
 .hc-slider-arrow:active {
   transform: translateY(-50%) scale(0.95);
-  background-color: #f1f5f9;
+  background-color: var(--suth-surface-2);
 }
 
 .arrow-left {
@@ -593,9 +589,9 @@
 }
 
 .hc-faq-item {
-  border: 1px solid #f1f5f9;
-  border-radius: 12px;
-  background: #ffffff;
+  border: 1px solid var(--suth-line-soft);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
   overflow: hidden;
 }
 
@@ -610,11 +606,11 @@
 }
 
 .hc-faq-question:hover {
-  background: #f8fafc;
+  background: var(--suth-canvas);
 }
 
 .hc-faq-item.open .hc-faq-question {
-  color: #f47932;
+  color: var(--suth-action-ink);
 }
 .hc-faq-item.open svg {
   transform: rotate(180deg);
@@ -622,17 +618,17 @@
 
 .hc-faq-answer {
   padding: 0 25px 20px;
-  color: #64748b;
+  color: var(--suth-muted);
   line-height: 1.8;
-  border-top: 1px solid #f8fafc;
+  border-top: 1px solid var(--suth-surface);
   padding-top: 20px;
 }
 
 /* CONTACT CTA */
 .hc-user-contact-box {
-  background: #fff7ed;
-  border: 1px dashed #f47932;
-  border-radius: 24px;
+  background: var(--suth-tint);
+  border: 1px dashed var(--suth-action);
+  border-radius: var(--suth-radius-card);
   padding: 30px;
   margin: 80px 0;
   display: flex;
@@ -649,31 +645,31 @@
   width: 80px;
 }
 .hc-contact-text h3 {
-  font-size: 20px;
+  font-size: var(--suth-fs-title);
   font-weight: 800;
   margin-bottom: 5px;
 }
 .hc-contact-text p {
-  color: #64748b;
-  font-size: 15px;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-body);
 }
 
 .hc-btn-contact-live {
-  background: #f47932;
-  color: white;
+  background: var(--suth-action);
+  color: var(--suth-on-action);
   border: none;
   padding: 15px 30px;
-  border-radius: 50px;
+  border-radius: var(--suth-radius-pill);
   font-weight: 700;
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
-  box-shadow: 0 8px 15px rgba(244, 121, 50, 0.2);
+  box-shadow: 0 8px 15px color-mix(in srgb, var(--suth-action) 20%, transparent);
 }
 
 .hc-btn-contact-live:hover {
-  background: #d85f1b;
+  background: var(--suth-action-hover);
 }
 
 /* MOBILE RESPONSIVE */
@@ -684,12 +680,12 @@
   }
 
   .hc-user-hero h1 {
-    font-size: 26px !important;
+    font-size: var(--suth-fs-hero) !important;
     line-height: 1.3 !important;
   }
 
   .hc-user-hero p {
-    font-size: 14px !important;
+    font-size: var(--suth-fs-sm) !important;
     margin-bottom: 25px !important;
     padding: 0 10px;
   }
@@ -701,7 +697,7 @@
   }
 
   .hc-user-search-wrapper input {
-    font-size: 14px !important;
+    font-size: var(--suth-fs-sm) !important;
     padding: 10px 6px !important;
   }
 
@@ -733,7 +729,7 @@
   .hc-header-icon {
     margin-top: 4px !important;
     flex-shrink: 0 !important;
-    font-size: 20px !important;
+    font-size: var(--suth-fs-title) !important;
   }
 
   .hc-section-header-text {
@@ -745,15 +741,15 @@
   }
 
   .hc-header-title h2 {
-    font-size: 18px !important;
+    font-size: var(--suth-fs-section) !important;
     margin: 0 !important;
     line-height: 1.3 !important;
-    color: #1e293b !important;
+    color: var(--suth-ink) !important;
   }
   .hc-section-header p {
-    font-size: 14px !important;
+    font-size: var(--suth-fs-sm) !important;
     line-height: 1.5 !important;
-    color: #64748b !important;
+    color: var(--suth-muted) !important;
     margin: 0 !important;
     width: 100% !important;
   }
@@ -761,9 +757,9 @@
   .hc-link-more {
     align-self: flex-start !important;
     margin-top: 14px !important;
-    font-size: 13px !important;
+    font-size: var(--suth-fs-label) !important;
     padding: 6px 14px !important;
-    border-radius: 20px !important;
+    border-radius: var(--suth-radius-card) !important;
     white-space: nowrap !important;
     display: inline-flex !important;
     align-items: center !important;
@@ -794,8 +790,8 @@
     display: flex !important;
     width: 36px !important;
     height: 36px !important;
-    background: rgba(255, 255, 255, 0.95) !important;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+    background: color-mix(in srgb, var(--suth-surface) 95%, transparent) !important;
+    box-shadow: 0 4px 10px rgba(31, 47, 63, 0.15) !important;
   }
 
   .hc-slider-arrow.left {
@@ -830,7 +826,7 @@
     gap: 20px !important;
     padding: 24px !important;
     margin: 50px 0 !important;
-    border-radius: 16px !important;
+    border-radius: var(--suth-radius-panel) !important;
   }
 
   .hc-contact-info {
@@ -848,7 +844,7 @@
 /* เพิ่มเติมสำหรับหน้าจอสมาร์ตโฟนขนาดเล็กพิเศษ (จอกว้างน้อยกว่า 480px) */
 @media (max-width: 480px) {
   .hc-header-title h2 {
-    font-size: 16px !important;
+    font-size: var(--suth-fs-md) !important;
   }
 
   .hc-user-clinic-card-scroll {

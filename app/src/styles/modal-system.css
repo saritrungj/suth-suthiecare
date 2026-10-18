@@ -1,16 +1,15 @@
 :root {
-  --suth-modal-backdrop: rgba(15, 23, 42, 0.58);
-  --suth-modal-surface: #fffdfb;
-  --suth-modal-surface-muted: #fffaf7;
-  --suth-modal-border: #e2e8f0;
-  --suth-modal-text: #1e293b;
-  --suth-modal-muted: #64748b;
-  --suth-modal-accent: #f47932;
-  --suth-modal-accent-hover: #dc5f18;
-  --suth-modal-radius: 16px;
-  --suth-modal-control-radius: 10px;
-  --suth-modal-shadow:
-    0 24px 64px rgba(15, 23, 42, 0.2), 0 4px 16px rgba(15, 23, 42, 0.08);
+  --suth-modal-backdrop: rgba(31, 47, 63, 0.58);
+  --suth-modal-surface: var(--suth-surface);
+  --suth-modal-surface-muted: var(--suth-surface-2);
+  --suth-modal-border: var(--suth-line);
+  --suth-modal-text: var(--suth-ink);
+  --suth-modal-muted: var(--suth-muted);
+  --suth-modal-accent: var(--suth-action);
+  --suth-modal-accent-hover: var(--suth-action-hover);
+  --suth-modal-radius: var(--suth-radius-lg);
+  --suth-modal-control-radius: var(--suth-radius);
+  --suth-modal-shadow: var(--suth-shadow-pop);
 }
 
 body:has(
@@ -100,7 +99,7 @@ body:has(
   background: var(--suth-modal-surface) !important;
   box-shadow: var(--suth-modal-shadow) !important;
   color: var(--suth-modal-text);
-  animation: suthModalSurfaceIn 220ms cubic-bezier(0.16, 1, 0.3, 1) both !important;
+  animation: suthModalSurfaceIn 220ms cubic-bezier(0.16, 1, 0.3, 1) backwards !important;
 }
 
 :is(
@@ -140,7 +139,7 @@ body:has(
   )
   :is(h2, h3) {
   color: var(--suth-modal-text) !important;
-  font-family: "Noto Sans Thai", "Sarabun", sans-serif;
+  font-family: var(--suth-font);
   font-size: clamp(1.15rem, 1rem + 0.4vw, 1.35rem) !important;
   font-weight: 700 !important;
   line-height: 1.35 !important;
@@ -163,7 +162,7 @@ body:has(
   p {
   margin-top: 4px !important;
   color: var(--suth-modal-muted) !important;
-  font-size: 0.875rem !important;
+  font-size: var(--suth-fs-sm) !important;
   line-height: 1.55 !important;
 }
 
@@ -172,6 +171,7 @@ body:has(
   .abm-body,
   .ebm-body,
   .crm-body,
+  .sum-member-modal__body,
   .eem-modal-body,
   .scd-create-case-body,
   .form-body,
@@ -195,7 +195,7 @@ body:has(
   )
   > :is(h2, h3) {
   color: var(--suth-modal-text) !important;
-  font-family: "Noto Sans Thai", "Sarabun", sans-serif;
+  font-family: var(--suth-font);
   font-size: clamp(1.15rem, 1rem + 0.4vw, 1.35rem) !important;
   font-weight: 700 !important;
   line-height: 1.4 !important;
@@ -248,11 +248,11 @@ body:has(
     .ui-modal__footer
   )
   > button {
-  min-height: 42px !important;
+  min-height: var(--suth-button-h) !important;
   padding: 9px 18px !important;
   border-radius: var(--suth-modal-control-radius) !important;
   font-family: inherit !important;
-  font-size: 0.925rem !important;
+  font-size: var(--suth-fs-body) !important;
   font-weight: 650 !important;
 }
 
@@ -274,7 +274,7 @@ body:has(
 ) {
   border: 1px solid var(--suth-modal-accent) !important;
   background: var(--suth-modal-accent) !important;
-  color: #fffaf7 !important;
+  color: var(--suth-on-action) !important;
   box-shadow: none !important;
 }
 
@@ -296,7 +296,7 @@ body:has(
   ):hover:not(:disabled) {
   border-color: var(--suth-modal-accent-hover) !important;
   background: var(--suth-modal-accent-hover) !important;
-  color: #fffaf7 !important;
+  color: var(--suth-on-action) !important;
   transform: none !important;
 }
 
@@ -315,9 +315,9 @@ body:has(
   .form-actions .cancel,
   .modal-footer .btn-secondary
 ) {
-  border: 1px solid #cbd5e1 !important;
-  background: #ffffff !important;
-  color: #475569 !important;
+  border: 1px solid var(--suth-control-line) !important;
+  background: var(--suth-surface) !important;
+  color: var(--suth-ink-2) !important;
   box-shadow: none !important;
 }
 
@@ -336,9 +336,9 @@ body:has(
     .form-actions .cancel,
     .modal-footer .btn-secondary
   ):hover:not(:disabled) {
-  border-color: #94a3b8 !important;
-  background: #f8fafc !important;
-  color: #1e293b !important;
+  border-color: var(--suth-action) !important;
+  background: var(--suth-surface) !important;
+  color: var(--suth-action-ink) !important;
   transform: none !important;
 }
 
@@ -362,13 +362,13 @@ body:has(
 ) {
   width: 40px !important;
   min-width: 40px !important;
-  height: 40px !important;
-  min-height: 40px !important;
+  height: var(--suth-control-h) !important;
+  min-height: var(--suth-control-h) !important;
   padding: 0 !important;
-  border: 1px solid #e2e8f0 !important;
+  border: 1px solid var(--suth-line-soft) !important;
   border-radius: 50% !important;
-  background: #f8fafc !important;
-  color: #64748b !important;
+  background: var(--suth-surface-2) !important;
+  color: var(--suth-muted) !important;
   box-shadow: none !important;
   transform: none !important;
   transition:
@@ -394,9 +394,9 @@ body:has(
   .close-btn,
   .ui-modal__close
 ):hover {
-  border-color: #fecaca !important;
-  background: #fff1f2 !important;
-  color: #be123c !important;
+  border-color: var(--suth-danger-line) !important;
+  background: var(--suth-danger-tint) !important;
+  color: var(--suth-danger) !important;
   transform: none !important;
 }
 
@@ -450,8 +450,12 @@ body:has(
     .detail-modal,
     .ui-modal
   )
-  :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea) {
-  border-color: #cbd5e1;
+  :is(
+    input:not([type="checkbox"]):not([type="radio"]):not(.tdp-time__input),
+    select,
+    textarea
+  ) {
+  border-color: var(--suth-line);
   border-radius: var(--suth-modal-control-radius) !important;
 }
 
@@ -480,7 +484,7 @@ body:has(
     textarea
   ):focus-visible {
   border-color: var(--suth-modal-accent) !important;
-  outline: 3px solid rgba(244, 121, 50, 0.16) !important;
+  outline: 3px solid var(--suth-focus-ring) !important;
   outline-offset: 0 !important;
   box-shadow: none !important;
 }
@@ -490,12 +494,12 @@ div.swal2-container .swal2-popup:not(.swal2-toast) {
   border-radius: var(--suth-modal-radius) !important;
   background: var(--suth-modal-surface);
   box-shadow: var(--suth-modal-shadow);
-  font-family: "Noto Sans Thai", "Sarabun", sans-serif;
+  font-family: var(--suth-font);
 }
 
 div.swal2-container .swal2-title {
   color: var(--suth-modal-text);
-  font-size: 1.35rem;
+  font-size: var(--suth-fs-title);
   line-height: 1.4;
 }
 
@@ -505,10 +509,430 @@ div.swal2-container .swal2-html-container {
 }
 
 div.swal2-container button.swal2-styled {
-  min-height: 42px;
+  min-height: var(--suth-button-h);
   border-radius: var(--suth-modal-control-radius) !important;
   font-family: inherit;
   font-weight: 650;
+}
+
+/* ── Shared modal anatomy ────────────────────────────────────────────────
+   Every modal: a fixed header, a body that scrolls on its own and a fixed
+   footer, with the same label, field and helper-text sizes. */
+
+/* Overlays always sit above the sidebar (1000) and the case drawer (10000
+   for nested dialogs); SweetAlert confirmations open above any modal. */
+:is(
+  .adm-overlay,
+  .abm-overlay,
+  .ebm-premium-overlay,
+  .crm-overlay,
+  .sum-modal-backdrop,
+  .eem-modal-overlay,
+  .scd-modal-overlay,
+  .cm-modal-overlay,
+  .hc-modal-overlay,
+  .fm-modal-overlay,
+  .sfb-modal-overlay,
+  .hr-modal-overlay,
+  .ar-modal-overlay,
+  .modal-overlay,
+  .ui-modal-overlay
+) {
+  z-index: var(--z-modal) !important;
+}
+
+.cdm-sub-modal-overlay,
+.cdm-tpl-modal-overlay,
+.ui-modal-overlay.sch-modal-overlay {
+  z-index: var(--z-modal-nested) !important;
+}
+
+/* Higher specificity than the page-level swal rules, so every alert
+   lands above whatever modal or drawer asked for it. */
+body div.swal2-container.swal2-container {
+  z-index: var(--z-alert) !important;
+}
+
+/* Header / scrolling body / footer for surfaces that have a body region. */
+:is(
+  .adm-card,
+  .abm-card,
+  .ebm-premium-card,
+  .crm-card,
+  .sum-member-modal,
+  .eem-modal-content,
+  .cdm-card,
+  .cdm-sub-modal-card,
+  .cdm-tpl-modal-card,
+  .scd-create-case-modal,
+  .cm-modal-content,
+  .hc-modal-content,
+  .hc-clinic-modal-content,
+  .fm-modal-content,
+  .sfb-modal-content,
+  .hr-modal-card,
+  .ar-modal,
+  .modal-content,
+  .modal-box,
+  .form-modal,
+  .detail-modal,
+  .ui-modal
+):has(
+  > :is(
+    .adm-body,
+    .abm-body,
+    .ebm-body,
+    .crm-body,
+    .sum-member-modal__body,
+    .eem-modal-body,
+    .scd-create-case-body,
+    .hr-modal-body,
+    .modal-body,
+    .ui-modal__body
+  ),
+  > form
+    > :is(
+      .adm-body,
+      .abm-body,
+      .ebm-body,
+      .crm-body,
+      .sum-member-modal__body,
+      .eem-modal-body,
+      .scd-create-case-body,
+      .hr-modal-body,
+      .modal-body,
+      .ui-modal__body
+    )
+) {
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+:is(
+    .adm-card,
+    .abm-card,
+    .ebm-premium-card,
+    .crm-card,
+    .sum-member-modal,
+    .eem-modal-content,
+    .cdm-card,
+    .cdm-sub-modal-card,
+    .cdm-tpl-modal-card,
+    .scd-create-case-modal,
+    .cm-modal-content,
+    .hc-modal-content,
+    .hc-clinic-modal-content,
+    .fm-modal-content,
+    .sfb-modal-content,
+    .hr-modal-card,
+    .ar-modal,
+    .modal-content,
+    .modal-box,
+    .form-modal,
+    .detail-modal,
+    .ui-modal
+  )
+  > form:has(
+    > :is(
+      .adm-body,
+      .abm-body,
+      .ebm-body,
+      .crm-body,
+      .sum-member-modal__body,
+      .eem-modal-body,
+      .scd-create-case-body,
+      .hr-modal-body,
+      .modal-body,
+      .ui-modal__body
+    )
+  ) {
+  min-height: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+:is(
+  .adm-body,
+  .abm-body,
+  .ebm-body,
+  .crm-body,
+  .sum-member-modal__body,
+  .eem-modal-body,
+  .scd-create-case-body,
+  .hr-modal-body,
+  .modal-body,
+  .ui-modal__body
+) {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto !important;
+}
+
+:is(
+  .adm-header,
+  .abm-header,
+  .ebm-header,
+  .crm-header,
+  .sum-member-modal__header,
+  .eem-modal-header,
+  .scd-create-case-header,
+  .hr-modal-header,
+  .modal-header,
+  .ui-modal__header,
+  .adm-footer,
+  .abm-footer,
+  .ebm-footer,
+  .crm-footer,
+  .sum-member-modal__footer,
+  .eem-modal-footer,
+  .scd-create-case-footer,
+  .modal-footer,
+  .ui-modal__footer
+) {
+  flex: 0 0 auto;
+}
+
+/* Single-scroll modals (title, form and actions inside one padded box):
+   the title sticks to the top and the actions to the bottom, matching the
+   header/footer bands of the other modals. */
+:is(
+  .cm-modal-content,
+  .hc-modal-content,
+  .hc-clinic-modal-content,
+  .fm-modal-content,
+  .sfb-modal-content,
+  .cdm-sub-modal-card
+) {
+  max-height: calc(100dvh - clamp(24px, 6vw, 64px)) !important;
+  padding: 0 24px !important;
+  overflow-y: auto !important;
+}
+
+:is(
+    .cm-modal-content,
+    .hc-modal-content,
+    .hc-clinic-modal-content,
+    .fm-modal-content,
+    .sfb-modal-content,
+    .cdm-sub-modal-card
+  )
+  > :is(h2, h3):first-of-type {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: 0 -24px 20px !important;
+  padding: 22px 72px 18px 24px !important;
+  border-bottom: 1px solid var(--suth-modal-border);
+  background: var(--suth-modal-surface);
+}
+
+:is(
+    .cm-modal-content,
+    .hc-modal-content,
+    .hc-clinic-modal-content,
+    .fm-modal-content,
+    .sfb-modal-content,
+    .cdm-sub-modal-card
+  )
+  :is(
+    .cm-modal-actions,
+    .hc-modal-actions,
+    .fm-modal-actions,
+    .sfb-modal-footer,
+    .cdm-sub-modal-actions,
+    .modal-actions,
+    .form-actions
+  ) {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin: 24px -24px 0 !important;
+}
+
+/* Close buttons of single-scroll modals sit in the sticky title band. */
+:is(.cm-close-btn-custom, .hc-close-btn-custom) {
+  position: absolute !important;
+  top: 16px !important;
+  right: 20px !important;
+  z-index: 3;
+}
+
+/* Field typography and size, identical in every modal. */
+:is(
+    .adm-card,
+    .abm-card,
+    .ebm-premium-card,
+    .crm-card,
+    .sum-member-modal,
+    .eem-modal-content,
+    .cdm-card,
+    .cdm-sub-modal-card,
+    .cdm-tpl-modal-card,
+    .scd-create-case-modal,
+    .cm-modal-content,
+    .hc-modal-content,
+    .hc-clinic-modal-content,
+    .fm-modal-content,
+    .sfb-modal-content,
+    .hr-modal-card,
+    .ar-modal,
+    .modal-content,
+    .modal-box,
+    .form-modal,
+    .detail-modal,
+    .ui-modal
+  )
+  :is(label, legend, .form-label, .field-label):not(
+    :has(input[type="checkbox"], input[type="radio"])
+  ) {
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+:is(
+    .adm-card,
+    .abm-card,
+    .ebm-premium-card,
+    .crm-card,
+    .sum-member-modal,
+    .eem-modal-content,
+    .cdm-card,
+    .cdm-sub-modal-card,
+    .cdm-tpl-modal-card,
+    .scd-create-case-modal,
+    .cm-modal-content,
+    .hc-modal-content,
+    .hc-clinic-modal-content,
+    .fm-modal-content,
+    .sfb-modal-content,
+    .hr-modal-card,
+    .ar-modal,
+    .modal-content,
+    .modal-box,
+    .form-modal,
+    .detail-modal,
+    .ui-modal
+  )
+  :is(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+        [type="color"]
+      ):not([type="file"]):not([type="hidden"]):not(.tdp-time__input):not(
+        .tdp-native
+      ),
+    select
+  ) {
+  min-height: var(--suth-control-h);
+  padding-block: 8px;
+  padding-inline-start: 12px;
+  border: 1px solid var(--suth-control-line);
+  background-color: var(--suth-surface);
+  color: var(--suth-ink);
+  font-family: var(--suth-font);
+  font-size: var(--suth-fs-body);
+  font-weight: 400;
+}
+
+:is(
+    .adm-card,
+    .abm-card,
+    .ebm-premium-card,
+    .crm-card,
+    .sum-member-modal,
+    .eem-modal-content,
+    .cdm-card,
+    .cdm-sub-modal-card,
+    .cdm-tpl-modal-card,
+    .scd-create-case-modal,
+    .cm-modal-content,
+    .hc-modal-content,
+    .hc-clinic-modal-content,
+    .fm-modal-content,
+    .sfb-modal-content,
+    .hr-modal-card,
+    .ar-modal,
+    .modal-content,
+    .modal-box,
+    .form-modal,
+    .detail-modal,
+    .ui-modal
+  )
+  textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--suth-control-line);
+  background-color: var(--suth-surface);
+  color: var(--suth-ink);
+  font-family: var(--suth-font);
+  font-size: var(--suth-fs-body);
+  line-height: 1.55;
+}
+
+:is(
+    .adm-card,
+    .abm-card,
+    .ebm-premium-card,
+    .crm-card,
+    .sum-member-modal,
+    .eem-modal-content,
+    .cdm-card,
+    .cdm-sub-modal-card,
+    .cdm-tpl-modal-card,
+    .scd-create-case-modal,
+    .cm-modal-content,
+    .hc-modal-content,
+    .hc-clinic-modal-content,
+    .fm-modal-content,
+    .sfb-modal-content,
+    .hr-modal-card,
+    .ar-modal,
+    .modal-content,
+    .modal-box,
+    .form-modal,
+    .detail-modal,
+    .ui-modal
+  )
+  :is(input, textarea)::placeholder {
+  color: var(--suth-muted);
+}
+
+:is(
+    .adm-card,
+    .abm-card,
+    .ebm-premium-card,
+    .crm-card,
+    .sum-member-modal,
+    .eem-modal-content,
+    .cdm-card,
+    .cdm-sub-modal-card,
+    .cdm-tpl-modal-card,
+    .scd-create-case-modal,
+    .cm-modal-content,
+    .hc-modal-content,
+    .hc-clinic-modal-content,
+    .fm-modal-content,
+    .sfb-modal-content,
+    .hr-modal-card,
+    .ar-modal,
+    .modal-content,
+    .modal-box,
+    .form-modal,
+    .detail-modal,
+    .ui-modal
+  )
+  :is(small, .form-hint, .field-hint, .helper-text) {
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-label);
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+/* Footers keep secondary tools (e.g. Excel export) on the left. */
+:is(.adm-footer, .sum-member-modal__footer, .modal-footer, .ui-modal__footer)
+  > :not(button):first-child {
+  margin-right: auto;
 }
 
 @keyframes suthModalBackdropIn {
@@ -527,7 +951,10 @@ div.swal2-container button.swal2-styled {
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    /* Fill-mode is backwards only: a transform kept after the animation, even
+       an identity one, makes the surface the containing block of fixed menus
+       (SearchableSelect), which then open offset and clipped. */
+    transform: none;
   }
 }
 
@@ -555,6 +982,7 @@ div.swal2-container button.swal2-styled {
     .abm-body,
     .ebm-body,
     .crm-body,
+    .sum-member-modal__body,
     .eem-modal-body,
     .scd-create-case-body,
     .form-body,
@@ -634,4 +1062,13 @@ div.swal2-container button.swal2-styled {
   ) {
     animation: none !important;
   }
+}
+
+/* SweetAlert confirm buttons follow the action token: white on orange,
+   white only on the red destructive variant. */
+div.swal2-container .swal2-styled.swal2-confirm {
+  color: var(--suth-on-action) !important;
+}
+div.swal2-container .swal2-styled.swal2-confirm[style*="rgb(220, 38, 38)"] {
+  color: var(--suth-on-action) !important;
 }

@@ -1,5 +1,5 @@
-import SearchableSelect from './SearchableSelect';
-import {ExportButton} from "./ExcelExport";
+import SearchableSelect from "./SearchableSelect";
+import { ExportButton } from "./ExcelExport";
 import { useEffect, useRef, useState } from "react";
 import { FiEye, FiEyeOff, FiKey, FiSave, FiX } from "react-icons/fi";
 
@@ -92,7 +92,10 @@ export default function PatientMemberModal({ member, onClose, onSave }) {
           </button>
         </header>
 
-        <ExportButton sources={[{resource:"member",id:member.id}]} title="ข้อมูลผู้มารับบริการ" />
+        <ExportButton
+          sources={[{ resource: "member", id: member.id }]}
+          title="ข้อมูลผู้มารับบริการ"
+        />
         <form onSubmit={submit} aria-busy={saving}>
           {error && (
             <div className="sum-member-modal__error" role="alert">

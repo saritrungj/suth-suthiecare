@@ -1,25 +1,31 @@
-import React, {useRef} from "react";
+import React, { useRef } from "react";
 import OrganizationWorkspace from "../permissions/OrganizationWorkspace";
 import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { ExportProvider, ExportToolbar } from "./ExcelExport";
 import { usePermissions } from "../permissions/PermissionsProvider";
-import AdminScrollToTop from './AdminScrollToTop';
-import '../styles/admin-theme.css';
+import AdminScrollToTop from "./AdminScrollToTop";
+import "../styles/admin-theme.css";
 
 const AdminLayout = () => {
   const { pathname } = useLocation();
   const hospital = /^\/admin\/(clinics|schedule)(\/|$)/.test(pathname);
-  const requiresUnit = hospital || /^\/admin\/(forms|referrals|help-center)(\/|$)/.test(pathname);
+  const requiresUnit =
+    hospital || /^\/admin\/(forms|referrals|help-center)(\/|$)/.test(pathname);
   const { activeOrganization } = usePermissions();
-  const contentRef=useRef(null);
+  const contentRef = useRef(null);
   return (
-    <div
-      className="admin-shell"
-    >
-      <a className="suth-skip-link" href="#admin-workspace" onClick={event => {
-        event.preventDefault(); contentRef.current?.focus();
-      }}>ข้ามไปยังเนื้อหาหลัก</a>
+    <div className="admin-shell">
+      <a
+        className="suth-skip-link"
+        href="#admin-workspace"
+        onClick={(event) => {
+          event.preventDefault();
+          contentRef.current?.focus();
+        }}
+      >
+        ข้ามไปยังเนื้อหาหลัก
+      </a>
       <Sidebar />
       <div
         className="admin-shell-content"
@@ -27,8 +33,20 @@ const AdminLayout = () => {
         tabIndex={-1}
         ref={contentRef}
       >
-        <ExportProvider><ExportToolbar />{requiresUnit ? <OrganizationWorkspace type={hospital ? "hospital" : undefined}><Outlet key={activeOrganization || "authorization-loading"} /></OrganizationWorkspace> : <Outlet key={activeOrganization || "authorization-loading"} />}</ExportProvider>
-        <AdminScrollToTop key={activeOrganization || 'loading'} contentRef={contentRef}/>
+        <ExportProvider>
+          <ExportToolbar />
+          {requiresUnit ? (
+            <OrganizationWorkspace type={hospital ? "hospital" : undefined}>
+              <Outlet key={activeOrganization || "authorization-loading"} />
+            </OrganizationWorkspace>
+          ) : (
+            <Outlet key={activeOrganization || "authorization-loading"} />
+          )}
+        </ExportProvider>
+        <AdminScrollToTop
+          key={activeOrganization || "loading"}
+          contentRef={contentRef}
+        />
       </div>
     </div>
   );

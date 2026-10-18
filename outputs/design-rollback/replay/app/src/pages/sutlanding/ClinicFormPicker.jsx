@@ -1,5 +1,5 @@
-import SearchableSelect from '../../components/SearchableSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import SearchableSelect from "../../components/SearchableSelect";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -23,7 +23,9 @@ const POPULAR_LIMIT = 3;
 const GROUP_LIMIT = 3;
 const PAGE_SIZE = 12;
 
-function stripHtml(html) { return toDisplayText(html); }
+function stripHtml(html) {
+  return toDisplayText(html);
+}
 
 function Highlight({ text, query }) {
   text = toDisplayText(text);
@@ -417,7 +419,10 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
           )}
           <label className="cfp-sort">
             <span>{t("clinic_picker.sort_label")}</span>
-            <SearchableSelect value={sort} onChange={(e) => setSort(e.target.value)}>
+            <SearchableSelect
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+            >
               <option value="default">{t("clinic_picker.sort_default")}</option>
               <option value="popular">{t("clinic_picker.sort_popular")}</option>
               <option value="name">{t("clinic_picker.sort_name")}</option>

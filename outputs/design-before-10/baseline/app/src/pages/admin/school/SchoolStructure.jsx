@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import { usePageExport } from "../../../components/ExcelExport";
 import { useCallback, useEffect, useState } from "react";
 import { FiEdit2, FiPlus, FiTrash2, FiUsers } from "react-icons/fi";
@@ -39,7 +39,18 @@ export default function SchoolStructure() {
   const { schools, loading, error } = useSchools();
   const school = schools[0];
 
-  usePageExport({title:"โครงสร้างโรงเรียน",sources:[{resource:"schools"},...(school?[{resource:"grades",id:school.id},{resource:"classrooms",id:school.id}]:[])]});
+  usePageExport({
+    title: "โครงสร้างโรงเรียน",
+    sources: [
+      { resource: "schools" },
+      ...(school
+        ? [
+            { resource: "grades", id: school.id },
+            { resource: "classrooms", id: school.id },
+          ]
+        : []),
+    ],
+  });
   return (
     <div className="sch-wrapper">
       <main className="sch-page">
@@ -75,7 +86,20 @@ function SchoolClasses({ school, access }) {
   const [busy, setBusy] = useState(false);
   const [classroomModal, setClassroomModal] = useState(null);
   const [teacherModal, setTeacherModal] = useState(null);
-  usePageExport({priority:1,title:"โครงสร้างโรงเรียน",sources:[{resource:"schools"},{resource:"grades",id:school.id},{resource:"classrooms",id:school.id,filters:{academic_year:year}}],disabled:loading});
+  usePageExport({
+    priority: 1,
+    title: "โครงสร้างโรงเรียน",
+    sources: [
+      { resource: "schools" },
+      { resource: "grades", id: school.id },
+      {
+        resource: "classrooms",
+        id: school.id,
+        filters: { academic_year: year },
+      },
+    ],
+    disabled: loading,
+  });
 
   const load = useCallback(async () => {
     if (!validYear(year)) return;

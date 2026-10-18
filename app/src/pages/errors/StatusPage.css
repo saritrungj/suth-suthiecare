@@ -3,30 +3,31 @@
   display: grid;
   place-items: center;
   padding: 2rem;
-  background: #f4f7f6;
-  color: #18332e;
-  font-family: Sarabun, system-ui, sans-serif;
+  background: var(--suth-surface-2);
+  color: var(--suth-care-ink);
+  font-family: var(--suth-font);
 }
 .status-page section {
   max-width: 34rem;
-  border-left: 5px solid #c86d36;
+  border: 1px solid var(--suth-tint-line);
+  border-radius: var(--suth-radius-card);
   padding: 2rem 2.25rem;
-  background: #fffcf7;
-  box-shadow: 0 16px 40px #18332e18;
+  background: var(--suth-surface-hover);
+  box-shadow: 0 16px 40px rgba(31, 47, 63, 0.09);
 }
 .status-code {
   margin: 0;
-  color: #c86d36;
-  font-size: clamp(3rem, 10vw, 6rem);
+  color: var(--suth-action-ink);
+  font-size: var(--suth-fs-display-lg);
   font-weight: 800;
   line-height: 1;
 }
 .status-page h1 {
   margin: 0.75rem 0;
-  font-size: 1.7rem;
+  font-size: var(--suth-fs-display);
 }
 .status-page p:not(.status-code) {
-  color: #52706a;
+  color: var(--suth-care);
   line-height: 1.7;
 }
 .status-actions {
@@ -39,14 +40,14 @@
 .status-actions button {
   border: 0;
   padding: 0.7rem 1rem;
-  background: #1d5a4c;
-  color: #fff;
+  background: var(--suth-care-ink);
+  color: var(--suth-on-action);
   text-decoration: none;
   font: inherit;
   cursor: pointer;
 }
 .status-actions a {
   background: transparent;
-  color: #1d5a4c;
-  border: 1px solid #1d5a4c;
+  color: var(--suth-care-ink);
+  border: 1px solid var(--suth-success);
 }

@@ -1,5 +1,6 @@
-import SearchableSelect from '../../../components/SearchableSelect';
-import {usePageExport} from "../../../components/ExcelExport";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { useModuleActions } from "../../../permissions/useModuleActions";
+import { usePageExport } from "../../../components/ExcelExport";
 import React, { useState, useEffect, useRef } from "react";
 import {
   getAllClinics,
@@ -19,6 +20,7 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaGripVertical,
+  FaSearch,
 } from "react-icons/fa";
 import "./ClinicManager.css";
 import Swal from "sweetalert2";
@@ -41,6 +43,11 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { PageHero } from "../../../components/dashboard/DashboardKit";
+import TablePagination from "../../../components/table/TablePagination";
+import usePagedRows from "../../../components/table/usePagedRows";
+import DataPanel from "../../../components/table/DataPanel";
+import ResultSummary from "../../../components/table/ResultSummary";
 
 const MySwal = withReactContent(Swal);
 
@@ -62,7 +69,11 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div
-          style={{ padding: "40px", background: "#fee2e2", color: "#991b1b" }}
+          style={{
+            padding: "40px",
+            background: "var(--suth-danger-tint)",
+            color: "var(--suth-danger)",
+          }}
         >
           <h2>💥 เกิดข้อผิดพลาด</h2>
           <p>{this.state.error?.toString()}</p>
@@ -76,7 +87,8 @@ class ErrorBoundary extends React.Component {
 // ============================================================
 // SortableRow — แถวในตารางที่ลากได้
 // ============================================================
-function SortableRow({ clinic, onEdit, onDelete }) {
+// Dragging to reorder clinics is "assign" on the roles page.
+function SortableRow({ clinic, onEdit, onDelete, rights }) {
   const {
     attributes,
     listeners,
@@ -84,13 +96,13 @@ function SortableRow({ clinic, onEdit, onDelete }) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: clinic.id });
+  } = useSortable({ id: clinic.id, disabled: !rights.assign });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-    background: isDragging ? "#f0f9ff" : "white",
+    background: isDragging ? "var(--suth-tint)" : "var(--suth-surface)",
     boxShadow: isDragging ? "0 8px 24px rgba(0,0,0,0.12)" : "none",
     zIndex: isDragging ? 999 : "auto",
     position: "relative",
@@ -147,6 +159,7 @@ function SortableRow({ clinic, onEdit, onDelete }) {
       <td className="cm-col-actions">
         <div className="cm-actions">
           <button
+            hidden={!rights.update}
             className="cm-btn-edit"
             onClick={() => onEdit(clinic)}
             title="แก้ไข"
@@ -154,6 +167,7 @@ function SortableRow({ clinic, onEdit, onDelete }) {
             <FaEdit />
           </button>
           <button
+            hidden={!rights.delete}
             className="cm-btn-delete"
             onClick={() => onDelete(clinic.id, clinic.name)}
             title="ลบ"
@@ -171,15 +185,31 @@ function SortableRow({ clinic, onEdit, onDelete }) {
 // ============================================================
 function ClinicManagerContent() {
   const { authorization, activeOrganization } = usePermissions();
+  const clinicRights = useModuleActions("clinics");
   const isSystemAdmin = Boolean(authorization?.is_system_admin);
   const [clinics, setClinics] = useState([]);
-  usePageExport({title:"คลินิก",sources:[{resource:"clinics"}]});
+  usePageExport({ title: "คลินิก", sources: [{ resource: "clinics" }] });
   const [organizations, setOrganizations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isReordering, setIsReordering] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClinic, setEditingClinic] = useState(null);
+  const [search, setSearch] = useState("");
+  const needle = search.trim().toLocaleLowerCase();
+  const visibleClinics = needle
+    ? clinics.filter((c) =>
+        [c.name, c.slug, c.organization_name].some((v) =>
+          String(v || "")
+            .toLocaleLowerCase()
+            .includes(needle),
+        ),
+      )
+    : clinics;
+  const { pageRows, pagination, setPage, setLimit } = usePagedRows(
+    visibleClinics,
+    { resetKeys: [needle] },
+  );
   const activeOrganizationLabel = getActiveOrganizationLabel(
     authorization,
     activeOrganization,
@@ -436,8 +466,8 @@ function ClinicManagerContent() {
       text: `คุณต้องการลบคลินิก "${name}" ใช่หรือไม่?`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
+      confirmButtonColor: "var(--suth-danger)",
+      cancelButtonColor: "var(--suth-muted)",
       confirmButtonText: "ใช่, ลบเลย!",
       cancelButtonText: "ยกเลิก",
     });
@@ -470,79 +500,118 @@ function ClinicManagerContent() {
   return (
     <div className="cm-admin-page">
       <main className="cm-main">
-        <header className="cm-header">
-          <div className="cm-header-info">
-            <h1>จัดการคลินิก</h1>
-            {/* hint text */}
-            <p className="cm-header-hint">
-              จัดการคลินิกของหน่วยงานที่เลือก และเรียงลำดับเพื่อแสดงผลบนหน้าเว็บ
-            </p>
+        <PageHero
+          title="จัดการคลินิก"
+          description="จัดการคลินิกของหน่วยงานที่เลือก และเรียงลำดับเพื่อแสดงผลบนหน้าเว็บ"
+          scope={
             <p className="cm-context-indicator">
               <span>ขอบเขตข้อมูล</span>
               {activeOrganizationLabel}
             </p>
-          </div>
-          <button className="cm-btn-add" onClick={() => handleOpenModal()}>
-            <FaPlus /> เพิ่มคลินิกใหม่
-          </button>
-        </header>
-
-        {isLoading ? (
-          <div className="cm-loading-state">
-            <div className="cm-loading-spinner"></div>
-            <p>กำลังโหลดข้อมูล...</p>
-          </div>
-        ) : (
-          <div className="cm-table-container">
-            {isReordering && (
-              <div className="cm-reorder-saving">
-                <span>💾 กำลังบันทึกลำดับ...</span>
-              </div>
-            )}
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
+          }
+          actions={
+            <button
+              hidden={!clinicRights.create}
+              className="cm-btn-add"
+              onClick={() => handleOpenModal()}
             >
-              <table className="cm-table">
-                <thead>
-                  <tr>
-                    <th className="cm-col-drag"></th>
-                    <th className="cm-col-logo">โลโก้</th>
-                    <th className="cm-col-slug">รหัสอ้างอิง (Slug)</th>
-                    <th className="cm-col-name">ชื่อคลินิก</th>
-                    <th className="cm-col-organization">หน่วยงานเจ้าของ</th>
-                    <th className="cm-col-status">สถานะ</th>
-                    <th className="cm-col-actions">จัดการ</th>
-                  </tr>
-                </thead>
-                <SortableContext
-                  items={clinics.map((c) => c.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <tbody>
-                    {clinics.length > 0 ? (
-                      clinics.map((clinic) => (
-                        <SortableRow
-                          key={clinic.id}
-                          clinic={clinic}
-                          onEdit={handleOpenModal}
-                          onDelete={handleDelete}
-                        />
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="7" className="cm-empty">
-                          ไม่พบข้อมูลคลินิก
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </SortableContext>
-              </table>
-            </DndContext>
+              <FaPlus /> เพิ่มคลินิกใหม่
+            </button>
+          }
+        />
+
+        <DataPanel className="cm-list-panel">
+          <div className="filter-bar cm-filter-bar">
+            <label className="rc-search-group">
+              <FaSearch className="rc-filter-icon" aria-hidden="true" />
+              <span className="sr-only">ค้นหาคลินิก</span>
+              <input
+                type="search"
+                placeholder="ค้นหาชื่อคลินิก รหัสอ้างอิง หรือหน่วยงาน"
+                value={search}
+                onChange={(e) => setSearch(e.target.value.slice(0, 80))}
+              />
+            </label>
           </div>
-        )}
+
+          <ResultSummary loading={isLoading} pagination={pagination} />
+
+          {isLoading ? (
+            <div className="cm-loading-state">
+              <div className="cm-loading-spinner"></div>
+              <p>กำลังโหลดข้อมูล...</p>
+            </div>
+          ) : (
+            <div
+              className="cm-table-container"
+              tabIndex={0}
+              role="region"
+              aria-label="ตารางจัดการคลินิก"
+            >
+              {isReordering && (
+                <div className="cm-reorder-saving">
+                  <span>💾 กำลังบันทึกลำดับ...</span>
+                </div>
+              )}
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <table
+                  className="cm-table admin-data-table"
+                  aria-label="รายการคลินิก"
+                >
+                  <thead>
+                    <tr>
+                      <th className="cm-col-drag"></th>
+                      <th className="cm-col-logo">โลโก้</th>
+                      <th className="cm-col-slug">รหัสอ้างอิง (Slug)</th>
+                      <th className="cm-col-name">ชื่อคลินิก</th>
+                      <th className="cm-col-organization">หน่วยงานเจ้าของ</th>
+                      <th className="cm-col-status">สถานะ</th>
+                      <th className="cm-col-actions">จัดการ</th>
+                    </tr>
+                  </thead>
+                  <SortableContext
+                    items={pageRows.map((c) => c.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <tbody>
+                      {pageRows.length > 0 ? (
+                        pageRows.map((clinic) => (
+                          <SortableRow
+                            key={clinic.id}
+                            clinic={clinic}
+                            onEdit={handleOpenModal}
+                            onDelete={handleDelete}
+                            rights={clinicRights}
+                          />
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="7" className="cm-empty">
+                            <p>ไม่พบข้อมูลคลินิก</p>
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </SortableContext>
+                </table>
+              </DndContext>
+            </div>
+          )}
+          {!isLoading && (
+            <TablePagination
+              page={pagination.page}
+              totalPages={pagination.total_pages}
+              total={pagination.total}
+              limit={pagination.limit}
+              onPage={setPage}
+              onLimit={setLimit}
+            />
+          )}
+        </DataPanel>
 
         {/* Modal (เหมือนเดิมทุกอย่าง) */}
         {isModalOpen && (

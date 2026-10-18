@@ -1,5 +1,5 @@
-import IconSelect from '../../components/IconSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import IconSelect from "../../components/IconSelect";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { usePageExport } from "../../components/ExcelExport";
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import AppointmentTable from "../../components/appointment/AppointmentTable";
@@ -36,7 +36,9 @@ import { usePermissions } from "../../permissions/PermissionsProvider";
 import { showErrorAlert, showSuccessToast } from "../../utils/alerts";
 import "./Appointment.css";
 
-const CustomDropdown = props => <IconSelect {...props} className="apt-custom-select" />;
+const CustomDropdown = (props) => (
+  <IconSelect {...props} className="apt-custom-select" />
+);
 
 function getRiskLevel(summary_data) {
   const scoreResults = summary_data?.score_results || [];
@@ -348,7 +350,16 @@ export default function Appointment() {
   };
 
   /* ================= UI ================= */
-  usePageExport({title:"นัดหมาย",sources:[{resource:"appointments",filters:{startDate,endDate},ids:filteredAppointments.map(r=>r.appointment_id||r.id)}]});
+  usePageExport({
+    title: "นัดหมาย",
+    sources: [
+      {
+        resource: "appointments",
+        filters: { startDate, endDate },
+        ids: filteredAppointments.map((r) => r.appointment_id || r.id),
+      },
+    ],
+  });
 
   return (
     <div className="apt-admin-layout">

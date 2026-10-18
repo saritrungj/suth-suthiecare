@@ -1,5 +1,5 @@
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import GuardianStudents from "./GuardianStudents";
 import MasterSelect from "../../../components/MasterSelect";
 import { usePageExport } from "../../../components/ExcelExport";
@@ -63,15 +63,19 @@ const emptyFilters = {
   student_type_id: "",
   status: "active",
   search: "",
-  is_boarder: '',
+  is_boarder: "",
 };
 
 export default function StudentList() {
   const { schoolAccess } = usePermissions();
-  return schoolAccess?.is_guardian ? <GuardianStudents /> : <StaffStudentList />;
+  return schoolAccess?.is_guardian ? (
+    <GuardianStudents />
+  ) : (
+    <StaffStudentList />
+  );
 }
 function StaffStudentList() {
-  const statusLabels=useStudentStatusLabels();
+  const statusLabels = useStudentStatusLabels();
   const { schoolAccess: access } = usePermissions();
   const { schoolId } = useSchools();
   const [filters, setFilters] = useState(emptyFilters);
@@ -197,7 +201,13 @@ function StaffStudentList() {
     }
   };
 
-  usePageExport({title:"นักเรียน",sources:[{resource:"students",filters:{...filters,school_id:schoolId}}],disabled:loading});
+  usePageExport({
+    title: "นักเรียน",
+    sources: [
+      { resource: "students", filters: { ...filters, school_id: schoolId } },
+    ],
+    disabled: loading,
+  });
   const students = result.data || [];
   // Previous/next inside the student file follow this page of the list.
   const viewingIndex = students.findIndex((student) => student.id === viewing);
@@ -312,7 +322,15 @@ function StaffStudentList() {
                   </option>
                 ))}
               </MenuSelect>
-              <MenuSelect label="ที่พัก" value={filters.is_boarder} onChange={value=>updateFilter('is_boarder',value)}><option value="">ทุกประเภทที่พัก</option><option value="1">นักเรียนหอพัก</option><option value="0">ไปกลับ</option></MenuSelect>
+              <MenuSelect
+                label="ที่พัก"
+                value={filters.is_boarder}
+                onChange={(value) => updateFilter("is_boarder", value)}
+              >
+                <option value="">ทุกประเภทที่พัก</option>
+                <option value="1">นักเรียนหอพัก</option>
+                <option value="0">ไปกลับ</option>
+              </MenuSelect>
             </FilterDropdown>
           </div>
 
@@ -383,7 +401,9 @@ function StaffStudentList() {
                         <span
                           className={`sch-badge status-${student.status === "active" ? "active" : "inactive"}`}
                         >
-                          {student.status_label || statusLabels[student.status] || STUDENT_STATUS_LABELS[student.status]}
+                          {student.status_label ||
+                            statusLabels[student.status] ||
+                            STUDENT_STATUS_LABELS[student.status]}
                         </span>
                       </td>
                       <td>
@@ -612,7 +632,11 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
           >
             <option value="">ไม่ระบุ</option>
             {studentTypes
-              .filter((type) => type.status === "active" || String(type.id) === String(initial.student_type_id))
+              .filter(
+                (type) =>
+                  type.status === "active" ||
+                  String(type.id) === String(initial.student_type_id),
+              )
               .map((type) => (
                 <option key={type.id} value={type.id}>
                   {type.name}
@@ -622,7 +646,18 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
         </label>
         <label className="sch-field">
           คำนำหน้า
-          <MasterSelect category="prefix" labelValues value={form.prefix} onChange={set("prefix")} fallback={["ด.ช.","ด.ญ.","นาย","นางสาว"].map(label=>({code:label,label}))}><option value="">ไม่ระบุ</option></MasterSelect>
+          <MasterSelect
+            category="prefix"
+            labelValues
+            value={form.prefix}
+            onChange={set("prefix")}
+            fallback={["ด.ช.", "ด.ญ.", "นาย", "นางสาว"].map((label) => ({
+              code: label,
+              label,
+            }))}
+          >
+            <option value="">ไม่ระบุ</option>
+          </MasterSelect>
         </label>
         <label className="sch-field">
           <span>
@@ -662,7 +697,17 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
         </label>
         <label className="sch-field">
           เพศ
-          <MasterSelect category="gender" value={form.gender} onChange={set("gender")} fallback={Object.entries(GENDER_LABELS).map(([code,label])=>({code,label}))}><option value="">ไม่ระบุ</option></MasterSelect>
+          <MasterSelect
+            category="gender"
+            value={form.gender}
+            onChange={set("gender")}
+            fallback={Object.entries(GENDER_LABELS).map(([code, label]) => ({
+              code,
+              label,
+            }))}
+          >
+            <option value="">ไม่ระบุ</option>
+          </MasterSelect>
         </label>
         <ThaiDateField
           label="วันเกิด"
@@ -689,12 +734,19 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
             />
           </label>
         )}
-        {(
+        {
           <label className="sch-field">
             สถานะ
-            <MasterSelect category="student_status" value={form.status} onChange={set("status")} fallback={Object.entries(STUDENT_STATUS_LABELS).filter(([code])=>!["transferred","inactive"].includes(code)).map(([code,label])=>({code,label}))} />
+            <MasterSelect
+              category="student_status"
+              value={form.status}
+              onChange={set("status")}
+              fallback={Object.entries(STUDENT_STATUS_LABELS)
+                .filter(([code]) => !["transferred", "inactive"].includes(code))
+                .map(([code, label]) => ({ code, label }))}
+            />
           </label>
-        )}
+        }
       </form>
     </SchoolModal>
   );

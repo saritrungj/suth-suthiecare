@@ -2,10 +2,10 @@
 name: Suthie Care
 description: Thai health-screening follow-up workspace for hospital clinics and schools; risk first, same task on any device, privacy by default.
 colors:
-  action: "#c2410c"
-  action-hover: "#9a3412"
-  action-ink: "#a9430b"
-  accent: "#f47932"
+  action: "#ff8a3d"
+  action-hover: "#f47932"
+  action-ink: "#b4470c"
+  accent: "#ff8a3d"
   on-action: "#ffffff"
   ink: "#1f2f3f"
   ink-2: "#344a5f"
@@ -34,44 +34,85 @@ colors:
   risk-dot-high: "#d92d20"
   risk-dot-medium: "#f79009"
   risk-dot-low: "#12b76a"
+  info-line: "#bad5e8"
+  success-line: "#bfe5cd"
+  care: "#2f7d7a"
+  care-ink: "#1d5a4c"
+  care-deep: "#142738"
+  care-tint: "#e3f1ef"
+  care-line: "#c5d8d5"
+  care-surface: "#f5f8f8"
 typography:
   headline:
-    fontFamily: "Sarabun, Noto Sans Thai, system-ui, sans-serif"
+    fontFamily: "Anuphan, system-ui, sans-serif"
     fontSize: "1.5rem"
     fontWeight: 700
     lineHeight: 1.3
     letterSpacing: "-0.02em"
   title:
-    fontFamily: "Sarabun, Noto Sans Thai, system-ui, sans-serif"
+    fontFamily: "Anuphan, system-ui, sans-serif"
     fontSize: "1.35rem"
     fontWeight: 700
     lineHeight: 1.3
     letterSpacing: "-0.01em"
-  title-sm:
-    fontFamily: "Sarabun, Noto Sans Thai, system-ui, sans-serif"
-    fontSize: "1.1rem"
-    fontWeight: 700
+  section:
+    fontFamily: "Anuphan, system-ui, sans-serif"
+    fontSize: "1.15rem"
+    fontWeight: 800
     lineHeight: 1.4
+  md:
+    fontFamily: "Anuphan, system-ui, sans-serif"
+    fontSize: "1rem"
+    fontWeight: 400
+    lineHeight: 1.5
   body:
-    fontFamily: "Sarabun, Noto Sans Thai, system-ui, sans-serif"
-    fontSize: "0.95rem"
+    fontFamily: "Anuphan, system-ui, sans-serif"
+    fontSize: "0.94rem"
+    fontWeight: 400
+    lineHeight: 1.5
+  body-sm:
+    fontFamily: "Anuphan, system-ui, sans-serif"
+    fontSize: "0.88rem"
     fontWeight: 400
     lineHeight: 1.5
   label:
-    fontFamily: "Sarabun, Noto Sans Thai, system-ui, sans-serif"
+    fontFamily: "Anuphan, system-ui, sans-serif"
     fontSize: "0.82rem"
     fontWeight: 700
     lineHeight: 1.45
+  caption:
+    fontFamily: "Anuphan, system-ui, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 700
+    lineHeight: 1.4
   numeric:
-    fontFamily: "Sarabun, Noto Sans Thai, system-ui, sans-serif"
+    fontFamily: "Anuphan, system-ui, sans-serif"
     fontSize: "0.82rem"
     fontWeight: 400
     fontFeature: '"tnum" 1'
+  display:
+    fontFamily: "Anuphan, system-ui, sans-serif"
+    fontSize: "2rem"
+    fontWeight: 800
+    lineHeight: 1.15
+  display-lg:
+    fontFamily: "Anuphan, system-ui, sans-serif"
+    fontSize: "clamp(2rem, 4.4vw, 3rem)"
+    fontWeight: 800
+    lineHeight: 1.1
+  code:
+    fontFamily: "ui-monospace, Cascadia Mono, Consolas, monospace"
+    fontSize: "0.82rem"
+    fontWeight: 400
 rounded:
-  inner: "8px"
-  control: "10px"
-  panel: "12px"
-  card: "14px"
+  xs: "6px"
+  sm: "8px"
+  inner: "12px"
+  control: "12px"
+  icon: "14px"
+  panel: "16px"
+  card: "22px"
+  hero: "28px"
   pill: "999px"
 spacing:
   xs: "4px"
@@ -180,7 +221,7 @@ components:
 
 **Creative North Star: "The Follow-Up Ledger"**
 
-Suthie Care is a working ledger for people who have to call someone back today. The page is a grey canvas carrying white work surfaces; inside them, information is ruled by 1px lines rather than boxed into tinted panels, numbers sit in tabular columns, and the only loud thing on screen is risk. The brand orange survives from the original app, but it has been split in two: a bright decorative orange that marks selection and progress, and a darker burnt action orange that carries white text at AA contrast.
+Suthie Care is a working ledger for people who have to call someone back today. The page is a grey canvas carrying white work surfaces; inside them, information is ruled by 1px lines rather than boxed into tinted panels, numbers sit in tabular columns, and the only loud thing on screen is risk. The brand orange survives from the original app, and since 16 October 2026 it is one lighter, brighter orange (#ff8a3d) used for fills, selection and progress; text on it is white by the owner's choice (about 2.3:1, below WCAG AA).
 
 Density is calm and operational, not dashboard-busy. A queue row shows a name, a case code, a risk pill and a status pill, and nothing else competes with them. Detail opens beside the list as a right-hand drawer, so staff never lose their place, and the drawer walks the follow-up as numbered steps. Phones get the same workflow, not a summary: rows become cards, the drawer goes full-screen, and every control grows to a 44px target.
 
@@ -189,7 +230,7 @@ Privacy is visual policy. Names, phone numbers and national IDs appear masked by
 **Key Characteristics:**
 
 - Grey canvas, white cards, 1px dividers; tint is for state, not for grouping.
-- Two oranges with separate jobs: decoration (#f47932) and white-text action (#c2410c).
+- One bright orange (#ff8a3d) for fills and decoration; white text (--suth-on-action) on every orange fill. Orange text on white uses the deeper action-ink (#b4470c).
 - Risk is always icon shape + word + color; status is always dot + verbatim word + color.
 - Tabular numerals on every ID, count and date; Buddhist-era dates.
 - Right-hand 560px case drawer with prev/next, a step rail, roving tabs and a sticky save.
@@ -201,13 +242,14 @@ A cool slate-and-white working palette with one warm orange family and a restrai
 
 ### Primary
 
-- **Burnt Action Orange** (action): every solid button with white text, the current step ring, checkbox accents. Hover deepens to **Ember** (action-hover), which also marks the name of the open row.
-- **Orange Ink** (action-ink): orange text on white or on tint (link-styled actions, selected tab label, secondary-button hover). Holds 5.9:1.
-- **Suthie Orange** (accent): the brand orange, decoration only. Selected-tab underline, the open phone card's border, chart lines. Never a fill under white text.
+- **Bright Orange** (action / accent, #ff8a3d): every solid button, the current step ring, checkbox accents, the sidebar surface. Text on it is white (on-action, owner decision; about 2.3:1, below AA). Hover deepens to **Ember** (action-hover, #f47932), which also marks the name of the open row.
+- **Orange Ink** (action-ink, #b4470c): orange text on white or on tint (link-styled actions, selected tab label, secondary-button hover). Holds 5.4:1.
 
 ### Secondary
 
 - **Clinical Blue** (info / info-tint): the "in progress" status family (นัดหมายสำเร็จ, ขอเลื่อนนัด, อยู่ระหว่างติดตามต่อเนื่อง, ส่งต่อผู้เชี่ยวชาญ). The only cool hue in the status set.
+
+- **Care Teal** (care, care-ink, care-deep, care-tint, care-line, care-surface): the public assessment register only (the live-results panel beside a form, the sign-in prompt on a form, result cards). It never appears on admin pages and never marks an action.
 
 ### Tertiary
 
@@ -226,7 +268,7 @@ A cool slate-and-white working palette with one warm orange family and a restrai
 
 ### Named Rules
 
-**The Two Oranges Rule.** White text sits on Burnt Action Orange (#c2410c) or darker, never on Suthie Orange (#f47932). The bright orange marks; the burnt orange acts.
+**The Bright Orange Rule.** Every orange fill carries --suth-on-action (white). Orange text on a light surface uses action-ink (#b4470c).
 
 **The Never Color Alone Rule.** Risk pairs color with an icon (triangle high, circle-alert medium, check low, minus none) and a word; status pairs color with a dot and its verbatim label. A grayscale screenshot must still say who is at high risk.
 
@@ -234,19 +276,26 @@ A cool slate-and-white working palette with one warm orange family and a restrai
 
 ## Typography
 
-**Display Font:** Sarabun (with Noto Sans Thai, system-ui)
-**Body Font:** Sarabun (with Noto Sans Thai, system-ui)
+**Display Font:** Anuphan (with system-ui)
+**Body Font:** Anuphan (with system-ui)
 
 **Character:** One Thai humanist sans for everything, carried by weight (400 to 800) rather than by size jumps. Headings are tightened slightly; labels and pills go heavy (700 to 800) at small sizes so Thai glyphs stay legible.
 
 ### Hierarchy
 
-- **Headline** (700, 1.5rem, 1.3, -0.02em; 1.3rem on phones): page title, balanced wrap, with a pill tag beside it for clinic or scope.
-- **Title** (700, 1.35rem, 1.3, -0.01em): the person's name at the top of the case drawer.
-- **Title Small** (700, 1.1rem): section titles inside a work surface.
-- **Body** (400, 0.95rem, 1.5): table cells (0.94rem), inputs, buttons (700). Header descriptions cap at 68ch, empty-state copy at 52ch.
-- **Label** (700, 0.82rem, 1.45): field labels, table headers (800), pills, chip counts, card meta.
+The scale is a fixed set of tokens in `tokens.css` (`--suth-fs-*`); CSS and inline styles use the token, never a literal size.
+
+- **Hero** (`--suth-fs-hero`, 800, 1.5rem, 1.25, -0.02em; `--suth-fs-title` 1.35rem on phones): page title, balanced wrap, with a pill tag beside it for clinic or scope. One per page, in `PageHero`.
+- **Title** (`--suth-fs-title`, 700, 1.35rem): the person's name at the top of the case drawer; modal titles.
+- **Section** (`--suth-fs-section`, 800, 1.15rem): section titles inside a work surface.
+- **Md** (`--suth-fs-md`, 1rem): lead text and public form inputs (16px stops iOS zoom).
+- **Body** (`--suth-fs-body`, 400, 0.94rem, 1.5): table cells, inputs, buttons (700). Header descriptions cap at 68ch, empty-state copy at 52ch.
+- **Body Small** (`--suth-fs-sm`, 0.88rem): secondary body, toolbars, result lines, pagination.
+- **Label** (`--suth-fs-label`, 700, 0.82rem, 1.45): field labels, table headers (800), pills, chip counts, card meta.
+- **Caption** (`--suth-fs-caption`, 700, 0.75rem): counts in badges, micro meta. Never body copy.
+- **Display** (`--suth-fs-display`, `--suth-fs-display-lg`, 800): KPI numbers, public heroes and result scores only.
 - **Numeric** (tabular figures): IDs, counts, dates, pagination, step numbers.
+- **Code** (`ui-monospace, Cascadia Mono, Consolas, monospace`, 0.82rem): codes and slugs in tables (school codes, import keys).
 
 ### Named Rules
 
@@ -273,13 +322,17 @@ Mostly flat with tonal layering: grey canvas, white surface, Mist bands. Shadows
 - **Menu** (`box-shadow: 0 12px 32px rgba(15, 23, 42, 0.16)`): dropdown menus in the drawer toolbar.
 - **Drawer** (`box-shadow: -18px 0 48px rgba(15, 23, 42, 0.18)`): the case drawer over a 32% slate scrim.
 
+### Stacking
+
+Layers come from the `--z-*` tokens in `tokens.css` (sticky, raised, fab, sidebar, dropdown, popover, modal, drawer, toast, alert, portal menu). Plain values 1 to 10 are allowed only for ordering siblings inside one component (a badge over a card image, a drag handle over a card); anything that must clear another component uses a token.
+
 ### Named Rules
 
 **The Flat Inside Rule.** Nothing inside a work surface or drawer casts a shadow except an open menu; inner structure is drawn with 1px rules.
 
 ## Shapes
 
-Softly rounded, never sharp and never bubbly. Controls and buttons share a 10px radius; frames inside a surface (table scroll frame, phone cards, menus, mode track, empty state) use 12px; top-level work surfaces use 14px; small inner hit areas (menu items, steps, date cells) use 8px. Everything that labels a state (risk, status, chips, counts, tags) is a full pill. Borders are 1px; the only thicker strokes are the 2px step ring, the 3px selected-tab underline and the 3px focus outline. Empty states use a dashed 1px control-line border.
+Rounded and friendly (since 17 October 2026, the user's "modern, cute, เป็นกันเอง" brief for the dashboards, then every admin page). Every text button, tab, segmented switch, search box, date field and state label is a full pill; fields and textareas use 12px; frames inside a surface (table frame, menus, inner tiles) use 16px; cards, modals, drawers and work surfaces use 22px with the soft lifted shadow (`--suth-shadow-soft`); page header bands use 22px (compact) or 28px (dashboard). Icon-only and close buttons are 14px rounded squares (`--suth-radius-icon`). Two small steps sit under the field radius: 8px (`--suth-radius-sm`) for badges, thumbnails and inline chips, and 6px (`--suth-radius-xs`) for checkboxes and tiny markers inside a control. The 22px and 28px radii are deliberate (the owner's "modern, cute" brief); they are the scale, not drift. Borders are 1px; the only thicker strokes are the 2px step ring and the 3px focus outline. Empty states use a dashed 1px control-line border. The shared layer lives in `styles/kit-system.css` and `components/dashboard/DashboardKit.{jsx,css}` (`PageHero`, `KpiTile`, `DzSection`, `DateRangePills`); dates use `components/ThaiDatePicker.jsx`.
 
 ## Components
 
@@ -288,11 +341,15 @@ Softly rounded, never sharp and never bubbly. Controls and buttons share a 10px 
 Solid, square-shouldered, quietly confident.
 
 - **Shape:** gently rounded (10px), 44px minimum height, 10px 16px padding, 0.95rem weight 700, icon + label with an 8px gap.
-- **Primary:** Burnt Action Orange fill and border, white text; one per header or footer.
+- **Primary:** Bright orange fill and border, white text; one per header or footer.
 - **Hover / Focus:** fill deepens to Ember over 160ms ease-out; focus is a 3px action-orange outline offset 2px. Disabled is 50% opacity.
 - **Secondary:** white with a Control Stroke border and Slate Ink text; hover turns the border action orange and the text Orange Ink.
 - **Ghost:** borderless; hover lays a Mist fill. A danger variant uses danger text on danger-tint hover.
 - **Icon button:** 40px square (44px on phones), Rule border, same hover as secondary; always carries an aria-label.
+
+### Button contracts
+
+All admin buttons follow one of four contracts (styles/button-system.css, modal-system.css): **primary** (bright orange fill, white text), **secondary** (white, Control Stroke border, Slate Ink; hover turns border and label orange), **danger** (danger red fill, white text; only for confirm-delete) and **row action** (icon-sized, Control Stroke border; hover tint for edit, danger tint for delete). Height is 44px, radius 10px, focus is the 3px focus outline. Text greys come only from ink, ink-2 and muted; do not introduce new greys or a second accent hue.
 
 ### Chips
 
@@ -323,12 +380,12 @@ The system's signature.
 ### Navigation
 
 - **Mode switch:** a segmented control on a Mist track (12px radius, 3px inset); the pressed segment turns white with the pressed-segment shadow. Full-width with equal segments on phones.
-- **Drawer tabs:** a roving tablist; muted labels, selected label in Orange Ink with a 3px Suthie Orange underline, counts in Mist pills. Equal-width on phones.
+- **Drawer tabs:** a roving tablist; muted labels, selected label in Orange Ink with a 3px bright-orange underline, counts in Mist pills. Equal-width on phones.
 - **Queue rows:** the person's name is a weight-800 button; hover underlines it 2px in Orange Ink; the open row is tinted Apricot.
 
 ### Case Drawer
 
-A 560px right-hand dialog over a 32% slate scrim, sliding in 32px over 260ms (cubic-bezier(0.16, 1, 0.3, 1)); full-screen on phones; no animation under reduced motion. Header: prev/next with a tabular "n / N" position, tool menus, close; then the name (Title), meta line, and risk + status pills. Below it, a four-step rail on a Mist band (ติดต่อ, บันทึกติดตาม, นัด/ส่งต่อ, ปิดเคส): numbered 24px rings, a green filled ring when done, a red ring with a small reason when attempted, an action-orange ring with an Apricot halo when current. Then tabs, a scrolling body (16px gap), and a sticky white save bar with a top rule. Focus is trapped inside, Escape closes the top dialog only, and focus returns to the opener.
+A 560px right-hand dialog over a 32% slate scrim, sliding in 32px over 260ms (cubic-bezier(0.16, 1, 0.3, 1)); full-screen on phones; no animation under reduced motion. Header: prev/next with a tabular "n / N" position, tool menus, close; then the name (Title), meta line, and risk + status pills. Below it, a four-step rail on a Mist band (ติดต่อ, บันทึกติดตาม, นัด/ส่งต่อ, ปิดเคส): numbered 24px rings, a green filled ring when done, a red ring with a small reason when attempted, an action-orange ring with an Apricot halo when current. Then tabs, a scrolling body (16px gap), and a sticky white save bar with a top rule. Every drawer, for every organization type (hospital case, school student file, referral), opens its body on the same ruled record line: latest activity (caption, bold title, tabular time, no tinted box) with Export Excel at its end. Body sections share one 1rem/700 heading, a soft rule between sections, and the same label-over-value fact grid; header pills (risk, status, enrolment, referral status) all use the full-pill shape. Focus is trapped inside, Escape closes the top dialog only, and focus returns to the opener.
 
 ### Empty and Loading
 
@@ -338,7 +395,7 @@ Empty states are centered in a dashed 12px frame: icon, a bold one-line title, a
 
 ### Do:
 
-- **Do** use Burnt Action Orange (#c2410c) for any fill under white text, and Suthie Orange (#f47932) only for underlines, borders, dots and chart lines.
+- **Do** pair every orange fill with --suth-on-action (white).
 - **Do** render risk with the shared risk pill (icon + word + color) and status with the status pill (dot + verbatim label); keep the eight status labels exactly as written.
 - **Do** give every control a 44px minimum at 760px and below, including icon buttons, chips, tabs, steps and date cells.
 - **Do** set IDs, counts and dates in tabular figures and show dates in the Buddhist era.
@@ -348,7 +405,7 @@ Empty states are centered in a dashed 12px frame: icon, a bold one-line title, a
 
 ### Don't:
 
-- **Don't** put white text on #f47932 or any lighter orange; it falls below 3:1.
+- **Note:** white on #ff8a3d is about 2.3:1 and fails WCAG AA; the owner accepted this on 16 Oct 2026.
 - **Don't** convey risk or status by color alone, and don't paraphrase or abbreviate a status label.
 - **Don't** wrap sections inside a surface in tinted boxes; Apricot tint means open, hovered or current.
 - **Don't** unmask names, phone numbers or national IDs in list or card views, or use real personal data in screenshots.

@@ -1,31 +1,120 @@
 [
   {
     "route": "dashboard",
-    "violations": []
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [".dz-pill[type=\"button\"]:nth-child(3)"],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 10.6pt (14.08px), font weight: bold). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
   },
   {
     "route": "cases",
-    "violations": []
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [".cw-mode > button[type=\"button\"]:nth-child(1)"],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 11.0pt (14.72px), font weight: bold). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [".cw-btn"],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 11.4pt (15.2px), font weight: bold). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
   },
   {
     "route": "risk-cases",
-    "violations": []
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [".cw-mode > button[type=\"button\"]:nth-child(1)"],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 11.0pt (14.72px), font weight: bold). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [".cw-btn"],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 11.4pt (15.2px), font weight: bold). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
   },
   {
     "route": "schedule",
-    "violations": []
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [".apt-view-btn.active[type=\"button\"]"],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 10.9pt (14.5px), font weight: bold). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
   },
   {
     "route": "referrals",
-    "violations": []
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": ["button[type=\"button\"]:nth-child(1) > span"],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
   },
   {
     "route": "forms",
-    "violations": []
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [".fm-btn-add-form"],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 10.9pt (14.5px), font weight: bold). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
   },
   {
     "route": "clinics",
-    "violations": []
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [".cm-context-indicator > span"],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 8.3pt (11px), font weight: bold). Expected contrast ratio of 4.5:1"
+          },
+          {
+            "target": [".cm-btn-add"],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 11.3pt (15px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
   },
   {
     "route": "members",
@@ -41,11 +130,33 @@
   },
   {
     "route": "organizations",
-    "violations": []
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [".org-btn"],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 11.4pt (15.2px), font weight: bold). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
   },
   {
     "route": "users",
-    "violations": []
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [".sum-add-btn"],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
   },
   {
     "route": "roles",
@@ -53,14 +164,21 @@
   },
   {
     "route": "banner",
-    "violations": []
+    "violations": [
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "nodes": [
+          {
+            "target": [".bm-add-btn"],
+            "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 11.3pt (15px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ]
+      }
+    ]
   },
   {
     "route": "profile",
-    "violations": []
-  },
-  {
-    "route": "school/types",
     "violations": []
   }
 ]

@@ -55,6 +55,22 @@
   border: 1px solid var(--suth-action);
 }
 
-.status-actions :is(a, button):hover { background: var(--suth-action-hover); color: white; }
-.status-actions :is(a, button):focus-visible { outline: 3px solid var(--suth-focus); outline-offset: 3px; }
-@media (max-width: 480px) { .status-page { padding: 16px; } .status-page section { padding: 28px 20px; } .status-page h1 { font-size: 1.5rem; } }
+.status-actions :is(a, button):hover {
+  background: var(--suth-action-hover);
+  color: white;
+}
+.status-actions :is(a, button):focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 3px;
+}
+@media (max-width: 480px) {
+  .status-page {
+    padding: 16px;
+  }
+  .status-page section {
+    padding: 28px 20px;
+  }
+  .status-page h1 {
+    font-size: 1.5rem;
+  }
+}

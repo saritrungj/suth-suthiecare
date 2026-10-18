@@ -1,6 +1,6 @@
-import { DialogFrame } from '../../../components/ui/index.jsx';
-import { toDisplayText } from '../../../utils/textPresentation.js';
-import { toSafeHtml } from '../../../utils/richText.js';
+import { DialogFrame } from "../../../components/ui/index.jsx";
+import { toDisplayText } from "../../../utils/textPresentation.js";
+import { toSafeHtml } from "../../../utils/richText.js";
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -646,7 +646,8 @@ export default function HistoryResult() {
 
   useEffect(() => {
     const requestedId = location.state?.expandResponseId;
-    if (loading || requestedId == null || openedRequestedResponse.current) return;
+    if (loading || requestedId == null || openedRequestedResponse.current)
+      return;
     const record = data.find((item) => String(item.id) === String(requestedId));
     if (!record) return;
     openedRequestedResponse.current = true;
@@ -654,7 +655,9 @@ export default function HistoryResult() {
     loadAnswers(record);
     setActiveInnerTab((previous) => ({
       ...previous,
-      [record.id]: record.summary_data?.score_results?.length ? "scores" : "answers",
+      [record.id]: record.summary_data?.score_results?.length
+        ? "scores"
+        : "answers",
     }));
   }, [data, loading, location.state?.expandResponseId]);
 
@@ -985,7 +988,15 @@ export default function HistoryResult() {
                   <button
                     className="hr-id-toggle"
                     aria-pressed={showId}
-                    aria-label={showId ? (i18n.language === "en" ? "Hide identity status" : "ซ่อนสถานะยืนยันตัวตน") : (i18n.language === "en" ? "Show identity status" : "แสดงสถานะยืนยันตัวตน")}
+                    aria-label={
+                      showId
+                        ? i18n.language === "en"
+                          ? "Hide identity status"
+                          : "ซ่อนสถานะยืนยันตัวตน"
+                        : i18n.language === "en"
+                          ? "Show identity status"
+                          : "แสดงสถานะยืนยันตัวตน"
+                    }
                     onClick={() => setShowId(!showId)}
                   >
                     {showId ? <FiEyeOff size={13} /> : <FiEye size={13} />}
@@ -2111,7 +2122,9 @@ export default function HistoryResult() {
                                                       <div
                                                         dangerouslySetInnerHTML={{
                                                           __html:
-                                                            toSafeHtml(displayRowTitle),
+                                                            toSafeHtml(
+                                                              displayRowTitle,
+                                                            ),
                                                         }}
                                                       />
                                                     ) : (
@@ -2232,53 +2245,58 @@ export default function HistoryResult() {
       </div>
 
       {adviceModal.isOpen && (
-        <DialogFrame className="hr-modal-card"
-        onClick={(e) => e.stopPropagation()}
-        aria-label="ประวัติคำแนะนำ" onClose={() => setAdviceModal({isOpen:false, logs:[], clinicInfo:null})}>
-            <div className="hr-modal-header">
-              <h3>
-                <FiMessageSquare color={adviceModal.clinicInfo?.color} />{" "}
-                ประวัติคำแนะนำ ({adviceModal.clinicInfo?.text})
-              </h3>
-              <button
-                className="hr-modal-close-btn"
-                aria-label="ปิดหน้าต่าง"
-                onClick={() =>
-                  setAdviceModal({ isOpen: false, logs: [], clinicInfo: null })
-                }
+        <DialogFrame
+          className="hr-modal-card"
+          onClick={(e) => e.stopPropagation()}
+          aria-label="ประวัติคำแนะนำ"
+          onClose={() =>
+            setAdviceModal({ isOpen: false, logs: [], clinicInfo: null })
+          }
+        >
+          <div className="hr-modal-header">
+            <h3>
+              <FiMessageSquare color={adviceModal.clinicInfo?.color} />{" "}
+              ประวัติคำแนะนำ ({adviceModal.clinicInfo?.text})
+            </h3>
+            <button
+              className="hr-modal-close-btn"
+              aria-label="ปิดหน้าต่าง"
+              onClick={() =>
+                setAdviceModal({ isOpen: false, logs: [], clinicInfo: null })
+              }
+            >
+              <FiX size={18} />
+            </button>
+          </div>
+          <div className="hr-modal-body">
+            {adviceModal.logs.map((log, idx) => (
+              <div
+                key={log.id || idx}
+                className="hr-advice-item"
+                style={{
+                  borderLeftColor: adviceModal.clinicInfo?.color,
+                  backgroundColor: adviceModal.clinicInfo?.bg,
+                }}
               >
-                <FiX size={18} />
-              </button>
-            </div>
-            <div className="hr-modal-body">
-              {adviceModal.logs.map((log, idx) => (
-                <div
-                  key={log.id || idx}
-                  className="hr-advice-item"
-                  style={{
-                    borderLeftColor: adviceModal.clinicInfo?.color,
-                    backgroundColor: adviceModal.clinicInfo?.bg,
-                  }}
-                >
-                  <ExpandableText
-                    text={log.detail}
-                    color={adviceModal.clinicInfo?.color}
-                  />
-                  <div className="hr-advice-meta" style={{ marginTop: "8px" }}>
-                    — {log.staff} (
-                    {new Date(log.created_at).toLocaleDateString("th-TH", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                    )
-                  </div>
+                <ExpandableText
+                  text={log.detail}
+                  color={adviceModal.clinicInfo?.color}
+                />
+                <div className="hr-advice-meta" style={{ marginTop: "8px" }}>
+                  — {log.staff} (
+                  {new Date(log.created_at).toLocaleDateString("th-TH", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                  )
                 </div>
-              ))}
-            </div>
-          </DialogFrame>
+              </div>
+            ))}
+          </div>
+        </DialogFrame>
       )}
     </div>
   );

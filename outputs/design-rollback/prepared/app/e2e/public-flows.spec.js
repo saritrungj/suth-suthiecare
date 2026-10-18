@@ -83,7 +83,10 @@ test("public navbars stay visible and usable on mobile and tablet", async ({
 
     await page.goto("/");
     const landingNav = page.locator(".sut2-nav");
-    await expect(landingNav).toHaveCSS("background-color", "rgb(255, 255, 255)");
+    await expect(landingNav).toHaveCSS(
+      "background-color",
+      "rgb(255, 255, 255)",
+    );
     await expect(landingNav).toHaveCSS("background-image", "none");
     await expect(landingNav).toHaveCSS("box-shadow", "none");
     const menuButton = page.getByRole("button", { name: "เปิดเมนู" });

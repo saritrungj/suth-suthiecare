@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { toDisplayText } from "../../../utils/textPresentation.js";
 // ตัวแปรการตั้งค่า API
 export const API_BASE = (import.meta.env?.VITE_API_URL || "/api").replace(
   /\/api$/,
@@ -19,29 +19,29 @@ export const CLINIC_INFO = {
     id: "general",
     text: "ทั่วไป",
     bg: "#f1f5f9",
-    color: "#475569",
-    border: "#cbd5e1",
+    color: "var(--suth-ink-2)",
+    border: "var(--suth-line)",
   },
   teenager: {
     id: "teenager",
     text: "คลินิกวัยรุ่น",
     bg: "#e0f2fe",
-    color: "#0284c7",
-    border: "#7dd3fc",
+    color: "var(--suth-care)",
+    border: "var(--suth-info-line)",
   },
   behavior: {
     id: "behavior",
     text: "คลินิกปรับเปลี่ยนพฤติกรรม",
     bg: "#dcfce7",
-    color: "#166534",
-    border: "#86efac",
+    color: "var(--suth-success)",
+    border: "var(--suth-success-line)",
   },
   sti: {
     id: "sti",
     text: "คลินิกโรคติดต่อฯ",
     bg: "#fce7f3",
-    color: "#be185d",
-    border: "#f9a8d4",
+    color: "var(--suth-danger)",
+    border: "var(--suth-danger-line)",
   },
 };
 
@@ -62,7 +62,7 @@ export const formatDate = (dateStr) => {
 
 export const getRiskInfo = (scoreResults = []) => {
   if (!scoreResults.length)
-    return { label: "ปกติ", color: "#2e7d32", bg: "#e8f5e9" };
+    return { label: "ปกติ", color: "var(--suth-success)", bg: "#e8f5e9" };
   const isHigh = scoreResults.some((s) => {
     const c = (s.color || "").toLowerCase().replace(/[^a-f0-9]/g, "");
     const l = (s.label || "").toLowerCase();
@@ -84,9 +84,9 @@ export const getRiskInfo = (scoreResults = []) => {
       l.includes("เฝ้าระวัง")
     );
   });
-  if (isHigh) return { label: "เสี่ยงสูง", color: "#c62828", bg: "#fce4ec" };
-  if (isMed) return { label: "เฝ้าระวัง", color: "#e65100", bg: "#fff3e0" };
-  return { label: "ปกติ", color: "#2e7d32", bg: "#e8f5e9" };
+  if (isHigh) return { label: "เสี่ยงสูง", color: "var(--suth-danger)", bg: "#fce4ec" };
+  if (isMed) return { label: "เฝ้าระวัง", color: "var(--suth-action-ink)", bg: "#fff3e0" };
+  return { label: "ปกติ", color: "var(--suth-success)", bg: "#e8f5e9" };
 };
 
 export const formatAnswerValue = (raw) => {

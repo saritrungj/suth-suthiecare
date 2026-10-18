@@ -1,16 +1,80 @@
-.se-widget{color:var(--suth-ink);font-family:var(--suth-font);border:1px solid var(--suth-line);border-radius:20px!important;box-shadow:none!important}
-.se-widget h2,.se-widget h3{color:var(--suth-ink)}
-.se-widget button,.se-modal button{min-height:44px;min-width:44px;border-radius:12px}
-.se-widget button:focus-visible,.se-modal button:focus-visible{outline:2px solid var(--suth-focus);outline-offset:3px}
-.se-widget button:hover:not(:disabled){background:var(--suth-tint)!important;color:var(--suth-action-ink)!important}
-.se-widget .se-view-all{color:var(--suth-action-ink)!important}
-.se-chart{background:var(--suth-chart-surface);border-radius:16px}
-.se-widget .recharts-default-tooltip{background:var(--suth-surface)!important;border:1px solid var(--suth-line)!important;border-radius:12px;color:var(--suth-ink)!important}
-.se-modal{--suth-modal-text:var(--suth-ink);--suth-modal-muted:var(--suth-muted);--suth-modal-surface:var(--suth-surface);--suth-modal-border:var(--suth-line);--suth-modal-accent:var(--suth-action);--suth-modal-radius:20px}
-.se-modal .ui-modal__header{padding:0 0 16px!important}
-.se-modal .ui-modal__close{background:var(--suth-surface-2)!important;color:var(--suth-muted)!important;border:1px solid var(--suth-line)!important}
-.se-modal .ui-modal__close:hover{background:var(--suth-tint)!important;color:var(--suth-action-ink)!important}
-.se-modal tbody tr:hover{background:var(--suth-surface-hover)}
-.se-modal table{min-width:640px}
-.se-modal .ui-modal__body{scrollbar-color:var(--suth-control-line) var(--suth-surface-2)}
-@media(max-width:700px){.se-widget{padding:16px!important}.se-modal{padding:16px!important;width:100%!important}.se-modal h2{font-size:1.1rem!important}}
+.se-widget {
+  color: var(--suth-ink);
+  font-family: var(--suth-font);
+  border: 1px solid var(--suth-line);
+  border-radius: 20px !important;
+  box-shadow: none !important;
+}
+.se-widget h2,
+.se-widget h3 {
+  color: var(--suth-ink);
+}
+.se-widget button,
+.se-modal button {
+  min-height: 44px;
+  min-width: 44px;
+  border-radius: 12px;
+}
+.se-widget button:focus-visible,
+.se-modal button:focus-visible {
+  outline: 2px solid var(--suth-focus);
+  outline-offset: 3px;
+}
+.se-widget button:hover:not(:disabled) {
+  background: var(--suth-tint) !important;
+  color: var(--suth-action-ink) !important;
+}
+.se-widget .se-view-all {
+  color: var(--suth-action-ink) !important;
+}
+.se-chart {
+  background: var(--suth-chart-surface);
+  border-radius: 16px;
+}
+.se-widget .recharts-default-tooltip {
+  background: var(--suth-surface) !important;
+  border: 1px solid var(--suth-line) !important;
+  border-radius: 12px;
+  color: var(--suth-ink) !important;
+}
+.se-modal {
+  --suth-modal-text: var(--suth-ink);
+  --suth-modal-muted: var(--suth-muted);
+  --suth-modal-surface: var(--suth-surface);
+  --suth-modal-border: var(--suth-line);
+  --suth-modal-accent: var(--suth-action);
+  --suth-modal-radius: 20px;
+}
+.se-modal .ui-modal__header {
+  padding: 0 0 16px !important;
+}
+.se-modal .ui-modal__close {
+  background: var(--suth-surface-2) !important;
+  color: var(--suth-muted) !important;
+  border: 1px solid var(--suth-line) !important;
+}
+.se-modal .ui-modal__close:hover {
+  background: var(--suth-tint) !important;
+  color: var(--suth-action-ink) !important;
+}
+.se-modal tbody tr:hover {
+  background: var(--suth-surface-hover);
+}
+.se-modal table {
+  min-width: 640px;
+}
+.se-modal .ui-modal__body {
+  scrollbar-color: var(--suth-control-line) var(--suth-surface-2);
+}
+@media (max-width: 700px) {
+  .se-widget {
+    padding: 16px !important;
+  }
+  .se-modal {
+    padding: 16px !important;
+    width: 100% !important;
+  }
+  .se-modal h2 {
+    font-size: 1.1rem !important;
+  }
+}

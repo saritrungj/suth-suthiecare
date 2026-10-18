@@ -1,5 +1,5 @@
 // Metadata only: never read or disclose clinical notes in a case queue.
-const { firstNameOf } = require("../utils/caseFirstName");
+const { firstNameOf, lastNameOf } = require("../utils/caseFirstName");
 const ACTIVITY_TITLES = {
   status: "อัปเดตสถานะเคส",
   note: "บันทึกการติดตาม",
@@ -7,8 +7,18 @@ const ACTIVITY_TITLES = {
 };
 
 function newestActivity(candidates) {
-  return candidates.filter((item) => item && Number.isFinite(new Date(item.occurred_at).getTime()))
-    .sort((a, b) => new Date(b.occurred_at) - new Date(a.occurred_at) || Number(b.id || 0) - Number(a.id || 0) || String(a.type || "").localeCompare(String(b.type || "")))[0] || null;
+  return (
+    candidates
+      .filter(
+        (item) => item && Number.isFinite(new Date(item.occurred_at).getTime()),
+      )
+      .sort(
+        (a, b) =>
+          new Date(b.occurred_at) - new Date(a.occurred_at) ||
+          Number(b.id || 0) - Number(a.id || 0) ||
+          String(a.type || "").localeCompare(String(b.type || "")),
+      )[0] || null
+  );
 }
 
 async function attachCaseActivities(db, responses) {
@@ -30,19 +40,33 @@ async function attachCaseActivities(db, responses) {
        LEFT JOIN mastercases mc ON mc.id=l.master_case_id AND mc.organization_id=fr.organization_id
       WHERE (${conditions.join(" OR ")})
         AND (l.master_case_id IS NULL OR (mc.id=fr.master_case_id))
-        AND l.type IN ('status','note','appoint') ORDER BY l.created_at DESC,l.id DESC`, values);
+        AND l.type IN ('status','note','appoint') ORDER BY l.created_at DESC,l.id DESC`,
+    values,
+  );
   const latest = new Map();
   for (const log of logs) {
     const key = `${log.organization_id}:${log.master_case_id ? "master" : "response"}:${log.master_case_id || log.response_id}`;
-    if (!latest.has(key)) latest.set(key, {
-      type: log.type, title: ACTIVITY_TITLES[log.type], occurred_at: log.created_at,
-    });
+    if (!latest.has(key))
+      latest.set(key, {
+        type: log.type,
+        title: ACTIVITY_TITLES[log.type],
+        occurred_at: log.created_at,
+      });
   }
-  return responses.map((row) => ({ ...row,
-    first_name: firstNameOf(row.summary_data?.display_name || row.summary_data?.name) || firstNameOf(row.submitted_by?.display_name),
-    latest_activity: latest.get(
-    `${row.organization_id}:${row.master_case_id ? "master" : "response"}:${row.master_case_id || row.id}`,
-  ) || null }));
+  return responses.map((row) => {
+    const recordedName =
+      row.summary_data?.display_name || row.summary_data?.name;
+    const accountName = row.submitted_by?.display_name;
+    return {
+      ...row,
+      first_name: firstNameOf(recordedName) || firstNameOf(accountName),
+      last_name: lastNameOf(recordedName) || lastNameOf(accountName),
+      latest_activity:
+        latest.get(
+          `${row.organization_id}:${row.master_case_id ? "master" : "response"}:${row.master_case_id || row.id}`,
+        ) || null,
+    };
+  });
 }
 
 async function schoolActivities(db, organizationId, students) {
@@ -63,14 +87,32 @@ async function schoolActivities(db, organizationId, students) {
         AND ((s.person_id IS NOT NULL AND fr.person_id=s.person_id) OR (s.patient_account_id IS NOT NULL AND fr.patient_account_id=s.patient_account_id))
        JOIN case_referrals r ON r.source_response_id=fr.id AND r.source_organization_id=fr.organization_id
       WHERE sch.organization_id=? AND s.id IN (?)`,
-    [organizationId, students.map((s) => s.id), organizationId, students.map((s) => s.id), organizationId, students.map((s) => s.id)]);
+    [
+      organizationId,
+      students.map((s) => s.id),
+      organizationId,
+      students.map((s) => s.id),
+      organizationId,
+      students.map((s) => s.id),
+    ],
+  );
   const grouped = new Map();
   for (const event of events) {
     const previous = grouped.get(event.student_id);
     const newest = newestActivity([previous, event]);
     if (newest) grouped.set(event.student_id, newest);
   }
-  return new Map([...grouped].map(([id, { type, title, occurred_at }]) => [id, { type, title, occurred_at }]));
+  return new Map(
+    [...grouped].map(([id, { type, title, occurred_at }]) => [
+      id,
+      { type, title, occurred_at },
+    ]),
+  );
 }
 
-module.exports = { ACTIVITY_TITLES, newestActivity, attachCaseActivities, schoolActivities };
+module.exports = {
+  ACTIVITY_TITLES,
+  newestActivity,
+  attachCaseActivities,
+  schoolActivities,
+};

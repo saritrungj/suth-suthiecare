@@ -1,5 +1,5 @@
-import SearchableSelect from '../../SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import SearchableSelect from "../../SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import "./TemplateManagerModal.css";
 import React, { useState, useEffect, useCallback } from "react";
 import { FaCog, FaTimes, FaPlus, FaTrashAlt, FaSave } from "react-icons/fa";
@@ -73,7 +73,7 @@ export default function TemplateManagerModal({
         icon: "warning",
         title: "ข้อมูลไม่ครบถ้วน.",
         text: "กรุณาระบุชื่อชุดคำถาม",
-        confirmButtonColor: "#3b82f6",
+        confirmButtonColor: "var(--suth-info)",
       });
     }
 
@@ -105,7 +105,7 @@ export default function TemplateManagerModal({
         icon: "error",
         title: "เกิดข้อผิดพลาด",
         text: "บันทึกไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
-        confirmButtonColor: "#3b82f6",
+        confirmButtonColor: "var(--suth-info)",
       });
     }
   };
@@ -116,8 +116,8 @@ export default function TemplateManagerModal({
       text: "คุณต้องการลบชุดคำถามนี้ใช่หรือไม่ (ไม่สามารถกู้คืนได้)",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#94a3b8",
+      confirmButtonColor: "var(--suth-risk-dot-high)",
+      cancelButtonColor: "var(--suth-control-line)",
       confirmButtonText: "ใช่, ลบทิ้งเลย!",
       cancelButtonText: "ยกเลิก",
     });
@@ -140,7 +140,7 @@ export default function TemplateManagerModal({
           icon: "error",
           title: "เกิดข้อผิดพลาด",
           text: "ลบไม่สำเร็จ กรุณาลองใหม่อีกครั้ง",
-          confirmButtonColor: "#3b82f6",
+          confirmButtonColor: "var(--suth-info)",
         });
       }
     }
@@ -194,7 +194,7 @@ export default function TemplateManagerModal({
           <h3
             style={{
               margin: 0,
-              color: "#0f766e",
+              color: "var(--suth-success)",
               display: "flex",
               alignItems: "center",
               gap: "8px",
@@ -221,7 +221,9 @@ export default function TemplateManagerModal({
                   className={`cdm-tpl-sidebar-item ${editingTplId === tpl.id ? "active" : ""}`}
                   onClick={() => handleEditClick(tpl)}
                 >
-                  <span className="cdm-tpl-item-label">{toDisplayText(tpl.label)}</span>
+                  <span className="cdm-tpl-item-label">
+                    {toDisplayText(tpl.label)}
+                  </span>
                   <button
                     type="button"
                     onClick={(e) => {
@@ -275,8 +277,8 @@ export default function TemplateManagerModal({
                       marginLeft: `${indentLevel * 30}px`,
                       borderLeft:
                         indentLevel > 0
-                          ? `4px solid ${indentLevel === 1 ? "#34d399" : "#94a3b8"}`
-                          : "1px solid #e2e8f0",
+                          ? `4px solid ${indentLevel === 1 ? "var(--suth-success-line)" : "var(--suth-control-line)"}`
+                          : "1px solid var(--suth-line-soft)",
                     }}
                   >
                     <div className="cdm-tpl-q-input-group">
@@ -284,8 +286,8 @@ export default function TemplateManagerModal({
                       <span
                         className="cdm-q-number"
                         style={{
-                          background: indentLevel > 0 ? "#d1fae5" : "#e0f2fe",
-                          color: indentLevel > 0 ? "#059669" : "#0ea5e9",
+                          background: indentLevel > 0 ? "var(--suth-success-tint)" : "var(--suth-info-line)",
+                          color: indentLevel > 0 ? "var(--suth-success)" : "var(--suth-info)",
                         }}
                       >
                         {displayNum}
@@ -342,8 +344,8 @@ export default function TemplateManagerModal({
                       >
                         <span
                           style={{
-                            fontSize: "13px",
-                            color: "#475569",
+                            fontSize: "var(--suth-fs-label)",
+                            color: "var(--suth-ink-2)",
                             fontWeight: "700",
                           }}
                         >
@@ -351,11 +353,11 @@ export default function TemplateManagerModal({
                         </span>
                         <SearchableSelect
                           style={{
-                            fontSize: "13px",
+                            fontSize: "var(--suth-fs-label)",
                             padding: "6px 10px",
-                            borderRadius: "8px",
-                            border: "1px solid #cbd5e1",
-                            background: "#fff",
+                            borderRadius: "var(--suth-radius)",
+                            border: "1px solid var(--suth-control-line)",
+                            background: "var(--suth-surface)",
                             minWidth: "150px",
                           }}
                           value={q.parentId || ""}
@@ -409,11 +411,11 @@ export default function TemplateManagerModal({
                               placeholder="ระบุหน่วย (เช่น นาที, เม็ด)"
                               style={{
                                 width: "150px",
-                                fontSize: "12px",
+                                fontSize: "var(--suth-fs-caption)",
                                 padding: "6px 10px",
-                                border: "1px dashed #0ea5e9",
-                                borderRadius: "6px",
-                                background: "#ffffff",
+                                border: "1px dashed var(--suth-info-line)",
+                                borderRadius: "var(--suth-radius)",
+                                background: "var(--suth-surface)",
                               }}
                               value={q.amountUnit || ""}
                               onChange={(e) => {
@@ -455,11 +457,11 @@ export default function TemplateManagerModal({
                           placeholder="พิมพ์ข้อความโครงร่าง (Template) สำหรับช่องหมายเหตุที่นี่..."
                           style={{
                             width: "100%",
-                            fontSize: "13px",
+                            fontSize: "var(--suth-fs-label)",
                             padding: "12px",
-                            border: "1px dashed #0ea5e9",
-                            borderRadius: "10px",
-                            background: "#f0f9ff",
+                            border: "1px dashed var(--suth-info-line)",
+                            borderRadius: "var(--suth-radius)",
+                            background: "var(--suth-canvas)",
                             minHeight: "60px",
                             fontFamily: "inherit",
                             resize: "vertical",
@@ -482,9 +484,9 @@ export default function TemplateManagerModal({
                           marginTop: "16px",
                           marginLeft: "45px",
                           padding: "16px",
-                          background: "#f8fafc",
-                          borderRadius: "12px",
-                          border: "1px solid #e2e8f0",
+                          background: "var(--suth-surface-2)",
+                          borderRadius: "var(--suth-radius)",
+                          border: "1px solid var(--suth-line)",
                         }}
                       >
                         <div
@@ -511,8 +513,8 @@ export default function TemplateManagerModal({
                                     width: "12px",
                                     height: "12px",
                                     borderRadius: "50%",
-                                    border: "3px solid #94a3b8",
-                                    background: "#fff",
+                                    border: "3px solid var(--suth-muted)",
+                                    background: "var(--suth-surface)",
                                   }}
                                 ></div>
                                 <input
@@ -521,8 +523,9 @@ export default function TemplateManagerModal({
                                   style={{
                                     flex: 1,
                                     border: "none",
-                                    borderBottom: "2px solid #cbd5e1",
-                                    fontSize: "14px",
+                                    borderBottom:
+                                      "2px solid var(--suth-control-line)",
+                                    fontSize: "var(--suth-fs-sm)",
                                     background: "transparent",
                                     padding: "4px 8px",
                                   }}
@@ -538,11 +541,11 @@ export default function TemplateManagerModal({
                                   }}
                                   onFocus={(e) =>
                                     (e.target.style.borderBottomColor =
-                                      "#0ea5e9")
+                                      "var(--suth-action)")
                                   }
                                   onBlur={(e) =>
                                     (e.target.style.borderBottomColor =
-                                      "#cbd5e1")
+                                      "var(--suth-line)")
                                   }
                                 />
                                 <button
@@ -566,13 +569,13 @@ export default function TemplateManagerModal({
                         <button
                           type="button"
                           style={{
-                            background: "#e0f2fe",
+                            background: "var(--suth-info-line)",
                             border: "none",
-                            color: "#0369a1",
-                            fontSize: "13px",
+                            color: "var(--suth-info)",
+                            fontSize: "var(--suth-fs-label)",
                             fontWeight: "700",
                             padding: "6px 12px",
-                            borderRadius: "20px",
+                            borderRadius: "var(--suth-radius-card)",
                             cursor: "pointer",
                             marginTop: "16px",
                             display: "flex",

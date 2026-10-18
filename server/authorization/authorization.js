@@ -223,11 +223,18 @@ function organizationWhere(column, req, params = []) {
   if (scope) {
     const alias = column.includes(".") ? column.split(".")[0] + "." : "";
     const path = req.schoolResourcePath || req.path;
-    const master = path.startsWith("/master-cases") || ["mc.", "m."].includes(alias);
+    const master =
+      path.startsWith("/master-cases") || ["mc.", "m."].includes(alias);
     const ids = master ? scope.masterIds : scope.responseIds;
-    return { sql: ` AND ${column} = ? AND ${alias}id IN (?)`, params: [...params, req.organizationContext, ids.length ? ids : [0]] };
+    return {
+      sql: ` AND ${column} = ? AND ${alias}id IN (?)`,
+      params: [...params, req.organizationContext, ids.length ? ids : [0]],
+    };
   }
-  return { sql: ` AND ${column} = ?`, params: [...params, req.organizationContext] };
+  return {
+    sql: ` AND ${column} = ?`,
+    params: [...params, req.organizationContext],
+  };
 }
 
 async function audit(

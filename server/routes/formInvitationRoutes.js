@@ -25,7 +25,8 @@ function fail(res, error) {
 router.post(
   "/form-invitations",
   verifyToken,
-  requireAction("cases.update"),
+  // Sending an assessment invitation to a patient account (roles page).
+  requireAction("patient_members.create"),
   async (req, res) => {
     const connection = await db.getConnection();
     try {
@@ -127,7 +128,7 @@ router.post(
 router.post(
   "/form-invitations/:id/revoke",
   verifyToken,
-  requireAction("cases.update"),
+  requireAction("patient_members.delete"),
   async (req, res) => {
     const connection = await db.getConnection();
     try {

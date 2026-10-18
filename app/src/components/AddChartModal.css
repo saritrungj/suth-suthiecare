@@ -6,7 +6,7 @@
   inset: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(31, 47, 63, 0.4);
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -23,13 +23,13 @@ body.modal-open {
    MODAL CONTENT
 ═════════════════════════════════════ */
 .modal-content {
-  background: #ffffff;
-  border-radius: 12px;
+  background: var(--suth-surface);
+  border-radius: var(--suth-radius-panel);
   width: 820px;
   max-width: 94vw;
   padding: 28px 32px 24px;
-  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.18);
-  border: 2px solid #2d7d81;
+  box-shadow: 0 20px 55px rgba(31, 47, 63, 0.18);
+  border: 2px solid var(--suth-action);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -70,28 +70,28 @@ select.form-control option {
   align-items: center;
   padding-bottom: 14px;
   margin-bottom: 20px;
-  border-bottom: 2px solid #f1f5f9;
+  border-bottom: 2px solid var(--suth-line-soft);
   flex-shrink: 0;
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 1.35rem;
+  font-size: var(--suth-fs-title);
   font-weight: 700;
-  color: #2d7d81;
+  color: var(--suth-action-ink);
 }
 
 .modal-header button {
   background: none;
   border: none;
-  font-size: 1.7rem;
-  color: #9ca3af;
+  font-size: var(--suth-fs-display);
+  color: var(--suth-muted);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .modal-header button:hover {
-  color: #ef4444;
+  color: var(--suth-danger);
   transform: scale(1.1);
 }
 
@@ -110,7 +110,7 @@ select.form-control option {
 /* เส้นแบ่งกลาง */
 .modal-divider {
   width: 1px;
-  background: #e5e7eb;
+  background: var(--suth-line-soft);
   align-self: stretch;
 }
 
@@ -132,31 +132,31 @@ select.form-control option {
 
 .form-group label {
   font-weight: 600;
-  color: #374151;
-  font-size: 0.9rem;
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-sm);
 }
 
 .form-control {
   width: 100%;
   height: 44px;
   padding: 0 14px;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  background: #f8fafc;
-  font-size: 0.95rem;
+  border-radius: var(--suth-radius-panel);
+  border: 1px solid var(--suth-line-soft);
+  background: var(--suth-surface-2);
+  font-size: var(--suth-fs-body);
   font-weight: 500;
   transition: all 0.2s ease;
   outline: none;
 }
 
 .form-control:hover {
-  background: #ffffff;
+  background: var(--suth-surface);
 }
 
 .form-control:focus {
-  border-color: #2d7d81;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(45, 125, 129, 0.15);
+  border-color: var(--suth-action);
+  background: var(--suth-surface);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--suth-action) 15%, transparent);
 }
 
 select.form-control {
@@ -180,17 +180,17 @@ select.form-control {
 }
 
 .modal-preview-side h3 {
-  font-size: 1rem;
+  font-size: var(--suth-fs-md);
   font-weight: 700;
-  color: #374151;
+  color: var(--suth-ink-2);
   margin: 0;
 }
 
 .preview-box {
   flex: 1;
-  background: #f8fafc;
-  border-radius: 12px;
-  border: 2px dashed #cbd5e1;
+  background: var(--suth-surface-2);
+  border-radius: var(--suth-radius-panel);
+  border: 2px dashed var(--suth-line);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -201,8 +201,8 @@ select.form-control {
 }
 
 .preview-box p {
-  color: #9ca3af;
-  font-size: 0.85rem;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-sm);
   text-align: center;
 }
 
@@ -215,41 +215,41 @@ select.form-control {
   gap: 12px;
   padding-top: 18px;
   margin-top: 20px;
-  border-top: 2px solid #f1f5f9;
+  border-top: 2px solid var(--suth-line-soft);
   flex-shrink: 0;
 }
 
 .btn-secondary {
-  background: #f1f5f9;
-  color: #4b5563;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  background: var(--suth-surface-2);
+  color: var(--suth-ink-2);
+  border: 1px solid var(--suth-line-soft);
+  border-radius: var(--suth-radius-panel);
   padding: 10px 28px;
-  font-size: 0.95rem;
+  font-size: var(--suth-fs-body);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .btn-secondary:hover {
-  background: #e2e8f0;
+  background: var(--suth-line);
 }
 
 .btn-primary {
-  background: #2d7d81;
-  color: white;
+  background: var(--suth-action);
+  color: var(--suth-on-action);
   border: none;
-  border-radius: 12px;
+  border-radius: var(--suth-radius-panel);
   padding: 10px 36px;
-  font-size: 0.95rem;
+  font-size: var(--suth-fs-body);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(45, 125, 129, 0.28);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--suth-action) 28%, transparent);
 }
 
 .btn-primary:hover {
-  background: #236366;
+  background: var(--suth-action);
   transform: translateY(-1px);
 }
 .btn-primary:active {
@@ -282,9 +282,9 @@ select.form-control {
   .modal-footer {
     margin-top: 15px;
     padding-top: 15px;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid var(--suth-line-soft);
     flex-shrink: 0;
-    background: #ffffff;
+    background: var(--suth-surface);
   }
 
   .preview-box {
@@ -297,9 +297,9 @@ select.form-control {
     justify-content: flex-start;
     align-items: center;
 
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
-    background: #f8fafc;
+    border: 2px dashed var(--suth-line);
+    border-radius: var(--suth-radius-panel);
+    background: var(--suth-surface-2);
     padding: 20px;
     box-sizing: border-box;
     overflow-y: auto;
@@ -312,7 +312,7 @@ select.form-control {
   .btn-primary,
   .btn-secondary {
     padding: 10px 24px;
-    font-size: 0.95rem;
+    font-size: var(--suth-fs-body);
     min-width: 120px;
   }
 }
@@ -348,12 +348,12 @@ select.form-control {
   .preview-box {
     min-height: 240px; /* 📏 พอดีไม่เตี้ยไม่สูง */
     padding: 8px; /* 📦 ลดขอบ */
-    border-radius: 10px;
+    border-radius: var(--suth-radius);
   }
 
   /* 🔥 หัวข้อ */
   .modal-preview-side h3 {
-    font-size: 0.95rem;
+    font-size: var(--suth-fs-body);
     margin-bottom: 4px;
   }
 

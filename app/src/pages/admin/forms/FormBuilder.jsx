@@ -1,5 +1,5 @@
-import {useMasterOptions} from "../../../components/MasterSelect";
-import {usePageExport} from "../../../components/ExcelExport";
+import { useMasterOptions } from "../../../components/MasterSelect";
+import { usePageExport } from "../../../components/ExcelExport";
 import React, {
   useState,
   useRef,
@@ -55,8 +55,19 @@ import MoveSectionModal from "./builder-components/MoveSectionModal";
 import SortableQuestion from "./builder-components/SortableQuestion";
 
 import PublishSettingsModal from "./builder-components/PublishSettingsModal";
+import { usePermissions } from "../../../permissions/PermissionsProvider";
+import { getSelectableOrganizations } from "../../../permissions/organizationContext";
+import {
+  getClinicName,
+  getHealthDomainLabel,
+  getOrganizationProfile,
+} from "../../../permissions/organizationProfile";
 import ThemeSidebar from "./builder-components/ThemeSidebar";
 import QuestionBody from "./builder-components/QuestionBody";
+import {
+  DEFAULT_FORM_THEME,
+  DEFAULT_SCORE_BAND_COLOR,
+} from "./formThemePalette";
 
 import {
   getTemplate9Q,
@@ -81,21 +92,23 @@ const DEFAULT_FACULTIES = [
 // 🟢 เพิ่มชุดตัวเลือกสำเร็จรูปสำหรับ อาชีพ/สถานะ
 const DEFAULT_USER_STATUSES = ["นักศึกษา", "บุคคลทั่วไป"];
 
+// Section badges cycle through the semantic tint/line pairs so adjacent
+// sections read apart without adding hues outside the token set.
 const SECTION_COLORS = [
-  "#e8eaf6",
-  "#fff8e1",
-  "#e8f5e9",
-  "#e3f2fd",
-  "#fce4ec",
-  "#f3e5f5",
+  "var(--suth-info-tint)",
+  "var(--suth-warning-tint)",
+  "var(--suth-success-tint)",
+  "var(--suth-tint)",
+  "var(--suth-danger-tint)",
+  "var(--suth-neutral-tint)",
 ];
 const SECTION_BORDER_COLORS = [
-  "#9fa8da",
-  "#ffe082",
-  "#a5d6a7",
-  "#90caf9",
-  "#f48fb1",
-  "#ce93d8",
+  "var(--suth-info-line)",
+  "var(--suth-warning-line)",
+  "var(--suth-success-line)",
+  "var(--suth-tint-line)",
+  "var(--suth-danger-line)",
+  "var(--suth-control-line)",
 ];
 
 const formatDateTimeForInput = (dateString) => {
@@ -143,8 +156,17 @@ const deeplyCleanData = (items) => {
 const FormBuilder = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const facultyOptions=useMasterOptions("faculty",DEFAULT_FACULTIES.map((label,index)=>({code:String(index),label})));
-  const userStatusOptions=useMasterOptions("user_status",DEFAULT_USER_STATUSES.map((label,index)=>({code:String(index),label})));
+  const facultyOptions = useMasterOptions(
+    "faculty",
+    DEFAULT_FACULTIES.map((label, index) => ({ code: String(index), label })),
+  );
+  const userStatusOptions = useMasterOptions(
+    "user_status",
+    DEFAULT_USER_STATUSES.map((label, index) => ({
+      code: String(index),
+      label,
+    })),
+  );
 
   const [activeQuestionId, setActiveQuestionId] = useState("main-header");
 
@@ -162,6 +184,11 @@ const FormBuilder = () => {
   const [healthDomain, setHealthDomain] = useState("");
   const [resultDisplayMode, setResultDisplayMode] = useState("realtime");
   const [clinics, setClinics] = useState([]);
+  const { activeOrganization, activeOrganizationType, authorization } =
+    usePermissions();
+  const builderProfile = getOrganizationProfile(
+    activeOrganization === "all" ? null : activeOrganizationType,
+  );
 
   useEffect(() => {
     getActiveClinics()
@@ -175,10 +202,10 @@ const FormBuilder = () => {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   const [isThemePanelOpen, setIsThemePanelOpen] = useState(false);
-  const [themeColor, setThemeColor] = useState("#673ab7");
-  const [bgColor, setBgColor] = useState("#f0f2f5");
+  const [themeColor, setThemeColor] = useState(DEFAULT_FORM_THEME.color);
+  const [bgColor, setBgColor] = useState(DEFAULT_FORM_THEME.bg);
   const [bannerType, setBannerType] = useState("none");
-  const [bannerBgColor, setBannerBgColor] = useState("#4285f4");
+  const [bannerBgColor, setBannerBgColor] = useState(DEFAULT_FORM_THEME.bannerBgColor);
   const [headerImage, setHeaderImage] = useState(null);
   const [bannerText, setBannerText] = useState("");
   const [bannerTextAlign, setBannerTextAlign] = useState("center");
@@ -204,7 +231,27 @@ const FormBuilder = () => {
     },
   ]);
 
-  usePageExport({title:"รายละเอียดแบบประเมิน",sources:id?[{resource:"form",id}]:[],...(id?{}:{localSheets:[{resource:"form_draft",data:{title:formTitle,description:formDesc,status:formStatus,clinic_type:clinicType,type:formType,questions}}]})});
+  usePageExport({
+    title: "รายละเอียดแบบประเมิน",
+    sources: id ? [{ resource: "form", id }] : [],
+    ...(id
+      ? {}
+      : {
+          localSheets: [
+            {
+              resource: "form_draft",
+              data: {
+                title: formTitle,
+                description: formDesc,
+                status: formStatus,
+                clinic_type: clinicType,
+                type: formType,
+                questions,
+              },
+            },
+          ],
+        }),
+  });
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
   const sensors = useSensors(
     useSensor(TouchSensor, {
@@ -245,10 +292,10 @@ const FormBuilder = () => {
                 ? JSON.parse(data.theme)
                 : data.theme;
             t = deeplyCleanData(t);
-            setThemeColor(t.color || "#673ab7");
-            setBgColor(t.bg || "#f0f2f5");
+            setThemeColor(t.color || DEFAULT_FORM_THEME.color);
+            setBgColor(t.bg || DEFAULT_FORM_THEME.bg);
             setBannerType(t.bannerType || "none");
-            setBannerBgColor(t.bannerBgColor || "#4285f4");
+            setBannerBgColor(t.bannerBgColor || DEFAULT_FORM_THEME.bannerBgColor);
             setHeaderImage(t.headerImage || null);
             setBannerText(t.bannerText || "");
             setBannerTextAlign(t.bannerTextAlign || "center");
@@ -573,8 +620,8 @@ const FormBuilder = () => {
       reverseButtons: true,
       confirmButtonText: "ลบส่วน",
       cancelButtonText: "ยกเลิก",
-      confirmButtonColor: "#dc2626",
-      cancelButtonColor: "#64748b",
+      confirmButtonColor: "var(--suth-danger)",
+      cancelButtonColor: "var(--suth-muted)",
     });
     if (result.isConfirmed) {
       const secIndex = questions.findIndex((q) => q.id === sectionId);
@@ -622,8 +669,8 @@ const FormBuilder = () => {
         confirmButtonText: "เผยแพร่ทันที",
         denyButtonText: "เก็บเป็นแบบร่าง",
         cancelButtonText: "ยกเลิก",
-        confirmButtonColor: "#1967d2", // สีน้ำเงิน
-        denyButtonColor: "#f59e0b", // สีส้ม
+        confirmButtonColor: "var(--suth-info)", // สีน้ำเงิน
+        denyButtonColor: "var(--suth-action)", // สีส้ม
       });
 
       // ถ้ากดปุ่ม "ยกเลิก" ให้หยุดการเซฟทันที
@@ -718,6 +765,12 @@ const FormBuilder = () => {
         bannerTextAlign,
       },
       questions: questions,
+      ...(activeOrganization !== "all" && {
+        organization_name: getSelectableOrganizations(authorization).find(
+          (org) => String(org.id) === String(activeOrganization),
+        )?.name,
+        organization_type: activeOrganizationType,
+      }),
     };
     window.__formPreviewData = previewData;
     try {
@@ -1029,7 +1082,7 @@ const FormBuilder = () => {
         if (q.id === id) {
           const newRules =
             isScored && (!q.scoringRules || q.scoringRules.length === 0)
-              ? [{ min: 0, max: 0, label: "", color: "#4caf50", advice: "" }]
+              ? [{ min: 0, max: 0, label: "", color: DEFAULT_SCORE_BAND_COLOR, advice: "" }]
               : q.scoringRules;
           return { ...q, isScored, scoringRules: newRules };
         }
@@ -1081,7 +1134,7 @@ const FormBuilder = () => {
               !["dropdown", "multiple_choice", "checkboxes"].includes(q.type) ||
               (q.options?.length <= 1 && q.options?.[0] === "ตัวเลือก 1")
             ) {
-              updates.options = facultyOptions.map(o=>o.label);
+              updates.options = facultyOptions.map((o) => o.label);
             }
           }
 
@@ -1091,7 +1144,7 @@ const FormBuilder = () => {
               !["dropdown", "multiple_choice", "checkboxes"].includes(q.type) ||
               (q.options?.length <= 1 && q.options?.[0] === "ตัวเลือก 1")
             ) {
-              updates.options = userStatusOptions.map(o=>o.label);
+              updates.options = userStatusOptions.map((o) => o.label);
             }
             updates.type = "multiple_choice";
             updates.isUserStatus = true;
@@ -1115,7 +1168,7 @@ const FormBuilder = () => {
               (!q.scoringRules || q.scoringRules.length === 0)
             ) {
               updates.scoringRules = [
-                { min: 0, max: 0, label: "", color: "#4caf50", advice: "" },
+                { min: 0, max: 0, label: "", color: DEFAULT_SCORE_BAND_COLOR, advice: "" },
               ];
             }
           } else {
@@ -1187,9 +1240,9 @@ const FormBuilder = () => {
             <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
             <FaSpinner
               size={40}
-              style={{ animation: "spin 1s linear infinite", color: "#1967d2" }}
+              style={{ animation: "spin 1s linear infinite", color: "var(--suth-info)" }}
             />
-            <h3 style={{ marginTop: "16px", color: "#5f6368" }}>
+            <h3 style={{ marginTop: "16px", color: "var(--suth-muted)" }}>
               กำลังโหลดแบบฟอร์ม...
             </h3>
           </main>
@@ -1226,8 +1279,8 @@ const FormBuilder = () => {
                       reverseButtons: true,
                       confirmButtonText: "ออกโดยไม่บันทึก",
                       cancelButtonText: "กลับไปแก้ไข",
-                      confirmButtonColor: "#dc2626",
-                      cancelButtonColor: "#64748b",
+                      confirmButtonColor: "var(--suth-danger)",
+                      cancelButtonColor: "var(--suth-muted)",
                     });
                     if (result.isConfirmed) navigate("/admin/forms");
                   }}
@@ -1239,7 +1292,7 @@ const FormBuilder = () => {
                   {formStatus === "draft" && (
                     <span
                       style={{
-                        fontSize: "14px",
+                        fontSize: "var(--suth-fs-sm)",
                         color: "var(--suth-warning)",
                         marginLeft: "8px",
                         fontWeight: "bold",
@@ -1252,47 +1305,16 @@ const FormBuilder = () => {
                       [<FaFileAlt /> แบบร่าง]
                     </span>
                   )}
-                  <span
-                    className="sfb-badge-clinic"
-                    style={{
-                      fontSize: "12px",
-                      background: "var(--suth-info-tint)",
-                      color: "var(--suth-info)",
-                      padding: "2px 8px",
-                      borderRadius: "4px",
-                      marginLeft: "10px",
-                      fontWeight: "bold",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      verticalAlign: "middle",
-                    }}
-                  >
-                    {(() => {
-                      if (!clinicType || clinicType === "general")
-                        return "ทั่วไป";
-                      const c = clinics.find((x) => x.slug === clinicType);
-                      if (c) return c.name;
-                      if (clinicType === "teenager") return "คลินิกวัยรุ่น";
-                      if (clinicType === "behavior") return "คลินิกปLSM";
-                      if (clinicType === "sti") return "คลินิกโรคติดต่อฯ";
-                      return clinicType;
-                    })()}
+                  <span className="sfb-badge-clinic">
+                    {builderProfile.formGroupAxis === "health_domain"
+                      ? getHealthDomainLabel(healthDomain)
+                      : getClinicName(clinicType || "general", clinics) ||
+                        "คลินิกที่ถูกลบแล้ว"}
                   </span>
                   <span
-                    className="sfb-badge-type"
-                    style={{
-                      fontSize: "12px",
-                      background:
-                        formType === "Follow-up" ? "#fce7f3" : "#f1f5f9",
-                      color: formType === "Follow-up" ? "#be185d" : "#475569",
-                      padding: "2px 8px",
-                      borderRadius: "4px",
-                      marginLeft: "6px",
-                      fontWeight: "bold",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      verticalAlign: "middle",
-                    }}
+                    className={`sfb-badge-type${
+                      formType === "Follow-up" ? " sfb-badge-type--followup" : ""
+                    }`}
                   >
                     {formType === "Follow-up"
                       ? "ฟอร์มติดตามผล"
@@ -1327,7 +1349,17 @@ const FormBuilder = () => {
                   <div
                     id="btn-undo"
                     className="sfb-icon-group"
+                    role="button"
+                    aria-label="Undo"
+                    tabIndex={past.length === 0 ? -1 : 0}
+                    aria-disabled={past.length === 0}
                     onClick={handleUndo}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        handleUndo();
+                      }
+                    }}
                     style={{
                       opacity: past.length === 0 ? 0.4 : 1,
                       pointerEvents: past.length === 0 ? "none" : "auto",
@@ -1339,7 +1371,17 @@ const FormBuilder = () => {
                   <div
                     id="btn-redo"
                     className="sfb-icon-group"
+                    role="button"
+                    aria-label="Redo"
+                    tabIndex={future.length === 0 ? -1 : 0}
+                    aria-disabled={future.length === 0}
                     onClick={handleRedo}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        handleRedo();
+                      }
+                    }}
                     style={{
                       opacity: future.length === 0 ? 0.4 : 1,
                       pointerEvents: future.length === 0 ? "none" : "auto",
@@ -1350,16 +1392,13 @@ const FormBuilder = () => {
                   </div>
                 </div>
                 <button
-                  className="sfb-btn-save"
+                  className={`sfb-btn-save ${
+                    formStatus === "draft"
+                      ? "sfb-btn-save--draft"
+                      : "sfb-btn-save--published"
+                  }`}
                   onClick={handleSaveForm}
                   disabled={isSaving}
-                  style={{
-                    backgroundColor:
-                      formStatus === "draft" ? "#fbbc04" : "#1967d2",
-                    color: formStatus === "draft" ? "#000" : "#fff",
-                    opacity: isSaving ? 0.7 : 1,
-                    cursor: isSaving ? "not-allowed" : "pointer",
-                  }}
                 >
                   {isSaving ? (
                     <span
@@ -1543,7 +1582,7 @@ const FormBuilder = () => {
                   style={{
                     width: "100%",
                     height: "1px",
-                    background: "#dadce0",
+                    background: "var(--suth-line)",
                     margin: "8px 0",
                   }}
                 ></div>
@@ -1553,9 +1592,9 @@ const FormBuilder = () => {
                 >
                   <FaFileMedical
                     className="sfb-tool-icon"
-                    style={{ color: "#d93025" }}
+                    style={{ color: "var(--suth-danger)" }}
                   />
-                  <span style={{ color: "#d93025", fontWeight: "bold" }}>
+                  <span style={{ color: "var(--suth-danger)", fontWeight: "bold" }}>
                     เพิ่ม 9Q
                   </span>
                 </button>
@@ -1565,9 +1604,9 @@ const FormBuilder = () => {
                 >
                   <FaWeight
                     className="sfb-tool-icon"
-                    style={{ color: "#00bcd4" }}
+                    style={{ color: "var(--suth-info)" }}
                   />
-                  <span style={{ color: "#0e6574", fontWeight: "bold" }}>
+                  <span style={{ color: "var(--suth-info)", fontWeight: "bold" }}>
                     เพิ่ม BMI
                   </span>
                 </button>
@@ -1577,9 +1616,11 @@ const FormBuilder = () => {
                 >
                   <FaClipboardList
                     className="sfb-tool-icon"
-                    style={{ color: "#4caf50" }}
+                    style={{ color: "var(--suth-success)" }}
                   />
-                  <span style={{ color: "var(--suth-success)", fontWeight: "bold" }}>
+                  <span
+                    style={{ color: "var(--suth-success)", fontWeight: "bold" }}
+                  >
                     เพิ่ม 3อ.
                   </span>
                 </button>
@@ -1589,9 +1630,11 @@ const FormBuilder = () => {
                 >
                   <FaHeartbeat
                     className="sfb-tool-icon"
-                    style={{ color: "#e91e63" }}
+                    style={{ color: "var(--suth-chart-purple)" }}
                   />
-                  <span style={{ color: "#a7194f", fontWeight: "bold" }}>
+                  <span
+                    style={{ color: "var(--suth-chart-purple)", fontWeight: "bold" }}
+                  >
                     เพิ่ม STIs
                   </span>
                 </button>

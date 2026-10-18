@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { setAuthSession } from "../../utils/authSession";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -1010,6 +1010,7 @@ export default function PatientLogin({ initialRole = "patient" }) {
               <div
                 ref={turnstileRef}
                 className="patient-turnstile"
+                role="group"
                 aria-label={t("patient_auth.login.security_label")}
               />
               <button

@@ -124,7 +124,16 @@ export default function PatientAccountMenu({
       {open && (
         <div className="patient-account-dropdown" role="menu">
           <div className="patient-account-menu-items">
-            {session.user.email && !session.user.email_verified && <button type="button" role="menuitem" onClick={()=>go('/account/verify-email')}><FiUser aria-hidden="true" />{t('nav.verify_email','ยืนยันอีเมล')}</button>}
+            {session.user.email && !session.user.email_verified && (
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => go("/account/verify-email")}
+              >
+                <FiUser aria-hidden="true" />
+                {t("nav.verify_email", "ยืนยันอีเมล")}
+              </button>
+            )}
             <button
               type="button"
               role="menuitem"

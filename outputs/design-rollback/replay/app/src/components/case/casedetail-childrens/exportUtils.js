@@ -1,10 +1,9 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { toDisplayText } from "../../../utils/textPresentation.js";
 // src/components/case/casedetail-childrens/exportUtils.js
 //โค้ดสร้างรายงาน PDF
 
 // 1. ฟังก์ชันทำความสะอาด HTML
-export const stripHtml = (html) =>
-  toDisplayText(html);
+export const stripHtml = (html) => toDisplayText(html);
 
 // 2. ฟังก์ชันจัดรูปแบบคำตอบ
 export const formatAnswer = (ans) => {

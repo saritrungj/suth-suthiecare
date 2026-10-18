@@ -27,9 +27,12 @@ router.use(verifyToken, requireAction("cases.view"), (req, res, next) => {
       .json({ message: "กรุณาเลือกหน่วยงานหนึ่งแห่งเพื่อใช้งานการส่งต่อ" });
   next();
 });
-const selectReferral = `SELECT r.*, so.name AS source_organization_name, dest.name AS destination_organization_name
-  FROM case_referrals r JOIN organizations so ON so.id=r.source_organization_id
+const referralFrom = `FROM case_referrals r JOIN organizations so ON so.id=r.source_organization_id
   JOIN organizations dest ON dest.id=r.destination_organization_id`;
+const selectReferral = `SELECT r.*, so.name AS source_organization_name, dest.name AS destination_organization_name
+  ${referralFrom}`;
+// Same page sizes as every admin table; anything else falls back to 10.
+const REFERRAL_PAGE_SIZES = [10, 25, 50, 100];
 const scopedReferral = (id, org) => [id, org, org];
 const participantWhere =
   " WHERE r.id=? AND (r.source_organization_id=? OR r.destination_organization_id=?)";
@@ -105,15 +108,26 @@ router.get("/", async (req, res) => {
   const page = Number(req.query.page || 1);
   if (!Number.isSafeInteger(page) || page < 1 || page > 100000)
     return res.status(400).json({ message: "เลขหน้าไม่ถูกต้อง" });
+  const limit = REFERRAL_PAGE_SIZES.includes(Number(req.query.limit))
+    ? Number(req.query.limit)
+    : 10;
   const column =
     direction === "incoming"
       ? "destination_organization_id"
       : "source_organization_id";
   const params = [req.organizationContext];
   let where = ` WHERE r.${column}=?`;
-  if(req.schoolSubjectScope){
-    where += " AND (r.source_response_id IN (?) OR r.source_master_case_id IN (?))";
-    params.push(req.schoolSubjectScope.responseIds.length?req.schoolSubjectScope.responseIds:[0],req.schoolSubjectScope.masterIds.length?req.schoolSubjectScope.masterIds:[0]);
+  if (req.schoolSubjectScope) {
+    where +=
+      " AND (r.source_response_id IN (?) OR r.source_master_case_id IN (?))";
+    params.push(
+      req.schoolSubjectScope.responseIds.length
+        ? req.schoolSubjectScope.responseIds
+        : [0],
+      req.schoolSubjectScope.masterIds.length
+        ? req.schoolSubjectScope.masterIds
+        : [0],
+    );
   }
   if (req.query.status) {
     where += " AND r.status=?";
@@ -137,15 +151,21 @@ router.get("/", async (req, res) => {
       where += " AND (r.source_response_id=? OR r.source_master_case_id=?)";
       params.push(anchors[0].id, anchors[0].master_case_id || null);
     }
+    const [[counted]] = await db.query(
+      `SELECT COUNT(*) AS total ${referralFrom}${where}`,
+      params,
+    );
+    const total = Number(counted?.total || 0);
     const [rows] = await db.query(
-      `${selectReferral}${where} ORDER BY r.updated_at DESC,r.id DESC LIMIT 51 OFFSET ?`,
-      [...params, (page - 1) * 50],
+      `${selectReferral}${where} ORDER BY r.updated_at DESC,r.id DESC LIMIT ? OFFSET ?`,
+      [...params, limit, (page - 1) * limit],
     );
     res.json({
-      items: rows
-        .slice(0, 50)
-        .map((row) => publicReferral(row, req.organizationContext)),
-      has_more: rows.length > 50,
+      items: rows.map((row) => publicReferral(row, req.organizationContext)),
+      total,
+      total_pages: Math.max(1, Math.ceil(total / limit)),
+      limit,
+      has_more: page * limit < total,
       page,
     });
   } catch (error) {
@@ -256,6 +276,16 @@ router.post("/", requireAction("cases.assign"), async (req, res) => {
           ]
             .filter(Boolean)
             .join(" ");
+    // The person's name and the assessment title travel only with "assign" rights.
+    const { can } = require("../authorization/can");
+    const sharedName =
+      can(req, "pii.view") && can(req, "pii.assign")
+        ? displayName
+        : "ไม่ระบุชื่อ";
+    const sharedTitle =
+      can(req, "clinical.view") && can(req, "clinical.assign")
+        ? source.form_title || null
+        : null;
     const [created] = await connection.query(
       "INSERT INTO case_referrals (source_organization_id,destination_organization_id,source_response_id,source_master_case_id,display_name_encrypted,form_title,reason_encrypted,created_by) VALUES (?,?,?,?,?,?,?,?)",
       [
@@ -264,12 +294,12 @@ router.post("/", requireAction("cases.assign"), async (req, res) => {
         source.id,
         source.master_case_id || null,
         writeField(
-          displayName,
+          sharedName,
           "case_referrals",
           "display_name_encrypted",
           req.organizationContext,
         ),
-        source.form_title || null,
+        sharedTitle,
         writeField(
           body.reason.trim(),
           "case_referrals",

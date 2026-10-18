@@ -1,13 +1,15 @@
-import { DialogFrame } from '../ui/index.jsx';
-import { Button as UiButton } from '../ui/index.jsx';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { DialogFrame } from "../ui/index.jsx";
+import { Button as UiButton } from "../ui/index.jsx";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import React, { useState, useEffect, useMemo } from "react";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { FiX, FiDownload, FiCheckSquare, FiSquare } from "react-icons/fi";
 import "./ExportExcelModal.css";
 
-const stripHtml = (html) => { return toDisplayText(html); };
+const stripHtml = (html) => {
+  return toDisplayText(html);
+};
 
 const findAnswerFlexible = (rawAnswers, qTitle) => {
   if (!rawAnswers || !qTitle) return undefined;
@@ -257,59 +259,72 @@ export default function ExportExcelModal({
   };
 
   return (
-    <DialogFrame className="eem-modal-content"
-        onClick={(e) => e.stopPropagation()}
-        aria-label="เลือกคำถามที่ต้องการ Export เป็น Excel" onClose={onClose}>
-        <div className="eem-modal-header">
-          <h3>เลือกคำถามที่ต้องการ Export เป็น Excel</h3>
-          <UiButton variant="secondary" size="icon" type="submit"
-            className="eem-close-btn"
-            onClick={onClose}
-            aria-label="ปิดหน้าต่าง"
-          >
-            <FiX size={20} />
-          </UiButton>
+    <DialogFrame
+      className="eem-modal-content"
+      onClick={(e) => e.stopPropagation()}
+      aria-label="เลือกคำถามที่ต้องการ Export เป็น Excel"
+      onClose={onClose}
+    >
+      <div className="eem-modal-header">
+        <h3>เลือกคำถามที่ต้องการ Export เป็น Excel</h3>
+        <UiButton
+          variant="secondary"
+          size="icon"
+          type="submit"
+          className="eem-close-btn"
+          onClick={onClose}
+          aria-label="ปิดหน้าต่าง"
+        >
+          <FiX size={20} />
+        </UiButton>
+      </div>
+      <div className="eem-modal-body">
+        <div className="eem-selection-controls">
+          <button className="eem-text-btn" onClick={handleSelectAll}>
+            เลือกทั้งหมด
+          </button>
+          <button className="eem-text-btn" onClick={handleDeselectAll}>
+            ไม่เลือกเลย
+          </button>
         </div>
-        <div className="eem-modal-body">
-          <div className="eem-selection-controls">
-            <button className="eem-text-btn" onClick={handleSelectAll}>
-              เลือกทั้งหมด
-            </button>
-            <button className="eem-text-btn" onClick={handleDeselectAll}>
-              ไม่เลือกเลย
-            </button>
-          </div>
-          <div className="eem-questions-list">
-            {allQuestions.map((q) => (
-              <label key={q.id} className="eem-question-item">
-                <input
-                  type="checkbox"
-                  checked={selectedQIds.includes(q.id)}
-                  onChange={() => handleToggle(q.id)}
-                  style={{ display: "none" }}
-                />
-                {selectedQIds.includes(q.id) ? (
-                  <FiCheckSquare className="eem-checkbox checked" />
-                ) : (
-                  <FiSquare className="eem-checkbox" />
-                )}
-                <span className="eem-question-text">{stripHtml(q.title)}</span>
-              </label>
-            ))}
-          </div>
+        <div className="eem-questions-list">
+          {allQuestions.map((q) => (
+            <label key={q.id} className="eem-question-item">
+              <input
+                type="checkbox"
+                checked={selectedQIds.includes(q.id)}
+                onChange={() => handleToggle(q.id)}
+                style={{ display: "none" }}
+              />
+              {selectedQIds.includes(q.id) ? (
+                <FiCheckSquare className="eem-checkbox checked" />
+              ) : (
+                <FiSquare className="eem-checkbox" />
+              )}
+              <span className="eem-question-text">{stripHtml(q.title)}</span>
+            </label>
+          ))}
         </div>
-        <div className="eem-modal-footer">
-          <UiButton variant="secondary" type="submit" className="eem-cancel-btn" onClick={onClose}>
-            ยกเลิก
-          </UiButton>
-          <UiButton variant="primary" type="submit"
-            className="eem-export-btn"
-            onClick={handleExport}
-            disabled={selectedQIds.length === 0}
-          >
-            <FiDownload /> Export Excel ({selectedQIds.length})
-          </UiButton>
-        </div>
-      </DialogFrame>
+      </div>
+      <div className="eem-modal-footer">
+        <UiButton
+          variant="secondary"
+          type="submit"
+          className="eem-cancel-btn"
+          onClick={onClose}
+        >
+          ยกเลิก
+        </UiButton>
+        <UiButton
+          variant="primary"
+          type="submit"
+          className="eem-export-btn"
+          onClick={handleExport}
+          disabled={selectedQIds.length === 0}
+        >
+          <FiDownload /> Export Excel ({selectedQIds.length})
+        </UiButton>
+      </div>
+    </DialogFrame>
   );
 }

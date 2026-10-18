@@ -8,21 +8,27 @@
   --suth-filter-focus: var(--suth-focus);
   --suth-admin-canvas: oklch(97.8% 0.009 65);
   --suth-admin-band: oklch(96% 0.025 65);
-  --suth-admin-band-ink: #713715;
-  --suth-admin-blue-line: #bad5e8;
+  --suth-admin-band-ink: var(--suth-action-ink);
+  --suth-admin-blue-line: var(--suth-info-line);
   color: var(--suth-ink);
   background: var(--suth-admin-canvas);
   accent-color: var(--suth-action);
   caret-color: var(--suth-action);
   --suth-admin-nav: var(--suth-accent);
-  --suth-admin-nav-hover: #ffad7d;
+  --suth-admin-nav-hover: color-mix(in srgb, var(--suth-action) 70%, var(--suth-surface));
   --suth-admin-nav-ink: var(--suth-on-accent);
 }
-.admin-shell .sidebar { background: var(--suth-admin-nav) !important; }
-.admin-shell .sidebar :is(.menu-item, .submenu-item, .menu-header-label, .menu-header-hint) {
+.admin-shell .sidebar {
+  background: var(--suth-admin-nav) !important;
+}
+.admin-shell
+  .sidebar
+  :is(.menu-item, .submenu-item, .menu-header-label, .menu-header-hint) {
   color: var(--suth-admin-nav-ink) !important;
 }
-.admin-shell .sidebar .label { color: inherit !important; }
+.admin-shell .sidebar .label {
+  color: inherit !important;
+}
 .admin-shell .sidebar :is(.menu-item, .submenu-item):hover {
   background: var(--suth-admin-nav-hover) !important;
 }
@@ -31,28 +37,77 @@
   color: var(--suth-action-ink) !important;
   box-shadow: none !important;
 }
-.admin-shell :is(.sch-header h1, .cw-header h1, .org-header h1,
-  .sum-user-header h1, .srp-roles-header-section h1, .profile-header h1,
-  .content-header h1, .cm-header-info h1, .hc-header-info h1,
-  .bm-title, .fm-content-header :is(h1,h2), .apt-title, .rc-inside-title) {
+.admin-shell
+  :is(
+    .sch-header h1,
+    .cw-header h1,
+    .org-header h1,
+    .sum-user-header h1,
+    .srp-roles-header-section h1,
+    .profile-header h1,
+    .content-header h1,
+    .cm-header-info h1,
+    .hc-header-info h1,
+    .bm-title,
+    .fm-content-header :is(h1, h2),
+    .apt-title,
+    .rc-inside-title
+  ) {
   color: var(--suth-action-ink) !important;
 }
 
 /* Brand navigation uses dark ink on the exact orange, with white selection. */
-.admin-shell .sidebar { color: var(--suth-admin-nav-ink); height: 100dvh; font-family: var(--suth-font); }
-.admin-shell .sidebar .organization-switcher { background: var(--suth-tint); border-color: var(--suth-tint-line); }
-.admin-shell .sidebar .organization-switcher label { color: var(--suth-action-ink); }
-.admin-shell .sidebar .organization-switcher-detail { color: var(--suth-ink-2); }
-.admin-shell .sidebar .organization-switcher label::before { background: var(--suth-success); }
-.admin-shell .sidebar .sidebar-bottom { border-top-color: rgb(52 32 20 / 20%) !important; }
-.admin-shell .sidebar .submenu-item .sub-icon { color: inherit; }
-.admin-shell .sidebar .toggle-btn { width: 44px; height: 44px; right: -22px; color: var(--suth-action-ink); box-shadow: none; }
-.admin-shell .sidebar .menu-item { line-height: 1.5; }
-.admin-shell .sidebar .menu-item .label { white-space: normal; overflow-wrap: anywhere; }
-.admin-shell .sidebar .menu-item:hover { transform: none; }
-.admin-shell .sidebar :is(.submenu,.sidebar-bottom) { background: transparent; }
+.admin-shell .sidebar {
+  color: var(--suth-admin-nav-ink);
+  height: 100dvh;
+  font-family: var(--suth-font);
+}
+.admin-shell .sidebar .organization-switcher {
+  background: var(--suth-tint);
+  border-color: var(--suth-tint-line);
+}
+.admin-shell .sidebar .organization-switcher label {
+  color: var(--suth-action-ink);
+}
+.admin-shell .sidebar .organization-switcher-detail {
+  color: var(--suth-ink-2);
+}
+.admin-shell .sidebar .organization-switcher label::before {
+  background: var(--suth-success);
+}
+.admin-shell .sidebar .sidebar-bottom {
+  border-top-color: color-mix(in srgb, var(--suth-ink) 20%, transparent) !important;
+}
+.admin-shell .sidebar .submenu-item .sub-icon {
+  color: inherit;
+}
+.admin-shell .sidebar .toggle-btn {
+  width: 44px;
+  height: 44px;
+  right: -22px;
+  color: var(--suth-action-ink);
+  box-shadow: none;
+}
+.admin-shell .sidebar .menu-item {
+  line-height: 1.5;
+}
+.admin-shell .sidebar .menu-item .label {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.admin-shell .sidebar .menu-item:hover {
+  transform: none;
+}
+.admin-shell .sidebar :is(.submenu, .sidebar-bottom) {
+  background: transparent;
+}
 @media (prefers-reduced-motion: reduce) {
-  .admin-shell .sidebar, .admin-shell .sidebar *, .admin-shell .mobile-drawer-overlay { transition: none !important; animation: none !important; }
+  .admin-shell .sidebar,
+  .admin-shell .sidebar *,
+  .admin-shell .mobile-drawer-overlay {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 .admin-shell .sidebar .mobile-close-btn {

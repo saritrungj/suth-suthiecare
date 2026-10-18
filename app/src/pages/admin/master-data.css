@@ -1,15 +1,372 @@
-.master-filters { display:flex; align-items:flex-end; flex-wrap:wrap; gap:16px; }
-.master-filters > .sch-field { flex:1 1 180px; margin:0; }
-.master-filters > .master-search { flex:2 1 240px; }
-.master-search .sch-search-group { flex:0 0 44px; height:44px; min-width:0; width:100%; }
-.master-search .sch-search-group input { flex:1; width:0; min-height:0; height:100%; padding:0; border:0; border-radius:0; background:transparent; }
-.master-search .sch-search-group input:focus-visible { outline:none; }
-.master-filters > button { min-height:44px; }
-.master-note { margin:16px 0; line-height:1.6; }
-.master-table-heading { margin-top:24px; }
-.master-page .sch-table td { overflow-wrap:anywhere; }
-.master-page .sch-table .sch-code { max-width:240px; }
-.master-success { padding:12px 16px; border-radius:var(--suth-radius); color:var(--suth-success); background:var(--suth-success-tint); }
-.master-active { display:flex; align-items:center; gap:10px; min-height:44px; align-self:end; cursor:pointer; }
-.master-active input { width:20px; height:20px; accent-color:var(--suth-action); }
-@media(max-width:760px) { .master-filters > .sch-field,.master-filters > button { flex-basis:100%; width:100%; } }
+/* Master data: category list on the left, the selected category on the
+   right, one var(--suth-surface) work surface. Lines separate; tint marks the current
+   category only. */
+
+.master-organization {
+  max-width: 420px;
+  margin: 0 0 16px;
+}
+
+.master-workspace {
+  display: grid;
+  grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+  max-width: 1500px;
+  margin: 0 auto 1.25rem;
+  border-radius: var(--suth-radius-lg);
+  background: var(--suth-surface);
+  box-shadow: var(--suth-shadow-card);
+  min-width: 0;
+}
+
+/* Category list */
+.master-rail {
+  padding: 12px 0;
+  border-right: 1px solid var(--suth-line);
+}
+
+.master-rail-group + .master-rail-group {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--suth-line-soft);
+}
+
+.master-rail-title {
+  margin: 0;
+  padding: 8px 20px 4px;
+  font-size: var(--suth-fs-label);
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--suth-muted);
+}
+
+.master-rail ul {
+  margin: 0;
+  padding: 0 8px;
+  list-style: none;
+}
+
+.master-rail button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: var(--suth-radius);
+  background: transparent;
+  color: var(--suth-ink-2);
+  font: 600 0.95rem/1.35 var(--suth-font);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease-out,
+    color 160ms ease-out;
+}
+
+.master-rail button:hover {
+  background: var(--suth-surface-2);
+  color: var(--suth-ink);
+}
+
+.master-rail button[aria-current="true"] {
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
+  font-weight: 800;
+}
+
+.master-rail button:focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: -3px;
+}
+
+.master-rail-label {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.master-rail-lock {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  color: var(--suth-muted);
+}
+
+.master-rail-count {
+  flex: none;
+  min-width: 28px;
+  padding: 1px 8px;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface-2);
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-label);
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.master-rail button[aria-current="true"] .master-rail-count {
+  background: var(--suth-surface);
+  color: var(--suth-action-ink);
+}
+
+/* Selected category */
+.master-panel {
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.5rem);
+}
+
+.master-category-select {
+  display: none;
+}
+
+.master-panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px 24px;
+}
+
+.master-panel-head h2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 0;
+  font-size: var(--suth-fs-title);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--suth-ink);
+}
+
+.master-panel-head p {
+  max-width: 68ch;
+  margin: 4px 0 0;
+  font-size: var(--suth-fs-body);
+  line-height: 1.5;
+  color: var(--suth-muted);
+}
+
+.master-fixed-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: var(--suth-radius-pill);
+  border: 1px solid var(--suth-line);
+  background: var(--suth-surface-2);
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-label);
+  font-weight: 700;
+}
+
+.master-fixed-tag svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* The list toolbar: the shared filter bar (search, status), set off from
+   the panel head by a hairline, with the reload button at the far right. */
+.master-toolbar {
+  margin: 16px 0 0;
+  padding-top: 16px !important;
+  border-top: 1px solid var(--suth-line-soft) !important;
+  border-radius: 0 !important;
+}
+
+.sch-filter-bar > .master-reload {
+  flex: 0 0 44px !important;
+  width: 44px;
+  margin-left: auto;
+}
+
+.master-note {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface-2);
+  font-size: var(--suth-fs-body);
+  line-height: 1.6;
+  color: var(--suth-ink-2);
+}
+
+.master-success {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: var(--suth-radius);
+  color: var(--suth-success);
+  background: var(--suth-success-tint);
+}
+
+/* Table */
+.master-page .sch-table td {
+  overflow-wrap: anywhere;
+}
+
+.master-page .sch-table .sch-code {
+  max-width: 240px;
+  font-variant-numeric: tabular-nums;
+}
+
+.master-table .sch-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.master-table .sch-name .sch-muted {
+  margin-top: 2px;
+  font-weight: 400;
+  color: var(--suth-muted);
+}
+
+.master-table td:last-child .sch-icon-btn {
+  width: 44px;
+}
+
+.master-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.master-swatch {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--suth-radius-pill);
+  box-shadow: inset 0 0 0 1px rgba(31, 47, 63, 0.18);
+}
+
+.master-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px 3px 8px;
+  border-radius: var(--suth-radius-pill);
+  font-size: var(--suth-fs-label);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.master-status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.master-status.is-active {
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
+}
+
+.master-status.is-inactive {
+  background: var(--suth-neutral-tint);
+  color: var(--suth-ink-2);
+}
+
+/* Editor */
+.master-active {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  align-self: end;
+  cursor: pointer;
+}
+
+.master-active input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--suth-action);
+}
+
+.master-usage-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--suth-warning-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-warning-tint);
+  color: var(--suth-warning);
+  font-size: var(--suth-fs-body);
+  line-height: 1.5;
+}
+
+.master-usage-warning svg {
+  flex: none;
+  margin-top: 3px;
+}
+
+@media (max-width: 760px) {
+  .master-organization {
+    max-width: none;
+  }
+
+  .master-workspace {
+    grid-template-columns: minmax(0, 1fr);
+    box-shadow: none;
+    border: 1px solid var(--suth-line);
+    border-radius: var(--suth-radius-panel);
+  }
+
+  .master-rail {
+    display: none;
+  }
+
+  .master-panel {
+    padding: 12px;
+  }
+
+  .master-category-select {
+    display: flex;
+    margin: 0 0 16px;
+  }
+
+  .master-panel-head .sch-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .sch-filter-bar > .master-reload {
+    margin-left: 0;
+  }
+}
+
+/* The master panel is narrower than a full-page table; let the few
+   columns fit instead of the shared 680px floor. */
+.master-page .admin-data-table.master-table {
+  min-width: 520px;
+}
+
+.master-table th:last-child,
+.master-table td:last-child {
+  width: 1%;
+  white-space: nowrap;
+}
+
+/* ── Kit shape (moved here from kit-system.css) ─────────────── */
+.admin-shell .master-workspace {
+  border-color: transparent;
+  border-radius: var(--suth-radius-card);
+  background: var(--suth-surface);
+  box-shadow: var(--suth-shadow-soft);
+}
+@media (max-width: 760px) {
+  .admin-shell .master-workspace {
+    border-radius: var(--suth-radius-inner);
+  }
+}
+
+/* Side rail: soft rounded rows, current row in apricot (moved from kit-system.css). */
+.admin-shell .master-rail button {
+  border-radius: var(--suth-radius-icon);
+}
+.admin-shell .master-rail button[aria-current="true"] {
+  background: var(--suth-tint-strong);
+}

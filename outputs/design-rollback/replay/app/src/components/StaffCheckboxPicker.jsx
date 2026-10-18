@@ -1,4 +1,4 @@
-import { toDisplayText } from '../utils/textPresentation.js';
+import { toDisplayText } from "../utils/textPresentation.js";
 import { useId, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import "./StaffCheckboxPicker.css";

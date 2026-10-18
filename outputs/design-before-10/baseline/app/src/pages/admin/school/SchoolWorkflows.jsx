@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api, {
@@ -23,7 +23,7 @@ import {
   saveTeacherWorkbook,
 } from "../../../utils/teacherImport";
 import "./school.css";
-import {RiskPill} from '../../../components/case/CaseDrawer';
+import { RiskPill } from "../../../components/case/CaseDrawer";
 
 function useLoad(url) {
   const [data, setData] = useState(null),
@@ -165,7 +165,14 @@ function FormSelect({ forms, value, onChange, domain, required = true }) {
 
 export default function SchoolWorkflows() {
   const { schoolAccess: access } = usePermissions(),
-    { schools, schoolId, setSchoolId, loading: schoolsLoading, error: schoolsError, reload: reloadSchools } = useSchools();
+    {
+      schools,
+      schoolId,
+      setSchoolId,
+      loading: schoolsLoading,
+      error: schoolsError,
+      reload: reloadSchools,
+    } = useSchools();
   const [tab, setTab] = useState(
       access?.can_view_risk === false ? "rounds" : "risk",
     ),
@@ -195,15 +202,41 @@ export default function SchoolWorkflows() {
           title="คัดกรองและติดตามโรงเรียน"
           description="จัดรอบประเมิน ติดตามนักเรียน และเตรียมข้อมูลก่อนเปิดภาคเรียน"
         >
-          <BarSelect label="โรงเรียน" value={schoolId} onChange={setSchoolId} disabled={schoolsLoading || !schools.length}>
-            {!schools.length && <option value="">{schoolsLoading ? "กำลังโหลด…" : "ยังไม่มีโรงเรียน"}</option>}
-            {schools.map(school => <option key={school.id} value={school.id}>{school.name}</option>)}
+          <BarSelect
+            label="โรงเรียน"
+            value={schoolId}
+            onChange={setSchoolId}
+            disabled={schoolsLoading || !schools.length}
+          >
+            {!schools.length && (
+              <option value="">
+                {schoolsLoading ? "กำลังโหลด…" : "ยังไม่มีโรงเรียน"}
+              </option>
+            )}
+            {schools.map((school) => (
+              <option key={school.id} value={school.id}>
+                {school.name}
+              </option>
+            ))}
           </BarSelect>
           <Link className="sch-btn-secondary" to="/admin/school/students">
             รายชื่อนักเรียน
           </Link>
         </PageHeader>
-        {schoolsError && <div className="sch-card"><p className="sch-error" role="alert">{schoolsError}</p><button type="button" className="sch-btn-secondary" onClick={reloadSchools}>โหลดโรงเรียนใหม่</button></div>}
+        {schoolsError && (
+          <div className="sch-card">
+            <p className="sch-error" role="alert">
+              {schoolsError}
+            </p>
+            <button
+              type="button"
+              className="sch-btn-secondary"
+              onClick={reloadSchools}
+            >
+              โหลดโรงเรียนใหม่
+            </button>
+          </div>
+        )}
         <nav className="sch-workflow-nav" aria-label="งานโรงเรียน">
           {tabs.map(([key, label]) => (
             <button
@@ -218,7 +251,11 @@ export default function SchoolWorkflows() {
           ))}
         </nav>
         {!schoolId ? (
-          <p role="status">{schoolsLoading ? "กำลังโหลดโรงเรียน…" : "ยังไม่มีโรงเรียนที่พร้อมใช้งาน"}</p>
+          <p role="status">
+            {schoolsLoading
+              ? "กำลังโหลดโรงเรียน…"
+              : "ยังไม่มีโรงเรียนที่พร้อมใช้งาน"}
+          </p>
         ) : (
           <section className="sch-card" key={`${schoolId}-${tab}`}>
             {tab === "risk" && <RiskSummary schoolId={schoolId} />}{" "}
@@ -297,7 +334,16 @@ function RiskSummary({ schoolId }) {
           ["student_code", "รหัสนักเรียน"],
           ["classroom_name", "ห้อง"],
           ["is_boarder", "ที่พัก", (r) => (r.is_boarder ? "หอพัก" : "ไปกลับ")],
-          ["risk_status", "ความเสี่ยง", (r) => <RiskPill level={r.risk_status==='normal'?'low':r.risk_status} label={RISK_LABELS[r.risk_status]}/>],
+          [
+            "risk_status",
+            "ความเสี่ยง",
+            (r) => (
+              <RiskPill
+                level={r.risk_status === "normal" ? "low" : r.risk_status}
+                label={RISK_LABELS[r.risk_status]}
+              />
+            ),
+          ],
           [
             "assessed_on",
             "วันที่ประเมิน",
@@ -573,8 +619,8 @@ function Followup({ schoolId, forms }) {
             <option value="">เลือกผลประเมิน</option>
             {selectedHealth.data?.assessments?.mental?.map((r) => (
               <option key={r.id} value={r.id}>
-                {toDisplayText(r.form_title)} · {formatThaiDate(r.submitted_at)} ·{" "}
-                {RISK_LABELS[r.risk]}
+                {toDisplayText(r.form_title)} · {formatThaiDate(r.submitted_at)}{" "}
+                · {RISK_LABELS[r.risk]}
               </option>
             ))}
           </select>

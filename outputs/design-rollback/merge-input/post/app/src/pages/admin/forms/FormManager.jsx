@@ -1,8 +1,13 @@
-import { PageHeader as UiPageHeader, Button as UiButton, FilterBar as UiFilterBar, TextInput as UiTextInput } from '../../../components/ui/index.jsx';
-import { Dialog } from '../../../components/ui/index.jsx';
-import IconSelect from '../../../components/IconSelect';
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import {
+  PageHeader as UiPageHeader,
+  Button as UiButton,
+  FilterBar as UiFilterBar,
+  TextInput as UiTextInput,
+} from "../../../components/ui/index.jsx";
+import { Dialog } from "../../../components/ui/index.jsx";
+import IconSelect from "../../../components/IconSelect";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import { usePageExport } from "../../../components/ExcelExport";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -45,7 +50,9 @@ import {
 } from "react-icons/fa";
 
 // 🟢 Component สำหรับ Dropdown
-const CustomDropdown = props => <IconSelect {...props} className="fm-custom-select" />;
+const CustomDropdown = (props) => (
+  <IconSelect {...props} className="fm-custom-select" />
+);
 
 const FormManager = () => {
   const { activeOrganization, authorization } = usePermissions();
@@ -173,7 +180,10 @@ const FormManager = () => {
     return matchSearch && matchClinic && matchStatus;
   });
 
-  usePageExport({title:"แบบประเมิน",sources:[{resource:"forms",ids:filteredForms.map(r=>r.id)}]});
+  usePageExport({
+    title: "แบบประเมิน",
+    sources: [{ resource: "forms", ids: filteredForms.map((r) => r.id) }],
+  });
   const handleToggleMenu = (e, formId) => {
     e.stopPropagation();
     setOpenMenuId(openMenuId === formId ? null : formId);
@@ -401,7 +411,9 @@ const FormManager = () => {
               {activeOrganizationLabel}
             </p>
           </div>
-          <UiButton variant="primary" type="submit"
+          <UiButton
+            variant="primary"
+            type="submit"
             className="fm-btn-add-form"
             onClick={() => navigate("/admin/forms/create")}
           >
@@ -668,7 +680,10 @@ const FormManager = () => {
                         "โรงพยาบาลมหาวิทยาลัยเทคโนโลยีสุรนารี"}
                     </span>
 
-                    <UiButton variant="secondary" size="icon" type="submit"
+                    <UiButton
+                      variant="secondary"
+                      size="icon"
+                      type="submit"
                       className="fm-card-menu-btn"
                       onClick={(e) => handleToggleMenu(e, form.id)}
                     >
@@ -785,151 +800,183 @@ const FormManager = () => {
 
       {/* Modal ต่างๆ คงเดิม */}
       {isImageModalOpen && (
-        <Dialog title="เปลี่ยนรูปภาพปก" aria-label="เปลี่ยนรูปแบบประเมิน" size="small"
-          onClose={() => setIsImageModalOpen(false)}>
-            <div
-              style={{
-                width: "100%",
-                height: "250px",
-                borderRadius: "8px",
-                overflow: "hidden",
-                marginBottom: "20px",
-                border: previewImage ? "none" : "2px dashed #ccc",
-                backgroundColor: "#f8f9fa",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                position: "relative",
-              }}
-            >
-              {previewImage ? (
-                <img
-                  src={previewImage}
-                  alt="Preview"
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              ) : (
-                <div
-                  style={{
-                    textAlign: "center",
-                    color: "#666",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    gap: "10px",
-                  }}
-                >
-                  <FaFolderOpen size={32} color="#a0aec0" />
-                  <p>ยังไม่ได้เลือกรูปภาพ</p>
-                </div>
-              )}
-            </div>
-            <div
-              className="fm-modal-actions"
-              style={{ justifyContent: "space-between" }}
-            >
-              <UiButton variant="secondary" type="submit"
-                className="fm-btn-cancel"
-                
-                onClick={() => fileInputRef.current.click()}
+        <Dialog
+          title="เปลี่ยนรูปภาพปก"
+          aria-label="เปลี่ยนรูปแบบประเมิน"
+          size="small"
+          onClose={() => setIsImageModalOpen(false)}
+        >
+          <div
+            style={{
+              width: "100%",
+              height: "250px",
+              borderRadius: "8px",
+              overflow: "hidden",
+              marginBottom: "20px",
+              border: previewImage ? "none" : "2px dashed #ccc",
+              backgroundColor: "#f8f9fa",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "relative",
+            }}
+          >
+            {previewImage ? (
+              <img
+                src={previewImage}
+                alt="Preview"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            ) : (
+              <div
+                style={{
+                  textAlign: "center",
+                  color: "#666",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
               >
-                {previewImage ? "เปลี่ยนรูปอื่น" : "+ เลือกรูปภาพ"}
-              </UiButton>
-              <div style={{ display: "flex", gap: "10px" }}>
-                <UiButton variant="secondary" type="submit"
-                  className="fm-btn-cancel"
-                  onClick={() => {
-                    setIsImageModalOpen(false);
-                    setPreviewImage(null);
-                    setSelectedFormForImage(null);
-                  }}
-                >
-                  ยกเลิก
-                </UiButton>
-                <UiButton variant="primary" type="submit"
-                  className="fm-btn-save"
-                  onClick={handleConfirmImageUpload}
-                  disabled={!previewImage}
-                  style={{
-                    opacity: !previewImage ? 0.5 : 1,
-                    cursor: !previewImage ? "not-allowed" : "pointer",
-                  }}
-                >
-                  บันทึก
-                </UiButton>
+                <FaFolderOpen size={32} color="#a0aec0" />
+                <p>ยังไม่ได้เลือกรูปภาพ</p>
               </div>
+            )}
+          </div>
+          <div
+            className="fm-modal-actions"
+            style={{ justifyContent: "space-between" }}
+          >
+            <UiButton
+              variant="secondary"
+              type="submit"
+              className="fm-btn-cancel"
+
+              onClick={() => fileInputRef.current.click()}
+            >
+              {previewImage ? "เปลี่ยนรูปอื่น" : "+ เลือกรูปภาพ"}
+            </UiButton>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <UiButton
+                variant="secondary"
+                type="submit"
+                className="fm-btn-cancel"
+                onClick={() => {
+                  setIsImageModalOpen(false);
+                  setPreviewImage(null);
+                  setSelectedFormForImage(null);
+                }}
+              >
+                ยกเลิก
+              </UiButton>
+              <UiButton
+                variant="primary"
+                type="submit"
+                className="fm-btn-save"
+                onClick={handleConfirmImageUpload}
+                disabled={!previewImage}
+                style={{
+                  opacity: !previewImage ? 0.5 : 1,
+                  cursor: !previewImage ? "not-allowed" : "pointer",
+                }}
+              >
+                บันทึก
+              </UiButton>
             </div>
+          </div>
         </Dialog>
       )}
 
       {isRenameModalOpen && (
-        <Dialog title="เปลี่ยนชื่อฟอร์ม" aria-label="เปลี่ยนชื่อแบบประเมิน" size="small"
-          onClose={() => setIsRenameModalOpen(false)}>
-            <UiTextInput
-              aria-label="ชื่อแบบประเมิน"
-              type="text"
-              className="fm-modal-input"
-              value={renamingForm.title}
-              onChange={(e) =>
-                setRenamingForm({ ...renamingForm, title: e.target.value })
-              }
-              autoFocus
-            />
-            <div className="fm-modal-actions">
-              <UiButton variant="secondary" type="submit"
-                className="fm-btn-cancel"
-                onClick={() => setIsRenameModalOpen(false)}
-              >
-                ยกเลิก
-              </UiButton>
-              <UiButton variant="primary" type="submit" className="fm-btn-save" onClick={handleSaveRename}>
-                ตกลง
-              </UiButton>
-            </div>
+        <Dialog
+          title="เปลี่ยนชื่อฟอร์ม"
+          aria-label="เปลี่ยนชื่อแบบประเมิน"
+          size="small"
+          onClose={() => setIsRenameModalOpen(false)}
+        >
+          <UiTextInput
+            aria-label="ชื่อแบบประเมิน"
+            type="text"
+            className="fm-modal-input"
+            value={renamingForm.title}
+            onChange={(e) =>
+              setRenamingForm({ ...renamingForm, title: e.target.value })
+            }
+            autoFocus
+          />
+          <div className="fm-modal-actions">
+            <UiButton
+              variant="secondary"
+              type="submit"
+              className="fm-btn-cancel"
+              onClick={() => setIsRenameModalOpen(false)}
+            >
+              ยกเลิก
+            </UiButton>
+            <UiButton
+              variant="primary"
+              type="submit"
+              className="fm-btn-save"
+              onClick={handleSaveRename}
+            >
+              ตกลง
+            </UiButton>
+          </div>
         </Dialog>
       )}
 
       {isClinicModalOpen && (
-        <Dialog title="เปลี่ยนประเภทคลินิก" aria-label="เปลี่ยนคลินิกของแบบประเมิน" size="small"
-          onClose={() => setIsClinicModalOpen(false)}>
-            <SearchableSelect
-              aria-label="ประเภทคลินิก"
-              className="fm-modal-input"
-              style={{
-                padding: "10px",
-                borderRadius: "8px",
-                border: "1px solid #ccc",
-                fontSize: "15px",
-                width: "100%",
-                marginTop: "10px",
-                boxSizing: "border-box",
-              }}
-              value={editingClinicForm.clinic_type}
-              onChange={(e) =>
-                setEditingClinicForm({
-                  ...editingClinicForm,
-                  clinic_type: e.target.value,
-                })
-              }
+        <Dialog
+          title="เปลี่ยนประเภทคลินิก"
+          aria-label="เปลี่ยนคลินิกของแบบประเมิน"
+          size="small"
+          onClose={() => setIsClinicModalOpen(false)}
+        >
+          <SearchableSelect
+            aria-label="ประเภทคลินิก"
+            className="fm-modal-input"
+            style={{
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              fontSize: "15px",
+              width: "100%",
+              marginTop: "10px",
+              boxSizing: "border-box",
+            }}
+            value={editingClinicForm.clinic_type}
+            onChange={(e) =>
+              setEditingClinicForm({
+                ...editingClinicForm,
+                clinic_type: e.target.value,
+              })
+            }
+          >
+            <option value="general">ทั่วไป (ใช้ร่วมกัน)</option>
+            {clinics.map((c) => (
+              <option key={c.slug} value={c.slug}>
+                {c.name}
+              </option>
+            ))}
+          </SearchableSelect>
+          <div className="fm-modal-actions" style={{ marginTop: "20px" }}>
+            <UiButton
+              variant="secondary"
+              type="submit"
+              className="fm-btn-cancel"
+              onClick={() => setIsClinicModalOpen(false)}
             >
-              <option value="general">ทั่วไป (ใช้ร่วมกัน)</option>
-              {clinics.map((c) => (
-                <option key={c.slug} value={c.slug}>
-                  {c.name}
-                </option>
-              ))}
-            </SearchableSelect>
-            <div className="fm-modal-actions" style={{ marginTop: "20px" }}>
-              <UiButton variant="secondary" type="submit"
-                className="fm-btn-cancel"
-                onClick={() => setIsClinicModalOpen(false)}
-              >
-                ยกเลิก
-              </UiButton>
-              <UiButton variant="primary" type="submit" className="fm-btn-save" onClick={handleSaveClinic}>
-                ตกลง
-              </UiButton>
-            </div>
+              ยกเลิก
+            </UiButton>
+            <UiButton
+              variant="primary"
+              type="submit"
+              className="fm-btn-save"
+              onClick={handleSaveClinic}
+            >
+              ตกลง
+            </UiButton>
+          </div>
         </Dialog>
       )}
 

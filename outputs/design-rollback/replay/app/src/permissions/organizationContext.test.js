@@ -11,15 +11,39 @@ import {
 } from "./organizationContext.js";
 
 test("system workspace enters any compatible unit without requiring membership", () => {
-  const authorization = {is_system_admin:true,memberships:[],organizations:[
-    {id:1,org_type:'hospital'}, {id:2,org_type:'school',status:'inactive'},
-    {id:3,org_type:'school'}, {id:4,org_type:'school'},
-  ]};
-  assert.equal(getWorkspaceOrganization(authorization,'all').selected.id,1);
-  assert.equal(getWorkspaceOrganization(authorization,'1','school').selected.id,3);
-  assert.equal(getWorkspaceOrganization(authorization,'4','school').selected.id,4);
-  assert.deepEqual(getWorkspaceOrganization(authorization,'all','school').organizations.map(o=>o.id),[3,4]);
-  assert.equal(getWorkspaceOrganization({is_system_admin:true,organizations:[]},'all','school').selected,null);
+  const authorization = {
+    is_system_admin: true,
+    memberships: [],
+    organizations: [
+      { id: 1, org_type: "hospital" },
+      { id: 2, org_type: "school", status: "inactive" },
+      { id: 3, org_type: "school" },
+      { id: 4, org_type: "school" },
+    ],
+  };
+  assert.equal(getWorkspaceOrganization(authorization, "all").selected.id, 1);
+  assert.equal(
+    getWorkspaceOrganization(authorization, "1", "school").selected.id,
+    3,
+  );
+  assert.equal(
+    getWorkspaceOrganization(authorization, "4", "school").selected.id,
+    4,
+  );
+  assert.deepEqual(
+    getWorkspaceOrganization(authorization, "all", "school").organizations.map(
+      (o) => o.id,
+    ),
+    [3, 4],
+  );
+  assert.equal(
+    getWorkspaceOrganization(
+      { is_system_admin: true, organizations: [] },
+      "all",
+      "school",
+    ).selected,
+    null,
+  );
 });
 
 test("system admin can select every active organization without memberships", () => {

@@ -1,5 +1,5 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
-import { toSafeHtml } from '../../utils/richText.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
+import { toSafeHtml } from "../../utils/richText.js";
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
@@ -278,7 +278,9 @@ export default function ClinicHelpDetail() {
                   }}
                 >
                   <FiFileText className="sub-q-icon" />
-                  <span className="sub-q-text">{toDisplayText(faq.question)}</span>
+                  <span className="sub-q-text">
+                    {toDisplayText(faq.question)}
+                  </span>
                 </li>
               ))}
 
@@ -339,7 +341,9 @@ export default function ClinicHelpDetail() {
                           onClick={() => setSelectedFaq(faq)}
                         >
                           <FiFileText className="sub-q-icon" />
-                          <span className="sub-q-text">{toDisplayText(faq.question)}</span>
+                          <span className="sub-q-text">
+                            {toDisplayText(faq.question)}
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -371,7 +375,9 @@ export default function ClinicHelpDetail() {
               <div className="hc-answer-body-content">
                 <div
                   className="hc-faq-answer suth-rich-content"
-                  dangerouslySetInnerHTML={{ __html: toSafeHtml(selectedFaq.answer) }}
+                  dangerouslySetInnerHTML={{
+                    __html: toSafeHtml(selectedFaq.answer),
+                  }}
                 />
               </div>
             </div>

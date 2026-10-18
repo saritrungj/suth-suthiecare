@@ -1,7 +1,7 @@
 .patient-account-login,
 .patient-account-trigger {
   min-height: 2.75rem;
-  border-radius: 0.625rem;
+  border-radius: var(--suth-radius);
   font: inherit;
   cursor: pointer;
 }
@@ -15,11 +15,11 @@
   justify-content: center;
   gap: 0.5rem;
   border: 0;
-  border-radius: 2.5rem;
-  background: #f47932;
-  color: #ffffff;
-  box-shadow: 0 10px 30px rgba(244, 121, 50, 0.32);
-  font-size: 0.875rem;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-action);
+  color: var(--suth-on-action);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--suth-action) 32%, transparent);
+  font-size: var(--suth-fs-sm);
   font-weight: 800;
   line-height: 1;
   text-align: center;
@@ -37,13 +37,13 @@
 }
 
 .patient-account-login:hover {
-  background: #a94513;
-  box-shadow: 0 12px 30px rgba(200, 86, 24, 0.4);
+  background: var(--suth-action-ink);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--suth-action-pressed) 40%, transparent);
   transform: translateY(-1px);
 }
 
 .patient-account-login:active {
-  background: #913a12;
+  background: var(--suth-warning);
   transform: translateY(0);
 }
 
@@ -63,8 +63,8 @@
   justify-content: flex-start;
   gap: 0.625rem;
   border: 1px solid transparent;
-  background: #eef3f5;
-  color: #183149;
+  background: var(--suth-neutral-tint);
+  color: var(--suth-ink);
   text-align: left;
 }
 
@@ -75,8 +75,8 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #183149;
-  color: #ffffff;
+  background: var(--suth-ink);
+  color: var(--suth-on-action);
   font-weight: 800;
 }
 
@@ -90,15 +90,15 @@
 }
 
 .patient-account-copy small {
-  color: #5c6f80;
-  font-size: 0.75rem;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-caption);
   font-weight: 650;
 }
 
 .patient-account-copy strong {
   max-width: 20ch;
   overflow: hidden;
-  font-size: 0.9375rem;
+  font-size: var(--suth-fs-body);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -122,11 +122,11 @@
   z-index: 220;
   width: min(15rem, calc(100vw - 1.5rem));
   overflow: hidden;
-  border: 1px solid #dce4ea;
+  border: 1px solid var(--suth-line);
   border-radius: 0.75rem;
-  background: #ffffff;
-  color: #263a4d;
-  box-shadow: 0 12px 28px rgba(17, 35, 51, 0.16);
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+  box-shadow: 0 12px 28px rgba(31, 47, 63, 0.16);
 }
 
 .patient-account-menu-items {
@@ -143,46 +143,46 @@
   align-items: center;
   gap: 0.5rem;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--suth-radius-sm);
   background: transparent;
-  color: #344a5f;
+  color: var(--suth-ink-2);
   font: inherit;
-  font-size: 0.9375rem;
+  font-size: var(--suth-fs-body);
   font-weight: 700;
   text-align: left;
   cursor: pointer;
 }
 
 .patient-account-menu-items > button:hover {
-  background: #eef3f5;
+  background: var(--suth-neutral-tint);
 }
 
 .patient-account-menu-items > .patient-account-logout {
   margin-top: 0.25rem;
   padding-top: 0.75rem;
-  box-shadow: inset 0 1px 0 #e1e7ec;
-  color: #9b2c2c;
+  box-shadow: inset 0 1px 0 var(--suth-line-soft);
+  color: var(--suth-danger);
 }
 
 .patient-account-menu.is-on-dark .patient-account-trigger {
-  border-color: #fff3;
-  background: #142738db;
-  color: #fff;
+  border-color: color-mix(in srgb, var(--suth-surface) 20%, transparent);
+  background: rgba(31, 47, 63, 0.86);
+  color: var(--suth-on-action);
   padding: 0 10px;
 }
 
 .patient-account-menu.is-on-dark .patient-account-copy small {
-  color: #dbe5eb;
+  color: color-mix(in srgb, var(--suth-on-action) 78%, transparent);
 }
 
 .patient-account-menu.is-on-dark .patient-account-avatar {
-  background: #0f2234;
+  background: var(--suth-ink);
 }
 
 .patient-account-login:focus-visible,
 .patient-account-trigger:focus-visible,
 .patient-account-menu-items button:focus-visible {
-  outline: 3px solid rgba(244, 121, 50, 0.4);
+  outline: 3px solid color-mix(in srgb, var(--suth-action) 40%, transparent);
   outline-offset: 2px;
 }
 
@@ -195,9 +195,9 @@
 
   .patient-account-menu.is-mobile-stack {
     width: 100%;
-    border: 1px solid #dce4ea;
+    border: 1px solid var(--suth-line);
     border-radius: 0.75rem;
-    background: #f4f7f9;
+    background: var(--suth-canvas);
     overflow: hidden;
   }
 
@@ -212,19 +212,19 @@
     width: 100%;
     margin-top: 0;
     border: 0;
-    border-top: 1px solid #dce4ea;
+    border-top: 1px solid var(--suth-line);
     border-radius: 0;
-    background: #ffffff;
+    background: var(--suth-surface);
     box-shadow: none;
   }
 
   .patient-account-menu.is-mobile-stack.is-on-dark .patient-account-trigger {
     background: transparent;
-    color: #183149;
+    color: var(--suth-ink);
   }
 
   .patient-account-menu.is-mobile-stack.is-on-dark .patient-account-copy small {
-    color: #5c6f80;
+    color: var(--suth-muted);
   }
 }
 

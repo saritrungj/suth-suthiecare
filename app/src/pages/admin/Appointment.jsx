@@ -1,9 +1,11 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
+import { useModuleActions } from "../../permissions/useModuleActions";
 import { usePageExport } from "../../components/ExcelExport";
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import AppointmentTable from "../../components/appointment/AppointmentTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
-import FilterDropdown from "../../components/FilterDropdown";
+import FilterDropdown, { FilterField } from "../../components/FilterDropdown";
+import DataPanel from "../../components/table/DataPanel";
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -34,6 +36,8 @@ import {
 import { usePermissions } from "../../permissions/PermissionsProvider";
 import { showErrorAlert, showSuccessToast } from "../../utils/alerts";
 import "./Appointment.css";
+import { PageHero } from "../../components/dashboard/DashboardKit";
+import ThaiDatePicker from "../../components/ThaiDatePicker";
 
 const CustomDropdown = ({
   icon: Icon,
@@ -64,9 +68,9 @@ const CustomDropdown = ({
 
   return (
     <div
-      className="apt-custom-select"
+      className={"apt-custom-select" + (isOpen ? " is-open" : "")}
       ref={ref}
-      style={{ ...style, zIndex: isOpen ? 999 : 1 }}
+      style={{ ...style, zIndex: isOpen ? "var(--z-dropdown)" : 1 }}
       onClick={() => setIsOpen(!isOpen)}
     >
       <Icon className="apt-filter-icon" style={iconStyle} />
@@ -130,6 +134,8 @@ function getRiskLevel(summary_data) {
 
 export default function Appointment() {
   const { activeOrganization } = usePermissions();
+  // Marking attendance is "update"; cancelling an appointment is "delete".
+  const apptRights = useModuleActions("appointments");
   /* ================= STATE ================= */
   const [calendarMode, setCalendarMode] = useState(false);
 
@@ -405,37 +411,107 @@ export default function Appointment() {
   };
 
   /* ================= UI ================= */
-  usePageExport({title:"นัดหมาย",sources:[{resource:"appointments",filters:{startDate,endDate},ids:filteredAppointments.map(r=>r.appointment_id||r.id)}]});
+  usePageExport({
+    title: "นัดหมาย",
+    sources: [
+      {
+        resource: "appointments",
+        filters: { startDate, endDate },
+        ids: filteredAppointments.map((r) => r.appointment_id || r.id),
+      },
+    ],
+  });
+
+  const clearMoreFilters = () => {
+    setFormStatusFilter("published");
+    setSelectedFormId("all");
+    setSelectedClinic("");
+    setFilterService("");
+    setFilterRisk("");
+  };
+  const filterChips = [
+    {
+      key: "formStatus",
+      label: "สถานะฟอร์ม",
+      value:
+        formStatusFilter === "published"
+          ? ""
+          : formStatusFilter === "draft"
+            ? "ฉบับร่าง/ซ่อน"
+            : "ทั้งหมด",
+      onRemove: () => setFormStatusFilter("published"),
+    },
+    {
+      key: "form",
+      label: "แบบฟอร์ม",
+      value:
+        selectedFormId && selectedFormId !== "all"
+          ? filteredForms.find((f) => String(f.id) === String(selectedFormId))
+              ?.title || selectedFormId
+          : "",
+      onRemove: () => setSelectedFormId("all"),
+    },
+    {
+      key: "clinic",
+      label: "คลินิก",
+      value:
+        selectedClinic === "general"
+          ? "ทั่วไป"
+          : clinics.find((c) => c.slug === selectedClinic)?.name ||
+            selectedClinic,
+      onRemove: () => setSelectedClinic(""),
+    },
+    {
+      key: "service",
+      label: "บริการ",
+      value: filterService
+        ? servicesList.find((x) => String(x.id) === String(filterService))
+            ?.name || filterService
+        : "",
+      onRemove: () => setFilterService(""),
+    },
+    {
+      key: "risk",
+      label: "ความเสี่ยง",
+      value: filterRisk ? "เสี่ยง" + filterRisk : "",
+      onRemove: () => setFilterRisk(""),
+    },
+  ];
 
   return (
     <div className="apt-admin-layout">
       <main className="apt-main-content">
-        <div className="apt-container">
-          <div className="apt-header-wrapper">
-            <h2 className="apt-title">ตารางนัดหมาย</h2>
-
-            <div className="apt-view-toggle">
+        <PageHero
+          title="ตารางนัดหมาย"
+          description="ดูและจัดการนัดหมายของผู้รับบริการ เลือกดูแบบรายการหรือแบบปฏิทิน"
+          actions={
+            <div className="apt-view-toggle" role="group" aria-label="มุมมอง">
               <button
+                type="button"
                 className={`apt-view-btn ${!calendarMode ? "active" : ""}`}
+                aria-pressed={!calendarMode}
                 onClick={() => setCalendarMode(false)}
               >
-                <FiList size={18} /> แบบรายการ
+                <FiList size={18} aria-hidden="true" /> แบบรายการ
               </button>
               <button
+                type="button"
                 className={`apt-view-btn ${calendarMode ? "active" : ""}`}
+                aria-pressed={calendarMode}
                 onClick={() => setCalendarMode(true)}
               >
-                <FiCalendar size={18} /> แบบปฏิทิน
+                <FiCalendar size={18} aria-hidden="true" /> แบบปฏิทิน
               </button>
             </div>
-          </div>
-
+          }
+        />
+        <DataPanel as="div" className="apt-container">
           {/* filter bar */}
           <div className="apt-filter-section">
             <div className="apt-search-group">
               <FiSearch
                 className="apt-filter-icon"
-                style={{ color: "#64748b" }}
+                style={{ color: "var(--suth-muted)" }}
               />
               <input
                 type="text"
@@ -455,164 +531,124 @@ export default function Appointment() {
                   filterRisk,
                 ].filter(Boolean).length
               }
+              onClear={clearMoreFilters}
             >
               {/* สถานะและแบบฟอร์ม: ใช้เมื่อจำเป็น */}
-              <CustomDropdown
-                icon={FiLayers}
-                value={formStatusFilter}
-                onChange={setFormStatusFilter}
-                options={[
-                  { value: "published", label: "✓ ฟอร์มที่เผยแพร่แล้ว" },
-                  { value: "draft", label: "✎ ฟอร์มฉบับร่าง/ซ่อน" },
-                  { value: "all", label: "☰ สถานะฟอร์มทั้งหมด" },
-                ]}
-                style={{ borderColor: "#bfdbfe", backgroundColor: "#eff6ff" }}
-                iconStyle={{ color: "#2563eb" }}
-                textStyle={{ color: "#1e40af", fontWeight: "600" }}
-              />
-
-              <CustomDropdown
-                icon={FiLayers}
-                value={selectedFormId}
-                onChange={setSelectedFormId}
-                options={
-                  isInitialSetup
-                    ? [{ value: "", label: "กำลังโหลดแบบฟอร์ม..." }]
-                    : filteredForms.length > 0
-                      ? [
-                          { value: "all", label: "ทุกแบบฟอร์ม" },
-                          ...filteredForms.map((f) => ({
-                            value: f.id,
-                            label: f.title,
-                          })),
-                        ]
-                      : [{ value: "", label: "-- ไม่มีแบบฟอร์ม --" }]
-                }
-                style={{ flex: "1 1 300px" }} /* บังคับยืดสุดขอบ */
-              />
-              <CustomDropdown
-                icon={FiLayers}
-                value={selectedClinic}
-                onChange={setSelectedClinic}
-                options={[
-                  { value: "", label: "ทุกคลินิก (All)" },
-                  { value: "general", label: "ทั่วไป" },
-                  ...clinics.map((c) => ({ value: c.slug, label: c.name })),
-                ]}
-              />
-
-              <div className="apt-date-wrapper">
-                <FiCalendar
-                  className="apt-filter-icon"
-                  style={{ color: "#64748b" }}
+              <FilterField label="สถานะฟอร์ม">
+                <CustomDropdown
+                  icon={FiLayers}
+                  value={formStatusFilter}
+                  onChange={setFormStatusFilter}
+                  options={[
+                    { value: "published", label: "✓ ฟอร์มที่เผยแพร่แล้ว" },
+                    { value: "draft", label: "✎ ฟอร์มฉบับร่าง/ซ่อน" },
+                    { value: "all", label: "☰ สถานะฟอร์มทั้งหมด" },
+                  ]}
                 />
+              </FilterField>
 
-                {/* 🟢 กล่องวันที่ 1 (เริ่มต้น) */}
-                <div
-                  style={{
-                    position: "relative",
-                    flex: 1,
-                    display: "flex",
-                    height: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="apt-date-input"
-                    placeholder="วัน/เดือน/ปี"
-                    value={displayThaiDate(startDate)}
-                    readOnly
-                    style={{ width: "100%", backgroundColor: "transparent" }}
-                  />
-                  <input
-                    type="date"
+              <FilterField label="แบบฟอร์ม">
+                <CustomDropdown
+                  icon={FiLayers}
+                  value={selectedFormId}
+                  onChange={setSelectedFormId}
+                  options={
+                    isInitialSetup
+                      ? [{ value: "", label: "กำลังโหลดแบบฟอร์ม..." }]
+                      : filteredForms.length > 0
+                        ? [
+                            { value: "all", label: "ทุกแบบฟอร์ม" },
+                            ...filteredForms.map((f) => ({
+                              value: f.id,
+                              label: f.title,
+                            })),
+                          ]
+                        : [{ value: "", label: "-- ไม่มีแบบฟอร์ม --" }]
+                  }
+                />
+              </FilterField>
+              <FilterField label="คลินิก">
+                <CustomDropdown
+                  icon={FiLayers}
+                  value={selectedClinic}
+                  onChange={setSelectedClinic}
+                  options={[
+                    { value: "", label: "ทุกคลินิก (All)" },
+                    { value: "general", label: "ทั่วไป" },
+                    ...clinics.map((c) => ({ value: c.slug, label: c.name })),
+                  ]}
+                />
+              </FilterField>
+
+              <FilterField label="ช่วงวันที่นัด">
+                <div className="apt-date-wrapper apt-date-wrapper--kit">
+                  <ThaiDatePicker
+                    label="ตั้งแต่วันที่"
                     value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    onClick={(e) =>
-                      e.target.showPicker && e.target.showPicker()
-                    }
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
-                      opacity: 0,
-                      cursor: "pointer",
-                      zIndex: 10,
-                    }}
-                    title="ตั้งแต่วันที่"
+                    max={endDate || undefined}
+                    rangeStart={startDate}
+                    rangeEnd={endDate}
+                    onChange={setStartDate}
                   />
-                </div>
-
-                <span className="apt-date-separator">ถึง</span>
-
-                {/* 🟢 กล่องวันที่ 2 (สิ้นสุด) */}
-                <div
-                  style={{
-                    position: "relative",
-                    flex: 1,
-                    display: "flex",
-                    height: "100%",
-                  }}
-                >
-                  <input
-                    type="text"
-                    className="apt-date-input"
-                    placeholder="วัน/เดือน/ปี"
-                    value={displayThaiDate(endDate)}
-                    readOnly
-                    style={{ width: "100%", backgroundColor: "transparent" }}
-                  />
-                  <input
-                    type="date"
+                  <span className="apt-date-separator">ถึง</span>
+                  <ThaiDatePicker
+                    label="ถึงวันที่"
                     value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    onClick={(e) =>
-                      e.target.showPicker && e.target.showPicker()
-                    }
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
-                      opacity: 0,
-                      cursor: "pointer",
-                      zIndex: 10,
-                    }}
-                    title="ถึงวันที่"
+                    min={startDate || undefined}
+                    rangeStart={startDate}
+                    rangeEnd={endDate}
+                    align="end"
+                    onChange={setEndDate}
                   />
                 </div>
-              </div>
+              </FilterField>
 
-              <CustomDropdown
-                icon={FiLayers}
-                value={filterService}
-                onChange={setFilterService}
-                options={[
-                  { value: "", label: "ทุกบริการ" },
-                  ...servicesList.map((s) => ({ value: s.id, label: s.name })),
-                ]}
-              />
+              <FilterField label="บริการ">
+                <CustomDropdown
+                  icon={FiLayers}
+                  value={filterService}
+                  onChange={setFilterService}
+                  options={[
+                    { value: "", label: "ทุกบริการ" },
+                    ...servicesList.map((s) => ({
+                      value: s.id,
+                      label: s.name,
+                    })),
+                  ]}
+                />
+              </FilterField>
 
-              <CustomDropdown
-                icon={FiActivity}
-                value={filterRisk}
-                onChange={setFilterRisk}
-                options={[
-                  { value: "", label: "ทุกระดับความเสี่ยง" },
-                  { value: "ต่ำ", label: "เสี่ยงต่ำ (สีเขียว)" },
-                  { value: "ปานกลาง", label: "เสี่ยงปานกลาง (สีเหลือง)" },
-                  { value: "สูง", label: "เสี่ยงสูง (สีแดง)" },
-                ]}
-              />
+              <FilterField label="ความเสี่ยง">
+                <CustomDropdown
+                  icon={FiActivity}
+                  value={filterRisk}
+                  onChange={setFilterRisk}
+                  options={[
+                    { value: "", label: "ทุกระดับความเสี่ยง" },
+                    { value: "ต่ำ", label: "เสี่ยงต่ำ (สีเขียว)" },
+                    { value: "ปานกลาง", label: "เสี่ยงปานกลาง (สีเหลือง)" },
+                    { value: "สูง", label: "เสี่ยงสูง (สีแดง)" },
+                  ]}
+                />
+              </FilterField>
             </FilterDropdown>
           </div>
 
           {!calendarMode ? (
             <AppointmentTable
+              resetKey={[
+                search,
+                formStatusFilter,
+                selectedFormId,
+                selectedClinic,
+                filterService,
+                filterRisk,
+                startDate,
+                endDate,
+              ].join("|")}
               appointments={filteredAppointments}
+              chips={filterChips}
+              onClearAll={clearMoreFilters}
               isLoading={isLoading || isInitialSetup}
               onSelectCase={setSelectedCase}
               onUpdateApptStatus={handleUpdateApptStatus}
@@ -650,18 +686,18 @@ export default function Appointment() {
                   const apptStatus = a.appt_status || "Scheduled";
                   let bgColor =
                     riskLevel === "ต่ำ"
-                      ? "#10b981"
+                      ? "var(--suth-success)"
                       : riskLevel === "ปานกลาง"
-                        ? "#f59e0b"
-                        : "#ef4444";
+                        ? "var(--suth-warning)"
+                        : "var(--suth-danger)";
                   let txtColor = "white";
 
                   if (apptStatus === "Completed") {
-                    bgColor = "#dcfce7"; // สีเขียวอ่อน
-                    txtColor = "#166534";
+                    bgColor = "var(--suth-success-tint)"; // สีเขียวอ่อน
+                    txtColor = "var(--suth-success)";
                   } else if (apptStatus === "Cancelled") {
-                    bgColor = "#fee2e2"; // สีแดงอ่อน
-                    txtColor = "#991b1b";
+                    bgColor = "var(--suth-danger-tint)"; // สีแดงอ่อน
+                    txtColor = "var(--suth-danger)";
                   }
 
                   return {
@@ -695,7 +731,7 @@ export default function Appointment() {
               />
             </div>
           )}
-        </div>
+        </DataPanel>
       </main>
 
       {/* 🟢 4. UI ของ Quick Action Popup สำหรับปฏิทิน */}
@@ -708,7 +744,7 @@ export default function Appointment() {
               left: 0,
               right: 0,
               bottom: 0,
-              zIndex: 9998,
+              zIndex: "var(--z-modal)",
             }}
             onClick={() =>
               setQuickActionPopup({ ...quickActionPopup, isOpen: false })
@@ -719,13 +755,13 @@ export default function Appointment() {
               position: "fixed",
               left: Math.min(quickActionPopup.x, window.innerWidth - 300),
               top: Math.min(quickActionPopup.y + 20, window.innerHeight - 250),
-              background: "white",
-              boxShadow: "0 15px 40px rgba(0,0,0,0.12)",
-              borderRadius: "24px",
+              background: "var(--suth-surface)",
+              boxShadow: "0 15px 40px rgba(31, 47, 63, 0.12)",
+              borderRadius: "var(--suth-radius-card)",
               padding: "20px",
               width: "300px",
-              zIndex: 9999,
-              border: "1px solid #f1f5f9",
+              zIndex: "var(--z-modal-nested)",
+              border: "1px solid var(--suth-surface-2)",
               animation: "aptPopIn 0.3s ease-out forwards",
             }}
           >
@@ -740,8 +776,8 @@ export default function Appointment() {
               <h4
                 style={{
                   margin: 0,
-                  fontSize: "16px",
-                  color: "#1e293b",
+                  fontSize: "var(--suth-fs-md)",
+                  color: "var(--suth-ink)",
                   fontWeight: "700",
                   lineHeight: "1.4",
                 }}
@@ -753,11 +789,11 @@ export default function Appointment() {
                   setQuickActionPopup({ ...quickActionPopup, isOpen: false })
                 }
                 style={{
-                  background: "#f1f5f9",
+                  background: "var(--suth-surface-2)",
                   border: "none",
                   cursor: "pointer",
-                  color: "#64748b",
-                  fontSize: "12px",
+                  color: "var(--suth-muted)",
+                  fontSize: "var(--suth-fs-caption)",
                   width: "28px",
                   height: "28px",
                   borderRadius: "50%",
@@ -768,12 +804,12 @@ export default function Appointment() {
                   flexShrink: 0,
                 }}
                 onMouseOver={(e) => {
-                  e.currentTarget.style.background = "#e2e8f0";
-                  e.currentTarget.style.color = "#0f172a";
+                  e.currentTarget.style.background = "var(--suth-line-soft)";
+                  e.currentTarget.style.color = "var(--suth-ink)";
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.background = "#f1f5f9";
-                  e.currentTarget.style.color = "#64748b";
+                  e.currentTarget.style.background = "var(--suth-surface-2)";
+                  e.currentTarget.style.color = "var(--suth-muted)";
                 }}
               >
                 ✕
@@ -787,25 +823,29 @@ export default function Appointment() {
               quickActionPopup.data.appt_status === "Scheduled" ? (
                 <div style={{ display: "flex", gap: "10px" }}>
                   <button
+                    hidden={!apptRights.update}
                     style={{
                       flex: 1,
-                      background: "#ecfdf5",
-                      color: "#059669",
-                      border: "1px solid #a7f3d0",
+                      background: "var(--suth-success-tint)",
+                      color: "var(--suth-success)",
+                      border:
+                        "1px solid color-mix(in srgb, var(--suth-success) 30%, transparent)",
                       padding: "10px 0",
-                      borderRadius: "20px",
+                      borderRadius: "var(--suth-radius-card)",
                       cursor: "pointer",
                       fontWeight: "700",
-                      fontSize: "13.5px",
+                      fontSize: "var(--suth-fs-label)",
                       transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                      boxShadow: "0 2px 4px rgba(5, 150, 105, 0.05)",
+                      boxShadow: "0 2px 4px color-mix(in srgb, var(--suth-success) 5%, transparent)",
                     }}
                     onMouseOver={(e) => {
-                      e.currentTarget.style.background = "#d1fae5";
+                      e.currentTarget.style.background =
+                        "color-mix(in srgb, var(--suth-success) 14%, white)";
                       e.currentTarget.style.transform = "translateY(-2px)";
                     }}
                     onMouseOut={(e) => {
-                      e.currentTarget.style.background = "#ecfdf5";
+                      e.currentTarget.style.background =
+                        "var(--suth-success-tint)";
                       e.currentTarget.style.transform = "translateY(0)";
                     }}
                     onClick={() => {
@@ -822,25 +862,28 @@ export default function Appointment() {
                     มาตามนัด
                   </button>
                   <button
+                    hidden={!apptRights.delete}
                     style={{
                       flex: 1,
-                      background: "#fff1f2",
-                      color: "#e11d48",
-                      border: "1px solid #fecdd3",
+                      background: "var(--suth-danger-tint)",
+                      color: "var(--suth-danger)",
+                      border: "1px solid var(--suth-danger-line)",
                       padding: "10px 0",
-                      borderRadius: "20px",
+                      borderRadius: "var(--suth-radius-card)",
                       cursor: "pointer",
                       fontWeight: "700",
-                      fontSize: "13.5px",
+                      fontSize: "var(--suth-fs-label)",
                       transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                      boxShadow: "0 2px 4px rgba(225, 29, 72, 0.05)",
+                      boxShadow: "0 2px 4px color-mix(in srgb, var(--suth-danger) 5%, transparent)",
                     }}
                     onMouseOver={(e) => {
-                      e.currentTarget.style.background = "#ffe4e6";
+                      e.currentTarget.style.background =
+                        "color-mix(in srgb, var(--suth-danger) 12%, white)";
                       e.currentTarget.style.transform = "translateY(-2px)";
                     }}
                     onMouseOut={(e) => {
-                      e.currentTarget.style.background = "#fff1f2";
+                      e.currentTarget.style.background =
+                        "var(--suth-danger-tint)";
                       e.currentTarget.style.transform = "translateY(0)";
                     }}
                     onClick={() => {
@@ -860,13 +903,13 @@ export default function Appointment() {
               ) : (
                 <div
                   style={{
-                    background: "#f8fafc",
-                    border: "1px dashed #cbd5e1",
+                    background: "var(--suth-surface-2)",
+                    border: "1px dashed var(--suth-control-line)",
                     padding: "10px",
-                    borderRadius: "16px",
+                    borderRadius: "var(--suth-radius-panel)",
                     textAlign: "center",
-                    color: "#64748b",
-                    fontSize: "13.5px",
+                    color: "var(--suth-muted)",
+                    fontSize: "var(--suth-fs-label)",
                     fontWeight: "600",
                   }}
                 >
@@ -881,30 +924,31 @@ export default function Appointment() {
               <hr
                 style={{
                   border: "none",
-                  borderTop: "2px dotted #e2e8f0",
+                  borderTop: "2px dotted var(--suth-line)",
                   margin: "4px 0",
                 }}
               />
 
               <button
                 style={{
-                  background: "#ffffff",
-                  color: "#0ea5e9",
-                  border: "1px solid #bae6fd",
+                  background: "var(--suth-surface)",
+                  color: "var(--suth-info)",
+                  border:
+                    "1px solid color-mix(in srgb, var(--suth-info) 30%, transparent)",
                   padding: "10px 12px",
-                  borderRadius: "20px",
+                  borderRadius: "var(--suth-radius-card)",
                   cursor: "pointer",
                   fontWeight: "700",
-                  fontSize: "13.5px",
+                  fontSize: "var(--suth-fs-label)",
                   transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                  boxShadow: "0 2px 4px rgba(14, 165, 233, 0.05)",
+                  boxShadow: "0 2px 4px color-mix(in srgb, var(--suth-info) 5%, transparent)",
                 }}
                 onMouseOver={(e) => {
-                  e.currentTarget.style.background = "#f0f9ff";
+                  e.currentTarget.style.background = "var(--suth-info-tint)";
                   e.currentTarget.style.transform = "translateY(-2px)";
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.background = "#ffffff";
+                  e.currentTarget.style.background = "var(--suth-surface)";
                   e.currentTarget.style.transform = "translateY(0)";
                 }}
                 onClick={() => {

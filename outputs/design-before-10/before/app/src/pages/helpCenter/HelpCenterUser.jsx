@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -120,7 +120,9 @@ export default function HelpCenterUser() {
 
   return (
     <div className="hc-user-page">
-      <a className="suth-skip-link" href="#public-main">ข้ามไปยังเนื้อหาหลัก</a>
+      <a className="suth-skip-link" href="#public-main">
+        ข้ามไปยังเนื้อหาหลัก
+      </a>
       {/* ── NAVBAR ── */}
       <Navbar showBack={true} backText="กลับหน้าหลัก" />
       {/* ── HERO SECTION ── */}
@@ -253,10 +255,7 @@ export default function HelpCenterUser() {
                 /* ร่างที่ 1: เมื่อเปิดแผ่ขยายออกทั้งหมด -> แสดงเป็น Grid แถวตั้งลงมา ไม่มีปุ่มลูกศร */
                 <div className="hc-user-clinic-grid-expanded">
                   {visibleClinics.map((clinic) => (
-                    <div
-                      key={clinic.id}
-                      className="hc-user-clinic-card"
-                    >
+                    <div key={clinic.id} className="hc-user-clinic-card">
                       <div className="hc-card-main-content">
                         <div className="hc-card-visual-container">
                           <div className="hc-card-logo-circle">
@@ -267,7 +266,14 @@ export default function HelpCenterUser() {
                           <h3>{clinic.name}</h3>
                         </div>
                       </div>
-                      <button className="hc-btn-view-clinic" type="button" onClick={() => navigate(`/help-center/clinic/${clinic.id}`)} aria-label={`ดูคำถามทั้งหมดของ${clinic.name}`}>
+                      <button
+                        className="hc-btn-view-clinic"
+                        type="button"
+                        onClick={() =>
+                          navigate(`/help-center/clinic/${clinic.id}`)
+                        }
+                        aria-label={`ดูคำถามทั้งหมดของ${clinic.name}`}
+                      >
                         ดูคำถามทั้งหมด <FiChevronRight />
                       </button>
                     </div>
@@ -301,7 +307,14 @@ export default function HelpCenterUser() {
                             <h3>{clinic.name}</h3>
                           </div>
                         </div>
-                        <button className="hc-btn-view-clinic" type="button" onClick={() => navigate(`/help-center/clinic/${clinic.id}`)} aria-label={`ดูคำถามทั้งหมดของ${clinic.name}`}>
+                        <button
+                          className="hc-btn-view-clinic"
+                          type="button"
+                          onClick={() =>
+                            navigate(`/help-center/clinic/${clinic.id}`)
+                          }
+                          aria-label={`ดูคำถามทั้งหมดของ${clinic.name}`}
+                        >
                           ดูคำถามทั้งหมด <FiChevronRight />
                         </button>
                       </div>

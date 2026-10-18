@@ -1,5 +1,5 @@
-process.env.DATA_ENCRYPTION_KEYS ||= JSON.stringify({test:'11'.repeat(32)});
-process.env.DATA_ENCRYPTION_ACTIVE_KEY ||= 'test';
+process.env.DATA_ENCRYPTION_KEYS ||= JSON.stringify({ test: "11".repeat(32) });
+process.env.DATA_ENCRYPTION_ACTIVE_KEY ||= "test";
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const express = require("express");
@@ -14,7 +14,17 @@ test("submits a hash-linked form and names it after the account", async () => {
     rollback: async () => {},
     release: () => {},
     query: async (sql, params) => {
-      if (sql.includes('FROM school_risk_triggers')) return [[{id:6,question_id:'diagnostic_question',answer_value:'diagnostic answer',enabled:1}]];
+      if (sql.includes("FROM school_risk_triggers"))
+        return [
+          [
+            {
+              id: 6,
+              question_id: "diagnostic_question",
+              answer_value: "diagnostic answer",
+              enabled: 1,
+            },
+          ],
+        ];
       if (sql.startsWith("SELECT title, clinic_type")) {
         return [
           [
@@ -105,11 +115,14 @@ test("submits a hash-linked form and names it after the account", async () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          processing_consent: true, notice_version: "standard-v1",
+          processing_consent: true,
+          notice_version: "standard-v1",
           answers: { diagnostic_question: "diagnostic answer" },
           questionTitles: { diagnostic_question: "Diagnostic question" },
           identityValue: "-",
-          summaryData: {school_risk_override:{level:'normal',trigger_ids:[]}},
+          summaryData: {
+            school_risk_override: { level: "normal", trigger_ids: [] },
+          },
         }),
       },
     );
@@ -131,13 +144,19 @@ test("submits a hash-linked form and names it after the account", async () => {
     );
     assert.equal(summary.display_name, "สมหญิง ใจดี");
     assert.equal(summary.display_name_source, "account");
-    assert.deepEqual(summary.school_risk_override,{level:'high',trigger_ids:[6]});
-    assert.equal(summary.score_results.at(-1).question_id,'school_risk_trigger');
+    assert.deepEqual(summary.school_risk_override, {
+      level: "high",
+      trigger_ids: [6],
+    });
+    assert.equal(
+      summary.score_results.at(-1).question_id,
+      "school_risk_trigger",
+    );
     assert.deepEqual(await response.json(), {
       message: "บันทึกคำตอบสำเร็จ",
       responseId: 901,
       masterCaseId: 701,
-      score_results:summary.score_results,
+      score_results: summary.score_results,
     });
   } finally {
     await new Promise((resolve, reject) =>
@@ -153,7 +172,7 @@ test("accepts a public form submission without a patient session", async () => {
     rollback: async () => {},
     release: () => {},
     query: async (sql) => {
-      if (sql.includes('FROM school_risk_triggers')) return [[]];
+      if (sql.includes("FROM school_risk_triggers")) return [[]];
       if (sql.startsWith("SELECT title, clinic_type")) {
         return [
           [
@@ -217,7 +236,8 @@ test("accepts a public form submission without a patient session", async () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          processing_consent: true, notice_version: "standard-v1",
+          processing_consent: true,
+          notice_version: "standard-v1",
           answers: { question: "answer" },
           summaryData: {},
         }),
@@ -297,7 +317,8 @@ test("blocks unauthenticated submission when login is strict or optional", async
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-          processing_consent: true, notice_version: "standard-v1",
+            processing_consent: true,
+            notice_version: "standard-v1",
             answers: { question: "answer" },
             summaryData: {},
           }),
@@ -420,7 +441,11 @@ async function submitAsGuest(connection, body) {
     return await fetch(`http://127.0.0.1:${port}/api/forms/60/submit`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({processing_consent:true,notice_version:"standard-v1",...body}),
+      body: JSON.stringify({
+        processing_consent: true,
+        notice_version: "standard-v1",
+        ...body,
+      }),
     });
   } finally {
     await new Promise((resolve, reject) =>
@@ -446,18 +471,28 @@ const thaiId = (prefix) => {
   return `${prefix}${(11 - (sum % 11)) % 10}`;
 };
 
-test('a form with default settings rejects missing consent and stale notice versions before saving responses',async()=>{
- let writes=0;
- const connection={beginTransaction:async()=>{},rollback:async()=>{},release:()=>{},query:async sql=>{
-  if(sql.startsWith('SELECT title, clinic_type'))return [[publicForm]];
-  if(sql.startsWith('SELECT purpose,legal_basis,notice_version'))return [[]];
-  writes++;throw Error('Consent rejection must precede persistence');
- }};
- for(const body of [{processing_consent:false,notice_version:'standard-v1'},{processing_consent:true,notice_version:'old-version'}]){
-  const response=await submitAsGuest(connection,{answers:{},...body});
-  assert.equal(response.status,422);
- }
- assert.equal(writes,0);
+test("a form with default settings rejects missing consent and stale notice versions before saving responses", async () => {
+  let writes = 0;
+  const connection = {
+    beginTransaction: async () => {},
+    rollback: async () => {},
+    release: () => {},
+    query: async (sql) => {
+      if (sql.startsWith("SELECT title, clinic_type")) return [[publicForm]];
+      if (sql.startsWith("SELECT purpose,legal_basis,notice_version"))
+        return [[]];
+      writes++;
+      throw Error("Consent rejection must precede persistence");
+    },
+  };
+  for (const body of [
+    { processing_consent: false, notice_version: "standard-v1" },
+    { processing_consent: true, notice_version: "old-version" },
+  ]) {
+    const response = await submitAsGuest(connection, { answers: {}, ...body });
+    assert.equal(response.status, 422);
+  }
+  assert.equal(writes, 0);
 });
 
 test("a guest who consents is filed under their national ID", async () => {
@@ -470,7 +505,7 @@ test("a guest who consents is filed under their national ID", async () => {
     rollback: async () => {},
     release: () => {},
     query: async (sql, params) => {
-      if (sql.includes('FROM school_risk_triggers')) return [[]];
+      if (sql.includes("FROM school_risk_triggers")) return [[]];
       if (sql.startsWith("SELECT title, clinic_type")) return [[publicForm]];
       if (sql.includes("FROM persons WHERE identity_hash"))
         return [[{ id: 7, patient_account_id: null, identity_hash: "h" }]];

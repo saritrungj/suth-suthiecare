@@ -1,4 +1,4 @@
-import { toDisplayText } from '../utils/textPresentation.js';
+import { toDisplayText } from "../utils/textPresentation.js";
 import {
   FiAlertCircle,
   FiCheckCircle,

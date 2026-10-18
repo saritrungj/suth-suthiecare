@@ -1,8 +1,17 @@
-import { Dialog as SharedDialog } from '../../components/ui/index.jsx';
-import { Surface as UiSurface, Badge as UiBadge } from '../../components/ui/index.jsx';
-import { PageHeader as UiPageHeader, Button as UiButton, FilterBar as UiFilterBar, TextInput as UiTextInput, DataTable as UiDataTable } from '../../components/ui/index.jsx';
-import SearchableSelect from '../../components/SearchableSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { Dialog as SharedDialog } from "../../components/ui/index.jsx";
+import {
+  Surface as UiSurface,
+  Badge as UiBadge,
+} from "../../components/ui/index.jsx";
+import {
+  PageHeader as UiPageHeader,
+  Button as UiButton,
+  FilterBar as UiFilterBar,
+  TextInput as UiTextInput,
+  DataTable as UiDataTable,
+} from "../../components/ui/index.jsx";
+import SearchableSelect from "../../components/SearchableSelect";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import MasterSelect from "../../components/MasterSelect";
 import { usePageExport } from "../../components/ExcelExport";
 import React, { useState, useEffect, useCallback, useRef } from "react";
@@ -539,7 +548,23 @@ export default function HelpCenterManager() {
       })
     : [];
 
-  usePageExport({title:"ศูนย์ช่วยเหลือ",sources:[{resource:"faqs",filters:{clinic_id:filterClinic,status:filterStatus,search:searchQuery},ids:sortedFaqs.map(r=>r.faq_id)},...(catSelectedClinic?[{resource:"faq_categories",id:catSelectedClinic}]:[])]});
+  usePageExport({
+    title: "ศูนย์ช่วยเหลือ",
+    sources: [
+      {
+        resource: "faqs",
+        filters: {
+          clinic_id: filterClinic,
+          status: filterStatus,
+          search: searchQuery,
+        },
+        ids: sortedFaqs.map((r) => r.faq_id),
+      },
+      ...(catSelectedClinic
+        ? [{ resource: "faq_categories", id: catSelectedClinic }]
+        : []),
+    ],
+  });
   const totalItems = sortedFaqs.length;
   const totalPages = Math.ceil(totalItems / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -622,7 +647,9 @@ export default function HelpCenterManager() {
             </p>
           </div>
           <div className="hc-header-actions-group">
-            <UiButton variant="secondary" type="submit"
+            <UiButton
+              variant="secondary"
+              type="submit"
               className="hc-btn-outline-custom"
               onClick={() => {
                 setClinicSearchQuery("");
@@ -631,7 +658,9 @@ export default function HelpCenterManager() {
             >
               <FaSlidersH /> ตั้งค่าคลินิกหน้าช่วยเหลือ
             </UiButton>
-            <UiButton variant="secondary" type="submit"
+            <UiButton
+              variant="secondary"
+              type="submit"
               className="hc-btn-outline-custom"
               onClick={handleOpenCatModal}
               disabled={clinics.length === 0}
@@ -641,7 +670,9 @@ export default function HelpCenterManager() {
             >
               <FaFolderPlus /> จัดการหมวดหมู่ย่อย
             </UiButton>
-            <UiButton variant="primary" type="submit"
+            <UiButton
+              variant="primary"
+              type="submit"
               className="hc-btn-add"
               onClick={() => handleOpenFaqModal()}
               disabled={clinics.length === 0}
@@ -680,7 +711,18 @@ export default function HelpCenterManager() {
               <label style={{ fontSize: "13px", color: "#64748b" }}>
                 สถานะ
               </label>
-              <MasterSelect category="publication_status" value={filterStatus} onChange={(e)=>setFilterStatus(e.target.value)} fallback={[{code:"published",label:"เผยแพร่"},{code:"draft",label:"ร่าง"},{code:"hidden",label:"ซ่อน"}]}><option value="">สถานะทั้งหมด</option></MasterSelect>
+              <MasterSelect
+                category="publication_status"
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                fallback={[
+                  { code: "published", label: "เผยแพร่" },
+                  { code: "draft", label: "ร่าง" },
+                  { code: "hidden", label: "ซ่อน" },
+                ]}
+              >
+                <option value="">สถานะทั้งหมด</option>
+              </MasterSelect>
             </div>
           </FilterDropdown>
 
@@ -720,7 +762,8 @@ export default function HelpCenterManager() {
         ) : loadError ? (
           <div className="hc-loading-state" role="alert">
             <p>{loadError}</p>
-            <UiButton variant="primary"
+            <UiButton
+              variant="primary"
               type="button"
               className="hc-btn-add"
               onClick={fetchInitialData}
@@ -729,7 +772,8 @@ export default function HelpCenterManager() {
             </UiButton>
           </div>
         ) : (
-          <UiSurface as="div"
+          <UiSurface
+            as="div"
             className="hc-table-container"
             style={{ display: "flex", flexDirection: "column" }}
           >
@@ -789,7 +833,10 @@ export default function HelpCenterManager() {
                               size={16}
                             />
                           </td>
-                          <td className="hc-col-question" title={toDisplayText(faq.question)}>
+                          <td
+                            className="hc-col-question"
+                            title={toDisplayText(faq.question)}
+                          >
                             {faq.question && faq.question.length > 60
                               ? faq.question.substring(0, 60) + "..."
                               : faq.question}
@@ -867,7 +914,9 @@ export default function HelpCenterManager() {
                           </td>
                           <td className="hc-col-actions">
                             <div className="hc-actions-wrapper">
-                              <UiButton variant="secondary" size="icon"
+                              <UiButton
+                                variant="secondary"
+                                size="icon"
                                 type="button"
                                 className="hc-btn-action-edit"
                                 onClick={() => handleOpenFaqModal(faq)}
@@ -875,7 +924,8 @@ export default function HelpCenterManager() {
                               >
                                 <FaEdit />
                               </UiButton>
-                              <UiButton variant="danger"
+                              <UiButton
+                                variant="danger"
                                 type="button"
                                 className="hc-btn-action-delete"
                                 onClick={() =>
@@ -924,7 +974,10 @@ export default function HelpCenterManager() {
                   <span>รายการ (รวมทั้งหมด {totalItems} รายการ)</span>
                 </div>
                 <div className="pagination-controls">
-                  <UiButton variant="secondary" size="icon" type="submit"
+                  <UiButton
+                    variant="secondary"
+                    size="icon"
+                    type="submit"
                     className="page-btn"
                     onClick={goToPrevPage}
                     disabled={currentPage === 1}
@@ -937,7 +990,10 @@ export default function HelpCenterManager() {
                     <strong className="page-highlight">{currentPage}</strong>{" "}
                     จาก {totalPages || 1}
                   </span>
-                  <UiButton variant="secondary" size="icon" type="submit"
+                  <UiButton
+                    variant="secondary"
+                    size="icon"
+                    type="submit"
                     className="page-btn"
                     onClick={goToNextPage}
                     disabled={currentPage === totalPages || totalPages === 0}
@@ -952,593 +1008,620 @@ export default function HelpCenterManager() {
         )}
 
         {isCatModalOpen && (
-          <SharedDialog title="จัดการหมวดหมู่คำถามย่อย" onClose={() => setIsCatModalOpen(false)} className="hc-dialog">
+          <SharedDialog
+            title="จัดการหมวดหมู่คำถามย่อย"
+            onClose={() => setIsCatModalOpen(false)}
+            className="hc-dialog"
+          >
+            <div className="hc-form-group">
+              <label>
+                เลือกคลินิกที่ต้องการจัดการ{" "}
+                <span className="hc-required">*</span>
+              </label>
+              <SearchableSelect
+                required
+                value={catSelectedClinic}
+                onChange={(e) => setCatSelectedClinic(e.target.value)}
+                disabled={!!editingCatId}
+                style={{
+                  backgroundColor: editingCatId ? "#f1f5f9" : "#ffffff",
+                  cursor: editingCatId ? "not-allowed" : "pointer",
+                }}
+              >
+                <option value="">-- เลือกคลินิกเพื่อดูข้อมูล --</option>
+                {clinics.length === 0 && (
+                  <option value="" disabled>
+                    ยังไม่มีคลินิกในหน่วยงานนี้
+                  </option>
+                )}
+                {clinics.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </SearchableSelect>
+            </div>
 
-
-              <div className="hc-form-group">
-                <label>
-                  เลือกคลินิกที่ต้องการจัดการ{" "}
-                  <span className="hc-required">*</span>
-                </label>
-                <SearchableSelect
-                  required
-                  value={catSelectedClinic}
-                  onChange={(e) => setCatSelectedClinic(e.target.value)}
-                  disabled={!!editingCatId}
+            {catSelectedClinic && (
+              <>
+                <hr
+                  style={{ margin: "20px 0", border: "0.5px solid #e2e8f0" }}
+                />
+                <form
+                  onSubmit={handleSaveCategory}
                   style={{
-                    backgroundColor: editingCatId ? "#f1f5f9" : "#ffffff",
-                    cursor: editingCatId ? "not-allowed" : "pointer",
+                    display: "flex",
+                    gap: "12px",
+                    alignItems: "flex-end",
+                    marginBottom: "20px",
                   }}
                 >
-                  <option value="">-- เลือกคลินิกเพื่อดูข้อมูล --</option>
-                  {clinics.length === 0 && (
-                    <option value="" disabled>
-                      ยังไม่มีคลินิกในหน่วยงานนี้
-                    </option>
-                  )}
-                  {clinics.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </SearchableSelect>
-              </div>
-
-              {catSelectedClinic && (
-                <>
-                  <hr
-                    style={{ margin: "20px 0", border: "0.5px solid #e2e8f0" }}
-                  />
-                  <form
-                    onSubmit={handleSaveCategory}
+                  <div className="hc-form-group" style={{ margin: 0, flex: 1 }}>
+                    <label>
+                      {editingCatId
+                        ? "กำลังแก้ไขชื่อหมวดหมู่"
+                        : "ชื่อหมวดหมู่ย่อยใหม่"}{" "}
+                      <span className="hc-required">*</span>
+                    </label>
+                    <UiTextInput
+                      type="text"
+                      placeholder="เช่น การนัดหมาย, ขั้นตอนบริการ"
+                      required
+                      value={catNameInput}
+                      onChange={(e) => setCatNameInput(e.target.value)}
+                    />
+                  </div>
+                  <UiButton
+                    variant="primary"
+                    type="submit"
+                    className="hc-btn-save"
                     style={{
                       display: "flex",
-                      gap: "12px",
-                      alignItems: "flex-end",
-                      marginBottom: "20px",
+                      alignItems: "center",
+                      gap: "8px",
                     }}
                   >
-                    <div
-                      className="hc-form-group"
-                      style={{ margin: 0, flex: 1 }}
-                    >
-                      <label>
-                        {editingCatId
-                          ? "กำลังแก้ไขชื่อหมวดหมู่"
-                          : "ชื่อหมวดหมู่ย่อยใหม่"}{" "}
-                        <span className="hc-required">*</span>
-                      </label>
-                      <UiTextInput
-                        type="text"
-                        placeholder="เช่น การนัดหมาย, ขั้นตอนบริการ"
-                        required
-                        value={catNameInput}
-                        onChange={(e) => setCatNameInput(e.target.value)}
-                      />
-                    </div>
-                    <UiButton variant="primary"
-                      type="submit"
-                      className="hc-btn-save"
-                      style={{display: "flex", alignItems: "center", gap: "8px"}}
-                    >
-                      {editingCatId ? (
-                        <>
-                          <FaSave /> บันทึก
-                        </>
-                      ) : (
-                        <>
-                          <FaPlus /> เพิ่มหมวดหมู่
-                        </>
-                      )}
-                    </UiButton>
-                    {editingCatId && (
-                      <UiButton variant="secondary"
-                        type="button"
-                        className="hc-btn-cancel"
-                        onClick={handleCancelEditCategory}
-                        style={{display: "flex", alignItems: "center", justifyContent: "center"}}
-                      >
-                        <FaTimes />
-                      </UiButton>
+                    {editingCatId ? (
+                      <>
+                        <FaSave /> บันทึก
+                      </>
+                    ) : (
+                      <>
+                        <FaPlus /> เพิ่มหมวดหมู่
+                      </>
                     )}
-                  </form>
-
-                  <label
-                    style={{
-                      fontWeight: 600,
-                      display: "block",
-                      marginBottom: "10px",
-                      color: "#334155",
-                      fontSize: "14.5px",
-                    }}
-                  >
-                    รายการหมวดหมู่ทั้งหมดในคลินิกนี้
-                  </label>
-                  <div
-                    style={{
-                      maxHeight: "250px",
-                      overflowY: "auto",
-                      border: "1px solid #e2e8f0",
-                      borderRadius: "8px",
-                    }}
-                  >
-                    <UiDataTable
-                      className="hc-table"
-                      style={{ minWidth: "100%", boxShadow: "none" }}
+                  </UiButton>
+                  {editingCatId && (
+                    <UiButton
+                      variant="secondary"
+                      type="button"
+                      className="hc-btn-cancel"
+                      onClick={handleCancelEditCategory}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
                     >
-                      <thead>
-                        <tr>
-                          <th
-                            style={{
-                              padding: "10px 15px",
-                              fontSize: "13px",
-                              width: "40px",
-                              textAlign: "center",
-                            }}
-                          ></th>
-                          <th
-                            style={{ padding: "10px 15px", fontSize: "13px" }}
-                          >
-                            ชื่อหมวดหมู่
-                          </th>
-                          <th
-                            style={{
-                              padding: "10px 15px",
-                              fontSize: "13px",
-                              width: "150px",
-                              textAlign: "center",
-                            }}
-                          >
-                            สถานะ
-                          </th>
-                          <th
-                            style={{
-                              padding: "10px 15px",
-                              fontSize: "13px",
-                              width: "100px",
-                              textAlign: "center",
-                            }}
-                          >
-                            จัดการ
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {categories.length > 0 ? (
-                          categories.map((cat, idx) => (
-                            <tr
-                              key={cat.id}
-                              draggable
-                              onDragStart={() => setDraggedCatIndex(idx)}
-                              onDragOver={(e) => {
-                                e.preventDefault();
-                                e.dataTransfer.dropEffect = "move";
-                              }}
-                              onDrop={() => handleCatDropReorder(idx)}
-                              onDragEnd={() => setDraggedCatIndex(null)}
-                              style={{
-                                cursor:
-                                  draggedCatIndex === idx ? "grabbing" : "grab",
-                                opacity: draggedCatIndex === idx ? 0.4 : 1,
-                                backgroundColor:
-                                  draggedCatIndex === idx
-                                    ? "#f8fafc"
-                                    : "inherit",
-                                transition: "all 0.2s ease",
-                              }}
-                            >
-                              <td
-                                style={{
-                                  padding: "10px 5px",
-                                  textAlign: "center",
-                                  color: "#94a3b8",
-                                }}
-                              >
-                                <FaGripVertical size={14} />
-                              </td>
-                              <td
-                                style={{
-                                  padding: "10px 15px",
-                                  fontSize: "14px",
-                                  fontWeight:
-                                    editingCatId === cat.id ? "700" : "normal",
-                                  color:
-                                    editingCatId === cat.id
-                                      ? "#F47932"
-                                      : "#475569",
-                                }}
-                              >
-                                {cat.category_name}
-                              </td>
-                              <td
-                                style={{
-                                  padding: "5px 10px",
-                                  textAlign: "center",
-                                }}
-                              >
-                                <SearchableSelect
-                                  value={cat.status || "published"}
-                                  onChange={(e) =>
-                                    handleCatStatusChange(cat, e.target.value)
-                                  }
-                                  style={{
-                                    padding: "4px 8px",
-                                    borderRadius: "6px",
-                                    fontSize: "12.5px",
-                                    border: "1px solid #cbd5e1",
-                                    cursor: "pointer",
-                                    backgroundColor:
-                                      cat.status === "published"
-                                        ? "#f0fdf4"
-                                        : cat.status === "draft"
-                                          ? "#f1f5f9"
-                                          : "#fdf2f2",
-                                    color:
-                                      cat.status === "published"
-                                        ? "#16a34a"
-                                        : cat.status === "draft"
-                                          ? "#475569"
-                                          : "#dc2626",
-                                    fontWeight: "600",
-                                  }}
-                                >
-                                  <option value="published">เผยแพร่</option>
-                                  <option value="draft">ร่าง</option>
-                                  <option value="hidden">ซ่อน</option>
-                                </SearchableSelect>
-                              </td>
-                              <td
-                                style={{
-                                  padding: "5px 15px",
-                                  textAlign: "center",
-                                }}
-                              >
-                                <div
-                                  className="hc-actions-wrapper"
-                                  style={{ gap: "4px" }}
-                                >
-                                  <UiButton variant="secondary" size="icon"
-                                    type="button"
-                                    className="hc-btn-action-edit"
+                      <FaTimes />
+                    </UiButton>
+                  )}
+                </form>
 
-                                    onClick={() => handleStartEditCategory(cat)}
-                                    title="แก้ไขชื่อหมวดหมู่"
-                                  >
-                                    <FaEdit size={12} />
-                                  </UiButton>
-                                  <UiButton variant="danger"
-                                    type="button"
-                                    className="hc-btn-action-delete"
-
-                                    onClick={() =>
-                                      handleDeleteCategory(
-                                        cat.id,
-                                        cat.category_name,
-                                      )
-                                    }
-                                    title="ลบหมวดหมู่"
-                                  >
-                                    <FaTrash size={12} />
-                                  </UiButton>
-                                </div>
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
+                <label
+                  style={{
+                    fontWeight: 600,
+                    display: "block",
+                    marginBottom: "10px",
+                    color: "#334155",
+                    fontSize: "14.5px",
+                  }}
+                >
+                  รายการหมวดหมู่ทั้งหมดในคลินิกนี้
+                </label>
+                <div
+                  style={{
+                    maxHeight: "250px",
+                    overflowY: "auto",
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <UiDataTable
+                    className="hc-table"
+                    style={{ minWidth: "100%", boxShadow: "none" }}
+                  >
+                    <thead>
+                      <tr>
+                        <th
+                          style={{
+                            padding: "10px 15px",
+                            fontSize: "13px",
+                            width: "40px",
+                            textAlign: "center",
+                          }}
+                        ></th>
+                        <th style={{ padding: "10px 15px", fontSize: "13px" }}>
+                          ชื่อหมวดหมู่
+                        </th>
+                        <th
+                          style={{
+                            padding: "10px 15px",
+                            fontSize: "13px",
+                            width: "150px",
+                            textAlign: "center",
+                          }}
+                        >
+                          สถานะ
+                        </th>
+                        <th
+                          style={{
+                            padding: "10px 15px",
+                            fontSize: "13px",
+                            width: "100px",
+                            textAlign: "center",
+                          }}
+                        >
+                          จัดการ
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {categories.length > 0 ? (
+                        categories.map((cat, idx) => (
+                          <tr
+                            key={cat.id}
+                            draggable
+                            onDragStart={() => setDraggedCatIndex(idx)}
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              e.dataTransfer.dropEffect = "move";
+                            }}
+                            onDrop={() => handleCatDropReorder(idx)}
+                            onDragEnd={() => setDraggedCatIndex(null)}
+                            style={{
+                              cursor:
+                                draggedCatIndex === idx ? "grabbing" : "grab",
+                              opacity: draggedCatIndex === idx ? 0.4 : 1,
+                              backgroundColor:
+                                draggedCatIndex === idx ? "#f8fafc" : "inherit",
+                              transition: "all 0.2s ease",
+                            }}
+                          >
                             <td
-                              colSpan="4"
                               style={{
+                                padding: "10px 5px",
                                 textAlign: "center",
-                                padding: "20px",
                                 color: "#94a3b8",
-                                fontSize: "13px",
                               }}
                             >
-                              ยังไม่มีหมวดหมู่ย่อยในคลินิกนี้
+                              <FaGripVertical size={14} />
+                            </td>
+                            <td
+                              style={{
+                                padding: "10px 15px",
+                                fontSize: "14px",
+                                fontWeight:
+                                  editingCatId === cat.id ? "700" : "normal",
+                                color:
+                                  editingCatId === cat.id
+                                    ? "#F47932"
+                                    : "#475569",
+                              }}
+                            >
+                              {cat.category_name}
+                            </td>
+                            <td
+                              style={{
+                                padding: "5px 10px",
+                                textAlign: "center",
+                              }}
+                            >
+                              <SearchableSelect
+                                value={cat.status || "published"}
+                                onChange={(e) =>
+                                  handleCatStatusChange(cat, e.target.value)
+                                }
+                                style={{
+                                  padding: "4px 8px",
+                                  borderRadius: "6px",
+                                  fontSize: "12.5px",
+                                  border: "1px solid #cbd5e1",
+                                  cursor: "pointer",
+                                  backgroundColor:
+                                    cat.status === "published"
+                                      ? "#f0fdf4"
+                                      : cat.status === "draft"
+                                        ? "#f1f5f9"
+                                        : "#fdf2f2",
+                                  color:
+                                    cat.status === "published"
+                                      ? "#16a34a"
+                                      : cat.status === "draft"
+                                        ? "#475569"
+                                        : "#dc2626",
+                                  fontWeight: "600",
+                                }}
+                              >
+                                <option value="published">เผยแพร่</option>
+                                <option value="draft">ร่าง</option>
+                                <option value="hidden">ซ่อน</option>
+                              </SearchableSelect>
+                            </td>
+                            <td
+                              style={{
+                                padding: "5px 15px",
+                                textAlign: "center",
+                              }}
+                            >
+                              <div
+                                className="hc-actions-wrapper"
+                                style={{ gap: "4px" }}
+                              >
+                                <UiButton
+                                  variant="secondary"
+                                  size="icon"
+                                  type="button"
+                                  className="hc-btn-action-edit"
+
+                                  onClick={() => handleStartEditCategory(cat)}
+                                  title="แก้ไขชื่อหมวดหมู่"
+                                >
+                                  <FaEdit size={12} />
+                                </UiButton>
+                                <UiButton
+                                  variant="danger"
+                                  type="button"
+                                  className="hc-btn-action-delete"
+
+                                  onClick={() =>
+                                    handleDeleteCategory(
+                                      cat.id,
+                                      cat.category_name,
+                                    )
+                                  }
+                                  title="ลบหมวดหมู่"
+                                >
+                                  <FaTrash size={12} />
+                                </UiButton>
+                              </div>
                             </td>
                           </tr>
-                        )}
-                      </tbody>
-                    </UiDataTable>
-                  </div>
-                </>
-              )}
-            </SharedDialog>
+                        ))
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan="4"
+                            style={{
+                              textAlign: "center",
+                              padding: "20px",
+                              color: "#94a3b8",
+                              fontSize: "13px",
+                            }}
+                          >
+                            ยังไม่มีหมวดหมู่ย่อยในคลินิกนี้
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </UiDataTable>
+                </div>
+              </>
+            )}
+          </SharedDialog>
         )}
 
         {/* ── 🌟 MODAL 2 (โฉมแก้ไขใหม่): หน้าต่างกรอกฟอร์มเพิ่ม/แก้ไขข้อคำถาม Hybrid ── */}
         {isFaqModalOpen && (
-          <SharedDialog title={editingFaq ? "แก้ไขข้อมูลคำถาม" : "เพิ่มข้อคำถามใหม่"} onClose={() => setIsFaqModalOpen(false)} className="hc-dialog">
+          <SharedDialog
+            title={editingFaq ? "แก้ไขข้อมูลคำถาม" : "เพิ่มข้อคำถามใหม่"}
+            onClose={() => setIsFaqModalOpen(false)}
+            className="hc-dialog"
+          >
+            <form onSubmit={handleSaveFaq}>
+              <div className="hc-form-row">
+                {/* 🟢 ปลดล็อกกล่องเลือกคลินิกหลักให้สอดรับสเตท Value ท่องจำค่าดั้งเดิมได้ตลอดเวลา */}
+                <div className="hc-form-group">
+                  <label>
+                    เลือกคลินิกหลัก <span className="hc-required">*</span>
+                  </label>
+                  <SearchableSelect
+                    name="clinic_id"
+                    value={faqForm.clinic_id || ""}
+                    onChange={(e) => {
+                      const val = e.target.value ? String(e.target.value) : "";
+                      setFaqForm({
+                        ...faqForm,
+                        clinic_id: val,
+                        category_id: "",
+                      });
+                      if (val) fetchCategoriesForForm(val);
+                    }}
+                    required
+                  >
+                    <option value="">-- เลือกคลินิก --</option>
+                    {clinics.map((clinic) => (
+                      <option key={clinic.id} value={clinic.id}>
+                        {clinic.name}
+                      </option>
+                    ))}
+                  </SearchableSelect>
+                </div>
 
-
-              <form onSubmit={handleSaveFaq}>
-                <div className="hc-form-row">
-                  {/* 🟢 ปลดล็อกกล่องเลือกคลินิกหลักให้สอดรับสเตท Value ท่องจำค่าดั้งเดิมได้ตลอดเวลา */}
-                  <div className="hc-form-group">
-                    <label>
-                      เลือกคลินิกหลัก <span className="hc-required">*</span>
-                    </label>
+                {/* 🟢 ปลดล็อกกล่องเลือกหมวดหมู่ย่อย ปล่อยว่างสำหรับคำถาม Hybrid ทั่วไปได้ */}
+                <div className="hc-form-group">
+                  <label>เลือกหมวดหมู่ย่อย</label>
+                  <div style={{ display: "flex", gap: "8px" }}>
                     <SearchableSelect
-                      name="clinic_id"
-                      value={faqForm.clinic_id || ""}
+                      name="category_id"
+                      value={faqForm.category_id || ""}
                       onChange={(e) => {
                         const val = e.target.value
                           ? String(e.target.value)
                           : "";
-                        setFaqForm({
-                          ...faqForm,
-                          clinic_id: val,
-                          category_id: "",
-                        });
-                        if (val) fetchCategoriesForForm(val);
+                        setFaqForm({ ...faqForm, category_id: val });
                       }}
-                      required
                     >
-                      <option value="">-- เลือกคลินิก --</option>
-                      {clinics.map((clinic) => (
-                        <option key={clinic.id} value={clinic.id}>
-                          {clinic.name}
-                        </option>
-                      ))}
+                      <option value="">
+                        -- ไม่มีหมวดหมู่ย่อย (คำถามทั่วไปประจำคลินิก) --
+                      </option>
+                      {categories &&
+                        categories.length > 0 &&
+                        categories.map((cat) => (
+                          <option key={cat.id} value={cat.id}>
+                            {cat.category_name}
+                          </option>
+                        ))}
                     </SearchableSelect>
                   </div>
-
-                  {/* 🟢 ปลดล็อกกล่องเลือกหมวดหมู่ย่อย ปล่อยว่างสำหรับคำถาม Hybrid ทั่วไปได้ */}
-                  <div className="hc-form-group">
-                    <label>เลือกหมวดหมู่ย่อย</label>
-                    <div style={{ display: "flex", gap: "8px" }}>
-                      <SearchableSelect
-                        name="category_id"
-                        value={faqForm.category_id || ""}
-                        onChange={(e) => {
-                          const val = e.target.value
-                            ? String(e.target.value)
-                            : "";
-                          setFaqForm({ ...faqForm, category_id: val });
-                        }}
-                      >
-                        <option value="">
-                          -- ไม่มีหมวดหมู่ย่อย (คำถามทั่วไปประจำคลินิก) --
-                        </option>
-                        {categories &&
-                          categories.length > 0 &&
-                          categories.map((cat) => (
-                            <option key={cat.id} value={cat.id}>
-                              {cat.category_name}
-                            </option>
-                          ))}
-                      </SearchableSelect>
-                    </div>
-                    {!faqForm.clinic_id && (
-                      <small style={{ color: "#ef4444" }}>
-                        * กรุณาเลือกคลินิกหลักก่อนเพื่อโหลดหมวดหมู่ย่อย
-                      </small>
-                    )}
-                  </div>
+                  {!faqForm.clinic_id && (
+                    <small style={{ color: "#ef4444" }}>
+                      * กรุณาเลือกคลินิกหลักก่อนเพื่อโหลดหมวดหมู่ย่อย
+                    </small>
+                  )}
                 </div>
+              </div>
 
-                <div className="hc-form-row">
-                  <div className="hc-form-group">
-                    <label>
-                      สถานะการแสดงผล <span className="hc-required">*</span>
-                    </label>
-                    <MasterSelect category="publication_status" required value={faqForm.status} onChange={(e)=>setFaqForm({...faqForm,status:e.target.value})} fallback={[{code:"published",label:"เผยแพร่"},{code:"draft",label:"ร่าง"},{code:"hidden",label:"ซ่อน"}]} />
-                  </div>
-                </div>
+              <div className="hc-form-row">
                 <div className="hc-form-group">
                   <label>
-                    ข้อคำถาม (Question) <span className="hc-required">*</span>
+                    สถานะการแสดงผล <span className="hc-required">*</span>
                   </label>
-                  <UiTextInput
-                    type="text"
-                    placeholder="เช่น ต้องเตรียมบัตรอะไรมาบ้างในวันนัดครั้งแรก?"
+                  <MasterSelect
+                    category="publication_status"
                     required
-                    value={faqForm.question}
+                    value={faqForm.status}
                     onChange={(e) =>
-                      setFaqForm({ ...faqForm, question: e.target.value })
+                      setFaqForm({ ...faqForm, status: e.target.value })
                     }
+                    fallback={[
+                      { code: "published", label: "เผยแพร่" },
+                      { code: "draft", label: "ร่าง" },
+                      { code: "hidden", label: "ซ่อน" },
+                    ]}
                   />
                 </div>
-                <div className="hc-form-group">
-                  <label>
-                    คำตอบ (Answer) <span className="hc-required">*</span>
-                  </label>
-                  <div
-                    style={{
-                      background: "#ffffff",
-                      borderRadius: "6.5px",
-                      overflow: "hidden",
-                      border: "1px solid #cbd5e1",
-                    }}
-                  >
-                    <RichTextInput
-                      showLists
-                      placeholder="พิมพ์เนื้อหาคำตอบ"
-                      value={faqForm.answer}
-                      onChange={(content) =>
-                        setFaqForm({ ...faqForm, answer: content })
-                      }
-                      style={{ minHeight: "180px", padding: "14px" }}
-                    />
-                  </div>
-                </div>
-                <div
-                  className="hc-form-group"
-                  style={{ display: "block", width: "100%" }}
-                >
-                  <div className="hc-homepage-toggle-card">
-                    <div className="hc-toggle-row">
-                      <label className="hc-switch">
-                        <input
-                          type="checkbox"
-                          checked={faqForm.is_homepage === 1}
-                          disabled={
-                            homepageFaqCount >= 6 && faqForm.is_homepage !== 1
-                          }
-                          onChange={(e) =>
-                            setFaqForm({
-                              ...faqForm,
-                              is_homepage: e.target.checked ? 1 : 0,
-                            })
-                          }
-                        />
-                        <span
-                          className="hc-slider"
-                          style={{
-                            opacity:
-                              homepageFaqCount >= 6 && faqForm.is_homepage !== 1
-                                ? 0.4
-                                : 1,
-                          }}
-                        ></span>
-                      </label>
-                      <span
-                        className={`hc-toggle-label ${homepageFaqCount >= 6 && faqForm.is_homepage !== 1 ? "disabled" : ""}`}
-                      >
-                        แสดงในคำถามที่พบบ่อยหน้าแรก
-                      </span>
-                    </div>
-                    <div className="hc-toggle-quota-info">
-                      <small>
-                        ปัจจุบันแสดงบนหน้าแรกแล้ว {homepageFaqCount}/6 คำถาม
-                      </small>
-                      {homepageFaqCount >= 6 && (
-                        <span className="hc-toggle-error-msg">
-                          <FaTimesCircle
-                            style={{ fontSize: "14px", flexShrink: 0 }}
-                          />{" "}
-                          โควตาเต็มแล้ว
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="hc-modal-actions">
-                  <UiButton variant="secondary"
-                    type="button"
-                    className="hc-btn-cancel"
-                    onClick={() => setIsFaqModalOpen(false)}
-                  >
-                    ยกเลิก
-                  </UiButton>
-                  <UiButton variant="primary" type="submit" className="hc-btn-save">
-                    บันทึกข้อมูล
-                  </UiButton>
-                </div>
-              </form>
-            </SharedDialog>
-        )}
-
-        {isClinicModalOpen && (
-          <SharedDialog title="ตั้งค่าการแสดงผลคลินิกบนหน้าช่วยเหลือ" onClose={() => setIsClinicModalOpen(false)} className="hc-dialog">
-
-
-              <div
-                className="hc-clinic-search-wrapper"
-                style={{ position: "relative" }}
-              >
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "14px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    color: "#94a3b8",
-                  }}
-                >
-                  <FaSearch />
-                </span>
+              </div>
+              <div className="hc-form-group">
+                <label>
+                  ข้อคำถาม (Question) <span className="hc-required">*</span>
+                </label>
                 <UiTextInput
                   type="text"
-                  placeholder="ค้นหาชื่อคลินิก..."
-                  value={clinicSearchQuery}
-                  onChange={(e) => setClinicSearchQuery(e.target.value)}
-                  className="hc-clinic-search-input"
-                  style={{ paddingLeft: "40px" }}
+                  placeholder="เช่น ต้องเตรียมบัตรอะไรมาบ้างในวันนัดครั้งแรก?"
+                  required
+                  value={faqForm.question}
+                  onChange={(e) =>
+                    setFaqForm({ ...faqForm, question: e.target.value })
+                  }
                 />
               </div>
-              <div className="hc-clinic-table-container">
-                <UiDataTable className="hc-mini-clinic-table">
-                  <thead>
-                    <tr>
-                      <th style={{ width: "90px" }}>โลโก้</th>
-                      <th>ชื่อคลินิก</th>
-                      <th style={{ width: "180px", textAlign: "center" }}>
-                        แสดงบนหน้าช่วยเหลือ
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredClinicSettings.length > 0 ? (
-                      filteredClinicSettings.map((clinic) => (
-                        <tr key={clinic.id}>
-                          <td>
-                            <div className="hc-mini-logo-container">
-                              <img
-                                src={
-                                  clinic.image ||
-                                  "https://via.placeholder.com/40"
-                                }
-                                alt={clinic.name}
-                                className="hc-mini-clinic-logo"
-                              />
-                            </div>
-                          </td>
-                          <td className="hc-clinic-name-text">{clinic.name}</td>
-                          <td style={{ textAlign: "center" }}>
-                            <label className="hc-switch">
-                              <input
-                                type="checkbox"
-                                checked={clinic.show_in_help_center === 1}
-                                onChange={() =>
-                                  handleToggleClinicHelpStatus(
-                                    clinic.id,
-                                    clinic.show_in_help_center,
-                                  )
-                                }
-                              />
-                              <span className="hc-slider round"></span>
-                            </label>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="3" className="hc-empty-state">
-                          <strong>
-                            {clinicSearchQuery.trim()
-                              ? "ไม่พบคลินิกที่ตรงกับคำค้นหา"
-                              : "ยังไม่มีคลินิกในหน่วยงานนี้"}
-                          </strong>
-                          <span>
-                            {clinicSearchQuery.trim()
-                              ? "ลองเปลี่ยนคำค้นหาแล้วค้นหาอีกครั้ง"
-                              : "เพิ่มคลินิกในเมนูจัดการคลินิกก่อนตั้งค่าหน้าช่วยเหลือ"}
-                          </span>
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </UiDataTable>
+              <div className="hc-form-group">
+                <label>
+                  คำตอบ (Answer) <span className="hc-required">*</span>
+                </label>
+                <div
+                  style={{
+                    background: "#ffffff",
+                    borderRadius: "6.5px",
+                    overflow: "hidden",
+                    border: "1px solid #cbd5e1",
+                  }}
+                >
+                  <RichTextInput
+                    showLists
+                    placeholder="พิมพ์เนื้อหาคำตอบ"
+                    value={faqForm.answer}
+                    onChange={(content) =>
+                      setFaqForm({ ...faqForm, answer: content })
+                    }
+                    style={{ minHeight: "180px", padding: "14px" }}
+                  />
+                </div>
               </div>
               <div
-                className="hc-modal-actions"
-                style={{
-                  marginTop: "20px",
-                  borderTop: "1px solid #e2e8f0",
-                  paddingTop: "15px",
-                }}
+                className="hc-form-group"
+                style={{ display: "block", width: "100%" }}
               >
-                <UiButton variant="secondary"
+                <div className="hc-homepage-toggle-card">
+                  <div className="hc-toggle-row">
+                    <label className="hc-switch">
+                      <input
+                        type="checkbox"
+                        checked={faqForm.is_homepage === 1}
+                        disabled={
+                          homepageFaqCount >= 6 && faqForm.is_homepage !== 1
+                        }
+                        onChange={(e) =>
+                          setFaqForm({
+                            ...faqForm,
+                            is_homepage: e.target.checked ? 1 : 0,
+                          })
+                        }
+                      />
+                      <span
+                        className="hc-slider"
+                        style={{
+                          opacity:
+                            homepageFaqCount >= 6 && faqForm.is_homepage !== 1
+                              ? 0.4
+                              : 1,
+                        }}
+                      ></span>
+                    </label>
+                    <span
+                      className={`hc-toggle-label ${homepageFaqCount >= 6 && faqForm.is_homepage !== 1 ? "disabled" : ""}`}
+                    >
+                      แสดงในคำถามที่พบบ่อยหน้าแรก
+                    </span>
+                  </div>
+                  <div className="hc-toggle-quota-info">
+                    <small>
+                      ปัจจุบันแสดงบนหน้าแรกแล้ว {homepageFaqCount}/6 คำถาม
+                    </small>
+                    {homepageFaqCount >= 6 && (
+                      <span className="hc-toggle-error-msg">
+                        <FaTimesCircle
+                          style={{ fontSize: "14px", flexShrink: 0 }}
+                        />{" "}
+                        โควตาเต็มแล้ว
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="hc-modal-actions">
+                <UiButton
+                  variant="secondary"
                   type="button"
                   className="hc-btn-cancel"
-                  onClick={() => setIsClinicModalOpen(false)}
+                  onClick={() => setIsFaqModalOpen(false)}
                 >
                   ยกเลิก
                 </UiButton>
+                <UiButton
+                  variant="primary"
+                  type="submit"
+                  className="hc-btn-save"
+                >
+                  บันทึกข้อมูล
+                </UiButton>
               </div>
-            </SharedDialog>
+            </form>
+          </SharedDialog>
+        )}
+
+        {isClinicModalOpen && (
+          <SharedDialog
+            title="ตั้งค่าการแสดงผลคลินิกบนหน้าช่วยเหลือ"
+            onClose={() => setIsClinicModalOpen(false)}
+            className="hc-dialog"
+          >
+            <div
+              className="hc-clinic-search-wrapper"
+              style={{ position: "relative" }}
+            >
+              <span
+                style={{
+                  position: "absolute",
+                  left: "14px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: "#94a3b8",
+                }}
+              >
+                <FaSearch />
+              </span>
+              <UiTextInput
+                type="text"
+                placeholder="ค้นหาชื่อคลินิก..."
+                value={clinicSearchQuery}
+                onChange={(e) => setClinicSearchQuery(e.target.value)}
+                className="hc-clinic-search-input"
+                style={{ paddingLeft: "40px" }}
+              />
+            </div>
+            <div className="hc-clinic-table-container">
+              <UiDataTable className="hc-mini-clinic-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: "90px" }}>โลโก้</th>
+                    <th>ชื่อคลินิก</th>
+                    <th style={{ width: "180px", textAlign: "center" }}>
+                      แสดงบนหน้าช่วยเหลือ
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredClinicSettings.length > 0 ? (
+                    filteredClinicSettings.map((clinic) => (
+                      <tr key={clinic.id}>
+                        <td>
+                          <div className="hc-mini-logo-container">
+                            <img
+                              src={
+                                clinic.image || "https://via.placeholder.com/40"
+                              }
+                              alt={clinic.name}
+                              className="hc-mini-clinic-logo"
+                            />
+                          </div>
+                        </td>
+                        <td className="hc-clinic-name-text">{clinic.name}</td>
+                        <td style={{ textAlign: "center" }}>
+                          <label className="hc-switch">
+                            <input
+                              type="checkbox"
+                              checked={clinic.show_in_help_center === 1}
+                              onChange={() =>
+                                handleToggleClinicHelpStatus(
+                                  clinic.id,
+                                  clinic.show_in_help_center,
+                                )
+                              }
+                            />
+                            <span className="hc-slider round"></span>
+                          </label>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="3" className="hc-empty-state">
+                        <strong>
+                          {clinicSearchQuery.trim()
+                            ? "ไม่พบคลินิกที่ตรงกับคำค้นหา"
+                            : "ยังไม่มีคลินิกในหน่วยงานนี้"}
+                        </strong>
+                        <span>
+                          {clinicSearchQuery.trim()
+                            ? "ลองเปลี่ยนคำค้นหาแล้วค้นหาอีกครั้ง"
+                            : "เพิ่มคลินิกในเมนูจัดการคลินิกก่อนตั้งค่าหน้าช่วยเหลือ"}
+                        </span>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </UiDataTable>
+            </div>
+            <div
+              className="hc-modal-actions"
+              style={{
+                marginTop: "20px",
+                borderTop: "1px solid #e2e8f0",
+                paddingTop: "15px",
+              }}
+            >
+              <UiButton
+                variant="secondary"
+                type="button"
+                className="hc-btn-cancel"
+                onClick={() => setIsClinicModalOpen(false)}
+              >
+                ยกเลิก
+              </UiButton>
+            </div>
+          </SharedDialog>
         )}
       </main>
     </div>

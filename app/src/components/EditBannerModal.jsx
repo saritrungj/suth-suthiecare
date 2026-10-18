@@ -141,8 +141,8 @@ export default function EditBannerModal({ banner, onClose, onSave }) {
                   position: "relative",
                   width: "100%",
                   height: "350px",
-                  background: "#1e293b",
-                  borderRadius: "12px",
+                  background: "var(--suth-ink)",
+                  borderRadius: "var(--suth-radius)",
                   overflow: "hidden",
                   marginBottom: "15px",
                 }}

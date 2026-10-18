@@ -25,10 +25,15 @@ export function filterSidebarItems(
   const isSystemAdmin = authorization?.is_system_admin === true;
   const allowed = (item) => {
     if (!authorization) return false;
+    if (item.hideForSystemAdmin && isSystemAdmin) return false;
     if ((item.system || item.systemAdminOnly) && !isSystemAdmin) return false;
     // Only the global overview exposes menus for every organization type.
     const showAllTypes = isSystemAdmin && activeOrganization === "all";
-    if (item.orgTypes && !showAllTypes && !item.orgTypes.includes(organizationType))
+    if (
+      item.orgTypes &&
+      !showAllTypes &&
+      !item.orgTypes.includes(organizationType)
+    )
       return false;
     if (isSystemAdmin) return true;
     if (item.type === "header")

@@ -1,6 +1,6 @@
-import AcademicYearSelect from './AcademicYearSelect';
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import AcademicYearSelect from "./AcademicYearSelect";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import { usePageExport } from "../../../components/ExcelExport";
 import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
@@ -43,11 +43,16 @@ async function runBatches(payload, rows, onProgress) {
   const results = [];
   for (let offset = 0; offset < rows.length; offset += BATCH_SIZE) {
     let data;
-    try { ({data} = await importSchoolStudents({
-      ...payload,
-      rows: rows.slice(offset, offset + BATCH_SIZE),
-      row_offset: offset,
-    })); } catch(error) { error.partialResults=results; throw error; }
+    try {
+      ({ data } = await importSchoolStudents({
+        ...payload,
+        rows: rows.slice(offset, offset + BATCH_SIZE),
+        row_offset: offset,
+      }));
+    } catch (error) {
+      error.partialResults = results;
+      throw error;
+    }
     results.push(...data.results);
     onProgress(Math.min(rows.length, offset + BATCH_SIZE));
   }
@@ -137,7 +142,7 @@ export default function StudentImport() {
       );
       setFinal(results);
     } catch (err) {
-      if(err.partialResults?.length)setFinal(err.partialResults);
+      if (err.partialResults?.length) setFinal(err.partialResults);
       await showErrorAlert({
         error: err,
         title: "นำเข้าไม่สำเร็จ",
@@ -164,7 +169,17 @@ export default function StudentImport() {
     ? shown.filter((item) => item.status === "error")
     : shown;
 
-  usePageExport({title:"ผลนำเข้านักเรียน",sources:[],localSheets:[{resource:"import_results",data:rowsToShow.map(({password,...row})=>row)}],disabled:busy});
+  usePageExport({
+    title: "ผลนำเข้านักเรียน",
+    sources: [],
+    localSheets: [
+      {
+        resource: "import_results",
+        data: rowsToShow.map(({ password, ...row }) => row),
+      },
+    ],
+    disabled: busy,
+  });
   const saveCredentials = async () => {
     await downloadCredentialsWorkbook(final, school?.name);
     setDownloaded(true);
@@ -196,7 +211,15 @@ export default function StudentImport() {
             <div className="sch-form-grid">
               <label className="sch-field">
                 ปีการศึกษาของห้องเรียน (พ.ศ.)
-                <AcademicYearSelect schoolId={schoolId} value={academicYear} disabled={busy} onChange={event => { setAcademicYear(event.target.value); setPreview(null); }} />
+                <AcademicYearSelect
+                  schoolId={schoolId}
+                  value={academicYear}
+                  disabled={busy}
+                  onChange={(event) => {
+                    setAcademicYear(event.target.value);
+                    setPreview(null);
+                  }}
+                />
               </label>
               <label className="sch-field">
                 เมื่อพบรหัสนักเรียนที่มีอยู่แล้ว

@@ -1,4 +1,4 @@
-import SearchableSelect from '../../../../components/SearchableSelect';
+import SearchableSelect from "../../../../components/SearchableSelect";
 import React, { useState } from "react";
 import {
   FaCalendarAlt,
@@ -70,7 +70,7 @@ const QuestionBody = ({
     return (
       <div className="sfb-group-container">
         <p className="sfb-group-header">
-          <FaLayerGroup size={16} color="#1967d2" /> คำถามย่อยในกลุ่มนี้ (
+          <FaLayerGroup size={16} color="var(--suth-info)" /> คำถามย่อยในกลุ่มนี้ (
           {subs.length} ข้อ)
         </p>
 
@@ -111,9 +111,9 @@ const QuestionBody = ({
                       {visibleSqOptions.map((opt, oIdx) => (
                         <div key={oIdx} className="sfb-sub-option-row">
                           {sq.type === "multiple_choice" ? (
-                            <FaRegCircle color="#ccc" />
+                            <FaRegCircle color="var(--suth-control-line)" />
                           ) : (
-                            <FaRegCheckSquare color="#ccc" />
+                            <FaRegCheckSquare color="var(--suth-control-line)" />
                           )}
 
                           {/* 🟢 ห่อ Input กับ Dashed Line เข้าด้วยกัน */}
@@ -353,7 +353,7 @@ const QuestionBody = ({
           display: "flex",
           alignItems: "center",
           gap: "8px",
-          color: "#5f6368",
+          color: "var(--suth-muted)",
         }}
       >
         <FaCloudUploadAlt size={20} />
@@ -451,8 +451,8 @@ const QuestionBody = ({
               style={{
                 width: "100%",
                 padding: "10px",
-                borderRadius: "6px",
-                border: "1px solid #ccc",
+                borderRadius: "var(--suth-radius)",
+                border: "1px solid var(--suth-control-line)",
               }}
             />
           </div>
@@ -464,7 +464,7 @@ const QuestionBody = ({
               paddingBottom: "56.25%",
               height: 0,
               overflow: "hidden",
-              borderRadius: "8px",
+              borderRadius: "var(--suth-radius)",
             }}
           >
             <iframe
@@ -488,10 +488,10 @@ const QuestionBody = ({
             style={{
               padding: "30px",
               textAlign: "center",
-              background: "#f8f9fa",
-              borderRadius: "8px",
-              border: "1px dashed #ccc",
-              color: "#666",
+              background: "var(--suth-canvas)",
+              borderRadius: "var(--suth-radius)",
+              border: "1px dashed var(--suth-control-line)",
+              color: "var(--suth-muted)",
             }}
           >
             {isActive

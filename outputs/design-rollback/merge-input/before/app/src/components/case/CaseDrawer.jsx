@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { useId, useRef } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -41,7 +41,9 @@ export function StatusPill({ status, emptyLabel = "เคสใหม่" }) {
       className={`cw-status cw-status--${statusTone(status)}`}
       title={status || emptyLabel}
     >
-      <span className="cw-status-label">{toDisplayText(status || emptyLabel)}</span>
+      <span className="cw-status-label">
+        {toDisplayText(status || emptyLabel)}
+      </span>
     </span>
   );
 }
@@ -180,10 +182,21 @@ export default function CaseDrawer({
                 tabIndex={activeTab === tab.id ? 0 : -1}
                 onClick={() => onTabChange(tab.id)}
               >
-                {tab.icon && <tab.icon className="cw-tab-icon" aria-hidden="true" />}
+                {tab.icon && (
+                  <tab.icon className="cw-tab-icon" aria-hidden="true" />
+                )}
                 <span className="cw-tab-text">
-                  <span className="cw-tab-label">{toDisplayText(tab.label)}</span>
-                  {tab.count > 0 && <small className="cw-tab-count" aria-label={`${tab.count} รายการ`}>{tab.count}</small>}
+                  <span className="cw-tab-label">
+                    {toDisplayText(tab.label)}
+                  </span>
+                  {tab.count > 0 && (
+                    <small
+                      className="cw-tab-count"
+                      aria-label={`${tab.count} รายการ`}
+                    >
+                      {tab.count}
+                    </small>
+                  )}
                 </span>
               </button>
             ))}

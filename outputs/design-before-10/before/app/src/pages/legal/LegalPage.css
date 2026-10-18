@@ -146,7 +146,24 @@
   }
 }
 
-.legal-page a:focus-visible { outline: 3px solid var(--suth-focus); outline-offset: 3px; }
-.legal-toc a { display: inline-block; padding-block: 6px; text-underline-offset: .2em; }
-.legal-doc { overflow-wrap: anywhere; }
-@media (max-width: 480px) { .legal-header { flex-wrap: wrap; gap: .5rem; } .legal-back { min-height: 44px; } }
+.legal-page a:focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 3px;
+}
+.legal-toc a {
+  display: inline-block;
+  padding-block: 6px;
+  text-underline-offset: 0.2em;
+}
+.legal-doc {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 480px) {
+  .legal-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .legal-back {
+    min-height: 44px;
+  }
+}

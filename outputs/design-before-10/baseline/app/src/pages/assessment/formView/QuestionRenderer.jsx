@@ -1,5 +1,5 @@
-import { toSafeHtml } from '../../../utils/richText.js';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { toSafeHtml } from "../../../utils/richText.js";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { FiRefreshCw, FiCheck, FiXCircle } from "react-icons/fi";
@@ -68,7 +68,9 @@ const QuestionRenderer = ({
         <div className="preview-group-header">
           <h3
             className="preview-sec__title"
-            dangerouslySetInnerHTML={{ __html: toSafeHtml(displayTitle || "กลุ่มคำถาม") }}
+            dangerouslySetInnerHTML={{
+              __html: toSafeHtml(displayTitle || "กลุ่มคำถาม"),
+            }}
           />
           {displayText && (
             <div
@@ -489,7 +491,9 @@ const QuestionRenderer = ({
                     >
                       <div
                         style={{ display: "inline" }}
-                        dangerouslySetInnerHTML={{ __html: toSafeHtml(displayOpt) }}
+                        dangerouslySetInnerHTML={{
+                          __html: toSafeHtml(displayOpt),
+                        }}
                       />
                       {isLimited && (
                         <span
@@ -570,7 +574,9 @@ const QuestionRenderer = ({
                     />
                     <div
                       style={{ display: "inline" }}
-                      dangerouslySetInnerHTML={{ __html: toSafeHtml(displayOpt) }}
+                      dangerouslySetInnerHTML={{
+                        __html: toSafeHtml(displayOpt),
+                      }}
                     />
                   </label>
 
@@ -635,7 +641,9 @@ const QuestionRenderer = ({
                     </span>
                     <div
                       style={{ display: "inline" }}
-                      dangerouslySetInnerHTML={{ __html: toSafeHtml(displayOpt) }}
+                      dangerouslySetInnerHTML={{
+                        __html: toSafeHtml(displayOpt),
+                      }}
                     />
                   </label>
 

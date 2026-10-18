@@ -35,7 +35,10 @@ test("successful login uses the cookie session without storing an access token",
   await page.getByRole("button", { name: "เข้าสู่ระบบ" }).click();
 
   await expect(page).toHaveURL(/\/admin\/dashboard$/);
-  await expect(page.getByRole("heading", { name: "แดชบอร์ด" })).toBeVisible();
+  // A system admin starts on the all-organizations overview.
+  await expect(
+    page.getByRole("heading", { name: "ภาพรวมทุกหน่วยงาน" }),
+  ).toBeVisible();
   expect(await page.evaluate(() => sessionStorage.getItem("suth_token"))).toBe(
     null,
   );

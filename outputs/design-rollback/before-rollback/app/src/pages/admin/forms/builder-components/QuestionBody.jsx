@@ -1,5 +1,8 @@
-import { TextInput as UiTextInput, DataTable as UiDataTable } from '../../../../components/ui/index.jsx';
-import SearchableSelect from '../../../../components/SearchableSelect';
+import {
+  TextInput as UiTextInput,
+  DataTable as UiDataTable,
+} from "../../../../components/ui/index.jsx";
+import SearchableSelect from "../../../../components/SearchableSelect";
 import React, { useState } from "react";
 import {
   FaCalendarAlt,

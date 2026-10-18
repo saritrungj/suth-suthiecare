@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import MasterSelect from "../../../components/MasterSelect";
 import StudentInsights from "./StudentInsights";
 import { ExportButton } from "../../../components/ExcelExport";
@@ -15,7 +15,15 @@ import CaseActivity from "../../../components/case/CaseActivity";
 import CaseDrawer from "../../../components/case/CaseDrawer";
 import CaseReferralPanel from "../../../components/case/CaseReferralPanel";
 import { usePermissions } from "../../../permissions/PermissionsProvider";
-import { FiEdit2, FiPlus, FiTrash2, FiUser, FiActivity, FiHeart, FiCornerUpRight } from "react-icons/fi";
+import {
+  FiEdit2,
+  FiPlus,
+  FiTrash2,
+  FiUser,
+  FiActivity,
+  FiHeart,
+  FiCornerUpRight,
+} from "react-icons/fi";
 import {
   createStudentPhysicalRecord,
   deleteStudentPhysicalRecord,
@@ -113,8 +121,29 @@ export default function StudentDetailModal({
     setError("");
     try {
       const basic = await getSchoolStudent(studentId);
-      const response = basic.data.can_view_health ? await getStudentHealth(studentId) : { data: { student: basic.data, can_update: false, assessments: { other: [] } } };
-      if (id === requestId.current) { setData({...response.data,can_view_mental:basic.data.can_view_mental ?? basic.data.can_view_health,can_view_physical:basic.data.can_view_physical ?? basic.data.can_view_health}); if (!basic.data.can_view_health || (initialTab === 'mental' && basic.data.can_view_mental === false)) setTab("general"); }
+      const response = basic.data.can_view_health
+        ? await getStudentHealth(studentId)
+        : {
+            data: {
+              student: basic.data,
+              can_update: false,
+              assessments: { other: [] },
+            },
+          };
+      if (id === requestId.current) {
+        setData({
+          ...response.data,
+          can_view_mental:
+            basic.data.can_view_mental ?? basic.data.can_view_health,
+          can_view_physical:
+            basic.data.can_view_physical ?? basic.data.can_view_health,
+        });
+        if (
+          !basic.data.can_view_health ||
+          (initialTab === "mental" && basic.data.can_view_mental === false)
+        )
+          setTab("general");
+      }
     } catch (err) {
       if (id === requestId.current)
         setError(
@@ -148,7 +177,23 @@ export default function StudentDetailModal({
           : undefined
       }
       nav={nav}
-      tabs={[...TABS.filter(t => t.id === 'general' || (t.id === 'mental' ? data?.can_view_mental : data?.can_view_physical)), ...(data?.can_view_mental ? [{ id: "insights", label: "ข้อมูลเชิงลึก", icon: FiUser }, ...(can("cases.view") ? [{ id: "referrals", label: "ส่งต่อ", icon: FiCornerUpRight }] : [])] : [])]}
+      tabs={[
+        ...TABS.filter(
+          (t) =>
+            t.id === "general" ||
+            (t.id === "mental"
+              ? data?.can_view_mental
+              : data?.can_view_physical),
+        ),
+        ...(data?.can_view_mental
+          ? [
+              { id: "insights", label: "ข้อมูลเชิงลึก", icon: FiUser },
+              ...(can("cases.view")
+                ? [{ id: "referrals", label: "ส่งต่อ", icon: FiCornerUpRight }]
+                : []),
+            ]
+          : []),
+      ]}
       activeTab={tab}
       onTabChange={setTab}
       onClose={onClose}
@@ -165,14 +210,27 @@ export default function StudentDetailModal({
       )}
       {!loading && data && (
         <>
-          <ExportButton sources={[{resource:"student",id:studentId}]} title="ข้อมูลนักเรียน" />
+          <ExportButton
+            sources={[{ resource: "student", id: studentId }]}
+            title="ข้อมูลนักเรียน"
+          />
           <CaseActivity school full activity={data.latest_activity} />
-          {tab === "insights" && data.can_view_mental && <StudentInsights studentId={studentId} />}
+          {tab === "insights" && data.can_view_mental && (
+            <StudentInsights studentId={studentId} />
+          )}
           {tab === "general" && <GeneralTab data={data} />}
-          {tab === "physical" && data.can_view_physical && <PhysicalTab data={data} reload={reloadHealth} />}
-          {tab === "mental" && data.can_view_mental && <MentalTab data={data} />}
+          {tab === "physical" && data.can_view_physical && (
+            <PhysicalTab data={data} reload={reloadHealth} />
+          )}
+          {tab === "mental" && data.can_view_mental && (
+            <MentalTab data={data} />
+          )}
           {tab === "referrals" && data.can_view_mental && can("cases.view") && (
-            <StudentReferrals key={data.student.id} data={data} onUpdated={reloadHealth} />
+            <StudentReferrals
+              key={data.student.id}
+              data={data}
+              onUpdated={reloadHealth}
+            />
           )}
         </>
       )}
@@ -198,12 +256,17 @@ function StudentReferrals({ data, onUpdated }) {
       >
         {assessments.map((item) => (
           <option key={item.id} value={item.id}>
-            {toDisplayText(item.form_title)} · {formatThaiDate(item.submitted_at)}
+            {toDisplayText(item.form_title)} ·{" "}
+            {formatThaiDate(item.submitted_at)}
           </option>
         ))}
       </select>
       {selectedId ? (
-        <CaseReferralPanel key={selectedId} sourceResponseId={selectedId} onUpdated={onUpdated} />
+        <CaseReferralPanel
+          key={selectedId}
+          sourceResponseId={selectedId}
+          onUpdated={onUpdated}
+        />
       ) : (
         <p className="sch-muted">
           ยังไม่มีแบบประเมินในหน่วยงานนี้สำหรับอ้างอิงการส่งต่อ
@@ -214,7 +277,7 @@ function StudentReferrals({ data, onUpdated }) {
 }
 
 function GeneralTab({ data }) {
-  const statusLabels=useStudentStatusLabels();
+  const statusLabels = useStudentStatusLabels();
   const { student, assessments } = data;
   const accountStatus = student.username
     ? student.must_change_password
@@ -262,7 +325,12 @@ function GeneralTab({ data }) {
           </div>
           <div>
             <dt>สถานะ</dt>
-            <dd>{student.status_label || statusLabels[student.status] || STUDENT_STATUS_LABELS[student.status] || student.status}</dd>
+            <dd>
+              {student.status_label ||
+                statusLabels[student.status] ||
+                STUDENT_STATUS_LABELS[student.status] ||
+                student.status}
+            </dd>
           </div>
           <div>
             <dt>ชื่อผู้ใช้</dt>
@@ -539,7 +607,9 @@ function PhysicalTab({ data, reload }) {
                       {HEARING_LABELS[record.hearing_right]}
                     </td>
                     <td data-label="สมรรถภาพกาย">{record.fitness || "-"}</td>
-                    <td data-label="หมายเหตุ">{toDisplayText(record.note || "-")}</td>
+                    <td data-label="หมายเหตุ">
+                      {toDisplayText(record.note || "-")}
+                    </td>
                     {canUpdate && (
                       <td>
                         <div className="sch-row-actions">
@@ -614,7 +684,14 @@ function HealthProfileForm({ studentId, profile, onCancel, onSaved }) {
     <form className="sch-form-grid" onSubmit={save}>
       <label className="sch-field">
         กรุ๊ปเลือด
-        <MasterSelect category="blood_type" {...field("blood_type")} fallback={Object.entries(BLOOD_LABELS).map(([code,label])=>({code,label}))} />
+        <MasterSelect
+          category="blood_type"
+          {...field("blood_type")}
+          fallback={Object.entries(BLOOD_LABELS).map(([code, label]) => ({
+            code,
+            label,
+          }))}
+        />
       </label>
       <label className="sch-field">
         ผู้ติดต่อฉุกเฉิน
@@ -746,7 +823,16 @@ function PhysicalRecordForm({ studentId, initial, onClose, onSaved }) {
         {number("systolic", "ความดันตัวบน")}
         {number("diastolic", "ความดันตัวล่าง")}
         {number("pulse", "ชีพจร (ครั้ง/นาที)")}
-        <label className="sch-field sch-full">ผลสมรรถภาพกาย<textarea maxLength={4000} value={form.fitness} onChange={event=>setForm({...form,fitness:event.target.value})} /></label>
+        <label className="sch-field sch-full">
+          ผลสมรรถภาพกาย
+          <textarea
+            maxLength={4000}
+            value={form.fitness}
+            onChange={(event) =>
+              setForm({ ...form, fitness: event.target.value })
+            }
+          />
+        </label>
         <label className="sch-field">
           สายตาซ้าย
           <input
@@ -772,7 +858,17 @@ function PhysicalRecordForm({ studentId, initial, onClose, onSaved }) {
         {["hearing_left", "hearing_right"].map((key) => (
           <label className="sch-field" key={key}>
             {key === "hearing_left" ? "การได้ยินหูซ้าย" : "การได้ยินหูขวา"}
-            <MasterSelect category="hearing" fallback={Object.entries(HEARING_LABELS).map(([code,label])=>({code,label}))} value={form[key]} onChange={(event)=>setForm({...form,[key]:event.target.value})} />
+            <MasterSelect
+              category="hearing"
+              fallback={Object.entries(HEARING_LABELS).map(([code, label]) => ({
+                code,
+                label,
+              }))}
+              value={form[key]}
+              onChange={(event) =>
+                setForm({ ...form, [key]: event.target.value })
+              }
+            />
           </label>
         ))}
         <label className="sch-field sch-full">

@@ -1,7 +1,12 @@
-import { TextInput as UiTextInput, TextArea as UiTextArea, DataTable as UiDataTable, Button as UiButton } from '../../../components/ui/index.jsx';
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
-import { toSafeHtml } from '../../../utils/richText.js';
+import {
+  TextInput as UiTextInput,
+  TextArea as UiTextArea,
+  DataTable as UiDataTable,
+  Button as UiButton,
+} from "../../../components/ui/index.jsx";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
+import { toSafeHtml } from "../../../utils/richText.js";
 import React, { useEffect, useState } from "react";
 import "./styles/FormPreview.css";
 import { showSuccessAlert } from "../../../utils/alerts";
@@ -362,7 +367,9 @@ const FormPreview = () => {
                         checked={isSelected}
                         onChange={() => handleAnswer(q.id, opt)}
                       />
-                      <span dangerouslySetInnerHTML={{ __html: toSafeHtml(opt) }} />
+                      <span
+                        dangerouslySetInnerHTML={{ __html: toSafeHtml(opt) }}
+                      />
                     </label>
 
                     {isSelected && showInput && (
@@ -423,7 +430,9 @@ const FormPreview = () => {
                       <span className="preview-check__mark">
                         {isChecked ? "✓" : ""}
                       </span>
-                      <span dangerouslySetInnerHTML={{ __html: toSafeHtml(opt) }} />
+                      <span
+                        dangerouslySetInnerHTML={{ __html: toSafeHtml(opt) }}
+                      />
                     </label>
 
                     {isChecked && showInput && (
@@ -491,7 +500,10 @@ const FormPreview = () => {
                   <tr>
                     <th></th>
                     {q.cols.map((col, i) => (
-                      <th key={i} dangerouslySetInnerHTML={{ __html: toSafeHtml(col) }} />
+                      <th
+                        key={i}
+                        dangerouslySetInnerHTML={{ __html: toSafeHtml(col) }}
+                      />
                     ))}
                   </tr>
                 </thead>
@@ -509,7 +521,9 @@ const FormPreview = () => {
                           : ""
                       }
                     >
-                      <td dangerouslySetInnerHTML={{ __html: toSafeHtml(row) }} />
+                      <td
+                        dangerouslySetInnerHTML={{ __html: toSafeHtml(row) }}
+                      />
                       {q.cols.map((col, j) => {
                         const key = String(i);
                         const rowAns =
@@ -654,7 +668,9 @@ const FormPreview = () => {
               }}
             />
             {stepData?.desc && (
-              <p dangerouslySetInnerHTML={{ __html: toSafeHtml(stepData.desc) }} />
+              <p
+                dangerouslySetInnerHTML={{ __html: toSafeHtml(stepData.desc) }}
+              />
             )}
             <p className="req" style={{ marginTop: "10px" }}>
               * แสดงว่าเป็นคำถามที่จำเป็น
@@ -665,7 +681,8 @@ const FormPreview = () => {
 
           <div className="preview-actions">
             {currentStep > 0 ? (
-              <UiButton variant="secondary"
+              <UiButton
+                variant="secondary"
                 type="button"
                 className="preview-btn preview-btn--ghost"
                 onClick={() => {
@@ -680,7 +697,8 @@ const FormPreview = () => {
             )}
 
             {currentStep < groupedSteps.length - 1 ? (
-              <UiButton variant="primary"
+              <UiButton
+                variant="primary"
                 type="button"
                 className="preview-btn preview-btn--primary"
                 onClick={() => {
@@ -693,7 +711,8 @@ const FormPreview = () => {
                 ถัดไป →
               </UiButton>
             ) : (
-              <UiButton variant="primary"
+              <UiButton
+                variant="primary"
                 type="button"
                 className="preview-btn preview-btn--primary"
                 onClick={() => {

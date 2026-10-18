@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../../../utils/textPresentation.js';
+import { toDisplayText } from "../../../../utils/textPresentation.js";
 import MasterSelect from "../../../../components/MasterSelect";
 import React, { useState, useEffect } from "react";
 import {
@@ -314,7 +314,23 @@ const PublishSettingsModal = ({
             >
               สถานะฟอร์มปัจจุบัน
             </label>
-            <MasterSelect style={{minHeight:"44px",padding:"10px 12px",border:"1px solid var(--suth-control-line)",borderRadius:"10px",font:"inherit"}} category="publication_status" allowedCodes={["draft","published"]} value={formStatus} onChange={(e)=>setFormStatus(e.target.value)} fallback={[{code:"draft",label:"แบบร่าง"},{code:"published",label:"เผยแพร่ (พร้อมใช้งาน)"}]} />
+            <MasterSelect
+              style={{
+                minHeight: "44px",
+                padding: "10px 12px",
+                border: "1px solid var(--suth-control-line)",
+                borderRadius: "10px",
+                font: "inherit",
+              }}
+              category="publication_status"
+              allowedCodes={["draft", "published"]}
+              value={formStatus}
+              onChange={(e) => setFormStatus(e.target.value)}
+              fallback={[
+                { code: "draft", label: "แบบร่าง" },
+                { code: "published", label: "เผยแพร่ (พร้อมใช้งาน)" },
+              ]}
+            />
           </div>
 
           {/* 4. ตั้งเวลาเปิด-ปิด */}

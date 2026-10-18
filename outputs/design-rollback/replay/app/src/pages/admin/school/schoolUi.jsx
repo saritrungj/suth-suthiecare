@@ -1,20 +1,22 @@
-import { Badge as UiBadge } from '../../../components/ui/index.jsx';
-import { TextInput as UiTextInput, PageHeader as UiPageHeader, Button as UiButton } from '../../../components/ui/index.jsx';
-import { Dialog, EmptyRow, LoadingRows } from '../../../components/ui/index.jsx';
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
-import {useMasterOptions} from "../../../components/MasterSelect";
+import { Badge as UiBadge } from "../../../components/ui/index.jsx";
+import {
+  TextInput as UiTextInput,
+  PageHeader as UiPageHeader,
+  Button as UiButton,
+} from "../../../components/ui/index.jsx";
+import {
+  Dialog,
+  EmptyRow,
+  LoadingRows,
+} from "../../../components/ui/index.jsx";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
+import { useMasterOptions } from "../../../components/MasterSelect";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { useMediaQuery } from "../../../components/useMediaQuery";
 import { RiskPill } from "../../../components/case/CaseDrawer";
-import {
-  FiChevronLeft,
-  FiChevronRight,
-
-  FiSearch,
-
-} from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi";
 import FilterDropdown from "../../../components/FilterDropdown";
 import { getSchools } from "../../../services/api";
 import { usePermissions } from "../../../permissions/PermissionsProvider";
@@ -43,11 +45,17 @@ export const STUDENT_STATUS_LABELS = {
   inactive: "ปิดใช้งาน",
 };
 
-export function useStudentStatusLabels(){
- const options=useMasterOptions("student_status",Object.entries(STUDENT_STATUS_LABELS).filter(([code])=>!["inactive","transferred"].includes(code)).map(([code,label])=>({code,label})));
- const labels=Object.fromEntries(options.map(o=>[o.code,o.label]));
- for(const [code,label] of Object.entries(STUDENT_STATUS_LABELS))if(!Object.hasOwn(labels,code))labels[code]=label;
- return labels;
+export function useStudentStatusLabels() {
+  const options = useMasterOptions(
+    "student_status",
+    Object.entries(STUDENT_STATUS_LABELS)
+      .filter(([code]) => !["inactive", "transferred"].includes(code))
+      .map(([code, label]) => ({ code, label })),
+  );
+  const labels = Object.fromEntries(options.map((o) => [o.code, o.label]));
+  for (const [code, label] of Object.entries(STUDENT_STATUS_LABELS))
+    if (!Object.hasOwn(labels, code)) labels[code] = label;
+  return labels;
 }
 
 export const TEACHER_ROLE_LABELS = {
@@ -58,7 +66,15 @@ export const TEACHER_ROLE_LABELS = {
 
 // Current Thai academic year: a new year starts in mid-May.
 export const currentAcademicYear = () => {
-  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Bangkok', year: 'numeric', month: 'numeric' }).formatToParts(new Date()).map(p => [p.type, p.value]));
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Bangkok",
+      year: "numeric",
+      month: "numeric",
+    })
+      .formatToParts(new Date())
+      .map((p) => [p.type, p.value]),
+  );
   return Number(parts.year) + 543 - (Number(parts.month) < 5 ? 1 : 0);
 };
 
@@ -102,12 +118,17 @@ const RISK_PILL_LEVEL = {
 
 // Risk as icon shape + word + color, the same pill as the case lists.
 export function RiskBadge({ risk }) {
-  const options=useMasterOptions("risk_level",Object.entries(RISK_LABELS).map(([code,label])=>({code,label})));
+  const options = useMasterOptions(
+    "risk_level",
+    Object.entries(RISK_LABELS).map(([code, label]) => ({ code, label })),
+  );
   if (!risk) return <UiBadge className="sch-badge">-</UiBadge>;
   return (
     <RiskPill
       level={RISK_PILL_LEVEL[risk] || "none"}
-      label={options.find(o=>o.code===risk)?.label || RISK_LABELS[risk] || risk}
+      label={
+        options.find((o) => o.code === risk)?.label || RISK_LABELS[risk] || risk
+      }
     />
   );
 }
@@ -151,7 +172,10 @@ export function MenuSelect({ label, value, onChange, children }) {
   return (
     <label className="sch-native-filter">
       <span>{toDisplayText(label)}</span>
-      <SearchableSelect value={value} onChange={(event) => onChange(event.target.value)}>
+      <SearchableSelect
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      >
         {children}
       </SearchableSelect>
     </label>
@@ -161,7 +185,14 @@ export function MenuSelect({ label, value, onChange, children }) {
 export { FilterDropdown };
 
 export function PageHeader({ title, description, children }) {
-  return <UiPageHeader className="sch-header" title={title} description={description} actions={children} />;
+  return (
+    <UiPageHeader
+      className="sch-header"
+      title={title}
+      description={description}
+      actions={children}
+    />
+  );
 }
 
 // Table states match the user management table (pulse bars, centered empty
@@ -180,8 +211,18 @@ export function SchoolModal({
   footer,
   size = "large",
 }) {
-  return <Dialog title={title} subtitle={subtitle} onClose={onClose} footer={footer}
-    size={size} className="sch-modal">{children}</Dialog>;
+  return (
+    <Dialog
+      title={title}
+      subtitle={subtitle}
+      onClose={onClose}
+      footer={footer}
+      size={size}
+      className="sch-modal"
+    >
+      {children}
+    </Dialog>
+  );
 }
 
 // Horizontal scroll area for a wide table: focusable so keyboard users can
@@ -397,7 +438,9 @@ export function Pagination({ pagination, onPage, onLimit }) {
         <span>จากทั้งหมด {total.toLocaleString("th-TH")} รายการ</span>
       </div>
       <div className="sch-pagination-controls">
-        <UiButton variant="secondary" size="icon"
+        <UiButton
+          variant="secondary"
+          size="icon"
           type="button"
           className="sch-page-btn"
           onClick={() => onPage(page - 1)}
@@ -409,7 +452,9 @@ export function Pagination({ pagination, onPage, onLimit }) {
         <span>
           หน้า <strong>{page}</strong> จาก {Math.max(totalPages, 1)}
         </span>
-        <UiButton variant="secondary" size="icon"
+        <UiButton
+          variant="secondary"
+          size="icon"
           type="button"
           className="sch-page-btn"
           onClick={() => onPage(page + 1)}

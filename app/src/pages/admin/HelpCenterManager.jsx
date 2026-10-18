@@ -1,5 +1,6 @@
-import SearchableSelect from '../../components/SearchableSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import SearchableSelect from "../../components/SearchableSelect";
+import { useModuleActions } from "../../permissions/useModuleActions";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import MasterSelect from "../../components/MasterSelect";
 import { usePageExport } from "../../components/ExcelExport";
 import React, { useState, useEffect, useCallback, useRef } from "react";
@@ -26,19 +27,32 @@ import {
   FaSave,
   FaTimes,
   FaSlidersH,
-  FaChevronLeft,
-  FaChevronRight,
   FaGripVertical,
 } from "react-icons/fa";
 import "./HelpCenterManager.css";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import RichTextInput from "./forms/builder-components/RichTextInput";
-import FilterDropdown from "../../components/FilterDropdown";
+import FilterDropdown, { FilterField } from "../../components/FilterDropdown";
+import DataPanel from "../../components/table/DataPanel";
+import ResultSummary from "../../components/table/ResultSummary";
+import TablePagination, {
+  DEFAULT_PAGE_SIZE,
+} from "../../components/table/TablePagination";
+import { PageHero } from "../../components/dashboard/DashboardKit";
 
 const MySwal = withReactContent(Swal);
 
+const FAQ_STATUS_LABELS = {
+  published: "เผยแพร่",
+  draft: "ร่าง",
+  hidden: "ซ่อน",
+};
+
 export default function HelpCenterManager() {
+  // Roles-page rights: help center, and clinic visibility on the help page.
+  const helpRights = useModuleActions("help_center");
+  const clinicRights = useModuleActions("clinics");
   const [faqs, setFaqs] = useState([]);
   const [clinics, setClinics] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -71,7 +85,7 @@ export default function HelpCenterManager() {
   });
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
 
   const [draggedFaqIndex, setDraggedFaqIndex] = useState(null);
   const [draggedCatIndex, setDraggedCatIndex] = useState(null);
@@ -249,8 +263,8 @@ export default function HelpCenterManager() {
       text: `คุณต้องการลบหมวดหมู่ "${name}" ใช่หรือไม่? (คำถามที่ผูกกับหมวดหมู่นี้อาจได้รับผลกระทบ)`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
+      confirmButtonColor: "var(--suth-danger)",
+      cancelButtonColor: "var(--suth-muted)",
       confirmButtonText: "ใช่, ลบเลย!",
       cancelButtonText: "ยกเลิก",
     });
@@ -475,8 +489,8 @@ export default function HelpCenterManager() {
       text: `คุณต้องการลบคำถาม "${title}" ใช่หรือไม่?`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
+      confirmButtonColor: "var(--suth-danger)",
+      cancelButtonColor: "var(--suth-muted)",
       confirmButtonText: "ใช่, ลบเลย!",
       cancelButtonText: "ยกเลิก",
     });
@@ -536,7 +550,23 @@ export default function HelpCenterManager() {
       })
     : [];
 
-  usePageExport({title:"ศูนย์ช่วยเหลือ",sources:[{resource:"faqs",filters:{clinic_id:filterClinic,status:filterStatus,search:searchQuery},ids:sortedFaqs.map(r=>r.faq_id)},...(catSelectedClinic?[{resource:"faq_categories",id:catSelectedClinic}]:[])]});
+  usePageExport({
+    title: "ศูนย์ช่วยเหลือ",
+    sources: [
+      {
+        resource: "faqs",
+        filters: {
+          clinic_id: filterClinic,
+          status: filterStatus,
+          search: searchQuery,
+        },
+        ids: sortedFaqs.map((r) => r.faq_id),
+      },
+      ...(catSelectedClinic
+        ? [{ resource: "faq_categories", id: catSelectedClinic }]
+        : []),
+    ],
+  });
   const totalItems = sortedFaqs.length;
   const totalPages = Math.ceil(totalItems / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
@@ -549,14 +579,6 @@ export default function HelpCenterManager() {
   const hasFaqFilters = Boolean(
     filterClinic || filterStatus || searchQuery.trim(),
   );
-
-  const goToNextPage = () =>
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-  const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
-  const handleRowsPerPageChange = (e) => {
-    setRowsPerPage(Number(e.target.value));
-    setCurrentPage(1);
-  };
 
   const handleDropReorder = async (dropIndex) => {
     if (draggedFaqIndex === null || draggedFaqIndex === dropIndex) return;
@@ -611,342 +633,348 @@ export default function HelpCenterManager() {
   return (
     <div className="hc-admin-page">
       <main className="hc-main">
-        <header className="hc-header">
-          <div className="hc-header-info">
-            <h1>จัดการศูนย์ช่วยเหลือ (FAQ)</h1>
-            <p className="hc-header-hint">
-              ตั้งค่าหมวดหมู่ย่อยและข้อคำถามที่พบบ่อยแยกตามแต่ละคลินิกบริการ
-            </p>
-          </div>
-          <div className="hc-header-actions-group">
-            <button
-              className="hc-btn-outline-custom"
-              onClick={() => {
-                setClinicSearchQuery("");
-                setIsClinicModalOpen(true);
-              }}
-            >
-              <FaSlidersH /> ตั้งค่าคลินิกหน้าช่วยเหลือ
-            </button>
-            <button
-              className="hc-btn-outline-custom"
-              onClick={handleOpenCatModal}
-              disabled={clinics.length === 0}
-              title={
-                clinics.length === 0 ? "ยังไม่มีคลินิกในหน่วยงานนี้" : undefined
-              }
-            >
-              <FaFolderPlus /> จัดการหมวดหมู่ย่อย
-            </button>
-            <button
-              className="hc-btn-add"
-              onClick={() => handleOpenFaqModal()}
-              disabled={clinics.length === 0}
-              title={
-                clinics.length === 0
-                  ? "กรุณาสร้างคลินิกก่อนเพิ่มคำถาม"
-                  : undefined
-              }
-            >
-              <FaPlus /> เพิ่มคำถามใหม่
-            </button>
-          </div>
-        </header>
-
-        <div className="hc-filter-panel">
-          <FilterDropdown
-            activeCount={[filterClinic, filterStatus].filter(Boolean).length}
-          >
-            <div className="hc-form-group" style={{ margin: 0, flex: 1.2 }}>
-              <label style={{ fontSize: "13px", color: "#64748b" }}>
-                กรองตามคลินิก
-              </label>
-              <SearchableSelect
-                value={filterClinic}
-                onChange={(e) => setFilterClinic(e.target.value)}
+        <PageHero
+          title="จัดการศูนย์ช่วยเหลือ (FAQ)"
+          description="ตั้งค่าหมวดหมู่ย่อยและข้อคำถามที่พบบ่อยแยกตามแต่ละคลินิกบริการ"
+          actions={
+            <>
+              <button
+                className="hc-btn-outline-custom"
+                hidden={!clinicRights.assign}
+                onClick={() => {
+                  setClinicSearchQuery("");
+                  setIsClinicModalOpen(true);
+                }}
               >
-                <option value="">เลือกคลินิกทั้งหมด</option>
-                {clinics.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </SearchableSelect>
-            </div>
-            <div className="hc-form-group" style={{ margin: 0, flex: 1.2 }}>
-              <label style={{ fontSize: "13px", color: "#64748b" }}>
-                สถานะ
-              </label>
-              <MasterSelect category="publication_status" value={filterStatus} onChange={(e)=>setFilterStatus(e.target.value)} fallback={[{code:"published",label:"เผยแพร่"},{code:"draft",label:"ร่าง"},{code:"hidden",label:"ซ่อน"}]}><option value="">สถานะทั้งหมด</option></MasterSelect>
-            </div>
-          </FilterDropdown>
+                <FaSlidersH /> ตั้งค่าคลินิกหน้าช่วยเหลือ
+              </button>
+              <button
+                hidden={
+                  !helpRights.create && !helpRights.update && !helpRights.delete
+                }
+                className="hc-btn-outline-custom"
+                onClick={handleOpenCatModal}
+                disabled={clinics.length === 0}
+                title={
+                  clinics.length === 0
+                    ? "ยังไม่มีคลินิกในหน่วยงานนี้"
+                    : undefined
+                }
+              >
+                <FaFolderPlus /> จัดการหมวดหมู่ย่อย
+              </button>
+              <button
+                hidden={!helpRights.create}
+                className="hc-btn-add"
+                onClick={() => handleOpenFaqModal()}
+                disabled={clinics.length === 0}
+                title={
+                  clinics.length === 0
+                    ? "กรุณาสร้างคลินิกก่อนเพิ่มคำถาม"
+                    : undefined
+                }
+              >
+                <FaPlus /> เพิ่มคำถามใหม่
+              </button>
+            </>
+          }
+        />
 
-          <div className="hc-form-group" style={{ margin: 0, flex: 3.5 }}>
-            <label style={{ fontSize: "13px", color: "#64748b" }}>
-              ค้นหาข้อคำถาม
-            </label>
-            <div style={{ position: "relative" }}>
+        <DataPanel className="hc-list-panel">
+          <div className="hc-filter-panel">
+            <label className="rc-search-group">
+              <FaSearch className="rc-filter-icon" aria-hidden="true" />
+              <span className="sr-only">ค้นหาข้อคำถาม</span>
               <input
                 type="text"
                 placeholder="พิมพ์เพื่อค้นหาข้อคำถามได้ทันที..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                style={{
-                  paddingLeft: "35px",
-                  width: "100%",
-                  boxSizing: "border-box",
-                }}
               />
-              <FaSearch
-                style={{
-                  position: "absolute",
-                  left: "12px",
-                  top: "14px",
-                  color: "#94a3b8",
-                }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {isLoading ? (
-          <div className="hc-loading-state">
-            <div className="hc-loading-spinner"></div>
-            <p>กำลังโหลดข้อมูล</p>
-          </div>
-        ) : loadError ? (
-          <div className="hc-loading-state" role="alert">
-            <p>{loadError}</p>
-            <button
-              type="button"
-              className="hc-btn-add"
-              onClick={fetchInitialData}
+            </label>
+            <FilterDropdown
+              activeCount={[filterClinic, filterStatus].filter(Boolean).length}
+              onClear={() => {
+                setFilterClinic("");
+                setFilterStatus("");
+                setCurrentPage(1);
+              }}
             >
-              ลองใหม่
-            </button>
+              <FilterField label="กรองตามคลินิก">
+                <SearchableSelect
+                  value={filterClinic}
+                  onChange={(e) => setFilterClinic(e.target.value)}
+                >
+                  <option value="">เลือกคลินิกทั้งหมด</option>
+                  {clinics.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </SearchableSelect>
+              </FilterField>
+              <FilterField label="สถานะ">
+                <MasterSelect
+                  category="publication_status"
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  fallback={[
+                    { code: "published", label: "เผยแพร่" },
+                    { code: "draft", label: "ร่าง" },
+                    { code: "hidden", label: "ซ่อน" },
+                  ]}
+                >
+                  <option value="">สถานะทั้งหมด</option>
+                </MasterSelect>
+              </FilterField>
+            </FilterDropdown>
           </div>
-        ) : (
-          <div
-            className="hc-table-container"
-            style={{ display: "flex", flexDirection: "column" }}
-          >
-            <div className="table-scroll-wrapper table-scroll-with-footer">
-              <table className="hc-table">
-                <thead>
-                  <tr>
-                    <th style={{ width: "4%", textAlign: "center" }}></th>
-                    <th className="hc-col-question" style={{ width: "25%" }}>
-                      คำถาม
-                    </th>
-                    <th className="hc-col-clinic" style={{ width: "15%" }}>
-                      คลินิกหลัก
-                    </th>
-                    <th className="hc-col-category" style={{ width: "15%" }}>
-                      หมวดหมู่ย่อย
-                    </th>
-                    <th
-                      className="hc-col-homepage"
-                      style={{ width: "12%", textAlign: "center" }}
-                    >
-                      แสดงหน้าแรก
-                    </th>
-                    <th style={{ width: "13%", textAlign: "center" }}>สถานะ</th>
-                    <th style={{ width: "12%" }}>อัปเดตล่าสุด</th>
-                    <th className="hc-col-actions" style={{ width: "8%" }}>
-                      จัดการ
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentFaqs && currentFaqs.length > 0 ? (
-                    currentFaqs.map((faq, index) => {
-                      return (
-                        <tr
-                          key={faq.faq_id || index}
-                          draggable
-                          onDragStart={() => setDraggedFaqIndex(index)}
-                          onDragOver={(e) => {
-                            e.preventDefault();
-                            e.dataTransfer.dropEffect = "move";
-                          }}
-                          onDrop={() => handleDropReorder(index)}
-                          onDragEnd={() => setDraggedFaqIndex(null)}
-                          style={{
-                            cursor:
-                              draggedFaqIndex === index ? "grabbing" : "grab",
-                            opacity: draggedFaqIndex === index ? 0.4 : 1,
-                            backgroundColor:
-                              draggedFaqIndex === index ? "#f8fafc" : "inherit",
-                            transition: "all 0.2s ease",
-                          }}
-                        >
-                          <td style={{ textAlign: "center", color: "#94a3b8" }}>
-                            <FaGripVertical
-                              title="คลิกค้างเพื่อลากจัดเรียง"
-                              size={16}
-                            />
-                          </td>
-                          <td className="hc-col-question" title={toDisplayText(faq.question)}>
-                            {faq.question && faq.question.length > 60
-                              ? faq.question.substring(0, 60) + "..."
-                              : faq.question}
-                          </td>
-                          {/* 🟢 แสดงชื่อคลินิกหลักตรงๆ ดึงจาก left join สลัดช่องว่างทิ้ง */}
-                          <td className="hc-col-clinic">
-                            {faq.clinic_name || "-"}
-                          </td>
-                          <td className="hc-col-category">
-                            <span className="hc-badge-category">
-                              {faq.category_name &&
-                              faq.category_name.trim() !== ""
-                                ? faq.category_name
-                                : "คำถามทั่วไปประจำคลินิก"}
-                            </span>
-                          </td>
-                          <td className="hc-col-homepage">
-                            {faq.is_homepage === 1 ? (
-                              <span className="hc-status-badge active">
-                                หน้าแรก
-                              </span>
-                            ) : (
-                              <span className="hc-status-badge inactive">
-                                ทั่วไป
-                              </span>
-                            )}
-                          </td>
-                          <td style={{ textAlign: "center" }}>
-                            {faq.status === "published" && (
-                              <span
-                                className="hc-status active"
-                                style={{
-                                  fontSize: "12px",
-                                  padding: "4px 10px",
-                                }}
-                              >
-                                <FaCheckCircle /> เผยแพร่
-                              </span>
-                            )}
-                            {faq.status === "draft" && (
-                              <span
-                                className="hc-status inactive"
-                                style={{
-                                  fontSize: "12px",
-                                  padding: "4px 10px",
-                                  backgroundColor: "#f1f5f9",
-                                  color: "#64748b",
-                                }}
-                              >
-                                <FaTimesCircle /> ร่าง
-                              </span>
-                            )}
-                            {faq.status === "hidden" && (
-                              <span
-                                className="hc-status inactive"
-                                style={{
-                                  fontSize: "12px",
-                                  padding: "4px 10px",
-                                  backgroundColor: "#fee2e2",
-                                  color: "#ef4444",
-                                }}
-                              >
-                                <FaTimesCircle /> ซ่อน
-                              </span>
-                            )}
-                          </td>
-                          <td
+
+          <ResultSummary
+            loading={isLoading}
+            pagination={{
+              page: currentPage,
+              total: totalItems,
+              limit: rowsPerPage,
+            }}
+            chips={[
+              {
+                key: "clinic",
+                label: "คลินิก",
+                value: filterClinic
+                  ? clinics.find((c) => String(c.id) === String(filterClinic))
+                      ?.name || filterClinic
+                  : "",
+                onRemove: () => setFilterClinic(""),
+              },
+              {
+                key: "status",
+                label: "สถานะ",
+                value: FAQ_STATUS_LABELS[filterStatus] || filterStatus,
+                onRemove: () => setFilterStatus(""),
+              },
+            ]}
+            onClearAll={() => {
+              setFilterClinic("");
+              setFilterStatus("");
+              setCurrentPage(1);
+            }}
+          />
+
+          {isLoading ? (
+            <div className="hc-loading-state">
+              <div className="hc-loading-spinner"></div>
+              <p>กำลังโหลดข้อมูล</p>
+            </div>
+          ) : loadError ? (
+            <div className="hc-loading-state" role="alert">
+              <p>{loadError}</p>
+              <button
+                type="button"
+                className="hc-btn-add"
+                onClick={fetchInitialData}
+              >
+                ลองใหม่
+              </button>
+            </div>
+          ) : (
+            <>
+              <div
+                className="table-scroll-wrapper table-scroll-with-footer"
+                tabIndex={0}
+                role="region"
+                aria-label="ตารางคำถามและคำตอบ"
+              >
+                <table
+                  className="hc-table admin-data-table"
+                  aria-label="รายการคำถามและคำตอบ"
+                >
+                  <thead>
+                    <tr>
+                      <th style={{ width: "4%", textAlign: "center" }}></th>
+                      <th className="hc-col-question" style={{ width: "25%" }}>
+                        คำถาม
+                      </th>
+                      <th className="hc-col-clinic" style={{ width: "15%" }}>
+                        คลินิกหลัก
+                      </th>
+                      <th className="hc-col-category" style={{ width: "15%" }}>
+                        หมวดหมู่ย่อย
+                      </th>
+                      <th
+                        className="hc-col-homepage"
+                        style={{ width: "12%", textAlign: "center" }}
+                      >
+                        แสดงหน้าแรก
+                      </th>
+                      <th style={{ width: "13%", textAlign: "center" }}>
+                        สถานะ
+                      </th>
+                      <th style={{ width: "12%" }}>อัปเดตล่าสุด</th>
+                      <th className="hc-col-actions" style={{ width: "8%" }}>
+                        จัดการ
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentFaqs && currentFaqs.length > 0 ? (
+                      currentFaqs.map((faq, index) => {
+                        return (
+                          <tr
+                            key={faq.faq_id || index}
+                            draggable={helpRights.update}
+                            onDragStart={() => setDraggedFaqIndex(index)}
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              e.dataTransfer.dropEffect = "move";
+                            }}
+                            onDrop={() => handleDropReorder(index)}
+                            onDragEnd={() => setDraggedFaqIndex(null)}
                             style={{
-                              fontSize: "13px",
-                              color: "#64748b",
-                              whiteSpace: "nowrap",
+                              cursor:
+                                draggedFaqIndex === index ? "grabbing" : "grab",
+                              opacity: draggedFaqIndex === index ? 0.4 : 1,
+                              backgroundColor:
+                                draggedFaqIndex === index
+                                  ? "var(--suth-surface-2)"
+                                  : "inherit",
+                              transition: "all 0.2s ease",
                             }}
                           >
-                            {formatThaiDate(faq.updated_at || faq.created_at)}
-                          </td>
-                          <td className="hc-col-actions">
-                            <div className="hc-actions-wrapper">
-                              <button
-                                type="button"
-                                className="hc-btn-action-edit"
-                                onClick={() => handleOpenFaqModal(faq)}
-                                title="แก้ไขคำถาม"
-                              >
-                                <FaEdit />
-                              </button>
-                              <button
-                                type="button"
-                                className="hc-btn-action-delete"
-                                onClick={() =>
-                                  handleDeleteFaq(faq.faq_id, faq.question)
-                                }
-                                title="ลบคำถาม"
-                              >
-                                <FaTrash />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  ) : (
-                    <tr>
-                      <td colSpan="8" className="hc-empty-state">
-                        <strong>
-                          {hasFaqFilters
-                            ? "ไม่พบคำถามที่ตรงกับตัวกรอง"
-                            : "ยังไม่มีคำถามในศูนย์ช่วยเหลือของหน่วยงานนี้"}
-                        </strong>
-                        <span>
-                          {hasFaqFilters
-                            ? "ลองเปลี่ยนคำค้นหา คลินิก หรือสถานะ"
-                            : "เริ่มต้นโดยเพิ่มคำถามใหม่สำหรับคลินิกในหน่วยงานนี้"}
-                        </span>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-              <div className="table-pagination-footer">
-                <div className="pagination-info">
-                  <span>แสดง</span>
-                  <SearchableSelect
-                    value={rowsPerPage}
-                    onChange={handleRowsPerPageChange}
-                    className="pagination-select"
-                  >
-                    <option value={10}>10</option>
-                    <option value={20}>20</option>
-                    <option value={50}>50</option>
-                    <option value={100}>100</option>
-                  </SearchableSelect>
-                  <span>รายการ (รวมทั้งหมด {totalItems} รายการ)</span>
-                </div>
-                <div className="pagination-controls">
-                  <button
-                    className="page-btn"
-                    onClick={goToPrevPage}
-                    disabled={currentPage === 1}
-                    title="หน้าก่อนหน้า"
-                  >
-                    <FaChevronLeft size={16} className="page-icon" />
-                  </button>
-                  <span className="page-indicator">
-                    หน้า{" "}
-                    <strong className="page-highlight">{currentPage}</strong>{" "}
-                    จาก {totalPages || 1}
-                  </span>
-                  <button
-                    className="page-btn"
-                    onClick={goToNextPage}
-                    disabled={currentPage === totalPages || totalPages === 0}
-                    title="หน้าถัดไป"
-                  >
-                    <FaChevronRight size={16} className="page-icon" />
-                  </button>
-                </div>
+                            <td
+                              style={{
+                                textAlign: "center",
+                                color: "var(--suth-muted)",
+                              }}
+                            >
+                              <FaGripVertical
+                                title="คลิกค้างเพื่อลากจัดเรียง"
+                                size={16}
+                              />
+                            </td>
+                            <td
+                              className="hc-col-question"
+                              title={toDisplayText(faq.question)}
+                            >
+                              {faq.question && faq.question.length > 60
+                                ? faq.question.substring(0, 60) + "..."
+                                : faq.question}
+                            </td>
+                            {/* 🟢 แสดงชื่อคลินิกหลักตรงๆ ดึงจาก left join สลัดช่องว่างทิ้ง */}
+                            <td className="hc-col-clinic">
+                              {faq.clinic_name || "-"}
+                            </td>
+                            <td className="hc-col-category">
+                              <span className="hc-badge-category">
+                                {faq.category_name &&
+                                faq.category_name.trim() !== ""
+                                  ? faq.category_name
+                                  : "คำถามทั่วไปประจำคลินิก"}
+                              </span>
+                            </td>
+                            <td className="hc-col-homepage">
+                              {faq.is_homepage === 1 ? (
+                                <span className="hc-status-badge active">
+                                  หน้าแรก
+                                </span>
+                              ) : (
+                                <span className="hc-status-badge inactive">
+                                  ทั่วไป
+                                </span>
+                              )}
+                            </td>
+                            <td style={{ textAlign: "center" }}>
+                              {faq.status === "published" && (
+                                <span
+                                  className="hc-status active"
+                                  style={{
+                                    fontSize: "var(--suth-fs-caption)",
+                                    padding: "4px 10px",
+                                  }}
+                                >
+                                  <FaCheckCircle /> เผยแพร่
+                                </span>
+                              )}
+                              {faq.status === "draft" && (
+                                <span className="hc-status draft">
+                                  <FaTimesCircle /> ร่าง
+                                </span>
+                              )}
+                              {faq.status === "hidden" && (
+                                <span className="hc-status inactive">
+                                  <FaTimesCircle /> ซ่อน
+                                </span>
+                              )}
+                            </td>
+                            <td
+                              style={{
+                                fontSize: "var(--suth-fs-label)",
+                                color: "var(--suth-muted)",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {formatThaiDate(faq.updated_at || faq.created_at)}
+                            </td>
+                            <td className="hc-col-actions">
+                              <div className="hc-actions-wrapper">
+                                <button
+                                  hidden={!helpRights.update}
+                                  type="button"
+                                  className="hc-btn-action-edit"
+                                  onClick={() => handleOpenFaqModal(faq)}
+                                  title="แก้ไขคำถาม"
+                                >
+                                  <FaEdit />
+                                </button>
+                                <button
+                                  hidden={!helpRights.delete}
+                                  type="button"
+                                  className="hc-btn-action-delete"
+                                  onClick={() =>
+                                    handleDeleteFaq(faq.faq_id, faq.question)
+                                  }
+                                  title="ลบคำถาม"
+                                >
+                                  <FaTrash />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    ) : (
+                      <tr>
+                        <td colSpan="8" className="hc-empty-state">
+                          <strong>
+                            {hasFaqFilters
+                              ? "ไม่พบคำถามที่ตรงกับตัวกรอง"
+                              : "ยังไม่มีคำถามในศูนย์ช่วยเหลือของหน่วยงานนี้"}
+                          </strong>
+                          <span>
+                            {hasFaqFilters
+                              ? "ลองเปลี่ยนคำค้นหา คลินิก หรือสถานะ"
+                              : "เริ่มต้นโดยเพิ่มคำถามใหม่สำหรับคลินิกในหน่วยงานนี้"}
+                          </span>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
-            </div>
-          </div>
-        )}
+              <TablePagination
+                page={currentPage}
+                totalPages={totalPages}
+                total={totalItems}
+                limit={rowsPerPage}
+                onPage={setCurrentPage}
+                onLimit={(size) => {
+                  setRowsPerPage(size);
+                  setCurrentPage(1);
+                }}
+              />
+            </>
+          )}
+        </DataPanel>
 
         {isCatModalOpen && (
           <div className="hc-modal-overlay" role="presentation">
@@ -976,7 +1004,9 @@ export default function HelpCenterManager() {
                   onChange={(e) => setCatSelectedClinic(e.target.value)}
                   disabled={!!editingCatId}
                   style={{
-                    backgroundColor: editingCatId ? "#f1f5f9" : "#ffffff",
+                    backgroundColor: editingCatId
+                      ? "var(--suth-surface-2)"
+                      : "var(--suth-surface)",
                     cursor: editingCatId ? "not-allowed" : "pointer",
                   }}
                 >
@@ -997,7 +1027,10 @@ export default function HelpCenterManager() {
               {catSelectedClinic && (
                 <>
                   <hr
-                    style={{ margin: "20px 0", border: "0.5px solid #e2e8f0" }}
+                    style={{
+                      margin: "20px 0",
+                      border: "0.5px solid var(--suth-line)",
+                    }}
                   />
                   <form
                     onSubmit={handleSaveCategory}
@@ -1070,8 +1103,8 @@ export default function HelpCenterManager() {
                       fontWeight: 600,
                       display: "block",
                       marginBottom: "10px",
-                      color: "#334155",
-                      fontSize: "14.5px",
+                      color: "var(--suth-ink-2)",
+                      fontSize: "var(--suth-fs-sm)",
                     }}
                   >
                     รายการหมวดหมู่ทั้งหมดในคลินิกนี้
@@ -1080,12 +1113,13 @@ export default function HelpCenterManager() {
                     style={{
                       maxHeight: "250px",
                       overflowY: "auto",
-                      border: "1px solid #e2e8f0",
-                      borderRadius: "8px",
+                      border: "1px solid var(--suth-line)",
+                      borderRadius: "var(--suth-radius)",
                     }}
                   >
                     <table
-                      className="hc-table"
+                      className="hc-table admin-data-table"
+                      aria-label="รายการข้อมูลช่วยเหลือ"
                       style={{ minWidth: "100%", boxShadow: "none" }}
                     >
                       <thead>
@@ -1093,20 +1127,20 @@ export default function HelpCenterManager() {
                           <th
                             style={{
                               padding: "10px 15px",
-                              fontSize: "13px",
+                              fontSize: "var(--suth-fs-label)",
                               width: "40px",
                               textAlign: "center",
                             }}
                           ></th>
                           <th
-                            style={{ padding: "10px 15px", fontSize: "13px" }}
+                            style={{ padding: "10px 15px", fontSize: "var(--suth-fs-label)" }}
                           >
                             ชื่อหมวดหมู่
                           </th>
                           <th
                             style={{
                               padding: "10px 15px",
-                              fontSize: "13px",
+                              fontSize: "var(--suth-fs-label)",
                               width: "150px",
                               textAlign: "center",
                             }}
@@ -1116,7 +1150,7 @@ export default function HelpCenterManager() {
                           <th
                             style={{
                               padding: "10px 15px",
-                              fontSize: "13px",
+                              fontSize: "var(--suth-fs-label)",
                               width: "100px",
                               textAlign: "center",
                             }}
@@ -1130,7 +1164,7 @@ export default function HelpCenterManager() {
                           categories.map((cat, idx) => (
                             <tr
                               key={cat.id}
-                              draggable
+                              draggable={helpRights.update}
                               onDragStart={() => setDraggedCatIndex(idx)}
                               onDragOver={(e) => {
                                 e.preventDefault();
@@ -1144,7 +1178,7 @@ export default function HelpCenterManager() {
                                 opacity: draggedCatIndex === idx ? 0.4 : 1,
                                 backgroundColor:
                                   draggedCatIndex === idx
-                                    ? "#f8fafc"
+                                    ? "var(--suth-surface-2)"
                                     : "inherit",
                                 transition: "all 0.2s ease",
                               }}
@@ -1153,7 +1187,7 @@ export default function HelpCenterManager() {
                                 style={{
                                   padding: "10px 5px",
                                   textAlign: "center",
-                                  color: "#94a3b8",
+                                  color: "var(--suth-muted)",
                                 }}
                               >
                                 <FaGripVertical size={14} />
@@ -1161,13 +1195,13 @@ export default function HelpCenterManager() {
                               <td
                                 style={{
                                   padding: "10px 15px",
-                                  fontSize: "14px",
+                                  fontSize: "var(--suth-fs-sm)",
                                   fontWeight:
                                     editingCatId === cat.id ? "700" : "normal",
                                   color:
                                     editingCatId === cat.id
-                                      ? "#F47932"
-                                      : "#475569",
+                                      ? "var(--suth-action-hover)"
+                                      : "var(--suth-ink-2)",
                                 }}
                               >
                                 {cat.category_name}
@@ -1180,27 +1214,29 @@ export default function HelpCenterManager() {
                               >
                                 <SearchableSelect
                                   value={cat.status || "published"}
+                                  disabled={!helpRights.assign}
                                   onChange={(e) =>
                                     handleCatStatusChange(cat, e.target.value)
                                   }
                                   style={{
                                     padding: "4px 8px",
-                                    borderRadius: "6px",
-                                    fontSize: "12.5px",
-                                    border: "1px solid #cbd5e1",
+                                    borderRadius: "var(--suth-radius)",
+                                    fontSize: "var(--suth-fs-caption)",
+                                    border:
+                                      "1px solid var(--suth-control-line)",
                                     cursor: "pointer",
                                     backgroundColor:
                                       cat.status === "published"
-                                        ? "#f0fdf4"
+                                        ? "var(--suth-canvas)"
                                         : cat.status === "draft"
-                                          ? "#f1f5f9"
-                                          : "#fdf2f2",
+                                          ? "var(--suth-surface-2)"
+                                          : "var(--suth-danger-tint)",
                                     color:
                                       cat.status === "published"
-                                        ? "#16a34a"
+                                        ? "var(--suth-success)"
                                         : cat.status === "draft"
-                                          ? "#475569"
-                                          : "#dc2626",
+                                          ? "var(--suth-ink-2)"
+                                          : "var(--suth-danger)",
                                     fontWeight: "600",
                                   }}
                                 >
@@ -1220,11 +1256,12 @@ export default function HelpCenterManager() {
                                   style={{ gap: "4px" }}
                                 >
                                   <button
+                                    hidden={!helpRights.update}
                                     type="button"
                                     className="hc-btn-action-edit"
                                     style={{
                                       height: "30px",
-                                      borderRadius: "6px",
+                                      borderRadius: "var(--suth-radius)",
                                     }}
                                     onClick={() => handleStartEditCategory(cat)}
                                     title="แก้ไขชื่อหมวดหมู่"
@@ -1232,11 +1269,12 @@ export default function HelpCenterManager() {
                                     <FaEdit size={12} />
                                   </button>
                                   <button
+                                    hidden={!helpRights.delete}
                                     type="button"
                                     className="hc-btn-action-delete"
                                     style={{
                                       height: "30px",
-                                      borderRadius: "6px",
+                                      borderRadius: "var(--suth-radius)",
                                     }}
                                     onClick={() =>
                                       handleDeleteCategory(
@@ -1259,8 +1297,8 @@ export default function HelpCenterManager() {
                               style={{
                                 textAlign: "center",
                                 padding: "20px",
-                                color: "#94a3b8",
-                                fontSize: "13px",
+                                color: "var(--suth-muted)",
+                                fontSize: "var(--suth-fs-label)",
                               }}
                             >
                               ยังไม่มีหมวดหมู่ย่อยในคลินิกนี้
@@ -1352,7 +1390,7 @@ export default function HelpCenterManager() {
                       </SearchableSelect>
                     </div>
                     {!faqForm.clinic_id && (
-                      <small style={{ color: "#ef4444" }}>
+                      <small style={{ color: "var(--suth-danger)" }}>
                         * กรุณาเลือกคลินิกหลักก่อนเพื่อโหลดหมวดหมู่ย่อย
                       </small>
                     )}
@@ -1364,7 +1402,20 @@ export default function HelpCenterManager() {
                     <label>
                       สถานะการแสดงผล <span className="hc-required">*</span>
                     </label>
-                    <MasterSelect category="publication_status" required value={faqForm.status} onChange={(e)=>setFaqForm({...faqForm,status:e.target.value})} fallback={[{code:"published",label:"เผยแพร่"},{code:"draft",label:"ร่าง"},{code:"hidden",label:"ซ่อน"}]} />
+                    <MasterSelect
+                      category="publication_status"
+                      required
+                      disabled={!helpRights.assign}
+                      value={faqForm.status}
+                      onChange={(e) =>
+                        setFaqForm({ ...faqForm, status: e.target.value })
+                      }
+                      fallback={[
+                        { code: "published", label: "เผยแพร่" },
+                        { code: "draft", label: "ร่าง" },
+                        { code: "hidden", label: "ซ่อน" },
+                      ]}
+                    />
                   </div>
                 </div>
                 <div className="hc-form-group">
@@ -1387,10 +1438,10 @@ export default function HelpCenterManager() {
                   </label>
                   <div
                     style={{
-                      background: "#ffffff",
-                      borderRadius: "6.5px",
+                      background: "var(--suth-surface)",
+                      borderRadius: "var(--suth-radius-sm)",
                       overflow: "hidden",
-                      border: "1px solid #cbd5e1",
+                      border: "1px solid var(--suth-control-line)",
                     }}
                   >
                     <RichTextInput
@@ -1447,7 +1498,7 @@ export default function HelpCenterManager() {
                       {homepageFaqCount >= 6 && (
                         <span className="hc-toggle-error-msg">
                           <FaTimesCircle
-                            style={{ fontSize: "14px", flexShrink: 0 }}
+                            style={{ fontSize: "var(--suth-fs-sm)", flexShrink: 0 }}
                           />{" "}
                           โควตาเต็มแล้ว
                         </span>
@@ -1510,7 +1561,7 @@ export default function HelpCenterManager() {
                     left: "14px",
                     top: "50%",
                     transform: "translateY(-50%)",
-                    color: "#94a3b8",
+                    color: "var(--suth-muted)",
                   }}
                 >
                   <FaSearch />
@@ -1525,7 +1576,10 @@ export default function HelpCenterManager() {
                 />
               </div>
               <div className="hc-clinic-table-container">
-                <table className="hc-mini-clinic-table">
+                <table
+                  className="hc-mini-clinic-table admin-data-table"
+                  aria-label="รายการคลินิกในศูนย์ช่วยเหลือ"
+                >
                   <thead>
                     <tr>
                       <th style={{ width: "90px" }}>โลโก้</th>
@@ -1592,7 +1646,7 @@ export default function HelpCenterManager() {
                 className="hc-modal-actions"
                 style={{
                   marginTop: "20px",
-                  borderTop: "1px solid #e2e8f0",
+                  borderTop: "1px solid var(--suth-line)",
                   paddingTop: "15px",
                 }}
               >

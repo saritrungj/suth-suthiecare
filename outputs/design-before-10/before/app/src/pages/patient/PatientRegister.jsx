@@ -558,7 +558,7 @@ export default function PatientRegister() {
                 <div
                   ref={turnstileRef}
                   className="patient-turnstile"
-                role="group"
+                  role="group"
                   aria-label={t("patient_auth.register.security_label")}
                 />
                 <button

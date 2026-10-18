@@ -809,7 +809,9 @@ select.preview-input:disabled {
 }
 /* Keep the native control in the accessibility tree and keyboard sequence.
    Its transparent hit area sits over the custom visual checkmark. */
-.preview-check { position: relative; }
+.preview-check {
+  position: relative;
+}
 .preview-check input[type="checkbox"] {
   position: absolute;
   left: 0;
@@ -1364,11 +1366,24 @@ select.preview-input--error {
 }
 
 /* Long Thai labels and controls retain their measure at narrow widths. */
-.preview-sec__title, .preview-step-intro, .preview-actions-nav { min-width: 0; overflow-wrap: anywhere; }
-.form-view-page input, .form-view-page textarea { caret-color: var(--theme-color, var(--suth-action)); }
-.form-view-page .preview-btn:focus-visible, .form-view-page .clear-question-btn:focus-visible {
-  outline: 3px solid var(--suth-focus); outline-offset: 3px;
+.preview-sec__title,
+.preview-step-intro,
+.preview-actions-nav {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.form-view-page input,
+.form-view-page textarea {
+  caret-color: var(--theme-color, var(--suth-action));
+}
+.form-view-page .preview-btn:focus-visible,
+.form-view-page .clear-question-btn:focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 3px;
 }
 @media (max-width: 760px) {
-  .form-view-page input:not([type="checkbox"]):not([type="radio"]), .form-view-page textarea { font-size: 16px; }
+  .form-view-page input:not([type="checkbox"]):not([type="radio"]),
+  .form-view-page textarea {
+    font-size: 16px;
+  }
 }

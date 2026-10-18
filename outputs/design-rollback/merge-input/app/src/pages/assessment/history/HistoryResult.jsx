@@ -1,5 +1,5 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
-import { toSafeHtml } from '../../../utils/richText.js';
+import { toDisplayText } from "../../../utils/textPresentation.js";
+import { toSafeHtml } from "../../../utils/richText.js";
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -2083,7 +2083,9 @@ export default function HistoryResult() {
                                                       <div
                                                         dangerouslySetInnerHTML={{
                                                           __html:
-                                                            toSafeHtml(displayRowTitle),
+                                                            toSafeHtml(
+                                                              displayRowTitle,
+                                                            ),
                                                         }}
                                                       />
                                                     ) : (

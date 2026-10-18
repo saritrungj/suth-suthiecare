@@ -1,5 +1,5 @@
-import SearchableSelect from './SearchableSelect';
-import { toDisplayText } from '../utils/textPresentation.js';
+import SearchableSelect from "./SearchableSelect";
+import { toDisplayText } from "../utils/textPresentation.js";
 import React, { useState, useEffect, useRef } from "react";
 import "./Sidebar.css";
 import logo from "../assets/logoSUTH.png";
@@ -273,8 +273,22 @@ const rawMenuItems = [
     schoolCheck: (access) => access?.can_view_school,
   },
 
-  { href: "/admin/school/roles", icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />, label: "บทบาทโรงเรียน", key: "school-roles", orgTypes: ["school"], schoolCheck: access => access?.can_manage_staff },
-  { href: "/admin/school/workflows", icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />, label: "คัดกรองและติดตามโรงเรียน", key: "school-workflows", orgTypes: ["school"], schoolCheck: access => access?.can_view_school },
+  {
+    href: "/admin/school/roles",
+    icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />,
+    label: "บทบาทโรงเรียน",
+    key: "school-roles",
+    orgTypes: ["school"],
+    schoolCheck: (access) => access?.can_manage_staff,
+  },
+  {
+    href: "/admin/school/workflows",
+    icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />,
+    label: "คัดกรองและติดตามโรงเรียน",
+    key: "school-workflows",
+    orgTypes: ["school"],
+    schoolCheck: (access) => access?.can_view_school,
+  },
 
   // 🟠 งานของหน่วยงานที่เลือกอยู่ (ข้อมูลแยกตามหน่วยงาน)
   { type: "header", label: "จัดการหน่วยงาน", key: "header-setup" },
@@ -315,7 +329,13 @@ const rawMenuItems = [
     hint: "",
     key: "header-system",
   },
-  { href: "/admin/master-data", icon: <FontAwesomeIcon icon={faTags} fixedWidth />, label: "จัดการข้อมูลหลัก", key: "master-data", module: "master_data.view" },
+  {
+    href: "/admin/master-data",
+    icon: <FontAwesomeIcon icon={faTags} fixedWidth />,
+    label: "จัดการข้อมูลหลัก",
+    key: "master-data",
+    module: "master_data.view",
+  },
   {
     href: "/admin/organizations",
     icon: <FontAwesomeIcon icon={faSitemap} fixedWidth />,
@@ -645,7 +665,9 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
                   )}
                   {toDisplayText(item.label)}
                   {item.hint && (
-                    <small className="menu-header-hint">{toDisplayText(item.hint)}</small>
+                    <small className="menu-header-hint">
+                      {toDisplayText(item.hint)}
+                    </small>
                   )}
                 </div>
               );

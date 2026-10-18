@@ -1,5 +1,5 @@
-import SearchableSelect from '../../../../components/SearchableSelect';
-import { toDisplayText } from '../../../../utils/textPresentation.js';
+import SearchableSelect from "../../../../components/SearchableSelect";
+import { toDisplayText } from "../../../../utils/textPresentation.js";
 import MasterSelect from "../../../../components/MasterSelect";
 import React, { useState, useEffect } from "react";
 import {
@@ -10,6 +10,8 @@ import {
   FaChevronDown,
 } from "react-icons/fa";
 import { getActiveClinics } from "../../../../services/api";
+import { usePermissions } from "../../../../permissions/PermissionsProvider";
+import ThaiDatePicker from "../../../../components/ThaiDatePicker";
 
 const PublishSettingsModal = ({
   isOpen,
@@ -35,6 +37,13 @@ const PublishSettingsModal = ({
 }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [clinics, setClinics] = useState([]);
+  const { activeOrganization, activeOrganizationType } = usePermissions();
+  // School forms are sorted by health domain, hospital forms by clinic; the
+  // all-organizations view keeps both.
+  const showClinic =
+    activeOrganization === "all" || activeOrganizationType !== "school";
+  const showHealthDomain =
+    activeOrganization === "all" || activeOrganizationType === "school";
 
   useEffect(() => {
     getActiveClinics()
@@ -55,8 +64,8 @@ const PublishSettingsModal = ({
           position: "relative",
           maxWidth: "500px",
           padding: "24px",
-          background: "white",
-          borderRadius: "12px",
+          background: "var(--suth-surface)",
+          borderRadius: "var(--suth-radius)",
         }}
       >
         <button
@@ -68,8 +77,8 @@ const PublishSettingsModal = ({
             background: "transparent",
             border: "none",
             cursor: "pointer",
-            fontSize: "18px",
-            color: "#64748b",
+            fontSize: "var(--suth-fs-section)",
+            color: "var(--suth-muted)",
           }}
         >
           <FaTimes />
@@ -81,10 +90,10 @@ const PublishSettingsModal = ({
             display: "flex",
             alignItems: "center",
             gap: "8px",
-            color: "#1e293b",
+            color: "var(--suth-ink)",
           }}
         >
-          <FaCog color="#64748b" /> ตั้งค่าฟอร์มและการเผยแพร่
+          <FaCog color="var(--suth-muted)" /> ตั้งค่าฟอร์มและการเผยแพร่
         </h3>
 
         <div
@@ -97,17 +106,17 @@ const PublishSettingsModal = ({
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              background: "#f8fafc",
+              background: "var(--suth-surface-2)",
               padding: "16px",
-              borderRadius: "8px",
-              border: "1px solid #e2e8f0",
+              borderRadius: "var(--suth-radius)",
+              border: "1px solid var(--suth-line)",
             }}
           >
             <label
               style={{
                 fontWeight: "bold",
-                fontSize: "14.5px",
-                color: "#0f172a",
+                fontSize: "var(--suth-fs-sm)",
+                color: "var(--suth-ink)",
               }}
             >
               ประเภทของฟอร์ม
@@ -118,13 +127,13 @@ const PublishSettingsModal = ({
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 style={{
                   padding: "10px",
-                  borderRadius: "8px",
-                  border: "1px solid #cbd5e1",
+                  borderRadius: "var(--suth-radius)",
+                  border: "1px solid var(--suth-control-line)",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
                   cursor: "pointer",
-                  background: "white",
+                  background: "var(--suth-surface)",
                 }}
               >
                 <div
@@ -133,7 +142,7 @@ const PublishSettingsModal = ({
                   <div
                     style={{
                       background:
-                        formType === "Registration" ? "#dbeafe" : "#dcfce7",
+                        formType === "Registration" ? "var(--suth-info-tint)" : "var(--suth-success-tint)",
                       padding: "6px",
                       borderRadius: "50%",
                       display: "flex",
@@ -142,9 +151,9 @@ const PublishSettingsModal = ({
                     }}
                   >
                     {formType === "Registration" ? (
-                      <FaFileAlt color="#2563eb" size={14} />
+                      <FaFileAlt color="var(--suth-info)" size={14} />
                     ) : (
-                      <FaSyncAlt color="#16a34a" size={14} />
+                      <FaSyncAlt color="var(--suth-success)" size={14} />
                     )}
                   </div>
 
@@ -163,11 +172,11 @@ const PublishSettingsModal = ({
                     top: "110%",
                     left: 0,
                     right: 0,
-                    background: "white",
-                    border: "1px solid #cbd5e1",
-                    borderRadius: "8px",
-                    zIndex: 1000,
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                    background: "var(--suth-surface)",
+                    border: "1px solid var(--suth-control-line)",
+                    borderRadius: "var(--suth-radius)",
+                    zIndex: "var(--z-dropdown)",
+                    boxShadow: "0 4px 12px rgba(31, 47, 63, 0.1)",
                   }}
                 >
                   <div
@@ -184,7 +193,7 @@ const PublishSettingsModal = ({
                   >
                     <div
                       style={{
-                        background: "#dbeafe",
+                        background: "var(--suth-info-tint)",
                         padding: "6px",
                         borderRadius: "50%",
                         display: "flex",
@@ -192,7 +201,7 @@ const PublishSettingsModal = ({
                         justifyContent: "center",
                       }}
                     >
-                      <FaFileAlt color="#2563eb" size={14} />
+                      <FaFileAlt color="var(--suth-info)" size={14} />
                     </div>
                     ฟอร์มลงทะเบียนแรกเข้า
                   </div>
@@ -211,7 +220,7 @@ const PublishSettingsModal = ({
                   >
                     <div
                       style={{
-                        background: "#dcfce7",
+                        background: "var(--suth-success-tint)",
                         padding: "6px",
                         borderRadius: "50%",
                         display: "flex",
@@ -219,7 +228,7 @@ const PublishSettingsModal = ({
                         justifyContent: "center",
                       }}
                     >
-                      <FaSyncAlt color="#16a34a" size={14} />
+                      <FaSyncAlt color="var(--suth-success)" size={14} />
                     </div>
                     แบบประเมินติดตามผล
                   </div>
@@ -228,8 +237,8 @@ const PublishSettingsModal = ({
             </div>
             <p
               style={{
-                fontSize: "12px",
-                color: "#64748b",
+                fontSize: "var(--suth-fs-caption)",
+                color: "var(--suth-muted)",
                 margin: 0,
                 lineHeight: 1.4,
               }}
@@ -240,12 +249,19 @@ const PublishSettingsModal = ({
           </div>
 
           {/* 2. เลือกคลินิก */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <div
+            hidden={!showClinic}
+            style={{
+              display: showClinic ? "flex" : "none",
+              flexDirection: "column",
+              gap: "8px",
+            }}
+          >
             <label
               style={{
                 fontWeight: "bold",
-                fontSize: "14.5px",
-                color: "#0f172a",
+                fontSize: "var(--suth-fs-sm)",
+                color: "var(--suth-ink)",
               }}
             >
               ประเภทคลินิก
@@ -255,9 +271,9 @@ const PublishSettingsModal = ({
               onChange={(e) => setClinicType(e.target.value)}
               style={{
                 padding: "10px",
-                borderRadius: "8px",
-                border: "1px solid #cbd5e1",
-                fontSize: "14.5px",
+                borderRadius: "var(--suth-radius)",
+                border: "1px solid var(--suth-control-line)",
+                fontSize: "var(--suth-fs-sm)",
                 outline: "none",
               }}
             >
@@ -271,13 +287,20 @@ const PublishSettingsModal = ({
           </div>
 
           {/* หมวดสุขภาพ: ใช้แยกผลในแฟ้มนักเรียน (สุขภาพจิต / สุขภาพกาย) */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <div
+            hidden={!showHealthDomain}
+            style={{
+              display: showHealthDomain ? "flex" : "none",
+              flexDirection: "column",
+              gap: "8px",
+            }}
+          >
             <label
               htmlFor="form-health-domain"
               style={{
                 fontWeight: "bold",
-                fontSize: "14.5px",
-                color: "#0f172a",
+                fontSize: "var(--suth-fs-sm)",
+                color: "var(--suth-ink)",
               }}
             >
               หมวดสุขภาพ
@@ -288,9 +311,9 @@ const PublishSettingsModal = ({
               onChange={(e) => setHealthDomain(e.target.value)}
               style={{
                 padding: "10px",
-                borderRadius: "8px",
-                border: "1px solid #cbd5e1",
-                fontSize: "14.5px",
+                borderRadius: "var(--suth-radius)",
+                border: "1px solid var(--suth-control-line)",
+                fontSize: "var(--suth-fs-sm)",
                 outline: "none",
               }}
             >
@@ -299,7 +322,7 @@ const PublishSettingsModal = ({
               <option value="physical">สุขภาพกาย</option>
               <option value="general">สุขภาพทั่วไป</option>
             </SearchableSelect>
-            <small style={{ color: "#64748b", fontSize: "12.5px" }}>
+            <small style={{ color: "var(--suth-muted)", fontSize: "var(--suth-fs-caption)" }}>
               ใช้แยกผลแบบประเมินในแฟ้มสุขภาพนักเรียน (หน่วยงานโรงเรียน)
             </small>
           </div>
@@ -309,13 +332,29 @@ const PublishSettingsModal = ({
             <label
               style={{
                 fontWeight: "bold",
-                fontSize: "14.5px",
-                color: "#0f172a",
+                fontSize: "var(--suth-fs-sm)",
+                color: "var(--suth-ink)",
               }}
             >
               สถานะฟอร์มปัจจุบัน
             </label>
-            <MasterSelect style={{minHeight:"44px",padding:"10px 12px",border:"1px solid var(--suth-control-line)",borderRadius:"10px",font:"inherit"}} category="publication_status" allowedCodes={["draft","published"]} value={formStatus} onChange={(e)=>setFormStatus(e.target.value)} fallback={[{code:"draft",label:"แบบร่าง"},{code:"published",label:"เผยแพร่ (พร้อมใช้งาน)"}]} />
+            <MasterSelect
+              style={{
+                minHeight: "44px",
+                padding: "10px 12px",
+                border: "1px solid var(--suth-control-line)",
+                borderRadius: "var(--suth-radius)",
+                font: "inherit",
+              }}
+              category="publication_status"
+              allowedCodes={["draft", "published"]}
+              value={formStatus}
+              onChange={(e) => setFormStatus(e.target.value)}
+              fallback={[
+                { code: "draft", label: "แบบร่าง" },
+                { code: "published", label: "เผยแพร่ (พร้อมใช้งาน)" },
+              ]}
+            />
           </div>
 
           {/* 4. ตั้งเวลาเปิด-ปิด */}
@@ -334,8 +373,8 @@ const PublishSettingsModal = ({
                 gap: "8px",
                 cursor: "pointer",
                 fontWeight: "bold",
-                fontSize: "14.5px",
-                color: "#0f172a",
+                fontSize: "var(--suth-fs-sm)",
+                color: "var(--suth-ink)",
               }}
             >
               <input
@@ -345,7 +384,7 @@ const PublishSettingsModal = ({
                 style={{
                   width: "16px",
                   height: "16px",
-                  accentColor: "#1967d2",
+                  accentColor: "var(--suth-action)",
                 }}
               />
               ตั้งเวลาเปิด-ปิดฟอร์มล่วงหน้า
@@ -358,7 +397,7 @@ const PublishSettingsModal = ({
                   flexDirection: "column",
                   gap: "12px",
                   paddingLeft: "26px",
-                  borderLeft: "2px solid #1967d2",
+                  borderLeft: "1px solid var(--suth-line)",
                   animation: "fadeIn 0.3s",
                 }}
               >
@@ -369,19 +408,16 @@ const PublishSettingsModal = ({
                     gap: "6px",
                   }}
                 >
-                  <label style={{ fontSize: "13px", color: "#475569" }}>
+                  <label
+                    style={{ fontSize: "var(--suth-fs-label)", color: "var(--suth-ink-2)" }}
+                  >
                     เริ่มเปิดรับข้อมูลตั้งแต่เวลา:
                   </label>
-                  <input
-                    type="datetime-local"
+                  <ThaiDatePicker
+                    label="เวลาเริ่มเปิดรับข้อมูล"
+                    withTime
                     value={publishStartDate}
-                    onChange={(e) => setPublishStartDate(e.target.value)}
-                    style={{
-                      padding: "10px",
-                      borderRadius: "6px",
-                      border: "1px solid #cbd5e1",
-                      outline: "none",
-                    }}
+                    onChange={setPublishStartDate}
                   />
                 </div>
                 <div
@@ -391,19 +427,16 @@ const PublishSettingsModal = ({
                     gap: "6px",
                   }}
                 >
-                  <label style={{ fontSize: "13px", color: "#475569" }}>
+                  <label
+                    style={{ fontSize: "var(--suth-fs-label)", color: "var(--suth-ink-2)" }}
+                  >
                     ปิดรับข้อมูลอัตโนมัติเมื่อถึงเวลา:
                   </label>
-                  <input
-                    type="datetime-local"
+                  <ThaiDatePicker
+                    label="เวลาปิดรับข้อมูล"
+                    withTime
                     value={publishEndDate}
-                    onChange={(e) => setPublishEndDate(e.target.value)}
-                    style={{
-                      padding: "10px",
-                      borderRadius: "6px",
-                      border: "1px solid #cbd5e1",
-                      outline: "none",
-                    }}
+                    onChange={setPublishEndDate}
                   />
                 </div>
               </div>
@@ -421,8 +454,8 @@ const PublishSettingsModal = ({
             <label
               style={{
                 fontWeight: "bold",
-                fontSize: "14.5px",
-                color: "#0f172a",
+                fontSize: "var(--suth-fs-sm)",
+                color: "var(--suth-ink)",
               }}
             >
               การเข้าถึงแบบประเมิน
@@ -432,22 +465,22 @@ const PublishSettingsModal = ({
                 value: "none",
                 label: "เปิดให้เข้าถึงได้เลย",
                 desc: "ไม่ต้องเข้าสู่ระบบ ผู้ใช้ทำแบบประเมินได้ทันที",
-                color: "#16a34a",
-                bgColor: "#dcfce7",
+                color: "var(--suth-success)",
+                bgColor: "var(--suth-success-tint)",
               },
               {
                 value: "optional",
                 label: "แนะนำให้เข้าสู่ระบบ",
                 desc: "แสดงข้อความแจ้งให้เข้าสู่ระบบ แต่ยังสามารถทดลองทำได้",
-                color: "#d97706",
-                bgColor: "#fef3c7",
+                color: "var(--suth-warning)",
+                bgColor: "var(--suth-warning-tint)",
               },
               {
                 value: "strict",
                 label: "บังคับเข้าสู่ระบบ",
                 desc: "ต้องเข้าสู่ระบบก่อนจึงจะดูและทำแบบประเมินได้",
-                color: "#dc2626",
-                bgColor: "#fee2e2",
+                color: "var(--suth-danger)",
+                bgColor: "var(--suth-danger-tint)",
               },
             ].map((opt) => (
               <div
@@ -459,10 +492,10 @@ const PublishSettingsModal = ({
                   gap: "10px",
                   cursor: "pointer",
                   padding: "10px 12px",
-                  borderRadius: "8px",
-                  border: `2px solid ${loginEnforcement === opt.value ? opt.color : "#cbd5e1"}`,
+                  borderRadius: "var(--suth-radius-sm)",
+                  border: `2px solid ${loginEnforcement === opt.value ? opt.color : "var(--suth-line)"}`,
                   background:
-                    loginEnforcement === opt.value ? opt.bgColor : "white",
+                    loginEnforcement === opt.value ? opt.bgColor : "var(--suth-surface)",
                   transition: "all 0.2s",
                 }}
               >
@@ -471,7 +504,7 @@ const PublishSettingsModal = ({
                     width: "18px",
                     height: "18px",
                     borderRadius: "50%",
-                    border: `2px solid ${loginEnforcement === opt.value ? opt.color : "#94a3b8"}`,
+                    border: `2px solid ${loginEnforcement === opt.value ? opt.color : "var(--suth-control-line)"}`,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -493,16 +526,16 @@ const PublishSettingsModal = ({
                   <div
                     style={{
                       fontWeight: "600",
-                      fontSize: "14px",
-                      color: "#0f172a",
+                      fontSize: "var(--suth-fs-sm)",
+                      color: "var(--suth-ink)",
                     }}
                   >
                     {toDisplayText(opt.label)}
                   </div>
                   <div
                     style={{
-                      fontSize: "12px",
-                      color: "#64748b",
+                      fontSize: "var(--suth-fs-caption)",
+                      color: "var(--suth-muted)",
                       marginTop: "2px",
                     }}
                   >
@@ -519,17 +552,17 @@ const PublishSettingsModal = ({
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              background: "#f8fafc",
+              background: "var(--suth-surface-2)",
               padding: "16px",
-              borderRadius: "8px",
-              border: "1px solid #e2e8f0",
+              borderRadius: "var(--suth-radius)",
+              border: "1px solid var(--suth-line)",
             }}
           >
             <label
               style={{
                 fontWeight: "bold",
-                fontSize: "14.5px",
-                color: "#0f172a",
+                fontSize: "var(--suth-fs-sm)",
+                color: "var(--suth-ink)",
               }}
             >
               โหมดการแสดงผลลัพธ์แบบประเมิน
@@ -545,10 +578,10 @@ const PublishSettingsModal = ({
                   gap: "8px",
                   cursor: "pointer",
                   padding: "10px 12px",
-                  borderRadius: "8px",
-                  border: `2px solid ${resultDisplayMode === "realtime" ? "#1967d2" : "#cbd5e1"}`,
+                  borderRadius: "var(--suth-radius-sm)",
+                  border: `2px solid ${resultDisplayMode === "realtime" ? "var(--suth-action)" : "var(--suth-line)"}`,
                   background:
-                    resultDisplayMode === "realtime" ? "#eff6ff" : "white",
+                    resultDisplayMode === "realtime" ? "var(--suth-tint)" : "var(--suth-surface)",
                   transition: "all 0.2s",
                 }}
               >
@@ -557,7 +590,7 @@ const PublishSettingsModal = ({
                     width: "16px",
                     height: "16px",
                     borderRadius: "50%",
-                    border: `2px solid ${resultDisplayMode === "realtime" ? "#1967d2" : "#94a3b8"}`,
+                    border: `2px solid ${resultDisplayMode === "realtime" ? "var(--suth-action)" : "var(--suth-control-line)"}`,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -570,7 +603,7 @@ const PublishSettingsModal = ({
                         width: "8px",
                         height: "8px",
                         borderRadius: "50%",
-                        background: "#1967d2",
+                        background: "var(--suth-action)",
                       }}
                     />
                   )}
@@ -579,16 +612,16 @@ const PublishSettingsModal = ({
                   <div
                     style={{
                       fontWeight: "600",
-                      fontSize: "14px",
-                      color: "#0f172a",
+                      fontSize: "var(--suth-fs-sm)",
+                      color: "var(--suth-ink)",
                     }}
                   >
                     แสดงผลแบบเรียลไทม์
                   </div>
                   <div
                     style={{
-                      fontSize: "12px",
-                      color: "#64748b",
+                      fontSize: "var(--suth-fs-caption)",
+                      color: "var(--suth-muted)",
                       marginTop: "2px",
                     }}
                   >
@@ -604,10 +637,10 @@ const PublishSettingsModal = ({
                   gap: "8px",
                   cursor: "pointer",
                   padding: "10px 12px",
-                  borderRadius: "8px",
-                  border: `2px solid ${resultDisplayMode === "on_submit" ? "#1967d2" : "#cbd5e1"}`,
+                  borderRadius: "var(--suth-radius-sm)",
+                  border: `2px solid ${resultDisplayMode === "on_submit" ? "var(--suth-action)" : "var(--suth-line)"}`,
                   background:
-                    resultDisplayMode === "on_submit" ? "#eff6ff" : "white",
+                    resultDisplayMode === "on_submit" ? "var(--suth-tint)" : "var(--suth-surface)",
                   transition: "all 0.2s",
                 }}
               >
@@ -616,7 +649,7 @@ const PublishSettingsModal = ({
                     width: "16px",
                     height: "16px",
                     borderRadius: "50%",
-                    border: `2px solid ${resultDisplayMode === "on_submit" ? "#1967d2" : "#94a3b8"}`,
+                    border: `2px solid ${resultDisplayMode === "on_submit" ? "var(--suth-action)" : "var(--suth-control-line)"}`,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -629,7 +662,7 @@ const PublishSettingsModal = ({
                         width: "8px",
                         height: "8px",
                         borderRadius: "50%",
-                        background: "#1967d2",
+                        background: "var(--suth-action)",
                       }}
                     />
                   )}
@@ -638,16 +671,16 @@ const PublishSettingsModal = ({
                   <div
                     style={{
                       fontWeight: "600",
-                      fontSize: "14px",
-                      color: "#0f172a",
+                      fontSize: "var(--suth-fs-sm)",
+                      color: "var(--suth-ink)",
                     }}
                   >
                     แสดงผลหลังส่งแบบประเมิน
                   </div>
                   <div
                     style={{
-                      fontSize: "12px",
-                      color: "#64748b",
+                      fontSize: "var(--suth-fs-caption)",
+                      color: "var(--suth-muted)",
                       marginTop: "2px",
                     }}
                   >
@@ -666,13 +699,13 @@ const PublishSettingsModal = ({
             style={{
               width: "100%",
               padding: "12px",
-              borderRadius: "8px",
-              background: "#1967d2",
-              color: "white",
+              borderRadius: "var(--suth-radius)",
+              background: "var(--suth-action)",
+              color: "var(--suth-on-action)",
               fontWeight: "bold",
               border: "none",
               cursor: "pointer",
-              fontSize: "15px",
+              fontSize: "var(--suth-fs-body)",
             }}
           >
             ตกลง

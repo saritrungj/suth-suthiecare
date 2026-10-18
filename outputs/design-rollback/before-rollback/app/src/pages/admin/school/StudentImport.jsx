@@ -1,8 +1,14 @@
-import { Surface as UiSurface, Badge as UiBadge } from '../../../components/ui/index.jsx';
-import { Button as UiButton, DataTable as UiDataTable } from '../../../components/ui/index.jsx';
-import AcademicYearSelect from './AcademicYearSelect';
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import {
+  Surface as UiSurface,
+  Badge as UiBadge,
+} from "../../../components/ui/index.jsx";
+import {
+  Button as UiButton,
+  DataTable as UiDataTable,
+} from "../../../components/ui/index.jsx";
+import AcademicYearSelect from "./AcademicYearSelect";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import { usePageExport } from "../../../components/ExcelExport";
 import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
@@ -45,11 +51,16 @@ async function runBatches(payload, rows, onProgress) {
   const results = [];
   for (let offset = 0; offset < rows.length; offset += BATCH_SIZE) {
     let data;
-    try { ({data} = await importSchoolStudents({
-      ...payload,
-      rows: rows.slice(offset, offset + BATCH_SIZE),
-      row_offset: offset,
-    })); } catch(error) { error.partialResults=results; throw error; }
+    try {
+      ({ data } = await importSchoolStudents({
+        ...payload,
+        rows: rows.slice(offset, offset + BATCH_SIZE),
+        row_offset: offset,
+      }));
+    } catch (error) {
+      error.partialResults = results;
+      throw error;
+    }
     results.push(...data.results);
     onProgress(Math.min(rows.length, offset + BATCH_SIZE));
   }
@@ -139,7 +150,7 @@ export default function StudentImport() {
       );
       setFinal(results);
     } catch (err) {
-      if(err.partialResults?.length)setFinal(err.partialResults);
+      if (err.partialResults?.length) setFinal(err.partialResults);
       await showErrorAlert({
         error: err,
         title: "นำเข้าไม่สำเร็จ",
@@ -166,7 +177,17 @@ export default function StudentImport() {
     ? shown.filter((item) => item.status === "error")
     : shown;
 
-  usePageExport({title:"ผลนำเข้านักเรียน",sources:[],localSheets:[{resource:"import_results",data:rowsToShow.map(({password,...row})=>row)}],disabled:busy});
+  usePageExport({
+    title: "ผลนำเข้านักเรียน",
+    sources: [],
+    localSheets: [
+      {
+        resource: "import_results",
+        data: rowsToShow.map(({ password, ...row }) => row),
+      },
+    ],
+    disabled: busy,
+  });
   const saveCredentials = async () => {
     await downloadCredentialsWorkbook(final, school?.name);
     setDownloaded(true);
@@ -193,12 +214,24 @@ export default function StudentImport() {
         </ol>
 
         {!final && (
-          <UiSurface as="section" className="sch-card" aria-labelledby="import-setup-title">
+          <UiSurface
+            as="section"
+            className="sch-card"
+            aria-labelledby="import-setup-title"
+          >
             <h2 id="import-setup-title">ตั้งค่าการนำเข้า</h2>
             <div className="sch-form-grid">
               <label className="sch-field">
                 ปีการศึกษาของห้องเรียน (พ.ศ.)
-                <AcademicYearSelect schoolId={schoolId} value={academicYear} disabled={busy} onChange={event => { setAcademicYear(event.target.value); setPreview(null); }} />
+                <AcademicYearSelect
+                  schoolId={schoolId}
+                  value={academicYear}
+                  disabled={busy}
+                  onChange={(event) => {
+                    setAcademicYear(event.target.value);
+                    setPreview(null);
+                  }}
+                />
               </label>
               <label className="sch-field">
                 เมื่อพบรหัสนักเรียนที่มีอยู่แล้ว
@@ -261,7 +294,8 @@ export default function StudentImport() {
                       onChange={(event) => chooseFile(event.target.files?.[0])}
                     />
                   </label>
-                  <UiButton variant="secondary"
+                  <UiButton
+                    variant="secondary"
                     type="button"
                     className="sch-btn-secondary"
                     onClick={downloadImportTemplate}
@@ -290,7 +324,8 @@ export default function StudentImport() {
                   </p>
                 )}
                 <div>
-                  <UiButton variant="primary"
+                  <UiButton
+                    variant="primary"
                     type="button"
                     className="sch-btn"
                     disabled={
@@ -332,7 +367,11 @@ export default function StudentImport() {
         )}
 
         {shown.length > 0 && !busy && (
-          <UiSurface as="section" className="sch-card" aria-labelledby="import-result-title">
+          <UiSurface
+            as="section"
+            className="sch-card"
+            aria-labelledby="import-result-title"
+          >
             <div className="sch-card-head">
               <h2 id="import-result-title">
                 {final ? "ผลการนำเข้า" : "ผลการตรวจสอบ (ยังไม่บันทึก)"}
@@ -369,7 +408,8 @@ export default function StudentImport() {
                   </p>
                 )}
                 <div className="sch-button-row">
-                  <UiButton variant="primary"
+                  <UiButton
+                    variant="primary"
                     type="button"
                     className="sch-btn"
                     onClick={saveCredentials}
@@ -377,7 +417,8 @@ export default function StudentImport() {
                     <FiDownload aria-hidden="true" /> ดาวน์โหลดบัญชีนักเรียน
                     (Excel)
                   </UiButton>
-                  <UiButton variant="secondary"
+                  <UiButton
+                    variant="secondary"
                     type="button"
                     className="sch-btn-secondary"
                     disabled={newPasswords > 0 && !downloaded}
@@ -394,7 +435,8 @@ export default function StudentImport() {
               </div>
             ) : (
               <div className="sch-button-row sch-stack-bottom">
-                <UiButton variant="primary"
+                <UiButton
+                  variant="primary"
                   type="button"
                   className="sch-btn"
                   disabled={!importable}
@@ -403,7 +445,8 @@ export default function StudentImport() {
                   นำเข้า {importable} คน
                   {problems ? ` (ข้ามแถวที่มีปัญหา ${problems} แถว)` : ""}
                 </UiButton>
-                <UiButton variant="secondary"
+                <UiButton
+                  variant="secondary"
                   type="button"
                   className="sch-btn-secondary"
                   onClick={reset}

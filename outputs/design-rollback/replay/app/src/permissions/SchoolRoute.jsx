@@ -6,7 +6,11 @@ import OrganizationWorkspace from "./OrganizationWorkspace";
 // organization, and the caller needs the given /school/access flag (the API
 // restricts insight access by stable role and assigned classrooms).
 export default function SchoolRoute({ check, children }) {
-  return <OrganizationWorkspace type="school"><SchoolAccessRoute check={check}>{children}</SchoolAccessRoute></OrganizationWorkspace>;
+  return (
+    <OrganizationWorkspace type="school">
+      <SchoolAccessRoute check={check}>{children}</SchoolAccessRoute>
+    </OrganizationWorkspace>
+  );
 }
 
 function SchoolAccessRoute({ check, children }) {

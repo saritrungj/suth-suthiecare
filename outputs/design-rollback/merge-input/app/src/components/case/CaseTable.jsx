@@ -1,15 +1,10 @@
-import SearchableSelect from '../SearchableSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import SearchableSelect from "../SearchableSelect";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { useEffect, useId, useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiInbox } from "react-icons/fi";
 import { RiskPill, StatusPill } from "./CaseDrawer";
 import CasePerson from "./CasePerson";
-import {
-  caseCode,
-  formatCaseDate,
-  rowRisk,
-  stripHtml,
-} from "./caseDisplay";
+import { caseCode, formatCaseDate, rowRisk, stripHtml } from "./caseDisplay";
 import { useMediaQuery } from "../useMediaQuery";
 
 const findAnswerFlexible = (rawAnswers, qTitle) => {
@@ -122,10 +117,20 @@ export default function CaseTable({
     );
 
   const nameButton = (row) => (
-    <CasePerson id={row.id} name={row.first_name || "ไม่ระบุชื่อ"} code={caseCode(row)} onOpen={() => onSelectCase(row)} />
+    <CasePerson
+      id={row.id}
+      name={row.first_name || "ไม่ระบุชื่อ"}
+      code={caseCode(row)}
+      onOpen={() => onSelectCase(row)}
+    />
   );
   const dateOf = (row) => {
-    const value = (viewMode === "master" && row.latest_activity?.occurred_at) || row.submitted_at || row.updated_at || row.created_at || row.createdAt;
+    const value =
+      (viewMode === "master" && row.latest_activity?.occurred_at) ||
+      row.submitted_at ||
+      row.updated_at ||
+      row.created_at ||
+      row.createdAt;
     const date = formatCaseDate(value);
     return date === "-" ? "—" : `${date} น.`;
   };
@@ -147,19 +152,17 @@ export default function CaseTable({
               {viewMode === "master" && <StatusPill status={row.status} />}
               <span className="cw-card-date">{dateOf(row)}</span>
             </div>
-            {viewMode !== "master" && (
-              dynamicQuestions.length > 0 && (
-                <dl className="cw-card-facts cw-card-facts--answers">
-                  {dynamicQuestions.map((q) => (
-                    <div key={q.id}>
-                      <dt>{stripHtml(q.title)}</dt>
-                      <dd>
-                        <Answer row={row} question={q} />
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              )
+            {viewMode !== "master" && dynamicQuestions.length > 0 && (
+              <dl className="cw-card-facts cw-card-facts--answers">
+                {dynamicQuestions.map((q) => (
+                  <div key={q.id}>
+                    <dt>{stripHtml(q.title)}</dt>
+                    <dd>
+                      <Answer row={row} question={q} />
+                    </dd>
+                  </div>
+                ))}
+              </dl>
             )}
           </li>
         ))}
@@ -190,15 +193,15 @@ export default function CaseTable({
                   String(row.id) === String(selectedId) ? "is-open" : ""
                 }
               >
-                <td className="cw-col-person">
-                  {nameButton(row)}
-                </td>
+                <td className="cw-col-person">{nameButton(row)}</td>
                 {showRisk && (
                   <td>
                     <RiskPill risk={rowRisk(row, "master")} short />
                   </td>
                 )}
-                <td className="cw-col-status"><StatusPill status={row.status} /></td>
+                <td className="cw-col-status">
+                  <StatusPill status={row.status} />
+                </td>
                 <td className="cw-col-date">{dateOf(row)}</td>
               </tr>
             ))}
@@ -235,9 +238,7 @@ export default function CaseTable({
                   String(row.id) === String(selectedId) ? "is-open" : ""
                 }
               >
-                <td className="cw-sticky cw-col-person">
-                  {nameButton(row)}
-                </td>
+                <td className="cw-sticky cw-col-person">{nameButton(row)}</td>
                 {hasScoring && (
                   <td>
                     <RiskPill risk={rowRisk(row, "form")} short />

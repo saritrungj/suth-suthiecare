@@ -1,14 +1,8 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { usePageExport } from "../../components/ExcelExport";
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useMemo,
-} from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import CaseTable from "../../components/case/CaseTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
-import FilterDropdown from "../../components/FilterDropdown";
 import {
   getForms,
   getFormById,
@@ -21,91 +15,28 @@ import SystemEvaluationWidget from "../../components/dashboard/SystemEvaluationW
 import {
   getCurrentMonthDateRange,
   isCaseInDateRange,
-  normaliseDateRange,
-  parseCaseDate,
 } from "../../utils/caseDateFilter";
 import { usePermissions } from "../../permissions/PermissionsProvider";
 import "./dashboard.css";
 import FormChartWorkspace from "../../components/FormChartWorkspace";
 import { useNavigate } from "react-router-dom";
+import { FiArrowRight, FiLayers, FiChevronDown } from "react-icons/fi";
+import ClinicKpiSummary from "../../components/dashboard/ClinicKpiSummary";
+import AllOrganizationsOverview from "../../components/dashboard/AllOrganizationsOverview";
 import {
-  FiArrowRight,
-  FiUsers,
-  FiActivity,
-  FiAlertCircle,
-  FiArchive,
-  FiDroplet,
-  FiBriefcase,
-  FiPlusSquare,
-  FiShield,
-  FiLayers,
-  FiChevronDown,
-} from "react-icons/fi";
+  DashboardHero,
+  DateRangePills,
+  DzSection,
+  describeRange,
+  formatCount,
+} from "../../components/dashboard/DashboardKit";
+import ActiveOrganizationScope from "../../components/OrganizationScope";
+import {
+  getClinicName,
+  pickInitialClinic,
+} from "../../permissions/organizationProfile";
 
-function StatBoxModern({
-  icon: Icon,
-  label,
-  value,
-  urgent,
-  color,
-  bgColor,
-  isLoading,
-}) {
-  return (
-    <div
-      className={`stat-box-modern ${urgent ? "urgent" : ""}`}
-      style={{ borderBottom: `4px solid ${urgent ? "#ef4444" : color}` }}
-    >
-      {Icon && (
-        <Icon
-          size={80}
-          color={color}
-          style={{
-            position: "absolute",
-            bottom: "-15px",
-            right: "-15px",
-            opacity: 0.05,
-            transform: "rotate(-10deg)",
-          }}
-        />
-      )}
-      <div className="stat-modern-header">
-        <div
-          className="stat-modern-icon"
-          style={{ backgroundColor: bgColor || `${color}15` }}
-        >
-          {Icon && <Icon size={20} color={urgent ? "#ef4444" : color} />}
-        </div>
-        <span
-          className="stat-modern-label"
-          style={{ color: urgent ? "#b91c1c" : "#475569", fontWeight: 700 }}
-        >
-          {toDisplayText(label)}
-        </span>
-      </div>
-      {isLoading ? (
-        <div className="db-stat-skeleton"></div>
-      ) : (
-        <span
-          className="stat-modern-value"
-          style={{ color: urgent ? "#ef4444" : "#1e293b" }}
-        >
-          {value}
-        </span>
-      )}
-    </div>
-  );
-}
-
-const CustomDropdown = ({
-  icon: Icon,
-  value,
-  options,
-  onChange,
-  style,
-  iconStyle,
-  textStyle,
-}) => {
+const CustomDropdown = ({ icon: Icon, value, options, onChange, label }) => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
   useEffect(() => {
@@ -125,30 +56,44 @@ const CustomDropdown = ({
 
   return (
     <div
-      className="db-custom-select"
+      className={"db-custom-select" + (isOpen ? " is-open" : "")}
       ref={ref}
-      style={{ ...style, zIndex: isOpen ? 999 : 1 }}
-      onClick={() => setIsOpen(!isOpen)}
+      style={{ zIndex: isOpen ? "var(--z-dropdown)" : 1 }}
     >
-      <Icon className="db-filter-icon" style={iconStyle} />
-      <span className="db-select-value" style={textStyle}>
-        {displayLabel}
-      </span>
-      <FiChevronDown
-        className={`db-dropdown-icon ${isOpen ? "open" : ""}`}
-        style={iconStyle}
-      />
+      <button
+        type="button"
+        className="db-custom-select__trigger"
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-label={
+          label ? label + ": " + toDisplayText(displayLabel) : undefined
+        }
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <Icon className="db-filter-icon" aria-hidden="true" />
+        <span className="db-select-value">{toDisplayText(displayLabel)}</span>
+        <FiChevronDown
+          className={`db-dropdown-icon ${isOpen ? "open" : ""}`}
+          aria-hidden="true"
+        />
+      </button>
 
       {isOpen && (
-        <div className="db-select-menu">
+        <div className="db-select-menu" role="listbox">
           {options.map((opt) => (
-            <div
+            <button
+              type="button"
+              role="option"
+              aria-selected={String(value) === String(opt.value)}
               key={opt.value}
               className={`db-select-option ${String(value) === String(opt.value) ? "selected" : ""}`}
-              onClick={() => onChange(opt.value)}
+              onClick={() => {
+                onChange(opt.value);
+                setIsOpen(false);
+              }}
             >
               {toDisplayText(opt.label)}
-            </div>
+            </button>
           ))}
         </div>
       )}
@@ -156,7 +101,18 @@ const CustomDropdown = ({
   );
 };
 
+// Forms with no clinic belong to "general", as on the forms page.
+const formClinic = (form) => form.clinic_type || "general";
+
+// The dashboard route: the system admin's "all organizations" scope gets the
+// cross-organization overview; one organization gets its own dashboard.
 export default function Dashboard() {
+  const { activeOrganization } = usePermissions();
+  if (activeOrganization === "all") return <AllOrganizationsOverview />;
+  return <OrganizationDashboard />;
+}
+
+function OrganizationDashboard() {
   const { activeOrganization, can } = usePermissions();
   const canManageDashboardSettings = Boolean(
     activeOrganization && activeOrganization !== "all",
@@ -185,25 +141,49 @@ export default function Dashboard() {
   const [forms, setForms] = useState([]);
 
   const [formStatusFilter, setFormStatusFilter] = useState("published");
-  const [selectedClinic, setSelectedClinic] = useState("teenager");
+  const [selectedClinic, setSelectedClinic] = useState("all");
   const [selectedFormId, setSelectedFormId] = useState("");
   const [currentFormDetails, setCurrentFormDetails] = useState(null);
   const [visibleColumns, setVisibleColumns] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedCase, setSelectedCase] = useState(null);
-  const [initialDateRange] = useState(getCurrentMonthDateRange);
-  const [startDate, setStartDate] = useState(initialDateRange.startDate);
-  const [endDate, setEndDate] = useState(initialDateRange.endDate);
-  usePageExport({title:"แดชบอร์ด",sources:[...(can("clinical.view")?[{resource:"dashboard_stats",filters:{startDate,endDate,form_id:selectedFormId,clinic:selectedClinic}}]:[{resource:"dashboard"}]),...(selectedFormId&&can("cases.view")&&can("cases.export")?[{resource:"responses",id:selectedFormId,filters:{startDate,endDate}}]:[])]});
+  const [range, setRange] = useState(getCurrentMonthDateRange);
+  const { startDate, endDate } = range;
+  usePageExport({
+    title: "แดชบอร์ด",
+    sources: [
+      ...(can("clinical.view")
+        ? [
+            {
+              resource: "dashboard_stats",
+              filters: {
+                startDate,
+                endDate,
+                clinic: selectedClinic,
+              },
+            },
+          ]
+        : [{ resource: "dashboard" }]),
+      ...(selectedFormId && can("cases.view") && can("cases.export")
+        ? [
+            {
+              resource: "responses",
+              id: selectedFormId,
+              filters: { startDate, endDate },
+            },
+          ]
+        : []),
+    ],
+  });
   const hasDateRange = Boolean(startDate || endDate);
   const newCaseLabel = hasDateRange ? "เคสใหม่ในช่วงที่เลือก" : "เคสใหม่วันนี้";
-  // 🟢 1. เพิ่ม State นี้เพื่อกั้นการโหลดข้อมูลก่อนเวลาอันควร
+  // Holds every request until the saved form and clinic are known.
   const [isInitialSetup, setIsInitialSetup] = useState(true);
 
   const filteredForms = useMemo(() => {
     let list = forms;
     if (selectedClinic !== "all") {
-      list = list.filter((f) => f.clinic_type === selectedClinic);
+      list = list.filter((f) => formClinic(f) === selectedClinic);
     }
     if (formStatusFilter === "published") {
       list = list.filter((f) => f.status === "published");
@@ -213,35 +193,45 @@ export default function Dashboard() {
     return list;
   }, [forms, selectedClinic, formStatusFilter]);
 
+  // Counts cover the whole clinic in the date range; the form picker below
+  // only chooses which form the recent-cases table shows.
   useEffect(() => {
-    if (isInitialSetup) return; // 🟢 3.4 สั่งให้หยุดรอ
+    if (isInitialSetup) return;
+    let alive = true;
     const fetchMasterCaseStats = async () => {
       setIsStatsLoading(true);
       try {
         const res = await getMasterCaseStats(
           selectedClinic,
-          selectedFormId,
+          "",
           startDate,
           endDate,
         );
-        if (res.data && typeof res.data === "object" && !res.data.error) {
+        if (
+          alive &&
+          res.data &&
+          typeof res.data === "object" &&
+          !res.data.error
+        ) {
           setMasterCaseStats((prev) => ({ ...prev, ...res.data }));
         }
       } catch (err) {
       } finally {
-        setIsStatsLoading(false);
+        if (alive) setIsStatsLoading(false);
       }
     };
     fetchMasterCaseStats();
+    return () => {
+      alive = false;
+    };
   }, [
     selectedClinic,
-    selectedFormId,
     startDate,
     endDate,
     statsRefetchTrigger,
     isInitialSetup,
     activeOrganization,
-  ]); // 🟢 3.3 เพิ่ม isInitialSetup เป็น dependency
+  ]);
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -257,9 +247,11 @@ export default function Dashboard() {
           settingsRequest,
           getActiveClinics(),
         ]);
+        const orgClinics = clinicRes.data.data || [];
         setForms(formRes.data);
-        setClinics(clinicRes.data.data || []);
+        setClinics(orgClinics);
         const savedSettings = settingsRes.data;
+        let savedClinic = null;
 
         if (savedSettings?.last_selected_form_id) {
           const lastId = savedSettings.last_selected_form_id;
@@ -268,16 +260,15 @@ export default function Dashboard() {
           );
 
           if (lastForm) {
-            setSelectedClinic(lastForm.clinic_type);
+            savedClinic = formClinic(lastForm);
             if (lastForm.status === "published") {
               setSelectedFormId(lastId);
-
             }
           }
         }
+        setSelectedClinic(pickInitialClinic(orgClinics, savedClinic));
       } catch (err) {
       } finally {
-        // 🟢 2. โหลดตั้งค่าเริ่มต้นเสร็จแล้ว ปลดล็อคได้!
         setIsInitialSetup(false);
       }
     };
@@ -296,7 +287,6 @@ export default function Dashboard() {
       setSelectedFormId("");
     }
   }, [selectedClinic, formStatusFilter, filteredForms, selectedFormId]);
-
 
   useEffect(() => {
     if (!selectedFormId) {
@@ -324,209 +314,136 @@ export default function Dashboard() {
     fetchFormDetails();
   }, [selectedFormId, activeOrganization]);
 
+  // Recent cases of the selected form, so each row has answers for the
+  // table's question columns.
   useEffect(() => {
+    if (isInitialSetup) return;
+    if (!selectedFormId) {
+      setCases([]);
+      setIsLoading(false);
+      return;
+    }
+    let alive = true;
     const fetchRecentCasesForClinic = async () => {
       setIsLoading(true);
       try {
-        const res = await getRecentCases(selectedClinic, startDate, endDate);
-        setCases(res.data);
+        const res = await getRecentCases(
+          selectedClinic,
+          startDate,
+          endDate,
+          selectedFormId,
+        );
+        if (alive) setCases(res.data);
       } catch (err) {
-        setCases([]);
+        if (alive) setCases([]);
       } finally {
-        setIsLoading(false);
+        if (alive) setIsLoading(false);
       }
     };
     fetchRecentCasesForClinic();
-  }, [selectedClinic, startDate, endDate, activeOrganization]);
-
-  const handleFormChange = (newFormId) => setSelectedFormId(newFormId);
+    return () => {
+      alive = false;
+    };
+  }, [
+    selectedClinic,
+    selectedFormId,
+    startDate,
+    endDate,
+    activeOrganization,
+    isInitialSetup,
+  ]);
 
   const filteredData = useMemo(() => {
     return cases.filter((item) => isCaseInDateRange(item, startDate, endDate));
   }, [cases, startDate, endDate]);
 
-  const clinicNameMap = {
-    all: "ทั้งหมด",
-    general: "ทั่วไป",
-    teenager: "วัยรุ่น",
-    behavior: "ปรับเปลี่ยนพฤติกรรม",
-    sti: "โรคติดต่อทางเพศสัมพันธ์",
+  const selectedClinicName =
+    getClinicName(selectedClinic, clinics) || selectedClinic;
+  const clinicOptions = [
+    // "general" is always offered once, even when it is also a clinic row.
+    ...clinics
+      .filter((c) => c.slug !== "general")
+      .map((c) => ({ value: c.slug, label: c.name })),
+    { value: "general", label: "ทั่วไป" },
+    { value: "all", label: "ทุกคลินิก" },
+  ];
+  const handleClinicChange = (val) => {
+    if (val === selectedClinic) return;
+    setSelectedClinic(val);
+    setIsLoading(true);
+    setIsStatsLoading(true);
   };
 
-  const displayThaiDate = (dateString) => {
-    if (!dateString) return "";
-    const date = parseCaseDate(dateString);
-    if (!date) return "";
-    return date.toLocaleDateString("th-TH", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
+  const openCases = () =>
+    navigate("/admin/cases", {
+      state: { defaultFormId: selectedFormId },
     });
-  };
 
-  const handleStartDateChange = (nextStartDate) => {
-    const [safeStartDate, safeEndDate] = normaliseDateRange(
-      nextStartDate,
-      endDate,
-    );
-    setStartDate(safeStartDate);
-    setEndDate(safeEndDate);
-  };
+  const highRisk = Number(masterCaseStats.highRisk || 0);
+  const waiting = Number(masterCaseStats.waitingContact || 0);
+  const ready = !isInitialSetup && !isStatsLoading;
+  const heroNote = !ready
+    ? null
+    : highRisk > 0
+      ? toDisplayText(selectedClinicName) +
+        " มีเคสเสี่ยงสูงที่ยังไม่ปิด " +
+        formatCount(highRisk) +
+        " เคส รอให้คุณดูแลอยู่นะ"
+      : waiting > 0
+        ? toDisplayText(selectedClinicName) +
+          " ไม่มีเคสเสี่ยงสูงค้าง มี " +
+          formatCount(waiting) +
+          " เคสรอติดต่อกลับ"
+        : null;
+  const heroTone = highRisk > 0 ? "alert" : waiting > 0 ? "warn" : "clear";
 
-  const handleEndDateChange = (nextEndDate) => {
-    const [safeStartDate, safeEndDate] = normaliseDateRange(
-      startDate,
-      nextEndDate,
-    );
-    setStartDate(safeStartDate);
-    setEndDate(safeEndDate);
-  };
+  const formOptions =
+    forms.length > 0
+      ? filteredForms.length > 0
+        ? filteredForms.map((form) => ({
+            value: form.id,
+            label: form.title,
+          }))
+        : [{ value: "", label: "-- ไม่มีแบบฟอร์มในหมวดนี้ --" }]
+      : [{ value: "", label: "กำลังโหลดแบบฟอร์ม..." }];
 
   return (
-    <div className="admin-page">
-      <main className="admin-content">
-        <header className="content-header">
-          <h1>แดชบอร์ด</h1>
-          <div className="dashboard-filters">
-            <FilterDropdown
-              activeCount={
-                [
-                  formStatusFilter !== "published" ? formStatusFilter : "",
-                  selectedClinic !== "all" ? selectedClinic : "",
-                ].filter(Boolean).length
-              }
-            >
-              <div className="select-wrapper status-select-wrap">
-                <span className="select-label">สถานะแบบฟอร์ม</span>
-                <CustomDropdown
-                  icon={FiLayers}
-                  value={formStatusFilter}
-                  onChange={setFormStatusFilter}
-                  options={[
-                    { value: "published", label: "✓ ฟอร์มที่เผยแพร่แล้ว" },
-                    { value: "draft", label: "✎ ฟอร์มฉบับร่าง/ซ่อน" },
-                    { value: "all", label: "☰ สถานะฟอร์มทั้งหมด" },
-                  ]}
-                  style={{ borderColor: "#bfdbfe", backgroundColor: "#eff6ff" }}
-                  iconStyle={{ color: "#2563eb" }}
-                  textStyle={{ color: "#1e40af", fontWeight: "600" }}
-                />
-              </div>
+    <div className="admin-page dz-surface">
+      <main className="dz-page">
+        <DashboardHero
+          title="แดชบอร์ด"
+          scope={<ActiveOrganizationScope />}
+          note={heroNote}
+          tone={heroTone}
+        />
 
-              <div className="select-wrapper clinic-select-wrap">
-                <span className="select-label">ประเภทคลินิก</span>
-                <CustomDropdown
-                  icon={FiLayers}
-                  value={selectedClinic}
-                  onChange={(val) => {
-                    setSelectedClinic(val);
-                    setIsLoading(true);
-                    setIsStatsLoading(true);
-                  }}
-                  options={[
-                    { value: "all", label: "ทุกคลินิก (All)" },
-                    { value: "general", label: "ทั่วไป" },
-                    ...clinics.map((c) => ({ value: c.slug, label: c.name })),
-                  ]}
-                />
-              </div>
-            </FilterDropdown>
-
-            <div className="select-wrapper form-select-wrap">
-              <span className="select-label">แบบฟอร์มสำหรับดูกราฟ</span>
-              <CustomDropdown
-                icon={FiLayers}
-                value={selectedFormId}
-                onChange={(val) => {
-                  if (val) {
-                    handleFormChange(val);
-                    setIsStatsLoading(true);
-                  }
-                }}
-                options={
-                  forms.length > 0
-                    ? filteredForms.length > 0
-                      ? filteredForms.map((form) => ({
-                          value: form.id,
-                          label: form.title,
-                        }))
-                      : [{ value: "", label: "-- ไม่มีแบบฟอร์มในหมวดนี้ --" }]
-                    : [{ value: "", label: "กำลังโหลดแบบฟอร์ม..." }]
-                }
-              />
-            </div>
-
-            <div className="select-wrapper filter-date-group">
-              <span className="select-label">ช่วงเวลาที่ต้องการดู</span>
-              <div className="db-date-range-premium">
-                <div
-                  className="date-input-box"
-                  style={{ position: "relative" }}
-                >
-                  <input
-                    type="text"
-                    placeholder="วัน/เดือน/ปี"
-                    value={displayThaiDate(startDate)}
-                    readOnly
-                    style={{ width: "100%", backgroundColor: "transparent" }}
-                  />
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => handleStartDateChange(e.target.value)}
-                    onClick={(e) =>
-                      e.target.showPicker && e.target.showPicker()
-                    }
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
-                      opacity: 0,
-                      cursor: "pointer",
-                      zIndex: 10,
-                    }}
-                  />
-                </div>
-
-                <span className="date-separator-premium">ถึง</span>
-
-                <div
-                  className="date-input-box"
-                  style={{ position: "relative" }}
-                >
-                  <input
-                    type="text"
-                    placeholder="วัน/เดือน/ปี"
-                    value={displayThaiDate(endDate)}
-                    readOnly
-                    style={{ width: "100%", backgroundColor: "transparent" }}
-                  />
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => handleEndDateChange(e.target.value)}
-                    min={startDate || undefined}
-                    onClick={(e) =>
-                      e.target.showPicker && e.target.showPicker()
-                    }
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
-                      opacity: 0,
-                      cursor: "pointer",
-                      zIndex: 10,
-                    }}
-                  />
-                </div>
+        <div className="dz-toolbar">
+          {clinics.length > 0 && (
+            <div className="dz-field">
+              <span className="dz-field__label" id="db-clinic-label">
+                คลินิก
+              </span>
+              <div
+                className="dz-pills"
+                role="group"
+                aria-labelledby="db-clinic-label"
+              >
+                {clinicOptions.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    className="dz-pill"
+                    aria-pressed={selectedClinic === opt.value}
+                    onClick={() => handleClinicChange(opt.value)}
+                  >
+                    {toDisplayText(opt.label)}
+                  </button>
+                ))}
               </div>
             </div>
-          </div>
-        </header>
+          )}
+          <DateRangePills value={range} onChange={setRange} />
+        </div>
 
         {isInitialSetup ? (
           <div className="db-loading-state">
@@ -534,275 +451,66 @@ export default function Dashboard() {
             <p>กำลังโหลดข้อมูล...</p>
           </div>
         ) : (
-          <div className="main-dashboard-container">
-            {selectedClinic === "sti" ? (
-              <div className="sti-dashboard-wrapper">
-                <div className="sti-hero-box">
-                  <div>
-                    <div className="sti-hero-title">
-                      <FiUsers size={24} color="#93c5fd" />
-                      ผู้ลงทะเบียนทั้งหมด
-                    </div>
-                    <div className="sti-hero-value">
-                      {(masterCaseStats?.totalActive || 0) +
-                        (masterCaseStats?.closed || 0)}
-                    </div>
+          <>
+            <ClinicKpiSummary
+              clinicSlug={selectedClinic}
+              clinicName={selectedClinicName}
+              stats={masterCaseStats}
+              isLoading={isStatsLoading}
+              newCaseLabel={newCaseLabel}
+              rangeLabel={
+                "ข้อมูล " +
+                describeRange(range) +
+                " นับเคสละหนึ่งครั้งตามผลประเมินล่าสุด"
+              }
+              onOpenCases={openCases}
+            />
+
+            <FormChartWorkspace
+              key={activeOrganization}
+              startDate={startDate}
+              endDate={endDate}
+              formId={selectedFormId}
+            />
+
+            <DzSection
+              className="dash-case-table-wrapper"
+              title={"เคสล่าสุด · " + toDisplayText(selectedClinicName)}
+              description="15 เคสล่าสุดของแบบฟอร์มที่เลือก ในช่วงเวลาเดียวกับด้านบน"
+              aside={
+                <div className="dash-case-table-header">
+                  <div className="db-form-picker">
+                    <CustomDropdown
+                      icon={FiLayers}
+                      label="แบบฟอร์ม"
+                      value={selectedFormId}
+                      onChange={(val) => {
+                        if (val) setSelectedFormId(val);
+                      }}
+                      options={formOptions}
+                    />
+                    <CustomDropdown
+                      icon={FiLayers}
+                      label="สถานะแบบฟอร์ม"
+                      value={formStatusFilter}
+                      onChange={setFormStatusFilter}
+                      options={[
+                        { value: "published", label: "เผยแพร่แล้ว" },
+                        { value: "draft", label: "ฉบับร่าง/ซ่อน" },
+                        { value: "all", label: "ทุกสถานะ" },
+                      ]}
+                    />
                   </div>
-                  <div className="sti-hero-stats">
-                    <div className="sti-hero-stat-item">
-                      <div className="label">นักศึกษา</div>
-                      <div className="value">
-                        {masterCaseStats?.totalStudent || 0}
-                      </div>
-                    </div>
-                    <div className="sti-hero-stat-item">
-                      <div className="label">บุคคลทั่วไป</div>
-                      <div className="value">
-                        {masterCaseStats?.totalGeneral || 0}
-                      </div>
-                    </div>
-                  </div>
+                  <button
+                    type="button"
+                    className="db-view-all-btn dz-link"
+                    onClick={openCases}
+                  >
+                    ดูทั้งหมด <FiArrowRight aria-hidden="true" />
+                  </button>
                 </div>
-
-                <div className="sti-stat-row">
-                  <StatBoxModern
-                    isLoading={isStatsLoading}
-                    icon={FiActivity}
-                    label={newCaseLabel}
-                    value={(masterCaseStats?.newToday || 0)
-                      .toString()
-                      .padStart(2, "0")}
-                    color="#3b82f6"
-                  />
-                  <StatBoxModern
-                    isLoading={isStatsLoading}
-                    icon={FiBriefcase}
-                    label="เคสที่รอติดต่อกลับ"
-                    value={(masterCaseStats?.waitingContact || 0)
-                      .toString()
-                      .padStart(2, "0")}
-                    color="#f59e0b"
-                  />
-                  <StatBoxModern
-                    isLoading={isStatsLoading}
-                    icon={FiAlertCircle}
-                    label="เคสเสี่ยงสูง (ฉุกเฉิน)"
-                    value={(masterCaseStats?.highRisk || 0)
-                      .toString()
-                      .padStart(2, "0")}
-                    color="#ef4444"
-                    urgent
-                  />
-                </div>
-
-                <div className="sti-stat-row">
-                  <div className="sti-blood-box">
-                    <div>
-                      <div className="sti-blood-title">
-                        <FiDroplet size={20} color="#be185d" />
-                        สถิติเจาะเลือดรวม
-                      </div>
-                      <div className="sti-blood-value">
-                        {(masterCaseStats?.bloodTestNegative || 0) +
-                          (masterCaseStats?.bloodTestPositive || 0)}
-                      </div>
-                    </div>
-                    <div className="sti-blood-stats">
-                      <div className="sti-blood-stat-item">
-                        <div
-                          style={{
-                            fontSize: "13px",
-                            color: "#10b981",
-                            fontWeight: "700",
-                          }}
-                        >
-                          Negative (-)
-                        </div>
-                        <div
-                          style={{
-                            fontSize: "22px",
-                            fontWeight: "800",
-                            color: "#047857",
-                          }}
-                        >
-                          {masterCaseStats?.bloodTestNegative || 0}
-                        </div>
-                      </div>
-                      <div
-                        className="sti-blood-stat-item"
-                        style={{ border: "1px solid #fecaca" }}
-                      >
-                        <div
-                          style={{
-                            fontSize: "13px",
-                            color: "#ef4444",
-                            fontWeight: "700",
-                          }}
-                        >
-                          Positive (+)
-                        </div>
-                        <div
-                          style={{
-                            fontSize: "22px",
-                            fontWeight: "800",
-                            color: "#b91c1c",
-                          }}
-                        >
-                          {masterCaseStats?.bloodTestPositive || 0}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <StatBoxModern
-                    isLoading={isStatsLoading}
-                    icon={FiPlusSquare}
-                    label="รับยา PrEP (เจาะเลือดที่นี่)"
-                    value={(masterCaseStats?.prepWithBlood || 0)
-                      .toString()
-                      .padStart(2, "0")}
-                    color="#8b5cf6"
-                  />
-                  <StatBoxModern
-                    isLoading={isStatsLoading}
-                    icon={FiShield}
-                    label="รับยา PrEP (มีผลเลือดมา)"
-                    value={(masterCaseStats?.prepWithoutBlood || 0)
-                      .toString()
-                      .padStart(2, "0")}
-                    color="#10b981"
-                  />
-                </div>
-
-                <div className="sti-stat-row">
-                  <StatBoxModern
-                    isLoading={isStatsLoading}
-                    icon={FiArrowRight}
-                    label="ส่งต่อ Safe Clinic"
-                    value={(masterCaseStats?.forwardSafeClinic || 0)
-                      .toString()
-                      .padStart(2, "0")}
-                    color="#ec4899"
-                  />
-                  <StatBoxModern
-                    isLoading={isStatsLoading}
-                    icon={FiArchive}
-                    label="เคสที่ปิดแล้ว (Closed)"
-                    value={(masterCaseStats?.closed || 0)
-                      .toString()
-                      .padStart(2, "0")}
-                    color="#64748b"
-                  />
-                </div>
-              </div>
-            ) : selectedClinic === "behavior" ? (
-              <div className="stats-grid">
-                <StatBoxModern
-                  isLoading={isStatsLoading}
-                  icon={FiUsers}
-                  label="ผู้ลงทะเบียนทั้งหมด"
-                  value={(
-                    (masterCaseStats?.totalActive || 0) +
-                    (masterCaseStats?.closed || 0)
-                  )
-                    .toString()
-                    .padStart(2, "0")}
-                  color="#14b8a6"
-                />
-                <StatBoxModern
-                  isLoading={isStatsLoading}
-                  icon={FiActivity}
-                  label={newCaseLabel}
-                  value={(masterCaseStats?.newToday || 0)
-                    .toString()
-                    .padStart(2, "0")}
-                  color="#3b82f6"
-                />
-                <StatBoxModern
-                  isLoading={isStatsLoading}
-                  icon={FiBriefcase}
-                  label="เคสที่รอติดต่อกลับ"
-                  value={(masterCaseStats?.waitingContact || 0)
-                    .toString()
-                    .padStart(2, "0")}
-                  color="#f59e0b"
-                />
-                <StatBoxModern
-                  isLoading={isStatsLoading}
-                  icon={FiArchive}
-                  label="เคสที่ปิดแล้ว (Closed)"
-                  value={(masterCaseStats?.closed || 0)
-                    .toString()
-                    .padStart(2, "0")}
-                  color="#64748b"
-                />
-              </div>
-            ) : (
-              <div className="stats-grid">
-                <StatBoxModern
-                  isLoading={isStatsLoading}
-                  icon={FiUsers}
-                  label="เคสที่กำลังดูแล (Active)"
-                  value={(masterCaseStats?.totalActive || 0)
-                    .toString()
-                    .padStart(2, "0")}
-                  color="#14b8a6"
-                />
-                <StatBoxModern
-                  isLoading={isStatsLoading}
-                  icon={FiActivity}
-                  label={newCaseLabel}
-                  value={(masterCaseStats?.newToday || 0)
-                    .toString()
-                    .padStart(2, "0")}
-                  color="#3b82f6"
-                />
-                <StatBoxModern
-                  isLoading={isStatsLoading}
-                  icon={FiAlertCircle}
-                  label="เคสที่มีความเสี่ยงสูง"
-                  value={(masterCaseStats?.highRisk || 0)
-                    .toString()
-                    .padStart(2, "0")}
-                  color="#ef4444"
-                  urgent
-                />
-                <StatBoxModern
-                  isLoading={isStatsLoading}
-                  icon={FiArchive}
-                  label="ปิดเคสแล้ว (Closed)"
-                  value={(masterCaseStats?.closed || 0)
-                    .toString()
-                    .padStart(2, "0")}
-                  color="#64748b"
-                />
-              </div>
-            )}
-
-            <hr className="divider" />
-
-            <FormChartWorkspace key={activeOrganization} startDate={startDate} endDate={endDate} formId={selectedFormId} />
-
-            <hr className="divider" />
-
-            <section className="dash-case-table-wrapper">
-              <div className="dash-case-table-header">
-                <h2
-                  className="text-2xl font-semibold"
-                  style={{ fontSize: "clamp(18px, 5vw, 24px)" }}
-                >
-                  ตารางเคสล่าสุด (คลินิก{clinicNameMap[selectedClinic] || ""})
-                </h2>
-                <button
-                  className="db-view-all-btn"
-                  onClick={() =>
-                    navigate("/admin/cases", {
-                      state: { defaultFormId: selectedFormId },
-                    })
-                  }
-                >
-                  ดูทั้งหมด <FiArrowRight />
-                </button>
-              </div>
+              }
+            >
               <div className="dash-case-table-scroll-area">
                 <CaseTable
                   data={filteredData}
@@ -843,21 +551,14 @@ export default function Dashboard() {
                   }}
                 />
               )}
-            </section>
+            </DzSection>
 
-            <hr className="divider" />
-
-            {/* 🟢 เรียกใช้ Component ประเมินระบบตรงนี้ */}
             <section className="dash-evaluation-wrapper">
               <SystemEvaluationWidget />
             </section>
-          </div>
+          </>
         )}
-
-
       </main>
-
-
     </div>
   );
 }

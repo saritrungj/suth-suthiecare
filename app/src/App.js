@@ -24,6 +24,7 @@ import PatientLogin from "./pages/patient/PatientLogin";
 import PatientRegister from "./pages/patient/PatientRegister";
 import PatientChangePassword from "./pages/patient/PatientChangePassword";
 import SchoolRoute from "./permissions/SchoolRoute";
+import RolesRoute from "./permissions/RolesRoute";
 import OrganizationTypeSwitch from "./permissions/OrganizationTypeSwitch";
 import SeoMetadata from "./components/SeoMetadata";
 import StatusPage from "./pages/errors/StatusPage";
@@ -41,12 +42,14 @@ const CaseData = lazy(() => import("./pages/admin/CaseData"));
 const CaseReferrals = lazy(() => import("./pages/admin/CaseReferrals"));
 const RolesPermissions = lazy(() => import("./pages/admin/RolesPermissions"));
 const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
-const RiskCases = lazy(() => import("./pages/admin/RiskCases"));
 const BannerManagement = lazy(() => import("./pages/admin/BannerManagement"));
 const MasterData = lazy(() => import("./pages/admin/MasterData"));
-const SchoolRoles = lazy(() => import("./pages/admin/school/SchoolRoles"));
-const SchoolWorkflows = lazy(() => import("./pages/admin/school/SchoolWorkflows"));
-const PatientVerifyEmail = lazy(() => import("./pages/patient/PatientVerifyEmail"));
+const SchoolWorkflows = lazy(
+  () => import("./pages/admin/school/SchoolWorkflows"),
+);
+const PatientVerifyEmail = lazy(
+  () => import("./pages/patient/PatientVerifyEmail"),
+);
 const MyProfile = lazy(() => import("./pages/admin/MyProfile"));
 const FormView = lazy(() => import("./pages/assessment/formView/FormView"));
 const HistorySearch = lazy(
@@ -59,14 +62,15 @@ const AdminLayout = lazy(() => import("./components/AdminLayout"));
 const ClinicDetail = lazy(
   () => import("./pages/assessment/history/ClinicDetail"),
 );
-const SchoolDashboard = lazy(() => import("./pages/admin/school/SchoolDashboard"));
+const SchoolDashboard = lazy(
+  () => import("./pages/admin/school/SchoolDashboard"),
+);
 const SchoolStructure = lazy(
   () => import("./pages/admin/school/SchoolStructure"),
 );
 const StudentList = lazy(() => import("./pages/admin/school/StudentList"));
 const StudentImport = lazy(() => import("./pages/admin/school/StudentImport"));
 const TeacherList = lazy(() => import("./pages/admin/school/TeacherList"));
-const SchoolTypes = lazy(() => import("./pages/admin/school/SchoolTypes"));
 const SchoolCaseData = lazy(
   () => import("./pages/admin/school/SchoolCaseData"),
 );
@@ -126,7 +130,7 @@ function App() {
           alignItems: "center",
           justifyContent: "center",
           height: "100vh",
-          color: "#64748b",
+          color: "var(--suth-muted)",
         }}
       >
         กำลังเชื่อมต่อข้อมูล...
@@ -147,7 +151,7 @@ function App() {
                 minHeight: "100vh",
                 display: "grid",
                 placeItems: "center",
-                fontFamily: "Sarabun, system-ui, sans-serif",
+                fontFamily: "var(--suth-font)",
               }}
             >
               กำลังโหลดข้อมูล...
@@ -159,7 +163,10 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/account/login" element={<PatientLogin />} />
             <Route path="/account/register" element={<PatientRegister />} />
-            <Route path="/account/verify-email" element={<PatientVerifyEmail />} />
+            <Route
+              path="/account/verify-email"
+              element={<PatientVerifyEmail />}
+            />
             <Route
               path="/account/change-password"
               element={<PatientChangePassword />}
@@ -220,7 +227,15 @@ function App() {
                 path="dashboard"
                 element={
                   <PermissionRoute module="Dashboard">
-                    <OrganizationTypeSwitch school={<SchoolRoute check="can_view_students"><SchoolDashboard /></SchoolRoute>}><Dashboard /></OrganizationTypeSwitch>
+                    <OrganizationTypeSwitch
+                      school={
+                        <SchoolRoute check="can_view_students">
+                          <SchoolDashboard />
+                        </SchoolRoute>
+                      }
+                    >
+                      <Dashboard />
+                    </OrganizationTypeSwitch>
                   </PermissionRoute>
                 }
               />
@@ -283,7 +298,7 @@ function App() {
               <Route
                 path="roles"
                 element={
-                  <PermissionRoute module="Roles & Permissions" systemAdminOnly>
+                  <PermissionRoute module="roles.manage" systemAdminOnly>
                     <RolesPermissions />
                   </PermissionRoute>
                 }
@@ -291,16 +306,16 @@ function App() {
               <Route
                 path="users"
                 element={
-                  <PermissionRoute module="User Management" systemAdminOnly>
-                    <UserManagement initialTab="staff" standalone />
-                  </PermissionRoute>
+                  <RolesRoute>
+                    <UserManagement initialTab="staff" />
+                  </RolesRoute>
                 }
               />
               <Route
                 path="members"
                 element={
                   <PermissionRoute module="User Management">
-                    <UserManagement initialTab="members" standalone />
+                    <UserManagement initialTab="members" />
                   </PermissionRoute>
                 }
               />
@@ -315,7 +330,7 @@ function App() {
                     }
                   >
                     <PermissionRoute module="Case Management">
-                      <RiskCases />
+                      <CaseData key="risk-cases" initialRisk="สูง" />
                     </PermissionRoute>
                   </OrganizationTypeSwitch>
                 }
@@ -372,12 +387,16 @@ function App() {
                 }
               />
               <Route
-                path="school/students/import"
+                path="school/import"
                 element={
-                  <SchoolRoute check="can_create_students">
+                  <SchoolRoute check="can_view_school">
                     <StudentImport />
                   </SchoolRoute>
                 }
+              />
+              <Route
+                path="school/students/import"
+                element={<Navigate to="/admin/school/import" replace />}
               />
               <Route
                 path="school/teachers"
@@ -387,17 +406,36 @@ function App() {
                   </SchoolRoute>
                 }
               />
+              {/* Teacher and student types are master data categories now. */}
               <Route
                 path="school/types"
                 element={
+                  <Navigate
+                    to="/admin/master-data?category=teacher_types"
+                    replace
+                  />
+                }
+              />
+              <Route
+                path="master-data"
+                element={
+                  <PermissionRoute module="master_data.view">
+                    <MasterData />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="school/roles"
+                element={<Navigate to="/admin/users" replace />}
+              />
+              <Route
+                path="school/workflows"
+                element={
                   <SchoolRoute check="can_view_school">
-                    <SchoolTypes />
+                    <SchoolWorkflows />
                   </SchoolRoute>
                 }
               />
-              <Route path="master-data" element={<MasterData />} />
-              <Route path="school/roles" element={<SchoolRoute check="can_manage_staff"><SchoolRoles /></SchoolRoute>} />
-              <Route path="school/workflows" element={<SchoolRoute check="can_view_school"><SchoolWorkflows /></SchoolRoute>} />
               {/* Every signed-in staff member manages their own account. */}
               <Route path="profile" element={<MyProfile />} />
             </Route>

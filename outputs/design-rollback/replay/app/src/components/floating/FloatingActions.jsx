@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { FiArrowUp, FiArrowUpRight, FiHeart, FiHelpCircle } from "react-icons/fi";
+import {
+  FiArrowUp,
+  FiArrowUpRight,
+  FiHeart,
+  FiHelpCircle,
+} from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import peeHomAvatar from "../../assets/pee-hom-ai.webp";
@@ -13,7 +18,10 @@ export const AI_CHAT_URL =
 function Sparkle({ className }) {
   return (
     <svg className={className} viewBox="0 0 24 24" focusable="false">
-      <path d="m12 1 3.2 7.8L23 12l-7.8 3.2L12 23l-3.2-7.8L1 12l7.8-3.2Z" fill="currentColor" />
+      <path
+        d="m12 1 3.2 7.8L23 12l-7.8 3.2L12 23l-3.2-7.8L1 12l7.8-3.2Z"
+        fill="currentColor"
+      />
     </svg>
   );
 }
@@ -77,9 +85,17 @@ export default function FloatingActions() {
         <span className="sut-fab-mascot">
           <span className="sut-fab-mascot__ring" aria-hidden="true" />
           <span className="sut-fab-mascot__portrait">
-            <img src={peeHomAvatar} width="256" height="256" alt="" decoding="async" />
+            <img
+              src={peeHomAvatar}
+              width="256"
+              height="256"
+              alt=""
+              decoding="async"
+            />
           </span>
-          <span className="sut-fab-mascot__badge" aria-hidden="true">AI</span>
+          <span className="sut-fab-mascot__badge" aria-hidden="true">
+            AI
+          </span>
           <span className="sut-fab-mascot__confetti" aria-hidden="true">
             <Sparkle className="sut-fab-spark sut-fab-spark--mint" />
             <Sparkle className="sut-fab-spark sut-fab-spark--peach" />
@@ -93,11 +109,18 @@ export default function FloatingActions() {
         <button
           type="button"
           className="sut-fab-round sut-fab-top"
-          onClick={() => window.scrollTo({
-            top: 0,
-            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+          onClick={() =>
+            window.scrollTo({
+              top: 0,
+              behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
+                .matches
+                ? "instant"
+                : "smooth",
+            })
+          }
+          aria-label={t("sutlanding.scroll_top", {
+            defaultValue: isEnglish ? "Back to top" : "กลับด้านบน",
           })}
-          aria-label={t("sutlanding.scroll_top", { defaultValue: isEnglish ? "Back to top" : "กลับด้านบน" })}
         >
           <FiArrowUp aria-hidden="true" />
         </button>
@@ -107,7 +130,9 @@ export default function FloatingActions() {
         type="button"
         className="sut-fab-round sut-fab-help"
         onClick={() => navigate("/help-center")}
-        aria-label={t("sutlanding.help_center", { defaultValue: isEnglish ? "Help center" : "ศูนย์ช่วยเหลือ" })}
+        aria-label={t("sutlanding.help_center", {
+          defaultValue: isEnglish ? "Help center" : "ศูนย์ช่วยเหลือ",
+        })}
       >
         <FiHelpCircle aria-hidden="true" />
       </button>

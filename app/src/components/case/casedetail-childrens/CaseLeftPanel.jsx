@@ -1,5 +1,5 @@
-import SearchableSelect from '../../SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import SearchableSelect from "../../SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import React, { useState } from "react";
 import { RiskPill } from "../CaseDrawer";
 import {
@@ -80,10 +80,10 @@ export default function CaseLeftPanel({
                 style={{
                   maxWidth: "100%",
                   maxHeight: "200px",
-                  borderRadius: "8px",
+                  borderRadius: "var(--suth-radius)",
                   cursor: "pointer",
                   objectFit: "cover",
-                  border: "1px solid #e2e8f0",
+                  border: "1px solid var(--suth-line)",
                 }}
                 onClick={() => {
                   import("sweetalert2").then((Swal) => {
@@ -109,11 +109,11 @@ export default function CaseLeftPanel({
                     alignItems: "center",
                     gap: "5px",
                     padding: "6px 12px",
-                    background: "#3b82f6",
-                    color: "#fff",
-                    borderRadius: "4px",
+                    background: "var(--suth-info)",
+                    color: "var(--suth-on-action)",
+                    borderRadius: "var(--suth-radius-sm)",
                     textDecoration: "none",
-                    fontSize: "13px",
+                    fontSize: "var(--suth-fs-label)",
                     fontWeight: "500",
                   }}
                 >
@@ -139,11 +139,11 @@ export default function CaseLeftPanel({
                     alignItems: "center",
                     gap: "5px",
                     padding: "6px 12px",
-                    background: "#10b981",
-                    color: "#fff",
-                    borderRadius: "4px",
+                    background: "var(--suth-risk-dot-low)",
+                    color: "var(--suth-on-action)",
+                    borderRadius: "var(--suth-radius-sm)",
                     textDecoration: "none",
-                    fontSize: "13px",
+                    fontSize: "var(--suth-fs-label)",
                     fontWeight: "500",
                   }}
                 >
@@ -160,15 +160,17 @@ export default function CaseLeftPanel({
             style={{
               marginTop: "10px",
               padding: "10px",
-              border: "1px dashed #cbd5e1",
-              borderRadius: "8px",
-              background: "#f8fafc",
+              border: "1px dashed var(--suth-control-line)",
+              borderRadius: "var(--suth-radius)",
+              background: "var(--suth-surface-2)",
             }}
           >
-            <FaFileAlt style={{ marginRight: "6px", color: "#64748b" }} />
+            <FaFileAlt
+              style={{ marginRight: "6px", color: "var(--suth-muted)" }}
+            />
             {formatAnswer(ans)}
             <br />
-            <small style={{ color: "#ef4444" }}>
+            <small style={{ color: "var(--suth-danger)" }}>
               *ไม่สามารถดึงข้อมูล Base64 ได้
             </small>
           </div>
@@ -191,7 +193,9 @@ export default function CaseLeftPanel({
 
                 return (
                   <tr key={idx}>
-                    <td className="cdm-table-label">{toDisplayText(displayRowTitle)}</td>
+                    <td className="cdm-table-label">
+                      {toDisplayText(displayRowTitle)}
+                    </td>
                     <td className="cdm-table-value">
                       {Array.isArray(rowValue)
                         ? rowValue.join(", ")
@@ -304,10 +308,10 @@ export default function CaseLeftPanel({
                 style={{
                   padding: "20px",
                   textAlign: "center",
-                  color: "#64748b",
-                  background: "#f8fafc",
-                  borderRadius: "8px",
-                  border: "1px dashed #cbd5e1",
+                  color: "var(--suth-muted)",
+                  background: "var(--suth-surface-2)",
+                  borderRadius: "var(--suth-radius)",
+                  border: "1px dashed var(--suth-control-line)",
                 }}
               >
                 ไม่พบประวัติการทำแบบประเมินอื่นๆ
@@ -330,7 +334,8 @@ export default function CaseLeftPanel({
                 {journeyResponses && journeyResponses.length > 0 ? (
                   journeyResponses.map((r, i) => (
                     <option key={r.id} value={r.id}>
-                      #{journeyResponses.length - i} {toDisplayText(r.form_title)} (
+                      #{journeyResponses.length - i}{" "}
+                      {toDisplayText(r.form_title)} (
                       {new Date(r.submitted_at).toLocaleDateString("th-TH")})
                     </option>
                   ))
@@ -352,7 +357,7 @@ export default function CaseLeftPanel({
                   className="cdm-section-title cdm-collapse-header"
                   onClick={() => setIsScoreOpen(!isScoreOpen)}
                 >
-                  <FaChartBar color="#f59e0b" /> ผลประเมินระบบ
+                  <FaChartBar color="var(--suth-action)" /> ผลประเมินระบบ
                   <FaChevronDown
                     className={`cdm-collapse-icon ${isScoreOpen ? "open" : ""}`}
                   />
@@ -363,13 +368,17 @@ export default function CaseLeftPanel({
                     {scoreResults.map((s, i) => (
                       <div key={i} className="cdm-score-card">
                         <div className="cdm-score-header">
-                          <span className="cdm-score-title">{toDisplayText(s.title)}</span>
+                          <span className="cdm-score-title">
+                            {toDisplayText(s.title)}
+                          </span>
                           <span className="cdm-score-value">{s.score}</span>
                         </div>
                         <div className="cdm-score-badge">
                           <i
                             aria-hidden="true"
-                            style={{ backgroundColor: s.color || "#64748b" }}
+                            style={{
+                              backgroundColor: s.color || "var(--suth-muted)",
+                            }}
                           />
                           ระดับ: {toDisplayText(s.label)}
                         </div>
@@ -391,7 +400,7 @@ export default function CaseLeftPanel({
                 className="cdm-section-title cdm-collapse-header"
                 onClick={() => setIsAnswersOpen(!isAnswersOpen)}
               >
-                <FaClipboardList color="#10b981" /> ข้อมูลคำตอบ
+                <FaClipboardList color="var(--suth-success)" /> ข้อมูลคำตอบ
                 <FaChevronDown
                   className={`cdm-collapse-icon ${isAnswersOpen ? "open" : ""}`}
                 />
@@ -410,7 +419,7 @@ export default function CaseLeftPanel({
                   ) : (
                     <div
                       style={{
-                        color: "#94a3b8",
+                        color: "var(--suth-muted)",
                         fontStyle: "italic",
                         padding: "10px 0",
                       }}

@@ -1,0 +1,224 @@
+/* Shared ledger table for admin data-management screens.
+   Page styles may own column widths and specialized cells; this file owns
+   table structure, hierarchy, interaction states and responsive scrolling. */
+.admin-shell table:is(.admin-data-table, .sch-table, .cw-queue) {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  font-family: var(--suth-font);
+  font-size: var(--suth-fs-body);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-shell table:is(.admin-data-table, .sch-table, .cw-queue) thead {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+}
+
+.admin-shell table:is(.admin-data-table, .sch-table, .cw-queue) th {
+  padding: 11px 14px;
+  border: 0;
+  border-bottom: 1px solid var(--suth-line);
+  background: var(--suth-surface-2);
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-label);
+  font-weight: 800;
+  line-height: 1.45;
+  letter-spacing: 0;
+  text-transform: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.admin-shell table:is(.admin-data-table, .sch-table, .cw-queue) td {
+  min-height: 52px;
+  padding: 12px 14px;
+  border: 0;
+  border-bottom: 1px solid var(--suth-line-soft);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  vertical-align: middle;
+}
+
+/* Alignment is a default only, at zero specificity, so a page's own
+   column classes (numbers right, icons centred) always win. */
+:where(.admin-shell table:is(.admin-data-table, .sch-table, .cw-queue))
+  :where(th, td) {
+  text-align: left;
+}
+
+/* Number columns: right-aligned, tabular, header follows its column. */
+.admin-shell
+  table:is(.admin-data-table, .sch-table, .cw-queue)
+  :is(th, td):is(.sch-num, .is-num) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Action columns: header and buttons share one centre line. */
+.admin-shell
+  table:is(.admin-data-table, .sch-table, .cw-queue)
+  :is(th, td):is(.is-actions, [class*="action"]) {
+  width: 1%;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.admin-shell
+  table:is(.admin-data-table, .sch-table, .cw-queue)
+  td:is(.is-actions, [class*="action"])
+  > :is(div, span) {
+  justify-content: center;
+}
+
+.admin-shell
+  table:is(.admin-data-table, .sch-table, .cw-queue)
+  tbody
+  tr:last-child
+  > td {
+  border-bottom: 0;
+}
+
+.admin-shell table:is(.admin-data-table, .sch-table, .cw-queue) tbody tr {
+  transition: background-color 160ms ease-out;
+}
+
+.admin-shell
+  table:is(.admin-data-table, .sch-table, .cw-queue)
+  tbody
+  tr:hover
+  > td {
+  background: var(--suth-surface-hover);
+}
+
+/* The row a drawer or detail is open for: a warm band (tint, no side stripe). */
+.admin-shell
+  table:is(.admin-data-table, .sch-table, .cw-queue)
+  tbody
+  tr:is(
+    [aria-selected="true"],
+    [aria-current="true"],
+    .is-selected,
+    .is-active,
+    .is-open
+  )
+  > td {
+  background: var(--suth-tint);
+}
+
+.admin-shell
+  table:is(.admin-data-table, .sch-table, .cw-queue)
+  :is(button, a):focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 2px;
+}
+
+/* The banner list sits in a narrow column beside the preview and has
+   only three columns, so it fits its card instead of scrolling. */
+.admin-shell .bm-table-card table.admin-data-table {
+  min-width: 0;
+}
+
+/* Existing management pages already provide the frame. This selector gives
+   every direct table parent the same safe horizontal-scroll contract. */
+.admin-shell *:has(> table:is(.admin-data-table, .sch-table, .cw-queue)) {
+  max-width: 100%;
+  border: 1px solid var(--suth-line-soft);
+  border-radius: var(--suth-radius-inner);
+  background: var(--suth-surface);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-shell
+  *:has(> table:is(.admin-data-table, .sch-table, .cw-queue)):focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .admin-shell table:is(.admin-data-table, .sch-table, .cw-queue) {
+    min-width: 620px;
+    font-size: var(--suth-fs-body);
+  }
+
+  .admin-shell table:is(.admin-data-table, .sch-table, .cw-queue) th,
+  .admin-shell table:is(.admin-data-table, .sch-table, .cw-queue) td {
+    padding: 10px 12px;
+  }
+
+  .admin-shell
+    table:is(.admin-data-table, .sch-table, .cw-queue)
+    :is(button, a) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* A table holding only its empty or loading row fits the screen, so
+     the message stays centred in view instead of across a wide scroll. */
+  .admin-shell
+    table:is(.admin-data-table, .sch-table, .cw-queue):has(
+      tbody > tr:only-child > td[colspan]:only-child
+    ) {
+    min-width: 0 !important;
+  }
+
+  .admin-shell
+    table:is(.admin-data-table, .sch-table, .cw-queue)
+    tbody
+    > tr:only-child
+    > td[colspan]:only-child {
+    white-space: normal;
+  }
+
+  /* Tables whose columns keep their width anyway (help center, clinics):
+     the message rides along at the visible left edge, centred in view. */
+  .admin-shell
+    table:is(.admin-data-table, .sch-table, .cw-queue)
+    tbody
+    > tr:only-child
+    > td[colspan]:only-child
+    > :not(svg) {
+    position: sticky;
+    left: 12px;
+    width: min(100%, calc(100vw - 96px));
+    box-sizing: border-box;
+  }
+
+  /* An icon is pinned at the centre of that same visible box. */
+  .admin-shell
+    table:is(.admin-data-table, .sch-table, .cw-queue)
+    tbody
+    > tr:only-child
+    > td[colspan]:only-child
+    > svg {
+    position: sticky;
+    left: calc(12px + (min(100%, 100vw - 96px) - 1em) / 2);
+    margin-inline: 0 !important;
+  }
+
+  /* Banner management switches rows to stacked cards on small screens. */
+  .admin-shell .bm-table-card table.admin-data-table {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-shell table:is(.admin-data-table, .sch-table, .cw-queue) tbody tr {
+    transition: none;
+  }
+}
+
+/* Empty and loading rows stay centred inside the shared left-aligned cells. */
+.admin-shell
+  table:is(.admin-data-table, .sch-table, .cw-queue)
+  td:is([class*="empty"], [class*="loading"]) {
+  text-align: center;
+}

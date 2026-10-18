@@ -1,0 +1,466 @@
+/* Dashboard kit primitives for every admin page (2026-10-17).
+   Loaded last of the global systems. It holds only shared shapes: the page
+   column, buttons, fields, row actions, pill tracks, menus, state pills and
+   empty states. Page-specific shapes (cards, canvases, rails) live in each
+   page sheet. Scope: the admin shell, plus the three admin overlays that
+   portal to the body (chart editor, case drawer, school dialogs). */
+
+/* ── Page column ──────────────────────────────────────────── */
+/* Every admin page is one column: the header band and every block under it
+   share the same left and right edge at any width, capped at 1500px and
+   centred, with one fluid gutter (DESIGN.md: clamp(1rem, 3vw, 2.5rem)).
+   The page root is the element that holds the compact header band; the
+   padding does the capping, so children need no width rules of their own.
+   Dashboard grids (.dz-page) already cap themselves. */
+.admin-shell :not(.dz-page):has(> .dz-hero--compact) {
+  --page-gutter: clamp(1rem, 3vw, 2.5rem);
+  padding-top: var(--page-gutter);
+  padding-inline: max(var(--page-gutter), calc((100% - 1500px) / 2));
+  box-sizing: border-box;
+}
+
+.admin-shell .dz-hero--compact {
+  width: 100%;
+  margin: 0 0 1.25rem;
+  box-sizing: border-box;
+}
+
+.admin-shell .dz-page > .dz-hero--compact {
+  margin: 0;
+}
+
+/* A result line outside a list panel keeps the panel rhythm. */
+.admin-shell :not(.dz-panel) > .dz-result {
+  margin-block: 14px;
+}
+
+/* Actions the roles page does not grant are rendered with the hidden attribute. */
+.admin-shell [hidden] {
+  display: none !important;
+}
+
+/* ── Buttons: every text button is a pill ─────────────────── */
+:is(.admin-shell, .fc-overlay, .cw-drawer-overlay, .ui-modal-overlay)
+  :is(button, a, label):is([class*="btn"], [class*="-button"]):not(
+    [class*="icon"]
+  ):not([class*="close"]):not([class*="slide"]) {
+  border-radius: var(--suth-radius-pill) !important;
+}
+
+/* Icon-only and close buttons: soft rounded squares. */
+:is(.admin-shell, .fc-overlay, .cw-drawer-overlay, .ui-modal-overlay)
+  :is(button, a):is([class*="icon-btn"], [class*="close"]) {
+  border-radius: var(--suth-radius-icon) !important;
+}
+
+/* Row actions in every table: one 40px soft square. Edit warms to the
+   brand tint, delete to the danger tint. */
+.admin-shell
+  :is(
+    .sum-edit,
+    .sum-delete,
+    .cm-btn-edit,
+    .cm-btn-delete,
+    .bn-edit-btn,
+    .bn-delete-btn,
+    [class*="hc-btn-action-"],
+    td .sch-icon-btn
+  ) {
+  display: inline-grid !important;
+  place-items: center;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  min-height: 40px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid var(--suth-line-soft) !important;
+  border-radius: var(--suth-radius-icon) !important;
+  background: var(--suth-surface-2) !important;
+  color: var(--suth-ink-2) !important;
+  box-shadow: none !important;
+  transition:
+    background-color 160ms var(--suth-ease-out),
+    color 160ms var(--suth-ease-out),
+    border-color 160ms var(--suth-ease-out) !important;
+}
+
+.admin-shell
+  :is(
+    .sum-edit,
+    .cm-btn-edit,
+    .bn-edit-btn,
+    .hc-btn-action-edit,
+    td .sch-icon-btn:not(.sch-danger)
+  ):hover:not(:disabled) {
+  border-color: var(--suth-tint-line) !important;
+  background: var(--suth-tint) !important;
+  color: var(--suth-action-ink) !important;
+}
+
+.admin-shell
+  :is(
+    .sum-delete,
+    .cm-btn-delete,
+    .bn-delete-btn,
+    [class*="hc-btn-action-"]:not(.hc-btn-action-edit),
+    td .sch-icon-btn.sch-danger
+  ):hover:not(:disabled) {
+  border-color: var(--suth-danger-line) !important;
+  background: var(--suth-danger-tint) !important;
+  color: var(--suth-danger) !important;
+}
+
+.admin-shell
+  :is(
+    .sum-edit,
+    .sum-delete,
+    .cm-btn-edit,
+    .cm-btn-delete,
+    .bn-edit-btn,
+    .bn-delete-btn,
+    [class*="hc-btn-action-"],
+    td .sch-icon-btn
+  )
+  svg {
+  width: 17px !important;
+  height: 17px !important;
+}
+
+/* Orange actions get a warm lift, like the pressed pill on the dashboard. */
+:is(.admin-shell, .fc-overlay, .cw-drawer-overlay, .ui-modal-overlay)
+  :is(
+    .bm-add-btn,
+    .cm-btn-add,
+    .sum-add-btn,
+    .btn-add,
+    .hc-btn-add,
+    .fm-btn-add-form,
+    .add-btn,
+    .btn-primary,
+    .sch-btn-primary,
+    .cw-btn:not(.cw-btn-secondary):not(.cw-btn-ghost),
+    .org-btn:not(.org-btn-secondary),
+    .rp-btn--primary,
+    .cdm-btn-confirm,
+    .cdm-btn-unified-save,
+    .sfb-btn-save--published,
+    .sfb-btn-primary,
+    .fm-btn-save,
+    .hc-btn-save,
+    .cm-btn-save,
+    .abm-btn-save,
+    .ebm-btn-save,
+    .adm-btn-save,
+    .profile-card button[type="submit"]
+  ):not(:disabled) {
+  box-shadow: 0 8px 18px -10px
+    color-mix(in srgb, var(--suth-action-hover) 75%, transparent) !important;
+  transition:
+    transform 180ms var(--suth-ease-out),
+    box-shadow 180ms var(--suth-ease-out),
+    background-color 180ms var(--suth-ease-out);
+}
+
+:is(.admin-shell, .fc-overlay, .cw-drawer-overlay, .ui-modal-overlay)
+  :is(
+    .bm-add-btn,
+    .cm-btn-add,
+    .sum-add-btn,
+    .btn-add,
+    .hc-btn-add,
+    .fm-btn-add-form,
+    .add-btn,
+    .btn-primary,
+    .sch-btn-primary,
+    .rp-btn--primary,
+    .cdm-btn-confirm,
+    .sfb-btn-save--published,
+    .fm-btn-save,
+    .hc-btn-save,
+    .cm-btn-save
+  ):hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+/* ── Fields ───────────────────────────────────────────────── */
+:is(.admin-shell, .fc-overlay, .cw-drawer-overlay, .ui-modal-overlay)
+  :is(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not(
+        [type="color"]
+      ):not([type="file"]):not(.tdp-native):not(.tdp-time__input),
+    select:not(.tp-pagination select),
+    textarea
+  ) {
+  border-radius: var(--suth-radius) !important;
+  font-family: var(--suth-font);
+}
+
+/* Search boxes read as pills, like the search on the overview. */
+:is(.admin-shell, .fc-overlay, .cw-drawer-overlay, .ui-modal-overlay)
+  :is(
+    input[type="search"],
+    .sch-search-group,
+    .sum-search-group,
+    .fm-search-group,
+    .apt-search-group,
+    .rc-search-group,
+    .cw-search
+  ) {
+  border-radius: var(--suth-radius-pill) !important;
+}
+
+.admin-shell
+  :is(
+    .sch-search-group,
+    .sum-search-group,
+    .fm-search-group,
+    .apt-search-group,
+    .cw-search
+  )
+  input {
+  border-radius: var(--suth-radius-pill) !important;
+}
+
+:is(.admin-shell, .fc-overlay, .cw-drawer-overlay, .ui-modal-overlay)
+  :is(input, select, textarea):not([type="checkbox"]):not(
+    [type="radio"]
+  ):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--suth-action) 35%, transparent) !important;
+  outline-offset: 1px;
+  border-color: var(--suth-action) !important;
+}
+
+/* Native checkboxes and radios take the action colour instead of browser blue. */
+:where(.admin-shell, .fc-overlay, .cw-drawer-overlay, .ui-modal-overlay)
+  :is(input[type="checkbox"], input[type="radio"]) {
+  accent-color: var(--suth-action-ink);
+}
+
+/* ── In-page tabs and segmented switches: the pill track ──── */
+.admin-shell
+  :is(
+    .sch-management-nav,
+    .sch-import-tabs,
+    .sch-workflow-nav,
+    .cw-mode,
+    .ref-directions,
+    .apt-view-toggle
+  ) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  /* A framed white track, so the pills sit in a visible control instead
+     of floating on the canvas. */
+  border: 1px solid var(--suth-line) !important;
+  border-radius: var(--suth-radius-pill) !important;
+  background: var(--suth-surface);
+  box-shadow: none;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.admin-shell
+  :is(
+    .sch-management-nav,
+    .sch-import-tabs,
+    .sch-workflow-nav,
+    .cw-mode,
+    .ref-directions,
+    .apt-view-toggle
+  )
+  > :is(a, button) {
+  min-height: 38px;
+  padding: 6px 16px !important;
+  border: 0 !important;
+  border-radius: var(--suth-radius-pill) !important;
+  background: transparent !important;
+  color: var(--suth-ink-2) !important;
+  font-weight: 700;
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+
+.admin-shell
+  :is(
+    .sch-management-nav,
+    .sch-import-tabs,
+    .sch-workflow-nav,
+    .cw-mode,
+    .ref-directions,
+    .apt-view-toggle
+  )
+  > :is(a, button):hover {
+  background: var(--suth-tint) !important;
+  color: var(--suth-action-ink) !important;
+}
+
+.admin-shell
+  :is(
+    .sch-management-nav,
+    .sch-import-tabs,
+    .sch-workflow-nav,
+    .cw-mode,
+    .ref-directions,
+    .apt-view-toggle
+  )
+  > :is(
+    a[aria-current="page"],
+    a.active,
+    button.active,
+    button[aria-pressed="true"],
+    button[aria-selected="true"],
+    [class*="--active"],
+    [class*="is-active"]
+  ) {
+  background: var(--suth-action) !important;
+  color: var(--suth-on-action) !important;
+  box-shadow: 0 4px 10px -4px
+    color-mix(in srgb, var(--suth-action-hover) 70%, transparent) !important;
+}
+
+@media (max-width: 760px) {
+  .admin-shell
+    :is(
+      .sch-management-nav,
+      .sch-import-tabs,
+      .sch-workflow-nav,
+      .cw-mode,
+      .ref-directions,
+      .apt-view-toggle
+    ) {
+    width: 100%;
+    border-radius: var(--suth-radius-panel) !important;
+  }
+
+  .admin-shell
+    :is(
+      .sch-management-nav,
+      .sch-import-tabs,
+      .sch-workflow-nav,
+      .cw-mode,
+      .ref-directions,
+      .apt-view-toggle
+    )
+    > :is(a, button) {
+    flex: 1 1 auto;
+    min-height: 44px;
+    justify-content: center;
+  }
+}
+
+/* ── Menus ────────────────────────────────────────────────── */
+:is(.admin-shell, .fc-overlay, .cw-drawer-overlay, .ui-modal-overlay)
+  :is(.filter-more__menu, .fm-dropdown-menu, .db-select-menu) {
+  border-radius: var(--suth-radius-inner) !important;
+  box-shadow: var(--suth-shadow-pop) !important;
+}
+
+/* ── Filter bars inside a card are part of that card ──────── */
+.admin-shell
+  :is(
+    .dz-panel,
+    .sch-card,
+    .sum-table-card,
+    .apt-container,
+    .cw-surface,
+    .bm-table-card,
+    .cm-table-container,
+    .master-workspace
+  )
+  :is(
+    .filter-bar,
+    .sum-filter-bar,
+    .sch-filter-bar,
+    .apt-filter-section,
+    .fm-action-bar,
+    .hc-filter-panel
+  ) {
+  padding: 0 0 4px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* ── Tables: state labels and codes ───────────────────────── */
+/* State labels in tables never break inside a word. */
+.admin-shell
+  table
+  :is(
+    [class*="status"],
+    [class*="badge"],
+    [class*="pill"],
+    .cw-risk,
+    .cw-status
+  ) {
+  white-space: nowrap;
+}
+
+/* One state pill everywhere, as on the dashboard: rounded, label size, the
+   label hugging an icon or dot. Colours stay with each page modifier,
+   which all read from the status tokens. */
+.admin-shell
+  :is(
+    .cm-status,
+    .hc-status,
+    .hc-status-badge,
+    .hc-badge-category,
+    .sum-status,
+    .ref-status,
+    .settings-status,
+    .aptt-status-tag,
+    .aptt-risk-tag,
+    .profile-badge,
+    .sch-badge,
+    .master-status,
+    .org-badge
+  ) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  padding: 3px 10px !important;
+  border-radius: var(--suth-radius-pill) !important;
+  font-size: var(--suth-fs-label) !important;
+  font-weight: 700 !important;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.admin-shell :is(.cm-status, .hc-status, .hc-status-badge) svg {
+  flex: none;
+  width: 13px;
+  height: 13px;
+}
+
+/* Codes and slugs read as one token. */
+.admin-shell table :is(.sch-code, td:has(> code)) {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+/* Phones: every row action reaches the 44px touch target. */
+@media (max-width: 760px) {
+  .admin-shell
+    :is(
+      .sum-edit,
+      .sum-delete,
+      .cm-btn-edit,
+      .cm-btn-delete,
+      .bn-edit-btn,
+      .bn-delete-btn,
+      [class*="hc-btn-action-"],
+      td .sch-icon-btn
+    ) {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+  .admin-shell .sch-icon-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

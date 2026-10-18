@@ -56,16 +56,17 @@ async function approveNotice(
 // A fixed, versioned fallback removes per-form setup without claiming that a
 // staff member approved a notice. Existing approved notices retain precedence.
 const STANDARD_NOTICE = Object.freeze({
-  purpose: 'health_assessment_followup',
-  legal_basis: 'consent',
-  notice_version: 'standard-v1',
-  notice_text: 'ระบบเก็บคำตอบและผลประเมินเพื่อประเมินสุขภาพและติดตามการดูแลโดยเจ้าหน้าที่ของหน่วยงานที่รับแบบประเมิน ข้อมูลจะแสดงตามสิทธิ์ของผู้ใช้งาน โปรดอ่านนโยบายความเป็นส่วนตัวของระบบก่อนยินยอมส่งแบบประเมิน',
+  purpose: "health_assessment_followup",
+  legal_basis: "consent",
+  notice_version: "standard-v1",
+  notice_text:
+    "ระบบเก็บคำตอบและผลประเมินเพื่อประเมินสุขภาพและติดตามการดูแลโดยเจ้าหน้าที่ของหน่วยงานที่รับแบบประเมิน ข้อมูลจะแสดงตามสิทธิ์ของผู้ใช้งาน โปรดอ่านนโยบายความเป็นส่วนตัวของระบบก่อนยินยอมส่งแบบประเมิน",
 });
 async function getProcessingNotice(connection, formId, organizationId) {
   const [rows] = await connection.query(
-    'SELECT purpose,legal_basis,notice_version,notice_text FROM pdpa_processing_purposes WHERE form_id=? AND organization_id=? AND approved_at IS NOT NULL',
+    "SELECT purpose,legal_basis,notice_version,notice_text FROM pdpa_processing_purposes WHERE form_id=? AND organization_id=? AND approved_at IS NOT NULL",
     [formId, organizationId],
   );
-  return rows[0] || {...STANDARD_NOTICE};
+  return rows[0] || { ...STANDARD_NOTICE };
 }
 module.exports = { approveNotice, STANDARD_NOTICE, getProcessingNotice };

@@ -1,5 +1,9 @@
-import { Surface as UiSurface } from '../../components/ui/index.jsx';
-import { PageHeader as UiPageHeader, Button as UiButton, DataTable as UiDataTable } from '../../components/ui/index.jsx';
+import { Surface as UiSurface } from "../../components/ui/index.jsx";
+import {
+  PageHeader as UiPageHeader,
+  Button as UiButton,
+  DataTable as UiDataTable,
+} from "../../components/ui/index.jsx";
 import { useState, useEffect } from "react";
 import "./BannerManagement.css";
 import {
@@ -139,7 +143,9 @@ export default function BannerManagement() {
       <div className="bm-page">
         <UiPageHeader className="bm-header">
           <h2 className="bm-title">จัดการภาพแบนเนอร์</h2>
-          <UiButton variant="primary" type="submit"
+          <UiButton
+            variant="primary"
+            type="submit"
             className="bm-add-btn"
             onClick={() => {
               if (isLimitReached) {

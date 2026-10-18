@@ -118,13 +118,21 @@ for (const role of ["system_admin", "admin", "staff"]) {
     if (role === "system_admin") {
       await organizationSelector.selectOption("all");
       await expect(organizationSelector).toHaveValue("all");
-      for (const path of ["/admin/school/students", "/admin/schedule", "/admin/clinics"])
+      for (const path of [
+        "/admin/school/students",
+        "/admin/schedule",
+        "/admin/clinics",
+      ])
         await expect(page.locator(`.sidebar a[href="${path}"]`)).toHaveCount(1);
       for (const path of mainPaths)
         await expect(page.locator(`.sidebar a[href="${path}"]`)).toHaveCount(1);
       await organizationSelector.selectOption("1");
-      await expect(page.locator('.sidebar a[href="/admin/school/students"]')).toHaveCount(0);
-      await expect(page.locator('.sidebar a[href="/admin/schedule"]')).toHaveCount(1);
+      await expect(
+        page.locator('.sidebar a[href="/admin/school/students"]'),
+      ).toHaveCount(0);
+      await expect(
+        page.locator('.sidebar a[href="/admin/schedule"]'),
+      ).toHaveCount(1);
     }
     await expect(
       page.locator('.sidebar a[href="/admin/members"]'),
@@ -147,7 +155,9 @@ for (const role of ["system_admin", "admin", "staff"]) {
       await expect(
         page.locator('.sidebar a[href="/admin/schedule"]'),
       ).toHaveCount(0);
-      await expect(page.locator('.sidebar a[href="/admin/clinics"]')).toHaveCount(0);
+      await expect(
+        page.locator('.sidebar a[href="/admin/clinics"]'),
+      ).toHaveCount(0);
     }
   });
 }

@@ -1,5 +1,5 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
-import { toSafeHtml } from '../../../utils/richText.js';
+import { toDisplayText } from "../../../utils/textPresentation.js";
+import { toSafeHtml } from "../../../utils/richText.js";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
@@ -837,7 +837,8 @@ const FormView = () => {
           ...payload,
           ...(urlToken ? { invitation_token: urlToken } : {}),
         });
-        if(Array.isArray(submitted.data?.score_results)) submittedResults=submitted.data.score_results;
+        if (Array.isArray(submitted.data?.score_results))
+          submittedResults = submitted.data.score_results;
       } catch (submitError) {
         setIsSubmitting(false);
         if (submitError.response?.status === 401) {
@@ -1084,10 +1085,11 @@ const FormView = () => {
               <h2
                 className="preview-step-intro__title"
                 dangerouslySetInnerHTML={{
-                  __html:
-                    toSafeHtml(translatedStep?.title ||
-                    stepData?.title ||
-                    "ส่วนที่ไม่มีชื่อ"),
+                  __html: toSafeHtml(
+                    translatedStep?.title ||
+                      stepData?.title ||
+                      "ส่วนที่ไม่มีชื่อ",
+                  ),
                 }}
               />
               {(translatedStep?.desc || stepData?.desc) && (

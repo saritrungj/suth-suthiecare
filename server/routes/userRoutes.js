@@ -1,3 +1,7 @@
+const {
+  deactivateSchoolTeacher,
+  upsertSchoolTeacher,
+} = require("../utils/schoolTeachers");
 const accountEmail = require("../utils/accountEmail");
 /**
  * ============================================================
@@ -17,7 +21,10 @@ const {
   requirePermission,
   verifySuperAdmin,
 } = require("../middleware/authMiddleware");
-const { validateUserInput } = require("../utils/userValidation");
+const {
+  normaliseSystemRoleId,
+  validateUserInput,
+} = require("../utils/userValidation");
 const {
   audit: auditPatient,
   validatePersonName,
@@ -27,7 +34,7 @@ const {
 } = require("../utils/patientAuth");
 const { normalizeEmail } = require("../services/otpService");
 
-const { encrypt, decrypt, maskName } = require("../utils/encryption");
+const { encrypt, decrypt } = require("../utils/encryption");
 const { organizationWhere } = require("../authorization/authorization");
 
 function safeDecrypt(value) {
@@ -47,6 +54,78 @@ const patientMemberStatuses = new Set([
 ]);
 const validEmail = (email) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 254;
+
+const {
+  SCHOOL_ROLE_LABELS: schoolRoleLabels,
+  TEACHER_ROLE_CODES: teacherSchoolRoles,
+  STAFF_ROLE_CODES: staffSchoolRoles,
+} = require("../utils/schoolStaffRoles");
+const positiveId = (value) =>
+  /^\d+$/.test(String(value)) &&
+  Number.isSafeInteger(Number(value)) &&
+  Number(value) > 0;
+
+function normalizeUserAssignments(body = {}) {
+  if (!Array.isArray(body.memberships) || body.memberships.length > 100)
+    return { error: "ข้อมูลหน่วยงานไม่ถูกต้อง" };
+  const organizationIds = new Set();
+  const memberships = [];
+  for (const item of body.memberships) {
+    if (!positiveId(item?.organization_id) || !positiveId(item?.role_id))
+      return { error: "กรุณาเลือกหน่วยงานและบทบาทให้ครบถ้วน" };
+    const organizationId = Number(item.organization_id);
+    if (organizationIds.has(organizationId))
+      return { error: "ไม่สามารถเลือกหน่วยงานซ้ำได้" };
+    organizationIds.add(organizationId);
+    let schoolAssignment = null;
+    if (item.school_assignment) {
+      const assignment = item.school_assignment;
+      if (
+        !positiveId(assignment.school_id) ||
+        !Object.hasOwn(schoolRoleLabels, assignment.role_code) ||
+        !["teacher", "staff"].includes(assignment.personnel_kind)
+      )
+        return {
+          error: "กรุณาระบุโรงเรียน ประเภทบุคลากร และหน้าที่ให้ครบถ้วน",
+        };
+      if (
+        assignment.personnel_kind === "teacher" &&
+        !positiveId(assignment.teacher_type_id)
+      )
+        return { error: "กรุณาเลือกประเภทครู" };
+      if (
+        !(
+          assignment.personnel_kind === "teacher"
+            ? teacherSchoolRoles
+            : staffSchoolRoles
+        ).has(assignment.role_code)
+      )
+        return { error: "หน้าที่ในโรงเรียนไม่ตรงกับประเภทบุคลากร" };
+      const employeeCode = String(assignment.employee_code || "").trim();
+      const position = String(assignment.position || "").trim();
+      if (employeeCode.length > 50 || position.length > 100)
+        return { error: "รหัสบุคลากรหรือตำแหน่งยาวเกินกำหนด" };
+      schoolAssignment = {
+        school_id: Number(assignment.school_id),
+        role_code: assignment.role_code,
+        personnel_kind: assignment.personnel_kind,
+        teacher_type_id:
+          assignment.personnel_kind === "teacher"
+            ? Number(assignment.teacher_type_id)
+            : null,
+        employee_code: employeeCode || null,
+        position: position || null,
+      };
+    }
+    memberships.push({
+      organization_id: organizationId,
+      role_id: Number(item.role_id),
+      is_primary: Boolean(item.is_primary),
+      school_assignment: schoolAssignment,
+    });
+  }
+  return { value: memberships };
+}
 
 function patientOrganizationClause(req, alias = "patient_accounts") {
   const scope = organizationWhere("fr.organization_id", req);
@@ -96,9 +175,15 @@ router.get(
       .trim()
       .slice(0, 80);
     const status = String(req.query.status || "").trim();
+    const memberType = String(req.query.type || "").trim();
+    const typeRules = require("../services/memberType");
+    const typeSql = typeRules.memberTypeSql("patient_accounts");
 
     if (status && !patientMemberStatuses.has(status)) {
       return res.status(422).json({ message: "สถานะสมาชิกไม่ถูกต้อง" });
+    }
+    if (memberType && !typeRules.FILTERABLE_TYPES.has(memberType)) {
+      return res.status(422).json({ message: "ประเภทผู้มารับบริการไม่ถูกต้อง" });
     }
 
     const conditions = [];
@@ -109,30 +194,41 @@ router.get(
       values.push(...clause.params);
     }
     if (req.schoolSubjectScope) {
-      conditions.push("id IN (?)");
-      values.push(req.schoolSubjectScope.accountIds.length ? req.schoolSubjectScope.accountIds : [0]);
+      conditions.push("patient_accounts.id IN (?)");
+      values.push(
+        req.schoolSubjectScope.accountIds.length
+          ? req.schoolSubjectScope.accountIds
+          : [0],
+      );
     }
     if (search) {
-      conditions.push("username LIKE ?");
+      conditions.push("patient_accounts.username LIKE ?");
       values.push(`%${search}%`);
     }
     if (status) {
-      conditions.push("status = ?");
+      conditions.push("patient_accounts.status = ?");
       values.push(status);
+    }
+    if (memberType) {
+      conditions.push(`${typeSql.type} = ?`);
+      values.push(memberType);
     }
     const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
 
     try {
       const [[countRow]] = await db.query(
-        `SELECT COUNT(*) AS total FROM patient_accounts ${where}`,
+        `SELECT COUNT(*) AS total FROM patient_accounts ${typeSql.joins} ${where}`,
         values,
       );
       const [rows] = await db.query(
-        `SELECT id, username, first_name_encrypted, last_name_encrypted,
-                status, verified_at, last_login_at, created_at
-         FROM patient_accounts
+        `SELECT patient_accounts.id, patient_accounts.username,
+                patient_accounts.first_name_encrypted, patient_accounts.last_name_encrypted,
+                patient_accounts.status, patient_accounts.verified_at,
+                patient_accounts.last_login_at, patient_accounts.created_at,
+                ${typeSql.type} AS member_type
+         FROM patient_accounts ${typeSql.joins}
          ${where}
-         ORDER BY created_at DESC, id DESC
+         ORDER BY patient_accounts.created_at DESC, patient_accounts.id DESC
          LIMIT ? OFFSET ?`,
         [...values, limit, offset],
       );
@@ -158,6 +254,8 @@ router.get(
               .filter(Boolean)
               .join(" ") || "—",
           status: row.status,
+          member_type: row.member_type,
+          member_type_label: typeRules.MEMBER_TYPE_LABELS[row.member_type],
           verified_at: row.verified_at,
           last_login_at: row.last_login_at,
           created_at: row.created_at,
@@ -289,12 +387,37 @@ router.put(
 
     try {
       const [existingRows] = await db.query(
-        "SELECT id, email,email_encrypted FROM patient_accounts WHERE id = ? LIMIT 1",
+        "SELECT id, email,email_encrypted,first_name_encrypted,last_name_encrypted,phone_hash,status FROM patient_accounts WHERE id = ? LIMIT 1",
         [memberId],
       );
       if (!existingRows.length) {
         return res.status(404).json({ message: "ไม่พบบัญชีผู้มารับบริการ" });
       }
+      // Roles page: names/phone need pii.update, a new password "assign",
+      // deactivating the account "delete".
+      const { denyUnless } = require("../authorization/can");
+      const { readField } = require("../utils/privateField");
+      const current = existingRows[0];
+      const identityChanged =
+        readField(
+          current.first_name_encrypted,
+          "patient_accounts",
+          "first_name_encrypted",
+        ) !== firstName.value ||
+        readField(
+          current.last_name_encrypted,
+          "patient_accounts",
+          "last_name_encrypted",
+        ) !== lastName.value ||
+        (current.phone_hash || null) !== (phone ? hmacHash(phone) : null);
+      if (identityChanged && denyUnless(req, res, "pii.update")) return;
+      if (password && denyUnless(req, res, "patient_members.assign")) return;
+      if (
+        status !== current.status &&
+        status !== "active" &&
+        denyUnless(req, res, "patient_members.delete")
+      )
+        return;
       const emailChanged =
         normalizeEmail(
           accountEmail.decode(existingRows[0], "patient_accounts"),
@@ -469,7 +592,7 @@ router.delete(
 
 // ============================================================
 //  1. ดึงข้อมูลผู้ใช้งานทั้งหมด  GET /users
-//     → แสดงข้อมูลแบบ mask (ปลอดภัย ไม่เปิดเผยข้อมูลจริง)
+//     → จำกัดเฉพาะผู้ดูแลระบบและบันทึก audit ก่อนเปิดเผยชื่อ/อีเมลเต็ม
 // ============================================================
 router.get("/users", verifyToken, verifySuperAdmin, async (req, res) => {
   try {
@@ -488,21 +611,26 @@ router.get("/users", verifyToken, verifySuperAdmin, async (req, res) => {
       return map;
     }, {});
 
-    // Decrypt แล้ว mask ก่อนส่งกลับ
+    await require("../utils/pdpaAudit").requiredAudit(
+      req,
+      "users.list.read",
+      "user",
+      "all",
+      { count: rows.length },
+    );
+
     const data = rows.map((row) => ({
       id: row.id,
       username: row.username,
-      email: require("../utils/privateDto").mask(
-        accountEmail.decode(row, "users"),
-        "email",
-      ),
+      email: accountEmail.decode(row, "users"),
       email_verified_at: row.email_verified_at,
       role_id: row.role_id,
       status: row.status,
       created_at: row.created_at,
-      // ── ข้อมูลที่ encrypt → decrypt → mask ──
-      name: maskName(
-        require("../utils/privateField").readField(row.name, "users", "name"),
+      name: require("../utils/privateField").readField(
+        row.name,
+        "users",
+        "name",
       ),
       memberships: membershipsByUser[row.id] || [],
     }));
@@ -513,9 +641,63 @@ router.get("/users", verifyToken, verifySuperAdmin, async (req, res) => {
       "Error fetching users:",
       require("../utils/safeError").safeError(err),
     );
-    res.status(500).json({ message: "Server Error" });
+    res.status(err.status || 500).json({ message: "Server Error" });
   }
 });
+
+// The add/edit user modal needs school-specific choices for every organization,
+// independent of the organization currently selected in the application shell.
+router.get(
+  "/users/assignment-options",
+  verifyToken,
+  verifySuperAdmin,
+  async (_req, res) => {
+    try {
+      const [schools] = await db.query(
+        `SELECT s.id, s.name, s.organization_id
+           FROM schools s
+           JOIN organizations o ON o.id=s.organization_id
+          WHERE o.status='active' AND o.org_type='school'
+          ORDER BY s.name`,
+      );
+      const [teacherTypes] = await db.query(
+        `SELECT t.id, t.name, t.organization_id
+           FROM school_teacher_types t
+           JOIN organizations o ON o.id=t.organization_id
+          WHERE t.status='active' AND o.status='active' AND o.org_type='school'
+          ORDER BY t.sort_order,t.name`,
+      );
+      const organizationIds = new Set([
+        ...schools.map((row) => Number(row.organization_id)),
+        ...teacherTypes.map((row) => Number(row.organization_id)),
+      ]);
+      res.json({
+        organizations: Object.fromEntries(
+          [...organizationIds].map((organizationId) => [
+            organizationId,
+            {
+              schools: schools.filter(
+                (row) => Number(row.organization_id) === organizationId,
+              ),
+              teacher_types: teacherTypes.filter(
+                (row) => Number(row.organization_id) === organizationId,
+              ),
+              role_labels: schoolRoleLabels,
+            },
+          ]),
+        ),
+      });
+    } catch (error) {
+      console.error(
+        "Error fetching user assignment options:",
+        require("../utils/safeError").safeError(error),
+      );
+      res
+        .status(500)
+        .json({ message: "ไม่สามารถโหลดตัวเลือกบุคลากรโรงเรียนได้" });
+    }
+  },
+);
 
 // ============================================================
 //  GET /users/:id/full  →  ดูข้อมูลจริง (สำหรับ admin)
@@ -539,6 +721,20 @@ router.get(
         `SELECT om.id, om.organization_id, om.role_id, om.status, om.is_primary, o.name organization_name, r.name role_name
          FROM organization_memberships om JOIN organizations o ON o.id=om.organization_id JOIN roles r ON r.id=om.role_id WHERE om.user_id=?`,
         [row.id],
+      );
+      const [schoolAssignments] = await db.query(
+        `SELECT s.organization_id, s.id AS school_id, s.name AS school_name,
+                COALESCE(sr.role_code,'other') AS role_code,
+                CASE WHEN t.id IS NULL OR t.status <> 'active' THEN 'staff' ELSE 'teacher' END AS personnel_kind,
+                t.id AS teacher_id, t.teacher_type_id, t.employee_code, t.position
+           FROM schools s
+           LEFT JOIN school_staff_roles sr
+             ON sr.school_id=s.id AND sr.user_id=? AND sr.status='active'
+           LEFT JOIN school_teachers t
+             ON t.school_id=s.id AND t.user_id=? AND t.status='active'
+          WHERE sr.user_id IS NOT NULL OR t.user_id IS NOT NULL
+          ORDER BY s.name`,
+        [row.id, row.id],
       );
       const actorRoleId = Number(req.user.role_id);
       if (
@@ -571,6 +767,7 @@ router.get(
           "name",
         ),
         memberships,
+        school_assignments: schoolAssignments,
       });
     } catch (err) {
       console.error(
@@ -594,8 +791,8 @@ router.post("/users", verifyToken, verifySuperAdmin, async (req, res) => {
     if (validated.error)
       return res.status(422).json({ message: validated.error });
     const { username, password, name, email } = validated.value;
-    const requestedRoleId = Number(role_id);
-    if (!Number.isInteger(requestedRoleId) || requestedRoleId < 1) {
+    const requestedRoleId = normaliseSystemRoleId(role_id);
+    if (!requestedRoleId) {
       return res.status(422).json({ message: "ระดับสิทธิ์ไม่ถูกต้อง" });
     }
     if (
@@ -657,6 +854,223 @@ router.post("/users", verifyToken, verifySuperAdmin, async (req, res) => {
   }
 });
 
+// Keep organization membership, school duty, and teacher-list membership in
+// one transaction. This is the canonical assignment write used by the user
+// editor, so a school employee never has to be entered a second time.
+router.put(
+  "/users/:id/assignments",
+  verifyToken,
+  verifySuperAdmin,
+  async (req, res) => {
+    if (!positiveId(req.params.id))
+      return res.status(422).json({ message: "รหัสผู้ใช้ไม่ถูกต้อง" });
+    const normalized = normalizeUserAssignments(req.body);
+    if (normalized.error)
+      return res.status(422).json({ message: normalized.error });
+    const memberships = normalized.value;
+    if (memberships.filter((item) => item.is_primary).length > 1)
+      return res
+        .status(422)
+        .json({ message: "กำหนดหน่วยงานหลักได้เพียงหนึ่งหน่วยงาน" });
+
+    const userId = Number(req.params.id);
+    const connection = await db.getConnection();
+    try {
+      await connection.beginTransaction();
+      const [users] = await connection.query(
+        "SELECT id,status FROM users WHERE id=? FOR UPDATE",
+        [userId],
+      );
+      if (!users.length) {
+        await connection.rollback();
+        return res.status(404).json({ message: "ไม่พบผู้ใช้" });
+      }
+
+      const [existingMemberships] = await connection.query(
+        "SELECT id,organization_id,role_id,status FROM organization_memberships WHERE user_id=? FOR UPDATE",
+        [userId],
+      );
+      const wantedOrganizations = new Set(
+        memberships.map((item) => item.organization_id),
+      );
+
+      for (const membership of memberships) {
+        const [[organization]] = await connection.query(
+          "SELECT id,org_type FROM organizations WHERE id=? AND status='active' AND org_level='unit' FOR UPDATE",
+          [membership.organization_id],
+        );
+        if (!organization)
+          throw Object.assign(new Error("ไม่พบหน่วยงานที่เลือก"), {
+            status: 422,
+          });
+        const [[role]] = await connection.query(
+          `SELECT r.id FROM roles r
+            WHERE r.id=? AND r.id<>1
+              AND (EXISTS (SELECT 1 FROM organization_role_permission_sets s WHERE s.organization_id=? AND s.role_id=r.id)
+                OR EXISTS (SELECT 1 FROM organization_role_permissions p WHERE p.organization_id=? AND p.role_id=r.id)
+                OR EXISTS (SELECT 1 FROM organization_memberships m WHERE m.organization_id=? AND m.role_id=r.id))
+            LIMIT 1`,
+          [
+            membership.role_id,
+            membership.organization_id,
+            membership.organization_id,
+            membership.organization_id,
+          ],
+        );
+        if (!role)
+          throw Object.assign(new Error("บทบาทไม่อยู่ในหน่วยงานที่เลือก"), {
+            status: 422,
+          });
+        if (organization.org_type === "school" && !membership.school_assignment)
+          throw Object.assign(
+            new Error("กรุณาระบุข้อมูลบุคลากรของหน่วยงานโรงเรียน"),
+            { status: 422 },
+          );
+        if (organization.org_type !== "school" && membership.school_assignment)
+          throw Object.assign(
+            new Error("ข้อมูลบุคลากรโรงเรียนไม่ตรงกับหน่วยงาน"),
+            {
+              status: 422,
+            },
+          );
+
+        await connection.query(
+          `INSERT INTO organization_memberships
+             (user_id,organization_id,role_id,status,is_primary)
+           VALUES (?,?,?,'active',?)
+           ON DUPLICATE KEY UPDATE role_id=VALUES(role_id),status='active',is_primary=VALUES(is_primary)`,
+          [
+            userId,
+            membership.organization_id,
+            membership.role_id,
+            membership.is_primary,
+          ],
+        );
+        const [[savedMembership]] = await connection.query(
+          "SELECT id FROM organization_memberships WHERE user_id=? AND organization_id=?",
+          [userId, membership.organization_id],
+        );
+        await require("../authorization/dataPermissions").resetMigratedGrants(
+          connection,
+          savedMembership.id,
+          membership.role_id,
+          membership.organization_id,
+        );
+
+        if (organization.org_type !== "school") continue;
+        const assignment = membership.school_assignment;
+        const [[school]] = await connection.query(
+          "SELECT id FROM schools WHERE id=? AND organization_id=? FOR UPDATE",
+          [assignment.school_id, membership.organization_id],
+        );
+        if (!school)
+          throw Object.assign(new Error("โรงเรียนไม่อยู่ในหน่วยงานที่เลือก"), {
+            status: 422,
+          });
+        if (assignment.personnel_kind === "teacher") {
+          const [[teacherType]] = await connection.query(
+            "SELECT id FROM school_teacher_types WHERE id=? AND organization_id=? AND status='active' FOR UPDATE",
+            [assignment.teacher_type_id, membership.organization_id],
+          );
+          if (!teacherType)
+            throw Object.assign(
+              new Error("ประเภทครูไม่อยู่ในหน่วยงานที่เลือก"),
+              {
+                status: 422,
+              },
+            );
+        }
+
+        await connection.query(
+          `UPDATE school_staff_roles sr
+             JOIN schools s ON s.id=sr.school_id
+              SET sr.status='inactive',sr.updated_by=?
+            WHERE sr.user_id=? AND s.organization_id=? AND sr.school_id<>?`,
+          [req.user.id, userId, membership.organization_id, school.id],
+        );
+        await connection.query(
+          `UPDATE school_teachers t
+             JOIN schools s ON s.id=t.school_id
+              SET t.status='inactive'
+            WHERE t.user_id=? AND s.organization_id=? AND t.school_id<>?`,
+          [userId, membership.organization_id, school.id],
+        );
+        await connection.query(
+          `INSERT INTO school_staff_roles
+             (school_id,user_id,role_code,status,updated_by)
+           VALUES (?,?,?,'active',?)
+           ON DUPLICATE KEY UPDATE role_code=VALUES(role_code),status='active',updated_by=VALUES(updated_by)`,
+          [school.id, userId, assignment.role_code, req.user.id],
+        );
+        if (assignment.personnel_kind === "teacher") {
+          await upsertSchoolTeacher(connection, {
+            schoolId: school.id,
+            userId,
+            teacherTypeId: assignment.teacher_type_id,
+            employeeCode: assignment.employee_code,
+            position: assignment.position,
+          });
+        } else {
+          await deactivateSchoolTeacher(connection, {
+            schoolId: school.id,
+            userId,
+          });
+        }
+      }
+
+      for (const membership of existingMemberships) {
+        if (wantedOrganizations.has(Number(membership.organization_id)))
+          continue;
+        await connection.query(
+          "UPDATE organization_memberships SET status='inactive',is_primary=0 WHERE id=?",
+          [membership.id],
+        );
+        await connection.query(
+          `UPDATE school_staff_roles sr JOIN schools s ON s.id=sr.school_id
+              SET sr.status='inactive',sr.updated_by=?
+            WHERE sr.user_id=? AND s.organization_id=?`,
+          [req.user.id, userId, membership.organization_id],
+        );
+        await connection.query(
+          `UPDATE school_teachers t JOIN schools s ON s.id=t.school_id
+              SET t.status='inactive'
+            WHERE t.user_id=? AND s.organization_id=?`,
+          [userId, membership.organization_id],
+        );
+      }
+
+      await require("../utils/pdpaAudit").requiredAudit(
+        req,
+        "users.assignments.update",
+        "user",
+        userId,
+        {
+          organizations: memberships.map((item) => item.organization_id),
+          school_count: memberships.filter((item) => item.school_assignment)
+            .length,
+        },
+        connection,
+      );
+      await connection.commit();
+      res.json({ success: true });
+    } catch (error) {
+      await connection.rollback();
+      console.error(
+        "Error updating user assignments:",
+        require("../utils/safeError").safeError(error),
+      );
+      res.status(error.status || 500).json({
+        message:
+          error.status && error.message
+            ? error.message
+            : "ไม่สามารถบันทึกหน่วยงานและบทบาทได้",
+      });
+    } finally {
+      connection.release();
+    }
+  },
+);
+
 // ============================================================
 //  3. แก้ไขข้อมูลผู้ใช้  PUT /users/:id
 //     → re-encrypt ทุกครั้งที่แก้ไข
@@ -671,8 +1085,8 @@ router.put("/users/:id", verifyToken, verifySuperAdmin, async (req, res) => {
     if (validated.error)
       return res.status(422).json({ message: validated.error });
     const { username, name, email, password } = validated.value;
-    const requestedRoleId = Number(role_id);
-    if (!Number.isInteger(requestedRoleId) || requestedRoleId < 1) {
+    const requestedRoleId = normaliseSystemRoleId(role_id);
+    if (!requestedRoleId) {
       return res.status(422).json({ message: "ระดับสิทธิ์ไม่ถูกต้อง" });
     }
     if (status && !["active", "inactive", "suspended"].includes(status)) {
@@ -741,7 +1155,7 @@ router.put("/users/:id", verifyToken, verifySuperAdmin, async (req, res) => {
     fields.push("role_id=?");
     values.push(requestedRoleId);
     fields.push("status=?");
-    values.push(status);
+    values.push(status || existing.status);
 
     // 🔐 password
     if (password && password.trim() !== "") {

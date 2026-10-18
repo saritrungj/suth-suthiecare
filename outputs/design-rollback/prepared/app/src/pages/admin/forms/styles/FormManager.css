@@ -1018,27 +1018,69 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fm-main-content *, .fm-modal-overlay, .fm-modal-content {
+  .fm-main-content *,
+  .fm-modal-overlay,
+  .fm-modal-content {
     animation: none !important;
     transition: none !important;
   }
-  .fm-modal-overlay { opacity: 1; }
-  .fm-modal-content { transform: none; }
+  .fm-modal-overlay {
+    opacity: 1;
+  }
+  .fm-modal-content {
+    transform: none;
+  }
 }
 
 /* Native links and buttons keep the complete form card usable by keyboard. */
-.fm-card-edit-link { color: inherit; text-decoration: none; }
-.fm-card-edit-link::after { content: ""; position: absolute; inset: 0; z-index: 3; border-radius: 12px; }
-.fm-card-edit-link:focus-visible { outline: none; }
-.fm-card-edit-link:focus-visible::after { outline: 3px solid var(--suth-focus); outline-offset: 3px; }
-.fm-form-card .fm-card-menu-btn { z-index: 4; }
-.fm-form-card .fm-dropdown-menu { z-index: 5; }
-.fm-add-empty-card { font: inherit; align-items: center; justify-content: center; gap: 12px; }
-.fm-add-empty-card:focus-visible { outline: 3px solid var(--suth-focus); outline-offset: 3px; }
+.fm-card-edit-link {
+  color: inherit;
+  text-decoration: none;
+}
+.fm-card-edit-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: 12px;
+}
+.fm-card-edit-link:focus-visible {
+  outline: none;
+}
+.fm-card-edit-link:focus-visible::after {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 3px;
+}
+.fm-form-card .fm-card-menu-btn {
+  z-index: 4;
+}
+.fm-form-card .fm-dropdown-menu {
+  z-index: 5;
+}
+.fm-add-empty-card {
+  font: inherit;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.fm-add-empty-card:focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 3px;
+}
 @media (max-width: 760px) {
-  .fm-forms-container.grid { grid-template-columns: minmax(0, 1fr); }
-  .fm-card-menu-btn, .fm-dropdown-menu button { min-height: 44px; }
-  .fm-card-menu-btn { min-width: 44px; }
+  .fm-forms-container.grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .fm-card-menu-btn,
+  .fm-dropdown-menu button {
+    min-height: 44px;
+  }
+  .fm-card-menu-btn {
+    min-width: 44px;
+  }
 }
 
-.fm-card-menu-btn:hover { transform: none; background: var(--suth-tint); }
+.fm-card-menu-btn:hover {
+  transform: none;
+  background: var(--suth-tint);
+}

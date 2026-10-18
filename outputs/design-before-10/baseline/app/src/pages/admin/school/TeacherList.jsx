@@ -1,4 +1,4 @@
-import {usePageExport} from "../../../components/ExcelExport";
+import { usePageExport } from "../../../components/ExcelExport";
 import { useCallback, useEffect, useState } from "react";
 import { FiEdit2, FiPlus, FiTrash2, FiUserCheck } from "react-icons/fi";
 import {
@@ -45,7 +45,13 @@ export default function TeacherList() {
       .catch(() => setTeacherTypes([]));
   }, []);
 
-  usePageExport({title:"ครู",sources:[{resource:"teachers",filters:{...filters,school_id:schoolId}}],disabled:loading});
+  usePageExport({
+    title: "ครู",
+    sources: [
+      { resource: "teachers", filters: { ...filters, school_id: schoolId } },
+    ],
+    disabled: loading,
+  });
   const load = useCallback(async () => {
     setLoading(true);
     try {
@@ -376,7 +382,11 @@ function TeacherFormModal({ initial, teacherTypes, onClose, onSaved }) {
           >
             <option value="">ไม่ระบุ</option>
             {teacherTypes
-              .filter((type) => type.status === "active" || String(type.id) === String(initial.teacher_type_id))
+              .filter(
+                (type) =>
+                  type.status === "active" ||
+                  String(type.id) === String(initial.teacher_type_id),
+              )
               .map((type) => (
                 <option key={type.id} value={type.id}>
                   {type.name}

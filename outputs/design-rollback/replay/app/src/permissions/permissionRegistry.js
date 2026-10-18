@@ -1,5 +1,9 @@
 export const PERMISSION_GROUPS = [
-  { id: "master_data", label: "ข้อมูลหลัก", actions: ["view", "manage", "export"] },
+  {
+    id: "master_data",
+    label: "ข้อมูลหลัก",
+    actions: ["view", "manage", "export"],
+  },
   {
     id: "pii",
     label: "ข้อมูลส่วนบุคคลเต็ม (ยังจำกัดด้วยขอบเขตสิทธิ์เดิม)",

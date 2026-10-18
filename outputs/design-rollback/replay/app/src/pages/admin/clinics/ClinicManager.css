@@ -39,7 +39,9 @@
 }
 
 .cm-header-info h1 {
-  color: var(--suth-action) !important; /* ปรับเป็นสีส้มแบรนด์ให้เข้าคู่กับแถบซ้าย */
+  color: var(
+    --suth-action
+  ) !important; /* ปรับเป็นสีส้มแบรนด์ให้เข้าคู่กับแถบซ้าย */
   margin: 0 0 6px 0;
 }
 

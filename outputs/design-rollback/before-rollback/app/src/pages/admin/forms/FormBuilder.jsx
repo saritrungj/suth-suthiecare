@@ -1,7 +1,10 @@
-import { themeToken } from '../../../styles/theme.js';
-import { Button as UiButton, TextInput as UiTextInput } from '../../../components/ui/index.jsx';
-import {useMasterOptions} from "../../../components/MasterSelect";
-import {usePageExport} from "../../../components/ExcelExport";
+import { themeToken } from "../../../styles/theme.js";
+import {
+  Button as UiButton,
+  TextInput as UiTextInput,
+} from "../../../components/ui/index.jsx";
+import { useMasterOptions } from "../../../components/MasterSelect";
+import { usePageExport } from "../../../components/ExcelExport";
 import React, {
   useState,
   useRef,
@@ -145,8 +148,17 @@ const deeplyCleanData = (items) => {
 const FormBuilder = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const facultyOptions=useMasterOptions("faculty",DEFAULT_FACULTIES.map((label,index)=>({code:String(index),label})));
-  const userStatusOptions=useMasterOptions("user_status",DEFAULT_USER_STATUSES.map((label,index)=>({code:String(index),label})));
+  const facultyOptions = useMasterOptions(
+    "faculty",
+    DEFAULT_FACULTIES.map((label, index) => ({ code: String(index), label })),
+  );
+  const userStatusOptions = useMasterOptions(
+    "user_status",
+    DEFAULT_USER_STATUSES.map((label, index) => ({
+      code: String(index),
+      label,
+    })),
+  );
 
   const [activeQuestionId, setActiveQuestionId] = useState("main-header");
 
@@ -177,8 +189,12 @@ const FormBuilder = () => {
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   const [isThemePanelOpen, setIsThemePanelOpen] = useState(false);
-  const [themeColor, setThemeColor] = useState(() => themeToken('--suth-action', '#c45428'));
-  const [bgColor, setBgColor] = useState(() => themeToken('--suth-canvas', '#faf7f3'));
+  const [themeColor, setThemeColor] = useState(() =>
+    themeToken("--suth-action", "#c45428"),
+  );
+  const [bgColor, setBgColor] = useState(() =>
+    themeToken("--suth-canvas", "#faf7f3"),
+  );
   const [bannerType, setBannerType] = useState("none");
   const [bannerBgColor, setBannerBgColor] = useState("#4285f4");
   const [headerImage, setHeaderImage] = useState(null);
@@ -206,7 +222,27 @@ const FormBuilder = () => {
     },
   ]);
 
-  usePageExport({title:"รายละเอียดแบบประเมิน",sources:id?[{resource:"form",id}]:[],...(id?{}:{localSheets:[{resource:"form_draft",data:{title:formTitle,description:formDesc,status:formStatus,clinic_type:clinicType,type:formType,questions}}]})});
+  usePageExport({
+    title: "รายละเอียดแบบประเมิน",
+    sources: id ? [{ resource: "form", id }] : [],
+    ...(id
+      ? {}
+      : {
+          localSheets: [
+            {
+              resource: "form_draft",
+              data: {
+                title: formTitle,
+                description: formDesc,
+                status: formStatus,
+                clinic_type: clinicType,
+                type: formType,
+                questions,
+              },
+            },
+          ],
+        }),
+  });
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
   const sensors = useSensors(
     useSensor(TouchSensor, {
@@ -247,8 +283,8 @@ const FormBuilder = () => {
                 ? JSON.parse(data.theme)
                 : data.theme;
             t = deeplyCleanData(t);
-            setThemeColor(t.color || themeToken('--suth-action', '#c45428'));
-            setBgColor(t.bg || themeToken('--suth-canvas', '#faf7f3'));
+            setThemeColor(t.color || themeToken("--suth-action", "#c45428"));
+            setBgColor(t.bg || themeToken("--suth-canvas", "#faf7f3"));
             setBannerType(t.bannerType || "none");
             setBannerBgColor(t.bannerBgColor || "#4285f4");
             setHeaderImage(t.headerImage || null);
@@ -1083,7 +1119,7 @@ const FormBuilder = () => {
               !["dropdown", "multiple_choice", "checkboxes"].includes(q.type) ||
               (q.options?.length <= 1 && q.options?.[0] === "ตัวเลือก 1")
             ) {
-              updates.options = facultyOptions.map(o=>o.label);
+              updates.options = facultyOptions.map((o) => o.label);
             }
           }
 
@@ -1093,7 +1129,7 @@ const FormBuilder = () => {
               !["dropdown", "multiple_choice", "checkboxes"].includes(q.type) ||
               (q.options?.length <= 1 && q.options?.[0] === "ตัวเลือก 1")
             ) {
-              updates.options = userStatusOptions.map(o=>o.label);
+              updates.options = userStatusOptions.map((o) => o.label);
             }
             updates.type = "multiple_choice";
             updates.isUserStatus = true;
@@ -1209,7 +1245,9 @@ const FormBuilder = () => {
           >
             <header className="sfb-builder-header">
               <div className="sfb-header-left">
-                <UiButton variant="secondary" type="submit"
+                <UiButton
+                  variant="secondary"
+                  type="submit"
                   className="sfb-btn-back"
                   aria-label="กลับไปจัดการฟอร์ม"
                   onClick={async () => {
@@ -1304,32 +1342,62 @@ const FormBuilder = () => {
               </div>
               <div className="sfb-header-actions">
                 <div className="sfb-action-icons">
-                  <button type="button" className="sfb-icon-group" onClick={handleCopyQuestions}>
+                  <button
+                    type="button"
+                    className="sfb-icon-group"
+                    onClick={handleCopyQuestions}
+                  >
                     <FaCopy />
                     <span>คัดลอก JSON</span>
                   </button>
-                  <button type="button" className="sfb-icon-group" onClick={() => setIsSettingsModalOpen(true)}>
+                  <button
+                    type="button"
+                    className="sfb-icon-group"
+                    onClick={() => setIsSettingsModalOpen(true)}
+                  >
                     <FaCog />
                     <span>ตั้งค่าเผยแพร่</span>
                   </button>
-                  <button type="button" className="sfb-icon-group" onClick={() => setIsThemePanelOpen(true)}>
+                  <button
+                    type="button"
+                    className="sfb-icon-group"
+                    onClick={() => setIsThemePanelOpen(true)}
+                  >
                     <FaPalette />
                     <span>ธีม</span>
                   </button>
-                  <button type="button" className="sfb-icon-group" onClick={handlePreview}>
+                  <button
+                    type="button"
+                    className="sfb-icon-group"
+                    onClick={handlePreview}
+                  >
                     <FaEye />
                     <span>แสดงตัวอย่าง</span>
                   </button>
-                  <button type="button" id="btn-undo" className="sfb-icon-group" onClick={handleUndo} disabled={past.length === 0}>
+                  <button
+                    type="button"
+                    id="btn-undo"
+                    className="sfb-icon-group"
+                    onClick={handleUndo}
+                    disabled={past.length === 0}
+                  >
                     <FaUndo />
                     <span>Undo</span>
                   </button>
-                  <button type="button" id="btn-redo" className="sfb-icon-group" onClick={handleRedo} disabled={future.length === 0}>
+                  <button
+                    type="button"
+                    id="btn-redo"
+                    className="sfb-icon-group"
+                    onClick={handleRedo}
+                    disabled={future.length === 0}
+                  >
                     <FaRedo />
                     <span>Redo</span>
                   </button>
                 </div>
-                <UiButton variant="primary" type="submit"
+                <UiButton
+                  variant="primary"
+                  type="submit"
                   className="sfb-btn-save"
                   onClick={handleSaveForm}
                   disabled={isSaving}
@@ -1360,30 +1428,29 @@ const FormBuilder = () => {
 
             <div className="sfb-form-content">
               <div className="sfb-form-canvas">
-            {bannerType !== "none" && (
-              <div
-                className="sfb-builder-full-banner"
-                style={{
-                  backgroundColor:
-                    bannerType === "color" ? bannerBgColor : "transparent",
-                  backgroundImage:
-                    bannerType === "image" && headerImage
-                      ? `url(${headerImage})`
-                      : "none",
-                }}
-              >
-                <div className="sfb-banner-overlay"></div>
-                <RichTextInput
-                  className="sfb-banner-text-input"
-                  value={bannerText}
-                  onChange={setBannerText}
-                  placeholder="คลิกเพื่อพิมพ์ข้อความส่วนหัวที่นี่..."
-                  showLists={false}
-                  style={{ textAlign: bannerTextAlign }}
-                />
-              </div>
-            )}
-
+                {bannerType !== "none" && (
+                  <div
+                    className="sfb-builder-full-banner"
+                    style={{
+                      backgroundColor:
+                        bannerType === "color" ? bannerBgColor : "transparent",
+                      backgroundImage:
+                        bannerType === "image" && headerImage
+                          ? `url(${headerImage})`
+                          : "none",
+                    }}
+                  >
+                    <div className="sfb-banner-overlay"></div>
+                    <RichTextInput
+                      className="sfb-banner-text-input"
+                      value={bannerText}
+                      onChange={setBannerText}
+                      placeholder="คลิกเพื่อพิมพ์ข้อความส่วนหัวที่นี่..."
+                      showLists={false}
+                      style={{ textAlign: bannerTextAlign }}
+                    />
+                  </div>
+                )}
 
                 <div
                   className={`sfb-form-card sfb-header-card ${totalSections > 1 ? "sfb-section-card" : "sfb-border-top-suth"} ${activeQuestionId === "main-header" ? "active" : "inactive"}`}
@@ -1553,7 +1620,9 @@ const FormBuilder = () => {
                     className="sfb-tool-icon"
                     style={{ color: "#4caf50" }}
                   />
-                  <span style={{ color: "var(--suth-success)", fontWeight: "bold" }}>
+                  <span
+                    style={{ color: "var(--suth-success)", fontWeight: "bold" }}
+                  >
                     เพิ่ม 3อ.
                   </span>
                 </button>

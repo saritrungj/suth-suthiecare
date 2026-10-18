@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { toDisplayText } from "../../../utils/textPresentation.js";
 // ตัวแปรการตั้งค่า API
 export const API_BASE = (import.meta.env?.VITE_API_URL || "/api").replace(
   /\/api$/,

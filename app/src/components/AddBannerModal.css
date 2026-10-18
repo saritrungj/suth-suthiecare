@@ -9,7 +9,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(30, 41, 59, 0.4);
+  background: rgba(31, 47, 63, 0.4);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
@@ -21,13 +21,13 @@
   width: 700px;
   max-height: 90vh;
   overflow-y: auto;
-  background: #ffffff;
-  border-radius: 12px;
+  background: var(--suth-surface);
+  border-radius: var(--suth-radius-panel);
   margin: auto;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 20px 50px rgba(31, 47, 63, 0.08);
   display: flex;
   flex-direction: column;
-  animation: abmSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: abmSlideUp 0.4s var(--suth-ease-out);
 }
 
 /* ตกแต่ง Scrollbar */
@@ -39,11 +39,11 @@
   margin: 15px 0;
 }
 .abm-card::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 100px;
+  background: var(--suth-control-line);
+  border-radius: var(--suth-radius-pill);
 }
 .abm-card::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--suth-control-line);
 }
 
 /* 3. Header  */
@@ -54,31 +54,31 @@
   align-items: flex-start;
   padding: 25px 30px;
   padding: 25px 30px 20px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--suth-line-soft);
 }
 
 .abm-header h3 {
   margin: 0 0 8px 0;
-  font-size: 22px;
+  font-size: var(--suth-fs-title);
   font-weight: 800;
-  color: #1e293b;
+  color: var(--suth-ink);
 }
 .abm-header-content h3 {
   margin: 0 0 4px 0;
-  font-size: 22px;
+  font-size: var(--suth-fs-title);
   font-weight: 800;
-  color: #1e293b;
+  color: var(--suth-ink);
 }
 
 .abm-header p {
   margin: 0;
-  font-size: 14px;
-  color: #64748b;
+  font-size: var(--suth-fs-sm);
+  color: var(--suth-muted);
 }
 .abm-header-content p {
   margin: 0;
-  font-size: 14px;
-  color: #64748b;
+  font-size: var(--suth-fs-sm);
+  color: var(--suth-muted);
   display: block;
 }
 /* 4. Body */
@@ -93,32 +93,32 @@
   justify-content: center;
   width: 100%;
   height: 220px;
-  border: 2px dashed #fed7aa;
-  border-radius: 12px;
+  border: 2px dashed var(--suth-warning-line);
+  border-radius: var(--suth-radius-panel);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  background: #fffaf7;
-  color: #f47932;
+  transition: all 0.3s var(--suth-ease-out);
+  background: var(--suth-surface-hover);
+  color: var(--suth-action-ink);
   gap: 12px;
 }
 
 .abm-upload-area:hover {
-  border-color: #ea580c;
-  background: #fffaf7;
-  color: #ea580c;
+  border-color: var(--suth-action);
+  background: var(--suth-surface-hover);
+  color: var(--suth-action-ink);
   transform: scale(1.02);
 }
 
 .abm-upload-area span {
   font-weight: 700;
-  font-size: 15px;
+  font-size: var(--suth-fs-body);
 }
 
 /* สไตล์รูปภาพพรีวิว */
 .abm-preview-section img {
-  border-radius: 12px !important;
-  border: 3px solid #ffffff !important;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06) !important;
+  border-radius: var(--suth-radius-panel) !important;
+  border: 3px solid var(--suth-surface) !important;
+  box-shadow: 0 8px 20px rgba(31, 47, 63, 0.06) !important;
 }
 
 /* 6. Form Elements */
@@ -127,9 +127,9 @@
 }
 
 .abm-label {
-  font-size: 14px;
+  font-size: var(--suth-fs-sm);
   font-weight: 700;
-  color: #475569;
+  color: var(--suth-ink-2);
   display: block;
   margin-left: 4px;
 }
@@ -137,10 +137,10 @@
 .abm-input {
   width: 100%;
   padding: 14px 20px;
-  border-radius: 12px;
-  border: 1.5px solid #e2e8f0;
-  background: #f8fafc;
-  font-size: 14px;
+  border-radius: var(--suth-radius-panel);
+  border: 1.5px solid var(--suth-line-soft);
+  background: var(--suth-surface-2);
+  font-size: var(--suth-fs-sm);
   transition: all 0.2s ease;
   box-sizing: border-box;
   margin-top: 10px;
@@ -148,9 +148,9 @@
 
 .abm-input:focus {
   outline: none;
-  border-color: #2563eb;
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+  border-color: var(--suth-action);
+  background: var(--suth-surface);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--suth-action) 15%, transparent);
 }
 
 /* ควบคุมกลุ่มอินพุตแบนเนอร์ */
@@ -158,27 +158,27 @@
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
-  color: #334155;
-  font-family: "Sarabun", sans-serif !important;
-  font-size: 16px;
+  color: var(--suth-ink-2);
+  font-family: var(--suth-font) !important;
+  font-size: var(--suth-fs-md);
 }
 
 .abm-btn-outline-sm {
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  color: #64748b;
+  background: var(--suth-surface);
+  border: 1.5px solid var(--suth-line-soft);
+  color: var(--suth-muted);
   padding: 8px 20px;
-  border-radius: 12px;
-  font-size: 13px;
+  border-radius: var(--suth-radius-panel);
+  font-size: var(--suth-fs-label);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .abm-btn-outline-sm:hover {
-  background: #fffaf7;
-  color: #f47932;
-  border-color: #fed7aa;
+  background: var(--suth-surface-hover);
+  color: var(--suth-action-ink);
+  border-color: var(--suth-warning-line);
 }
 
 /* 7. Footer & Buttons */
@@ -187,49 +187,49 @@
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  background: #fcfcfd;
-  border-top: 1px solid #f1f5f9;
+  background: var(--suth-surface);
+  border-top: 1px solid var(--suth-line-soft);
 }
 
 /* ปุ่มยกเลิก */
 .abm-btn-cancel {
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
+  background: var(--suth-surface);
+  border: 1.5px solid var(--suth-line-soft);
   padding: 12px 28px;
-  border-radius: 12px;
+  border-radius: var(--suth-radius-panel);
   font-weight: 600;
-  color: #64748b;
+  color: var(--suth-muted);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .abm-btn-cancel:hover {
-  background: #f1f5f9;
-  color: #1e293b;
+  background: var(--suth-surface-2);
+  color: var(--suth-ink);
 }
 
 /*  ปุ่มบันทึก */
 .abm-btn-save {
-  background: linear-gradient(135deg, #f47932, #ea580c);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--suth-action), var(--suth-action-ink));
+  color: var(--suth-on-action);
   border: none;
   padding: 12px 32px;
-  border-radius: 12px;
+  border-radius: var(--suth-radius-panel);
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 6px 15px rgba(244, 121, 50, 0.25);
+  box-shadow: 0 6px 15px color-mix(in srgb, var(--suth-action) 25%, transparent);
   transition: all 0.2s ease;
 }
 
 .abm-btn-save:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(244, 121, 50, 0.35);
+  box-shadow: 0 10px 20px color-mix(in srgb, var(--suth-action) 35%, transparent);
   filter: brightness(1.05);
 }
 
 .abm-btn-save:disabled {
-  background: #e2e8f0;
-  color: #94a3b8;
+  background: var(--suth-line);
+  color: var(--suth-muted);
   box-shadow: none;
   cursor: not-allowed;
 }
@@ -249,7 +249,7 @@
   height: 36px;
   border-radius: 50%;
   border: none;
-  background-color: #fef2f2;
+  background-color: var(--suth-danger-tint);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -273,8 +273,8 @@
   position: absolute;
   width: 100%;
   height: 2px;
-  background-color: #ef4444;
-  border-radius: 10px;
+  background-color: var(--suth-risk-dot-high);
+  border-radius: var(--suth-radius);
   transition: background-color 0.3s;
 }
 .close-cross::before {
@@ -286,13 +286,13 @@
 
 /* 🟢 เอฟเฟกต์ตอน Hover (หมุน 180 องศา) */
 .abm-close-btn-custom:hover {
-  background-color: #fee2e2;
+  background-color: var(--suth-danger-tint);
   transform: rotate(180deg);
 }
 
 .abm-close-btn-custom:hover .close-cross::before,
 .abm-close-btn-custom:hover .close-cross::after {
-  background-color: #dc2626;
+  background-color: var(--suth-risk-dot-high);
 }
 
 /* 8. Animations */
@@ -321,7 +321,7 @@
     width: 90% !important;
     max-width: 450px;
     padding: 0;
-    border-radius: 16px;
+    border-radius: var(--suth-radius-lg);
   }
   .abm-header {
     padding: 15px 20px;
@@ -341,13 +341,13 @@
     display: grid;
     grid-template-columns: 1fr 1.5fr;
     gap: 12px;
-    background: #f8fafc;
+    background: var(--suth-surface-2);
   }
   .abm-btn-cancel,
   .abm-btn-save {
     width: 100% !important;
     padding: 12px !important;
-    font-size: 14px;
+    font-size: var(--suth-fs-sm);
     margin: 0 !important;
     display: flex;
     justify-content: center;

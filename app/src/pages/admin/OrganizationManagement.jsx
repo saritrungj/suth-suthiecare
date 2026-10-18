@@ -1,18 +1,12 @@
-import SearchableSelect from '../../components/SearchableSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import SearchableSelect from "../../components/SearchableSelect";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { usePageExport } from "../../components/ExcelExport";
 import OrganizationServiceSettings from "../../components/OrganizationServiceSettings";
-import OrganizationRolePermissions from "../../components/OrganizationRolePermissions";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   createOrganization,
-  createOrganizationMember,
-  getOrganizationMembers,
   getOrganizations,
-  getRoles,
-  getUsers,
   updateOrganization,
-  updateOrganizationMember,
 } from "../../services/api";
 import {
   confirmAlert,
@@ -20,9 +14,9 @@ import {
   showSuccessAlert,
   showSuccessToast,
 } from "../../utils/alerts";
-import { FiSearch, FiUserMinus } from "react-icons/fi";
 import StaffCheckboxPicker from "../../components/StaffCheckboxPicker";
 import "./OrganizationManagement.css";
+import { PageHero } from "../../components/dashboard/DashboardKit";
 
 const ORG_TYPE_LABELS = { hospital: "โรงพยาบาล", school: "โรงเรียน" };
 // The type is chosen on the main organization and inherited by its sub-units.
@@ -43,14 +37,19 @@ const blankForm = {
 // has a type (hospital or school), its own members and its own data.
 export default function OrganizationManagement() {
   const [organizations, setOrganizations] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [roles, setRoles] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   // "view" an existing organization, or create a "main" one or a "unit".
-  usePageExport({title:"หน่วยงาน",sources:[{resource:"organizations"},...(selectedId?[{resource:"organization_members",id:selectedId}]:[])]});
+  usePageExport({
+    title: "หน่วยงาน",
+    sources: [
+      { resource: "organizations" },
+      ...(selectedId
+        ? [{ resource: "organization_members", id: selectedId }]
+        : []),
+    ],
+  });
   const [mode, setMode] = useState("view");
   const [form, setForm] = useState(blankForm);
-  const [members, setMembers] = useState([]);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   // On a phone the form sits below the directory: after choosing an
@@ -79,16 +78,10 @@ export default function OrganizationManagement() {
 
   const load = async () => {
     try {
-      const [orgs, staff, roleRows] = await Promise.all([
-        getOrganizations(),
-        getUsers(),
-        getRoles(),
-      ]);
+      const orgs = await getOrganizations();
       const list = (response) =>
         Array.isArray(response.data) ? response.data : [];
       setOrganizations(list(orgs));
-      setUsers(list(staff));
-      setRoles(list(roleRows));
       setSelectedId((current) => current || list(orgs)[0]?.id || null);
     } catch {
       setError("ไม่สามารถโหลดข้อมูลการจัดการหน่วยงานได้");
@@ -115,25 +108,6 @@ export default function OrganizationManagement() {
       org_type: selected.org_type || "",
       parent_id: selected.parent_id ? String(selected.parent_id) : "",
     });
-  }, [selected, mode]);
-
-  useEffect(() => {
-    if (mode !== "view" || !selected || selected.kind !== "unit") {
-      setMembers([]);
-      return;
-    }
-    let current = true;
-    setMembers([]);
-    getOrganizationMembers(selected.id)
-      .then(({ data }) => {
-        if (current) setMembers(data || []);
-      })
-      .catch(() => {
-        if (current) setError("ไม่สามารถโหลดสมาชิกหน่วยงานได้");
-      });
-    return () => {
-      current = false;
-    };
   }, [selected, mode]);
 
   const startCreate = (kind, parentId = "") => {
@@ -238,40 +212,6 @@ export default function OrganizationManagement() {
     }
   };
 
-  const refreshMembers = async () => {
-    const { data } = await getOrganizationMembers(selected.id);
-    setMembers(data || []);
-    await load();
-  };
-
-  const updateMember = async (member, patch) => {
-    const isRemoving =
-      patch.status === "inactive" && member.status === "active";
-    if (isRemoving) {
-      const confirmed = await confirmAlert({
-        title: "ถอดสมาชิกออกจากหน่วยงาน?",
-        text: `${member.name || member.username} จะไม่อยู่ในหน่วยงานนี้และเลือกหน่วยงานนี้ไม่ได้อีก (เพิ่มกลับได้ภายหลัง)`,
-        confirmText: "ถอดสมาชิก",
-        danger: true,
-      });
-      if (!confirmed) return;
-    }
-    try {
-      await updateOrganizationMember(selected.id, member.id, {
-        role_id: Number(patch.role_id ?? member.role_id),
-        status: patch.status ?? member.status,
-        is_primary: patch.is_primary ?? member.is_primary,
-      });
-      await refreshMembers();
-      await showSuccessToast(
-        isRemoving ? "ถอดสมาชิกเรียบร้อยแล้ว" : "เปลี่ยนบทบาทแล้ว",
-      );
-    } catch (err) {
-      setError(err.response?.data?.message || "ไม่สามารถแก้ไขสมาชิกได้");
-      await showErrorAlert({ error: err, title: "แก้ไขสมาชิกไม่สำเร็จ" });
-    }
-  };
-
   const directoryItem = (organization, nested = false) => (
     <button
       type="button"
@@ -304,40 +244,37 @@ export default function OrganizationManagement() {
   return (
     <div className="org-wrapper">
       <main className="org-page">
-        <header className="org-header">
-          <div>
-            <h1>หน่วยงานหลักและหน่วยงานย่อย</h1>
-            <p>
-              หน่วยงานหลักใช้จัดกลุ่ม ส่วนหน่วยงานย่อยคือหน่วยที่ทำงานจริง
-              (โรงพยาบาลหรือโรงเรียน) มีสมาชิก บทบาท และข้อมูลของตัวเอง
-            </p>
-          </div>
-          <div className="org-header-actions">
-            <button
-              className="org-btn"
-              type="button"
-              onClick={() => startCreate("main")}
-            >
-              + หน่วยงานหลัก
-            </button>
-            <button
-              className="org-btn-secondary"
-              type="button"
-              disabled={!mains.length}
-              title={!mains.length ? "สร้างหน่วยงานหลักก่อน" : undefined}
-              onClick={() =>
-                startCreate(
-                  "unit",
-                  selected?.kind === "main"
-                    ? selected.id
-                    : selected?.parent_id || mains[0]?.id,
-                )
-              }
-            >
-              + หน่วยงานย่อย
-            </button>
-          </div>
-        </header>
+        <PageHero
+          title="หน่วยงานหลักและหน่วยงานย่อย"
+          description="หน่วยงานหลักใช้จัดกลุ่ม ส่วนหน่วยงานย่อยคือหน่วยที่ทำงานจริง (โรงพยาบาลหรือโรงเรียน) มีสมาชิก บทบาท และข้อมูลของตัวเอง"
+          actions={
+            <>
+              <button
+                className="org-btn"
+                type="button"
+                onClick={() => startCreate("main")}
+              >
+                + หน่วยงานหลัก
+              </button>
+              <button
+                className="org-btn-secondary"
+                type="button"
+                disabled={!mains.length}
+                title={!mains.length ? "สร้างหน่วยงานหลักก่อน" : undefined}
+                onClick={() =>
+                  startCreate(
+                    "unit",
+                    selected?.kind === "main"
+                      ? selected.id
+                      : selected?.parent_id || mains[0]?.id,
+                  )
+                }
+              >
+                + หน่วยงานย่อย
+              </button>
+            </>
+          }
+        />
         {error && (
           <p className="org-error" role="alert">
             {error}
@@ -591,24 +528,6 @@ export default function OrganizationManagement() {
             )}
 
             {mode === "view" && selected?.kind === "unit" && (
-              <MemberSection
-                organization={selected}
-                members={members}
-                users={users}
-                roles={roles}
-                onAdded={refreshMembers}
-                onUpdate={updateMember}
-                onError={setError}
-              />
-            )}
-            {mode === "view" && selected?.kind === "unit" && (
-              <OrganizationRolePermissions
-                key={`permissions-${selected.id}`}
-                organization={selected}
-                roles={roles}
-              />
-            )}
-            {mode === "view" && selected?.kind === "unit" && (
               <OrganizationServiceSettings
                 key={selected.id}
                 organization={selected}
@@ -619,209 +538,5 @@ export default function OrganizationManagement() {
         </div>
       </main>
     </div>
-  );
-}
-
-function MemberSection({
-  organization,
-  members,
-  users,
-  roles,
-  onAdded,
-  onUpdate,
-  onError,
-}) {
-  const [adding, setAdding] = useState(false);
-  const [picked, setPicked] = useState(new Set());
-  const [roleId, setRoleId] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [query, setQuery] = useState("");
-
-  useEffect(() => {
-    setPicked(new Set());
-    setAdding(false);
-    setQuery("");
-  }, [organization.id]);
-
-  const memberIds = new Set(members.map((member) => Number(member.user_id)));
-  const candidates = users
-    .filter((user) => user.status === "active")
-    .filter((user) => !memberIds.has(Number(user.id)))
-    .map((user) => ({
-      id: Number(user.id),
-      name: user.name || user.username,
-      username: user.username,
-      hint:
-        (user.memberships || [])
-          .filter((membership) => membership.status === "active")
-          .map((membership) => membership.organization_name)
-          .join(", ") ||
-        user.email ||
-        "",
-    }));
-
-  const shownMembers = query.trim()
-    ? members.filter((member) =>
-        [member.name, member.username, member.email, member.role_name]
-          .filter(Boolean)
-          .some((value) =>
-            String(value).toLowerCase().includes(query.trim().toLowerCase()),
-          ),
-      )
-    : members;
-
-  const closeAdd = () => {
-    setAdding(false);
-    setPicked(new Set());
-  };
-
-  const addMembers = async (event) => {
-    event.preventDefault();
-    if (!picked.size || !roleId) return;
-    setSaving(true);
-    try {
-      const { data } = await createOrganizationMember(organization.id, {
-        user_ids: [...picked],
-        role_id: Number(roleId),
-      });
-      closeAdd();
-      await onAdded();
-      const count = (data.added?.length || 0) + (data.reactivated?.length || 0);
-      await showSuccessToast(`เพิ่มสมาชิก ${count} คนแล้ว`);
-    } catch (err) {
-      onError(err.response?.data?.message || "ไม่สามารถเพิ่มสมาชิกได้");
-      await showErrorAlert({ error: err, title: "เพิ่มสมาชิกไม่สำเร็จ" });
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <section className="org-members" aria-labelledby="org-members-title">
-      <div className="org-members-head">
-        <h2 id="org-members-title">
-          สมาชิก <span className="org-count">{members.length}</span>
-        </h2>
-        {!adding && (
-          <button
-            type="button"
-            className="org-btn"
-            onClick={() => setAdding(true)}
-          >
-            + เพิ่มสมาชิก
-          </button>
-        )}
-      </div>
-
-      {adding && (
-        <form className="org-add-panel" onSubmit={addMembers}>
-          <StaffCheckboxPicker
-            people={candidates}
-            selected={picked}
-            onChange={setPicked}
-            label="ติ๊กเลือกเจ้าหน้าที่ (เลือกได้หลายคน)"
-            emptyText="เจ้าหน้าที่ทุกคนเป็นสมาชิกของหน่วยงานนี้แล้ว"
-          />
-          <div className="org-add-panel-footer">
-            <label className="org-field">
-              <span>บทบาทในหน่วยงานนี้</span>
-              <SearchableSelect
-                required
-                value={roleId}
-                onChange={(event) => setRoleId(event.target.value)}
-              >
-                <option value="">เลือกบทบาท</option>
-                {roles.map((role) => (
-                  <option key={role.id} value={role.id}>
-                    {role.name}
-                  </option>
-                ))}
-              </SearchableSelect>
-            </label>
-            <div className="org-add-panel-actions">
-              <button
-                type="button"
-                className="org-btn-secondary"
-                onClick={closeAdd}
-              >
-                ยกเลิก
-              </button>
-              <button
-                className="org-btn"
-                disabled={saving || !picked.size || !roleId}
-              >
-                {saving
-                  ? "กำลังเพิ่ม…"
-                  : picked.size
-                    ? `เพิ่ม ${picked.size} คน`
-                    : "เพิ่มสมาชิก"}
-              </button>
-            </div>
-          </div>
-        </form>
-      )}
-
-      {members.length > 6 && (
-        <label className="org-member-search">
-          <FiSearch aria-hidden="true" />
-          <span className="org-sr-only">ค้นหาสมาชิก</span>
-          <input
-            type="search"
-            placeholder="ค้นหาสมาชิก ชื่อ ชื่อผู้ใช้ หรือบทบาท"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
-        </label>
-      )}
-
-      {members.length === 0 ? (
-        <p className="org-empty">
-          ยังไม่มีสมาชิก กด &quot;+ เพิ่มสมาชิก&quot; เพื่อเลือกเจ้าหน้าที่
-        </p>
-      ) : (
-        <ul className="org-member-rows">
-          {shownMembers.map((member) => (
-            <li key={member.id}>
-              <span className="org-avatar" aria-hidden="true">
-                {(member.name || member.username).trim().charAt(0)}
-              </span>
-              <span className="org-member-identity">
-                <strong>{member.name || member.username}</strong>
-                <small>
-                  @{member.username}
-                  {member.email ? ` · ${member.email}` : ""}
-                </small>
-              </span>
-              <SearchableSelect
-                className="org-role-select"
-                aria-label={`บทบาทของ ${member.username}`}
-                value={member.role_id}
-                onChange={(event) =>
-                  onUpdate(member, { role_id: event.target.value })
-                }
-              >
-                {roles.map((role) => (
-                  <option key={role.id} value={role.id}>
-                    {role.name}
-                  </option>
-                ))}
-              </SearchableSelect>
-              <button
-                type="button"
-                className="org-icon-btn org-icon-btn--danger"
-                aria-label={`ถอด ${member.username} ออกจากหน่วยงาน`}
-                title="ถอดออกจากหน่วยงาน"
-                onClick={() => onUpdate(member, { status: "inactive" })}
-              >
-                <FiUserMinus aria-hidden="true" />
-              </button>
-            </li>
-          ))}
-          {!shownMembers.length && (
-            <li className="org-member-empty">ไม่พบสมาชิกที่ค้นหา</li>
-          )}
-        </ul>
-      )}
-    </section>
   );
 }

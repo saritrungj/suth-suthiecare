@@ -1,5 +1,5 @@
-import {useMasterOptions} from "../../../components/MasterSelect";
-import {usePageExport} from "../../../components/ExcelExport";
+import { useMasterOptions } from "../../../components/MasterSelect";
+import { usePageExport } from "../../../components/ExcelExport";
 import React, {
   useState,
   useRef,
@@ -143,8 +143,17 @@ const deeplyCleanData = (items) => {
 const FormBuilder = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const facultyOptions=useMasterOptions("faculty",DEFAULT_FACULTIES.map((label,index)=>({code:String(index),label})));
-  const userStatusOptions=useMasterOptions("user_status",DEFAULT_USER_STATUSES.map((label,index)=>({code:String(index),label})));
+  const facultyOptions = useMasterOptions(
+    "faculty",
+    DEFAULT_FACULTIES.map((label, index) => ({ code: String(index), label })),
+  );
+  const userStatusOptions = useMasterOptions(
+    "user_status",
+    DEFAULT_USER_STATUSES.map((label, index) => ({
+      code: String(index),
+      label,
+    })),
+  );
 
   const [activeQuestionId, setActiveQuestionId] = useState("main-header");
 
@@ -204,7 +213,27 @@ const FormBuilder = () => {
     },
   ]);
 
-  usePageExport({title:"รายละเอียดแบบประเมิน",sources:id?[{resource:"form",id}]:[],...(id?{}:{localSheets:[{resource:"form_draft",data:{title:formTitle,description:formDesc,status:formStatus,clinic_type:clinicType,type:formType,questions}}]})});
+  usePageExport({
+    title: "รายละเอียดแบบประเมิน",
+    sources: id ? [{ resource: "form", id }] : [],
+    ...(id
+      ? {}
+      : {
+          localSheets: [
+            {
+              resource: "form_draft",
+              data: {
+                title: formTitle,
+                description: formDesc,
+                status: formStatus,
+                clinic_type: clinicType,
+                type: formType,
+                questions,
+              },
+            },
+          ],
+        }),
+  });
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
   const sensors = useSensors(
     useSensor(TouchSensor, {
@@ -1081,7 +1110,7 @@ const FormBuilder = () => {
               !["dropdown", "multiple_choice", "checkboxes"].includes(q.type) ||
               (q.options?.length <= 1 && q.options?.[0] === "ตัวเลือก 1")
             ) {
-              updates.options = facultyOptions.map(o=>o.label);
+              updates.options = facultyOptions.map((o) => o.label);
             }
           }
 
@@ -1091,7 +1120,7 @@ const FormBuilder = () => {
               !["dropdown", "multiple_choice", "checkboxes"].includes(q.type) ||
               (q.options?.length <= 1 && q.options?.[0] === "ตัวเลือก 1")
             ) {
-              updates.options = userStatusOptions.map(o=>o.label);
+              updates.options = userStatusOptions.map((o) => o.label);
             }
             updates.type = "multiple_choice";
             updates.isUserStatus = true;

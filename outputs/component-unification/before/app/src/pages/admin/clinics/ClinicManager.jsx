@@ -1,5 +1,5 @@
-import SearchableSelect from '../../../components/SearchableSelect';
-import {usePageExport} from "../../../components/ExcelExport";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { usePageExport } from "../../../components/ExcelExport";
 import React, { useState, useEffect, useRef } from "react";
 import {
   getAllClinics,
@@ -173,7 +173,7 @@ function ClinicManagerContent() {
   const { authorization, activeOrganization } = usePermissions();
   const isSystemAdmin = Boolean(authorization?.is_system_admin);
   const [clinics, setClinics] = useState([]);
-  usePageExport({title:"คลินิก",sources:[{resource:"clinics"}]});
+  usePageExport({ title: "คลินิก", sources: [{ resource: "clinics" }] });
   const [organizations, setOrganizations] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);

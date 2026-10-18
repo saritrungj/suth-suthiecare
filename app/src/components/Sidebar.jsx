@@ -1,5 +1,5 @@
-import SearchableSelect from './SearchableSelect';
-import { toDisplayText } from '../utils/textPresentation.js';
+import SearchableSelect from "./SearchableSelect";
+import { toDisplayText } from "../utils/textPresentation.js";
 import React, { useState, useEffect, useRef } from "react";
 import "./Sidebar.css";
 import logo from "../assets/logoSUTH.png";
@@ -16,6 +16,7 @@ import {
   faChevronLeft,
   faChalkboardUser,
   faFilePen,
+  faFileImport,
   faFolderOpen,
   faGaugeHigh,
   faImages,
@@ -43,146 +44,6 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
 const MySwal = withReactContent(Swal);
-
-const DashboardIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-    <rect x="3" y="3" width="8" height="8" rx="1.5" />
-    <rect x="13" y="3" width="8" height="8" rx="1.5" />
-    <rect x="3" y="13" width="8" height="8" rx="1.5" />
-    <rect x="13" y="13" width="8" height="8" rx="1.5" />
-  </svg>
-);
-
-const CaseIcon = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-    <polyline points="14 2 14 8 20 8" />
-    <line x1="16" y1="13" x2="8" y2="13" />
-    <line x1="16" y1="17" x2="8" y2="17" />
-    <polyline points="10 9 9 9 8 9" />
-  </svg>
-);
-
-const RiskIcon = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-    <line x1="12" y1="9" x2="12" y2="13" />
-    <line x1="12" y1="17" x2="12" y2="17" />
-  </svg>
-);
-
-const FormIcon = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-  </svg>
-);
-
-const CalendarIcon = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-    <line x1="16" y1="2" x2="16" y2="6" />
-    <line x1="8" y1="2" x2="8" y2="6" />
-    <line x1="3" y1="10" x2="21" y2="10" />
-    <line x1="8" y1="14" x2="8" y2="14" />
-    <line x1="12" y1="14" x2="12" y2="14" />
-    <line x1="16" y1="14" x2="16" y2="14" />
-    <line x1="8" y1="18" x2="8" y2="18" />
-    <line x1="12" y1="18" x2="12" y2="18" />
-    <line x1="16" y1="18" x2="16" y2="18" />
-  </svg>
-);
-
-const UsersIcon = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-    <circle cx="9" cy="7" r="4" />
-    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-  </svg>
-);
-
-const ContentIcon = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="3" y="3" width="18" height="18" rx="2" />
-    <line x1="3" y1="9" x2="21" y2="9" />
-    <line x1="9" y1="21" x2="9" y2="9" />
-  </svg>
-);
-
-const ClinicIcon = () => (
-  <svg
-    width="22"
-    height="22"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M3 21h18" />
-    <path d="M3 7v14" />
-    <path d="M21 7v14" />
-    <path d="M9 21V11h6v10" />
-    <path d="M2 14h20" />
-    <path d="M10 3h4v4h-4z" />
-  </svg>
-);
 
 const ORG_TYPE_LABELS = { hospital: "โรงพยาบาล", school: "โรงเรียน" };
 
@@ -256,6 +117,15 @@ const rawMenuItems = [
     schoolCheck: (access) => access?.can_view_school,
   },
   {
+    href: "/admin/school/import",
+    icon: <FontAwesomeIcon icon={faFileImport} fixedWidth />,
+    label: "นำเข้าข้อมูล",
+    key: "school-import",
+    orgTypes: ["school"],
+    schoolCheck: (access) =>
+      access?.can_create_students || access?.staff_actions?.create,
+  },
+  {
     href: "/admin/school",
     icon: <FontAwesomeIcon icon={faSchool} fixedWidth />,
     label: "ชั้นปีและห้องเรียน",
@@ -264,17 +134,24 @@ const rawMenuItems = [
     orgTypes: ["school"],
     schoolCheck: (access) => access?.can_view_school,
   },
+
   {
-    href: "/admin/school/types",
-    icon: <FontAwesomeIcon icon={faTags} fixedWidth />,
-    label: "ประเภทครูและนักเรียน",
-    key: "school-types",
+    href: "/admin/users",
+    hideForSystemAdmin: true,
+    icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />,
+    label: "บุคลากรและผู้ปกครอง",
+    key: "school-staff-access",
+    orgTypes: ["school"],
+    schoolCheck: (access) => access?.can_manage_staff,
+  },
+  {
+    href: "/admin/school/workflows",
+    icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />,
+    label: "คัดกรองและติดตามโรงเรียน",
+    key: "school-workflows",
     orgTypes: ["school"],
     schoolCheck: (access) => access?.can_view_school,
   },
-
-  { href: "/admin/school/roles", icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />, label: "บทบาทโรงเรียน", key: "school-roles", orgTypes: ["school"], schoolCheck: access => access?.can_manage_staff },
-  { href: "/admin/school/workflows", icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />, label: "คัดกรองและติดตามโรงเรียน", key: "school-workflows", orgTypes: ["school"], schoolCheck: access => access?.can_view_school },
 
   // 🟠 งานของหน่วยงานที่เลือกอยู่ (ข้อมูลแยกตามหน่วยงาน)
   { type: "header", label: "จัดการหน่วยงาน", key: "header-setup" },
@@ -299,6 +176,10 @@ const rawMenuItems = [
     label: "ผู้มารับบริการ",
     key: "patient-members",
     module: "User Management",
+    // Patient accounts belong to hospital services; schools work with students.
+    orgTypes: ["hospital"],
+    // System admins manage every patient account from the system section.
+    hideForSystemAdmin: true,
   },
   {
     href: "/admin/help-center",
@@ -306,6 +187,15 @@ const rawMenuItems = [
     label: "จัดการศูนย์ช่วยเหลือ",
     key: "help-center",
     module: "Help Center Management",
+    // FAQ categories belong to clinics, which only hospital units have.
+    orgTypes: ["hospital"],
+  },
+  {
+    href: "/admin/master-data",
+    icon: <FontAwesomeIcon icon={faTags} fixedWidth />,
+    label: "จัดการข้อมูลหลัก",
+    key: "master-data",
+    module: "master_data.view",
   },
 
   // 🛡️ ผู้ดูแลระบบ: ตั้งค่าทั้งระบบ ไม่ขึ้นกับหน่วยงานที่เลือก
@@ -315,7 +205,6 @@ const rawMenuItems = [
     hint: "",
     key: "header-system",
   },
-  { href: "/admin/master-data", icon: <FontAwesomeIcon icon={faTags} fixedWidth />, label: "จัดการข้อมูลหลัก", key: "master-data", module: "master_data.view" },
   {
     href: "/admin/organizations",
     icon: <FontAwesomeIcon icon={faSitemap} fixedWidth />,
@@ -329,6 +218,13 @@ const rawMenuItems = [
     icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />,
     label: "ผู้ดูแลระบบและเจ้าหน้าที่",
     key: "users",
+    systemAdminOnly: true,
+  },
+  {
+    href: "/admin/members",
+    icon: <FontAwesomeIcon icon={faUsers} fixedWidth />,
+    label: "ผู้มารับบริการ",
+    key: "system-patient-members",
     systemAdminOnly: true,
   },
   {
@@ -401,35 +297,53 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
   useEffect(() => {
     if (!isMobileOpen) return;
     const drawer = sidebarRef.current;
-    const background = document.querySelectorAll('.admin-shell-content, .mobile-header-bar');
-    const previousInert = [...background].map(element => element.inert);
-    background.forEach(element => { element.inert = true; });
-    drawer?.querySelector('.mobile-close-btn')?.focus({ preventScroll: true });
-    const keyboard = event => {
+    const background = document.querySelectorAll(
+      ".admin-shell-content, .mobile-header-bar",
+    );
+    const previousInert = [...background].map((element) => element.inert);
+    background.forEach((element) => {
+      element.inert = true;
+    });
+    drawer?.querySelector(".mobile-close-btn")?.focus({ preventScroll: true });
+    const keyboard = (event) => {
       if (event.defaultPrevented || !drawer?.contains(event.target)) return;
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         event.preventDefault();
         setIsMobileOpen(false);
       }
-      if (event.key !== 'Tab') return;
-      const items = [...drawer.querySelectorAll('a[href], button:not(:disabled), select:not(:disabled), [tabindex="0"]')]
-        .filter(element => element.getClientRects().length && getComputedStyle(element).visibility !== 'hidden');
+      if (event.key !== "Tab") return;
+      const items = [
+        ...drawer.querySelectorAll(
+          'a[href], button:not(:disabled), select:not(:disabled), [tabindex="0"]',
+        ),
+      ].filter(
+        (element) =>
+          element.getClientRects().length &&
+          getComputedStyle(element).visibility !== "hidden",
+      );
       if (!items.length) return;
       if (event.shiftKey && document.activeElement === items[0]) {
-        event.preventDefault(); items.at(-1).focus();
+        event.preventDefault();
+        items.at(-1).focus();
       } else if (!event.shiftKey && document.activeElement === items.at(-1)) {
-        event.preventDefault(); items[0].focus();
+        event.preventDefault();
+        items[0].focus();
       }
     };
-    const desktop = window.matchMedia('(min-width: 769px)');
-    const resize = event => { if (event.matches) setIsMobileOpen(false); };
-    desktop.addEventListener('change', resize);
-    document.addEventListener('keydown', keyboard);
+    const desktop = window.matchMedia("(min-width: 769px)");
+    const resize = (event) => {
+      if (event.matches) setIsMobileOpen(false);
+    };
+    desktop.addEventListener("change", resize);
+    document.addEventListener("keydown", keyboard);
     return () => {
-      background.forEach((element, index) => { element.inert = previousInert[index]; });
-      document.removeEventListener('keydown', keyboard);
-      desktop.removeEventListener('change', resize);
-      if (!desktop.matches) menuButtonRef.current?.focus({ preventScroll: true });
+      background.forEach((element, index) => {
+        element.inert = previousInert[index];
+      });
+      document.removeEventListener("keydown", keyboard);
+      desktop.removeEventListener("change", resize);
+      if (!desktop.matches)
+        menuButtonRef.current?.focus({ preventScroll: true });
     };
   }, [isMobileOpen]);
 
@@ -489,8 +403,10 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
     if (active) {
       const item = active.getBoundingClientRect();
       const menu = container.getBoundingClientRect();
-      if (item.bottom > menu.bottom) container.scrollTop += item.bottom - menu.bottom + 12;
-      else if (item.top < menu.top) container.scrollTop -= menu.top - item.top + 12;
+      if (item.bottom > menu.bottom)
+        container.scrollTop += item.bottom - menu.bottom + 12;
+      else if (item.top < menu.top)
+        container.scrollTop -= menu.top - item.top + 12;
     }
   }, [location.pathname, isMobileOpen]);
 
@@ -530,8 +446,8 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
       text: "คุณต้องการออกจากระบบใช่หรือไม่?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#94a3b8",
+      confirmButtonColor: "var(--suth-risk-dot-high)",
+      cancelButtonColor: "var(--suth-control-line)",
       confirmButtonText: "ออกจากระบบ",
       cancelButtonText: "ยกเลิก",
       reverseButtons: true,
@@ -618,7 +534,7 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
           >
             <FontAwesomeIcon
               icon={faChevronLeft}
-              color="#c94e07"
+              color="var(--suth-action-ink)"
               style={{
                 transform: collapsed ? "rotate(180deg)" : "rotate(0deg)",
                 transition: "transform 0.3s ease",
@@ -674,7 +590,9 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
                   )}
                   {toDisplayText(item.label)}
                   {item.hint && (
-                    <small className="menu-header-hint">{toDisplayText(item.hint)}</small>
+                    <small className="menu-header-hint">
+                      {toDisplayText(item.hint)}
+                    </small>
                   )}
                 </div>
               );

@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -88,7 +88,9 @@ export default function LegalPage({ kind }) {
               ))}
               {section.link && (
                 <p>
-                  <Link to={section.link.to}>{toDisplayText(section.link.label)}</Link>
+                  <Link to={section.link.to}>
+                    {toDisplayText(section.link.label)}
+                  </Link>
                 </p>
               )}
             </section>

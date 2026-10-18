@@ -4,8 +4,12 @@ const student = {
   id: 1,
   school_id: 1,
   student_code: "0001",
+  prefix: "เด็กหญิง",
+  first_name: "สมหญิง",
+  last_name: "สุขใจ",
   classroom_id: 11,
   classroom_name: "1/1",
+  grade_name: "ม.1",
   status: "active",
   status_label: "กำลังศึกษา",
   is_boarder: true,
@@ -62,6 +66,8 @@ async function setup(page, { mental = true, manage = true } = {}) {
                 "school.view",
                 "students.view",
                 "students.create",
+                // Importing students records who they are (derived by the migration).
+                "pii.create",
                 "forms.view",
                 "students.export",
               ],
@@ -77,6 +83,37 @@ async function setup(page, { mental = true, manage = true } = {}) {
           can_view_all_students: manage,
           can_create_students: manage,
           can_manage_staff: manage,
+          // Roles-page actions the school access endpoint now reports.
+          staff_actions: {
+            view: manage,
+            create: manage,
+            update: manage,
+            delete: manage,
+            assign: manage,
+            export: manage,
+            manage: manage,
+          },
+          workflow_actions: {
+            view: manage,
+            create: manage,
+            update: manage,
+            delete: manage,
+            assign: manage,
+            export: manage,
+            manage: manage,
+          },
+          health_actions: {
+            view: true,
+            create: true,
+            update: true,
+            delete: true,
+            assign: true,
+            export: true,
+            manage: true,
+          },
+          can_assign_school: manage,
+          can_assign_students: manage,
+          can_manage_workflows: manage,
           can_view_health: mental,
           can_view_mental: mental,
           can_view_physical: mental,
@@ -128,6 +165,22 @@ async function setup(page, { mental = true, manage = true } = {}) {
         },
       });
     }
+    if (path === "/school/promotions" && req.method() === "POST") {
+      const body = req.postDataJSON();
+      requests.push({ path, body });
+      return route.fulfill({
+        json: {
+          dry_run: body.dry_run,
+          data: [
+            {
+              from_classroom_id: 11,
+              to_classroom_id: 12,
+              count: 1,
+            },
+          ],
+        },
+      });
+    }
     if (req.method() !== "GET") {
       const body = req.postDataJSON();
       requests.push({ path, body });
@@ -142,6 +195,8 @@ async function setup(page, { mental = true, manage = true } = {}) {
             {
               id: 1,
               student_code: "0001",
+              student_name: "เด็กหญิง สมหญิง สุขใจ",
+              grade_name: "ม.1",
               classroom_name: "1/1",
               is_boarder: true,
               risk_status: "high",
@@ -179,11 +234,32 @@ async function setup(page, { mental = true, manage = true } = {}) {
             {
               id: 1,
               student_code: "0001",
+              student_name: "เด็กหญิง สมหญิง สุขใจ",
+              grade_name: "ม.1",
               classroom_name: "1/1",
               completed_on: null,
             },
           ],
         },
+      });
+    if (path === "/school/rescreen-tasks")
+      return route.fulfill({
+        json: [
+          {
+            id: 8,
+            school_id: 1,
+            student_id: 1,
+            student_code: "0001",
+            source_response_id: 30,
+            target_form_id: 5,
+            assigned_user_id: 2,
+            assigned_username: "teacher-demo",
+            created_at: "2026-11-04T08:00:00.000Z",
+            due_on: "2026-11-15",
+            status: "pending",
+            overdue: false,
+          },
+        ],
       });
     if (path === "/school/workflow-settings/1")
       return route.fulfill({
@@ -216,6 +292,13 @@ async function setup(page, { mental = true, manage = true } = {}) {
           assessments: {
             mental: [
               {
+                id: 31,
+                form_id: 5,
+                form_title: "แบบคัดกรองตัวอย่าง",
+                submitted_at: "2026-11-05T09:30:00.000Z",
+                risk: "medium",
+              },
+              {
                 id: 30,
                 form_id: 5,
                 form_title: "แบบคัดกรองตัวอย่าง",
@@ -228,16 +311,33 @@ async function setup(page, { mental = true, manage = true } = {}) {
       });
     if (path.includes("/classrooms"))
       return route.fulfill({
-        json: [
-          {
-            id: 11,
-            name: "1/1",
-            academic_year: Number(
-              url.searchParams.get("academic_year") || 2569,
-            ),
-            grade_name: "ม.1",
-          },
-        ],
+        json:
+          Number(url.searchParams.get("academic_year")) === 2570
+            ? [
+                {
+                  id: 12,
+                  name: "2/1",
+                  academic_year: 2570,
+                  grade_name: "ม.2",
+                  level_order: 2,
+                },
+              ]
+            : [
+                {
+                  id: 11,
+                  name: "1/1",
+                  academic_year: 2569,
+                  grade_name: "ม.1",
+                  level_order: 1,
+                },
+                {
+                  id: 13,
+                  name: "1/2",
+                  academic_year: 2569,
+                  grade_name: "ม.1",
+                  level_order: 1,
+                },
+              ],
       });
     if (path.includes("/grades"))
       return route.fulfill({ json: [{ id: 5, name: "ม.1" }] });
@@ -259,6 +359,20 @@ test("school workflows show minimal risk, actual round progress and accessible d
   await expect(
     page.getByText("คำแนะนำที่โรงเรียนยืนยัน", { exact: true }),
   ).toBeVisible();
+  await expect(
+    page.locator('td[data-label="รหัสนักเรียน"]', { hasText: "0001" }),
+  ).toBeVisible();
+  await expect(
+    page.locator('td[data-label="ชื่อ–นามสกุล"]', {
+      hasText: "เด็กหญิง สมหญิง สุขใจ",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.locator('td[data-label="ชั้น / ห้อง"]', { hasText: "ม.1 ห้อง 1/1" }),
+  ).toBeVisible();
+  await expect(
+    page.locator('td[data-label="ที่พัก"]', { hasText: "หอพัก" }),
+  ).toBeVisible();
   const audit = await new AxeBuilder({ page })
     .include(".sch-page")
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
@@ -269,7 +383,21 @@ test("school workflows show minimal risk, actual round progress and accessible d
     fullPage: true,
   });
   await page.getByRole("button", { name: "รอบประเมิน", exact: true }).click();
-  await page.getByRole("button", { name: "ดูผู้ยังไม่ประเมิน" }).click();
+  const outstandingButton = page.getByRole("button", {
+    name: "ดูผู้ยังไม่ประเมิน รอบ ต้นภาคเรียน",
+  });
+  await expect(outstandingButton).toHaveText("");
+  await expect(
+    page.getByRole("button", { name: "ปิดรอบ ต้นภาคเรียน" }),
+  ).toHaveClass(/is-close/);
+  await outstandingButton.click();
+  await expect(
+    page.getByRole("dialog", { name: "ผู้ยังไม่ประเมิน" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("เด็กหญิง สมหญิง สุขใจ", { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText("ม.1 ห้อง 1/1", { exact: true })).toBeVisible();
   await expect(
     page.getByText("ทั้งหมด 2 คน · ประเมินแล้ว 1 คน · ยังไม่ประเมิน 1 คน"),
   ).toBeVisible();
@@ -280,6 +408,34 @@ test("school workflows show minimal risk, actual round progress and accessible d
   expect(size.width).toBeLessThanOrEqual(size.viewport);
   await page.screenshot({
     path: `../outputs/school-workflows-rounds-${info.project.name}.png`,
+    fullPage: true,
+  });
+});
+test("school imports are separated from workflows and provide student and teacher templates", async ({
+  page,
+}, info) => {
+  await setup(page);
+  await page.goto("/admin/school/workflows");
+  await expect(
+    page.locator('summary[aria-label="เปิดเมนูจัดการ"]'),
+  ).toHaveCount(0);
+  await expect(
+    page.locator('.sidebar a[href="/admin/school/import"]'),
+  ).toHaveCount(1);
+  await page.goto("/admin/school/import");
+  await expect(
+    page.getByRole("heading", { name: "นำเข้าข้อมูลโรงเรียน" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "ดาวน์โหลดแบบฟอร์ม" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "ครู", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "ดาวน์โหลดแบบฟอร์ม" }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "เลือกไฟล์" })).toBeVisible();
+  await page.screenshot({
+    path: `../.impeccable/review/import-${info.project.name === "mobile-chromium" ? "mobile" : "desktop"}.png`,
     fullPage: true,
   });
 });
@@ -295,57 +451,39 @@ test("general and dormitory staff have the minimal workflow without insight mana
     page.getByRole("button", { name: "คัดกรองซ้ำ", exact: true }),
   ).toHaveCount(0);
   await expect(
-    page.getByRole("button", { name: "เกณฑ์รายข้อ", exact: true }),
+    page.locator('summary[aria-label="เปิดเมนูจัดการ"]'),
   ).toHaveCount(0);
-  await expect(
-    page.getByRole("button", { name: "นำเข้าครู", exact: true }),
-  ).toHaveCount(0);
-});
-test("risk rule selects the exact grid row and submits its approved trigger", async ({
-  page,
-}) => {
-  const writes = await setup(page);
-  await page.goto("/admin/school/workflows");
-  await page.getByRole("button", { name: "เกณฑ์รายข้อ", exact: true }).click();
-  await page
-    .getByRole("combobox", { name: "แบบประเมิน", exact: true })
-    .selectOption("5");
-  await page
-    .getByRole("combobox", { name: "ข้อคำถาม", exact: true })
-    .selectOption("q_grid");
-  await page
-    .getByRole("combobox", { name: "แถวคำถามที่ต้องตรวจ" })
-    .selectOption("1");
-  await page.getByLabel("คำตอบที่ให้เป็นสีแดง").fill("มี");
-  await page
-    .getByRole("button", { name: "บันทึกเกณฑ์ที่โรงเรียนยืนยัน" })
-    .click();
-  await expect
-    .poll(() => writes.some((w) => w.path === "/school/risk-triggers"))
-    .toBe(true);
-  expect(
-    writes.find((w) => w.path === "/school/risk-triggers").body,
-  ).toMatchObject({
-    question_id: "q_grid",
-    answer_path: "1",
-    answer_value: "มี",
-  });
 });
 test("rescreen workflow selects an eligible assignee, source response and actual due date", async ({
   page,
-}) => {
+}, info) => {
   const writes = await setup(page);
   await page.goto("/admin/school/workflows");
   await page.getByRole("button", { name: "คัดกรองซ้ำ", exact: true }).click();
+  await expect(
+    page.locator('td[data-label="รหัสนักเรียน"]', { hasText: "0001" }),
+  ).toBeVisible();
+  await expect(
+    page.locator('td[data-label="ชื่อ–นามสกุล"]', {
+      hasText: "เด็กหญิง สมหญิง สุขใจ",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.locator('td[data-label="ชั้น / ห้อง"]', { hasText: "ม.1 ห้อง 1/1" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "สร้างงานใหม่", exact: true }).click();
+  await expect(
+    page.getByRole("dialog", { name: "สร้างงานคัดกรองซ้ำ" }),
+  ).toBeVisible();
   await page
     .getByRole("combobox", { name: "นักเรียน", exact: true })
     .selectOption("1");
-  await page
-    .getByRole("combobox", { name: "ผลประเมินต้นทาง" })
-    .selectOption("30");
-  await page
-    .getByRole("combobox", { name: "แบบประเมิน", exact: true })
-    .selectOption("5");
+  await expect(
+    page.getByRole("combobox", { name: "ผลประเมินต้นทาง" }),
+  ).toHaveValue("31");
+  await expect(
+    page.getByRole("combobox", { name: "แบบประเมิน", exact: true }),
+  ).toHaveValue("5");
   await page.getByRole("combobox", { name: "ผู้รับผิดชอบ" }).selectOption("2");
   await page
     .getByRole("textbox", { name: "กำหนดประเมินซ้ำ" })
@@ -358,10 +496,28 @@ test("rescreen workflow selects an eligible assignee, source response and actual
     writes.find((w) => w.path === "/school/rescreen-tasks").body,
   ).toMatchObject({
     student_id: "1",
-    source_response_id: "30",
+    source_response_id: "31",
     assigned_user_id: "2",
     target_form_id: "5",
     due_on: "2026-11-15",
+  });
+  const loadLatest = page.getByRole("button", {
+    name: "โหลดการประเมินล่าสุดของ 0001",
+  });
+  await expect(loadLatest).toHaveText("");
+  await loadLatest.click();
+  await expect
+    .poll(() => writes.some((w) => w.path === "/school/rescreen-tasks/8"))
+    .toBe(true);
+  expect(
+    writes.find((w) => w.path === "/school/rescreen-tasks/8").body,
+  ).toEqual({
+    status: "completed",
+    completed_response_id: 31,
+  });
+  await page.screenshot({
+    path: `../.impeccable/review/followup-${info.project.name === "mobile-chromium" ? "mobile" : "desktop"}.png`,
+    fullPage: true,
   });
 });
 test("student Excel/CSV onboarding processes 800 rows in batches with email and boarding metadata", async ({

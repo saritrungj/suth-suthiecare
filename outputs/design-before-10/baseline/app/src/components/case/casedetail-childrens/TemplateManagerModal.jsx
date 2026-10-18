@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import "./TemplateManagerModal.css";
 import React, { useState, useEffect, useCallback } from "react";
 import { FaCog, FaTimes, FaPlus, FaTrashAlt, FaSave } from "react-icons/fa";
@@ -220,7 +220,9 @@ export default function TemplateManagerModal({
                   className={`cdm-tpl-sidebar-item ${editingTplId === tpl.id ? "active" : ""}`}
                   onClick={() => handleEditClick(tpl)}
                 >
-                  <span className="cdm-tpl-item-label">{toDisplayText(tpl.label)}</span>
+                  <span className="cdm-tpl-item-label">
+                    {toDisplayText(tpl.label)}
+                  </span>
                   <button
                     type="button"
                     onClick={(e) => {

@@ -1,0 +1,149 @@
+/* Shared table footer: page size on the left, range in the middle, page pills
+   on the right. Colours come from the dashboard tokens; the current page is
+   the orange action fill with the on-action text token. */
+.tp-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 12px 14px 0;
+  font-family: var(--suth-font);
+  font-size: var(--suth-fs-sm);
+  color: var(--suth-ink-2);
+}
+
+.tp-pagination__size {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+/* Page size: a small pill field like the page pills beside it, with a
+   drawn chevron instead of the browser's own select chrome. */
+.tp-pagination .tp-pagination__size select {
+  appearance: none;
+  min-width: 84px;
+  height: 38px;
+  padding: 0 34px 0 14px;
+  border: 1px solid var(--suth-control-line);
+  border-radius: var(--suth-radius-pill) !important;
+  background-color: var(--suth-surface);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--suth-muted) 50%),
+    linear-gradient(135deg, var(--suth-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 13px) 50%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+  color: var(--suth-ink);
+  font: inherit;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--suth-ease-out),
+    border-color 160ms var(--suth-ease-out);
+}
+
+.tp-pagination .tp-pagination__size select:hover {
+  border-color: var(--suth-tint-line);
+  background-color: var(--suth-tint);
+}
+
+.tp-pagination .tp-pagination__size select:focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 2px;
+}
+
+.tp-pagination__range {
+  margin: 0;
+  color: var(--suth-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.tp-pagination__pages {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.tp-pagination__nav,
+.tp-pagination__page {
+  min-width: 38px;
+  height: 38px;
+  display: inline-grid;
+  place-items: center;
+  padding: 0 10px;
+  border: 1px solid var(--suth-line-soft);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--suth-ease-out),
+    color 160ms var(--suth-ease-out),
+    border-color 160ms var(--suth-ease-out);
+}
+
+.tp-pagination__nav:hover:not(:disabled),
+.tp-pagination__page:hover:not([aria-current="page"]) {
+  border-color: var(--suth-tint-line);
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
+}
+
+.tp-pagination__nav:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.tp-pagination__page[aria-current="page"] {
+  border-color: var(--suth-action);
+  background: var(--suth-action);
+  color: var(--suth-on-action);
+  box-shadow: 0 4px 10px -4px color-mix(in srgb, var(--suth-action) 70%, transparent);
+}
+
+.tp-pagination__nav:focus-visible,
+.tp-pagination__page:focus-visible {
+  outline: 3px solid var(--suth-focus-ring);
+  outline-offset: 2px;
+}
+
+.tp-pagination__gap {
+  color: var(--suth-muted);
+  padding: 0 4px;
+}
+
+@media (max-width: 760px) {
+  .tp-pagination {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tp-pagination__pages {
+    justify-content: center;
+  }
+
+  .tp-pagination__nav,
+  .tp-pagination__page {
+    min-width: 44px;
+    height: 44px;
+  }
+}
+
+/* Phones: page pills and the page-size field reach the 44px touch target. */
+@media (max-width: 760px) {
+  .tp-pagination .tp-pagination__size select,
+  .tp-pagination__nav,
+  .tp-pagination__page {
+    min-width: 44px;
+    height: 44px;
+  }
+}

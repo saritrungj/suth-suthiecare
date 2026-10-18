@@ -35,8 +35,11 @@ const organizations = [
   },
 ];
 async function setup(page, received = {}, options = {}) {
-  received.deprecatedRequests=[];
-  page.on('request',req=>{if(/\/pdpa\/|\/patient\/privacy\/|\/data-permissions/.test(req.url()))received.deprecatedRequests.push(req.url());});
+  received.deprecatedRequests = [];
+  page.on("request", (req) => {
+    if (/\/pdpa\/|\/patient\/privacy\/|\/data-permissions/.test(req.url()))
+      received.deprecatedRequests.push(req.url());
+  });
   await mockAdminApi(page);
   await page.addInitScript(() => {
     document.cookie = "suth_staff_session=synthetic-session; path=/";
@@ -62,7 +65,7 @@ async function setup(page, received = {}, options = {}) {
           },
         ],
       });
-    if (pathname === "/api/roles")
+    if (pathname === "/api/roles" || pathname === "/api/organizations/1/roles")
       return route.fulfill({ json: [{ id: 3, name: "Staff" }] });
     if (pathname.endsWith("/roles/3/permissions")) {
       if (method === "PUT") {
@@ -141,6 +144,10 @@ async function setup(page, received = {}, options = {}) {
       });
     return route.fallback();
   });
+  await openOrganizationSettings(page);
+}
+
+async function openOrganizationSettings(page) {
   await page.goto("/admin/organizations");
   await page
     .getByRole("complementary", { name: "โครงสร้างหน่วยงาน" })
@@ -152,11 +159,13 @@ test("new management sections follow the existing controls on desktop and mobile
   page,
 }, testInfo) => {
   await setup(page);
+  // Unit role rights live on the unified roles page; the unit page keeps settings.
+  await page.goto("/admin/roles");
   const role = page.getByRole("region", {
     name: "บทบาทและสิทธิ์ในหน่วยงาน",
     exact: true,
   });
-  await role.getByLabel("บทบาทที่ตั้งสิทธิ์").selectOption("3");
+  await role.getByRole("radio", { name: "Staff", exact: true }).check();
   await expect(
     role.getByRole("checkbox", { name: "ดูข้อมูล" }).first(),
   ).toBeAttached();
@@ -171,6 +180,7 @@ test("new management sections follow the existing controls on desktop and mobile
   await page.screenshot({
     path: `../outputs/pdpa/evidence/ui-role-${testInfo.project.name}.png`,
   });
+  await openOrganizationSettings(page);
   const settings = page.getByRole("region", {
     name: "การส่งต่อและการแจ้งเตือน",
   });
@@ -230,7 +240,13 @@ test("service settings save independently without privacy configuration", async 
   await expect
     .poll(() => received.notification)
     .toEqual({ destination: "-100123456", enabled: true, verified: true });
-  for(const title of ['สิทธิ์ข้อมูลละเอียดรายสมาชิก','วัตถุประสงค์และประกาศความเป็นส่วนตัว','คำขอใช้สิทธิ','อายุเก็บข้อมูลและการตรวจรายการก่อนลบ']) await expect(settings.getByText(title,{exact:true})).toHaveCount(0);
+  for (const title of [
+    "สิทธิ์ข้อมูลละเอียดรายสมาชิก",
+    "วัตถุประสงค์และประกาศความเป็นส่วนตัว",
+    "คำขอใช้สิทธิ",
+    "อายุเก็บข้อมูลและการตรวจรายการก่อนลบ",
+  ])
+    await expect(settings.getByText(title, { exact: true })).toHaveCount(0);
   expect(received.deprecatedRequests).toEqual([]);
 });
 
@@ -258,15 +274,34 @@ test("a failed section does not block the other settings", async ({ page }) => {
   ).toBeEnabled();
 });
 
-test("patient history has no privacy request settings or API calls", async ({page}) => {
- await mockPublicApi(page);
- await page.addInitScript(()=>{document.cookie='suth_patient_session=synthetic-session; path=/';localStorage.setItem('i18nextLng','th');});
- const requests=[];page.on('request',req=>{if(req.url().includes('/patient/privacy/'))requests.push(req.url());});
- await page.route('**/api/patient/history',route=>route.fulfill({json:{success:true,profile:{id:1,display_name:'บัญชีสาธิต',status:'active'},masterCases:[],responses:[]}}));
- await page.goto('/history/result');
- await expect(page.locator('.hr-layout')).toBeVisible();
- await expect(page.getByRole('region',{name:'คำขอเกี่ยวกับข้อมูลส่วนบุคคล'})).toHaveCount(0);
- expect(requests).toEqual([]);
+test("patient history has no privacy request settings or API calls", async ({
+  page,
+}) => {
+  await mockPublicApi(page);
+  await page.addInitScript(() => {
+    document.cookie = "suth_patient_session=synthetic-session; path=/";
+    localStorage.setItem("i18nextLng", "th");
+  });
+  const requests = [];
+  page.on("request", (req) => {
+    if (req.url().includes("/patient/privacy/")) requests.push(req.url());
+  });
+  await page.route("**/api/patient/history", (route) =>
+    route.fulfill({
+      json: {
+        success: true,
+        profile: { id: 1, display_name: "บัญชีสาธิต", status: "active" },
+        masterCases: [],
+        responses: [],
+      },
+    }),
+  );
+  await page.goto("/history/result");
+  await expect(page.locator(".hr-layout")).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "คำขอเกี่ยวกับข้อมูลส่วนบุคคล" }),
+  ).toHaveCount(0);
+  expect(requests).toEqual([]);
 });
 
 test("privacy notice sits with the form and consent remains keyboard accessible", async ({

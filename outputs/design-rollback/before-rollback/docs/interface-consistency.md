@@ -4,14 +4,14 @@
 
 ## แหล่งที่รับผิดชอบ
 
-| ส่วน | แหล่งกลาง |
-| --- | --- |
-| สี ฟอนต์ ระยะ และลำดับชั้น | `app/src/styles/tokens.css` |
-| ปุ่ม ช่องกรอก หัวข้อ ตัวกรอง ตาราง และแท็บ | `app/src/components/ui/index.jsx`, `component-system.css` |
-| ความกว้าง ระยะขอบ การขึ้นแถว และพื้นที่เลื่อน | `layout-system.css` |
-| focus / active / disabled และรายละเอียดการโต้ตอบ | `interaction-system.css` |
-| รูปลักษณ์หน้าต่างเดิมและ SweetAlert | `modal-system.css` |
-| โฟกัสและการซ้อนหน้าต่าง | `useDialogFocus.js` |
+| ส่วน                                             | แหล่งกลาง                                                 |
+| ------------------------------------------------ | --------------------------------------------------------- |
+| สี ฟอนต์ ระยะ และลำดับชั้น                       | `app/src/styles/tokens.css`                               |
+| ปุ่ม ช่องกรอก หัวข้อ ตัวกรอง ตาราง และแท็บ       | `app/src/components/ui/index.jsx`, `component-system.css` |
+| ความกว้าง ระยะขอบ การขึ้นแถว และพื้นที่เลื่อน    | `layout-system.css`                                       |
+| focus / active / disabled และรายละเอียดการโต้ตอบ | `interaction-system.css`                                  |
+| รูปลักษณ์หน้าต่างเดิมและ SweetAlert              | `modal-system.css`                                        |
+| โฟกัสและการซ้อนหน้าต่าง                          | `useDialogFocus.js`                                       |
 
 CSS รายหน้าต้องจำกัดขอบเขตใน root ของหน้านั้น หลีกเลี่ยง `td button`, `.filter-bar`, `.modal-overlay` หรือ `.label-icon` แบบไม่มีเจ้าของ เพราะ stylesheet ที่โหลดระหว่างสลับเมนูยังมีผลต่อหน้าถัดไป Dashboard ใช้ `.dashboard-page`; RiskCases ใช้ `.admin-wrapper2`; เนื้อหา FAQ ที่เป็น portal ใช้ `.hc-dialog`
 

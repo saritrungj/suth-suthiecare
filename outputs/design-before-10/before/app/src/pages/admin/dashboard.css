@@ -1562,17 +1562,47 @@ button {
 }
 
 /* Recent cases use the same work surface and neutral header as the case queue. */
-.dash-case-table-wrapper{color:var(--suth-ink);font-family:var(--suth-font)}
-.dash-case-table-header{font-family:inherit}
-.dash-case-table-scroll-area{border-radius:20px;scrollbar-color:var(--suth-control-line) var(--suth-surface-2)}
-.dash-case-table-header h2{color:var(--suth-ink)}
-.dash-case-table-wrapper .db-view-all-btn{min-height:44px}
-.dash-case-table-wrapper :focus-visible{outline:2px solid var(--suth-focus);outline-offset:3px}
-.dash-case-table-scroll-area .cw-queue{color:var(--suth-ink-2)}
+.dash-case-table-wrapper {
+  color: var(--suth-ink);
+  font-family: var(--suth-font);
+}
+.dash-case-table-header {
+  font-family: inherit;
+}
+.dash-case-table-scroll-area {
+  border-radius: 20px;
+  scrollbar-color: var(--suth-control-line) var(--suth-surface-2);
+}
+.dash-case-table-header h2 {
+  color: var(--suth-ink);
+}
+.dash-case-table-wrapper .db-view-all-btn {
+  min-height: 44px;
+}
+.dash-case-table-wrapper :focus-visible {
+  outline: 2px solid var(--suth-focus);
+  outline-offset: 3px;
+}
+.dash-case-table-scroll-area .cw-queue {
+  color: var(--suth-ink-2);
+}
 
 /* Expand recent results in the page; do not create a second vertical scroller. */
-.dash-case-table-scroll-area{max-height:none!important;overflow:visible!important;display:block}
-.dash-case-table-scroll-area > .cw-scroll{max-height:none!important;overflow:visible!important}
-.dash-case-table-scroll-area .table-pagination-footer{position:static}
-.dash-case-table-scroll-area thead th:first-child{border-top-left-radius:20px}
-.dash-case-table-scroll-area thead th:last-child{border-top-right-radius:20px}
+.dash-case-table-scroll-area {
+  max-height: none !important;
+  overflow: visible !important;
+  display: block;
+}
+.dash-case-table-scroll-area > .cw-scroll {
+  max-height: none !important;
+  overflow: visible !important;
+}
+.dash-case-table-scroll-area .table-pagination-footer {
+  position: static;
+}
+.dash-case-table-scroll-area thead th:first-child {
+  border-top-left-radius: 20px;
+}
+.dash-case-table-scroll-area thead th:last-child {
+  border-top-right-radius: 20px;
+}

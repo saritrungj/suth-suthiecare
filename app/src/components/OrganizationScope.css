@@ -1,0 +1,73 @@
+@import "../styles/tokens.css";
+
+.org-scope {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin: 6px 0 0;
+  font-family: var(--suth-font);
+  font-size: var(--suth-fs-body);
+  line-height: 1.45;
+  color: var(--suth-ink-2);
+}
+
+.org-scope__icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: var(--suth-action-ink);
+}
+
+.org-scope__prefix {
+  color: var(--suth-muted);
+}
+
+.org-scope__name {
+  font-weight: 700;
+  color: var(--suth-ink);
+  overflow-wrap: anywhere;
+}
+
+.org-scope__type {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface-2);
+  border: 1px solid var(--suth-line);
+  font-size: var(--suth-fs-label);
+  font-weight: 700;
+  color: var(--suth-ink-2);
+}
+
+.org-scope__parent {
+  color: var(--suth-muted);
+}
+
+.org-scope__parent::before {
+  content: "·";
+  margin-right: 8px;
+  color: var(--suth-line);
+}
+
+.org-scope--compact {
+  margin: 0;
+  font-size: var(--suth-fs-label);
+}
+
+.org-scope--compact .org-scope__icon {
+  width: 16px;
+  height: 16px;
+}
+
+@media (max-width: 760px) {
+  .org-scope__parent {
+    flex-basis: 100%;
+    font-size: var(--suth-fs-label);
+  }
+
+  .org-scope__parent::before {
+    content: none;
+  }
+}

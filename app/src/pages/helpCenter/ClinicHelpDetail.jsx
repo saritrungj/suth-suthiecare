@@ -1,5 +1,5 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
-import { toSafeHtml } from '../../utils/richText.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
+import { toSafeHtml } from "../../utils/richText.js";
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
@@ -178,16 +178,16 @@ export default function ClinicHelpDetail() {
   if (!selectedClinic) {
     return (
       <div
-        style={{ textAlign: "center", padding: "100px 0", color: "#64748b" }}
+        style={{ textAlign: "center", padding: "100px 0", color: "var(--suth-muted)" }}
       >
-        <p style={{ fontSize: "16px" }}>
+        <p style={{ fontSize: "var(--suth-fs-md)" }}>
           {loadError || "ไม่พบข้อมูลคลินิกที่คุณต้องการ"}
         </p>
         <button
           onClick={handleBack}
           style={{
             marginTop: "15px",
-            color: "#f47932",
+            color: "var(--suth-action-ink)",
             cursor: "pointer",
             background: "none",
             border: "none",
@@ -209,7 +209,8 @@ export default function ClinicHelpDetail() {
         <div className="hc-user-container hc-clinic-hero-inner">
           {/* กรอบโลโก้คลินิกขนาดลงตัว */}
           <div className="hc-clinic-logo-frame">
-            {selectedClinic.image && selectedClinic.image !== failedClinicImage ? (
+            {selectedClinic.image &&
+            selectedClinic.image !== failedClinicImage ? (
               <img
                 src={selectedClinic.image}
                 alt={selectedClinic.name}
@@ -281,13 +282,15 @@ export default function ClinicHelpDetail() {
                   className={`hc-sub-question-item ${selectedFaq?.faq_id === faq.faq_id ? "active" : ""}`}
                   onClick={() => setSelectedFaq(faq)}
                   style={{
-                    border: "1px solid #f1f5f9",
-                    borderRadius: "10px",
+                    border: "1px solid var(--suth-line-soft)",
+                    borderRadius: "var(--suth-radius)",
                     marginBottom: "6px",
                   }}
                 >
                   <FiFileText className="sub-q-icon" />
-                  <span className="sub-q-text">{toDisplayText(faq.question)}</span>
+                  <span className="sub-q-text">
+                    {toDisplayText(faq.question)}
+                  </span>
                 </li>
               ))}
 
@@ -301,7 +304,7 @@ export default function ClinicHelpDetail() {
                 <hr
                   style={{
                     border: "0",
-                    borderTop: "1px dashed #e2e8f0",
+                    borderTop: "1px dashed var(--suth-line-soft)",
                     margin: "12px 0",
                   }}
                 />
@@ -348,7 +351,9 @@ export default function ClinicHelpDetail() {
                           onClick={() => setSelectedFaq(faq)}
                         >
                           <FiFileText className="sub-q-icon" />
-                          <span className="sub-q-text">{toDisplayText(faq.question)}</span>
+                          <span className="sub-q-text">
+                            {toDisplayText(faq.question)}
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -380,7 +385,9 @@ export default function ClinicHelpDetail() {
               <div className="hc-answer-body-content">
                 <div
                   className="hc-faq-answer suth-rich-content"
-                  dangerouslySetInnerHTML={{ __html: toSafeHtml(selectedFaq.answer) }}
+                  dangerouslySetInnerHTML={{
+                    __html: toSafeHtml(selectedFaq.answer),
+                  }}
                 />
               </div>
             </div>

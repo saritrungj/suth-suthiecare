@@ -1,9 +1,9 @@
-@import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@300; 400; 500; 600; 700; 800&display=swap"); /* =========================================
+/* =========================================
    1. RESET & VARIABLES 
 ========================================= */
 .sut2-page {
-  font-family: "Sarabun", sans-serif;
-  background-color: #0f172a;
+  font-family: var(--suth-font);
+  background-color: var(--suth-ink);
   overflow-x: hidden;
 }
 .sut2-page * {
@@ -17,9 +17,9 @@
 .sut2-main-wrapper {
   position: relative;
   z-index: 2;
-  background-color: #f8fafc;
+  background-color: var(--suth-canvas);
   margin-bottom: 22rem;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 20px 50px rgba(31, 47, 63, 0.5);
   transform: translateZ(0);
   will-change: transform;
 }
@@ -30,8 +30,8 @@
   width: 100%;
   height: 22rem;
   z-index: 1;
-  background: #0f172a;
-  color: #94a3b8;
+  background: var(--suth-ink);
+  color: color-mix(in srgb, var(--suth-on-action) 72%, transparent);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -43,7 +43,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.3fr) minmax(17.5rem, 0.7fr);
   gap: clamp(3rem, 8vw, 7rem);
-  border-bottom: 1px solid #1e293b;
+  border-bottom: 1px solid var(--suth-ink);
   padding-bottom: 1.5rem;
 }
 .sut2-footer-logo {
@@ -54,25 +54,25 @@
 }
 .sut2-footer-col h2 {
   margin: 0 0 1rem;
-  color: #f8fafc;
-  font-size: 1.125rem;
+  color: var(--suth-on-action);
+  font-size: var(--suth-fs-section);
   line-height: 1.35;
 }
 .sut2-footer-brand > p {
   max-width: 50ch;
-  color: #c2ced8;
-  font-size: 0.9375rem;
+  color: var(--suth-control-line);
+  font-size: var(--suth-fs-body);
   line-height: 1.7;
 }
 .sut2-footer-organization {
   margin-bottom: 0.5rem;
-  color: #e4ebf0;
-  font-size: 0.9375rem;
+  color: color-mix(in srgb, var(--suth-on-action) 78%, transparent);
+  font-size: var(--suth-fs-body);
   font-weight: 700;
 }
 .sut2-footer-contact address {
-  color: #aebdca;
-  font-size: 0.9375rem;
+  color: color-mix(in srgb, var(--suth-on-action) 78%, transparent);
+  font-size: var(--suth-fs-body);
   font-style: normal;
   line-height: 1.65;
 }
@@ -83,13 +83,13 @@
 }
 .sut2-footer-links a {
   width: fit-content;
-  color: #c2ced8;
-  font-size: 0.9375rem;
+  color: var(--suth-control-line);
+  font-size: var(--suth-fs-body);
   line-height: 1.5;
   text-decoration: none;
 }
 .sut2-footer-links a:hover {
-  color: #ffad7b;
+  color: var(--suth-action);
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
@@ -100,8 +100,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  color: #94a3b8;
-  font-size: 0.8125rem;
+  color: color-mix(in srgb, var(--suth-on-action) 72%, transparent);
+  font-size: var(--suth-fs-label);
   line-height: 1.5;
 }
 .sut2-footer-legal {
@@ -111,17 +111,17 @@
   margin-right: auto;
 }
 .sut2-footer-legal a {
-  color: #cbd5e1;
+  color: var(--suth-control-line);
   text-decoration: none;
 }
 .sut2-footer-legal a:hover,
 .sut2-footer-legal a:focus-visible {
-  color: #fff;
+  color: var(--suth-on-action);
   text-decoration: underline;
 }
 .sut2-footer-version {
   flex: 0 0 auto;
-  color: #c2ced8;
+  color: var(--suth-control-line);
   font-variant-numeric: tabular-nums;
 }
 @media (max-width: 900px) {
@@ -207,51 +207,51 @@
   align-items: center;
   gap: 8px;
   padding: 0.625rem 0.875rem;
-  border-radius: 0.625rem;
-  font-family: "Sarabun", "Noto Sans Thai", sans-serif;
-  font-size: 0.875rem;
+  border-radius: var(--suth-radius);
+  font-family: var(--suth-font);
+  font-size: var(--suth-fs-sm);
   font-weight: 700;
   cursor: pointer;
   border: none;
   transition: 0.3s;
 }
 .sut2-nav__btn--history {
-  background: rgba(30, 41, 59, 0.6);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(31, 47, 63, 0.6);
+  color: var(--suth-on-action);
+  border: 1px solid color-mix(in srgb, var(--suth-surface) 15%, transparent);
   backdrop-filter: blur(8px);
 }
 .sut2-nav__btn--history:hover {
-  background: #f47932;
-  color: #ffffff;
+  background: var(--suth-action-hover);
+  color: var(--suth-on-action);
   border: none;
 }
 .sut2-nav--scrolled .sut2-nav__btn--history:hover {
-  background: #f47932;
-  color: #ffffff;
+  background: var(--suth-action-hover);
+  color: var(--suth-on-action);
 }
 .sut2-nav__btn--staff {
   width: 2.75rem;
   padding: 0;
   justify-content: center;
-  border: 1px solid rgba(255, 255, 255, 0.34);
-  background: rgba(20, 39, 56, 0.72);
-  color: #ffffff;
+  border: 1px solid color-mix(in srgb, var(--suth-surface) 34%, transparent);
+  background: rgba(31, 47, 63, 0.72);
+  color: var(--suth-on-action);
 }
 .sut2-nav__btn--staff:hover {
-  border-color: #f47932;
-  background: #f47932;
-  color: #ffffff;
+  border-color: var(--suth-action);
+  background: var(--suth-action-hover);
+  color: var(--suth-on-action);
 }
 .sut2-nav--scrolled .sut2-nav__btn--staff {
-  border-color: #d6dee5;
-  background: #ffffff;
-  color: #41566a;
+  border-color: var(--suth-line);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
 }
 .sut2-nav--scrolled .sut2-nav__btn--staff:hover {
-  border-color: #f47932;
-  background: #fff1e8;
-  color: #8d3809;
+  border-color: var(--suth-action);
+  background: var(--suth-danger-tint);
+  color: var(--suth-warning);
 }
 .sut2-nav__sr-only {
   position: absolute;
@@ -271,26 +271,26 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  font-size: 28px;
+  font-size: var(--suth-fs-display);
   cursor: pointer;
-  color: #1e293b;
+  color: var(--suth-ink);
   border: 0;
   background: transparent;
 }
 @media (max-width: 1024px) {
   .sut2-nav__menu-btn {
     display: inline-flex;
-    border: 1px solid rgba(255, 255, 255, 0.42);
-    border-radius: 0.625rem;
-    background: rgba(15, 34, 52, 0.82);
-    color: white;
-    font-size: 1.375rem;
-    box-shadow: 0 4px 14px rgba(15, 34, 52, 0.18);
+    border: 1px solid color-mix(in srgb, var(--suth-surface) 42%, transparent);
+    border-radius: var(--suth-radius);
+    background: rgba(31, 47, 63, 0.82);
+    color: var(--suth-on-action);
+    font-size: var(--suth-fs-title);
+    box-shadow: 0 4px 14px rgba(31, 47, 63, 0.18);
   }
   .sut2-nav--scrolled .sut2-nav__menu-btn {
-    border-color: rgba(255, 255, 255, 0.42);
-    background: rgba(15, 34, 52, 0.92);
-    color: #ffffff;
+    border-color: color-mix(in srgb, var(--suth-surface) 42%, transparent);
+    background: rgba(31, 47, 63, 0.92);
+    color: var(--suth-on-action);
   }
   .sut2-nav__actions {
     position: absolute;
@@ -300,11 +300,11 @@
     grid-template-columns: 1fr auto;
     align-items: center;
     gap: 0.75rem;
-    background: #f8fafc;
+    background: var(--suth-canvas);
     width: min(22rem, calc(100vw - 2rem));
     padding: 1rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(15, 34, 52, 0.14);
+    border-radius: var(--suth-radius);
+    box-shadow: 0 10px 30px rgba(31, 47, 63, 0.14);
     opacity: 0;
     pointer-events: none;
     transform: translateY(-10px);
@@ -330,7 +330,7 @@
     grid-row: 1;
   }
   .sut2-nav__actions .patient-account-login {
-    box-shadow: 0 6px 18px rgba(200, 86, 24, 0.24);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--suth-action-pressed) 24%, transparent);
   }
   .sut2-nav {
     background: transparent !important;
@@ -355,7 +355,7 @@
   overflow: hidden;
   transform: translateZ(0);
   z-index: 1;
-  background-color: #0f172a;
+  background-color: var(--suth-ink);
 }
 .sut2-hero__bg {
   position: absolute;
@@ -374,8 +374,8 @@
   inset: 0;
   background: linear-gradient(
     135deg,
-    rgba(15, 23, 42, 0.9) 0%,
-    rgba(15, 23, 42, 0.4) 100%
+    rgba(31, 47, 63, 0.9) 0%,
+    rgba(31, 47, 63, 0.4) 100%
   );
   z-index: 1;
   transform: translateZ(0);
@@ -393,52 +393,52 @@
 }
 .sut2-hero__text-box {
   flex: 1;
-  font-family: "Noto Sans Thai", sans-serif;
-  color: white;
+  font-family: var(--suth-font);
+  color: var(--suth-on-action);
   animation: sut2FadeInUp 1s ease-out;
   will-change: transform;
   width: 100%;
 }
 .sut2-hero__badge {
   display: none;
-  background: rgba(255, 255, 255, 0.1);
+  background: color-mix(in srgb, var(--suth-surface) 10%, transparent);
   backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 30px;
-  font-size: 14px;
+  border: 1px solid color-mix(in srgb, var(--suth-surface) 20%, transparent);
+  border-radius: var(--suth-radius-hero);
+  font-size: var(--suth-fs-sm);
   font-weight: 600;
   letter-spacing: 1px;
   margin-bottom: 20px;
 }
 .sut2-hero__title {
-  font-size: 4rem;
+  font-size: var(--suth-fs-display-lg);
   line-height: 1.3;
   font-weight: 700;
   margin-bottom: 20px;
 }
 .sut2-hero__highlight {
-  color: #f47932;
-  font-size: 3.2rem;
+  color: var(--suth-action-ink);
+  font-size: var(--suth-fs-display-lg);
 }
 .sut2-hero__subtitle {
-  font-size: 1.2rem;
+  font-size: var(--suth-fs-title);
   line-height: 1.6;
-  color: #cbd5e1;
+  color: var(--suth-control-line);
   margin-bottom: 40px;
   max-width: 500px;
 }
 .sut2-hero__cta {
   padding: 16px 32px;
-  font-size: 18px;
+  font-size: var(--suth-fs-section);
   font-weight: 700;
   font-family: inherit;
-  border-radius: 40px;
+  border-radius: var(--suth-radius-pill);
   border: none;
   cursor: pointer;
-  background: #f47932;
-  color: white;
+  background: var(--suth-action);
+  color: var(--suth-on-action);
   transition: 0.3s;
-  box-shadow: 0 10px 30px rgba(244, 121, 50, 0.4);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--suth-action) 40%, transparent);
 }
 .sut2-hero__cta-group {
   display: flex;
@@ -446,17 +446,17 @@
   flex-wrap: wrap;
 }
 .sut2-hero__cta--secondary {
-  background: #038f9f;
-  border: 2px solid #038f9f;
-  color: #ffffff;
-  box-shadow: 0 8px 20px rgba(3, 143, 159, 0.2);
+  background: var(--suth-care);
+  border: 2px solid var(--suth-care);
+  color: var(--suth-on-action);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--suth-info) 20%, transparent);
   transition: all 0.3s ease;
 }
 .sut2-hero__cta--secondary:hover {
-  background: #017986;
-  border-color: #017986;
+  background: var(--suth-care-ink);
+  border-color: var(--suth-care);
   transform: translateY(-2px);
-  color: #fff;
+  color: var(--suth-on-action);
 }
 .sut2-hero__banner-box {
   flex: 1;
@@ -468,12 +468,12 @@
   position: relative;
   width: 100%;
   aspect-ratio: 4/3;
-  border-radius: 24px;
+  border-radius: var(--suth-radius-card);
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.1);
+  background: color-mix(in srgb, var(--suth-surface) 10%, transparent);
   backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  border: 1px solid color-mix(in srgb, var(--suth-surface) 20%, transparent);
+  box-shadow: 0 20px 50px rgba(31, 47, 63, 0.3);
   transform: translateZ(0);
 }
 .sut2-banner-slide {
@@ -505,11 +505,11 @@
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  background: rgba(255, 255, 255, 0.4);
+  background: color-mix(in srgb, var(--suth-surface) 40%, transparent);
   transition: 0.3s;
 }
 .sut2-banner-dot.active {
-  background: white;
+  background: var(--suth-surface);
   transform: scale(1.3);
 }
 .sut2-banner-placeholder {
@@ -518,9 +518,9 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: white;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 24px;
+  color: var(--suth-on-action);
+  background: color-mix(in srgb, var(--suth-surface) 5%, transparent);
+  border-radius: var(--suth-radius-card);
 }
 @media (max-width: 992px) {
   .sut2-hero__content {
@@ -583,13 +583,17 @@
   height: 480px !important;
   transform: none !important;
   margin: 0 !important;
-  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
-  border-radius: 30px;
+  background: linear-gradient(
+    135deg,
+    var(--suth-action) 0%,
+    var(--suth-action) 100%
+  );
+  border-radius: var(--suth-radius-hero);
   padding: 40px 30px;
-  color: white;
+  color: var(--suth-on-action);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(249, 115, 22, 0.15);
+  box-shadow: 0 20px 40px color-mix(in srgb, var(--suth-action) 15%, transparent);
   display: flex;
   flex-direction: column;
   z-index: 10;
@@ -683,24 +687,24 @@
   margin-bottom: -80px;
   background: linear-gradient(
     to bottom,
-    rgba(15, 23, 42, 0) 0px,
-    rgba(15, 23, 42, 0.05) 10px,
-    rgba(15, 23, 42, 0.15) 20px,
-    rgba(15, 23, 42, 0.3) 30px,
-    rgba(15, 23, 42, 0.5) 40px,
-    rgba(15, 23, 42, 0.7) 50px,
-    rgba(15, 23, 42, 0.85) 60px,
-    rgba(15, 23, 42, 0.95) 70px,
-    rgba(15, 23, 42, 1) 80px,
-    rgba(15, 23, 42, 1) calc(100% - 80px),
-    rgba(15, 23, 42, 0.95) calc(100% - 70px),
-    rgba(15, 23, 42, 0.85) calc(100% - 60px),
-    rgba(15, 23, 42, 0.7) calc(100% - 50px),
-    rgba(15, 23, 42, 0.5) calc(100% - 40px),
-    rgba(15, 23, 42, 0.3) calc(100% - 30px),
-    rgba(15, 23, 42, 0.15) calc(100% - 20px),
-    rgba(15, 23, 42, 0.05) calc(100% - 10px),
-    rgba(15, 23, 42, 0) 100%
+    rgba(31, 47, 63, 0) 0px,
+    rgba(31, 47, 63, 0.05) 10px,
+    rgba(31, 47, 63, 0.15) 20px,
+    rgba(31, 47, 63, 0.3) 30px,
+    rgba(31, 47, 63, 0.5) 40px,
+    rgba(31, 47, 63, 0.7) 50px,
+    rgba(31, 47, 63, 0.85) 60px,
+    rgba(31, 47, 63, 0.95) 70px,
+    var(--suth-ink) 80px,
+    var(--suth-ink) calc(100% - 80px),
+    rgba(31, 47, 63, 0.95) calc(100% - 70px),
+    rgba(31, 47, 63, 0.85) calc(100% - 60px),
+    rgba(31, 47, 63, 0.7) calc(100% - 50px),
+    rgba(31, 47, 63, 0.5) calc(100% - 40px),
+    rgba(31, 47, 63, 0.3) calc(100% - 30px),
+    rgba(31, 47, 63, 0.15) calc(100% - 20px),
+    rgba(31, 47, 63, 0.05) calc(100% - 10px),
+    rgba(31, 47, 63, 0) 100%
   );
   overflow: visible;
   z-index: 10;
@@ -716,15 +720,15 @@
   gap: 0.75rem;
   width: min(100% - 2rem, 56rem);
   margin: 0;
-  color: rgba(226, 232, 240, 0.82);
-  font-size: clamp(0.6875rem, 1.4vw, 0.8125rem);
+  color: color-mix(in srgb, color-mix(in srgb, var(--suth-on-action) 78%, transparent) 82%, transparent);
+  font-size: var(--suth-fs-caption);
   line-height: 1.45;
   text-align: center;
   transform: translateX(-50%);
 }
 .sut2-clinic-guidance span + span {
   padding-left: 0.75rem;
-  border-left: 1px solid rgba(226, 232, 240, 0.28);
+  border-left: 1px solid color-mix(in srgb, var(--suth-line-soft) 28%, transparent);
 }
 @media (max-width: 640px) {
   .sut2-clinic-guidance {
@@ -756,7 +760,7 @@
   position: absolute;
   inset: 0;
   backface-visibility: hidden;
-  border-radius: 30px;
+  border-radius: var(--suth-radius-hero);
   overflow: hidden;
   -webkit-backface-visibility: hidden;
   background: transparent;
@@ -775,7 +779,7 @@
   margin-bottom: 20px;
 }
 .sut2-promo-title {
-  font-size: 2.2rem;
+  font-size: var(--suth-fs-display);
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.5px;
@@ -783,18 +787,18 @@
 .sut2-promo-divider {
   width: 40px;
   height: 4px;
-  background: white;
+  background: var(--suth-surface);
   margin: 20px 0;
-  border-radius: 2px;
+  border-radius: var(--suth-radius-xs);
 }
 .sut2-promo-desc {
-  font-size: 1.05rem;
+  font-size: var(--suth-fs-section);
   line-height: 1.7;
   opacity: 0.9;
 }
 .sut2-promo-content {
   height: 100%;
-  font-family: "Noto Sans Thai", sans-serif;
+  font-family: var(--suth-font);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -807,10 +811,10 @@
   margin-top: auto !important;
   margin-bottom: 20px !important;
   padding: 10px 24px !important;
-  border-radius: 25px !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  background: #f1f5f9 !important;
-  color: #1e293b !important;
+  border-radius: var(--suth-radius-hero) !important;
+  border: 1px solid color-mix(in srgb, var(--suth-surface) 30%, transparent) !important;
+  background: var(--suth-surface-2) !important;
+  color: var(--suth-ink) !important;
   font-weight: 700 !important;
   cursor: pointer !important;
   display: flex !important;
@@ -825,11 +829,11 @@
     transform 0.3s !important;
 }
 .promo-back .back-btn:hover {
-  background: #334155 !important;
-  color: #ffffff !important;
-  border-color: #334155 !important;
+  background: var(--suth-ink-2) !important;
+  color: var(--suth-on-action) !important;
+  border-color: var(--suth-ink-2) !important;
   transform: rotateY(180deg) translateY(-3px) !important;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 6px 15px rgba(31, 47, 63, 0.2) !important;
 }
 .promo-back .back-btn * {
   transform: none !important;
@@ -840,20 +844,20 @@
 .sut2-card {
   width: 100%;
   height: 100%;
-  background: white;
-  border-radius: 20px;
+  background: var(--suth-surface);
+  border-radius: var(--suth-radius-card);
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 15px rgba(31, 47, 63, 0.1) !important;
   display: flex;
   flex-direction: column;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--suth-line-soft);
   transform: none !important;
   transition: all 0.3s ease !important;
 }
 .sut2-card:hover {
   transform: translateY(-5px) !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 10px 25px rgba(31, 47, 63, 0.15) !important;
 }
 /* ===== Band ด้านบน ===== */
 .sut2-card__band {
@@ -862,7 +866,7 @@
   flex-shrink: 0;
   position: relative;
   overflow: hidden; /* สีเริ่มต้น (จะถูก override โดย theme class ด้านล่าง) */
-  background: #e2e8f0;
+  background: var(--suth-line-soft);
 }
 /* ถ้ามีรูปเป็น banner → รูปเต็ม band */
 .sut2-card__band--has-img {
@@ -876,7 +880,7 @@
 }
 /* ถ้ามีรูปไม่ใช่ banner → แสดงรูปกลาง band บนพื้นสีขาว */
 .sut2-card__band--has-illust {
-  background: #f8fafc !important;
+  background: var(--suth-canvas) !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -895,13 +899,13 @@
 }
 /* ===== Theme colors สำหรับ band เมื่อไม่มีรูป ===== */
 .sut2-card--blue .sut2-card__band {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, var(--suth-info), var(--suth-info));
 }
 .sut2-card--pink .sut2-card__band {
-  background: linear-gradient(135deg, #ec4899, #db2777);
+  background: linear-gradient(135deg, var(--suth-risk-dot-high), var(--suth-risk-dot-high));
 }
 .sut2-card--green .sut2-card__band {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--suth-risk-dot-low), var(--suth-care));
 }
 /* เมื่อมีรูป banner → ลบ gradient ออก */
 .sut2-card--blue .sut2-card__band--has-img,
@@ -913,7 +917,7 @@
 .sut2-card--blue .sut2-card__band--has-illust,
 .sut2-card--pink .sut2-card__band--has-illust,
 .sut2-card--green .sut2-card__band--has-illust {
-  background: #f8fafc !important;
+  background: var(--suth-canvas) !important;
 }
 /* ===== Body ตัวหนังสือ (ความสูงเท่ากันทุกการ์ด) ===== */
 .sut2-card__body {
@@ -924,8 +928,8 @@
   flex: 1;
 }
 .sut2-card__title {
-  font-size: 1.05rem;
-  color: #1e293b;
+  font-size: var(--suth-fs-section);
+  color: var(--suth-ink);
   font-weight: 700;
   line-height: 1.45;
   margin: 0; /* จำกัด 2 บรรทัด + ความสูงคงที่ */
@@ -937,8 +941,8 @@
   min-height: 3.05rem;
 }
 .sut2-card__desc {
-  font-size: 0.9rem;
-  color: #64748b;
+  font-size: var(--suth-fs-sm);
+  color: var(--suth-muted);
   font-weight: 400;
   line-height: 1.6;
   margin: 0; /* จำกัด 3 บรรทัด + ความสูงคงที่ */
@@ -952,25 +956,25 @@
 /* ===== Count footer ===== */
 .sut2-card__count {
   padding: 14px 20px;
-  background: #f8fafc;
-  border-top: 1px solid #f1f5f9;
+  background: var(--suth-canvas);
+  border-top: 1px solid var(--suth-line-soft);
   text-align: right;
   flex-shrink: 0;
 }
 .sut2-card__count-text {
-  font-size: 0.9rem;
-  color: #475569;
+  font-size: var(--suth-fs-sm);
+  color: var(--suth-ink-2);
 }
 .sut2-card__count-text strong {
-  color: #f47932;
-  font-size: 1.05rem;
+  color: var(--suth-action-ink);
+  font-size: var(--suth-fs-section);
 }
 /* ลบ class เก่าที่ไม่ใช้แล้ว */
 .sut2-card__illust {
   display: none !important;
 }
 .sut2-card__band--no-img {
-  background: #e2e8f0 !important;
+  background: var(--suth-line-soft) !important;
 }
 /* =========================================
    7. CLINIC CARD
@@ -983,14 +987,14 @@
   background-repeat: no-repeat;
   overflow: hidden;
   position: relative;
-  border-radius: 20px;
+  border-radius: var(--suth-radius-card);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 20px;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(31, 47, 63, 0.1);
   transition:
     transform 0.5s ease,
     opacity 0.5s ease;
@@ -1006,22 +1010,22 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(31, 47, 63, 0.35);
 }
 .clinic-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 25px rgba(31, 47, 63, 0.15);
 }
 .clinic-icon {
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: #fff7ed;
-  color: #f97316;
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 40px;
+  font-size: var(--suth-fs-display-lg);
   transform: translateZ(0);
 }
 .clinic-icon img {
@@ -1029,14 +1033,14 @@
   height: 120px;
   object-fit: cover;
   border-radius: 50%;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--suth-line-soft);
 }
 .clinic-card h3 {
-  font-family: "Noto Sans Thai", sans-serif;
-  font-size: 1.3rem;
+  font-family: var(--suth-font);
+  font-size: var(--suth-fs-title);
   font-weight: 700;
-  color: #ffffff;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  color: var(--suth-on-action);
+  text-shadow: 0 2px 8px rgba(31, 47, 63, 0.6);
 }
 /* =========================================
    8. HOW IT WORKS
@@ -1063,12 +1067,12 @@
 .sut2-steps-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(31, 47, 63, 0.85);
   z-index: 1;
   transform: translateZ(0);
 }
 .sut2-steps-content {
-  font-family: "Noto Sans Thai", sans-serif;
+  font-family: var(--suth-font);
   position: relative;
   z-index: 2;
   max-width: 1200px;
@@ -1076,8 +1080,8 @@
 }
 .sut2-steps-title {
   text-align: center;
-  color: white;
-  font-size: 2.5rem;
+  color: var(--suth-on-action);
+  font-size: var(--suth-fs-display-lg);
   margin-bottom: 60px;
 }
 .sut2-steps-grid {
@@ -1086,14 +1090,14 @@
   gap: 50px;
 }
 .sut2-step-glass {
-  background: rgba(255, 255, 255, 0.1);
+  background: color-mix(in srgb, var(--suth-surface) 10%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--suth-surface) 20%, transparent);
+  border-radius: var(--suth-radius-card);
   padding: 40px 30px;
   text-align: center;
-  color: white;
+  color: var(--suth-on-action);
   transition:
     box-shadow 0.3s,
     transform 0.3s,
@@ -1102,28 +1106,28 @@
 }
 .sut2-step-glass:hover {
   transform: translateY(-8px);
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  background: color-mix(in srgb, var(--suth-surface) 15%, transparent);
+  box-shadow: 0 10px 30px rgba(31, 47, 63, 0.3);
 }
 .sut2-step-icon {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: rgba(244, 121, 50, 0.2);
-  color: #f47932;
+  background: color-mix(in srgb, var(--suth-action) 20%, transparent);
+  color: var(--suth-action-ink);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
+  font-size: var(--suth-fs-display);
   margin: 0 auto 24px auto;
 }
 .sut2-step-glass h3 {
-  font-size: 1.2rem;
+  font-size: var(--suth-fs-title);
   margin-bottom: 16px;
 }
 .sut2-step-glass p {
-  font-size: 1.05rem;
-  color: #cbd5e1;
+  font-size: var(--suth-fs-section);
+  color: var(--suth-control-line);
   line-height: 1.6;
 }
 
@@ -1134,7 +1138,7 @@
   position: relative;
   padding: 120px 5%;
   /* Smooth Apple-style gradient using the brand colors (#f47932 → #038f9f) */
-  background: linear-gradient(135deg, #f47932 0%, #038f9f 100%);
+  background: linear-gradient(135deg, var(--suth-action) 0%, var(--suth-care) 100%);
   overflow: hidden;
 }
 /* Soft blur shades at the top & bottom that blend the section gradient into
@@ -1143,30 +1147,29 @@
   content: "";
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(
+  background: linear-gradient(
       to bottom,
-      rgba(15, 23, 42, 0.8) 0%,
-      rgba(15, 23, 42, 0) 26%
+      rgba(31, 47, 63, 0.8) 0%,
+      rgba(31, 47, 63, 0) 26%
     ),
     linear-gradient(
       to top,
-      rgba(248, 250, 252, 0.9) 0%,
-      rgba(248, 250, 252, 0) 26%
+      color-mix(in srgb, var(--suth-canvas) 90%, transparent) 0%,
+      color-mix(in srgb, var(--suth-canvas) 0%, transparent) 26%
     ),
     radial-gradient(
       circle at 15% 20%,
-      rgba(255, 255, 255, 0.18) 0%,
+      color-mix(in srgb, var(--suth-surface) 18%, transparent) 0%,
       transparent 45%
     ),
     radial-gradient(
       circle at 85% 80%,
-      rgba(255, 255, 255, 0.14) 0%,
+      color-mix(in srgb, var(--suth-surface) 14%, transparent) 0%,
       transparent 45%
     ),
     radial-gradient(
       circle at 70% 10%,
-      rgba(3, 143, 159, 0.35) 0%,
+      color-mix(in srgb, var(--suth-care) 35%, transparent) 0%,
       transparent 50%
     );
   pointer-events: none;
@@ -1180,10 +1183,10 @@
 }
 .sut2-sites-title {
   text-align: center;
-  color: #ffffff;
-  font-size: 2.5rem;
+  color: var(--suth-on-action);
+  font-size: var(--suth-fs-display-lg);
   margin-bottom: 60px;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.14);
+  text-shadow: 0 2px 12px rgba(31, 47, 63, 0.14);
 }
 .sut2-sites-grid {
   display: grid;
@@ -1193,11 +1196,11 @@
 .sut2-site-card {
   display: flex;
   flex-direction: column;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
+  background: var(--suth-surface);
+  border: 1px solid var(--suth-line-soft);
+  border-radius: var(--suth-radius-card);
   overflow: hidden;
-  color: #0f172a;
+  color: var(--suth-ink);
   text-decoration: none;
   transition:
     box-shadow 0.3s,
@@ -1207,15 +1210,15 @@
 }
 .sut2-site-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  border-color: #f47932;
+  box-shadow: 0 10px 30px rgba(31, 47, 63, 0.1);
+  border-color: var(--suth-action);
 }
 .sut2-site-banner {
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
   display: block;
-  background: #e2e8f0;
+  background: var(--suth-line-soft);
 }
 .sut2-site-body {
   display: flex;
@@ -1224,13 +1227,13 @@
   padding: 24px 24px 28px;
 }
 .sut2-site-name {
-  font-size: 1.2rem;
+  font-size: var(--suth-fs-title);
   margin-bottom: 12px;
-  color: #0f172a;
+  color: var(--suth-ink);
 }
 .sut2-site-desc {
-  font-size: 1.05rem;
-  color: #475569;
+  font-size: var(--suth-fs-section);
+  color: var(--suth-ink-2);
   line-height: 1.6;
   margin-bottom: 24px;
 }
@@ -1238,13 +1241,13 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #f47932;
-  font-size: 0.95rem;
+  color: var(--suth-action-ink);
+  font-size: var(--suth-fs-body);
   font-weight: 600;
   margin-top: auto;
 }
 .sut2-site-link svg {
-  font-size: 1rem;
+  font-size: var(--suth-fs-md);
 }
 
 /* =========================================
@@ -1345,25 +1348,25 @@
     width: 85px;
   }
   .sut2-card__title {
-    font-size: 0.95rem;
+    font-size: var(--suth-fs-body);
     min-height: 2.75rem;
   }
   .sut2-card__desc {
-    font-size: 0.82rem;
+    font-size: var(--suth-fs-label);
     min-height: 3.9rem;
   }
   .sut2-step-glass {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-    background: rgba(30, 41, 59, 0.95);
-    border-color: rgba(255, 255, 255, 0.05);
+    background: rgba(31, 47, 63, 0.95);
+    border-color: color-mix(in srgb, var(--suth-surface) 5%, transparent);
     box-shadow: none;
   }
   .sut2-sites-section {
     padding: 80px 5%;
   }
   .sut2-sites-title {
-    font-size: 1.9rem;
+    font-size: var(--suth-fs-display);
     margin-bottom: 40px;
   }
   .sut2-sites-grid {
@@ -1373,14 +1376,14 @@
     padding: 20px 20px 24px;
   }
   .sut2-hero__title {
-    font-size: 30px !important;
+    font-size: var(--suth-fs-display) !important;
     line-height: 1.35;
   }
   .sut2-hero__highlight {
-    font-size: 20px !important;
+    font-size: var(--suth-fs-title) !important;
   }
   .sut2-hero__subtitle {
-    font-size: 15px !important;
+    font-size: var(--suth-fs-body) !important;
     line-height: 1.6;
     margin: 0 auto 30px auto !important;
   }
@@ -1395,17 +1398,17 @@
     max-width: none;
   }
   .sut2-nav__menu-btn {
-    font-size: 1.375rem;
-    color: white;
+    font-size: var(--suth-fs-title);
+    color: var(--suth-on-action);
   }
   .sut2-nav--scrolled .sut2-nav__menu-btn {
-    color: #ffffff;
+    color: var(--suth-on-action);
   }
   .sut2-nav__actions {
     right: 1rem;
   }
   .sut2-nav__btn {
-    font-size: 0.875rem;
+    font-size: var(--suth-fs-sm);
     padding: 0.625rem 0.875rem;
   }
   .sut2-nav__btn--staff {
@@ -1420,12 +1423,12 @@
   }
   .sut2-hero__cta {
     padding: 10px 14px !important;
-    font-size: 14px !important;
+    font-size: var(--suth-fs-sm) !important;
     flex: 1;
     white-space: nowrap;
   }
   .back-btn {
-    font-size: 0.9rem;
+    font-size: var(--suth-fs-sm);
     padding: 0.4rem 0.8rem;
     display: block;
     width: 90%;
@@ -1435,7 +1438,7 @@
     margin-bottom: 20px;
   }
   .clinic-card h3 {
-    font-size: 1rem;
+    font-size: var(--suth-fs-md);
     line-height: 1.3;
     text-align: center;
     white-space: nowrap;

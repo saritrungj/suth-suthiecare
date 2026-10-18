@@ -18,7 +18,7 @@
   flex: none;
   width: 20px;
   height: 20px;
-  color: var(--theme-color, var(--suth-action));
+  color: var(--theme-color, var(--suth-action-ink));
 }
 .form-privacy-notice summary span {
   flex: 1;

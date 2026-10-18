@@ -1,8 +1,20 @@
-import { SelectionGroup as UiSelectionGroup, Surface as UiSurface } from '../../components/ui/index.jsx';
-import { EmptyRow as UiEmptyRow, LoadingRows as UiLoadingRows } from '../../components/ui/index.jsx';
-import { PageHeader as UiPageHeader, Button as UiButton, FilterBar as UiFilterBar, TextInput as UiTextInput, DataTable as UiDataTable } from '../../components/ui/index.jsx';
-import SearchableSelect from '../../components/SearchableSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import {
+  SelectionGroup as UiSelectionGroup,
+  Surface as UiSurface,
+} from "../../components/ui/index.jsx";
+import {
+  EmptyRow as UiEmptyRow,
+  LoadingRows as UiLoadingRows,
+} from "../../components/ui/index.jsx";
+import {
+  PageHeader as UiPageHeader,
+  Button as UiButton,
+  FilterBar as UiFilterBar,
+  TextInput as UiTextInput,
+  DataTable as UiDataTable,
+} from "../../components/ui/index.jsx";
+import SearchableSelect from "../../components/SearchableSelect";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { usePageExport } from "../../components/ExcelExport";
 import { authSession } from "../../utils/authSession";
 import React, {
@@ -235,7 +247,14 @@ export default function UserManagement({
   );
   const totalItems =
     activeTab === "staff" ? filteredUsers.length : memberPagination.total;
-  usePageExport({title:activeTab === "staff" ? "ผู้ใช้" : "สมาชิก",sources:activeTab === "staff" ? [{resource:"users",ids:filteredUsers.map(r=>r.id)}] : [{resource:"members",filters:{search,status:statusFilter}}],disabled:loading});
+  usePageExport({
+    title: activeTab === "staff" ? "ผู้ใช้" : "สมาชิก",
+    sources:
+      activeTab === "staff"
+        ? [{ resource: "users", ids: filteredUsers.map((r) => r.id) }]
+        : [{ resource: "members", filters: { search, status: statusFilter } }],
+    disabled: loading,
+  });
   const totalPages =
     activeTab === "staff" ? staffTotalPages : memberPagination.total_pages;
 
@@ -474,7 +493,9 @@ export default function UserManagement({
             </p>
           </div>
           {activeTab === "staff" && (
-            <UiButton variant="primary" type="submit"
+            <UiButton
+              variant="primary"
+              type="submit"
               className="sum-add-btn"
               onClick={() => {
                 setEditingUser(null);
@@ -493,7 +514,11 @@ export default function UserManagement({
         </UiPageHeader>
 
         {!standalone && (
-          <UiSelectionGroup as="nav" className="sum-user-tabs" aria-label="ประเภทผู้ใช้งาน">
+          <UiSelectionGroup
+            as="nav"
+            className="sum-user-tabs"
+            aria-label="ประเภทผู้ใช้งาน"
+          >
             <button
               className={activeTab === "staff" ? "active" : ""}
               onClick={() => switchTab("staff")}
@@ -587,7 +612,16 @@ export default function UserManagement({
             </div>
           )}
 
-          <div className="sum-table-responsive" tabIndex={0} role="region" aria-label={activeTab === "staff" ? "ตารางผู้ดูแลระบบและเจ้าหน้าที่" : "ตารางผู้มารับบริการ"}>
+          <div
+            className="sum-table-responsive"
+            tabIndex={0}
+            role="region"
+            aria-label={
+              activeTab === "staff"
+                ? "ตารางผู้ดูแลระบบและเจ้าหน้าที่"
+                : "ตารางผู้มารับบริการ"
+            }
+          >
             {activeTab === "staff" ? (
               <UiDataTable>
                 <thead>
@@ -802,7 +836,10 @@ export default function UserManagement({
                 </span>
               </div>
               <div className="sum-pagination-controls">
-                <UiButton variant="secondary" size="icon" type="submit"
+                <UiButton
+                  variant="secondary"
+                  size="icon"
+                  type="submit"
                   className="sum-page-btn"
                   onClick={() =>
                     setCurrentPage((page) => Math.max(1, page - 1))
@@ -815,7 +852,10 @@ export default function UserManagement({
                 <span>
                   หน้า <strong>{currentPage}</strong> จาก {totalPages}
                 </span>
-                <UiButton variant="secondary" size="icon" type="submit"
+                <UiButton
+                  variant="secondary"
+                  size="icon"
+                  type="submit"
                   className="sum-page-btn"
                   onClick={() =>
                     setCurrentPage((page) => Math.min(totalPages, page + 1))
@@ -861,7 +901,11 @@ function StatusBadge({ status, staff = false }) {
       ? "ใช้งานปกติ"
       : "ระงับการใช้งาน"
     : memberStatusMap[status] || "ไม่ทราบสถานะ";
-  return <span className={`sum-status sum-status-${status}`}>{toDisplayText(label)}</span>;
+  return (
+    <span className={`sum-status sum-status-${status}`}>
+      {toDisplayText(label)}
+    </span>
+  );
 }
 
 function LoadingRows({ columns }) {
@@ -869,5 +913,7 @@ function LoadingRows({ columns }) {
 }
 
 function EmptyRow({ columns, message, hint }) {
-  return <UiEmptyRow columns={columns} title={message} hint={hint} icon={FiUsers} />;
+  return (
+    <UiEmptyRow columns={columns} title={message} hint={hint} icon={FiUsers} />
+  );
 }

@@ -7,7 +7,9 @@
   box-sizing: border-box;
 }
 
-.ar-page { font-family: "Sarabun", sans-serif; }
+.ar-page {
+  font-family: "Sarabun", sans-serif;
+}
 
 /* ─── PAGE ─── */
 .ar-page {
@@ -62,7 +64,9 @@
   padding: 8px 16px;
   border-radius: 12px;
   cursor: pointer;
-  transition: background-color 180ms ease-out, color 180ms ease-out;
+  transition:
+    background-color 180ms ease-out,
+    color 180ms ease-out;
   font-family: inherit;
   white-space: nowrap; /* กัน text ตัดบรรทัดบนจอเล็ก */
 }
@@ -296,7 +300,9 @@
   font-weight: 700;
   border-radius: 12px;
   cursor: pointer;
-  transition: background-color 180ms ease-out, color 180ms ease-out;
+  transition:
+    background-color 180ms ease-out,
+    color 180ms ease-out;
   border: none;
   color: #fff;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -704,7 +710,7 @@
     min-width: 0 !important;
   }
   .swal2-confirm,
-.swal2-cancel {
+  .swal2-cancel {
     flex: 1 !important;
     padding: 12px 5px !important;
     font-size: 14px !important;

@@ -24,7 +24,7 @@
 }
 .management-settings .settings-heading h2 {
   margin: 0;
-  font-size: 1.15rem;
+  font-size: var(--suth-fs-section);
   line-height: 1.5;
 }
 .settings-heading p,
@@ -32,7 +32,7 @@
   max-width: 70ch;
   margin: 6px 0 0;
   color: var(--suth-muted);
-  font-size: 0.9rem;
+  font-size: var(--suth-fs-sm);
 }
 .settings-toolbar {
   align-items: flex-end;
@@ -44,7 +44,7 @@
 }
 .settings-count {
   color: var(--suth-muted);
-  font-size: 0.85rem;
+  font-size: var(--suth-fs-sm);
   font-variant-numeric: tabular-nums;
 }
 .settings-grid {
@@ -66,7 +66,7 @@
   display: grid;
   gap: 7px;
   color: var(--suth-ink-2);
-  font-size: 0.9rem;
+  font-size: var(--suth-fs-sm);
   font-weight: 700;
 }
 .settings-field :is(input, select, textarea) {
@@ -109,7 +109,7 @@
   background: var(--suth-surface);
   color: var(--suth-ink-2);
   font: inherit;
-  font-size: 0.9rem;
+  font-size: var(--suth-fs-sm);
   font-weight: 700;
   line-height: 1.5;
   text-align: center;
@@ -160,7 +160,7 @@
   min-width: 0;
   padding: 10px 0;
   color: var(--suth-ink-2);
-  font-size: 0.9rem;
+  font-size: var(--suth-fs-sm);
   line-height: 1.6;
   cursor: pointer;
 }
@@ -181,7 +181,7 @@
   display: block;
   margin-top: 3px;
   color: var(--suth-muted);
-  font-size: 0.85rem;
+  font-size: var(--suth-fs-sm);
 }
 .settings-check:has(input:disabled) {
   cursor: not-allowed;
@@ -210,7 +210,7 @@
   margin: 0 0 8px;
   padding: 0;
   color: var(--suth-ink);
-  font-size: 0.9rem;
+  font-size: var(--suth-fs-sm);
   font-weight: 700;
   overflow-wrap: anywhere;
 }
@@ -224,7 +224,7 @@
   align-items: center;
   padding: 8px 12px;
   border: 1px solid var(--suth-control-line);
-  border-radius: 8px;
+  border-radius: var(--suth-radius);
 }
 .settings-permission-options .settings-check:has(input:checked) {
   color: var(--suth-action-ink);
@@ -267,13 +267,13 @@
 }
 .settings-panel-heading strong {
   display: block;
-  font-size: 0.95rem;
+  font-size: var(--suth-fs-body);
 }
 .settings-panel-heading small {
   display: block;
   margin-top: 3px;
   color: var(--suth-muted);
-  font-size: 0.85rem;
+  font-size: var(--suth-fs-sm);
   line-height: 1.6;
 }
 .settings-chevron {
@@ -305,13 +305,13 @@
   padding: 16px 0;
 }
 .settings-record-heading strong {
-  font-size: 0.95rem;
+  font-size: var(--suth-fs-body);
   overflow-wrap: anywhere;
 }
 .settings-record small,
 .settings-record time {
   color: var(--suth-muted);
-  font-size: 0.85rem;
+  font-size: var(--suth-fs-sm);
   font-variant-numeric: tabular-nums;
 }
 .settings-prose {
@@ -325,10 +325,10 @@
   display: inline-flex;
   align-items: center;
   padding: 4px 10px;
-  border-radius: 6px;
+  border-radius: var(--suth-radius);
   background: var(--suth-neutral-tint);
   color: var(--suth-ink-2);
-  font-size: 0.8rem;
+  font-size: var(--suth-fs-label);
   font-weight: 700;
 }
 .settings-status--submitted,
@@ -353,7 +353,7 @@
   border-radius: var(--suth-radius);
   background: var(--suth-neutral-tint);
   color: var(--suth-ink-2);
-  font-size: 0.9rem;
+  font-size: var(--suth-fs-sm);
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
@@ -379,7 +379,7 @@
   padding: 20px 0;
   margin: 0;
   color: var(--suth-muted);
-  font-size: 0.9rem;
+  font-size: var(--suth-fs-sm);
 }
 .settings-loading svg,
 .settings-empty svg {

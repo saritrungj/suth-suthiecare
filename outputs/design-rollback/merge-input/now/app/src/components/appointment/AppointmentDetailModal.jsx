@@ -1,6 +1,6 @@
-import { DialogFrame } from '../ui/index.jsx';
-import { Button as UiButton } from '../ui/index.jsx';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { DialogFrame } from "../ui/index.jsx";
+import { Button as UiButton } from "../ui/index.jsx";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import "./AppointmentDetailModal.css";
 import AppointmentFormModal from "./AppointmentFormModal";
 
@@ -19,57 +19,67 @@ export default function AppointmentDetailModal({
 
   return (
     <>
-      <DialogFrame className="detail-modal"
-        aria-label="รายละเอียดนัดหมาย" onClose={onClose}>
-          <div className="modal-header">
-            <div>
-              <h3>{user?.name}</h3>
-              <p>Case ID: {user?.caseId}</p>
-            </div>
-
-            <button
-              className="close-btn"
-              onClick={onClose}
-              aria-label="ปิดหน้าต่าง"
-            >
-              ✕
-            </button>
+      <DialogFrame
+        className="detail-modal"
+        aria-label="รายละเอียดนัดหมาย"
+        onClose={onClose}
+      >
+        <div className="modal-header">
+          <div>
+            <h3>{user?.name}</h3>
+            <p>Case ID: {user?.caseId}</p>
           </div>
 
-          <div className="appointment-list">
-            {appointments.map((a, index) => {
-              const status = statusConfig[a.status];
+          <button
+            className="close-btn"
+            onClick={onClose}
+            aria-label="ปิดหน้าต่าง"
+          >
+            ✕
+          </button>
+        </div>
 
-              return (
-                <div key={a.id} className={`appointment-card ${a.status}`}>
-                  <div className="appoint-number">{index + 1}</div>
+        <div className="appointment-list">
+          {appointments.map((a, index) => {
+            const status = statusConfig[a.status];
 
-                  <div className="appoint-info">
-                    <h4>นัดหมายครั้งที่</h4>
-                    <p>บริการ : {a.service}</p>
-                    <p>{a.date}</p>
+            return (
+              <div key={a.id} className={`appointment-card ${a.status}`}>
+                <div className="appoint-number">{index + 1}</div>
 
-                    <div className="note">📄 ({toDisplayText(a.note)})</div>
-                  </div>
+                <div className="appoint-info">
+                  <h4>นัดหมายครั้งที่</h4>
+                  <p>บริการ : {a.service}</p>
+                  <p>{a.date}</p>
 
-                  <div className={`appoint-status ${a.status}`}>
-                    <div className="status-icon">{status.icon}</div>
-
-                    <span className="status-text">{toDisplayText(status.label)}</span>
-                  </div>
-
-                  <button className="edit-btn" onClick={() => onEdit(a)}>
-                    ✎
-                  </button>
+                  <div className="note">📄 ({toDisplayText(a.note)})</div>
                 </div>
-              );
-            })}
-          </div>
 
-          <UiButton variant="primary" type="submit" className="add-btn" onClick={onAdd}>
-            + เพิ่มนัดหมาย
-          </UiButton>
-        </DialogFrame>
+                <div className={`appoint-status ${a.status}`}>
+                  <div className="status-icon">{status.icon}</div>
+
+                  <span className="status-text">
+                    {toDisplayText(status.label)}
+                  </span>
+                </div>
+
+                <button className="edit-btn" onClick={() => onEdit(a)}>
+                  ✎
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        <UiButton
+          variant="primary"
+          type="submit"
+          className="add-btn"
+          onClick={onAdd}
+        >
+          + เพิ่มนัดหมาย
+        </UiButton>
+      </DialogFrame>
     </>
   );
 }

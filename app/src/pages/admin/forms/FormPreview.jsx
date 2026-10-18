@@ -1,8 +1,10 @@
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
-import { toSafeHtml } from '../../../utils/richText.js';
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
+import { toSafeHtml } from "../../../utils/richText.js";
 import React, { useEffect, useState } from "react";
 import "./styles/FormPreview.css";
+import { DEFAULT_FORM_THEME } from "./formThemePalette";
+import { OrganizationScope } from "../../../components/OrganizationScope";
 import { showSuccessAlert } from "../../../utils/alerts";
 
 // 🟢 ฟังก์ชันจัดฟอร์แมตเลขบัตร (x-xxxx-xxxxx-xx-x)
@@ -361,7 +363,9 @@ const FormPreview = () => {
                         checked={isSelected}
                         onChange={() => handleAnswer(q.id, opt)}
                       />
-                      <span dangerouslySetInnerHTML={{ __html: toSafeHtml(opt) }} />
+                      <span
+                        dangerouslySetInnerHTML={{ __html: toSafeHtml(opt) }}
+                      />
                     </label>
 
                     {isSelected && showInput && (
@@ -380,7 +384,7 @@ const FormPreview = () => {
                             handleOptionInputChange(q.id, opt, e.target.value)
                           }
                           style={{
-                            fontSize: "14px",
+                            fontSize: "var(--suth-fs-sm)",
                             padding: "6px 0",
                             borderBottomColor: "var(--theme-color)",
                             maxWidth: "300px",
@@ -422,7 +426,9 @@ const FormPreview = () => {
                       <span className="preview-check__mark">
                         {isChecked ? "✓" : ""}
                       </span>
-                      <span dangerouslySetInnerHTML={{ __html: toSafeHtml(opt) }} />
+                      <span
+                        dangerouslySetInnerHTML={{ __html: toSafeHtml(opt) }}
+                      />
                     </label>
 
                     {isChecked && showInput && (
@@ -441,7 +447,7 @@ const FormPreview = () => {
                             handleOptionInputChange(q.id, opt, e.target.value)
                           }
                           style={{
-                            fontSize: "14px",
+                            fontSize: "var(--suth-fs-sm)",
                             padding: "6px 0",
                             borderBottomColor: "var(--theme-color)",
                             maxWidth: "300px",
@@ -490,7 +496,10 @@ const FormPreview = () => {
                   <tr>
                     <th></th>
                     {q.cols.map((col, i) => (
-                      <th key={i} dangerouslySetInnerHTML={{ __html: toSafeHtml(col) }} />
+                      <th
+                        key={i}
+                        dangerouslySetInnerHTML={{ __html: toSafeHtml(col) }}
+                      />
                     ))}
                   </tr>
                 </thead>
@@ -508,7 +517,9 @@ const FormPreview = () => {
                           : ""
                       }
                     >
-                      <td dangerouslySetInnerHTML={{ __html: toSafeHtml(row) }} />
+                      <td
+                        dangerouslySetInnerHTML={{ __html: toSafeHtml(row) }}
+                      />
                       {q.cols.map((col, j) => {
                         const key = String(i);
                         const rowAns =
@@ -554,7 +565,7 @@ const FormPreview = () => {
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
-                fill="#d93025"
+                style={{ fill: "var(--suth-danger)" }}
               >
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path>
               </svg>
@@ -571,7 +582,7 @@ const FormPreview = () => {
 
   const theme = formData.theme || {};
   const bannerType = theme.bannerType || "none";
-  const bannerBgColor = theme.bannerBgColor || "#4285f4";
+  const bannerBgColor = theme.bannerBgColor || DEFAULT_FORM_THEME.bannerBgColor;
   const headerImage = theme.headerImage || null;
   const bannerText = theme.bannerText || "";
   const bannerTextAlign = theme.bannerTextAlign || "center";
@@ -582,8 +593,8 @@ const FormPreview = () => {
     <div
       className="preview-page"
       style={{
-        "--theme-color": theme.color || "#673ab7",
-        "--bg-color": theme.bg || "#f0f2f5",
+        "--theme-color": theme.color || DEFAULT_FORM_THEME.color,
+        "--bg-color": theme.bg || DEFAULT_FORM_THEME.bg,
       }}
     >
       {bannerType !== "none" && (
@@ -646,6 +657,14 @@ const FormPreview = () => {
       <div className="preview-container">
         <form className="preview-form" onSubmit={(e) => e.preventDefault()}>
           <div className="preview-step-intro">
+            {formData.organization_name && currentStep === 0 && (
+              <OrganizationScope
+                compact
+                prefix="จัดทำโดย"
+                name={formData.organization_name}
+                orgType={formData.organization_type || "hospital"}
+              />
+            )}
             <h2
               className="preview-step-intro__title"
               dangerouslySetInnerHTML={{
@@ -653,7 +672,9 @@ const FormPreview = () => {
               }}
             />
             {stepData?.desc && (
-              <p dangerouslySetInnerHTML={{ __html: toSafeHtml(stepData.desc) }} />
+              <p
+                dangerouslySetInnerHTML={{ __html: toSafeHtml(stepData.desc) }}
+              />
             )}
             <p className="req" style={{ marginTop: "10px" }}>
               * แสดงว่าเป็นคำถามที่จำเป็น

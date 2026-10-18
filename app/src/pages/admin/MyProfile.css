@@ -1,31 +1,17 @@
+/* Page root: the shared page column (kit-system.css) sets the gutter and
+   the 1500px cap; the root only scrolls inside the fixed-height shell. */
 .profile-page {
-  min-height: 100%;
-  padding: clamp(1.5rem, 3vw, 2.5rem);
-  overflow: auto;
-  background: #f5f7fa;
-  color: #1f2f3f;
-  font-family: Sarabun, "Noto Sans Thai", system-ui, sans-serif;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  background: var(--suth-canvas);
+  color: var(--suth-ink);
+  font-family: var(--suth-font);
 }
-.profile-header,
-.profile-grid,
 .profile-alert,
 .profile-loading {
-  max-width: 1100px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.profile-header {
-  margin-bottom: 1.5rem;
-}
-.profile-header h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  letter-spacing: -0.02em;
-}
-.profile-header p {
-  margin: 6px 0 0;
-  color: #526578;
-  line-height: 1.6;
+  margin-bottom: 20px;
 }
 .profile-grid {
   display: grid;
@@ -35,19 +21,28 @@
 }
 .profile-card {
   padding: 1.5rem;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 6px 16px rgba(21, 40, 61, 0.08);
+  border-radius: var(--suth-radius-card);
+  background: var(--suth-surface);
+  box-shadow: var(--suth-shadow-soft);
+}
+.profile-card button[type="submit"] {
+  border-radius: var(--suth-radius-pill);
+  padding-inline: 22px;
+}
+@media (max-width: 760px) {
+  .profile-card {
+    border-radius: var(--suth-radius-inner);
+  }
 }
 .profile-card h2 {
   display: flex;
   align-items: center;
   gap: 10px;
   margin: 0 0 1.25rem;
-  font-size: 1.1rem;
+  font-size: var(--suth-fs-section);
 }
 .profile-card h2 svg {
-  color: #f47932;
+  color: var(--suth-action-ink);
 }
 .profile-meta {
   display: grid;
@@ -60,7 +55,7 @@
   gap: 8px;
 }
 .profile-meta dt {
-  color: #526578;
+  color: var(--suth-muted);
 }
 .profile-meta dd {
   margin: 0;
@@ -71,23 +66,23 @@
   display: inline-block;
   margin-left: 8px;
   padding: 2px 8px;
-  border-radius: 999px;
-  background: #fff4e5;
-  color: #9a5a00;
-  font-size: 0.75rem;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-warning-tint);
+  color: var(--suth-warning);
+  font-size: var(--suth-fs-caption);
   font-weight: 600;
 }
 .profile-badge.ok {
-  background: #e8f7ee;
-  color: #1c7a43;
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
 }
 .profile-note {
   margin: 0 0 1.25rem;
   padding: 10px 12px;
-  border-radius: 10px;
-  background: #f5f7fa;
-  color: #526578;
-  font-size: 0.875rem;
+  border-radius: var(--suth-radius);
+  background: var(--suth-canvas);
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-sm);
 }
 .profile-field {
   display: grid;
@@ -96,25 +91,25 @@
 }
 .profile-field label {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: var(--suth-fs-sm);
 }
 .profile-field small {
-  color: #6b7c8d;
+  color: var(--suth-muted);
 }
 .profile-field input {
   width: 100%;
-  min-height: 42px;
+  min-height: var(--suth-control-h);
   box-sizing: border-box;
   padding: 9px 12px;
-  border: 1px solid #d5dde6;
-  border-radius: 10px;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
   font: inherit;
   color: inherit;
-  background: #fff;
+  background: var(--suth-surface);
 }
 .profile-field input:focus-visible,
 .profile-card button:focus-visible {
-  outline: 3px solid rgba(244, 121, 50, 0.3);
+  outline: 3px solid color-mix(in srgb, var(--suth-action) 30%, transparent);
   outline-offset: 2px;
 }
 .profile-password {
@@ -131,25 +126,25 @@
   min-height: 34px;
   padding: 6px 10px;
   background: transparent;
-  color: #6b7c8d;
+  color: var(--suth-muted);
 }
 .profile-card .profile-eye:hover {
-  background: #f5f7fa;
-  color: #1f2f3f;
+  background: var(--suth-canvas);
+  color: var(--suth-ink);
 }
 .profile-card button[type="submit"] {
-  min-height: 42px;
+  min-height: var(--suth-control-h);
   border: 0;
-  border-radius: 10px;
+  border-radius: var(--suth-radius);
   padding: 9px 18px;
-  background: #f47932;
-  color: #fff;
+  background: var(--suth-action);
+  color: var(--suth-on-action);
   font: 700 0.9rem inherit;
   cursor: pointer;
   transition: background-color 180ms ease-out;
 }
 .profile-card button[type="submit"]:hover:not(:disabled) {
-  background: #e56822;
+  background: var(--suth-action-hover);
 }
 .profile-card button[type="submit"]:disabled {
   opacity: 0.55;
@@ -157,19 +152,19 @@
 }
 .profile-card .profile-eye {
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--suth-radius);
   cursor: pointer;
 }
 .profile-error,
 .profile-alert {
   margin: 0 0 1rem;
   padding: 10px 12px;
-  border-radius: 10px;
-  background: #fff1f1;
-  color: #8c2020;
+  border-radius: var(--suth-radius);
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
 }
 .profile-loading {
-  color: #526578;
+  color: var(--suth-muted);
 }
 @media (max-width: 480px) {
   .profile-meta div {

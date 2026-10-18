@@ -1,6 +1,10 @@
-import { PageHeader as UiPageHeader, FilterBar as UiFilterBar, TextInput as UiTextInput } from '../../components/ui/index.jsx';
-import IconSelect from '../../components/IconSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import {
+  PageHeader as UiPageHeader,
+  FilterBar as UiFilterBar,
+  TextInput as UiTextInput,
+} from "../../components/ui/index.jsx";
+import IconSelect from "../../components/IconSelect";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { usePageExport } from "../../components/ExcelExport";
 import { useState, useEffect, useMemo, useRef } from "react";
 import "./RiskCases.css";
@@ -132,7 +136,9 @@ function getRiskLevel(summary_data) {
 }
 
 // 🟢 คอมโพเนนต์ Custom Dropdown สำหรับ RiskCases
-const CustomDropdown = props => <IconSelect {...props} className="rc-custom-select" />;
+const CustomDropdown = (props) => (
+  <IconSelect {...props} className="rc-custom-select" />
+);
 
 export default function RiskCases() {
   const { activeOrganization } = usePermissions();
@@ -352,7 +358,18 @@ export default function RiskCases() {
     setEndDate(safeEndDate);
   };
 
-  usePageExport({title:"เคสเสี่ยง",sources:[{resource:"responses",id:selectedFormId,filters:{startDate,endDate},ids:filteredData.map(r=>r.id)}],disabled:!selectedFormId||isLoading});
+  usePageExport({
+    title: "เคสเสี่ยง",
+    sources: [
+      {
+        resource: "responses",
+        id: selectedFormId,
+        filters: { startDate, endDate },
+        ids: filteredData.map((r) => r.id),
+      },
+    ],
+    disabled: !selectedFormId || isLoading,
+  });
 
   return (
     <div className="admin-wrapper2">

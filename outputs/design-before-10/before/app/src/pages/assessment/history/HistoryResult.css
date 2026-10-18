@@ -5,7 +5,10 @@
 .hr-page *::after {
   box-sizing: border-box;
 }
-.hr-page, .hr-modal-card, .hr-loading-screen, .hr-empty-screen {
+.hr-page,
+.hr-modal-card,
+.hr-loading-screen,
+.hr-empty-screen {
   /* 🟢 ธีมสีเขียว (SUTH) */
   --theme-green-900: #6f310e;
   --theme-green-800: #87390c;
@@ -2194,28 +2197,108 @@
 }
 
 /* Patient actions remain discoverable with touch and keyboard input. */
-.hr-page :is(button, a, input, [role="button"]):focus-visible { outline: 3px solid #b94d10; outline-offset: 3px; }
-.hr-page :is(button, input) { font-family: inherit; }
-.hr-page :is(.hr-id-toggle,.hr-info-icon-wrapper,.hr-eye-btn,.hr-edit-btn,.hr-hero-edit-btn,.hr-action-btn,.hr-hero-action-btn,.hr-advice-toggle-btn-new) { min-height: 44px; min-width: 44px; }
-.hr-page :is(.hr-edit-btn,.hr-hero-edit-btn) { opacity: 1; }
-.hr-page :is(.hr-card-left,.hr-card-right,.hr-hero-info,.hr-case-left,.hr-case-info,.hr-widget) { min-width: 0; }
-.hr-page :is(.hr-name,.hr-card-title,.hr-field-val,.hr-answer-v,.hr-case-info h4) { overflow-wrap: anywhere; }
-.hr-page .hr-card-head { width: 100%; border: 0; font: inherit; text-align: left; }
-.hr-page .hr-hero :is(.hr-id-toggle:hover,.hr-hero-edit-btn,.hr-hero-input,.hr-hero-action-btn) { color: #6f310e; }
-.hr-page .hr-hero-input::placeholder { color: #785844; }
-.hr-page .hr-hero-input { background: #fff; }
-.hr-page .hr-id-toggle { justify-content: center; }
-.hr-page .hr-info-icon-wrapper:focus-within .hr-tooltip { opacity: 1; visibility: visible; }
+.hr-page :is(button, a, input, [role="button"]):focus-visible {
+  outline: 3px solid #b94d10;
+  outline-offset: 3px;
+}
+.hr-page :is(button, input) {
+  font-family: inherit;
+}
+.hr-page
+  :is(
+    .hr-id-toggle,
+    .hr-info-icon-wrapper,
+    .hr-eye-btn,
+    .hr-edit-btn,
+    .hr-hero-edit-btn,
+    .hr-action-btn,
+    .hr-hero-action-btn,
+    .hr-advice-toggle-btn-new
+  ) {
+  min-height: 44px;
+  min-width: 44px;
+}
+.hr-page :is(.hr-edit-btn, .hr-hero-edit-btn) {
+  opacity: 1;
+}
+.hr-page
+  :is(
+    .hr-card-left,
+    .hr-card-right,
+    .hr-hero-info,
+    .hr-case-left,
+    .hr-case-info,
+    .hr-widget
+  ) {
+  min-width: 0;
+}
+.hr-page
+  :is(.hr-name, .hr-card-title, .hr-field-val, .hr-answer-v, .hr-case-info h4) {
+  overflow-wrap: anywhere;
+}
+.hr-page .hr-card-head {
+  width: 100%;
+  border: 0;
+  font: inherit;
+  text-align: left;
+}
+.hr-page
+  .hr-hero
+  :is(
+    .hr-id-toggle:hover,
+    .hr-hero-edit-btn,
+    .hr-hero-input,
+    .hr-hero-action-btn
+  ) {
+  color: #6f310e;
+}
+.hr-page .hr-hero-input::placeholder {
+  color: #785844;
+}
+.hr-page .hr-hero-input {
+  background: #fff;
+}
+.hr-page .hr-id-toggle {
+  justify-content: center;
+}
+.hr-page .hr-info-icon-wrapper:focus-within .hr-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
 @media (max-width: 480px) {
-  .hr-page .hr-layout { padding: 20px 12px; }
-  .hr-page .hr-hero { padding: 24px 18px; }
-  .hr-page .hr-widget { padding: 20px 16px; }
-  .hr-page .hr-card-head { align-items: flex-start; flex-wrap: wrap; gap: 12px; padding: 16px; }
-  .hr-page .hr-hero-info { min-width: 0; width: 100%; }
-  .hr-page .hr-reentry-menu { width: min(280px, calc(100vw - 60px)); }
+  .hr-page .hr-layout {
+    padding: 20px 12px;
+  }
+  .hr-page .hr-hero {
+    padding: 24px 18px;
+  }
+  .hr-page .hr-widget {
+    padding: 20px 16px;
+  }
+  .hr-page .hr-card-head {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px;
+  }
+  .hr-page .hr-hero-info {
+    min-width: 0;
+    width: 100%;
+  }
+  .hr-page .hr-reentry-menu {
+    width: min(280px, calc(100vw - 60px));
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hr-page *, .hr-modal-card *, .hr-loading-screen *, .hr-empty-screen * { animation: none !important; transition: none !important; }
+  .hr-page *,
+  .hr-modal-card *,
+  .hr-loading-screen *,
+  .hr-empty-screen * {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
-.hr-page .hr-hero .hr-info-icon-wrapper { color: #87390c; }
+.hr-page .hr-hero .hr-info-icon-wrapper {
+  color: #87390c;
+}

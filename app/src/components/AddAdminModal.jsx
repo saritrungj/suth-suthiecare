@@ -1,21 +1,33 @@
-import SearchableSelect from './SearchableSelect';
+import SearchableSelect from "./SearchableSelect";
 import { authSession } from "../utils/authSession";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
+  FiBriefcase,
   FiEye,
   FiEyeOff,
+  FiHome,
   FiUser,
   FiLock,
   FiMail,
   FiShield,
   FiCheckCircle,
+  FiX,
 } from "react-icons/fi";
 import "./AddAdminModal.css";
 
 const MAX_NAME_LENGTH = 255;
+const MAX_USERNAME_LENGTH = 50;
+const MAX_EMAIL_LENGTH = 100;
 const normaliseText = (value) =>
   value.normalize("NFC").trim().replace(/\s+/g, " ");
 const charLength = (value) => Array.from(value).length;
+const teacherSchoolRoles = new Set(["counselor", "homeroom", "other"]);
+const staffSchoolRoles = new Set([
+  "admin",
+  "mental_admin",
+  "physical_admin",
+  "dorm_staff",
+]);
 
 export default function AddAdminModal({
   onClose,
@@ -23,25 +35,34 @@ export default function AddAdminModal({
   initialData,
   canViewPassword,
   organizations = [],
-  roles = [],
+  organizationRoles = {},
+  schoolAssignmentOptions = {},
 }) {
   const currentUser = authSession("staff").user;
-  const currentRoleId = currentUser ? Number(currentUser.role_id) : 3;
 
   const [showPassword, setShowPassword] = useState(false);
+  const [organizationToAdd, setOrganizationToAdd] = useState("");
+  const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState(
     initialData
       ? {
           ...initialData,
           password: "",
-          memberships: initialData.memberships || [],
+          memberships: (initialData.memberships || []).map((membership) => ({
+            ...membership,
+            school_assignment: (initialData.school_assignments || []).find(
+              (assignment) =>
+                Number(assignment.organization_id) ===
+                Number(membership.organization_id),
+            ),
+          })),
         }
       : {
           username: "",
           password: "",
           name: "",
           email: "",
-          role_id: 2,
+          role_id: 3,
           status: "active",
           memberships: [],
         },
@@ -49,18 +70,91 @@ export default function AddAdminModal({
 
   const [errors, setErrors] = useState({});
 
+  const availableOrganizations = useMemo(
+    () =>
+      organizations.filter(
+        (organization) =>
+          organization.status === "active" &&
+          organization.org_level !== "main" &&
+          organization.kind !== "main",
+      ),
+    [organizations],
+  );
+
   const isEditingSelf =
     initialData && currentUser && currentUser.id === initialData.id;
-  const targetRoleId = initialData
-    ? Number(initialData.role_id)
-    : Number(formData.role_id);
+  // This modal is only reachable by system admins, so password and status
+  // are always editable. Own account is protected from being demoted or
+  // suspended so the last admin cannot lock themselves out.
+  const canChangePassword = true;
+  const canChangeRole = !isEditingSelf;
+  const canChangeStatus = !isEditingSelf;
+  const isSystemAdminAccount = Number(formData.role_id) === 1;
 
-  const canChangePassword =
-    currentRoleId === 1 || isEditingSelf || currentRoleId < targetRoleId;
-  const canChangeRole =
-    currentRoleId === 1 || (currentRoleId < targetRoleId && !isEditingSelf);
-  const canChangeStatus =
-    currentRoleId === 1 || (currentRoleId < targetRoleId && !isEditingSelf);
+  const updateMembership = (organizationId, updater) =>
+    setFormData((current) => ({
+      ...current,
+      memberships: current.memberships.map((membership) =>
+        Number(membership.organization_id) === Number(organizationId)
+          ? updater(membership)
+          : membership,
+      ),
+    }));
+
+  const addOrganization = (organizationId) => {
+    const organization = availableOrganizations.find(
+      (item) => Number(item.id) === Number(organizationId),
+    );
+    if (!organization) return;
+    const availableRoles = organizationRoles[organization.id] || [];
+    if (!availableRoles.length) {
+      setErrors((current) => ({
+        ...current,
+        memberships: `หน่วยงาน "${organization.name}" ยังไม่มีบทบาท กรุณาสร้างบทบาทที่หน้า บทบาทและสิทธิ์ ก่อน`,
+      }));
+      setOrganizationToAdd("");
+      return;
+    }
+    const schoolOptions = schoolAssignmentOptions[organization.id];
+    const firstSchool = schoolOptions?.schools?.[0];
+    const firstTeacherType = schoolOptions?.teacher_types?.[0];
+    setFormData((current) => ({
+      ...current,
+      memberships: [
+        ...current.memberships,
+        {
+          organization_id: organization.id,
+          role_id: availableRoles[0].id,
+          status: "active",
+          is_primary: current.memberships.length === 0,
+          school_assignment:
+            organization.org_type === "school"
+              ? {
+                  school_id: firstSchool?.id || "",
+                  role_code: "other",
+                  personnel_kind: "teacher",
+                  teacher_type_id: firstTeacherType?.id || "",
+                  employee_code: "",
+                  position: "",
+                }
+              : null,
+        },
+      ],
+    }));
+    setOrganizationToAdd("");
+    setErrors((current) => ({ ...current, memberships: undefined }));
+  };
+
+  const removeOrganization = (organizationId) =>
+    setFormData((current) => {
+      const memberships = current.memberships.filter(
+        (membership) =>
+          Number(membership.organization_id) !== Number(organizationId),
+      );
+      if (memberships.length && !memberships.some((item) => item.is_primary))
+        memberships[0] = { ...memberships[0], is_primary: true };
+      return { ...current, memberships };
+    });
 
   const validateForm = () => {
     const newErrors = {};
@@ -69,11 +163,10 @@ export default function AddAdminModal({
     const email = normaliseText(formData.email || "");
     if (
       charLength(username) < 3 ||
-      charLength(username) > 100 ||
+      charLength(username) > MAX_USERNAME_LENGTH ||
       /\s/.test(username)
     )
-      newErrors.username =
-        "ชื่อผู้ใช้งานต้องยาว 3-100 ตัวอักษร และห้ามมีช่องว่าง";
+      newErrors.username = `ชื่อผู้ใช้งานต้องยาว 3-${MAX_USERNAME_LENGTH} ตัวอักษร และห้ามมีช่องว่าง`;
     if (!initialData && (!formData.password || formData.password.length < 8))
       newErrors.password = "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร";
     if (
@@ -83,13 +176,42 @@ export default function AddAdminModal({
       newErrors.password = "รหัสผ่านต้องมี 8-200 ตัวอักษร";
     if (charLength(name) < 2 || charLength(name) > MAX_NAME_LENGTH)
       newErrors.name = `ชื่อ-นามสกุลต้องยาว 2-${MAX_NAME_LENGTH} ตัวอักษร`;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || charLength(email) > 254)
+    if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+      charLength(email) > MAX_EMAIL_LENGTH
+    )
       newErrors.email = "กรุณากรอกอีเมลให้ถูกต้อง";
+    if (Number(formData.role_id) !== 1 && !formData.memberships.length)
+      newErrors.memberships = "กรุณาเลือกหน่วยงานอย่างน้อย 1 แห่ง";
+    for (const membership of formData.memberships) {
+      const organization = availableOrganizations.find(
+        (item) => Number(item.id) === Number(membership.organization_id),
+      );
+      if (!membership.role_id) {
+        newErrors.memberships = "กรุณาเลือกบทบาทของทุกหน่วยงาน";
+        break;
+      }
+      if (organization?.org_type === "school") {
+        const assignment = membership.school_assignment;
+        if (!assignment?.school_id || !assignment?.role_code) {
+          newErrors.memberships =
+            "กรุณาเลือกโรงเรียนและหน้าที่ของบุคลากรให้ครบถ้วน";
+          break;
+        }
+        if (
+          assignment.personnel_kind === "teacher" &&
+          !assignment.teacher_type_id
+        ) {
+          newErrors.memberships = "กรุณาเลือกประเภทครู";
+          break;
+        }
+      }
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateForm()) return;
 
     const dataToSend = {
@@ -97,7 +219,7 @@ export default function AddAdminModal({
       username: normaliseText(formData.username),
       name: normaliseText(formData.name),
       email: normaliseText(formData.email),
-      role_id: Number(formData.role_id),
+      role_id: Number(formData.role_id) === 1 ? 1 : 3,
       status: formData.status,
       memberships: (formData.memberships || []).map(
         ({
@@ -106,12 +228,25 @@ export default function AddAdminModal({
           status = "active",
           is_primary = false,
           id,
+          school_assignment,
         }) => ({
           id,
           organization_id: Number(organization_id),
           role_id: Number(role_id),
           status,
           is_primary: Boolean(is_primary),
+          school_assignment: school_assignment
+            ? {
+                school_id: Number(school_assignment.school_id),
+                role_code: school_assignment.role_code,
+                personnel_kind: school_assignment.personnel_kind,
+                teacher_type_id: school_assignment.teacher_type_id
+                  ? Number(school_assignment.teacher_type_id)
+                  : null,
+                employee_code: school_assignment.employee_code || "",
+                position: school_assignment.position || "",
+              }
+            : null,
         }),
       ),
     };
@@ -120,7 +255,12 @@ export default function AddAdminModal({
       dataToSend.password = formData.password;
     }
 
-    onSave(dataToSend);
+    setSaving(true);
+    try {
+      await onSave(dataToSend);
+    } finally {
+      setSaving(false);
+    }
   };
   return (
     <div className="adm-overlay" role="presentation">
@@ -132,9 +272,6 @@ export default function AddAdminModal({
       >
         <div className="adm-header">
           <div className="adm-header-title">
-            <div className="adm-icon-badge">
-              <FiUser />
-            </div>
             <h3>{initialData ? "แก้ไขข้อมูลผู้ใช้งาน" : "เพิ่มผู้ใช้งาน"}</h3>
           </div>
           <button
@@ -177,7 +314,7 @@ export default function AddAdminModal({
                   <span
                     style={{
                       fontSize: 11,
-                      color: "#94a3b8",
+                      color: "var(--suth-muted)",
                       fontWeight: 400,
                       marginLeft: 8,
                     }}
@@ -265,24 +402,34 @@ export default function AddAdminModal({
             )}
           </div>
 
-          {/* Role & Status */}
+          {/* Account authority & status */}
           <div className="adm-grid-2">
             <div className="adm-input-group">
-              <label>
-                <FiShield className="label-icon" /> ระดับสิทธิ์ (Role)
+              <label htmlFor="adm-system-admin">
+                <FiShield className="label-icon" /> สิทธิ์ผู้ดูแลระบบ
               </label>
-              <SearchableSelect
-                className="adm-select"
-                value={formData.role_id}
-                onChange={(e) =>
-                  setFormData({ ...formData, role_id: Number(e.target.value) })
-                }
-                disabled={!canChangeRole}
-              >
-                {currentRoleId === 1 && <option value="1">System Admin</option>}
-                <option value="2">Admin</option>
-                <option value="3">Staff</option>
-              </SearchableSelect>
+              <label className="adm-switch" htmlFor="adm-system-admin">
+                <input
+                  id="adm-system-admin"
+                  type="checkbox"
+                  role="switch"
+                  checked={isSystemAdminAccount}
+                  disabled={!canChangeRole}
+                  onChange={(event) =>
+                    setFormData({
+                      ...formData,
+                      role_id: event.target.checked ? 1 : 3,
+                    })
+                  }
+                />
+                <span className="adm-switch__track" aria-hidden="true" />
+                <span>ผู้ดูแลระบบทั้งระบบ (System Admin)</span>
+              </label>
+              <small>
+                {isEditingSelf
+                  ? "ไม่สามารถถอดสิทธิ์ผู้ดูแลระบบของบัญชีตัวเองได้"
+                  : "เข้าถึงการตั้งค่าทั้งระบบ สิทธิ์ทำงานในหน่วยงานกำหนดจากบทบาทในหน่วยงานด้านล่าง"}
+              </small>
             </div>
 
             <div className="adm-input-group">
@@ -291,6 +438,8 @@ export default function AddAdminModal({
               </label>
               <div className="adm-status-toggle">
                 <button
+                  type="button"
+                  aria-pressed={formData.status === "active"}
                   className={`adm-status-btn ${formData.status === "active" ? "active" : ""}`}
                   onClick={() =>
                     canChangeStatus &&
@@ -301,6 +450,8 @@ export default function AddAdminModal({
                   ใช้งาน
                 </button>
                 <button
+                  type="button"
+                  aria-pressed={formData.status === "inactive"}
                   className={`adm-status-btn ${formData.status === "inactive" ? "inactive" : ""}`}
                   onClick={() =>
                     canChangeStatus &&
@@ -318,97 +469,346 @@ export default function AddAdminModal({
             aria-labelledby="membership-heading"
           >
             <div className="adm-membership-heading">
-              <FiShield className="label-icon" />
+              <FiBriefcase className="label-icon" />
               <div>
-                <h4 id="membership-heading">หน่วยงานและบทบาท</h4>
+                <h4 id="membership-heading">หน่วยงานและหน้าที่การทำงาน</h4>
                 <p>
-                  เลือกหน่วยงานที่เจ้าหน้าที่เข้าถึง
-                  และกำหนดบทบาทในแต่ละหน่วยงาน
+                  เลือกหน่วยงานและบทบาทครั้งเดียว หากเป็นครู
+                  ระบบจะเพิ่มเข้ารายชื่อครูให้อัตโนมัติ
                 </p>
               </div>
             </div>
-            {organizations.filter(
-              (organization) => organization.status === "active",
-            ).length === 0 ? (
+            {availableOrganizations.length === 0 ? (
               <p className="adm-no-perm-text">
                 ยังไม่มีหน่วยงานที่เปิดใช้งาน กรุณาสร้างหน่วยงานก่อน
               </p>
             ) : (
-              organizations
-                .filter((organization) => organization.status === "active")
-                .map((organization) => {
-                  const membership = (formData.memberships || []).find(
-                    (item) =>
-                      Number(item.organization_id) === Number(organization.id),
-                  );
-                  const setMembership = (next) =>
-                    setFormData({ ...formData, memberships: next });
-                  return (
-                    <div className="adm-membership-row" key={organization.id}>
-                      <label className="adm-org-check">
-                        <input
-                          type="checkbox"
-                          checked={Boolean(membership)}
-                          onChange={(event) =>
-                            setMembership(
-                              event.target.checked
-                                ? [
-                                    ...formData.memberships,
-                                    {
-                                      organization_id: organization.id,
-                                      role_id: roles[0]?.id || "",
-                                      status: "active",
-                                    },
-                                  ]
-                                : formData.memberships.filter(
-                                    (item) =>
-                                      Number(item.organization_id) !==
-                                      Number(organization.id),
-                                  ),
-                            )
-                          }
-                        />{" "}
-                        <span>{organization.name}</span>
-                      </label>
-                      {membership && (
-                        <SearchableSelect
-                          className="adm-select"
-                          aria-label={`บทบาทของ ${organization.name}`}
-                          value={membership.role_id}
-                          onChange={(event) =>
-                            setMembership(
-                              formData.memberships.map((item) =>
-                                Number(item.organization_id) ===
-                                Number(organization.id)
-                                  ? {
-                                      ...item,
-                                      role_id: Number(event.target.value),
+              <>
+                <div className="adm-add-organization">
+                  <label htmlFor="adm-organization-picker">เพิ่มหน่วยงาน</label>
+                  <SearchableSelect
+                    id="adm-organization-picker"
+                    className="adm-select"
+                    value={organizationToAdd}
+                    onChange={(event) => addOrganization(event.target.value)}
+                  >
+                    <option value="">+ เพิ่มหน่วยงาน…</option>
+                    {availableOrganizations.map((organization) => (
+                      <option
+                        key={organization.id}
+                        value={organization.id}
+                        disabled={formData.memberships.some(
+                          (membership) =>
+                            Number(membership.organization_id) ===
+                            Number(organization.id),
+                        )}
+                      >
+                        {organization.name}
+                        {organization.org_type === "school"
+                          ? " · โรงเรียน"
+                          : ""}
+                      </option>
+                    ))}
+                  </SearchableSelect>
+                </div>
+                {!formData.memberships.length && (
+                  <p className="adm-membership-empty">
+                    เลือกหน่วยงานเพื่อกำหนดบทบาทและประเภทบุคลากร
+                  </p>
+                )}
+                <div className="adm-membership-list">
+                  {formData.memberships.map((membership) => {
+                    const organization = availableOrganizations.find(
+                      (item) =>
+                        Number(item.id) === Number(membership.organization_id),
+                    );
+                    if (!organization) return null;
+                    const availableRoles =
+                      organizationRoles[organization.id] || [];
+                    const schoolOptions =
+                      schoolAssignmentOptions[organization.id];
+                    const assignment = membership.school_assignment;
+                    return (
+                      <div className="adm-membership-row" key={organization.id}>
+                        <div className="adm-membership-row__header">
+                          <span
+                            className="adm-organization-icon"
+                            aria-hidden="true"
+                          >
+                            <FiHome />
+                          </span>
+                          <div>
+                            <strong>{organization.name}</strong>
+                            <small>
+                              {organization.org_type === "school"
+                                ? "หน่วยงานโรงเรียน"
+                                : "หน่วยงานบริการ"}
+                            </small>
+                          </div>
+                          <button
+                            type="button"
+                            className="adm-remove-organization"
+                            onClick={() => removeOrganization(organization.id)}
+                            aria-label={`นำ ${organization.name} ออกจากผู้ใช้งาน`}
+                          >
+                            <FiX aria-hidden="true" />
+                          </button>
+                        </div>
+                        <div className="adm-assignment-grid">
+                          <div className="adm-input-group">
+                            <label>บทบาทในหน่วยงาน</label>
+                            <SearchableSelect
+                              className="adm-select"
+                              aria-label={`บทบาทของ ${organization.name}`}
+                              value={membership.role_id}
+                              onChange={(event) =>
+                                updateMembership(organization.id, (item) => ({
+                                  ...item,
+                                  role_id: Number(event.target.value),
+                                }))
+                              }
+                            >
+                              {availableRoles.map((role) => (
+                                <option value={role.id} key={role.id}>
+                                  {role.name}
+                                </option>
+                              ))}
+                            </SearchableSelect>
+                          </div>
+                          {organization.org_type === "school" && (
+                            <>
+                              <div className="adm-input-group">
+                                <label>โรงเรียน</label>
+                                <SearchableSelect
+                                  className="adm-select"
+                                  aria-label={`โรงเรียนของ ${organization.name}`}
+                                  value={assignment?.school_id || ""}
+                                  onChange={(event) =>
+                                    updateMembership(
+                                      organization.id,
+                                      (item) => ({
+                                        ...item,
+                                        school_assignment: {
+                                          ...item.school_assignment,
+                                          school_id: Number(event.target.value),
+                                        },
+                                      }),
+                                    )
+                                  }
+                                >
+                                  <option value="">เลือกโรงเรียน…</option>
+                                  {(schoolOptions?.schools || []).map(
+                                    (school) => (
+                                      <option key={school.id} value={school.id}>
+                                        {school.name}
+                                      </option>
+                                    ),
+                                  )}
+                                </SearchableSelect>
+                              </div>
+                              <div className="adm-input-group">
+                                <label>ประเภทบุคลากร</label>
+                                <div
+                                  className="adm-personnel-toggle"
+                                  role="group"
+                                  aria-label={`ประเภทบุคลากรของ ${organization.name}`}
+                                >
+                                  {[
+                                    ["teacher", "ครู"],
+                                    ["staff", "บุคลากรสนับสนุน"],
+                                  ].map(([value, label]) => (
+                                    <button
+                                      type="button"
+                                      key={value}
+                                      className={
+                                        assignment?.personnel_kind === value
+                                          ? "active"
+                                          : ""
+                                      }
+                                      aria-pressed={
+                                        assignment?.personnel_kind === value
+                                      }
+                                      onClick={() =>
+                                        updateMembership(
+                                          organization.id,
+                                          (item) => ({
+                                            ...item,
+                                            school_assignment: {
+                                              ...item.school_assignment,
+                                              personnel_kind: value,
+                                              role_code:
+                                                value === "teacher"
+                                                  ? teacherSchoolRoles.has(
+                                                      item.school_assignment
+                                                        ?.role_code,
+                                                    )
+                                                    ? item.school_assignment
+                                                        .role_code
+                                                    : "other"
+                                                  : staffSchoolRoles.has(
+                                                        item.school_assignment
+                                                          ?.role_code,
+                                                      )
+                                                    ? item.school_assignment
+                                                        .role_code
+                                                    : "admin",
+                                            },
+                                          }),
+                                        )
+                                      }
+                                    >
+                                      {label}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="adm-input-group">
+                                <label>หน้าที่ในโรงเรียน</label>
+                                <SearchableSelect
+                                  className="adm-select"
+                                  aria-label={`หน้าที่ในโรงเรียนของ ${organization.name}`}
+                                  value={assignment?.role_code || ""}
+                                  onChange={(event) =>
+                                    updateMembership(
+                                      organization.id,
+                                      (item) => ({
+                                        ...item,
+                                        school_assignment: {
+                                          ...item.school_assignment,
+                                          role_code: event.target.value,
+                                        },
+                                      }),
+                                    )
+                                  }
+                                >
+                                  {Object.entries(
+                                    schoolOptions?.role_labels || {},
+                                  )
+                                    .filter(([code]) =>
+                                      (assignment?.personnel_kind === "staff"
+                                        ? staffSchoolRoles
+                                        : teacherSchoolRoles
+                                      ).has(code),
+                                    )
+                                    .map(([code, label]) => (
+                                      <option key={code} value={code}>
+                                        {label}
+                                      </option>
+                                    ))}
+                                </SearchableSelect>
+                              </div>
+                              {assignment?.personnel_kind === "teacher" && (
+                                <div className="adm-input-group">
+                                  <label>ประเภทครู</label>
+                                  <SearchableSelect
+                                    className="adm-select"
+                                    aria-label={`ประเภทครูของ ${organization.name}`}
+                                    value={assignment.teacher_type_id || ""}
+                                    onChange={(event) =>
+                                      updateMembership(
+                                        organization.id,
+                                        (item) => ({
+                                          ...item,
+                                          school_assignment: {
+                                            ...item.school_assignment,
+                                            teacher_type_id: Number(
+                                              event.target.value,
+                                            ),
+                                          },
+                                        }),
+                                      )
                                     }
-                                  : item,
-                              ),
-                            )
-                          }
-                        >
-                          {roles.map((role) => (
-                            <option value={role.id} key={role.id}>
-                              {role.name}
-                            </option>
-                          ))}
-                        </SearchableSelect>
-                      )}
-                    </div>
-                  );
-                })
+                                  >
+                                    <option value="">เลือกประเภทครู…</option>
+                                    {(schoolOptions?.teacher_types || []).map(
+                                      (type) => (
+                                        <option key={type.id} value={type.id}>
+                                          {type.name}
+                                        </option>
+                                      ),
+                                    )}
+                                  </SearchableSelect>
+                                </div>
+                              )}
+                              <div className="adm-input-group">
+                                <label>
+                                  รหัสบุคลากร <span>(ถ้ามี)</span>
+                                </label>
+                                <input
+                                  className="adm-input"
+                                  value={assignment?.employee_code || ""}
+                                  maxLength={50}
+                                  onChange={(event) =>
+                                    updateMembership(
+                                      organization.id,
+                                      (item) => ({
+                                        ...item,
+                                        school_assignment: {
+                                          ...item.school_assignment,
+                                          employee_code: event.target.value,
+                                        },
+                                      }),
+                                    )
+                                  }
+                                />
+                              </div>
+                              <div className="adm-input-group">
+                                <label>
+                                  ตำแหน่ง <span>(ถ้ามี)</span>
+                                </label>
+                                <input
+                                  className="adm-input"
+                                  value={assignment?.position || ""}
+                                  maxLength={100}
+                                  onChange={(event) =>
+                                    updateMembership(
+                                      organization.id,
+                                      (item) => ({
+                                        ...item,
+                                        school_assignment: {
+                                          ...item.school_assignment,
+                                          position: event.target.value,
+                                        },
+                                      }),
+                                    )
+                                  }
+                                />
+                              </div>
+                            </>
+                          )}
+                        </div>
+                        {!availableRoles.length && (
+                          <small className="adm-no-perm-text">
+                            ยังไม่มีบทบาทสำหรับหน่วยงานนี้
+                            กรุณาสร้างในหน้าบทบาทและสิทธิ์ก่อน
+                          </small>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+            {errors.memberships && (
+              <span className="adm-error-text">{errors.memberships}</span>
             )}
           </section>
         </div>
 
         <div className="adm-footer">
-          <button className="adm-btn-cancel" onClick={onClose}>
+          <button
+            className="adm-btn-cancel"
+            onClick={onClose}
+            disabled={saving}
+          >
             ยกเลิก
           </button>
-          <button className="adm-btn-save" onClick={handleSubmit}>
-            บันทึกข้อมูล
+          <button
+            className="adm-btn-save"
+            onClick={handleSubmit}
+            disabled={saving}
+          >
+            {saving ? "กำลังบันทึก…" : "บันทึกข้อมูล"}
           </button>
         </div>
       </div>

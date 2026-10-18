@@ -1,4 +1,4 @@
-import { DialogFrame } from './ui/index.jsx';
+import { DialogFrame } from "./ui/index.jsx";
 import React, { useState } from "react";
 import {
   FiCheckCircle,
@@ -26,7 +26,6 @@ export default function CreateRoleModal({
     MODULES.map((module) => [module.id, module.label]),
   );
 
-
   const togglePermission = (module, type) => {
     setPermissions((previous) => {
       const current = previous[module] || {};
@@ -44,117 +43,120 @@ export default function CreateRoleModal({
   };
 
   return (
-    <DialogFrame className="crm-card"
-        onClick={(event) => event.stopPropagation()}
-        aria-label="เพิ่มบทบาท" onClose={onClose}>
-        <div className="crm-header">
-          <div className="crm-header-title">
-            <div className="crm-icon-badge">
-              <FiShield />
-            </div>
-            <h3>เพิ่มบทบาท</h3>
+    <DialogFrame
+      className="crm-card"
+      onClick={(event) => event.stopPropagation()}
+      aria-label="เพิ่มบทบาท"
+      onClose={onClose}
+    >
+      <div className="crm-header">
+        <div className="crm-header-title">
+          <div className="crm-icon-badge">
+            <FiShield />
           </div>
-          <button
-            className="crm-close-circle-btn"
-            onClick={onClose}
-            aria-label="ปิดหน้าต่าง"
-          >
-            <span className="crm-close-icon-line" />
-          </button>
+          <h3>เพิ่มบทบาท</h3>
         </div>
-        <div className="crm-body">
-          <div className="crm-role-info-grid">
-            <div className="crm-input-group">
-              <label>
-                <FiShield className="label-icon" /> ชื่อบทบาท
-              </label>
-              <input
-                className="crm-input"
-                maxLength={100}
-                value={roleName}
-                onChange={(event) => setRoleName(event.target.value)}
-                placeholder="เช่น Manager"
-              />
-            </div>
-            <div className="crm-input-group">
-              <label>
-                <FiEdit3 className="label-icon" /> คำอธิบาย
-              </label>
-              <input
-                className="crm-input"
-                maxLength={255}
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-                placeholder="รายละเอียดหน้าที่"
-              />
-            </div>
+        <button
+          className="crm-close-circle-btn"
+          onClick={onClose}
+          aria-label="ปิดหน้าต่าง"
+        >
+          <span className="crm-close-icon-line" />
+        </button>
+      </div>
+      <div className="crm-body">
+        <div className="crm-role-info-grid">
+          <div className="crm-input-group">
+            <label>
+              <FiShield className="label-icon" /> ชื่อบทบาท
+            </label>
+            <input
+              className="crm-input"
+              maxLength={100}
+              value={roleName}
+              onChange={(event) => setRoleName(event.target.value)}
+              placeholder="เช่น Manager"
+            />
           </div>
-          <h4 className="crm-section-title">กำหนดสิทธิ์การเข้าถึง</h4>
-          <div className="crm-permission-area">
-            {modules.map((module) => {
-              const expanded = expandedModules[module];
-              return (
-                <div
-                  key={module}
-                  className={`crm-module-card ${expanded ? "expanded" : ""}`}
+          <div className="crm-input-group">
+            <label>
+              <FiEdit3 className="label-icon" /> คำอธิบาย
+            </label>
+            <input
+              className="crm-input"
+              maxLength={255}
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              placeholder="รายละเอียดหน้าที่"
+            />
+          </div>
+        </div>
+        <h4 className="crm-section-title">กำหนดสิทธิ์การเข้าถึง</h4>
+        <div className="crm-permission-area">
+          {modules.map((module) => {
+            const expanded = expandedModules[module];
+            return (
+              <div
+                key={module}
+                className={`crm-module-card ${expanded ? "expanded" : ""}`}
+              >
+                <button
+                  type="button"
+                  className="crm-module-header"
+                  onClick={() =>
+                    setExpandedModules((previous) => ({
+                      ...previous,
+                      [module]: !previous[module],
+                    }))
+                  }
                 >
-                  <button
-                    type="button"
-                    className="crm-module-header"
-                    onClick={() =>
-                      setExpandedModules((previous) => ({
-                        ...previous,
-                        [module]: !previous[module],
-                      }))
-                    }
-                  >
-                    <span className="crm-module-title-text">
-                      {expanded ? <FiChevronDown /> : <FiChevronRight />}
-                      {moduleLabels[module] || module}
-                    </span>
-                  </button>
-                  {expanded && (
-                    <div className="crm-permission-row-container">
-                      <div className="crm-permission-row">
-                        {permissionTypes.map((type) => {
-                          const checked = Boolean(permissions[module]?.[type]);
-                          return (
-                            <label
-                              key={type}
-                              className={`crm-checkbox-label ${checked ? "active" : ""}`}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={checked}
-                                onChange={() => togglePermission(module, type)}
-                              />
-                              <span className="crm-custom-checkbox">
-                                {checked && <FiCheckCircle />}
-                              </span>
-                              {type}
-                            </label>
-                          );
-                        })}
-                      </div>
+                  <span className="crm-module-title-text">
+                    {expanded ? <FiChevronDown /> : <FiChevronRight />}
+                    {moduleLabels[module] || module}
+                  </span>
+                </button>
+                {expanded && (
+                  <div className="crm-permission-row-container">
+                    <div className="crm-permission-row">
+                      {permissionTypes.map((type) => {
+                        const checked = Boolean(permissions[module]?.[type]);
+                        return (
+                          <label
+                            key={type}
+                            className={`crm-checkbox-label ${checked ? "active" : ""}`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() => togglePermission(module, type)}
+                            />
+                            <span className="crm-custom-checkbox">
+                              {checked && <FiCheckCircle />}
+                            </span>
+                            {type}
+                          </label>
+                        );
+                      })}
                     </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
-        <div className="crm-footer">
-          <button className="crm-btn-cancel" onClick={onClose}>
-            ยกเลิก
-          </button>
-          <button
-            className="crm-btn-save"
-            onClick={handleSave}
-            disabled={!roleName.trim()}
-          >
-            บันทึก
-          </button>
-        </div>
-      </DialogFrame>
+      </div>
+      <div className="crm-footer">
+        <button className="crm-btn-cancel" onClick={onClose}>
+          ยกเลิก
+        </button>
+        <button
+          className="crm-btn-save"
+          onClick={handleSave}
+          disabled={!roleName.trim()}
+        >
+          บันทึก
+        </button>
+      </div>
+    </DialogFrame>
   );
 }

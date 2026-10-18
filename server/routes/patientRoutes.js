@@ -256,6 +256,132 @@ router.post("/me/email/resend", otpLimiter, async (req, res) => {
   }
 });
 
+// A school student's own physical health from the school roster: health
+// profile and every physical check, newest first. Only for members whose
+// type is school student. Staff notes and the emergency contact stay with
+// the school; everything else is the student's own measurements.
+router.get("/me/school-health", async (req, res) => {
+  const memberTypes = require("../services/memberType");
+  const { physicalRecord, bloodType } = require("../utils/schoolPrivateData");
+  const { readField } = require("../utils/privateField");
+  try {
+    const type = (await memberTypes.memberTypesFor(db, [req.patient.id])).get(
+      req.patient.id,
+    );
+    if (type?.type !== "school_student")
+      return res
+        .status(404)
+        .json({ success: false, message: "ไม่พบข้อมูลสุขภาพจากโรงเรียน" });
+    const [students] = await db.query(
+      `SELECT s.id, s.status, s.archived_at, sc.organization_id
+         FROM school_students s
+         JOIN schools sc ON sc.id = s.school_id
+         LEFT JOIN persons p ON p.id = s.person_id
+        WHERE s.patient_account_id = ? OR p.patient_account_id = ?
+        ORDER BY (s.status = 'active' AND s.archived_at IS NULL) DESC, s.updated_at DESC`,
+      [req.patient.id, req.patient.id],
+    );
+    if (!students.length)
+      return res
+        .status(404)
+        .json({ success: false, message: "ไม่พบข้อมูลสุขภาพจากโรงเรียน" });
+    const orgOf = new Map(students.map((s) => [s.id, s.organization_id]));
+    const [rows] = await db.query(
+      "SELECT * FROM school_student_physical_records WHERE student_id IN (?) ORDER BY measured_at DESC, id DESC",
+      [students.map((s) => s.id)],
+    );
+    const records = rows.map((row) => {
+      const record = physicalRecord(row, orgOf.get(row.student_id));
+      return {
+        id: record.id,
+        measured_at: record.measured_at,
+        weight_kg: record.weight_kg ?? null,
+        height_cm: record.height_cm ?? null,
+        bmi: record.bmi ?? null,
+        systolic: record.systolic ?? null,
+        diastolic: record.diastolic ?? null,
+        pulse: record.pulse ?? null,
+        vision_left: record.vision_left || null,
+        vision_right: record.vision_right || null,
+        hearing_left: record.hearing_left || "not_tested",
+        hearing_right: record.hearing_right || "not_tested",
+        fitness: record.fitness || null,
+      };
+    });
+    const current = students[0];
+    const org = current.organization_id;
+    const [profiles] = await db.query(
+      "SELECT * FROM school_student_health_profiles WHERE student_id = ?",
+      [current.id],
+    );
+    const profile = profiles[0];
+    const field = (name) =>
+      profile
+        ? readField(profile[name], "school_student_health_profiles", name, org)
+        : null;
+    await require("../utils/pdpaAudit").requiredPatientAudit(
+      req,
+      "school_health.read",
+      req.patient.id,
+      { records: records.length },
+    );
+    return res.json({
+      success: true,
+      profile: {
+        blood_type: profile ? bloodType(profile, org) : null,
+        chronic_conditions: field("chronic_conditions_encrypted"),
+        allergies: field("allergies_encrypted"),
+        medications: field("medications_encrypted"),
+      },
+      records,
+    });
+  } catch (error) {
+    console.error(
+      "Member school health failed:",
+      require("../utils/safeError").safeError(error),
+    );
+    return res
+      .status(error.status || 500)
+      .json({ success: false, message: "ไม่สามารถโหลดข้อมูลสุขภาพได้" });
+  }
+});
+
+// The member chooses their own type when no school roster or case says it.
+// It counts like a new answer (see services/memberType.js). School student is
+// never self-declared: it comes from the school roster.
+router.put("/me/member-type", async (req, res) => {
+  const memberTypes = require("../services/memberType");
+  const type = String(req.body?.type || "");
+  const faculty = String(req.body?.faculty || "").trim();
+  if (!["university_student", "general"].includes(type))
+    return res
+      .status(422)
+      .json({ success: false, message: "กรุณาเลือกประเภทผู้มารับบริการ" });
+  if (type === "university_student" && !faculty)
+    return res
+      .status(422)
+      .json({ success: false, message: "กรุณาเลือกสำนักวิชา" });
+  try {
+    await memberTypes.declareMemberType(db, req.patient.id, type, faculty);
+    const memberType = (await memberTypes.memberTypesFor(db, [req.patient.id])).get(
+      req.patient.id,
+    );
+    const school =
+      memberType?.type === "school_student"
+        ? await memberTypes.memberSchoolRecord(db, req.patient.id)
+        : null;
+    return res.json({ success: true, member_type: { ...memberType, school } });
+  } catch (error) {
+    console.error(
+      "Member type update failed:",
+      require("../utils/safeError").safeError(error),
+    );
+    return res
+      .status(error.status || 500)
+      .json({ success: false, message: "บันทึกประเภทไม่สำเร็จ กรุณาลองใหม่" });
+  }
+});
+
 router.get("/history", async (req, res) => {
   try {
     const [responses] = await db.query(
@@ -294,6 +420,19 @@ router.get("/history", async (req, res) => {
         ? `${String(identityValue).slice(0, 4)}*****${String(identityValue).slice(-4)}`
         : "บัญชีผู้รับบริการ";
     const profile = publicAccount(req.patient);
+    const memberTypes = require("../services/memberType");
+    const memberType = (await memberTypes.memberTypesFor(db, [req.patient.id])).get(
+      req.patient.id,
+    ) || {
+      type: "unknown",
+      label: memberTypes.MEMBER_TYPE_LABELS.unknown,
+      source: "none",
+      faculty: null,
+    };
+    const school =
+      memberType.type === "school_student"
+        ? await memberTypes.memberSchoolRecord(db, req.patient.id)
+        : null;
     const historicalProfile = getHistoricalProfile(sanitized);
     const accountDisplayName = [profile.first_name, profile.last_name]
       .map(cleanProfileValue)
@@ -314,6 +453,7 @@ router.get("/history", async (req, res) => {
       success: true,
       profile,
       identity_masked: identityMasked,
+      member_type: { ...memberType, school },
       masterCases: masterCases.map(
         ({ identityValue: _identityValue, ...row }) => ({
           ...row,

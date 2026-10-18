@@ -1,4 +1,4 @@
-import { DialogFrame } from './ui/index.jsx';
+import { DialogFrame } from "./ui/index.jsx";
 import React, { useState, useCallback } from "react";
 import Cropper from "react-easy-crop";
 import { FiPlus, FiImage, FiEdit3 } from "react-icons/fi";
@@ -106,164 +106,171 @@ export default function EditBannerModal({ banner, onClose, onSave }) {
   };
 
   return (
-    <DialogFrame className="ebm-premium-card"
-        aria-label={isCropping ? "ปรับตำแหน่งรูปภาพใหม่" : "แก้ไขแบนเนอร์"}
-        style={isCropping ? { width: "700px" } : {}} onClose={onClose}>
-        {!isCropping && (
-          <button
-            className="ebm-close-btn"
-            onClick={onClose}
-            type="button"
-            aria-label="ปิดหน้าต่าง"
-          >
-            <span className="ebm-close-icon"></span>
-          </button>
-        )}
+    <DialogFrame
+      className="ebm-premium-card"
+      aria-label={isCropping ? "ปรับตำแหน่งรูปภาพใหม่" : "แก้ไขแบนเนอร์"}
+      style={isCropping ? { width: "700px" } : {}}
+      onClose={onClose}
+    >
+      {!isCropping && (
+        <button
+          className="ebm-close-btn"
+          onClick={onClose}
+          type="button"
+          aria-label="ปิดหน้าต่าง"
+        >
+          <span className="ebm-close-icon"></span>
+        </button>
+      )}
 
-        <div className="ebm-header">
-          <h3>{isCropping ? "ปรับตำแหน่งรูปภาพใหม่" : "แก้ไขแบนเนอร์"}</h3>
-          <p>
-            {isCropping
-              ? "ลากกรอบสัดส่วน 4:3 เพื่อจัดตำแหน่งภาพ"
-              : "ภาพใหม่จะถูกบันทึกเป็นสัดส่วน 4:3 "}
-          </p>
-        </div>
+      <div className="ebm-header">
+        <h3>{isCropping ? "ปรับตำแหน่งรูปภาพใหม่" : "แก้ไขแบนเนอร์"}</h3>
+        <p>
+          {isCropping
+            ? "ลากกรอบสัดส่วน 4:3 เพื่อจัดตำแหน่งภาพ"
+            : "ภาพใหม่จะถูกบันทึกเป็นสัดส่วน 4:3 "}
+        </p>
+      </div>
 
-        <div className="ebm-body">
-          {isCropping ? (
-            <div>
-              <div
-                style={{
-                  position: "relative",
-                  width: "100%",
-                  height: "350px",
-                  background: "#1e293b",
-                  borderRadius: "12px",
-                  overflow: "hidden",
-                  marginBottom: "15px",
-                }}
-              >
-                <Cropper
-                  image={rawImage}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={4 / 3}
-                  onCropChange={setCrop}
-                  onCropComplete={onCropComplete}
-                  onZoomChange={setZoom}
-                />
-              </div>
-              <input
-                type="range"
-                aria-label="ระดับการซูมภาพ"
-                min="1"
-                max="3"
-                step="0.1"
-                value={zoom}
-                onChange={(e) => setZoom(e.target.value)}
-                style={{ width: "100%" }}
+      <div className="ebm-body">
+        {isCropping ? (
+          <div>
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                height: "350px",
+                background: "#1e293b",
+                borderRadius: "12px",
+                overflow: "hidden",
+                marginBottom: "15px",
+              }}
+            >
+              <Cropper
+                image={rawImage}
+                crop={crop}
+                zoom={zoom}
+                aspect={4 / 3}
+                onCropChange={setCrop}
+                onCropComplete={onCropComplete}
+                onZoomChange={setZoom}
               />
             </div>
-          ) : (
-            <>
-              <div className="ebm-grid">
-                <div className="ebm-section">
-                  <label>
-                    <FiImage className="ebm-icon" /> ภาพเดิม
-                  </label>
-                  <div className="ebm-current-preview">
-                    <img src={banner.image} alt="current" />
-                  </div>
-                </div>
-                <div className="ebm-section">
-                  <label>
-                    <FiPlus className="ebm-icon" /> ภาพใหม่{" "}
-                  </label>
-                  <label
-                    className={`ebm-upload-area ${image !== banner.image ? "is-new" : ""}`}
-                  >
-                    {image ? (
-                      <div className="ebm-preview-wrapper">
-                        <img
-                          src={image}
-                          alt="preview"
-                          style={{ objectFit: "cover" }}
-                        />
-                        <div className="ebm-hover-overlay">
-                          <FiEdit3 size={20} />
-                          <span>เปลี่ยนรูป</span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="ebm-placeholder">
-                        <FiPlus size={30} />
-                        <span>เลือกรูป</span>
-                      </div>
-                    )}
-                    <input
-                      type="file"
-                      aria-label="เปลี่ยนรูปภาพแบนเนอร์"
-                      className="suth-file-picker"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                    />
-                  </label>
+            <input
+              type="range"
+              aria-label="ระดับการซูมภาพ"
+              min="1"
+              max="3"
+              step="0.1"
+              value={zoom}
+              onChange={(e) => setZoom(e.target.value)}
+              style={{ width: "100%" }}
+            />
+          </div>
+        ) : (
+          <>
+            <div className="ebm-grid">
+              <div className="ebm-section">
+                <label>
+                  <FiImage className="ebm-icon" /> ภาพเดิม
+                </label>
+                <div className="ebm-current-preview">
+                  <img src={banner.image} alt="current" />
                 </div>
               </div>
-              <div className="ebm-input-group">
-                <label htmlFor="edit-banner-filename">
-                  <FiEdit3 className="ebm-icon" /> ชื่อไฟล์แบนเนอร์
+              <div className="ebm-section">
+                <label>
+                  <FiPlus className="ebm-icon" /> ภาพใหม่{" "}
                 </label>
-                <input
-                  id="edit-banner-filename"
-                  type="text"
-                  value={filename}
-                  onChange={(e) => setFilename(e.target.value)}
-                  className="ebm-input"
-                />
-              </div>
-              <div className="ebm-input-group">
-                <label htmlFor="edit-banner-link">
-                  <FiEdit3 className="ebm-icon" /> ลิงก์ปลายทางเมื่อคลิกแบนเนอร์
-                  (ถ้ามี)
+                <label
+                  className={`ebm-upload-area ${image !== banner.image ? "is-new" : ""}`}
+                >
+                  {image ? (
+                    <div className="ebm-preview-wrapper">
+                      <img
+                        src={image}
+                        alt="preview"
+                        style={{ objectFit: "cover" }}
+                      />
+                      <div className="ebm-hover-overlay">
+                        <FiEdit3 size={20} />
+                        <span>เปลี่ยนรูป</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="ebm-placeholder">
+                      <FiPlus size={30} />
+                      <span>เลือกรูป</span>
+                    </div>
+                  )}
+                  <input
+                    type="file"
+                    aria-label="เปลี่ยนรูปภาพแบนเนอร์"
+                    className="suth-file-picker"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
                 </label>
-                <input
-                  id="edit-banner-link"
-                  type="url"
-                  placeholder="https://example.com"
-                  value={link}
-                  onChange={(e) => setLink(e.target.value)}
-                  className="ebm-input"
-                />
               </div>
-            </>
-          )}
-        </div>
+            </div>
+            <div className="ebm-input-group">
+              <label htmlFor="edit-banner-filename">
+                <FiEdit3 className="ebm-icon" /> ชื่อไฟล์แบนเนอร์
+              </label>
+              <input
+                id="edit-banner-filename"
+                type="text"
+                value={filename}
+                onChange={(e) => setFilename(e.target.value)}
+                className="ebm-input"
+              />
+            </div>
+            <div className="ebm-input-group">
+              <label htmlFor="edit-banner-link">
+                <FiEdit3 className="ebm-icon" /> ลิงก์ปลายทางเมื่อคลิกแบนเนอร์
+                (ถ้ามี)
+              </label>
+              <input
+                id="edit-banner-link"
+                type="url"
+                placeholder="https://example.com"
+                value={link}
+                onChange={(e) => setLink(e.target.value)}
+                className="ebm-input"
+              />
+            </div>
+          </>
+        )}
+      </div>
 
-        <div className="ebm-footer">
-          {isCropping ? (
-            <>
-              <button
-                className="ebm-btn-cancel"
-                onClick={() => setIsCropping(false)}
-              >
-                ยกเลิก
-              </button>
-              <button className="ebm-btn-save" onClick={handleConfirmCrop} disabled={!croppedAreaPixels}>
-                ยืนยันการตัดรูป
-              </button>
-            </>
-          ) : (
-            <>
-              <button className="ebm-btn-cancel" onClick={onClose}>
-                ยกเลิก
-              </button>
-              <button className="ebm-btn-save" onClick={handleSave}>
-                บันทึกการแก้ไข
-              </button>
-            </>
-          )}
-        </div>
-      </DialogFrame>
+      <div className="ebm-footer">
+        {isCropping ? (
+          <>
+            <button
+              className="ebm-btn-cancel"
+              onClick={() => setIsCropping(false)}
+            >
+              ยกเลิก
+            </button>
+            <button
+              className="ebm-btn-save"
+              onClick={handleConfirmCrop}
+              disabled={!croppedAreaPixels}
+            >
+              ยืนยันการตัดรูป
+            </button>
+          </>
+        ) : (
+          <>
+            <button className="ebm-btn-cancel" onClick={onClose}>
+              ยกเลิก
+            </button>
+            <button className="ebm-btn-save" onClick={handleSave}>
+              บันทึกการแก้ไข
+            </button>
+          </>
+        )}
+      </div>
+    </DialogFrame>
   );
 }

@@ -89,7 +89,10 @@ async function withApp(
       const expected = sql.includes("WHERE r.destination_organization_id=?")
         ? state.referral.destination_organization_id
         : state.referral.source_organization_id;
-      return [Number(params[0]) === expected ? [{ ...state.referral }] : []];
+      const matches = Number(params[0]) === expected;
+      if (sql.startsWith("SELECT COUNT(*) AS total"))
+        return [[{ total: matches ? 1 : 0 }]];
+      return [matches ? [{ ...state.referral }] : []];
     }
     if (sql.startsWith("SELECT u.*"))
       return [
@@ -167,7 +170,7 @@ async function withApp(
       permissions: new Set(
         (
           req.get("X-Test-Permissions") ??
-          "cases.view,cases.assign,cases.update"
+          "cases.view,cases.assign,cases.update,pii.view,pii.assign,clinical.view,clinical.assign"
         ).split(","),
       ),
     };
@@ -256,10 +259,12 @@ test("case history includes referrals from the same master case and refuses fore
     );
     assert.equal(response.status, 200);
     assert.equal((await response.json()).items.length, 1);
-    const lookup = state.calls.find((call) =>
-      call.sql.includes("r.source_master_case_id=?"),
+    const lookup = state.calls.find(
+      (call) =>
+        call.sql.includes("r.source_master_case_id=?") &&
+        call.sql.includes("LIMIT ? OFFSET ?"),
     );
-    assert.deepEqual(lookup.params, [1, 101, 10, 0]);
+    assert.deepEqual(lookup.params, [1, 101, 10, 10, 0]);
     assert.equal(
       (await request(2, "?direction=outgoing&source_response_id=101")).status,
       404,
@@ -472,4 +477,46 @@ test("closing a referral pair stops new referrals while existing participants re
     },
     { disabledPair: true },
   );
+});
+
+test("without assign rights a referral withholds the person's name and the assessment title", async () => {
+  await withApp(async (request, state) => {
+    const created = await request(
+      1,
+      "",
+      {
+        source_response_id: 101,
+        destination_organization_id: 2,
+        reason: "ขอประสานงาน",
+      },
+      "POST",
+      "cases.view,cases.assign,cases.update",
+    );
+    assert.equal(created.status, 201);
+    assert.equal(decrypt(state.createdParams[4]), "ไม่ระบุชื่อ");
+    assert.equal(state.createdParams[5], null);
+  });
+});
+
+test("the referral list pages by the shared table sizes and reports the total", async () => {
+  await withApp(async (request, state) => {
+    const page = await (
+      await request(1, "?direction=outgoing&limit=25")
+    ).json();
+    assert.equal(page.total, 1);
+    assert.equal(page.total_pages, 1);
+    assert.equal(page.limit, 25);
+    assert.equal(page.has_more, false);
+    const list = state.calls.filter((call) =>
+      call.sql.includes("LIMIT ? OFFSET ?"),
+    );
+    assert.deepEqual(list.at(-1).params.slice(-2), [25, 0]);
+    const count = state.calls.find((call) =>
+      call.sql.startsWith("SELECT COUNT(*) AS total"),
+    );
+    assert.ok(count && !count.sql.includes("LIMIT"));
+    // Sizes outside 10/25/50/100 fall back to the default of 10.
+    const odd = await (await request(1, "?direction=outgoing&limit=7")).json();
+    assert.equal(odd.limit, 10);
+  });
 });

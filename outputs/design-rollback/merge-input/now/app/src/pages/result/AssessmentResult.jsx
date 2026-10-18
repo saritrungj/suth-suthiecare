@@ -1,5 +1,5 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
-import { toSafeHtml } from '../../utils/richText.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
+import { toSafeHtml } from "../../utils/richText.js";
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -26,19 +26,36 @@ import Swal from "sweetalert2";
 // 🟢 ฟังก์ชันผู้ช่วย: แปลงสี HEX เป็น RGB
 const hexToRgbArray = (hex) => {
   const raw = String(hex || "").replace(/^#/, "");
-  const normalized = raw.length === 3 ? raw.split("").map((value) => value + value).join("") : raw;
+  const normalized =
+    raw.length === 3
+      ? raw
+          .split("")
+          .map((value) => value + value)
+          .join("")
+      : raw;
   if (!/^[0-9a-f]{6}$/i.test(normalized)) return [169, 67, 11];
-  return [0, 2, 4].map((offset) => parseInt(normalized.slice(offset, offset + 2), 16));
+  return [0, 2, 4].map((offset) =>
+    parseInt(normalized.slice(offset, offset + 2), 16),
+  );
 };
 
 // Retain the risk hue while making text legible on its pale result surface.
 const readableRiskColor = (hex) => {
   let rgb = hexToRgbArray(hex);
-  const luminance = (values) => values.map((value) => {
-    const channel = value / 255;
-    return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-  }).reduce((sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index], 0);
-  while (1.05 / (luminance(rgb) + 0.05) < 7) rgb = rgb.map((value) => Math.floor(value * 0.9));
+  const luminance = (values) =>
+    values
+      .map((value) => {
+        const channel = value / 255;
+        return channel <= 0.04045
+          ? channel / 12.92
+          : ((channel + 0.055) / 1.055) ** 2.4;
+      })
+      .reduce(
+        (sum, value, index) => sum + value * [0.2126, 0.7152, 0.0722][index],
+        0,
+      );
+  while (1.05 / (luminance(rgb) + 0.05) < 7)
+    rgb = rgb.map((value) => Math.floor(value * 0.9));
   return `#${rgb.map((value) => value.toString(16).padStart(2, "0")).join("")}`;
 };
 
@@ -482,21 +499,24 @@ export default function AssessmentResult() {
                       className="ar-level-badge"
                       style={{ color: level.textColor }}
                     >
-                      <FiActivity size={24} /> <span>{toDisplayText(level.label)}</span>
+                      <FiActivity size={24} />{" "}
+                      <span>{toDisplayText(level.label)}</span>
                     </div>
                     <p className="ar-card-title">
-                      {toDisplayText(isTotal
-                        ? t("assessment_result.total_score_summary", {
-                            count: res.partCount,
-                          })
-                        : res.title ||
-                          t("assessment_result.score_section", {
-                            index:
-                              index +
-                              (displayResults[0]?.displayKind === "total"
-                                ? 0
-                                : 1),
-                          }))}
+                      {toDisplayText(
+                        isTotal
+                          ? t("assessment_result.total_score_summary", {
+                              count: res.partCount,
+                            })
+                          : res.title ||
+                              t("assessment_result.score_section", {
+                                index:
+                                  index +
+                                  (displayResults[0]?.displayKind === "total"
+                                    ? 0
+                                    : 1),
+                              }),
+                      )}
                     </p>
 
                     <div
@@ -540,7 +560,10 @@ export default function AssessmentResult() {
 
                     <ul className="ar-advice__list">
                       {level.advice.map((a, i) => (
-                        <li key={i} dangerouslySetInnerHTML={{__html:toSafeHtml(a)}} />
+                        <li
+                          key={i}
+                          dangerouslySetInnerHTML={{ __html: toSafeHtml(a) }}
+                        />
                       ))}
                     </ul>
                   </div>
@@ -559,7 +582,10 @@ export default function AssessmentResult() {
                         background: `radial-gradient(circle at 50% 50%, rgba(${level.rgb}, 0.25), transparent 70%)`,
                       }}
                     >
-                      <img src={level.visualImage} alt={toDisplayText(level.label)} />
+                      <img
+                        src={level.visualImage}
+                        alt={toDisplayText(level.label)}
+                      />
                     </div>
                   </div>
                 </div>

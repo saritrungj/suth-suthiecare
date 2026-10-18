@@ -14,7 +14,7 @@
   padding: 0;
   font-weight: 700;
   color: var(--suth-ink-2);
-  font-size: 0.92rem;
+  font-size: var(--suth-fs-body);
 }
 
 .scp-toolbar {
@@ -107,7 +107,7 @@
   min-height: 44px;
   padding: 6px 10px;
   box-sizing: border-box;
-  border-radius: 8px;
+  border-radius: var(--suth-radius);
   cursor: pointer;
 }
 
@@ -138,7 +138,7 @@
 
 .scp-list strong {
   display: block;
-  font-size: 0.95rem;
+  font-size: var(--suth-fs-body);
   color: var(--suth-ink);
   overflow-wrap: anywhere;
 }
@@ -146,7 +146,7 @@
 .scp-list small {
   display: block;
   color: var(--suth-muted);
-  font-size: 0.8rem;
+  font-size: var(--suth-fs-label);
   overflow-wrap: anywhere;
 }
 
@@ -167,14 +167,14 @@
 .scp-error {
   margin: 6px 0 0;
   color: var(--suth-danger);
-  font-size: 0.875rem;
+  font-size: var(--suth-fs-sm);
   font-weight: 600;
 }
 
 .scp-count {
   margin: 6px 0 0;
   color: var(--suth-muted);
-  font-size: 0.85rem;
+  font-size: var(--suth-fs-sm);
   font-variant-numeric: tabular-nums;
 }
 
@@ -191,7 +191,7 @@
   .scp-search input,
   .scp-toggle-all {
     min-height: var(--suth-control-h);
-    font-size: 1rem;
+    font-size: var(--suth-fs-md);
   }
 
   .scp-toggle-all {

@@ -40,7 +40,7 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       open: true,
       // Browser traces are generated files and can be locked during writes on Windows.
-      watch: { ignored: ['**/test-results*/**', '**/playwright-report/**'] },
+      watch: { ignored: ["**/test-results*/**", "**/playwright-report/**"] },
       // Cloudflare Tunnel validates the incoming Host header. Keep this
       // allowlist explicit instead of disabling host checks globally.
       allowedHosts: ["transition-roman-ranking-stat.trycloudflare.com"],

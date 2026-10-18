@@ -80,8 +80,6 @@
   border-radius: 999px;
 
   background: rgba(255, 255, 255, 0.15);
-
-
 }
 
 .clinic-detail-page .clinic-hero h1 {
@@ -113,8 +111,6 @@
   border-radius: 12px;
 
   background: rgba(255, 255, 255, 0.15);
-
-
 }
 
 .clinic-detail-page .hero-stat strong {
@@ -202,8 +198,6 @@
   border-radius: 999px;
 
   background: rgba(255, 255, 255, 0.15);
-
-
 
   font-size: 14px;
   font-weight: 600;
@@ -422,21 +416,63 @@
   }
 }
 
-.clinic-detail-page * { box-sizing: border-box; }
-.clinic-detail-page :is(button,a):focus-visible { outline: 3px solid #b94d10; outline-offset: 3px; }
-.clinic-detail-page button { min-height: 44px; font-family: inherit; }
-.clinic-detail-page .timeline-content { min-width: 0; overflow-wrap: anywhere; }
-.clinic-detail-page .timeline-icon { flex: 0 0 52px; }
-.clinic-detail-page .clinic-hero::before { display: none; }
-.clinic-detail-page .hero-trend { background: #fff; color: #6f310e; }
-.clinic-detail-page .risk-label { color: #344b54; }
-@media (max-width: 600px) {
-  .clinic-detail-page { padding: 16px 12px 32px; }
-  .clinic-detail-page .clinic-hero { padding: 24px 20px; }
-  .clinic-detail-page :is(.bmi-card,.advice-card,.timeline-section) { padding: 20px 16px; }
-  .clinic-detail-page .timeline-header { align-items: flex-start; flex-wrap: wrap; gap: 12px; }
-  .clinic-detail-page .timeline-card { flex-wrap: wrap; gap: 12px; }
-  .clinic-detail-page .timeline-btn { margin-left: 64px; }
-  .clinic-detail-page .hero-main-value span { display: block; margin: 8px 0 0; }
+.clinic-detail-page * {
+  box-sizing: border-box;
 }
-@media (prefers-reduced-motion: reduce) { .clinic-detail-page * { transition: none !important; } }
+.clinic-detail-page :is(button, a):focus-visible {
+  outline: 3px solid #b94d10;
+  outline-offset: 3px;
+}
+.clinic-detail-page button {
+  min-height: 44px;
+  font-family: inherit;
+}
+.clinic-detail-page .timeline-content {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.clinic-detail-page .timeline-icon {
+  flex: 0 0 52px;
+}
+.clinic-detail-page .clinic-hero::before {
+  display: none;
+}
+.clinic-detail-page .hero-trend {
+  background: #fff;
+  color: #6f310e;
+}
+.clinic-detail-page .risk-label {
+  color: #344b54;
+}
+@media (max-width: 600px) {
+  .clinic-detail-page {
+    padding: 16px 12px 32px;
+  }
+  .clinic-detail-page .clinic-hero {
+    padding: 24px 20px;
+  }
+  .clinic-detail-page :is(.bmi-card, .advice-card, .timeline-section) {
+    padding: 20px 16px;
+  }
+  .clinic-detail-page .timeline-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .clinic-detail-page .timeline-card {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .clinic-detail-page .timeline-btn {
+    margin-left: 64px;
+  }
+  .clinic-detail-page .hero-main-value span {
+    display: block;
+    margin: 8px 0 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clinic-detail-page * {
+    transition: none !important;
+  }
+}

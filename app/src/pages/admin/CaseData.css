@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap");
-
 /* ===============================
    CASE PAGE
 ================================= */
@@ -53,7 +51,7 @@
   position: fixed;
   inset: 0;
 
-  background: rgba(15, 23, 42, 0.42);
+  background: rgba(31, 47, 63, 0.42);
 
   backdrop-filter: blur(6px);
 
@@ -74,15 +72,15 @@
   width: 100%;
   max-width: 860px;
 
-  background: #f8fafc;
+  background: var(--suth-surface-2);
 
-  border-radius: 20px;
+  border-radius: var(--suth-radius-lg);
 
   overflow: hidden;
 
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 20px 50px rgba(31, 47, 63, 0.18);
 
-  font-family: "Sarabun", sans-serif;
+  font-family: var(--suth-font);
 
   animation: modalEnter 0.18s ease;
 }
@@ -105,9 +103,9 @@
 .scd-create-case-header {
   padding: 22px 26px;
 
-  background: #f47932;
+  background: var(--suth-action);
 
-  color: #fff;
+  color: var(--suth-on-action);
 
   display: flex;
   align-items: flex-start;
@@ -117,24 +115,24 @@
 .scd-create-case-header h2 {
   margin: 0;
 
-  font-size: 22px;
+  font-size: var(--suth-fs-title);
   font-weight: 700;
 }
 
 .scd-create-case-header p {
   margin-top: 4px;
 
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.82);
+  font-size: var(--suth-fs-label);
+  color: color-mix(in srgb, var(--suth-on-action) 82%, transparent);
 }
 .scd-close-btn {
   width: 40px;
-  height: 40px;
+  height: var(--suth-control-h);
   border: none;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
+  background: color-mix(in srgb, var(--suth-surface) 18%, transparent);
   backdrop-filter: blur(10px);
-  color: #ffffff;
+  color: var(--suth-on-action);
   position: relative;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -147,8 +145,8 @@
   left: 20%;
   width: 60%;
   height: 2px;
-  background-color: #ffffff;
-  border-radius: 2px;
+  background-color: var(--suth-surface);
+  border-radius: var(--suth-radius-xs);
   transition: all 0.3s ease;
 }
 .scd-close-btn::before {
@@ -160,11 +158,11 @@
 }
 .scd-close-btn:hover::before,
 .scd-close-btn:hover::after {
-  background-color: #f47932;
+  background-color: var(--suth-action-hover);
 }
 
 .scd-close-btn:hover {
-  background: #ffffff;
+  background: var(--suth-surface);
   transform: rotate(90deg);
 }
 /* =========================
@@ -195,10 +193,10 @@
 }
 
 .scd-section-title {
-  font-size: 15px;
+  font-size: var(--suth-fs-body);
   font-weight: 700;
 
-  color: #0f172a;
+  color: var(--suth-ink);
 
   margin-bottom: 18px;
 }
@@ -227,10 +225,10 @@
 }
 
 .scd-form-group label {
-  font-size: 13px;
+  font-size: var(--suth-fs-label);
   font-weight: 600;
 
-  color: #334155;
+  color: var(--suth-ink-2);
 }
 
 /* =========================
@@ -244,19 +242,19 @@
 
   height: 44px;
 
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--suth-line);
 
-  background: #fff;
+  background: var(--suth-surface);
 
-  border-radius: 12px;
+  border-radius: var(--suth-radius-panel);
 
   padding: 0 14px;
 
-  font-family: "Sarabun", sans-serif;
-  font-size: 14px;
+  font-family: var(--suth-font);
+  font-size: var(--suth-fs-sm);
   font-weight: 500;
 
-  color: #0f172a;
+  color: var(--suth-ink);
 
   outline: none;
 
@@ -274,9 +272,9 @@
 .scd-form-group input:focus,
 .scd-form-group select:focus,
 .scd-form-group textarea:focus {
-  border-color: #f47932;
+  border-color: var(--suth-action);
 
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--suth-action) 8%, transparent);
 }
 
 /* =========================
@@ -294,9 +292,9 @@
 .scd-create-case-footer {
   padding: 18px 22px;
 
-  background: #fff;
+  background: var(--suth-surface);
 
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--suth-line-soft);
 
   display: flex;
   justify-content: flex-end;
@@ -308,25 +306,25 @@
 ========================= */
 
 .scd-cancel-btn {
-  height: 42px;
+  height: var(--suth-control-h);
   padding: 0 18px;
 
   border: none;
-  border-radius: 12px;
+  border-radius: var(--suth-radius-panel);
 
-  background: #e2e8f0;
+  background: var(--suth-line);
 
-  color: #334155;
+  color: var(--suth-ink-2);
 
-  font-family: "Sarabun", sans-serif;
-  font-size: 14px;
+  font-family: var(--suth-font);
+  font-size: var(--suth-fs-sm);
   font-weight: 600;
 
   cursor: pointer;
 }
 
 .scd-cancel-btn:hover {
-  background: #cbd5e1;
+  background: var(--suth-control-line);
 }
 
 .scd-save-btn {
@@ -334,14 +332,14 @@
   padding: 0 18px;
 
   border: none;
-  border-radius: 12px;
+  border-radius: var(--suth-radius-panel);
 
   background: var(--suth-action);
 
-  color: #fff;
+  color: var(--suth-on-action);
 
-  font-family: "Sarabun", sans-serif;
-  font-size: 14px;
+  font-family: var(--suth-font);
+  font-size: var(--suth-fs-sm);
   font-weight: 600;
 
   cursor: pointer;
@@ -362,8 +360,8 @@
 }
 
 .scd-create-case-body::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 999px;
+  background: var(--suth-control-line);
+  border-radius: var(--suth-radius-pill);
 }
 
 /* =========================
@@ -399,7 +397,7 @@
 .scd-create-case-modal .scd-create-case-footer > button.scd-save-btn {
   border-color: var(--suth-action) !important;
   background: var(--suth-action) !important;
-  color: #ffffff !important;
+  color: var(--suth-on-action) !important;
 }
 
 .scd-create-case-modal

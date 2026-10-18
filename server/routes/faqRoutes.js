@@ -131,6 +131,7 @@ router.post("/categories", verifyToken, async (req, res) => {
 router.patch("/categories/:id", verifyToken, async (req, res) => {
   const denied = await categoryInScope(req, req.params.id);
   if (denied) return fail(res, denied);
+  if (await denyStatusChange(req, res, "faq_categories", req.params.id)) return;
   await db.query(
     "UPDATE faq_categories SET category_name=?,display_order=?,status=? WHERE id=?",
     [
@@ -224,9 +225,22 @@ router.post("/faqs", verifyToken, async (req, res) => {
   );
   res.json({ success: true, insertId: result.insertId });
 });
+// Publishing or hiding help content is "assign" on the roles page.
+async function denyStatusChange(req, res, table, id) {
+  const [[row]] = await db.query(`SELECT status FROM ${table} WHERE id=?`, [
+    id,
+  ]);
+  const next = req.body?.status || PUBLISHED;
+  return Boolean(
+    row &&
+    row.status !== next &&
+    require("../authorization/can").denyUnless(req, res, "help_center.assign"),
+  );
+}
 router.put("/faqs/:id", verifyToken, async (req, res) => {
   const existing = await faqInScope(req, req.params.id);
   if (existing) return fail(res, existing);
+  if (await denyStatusChange(req, res, "faqs", req.params.id)) return;
   const clinicId = await validateFaqPayload(req, res);
   if (clinicId === null && !req.authorization?.isSystemAdmin) return;
   await db.query(

@@ -1,5 +1,5 @@
-import SearchableSelect from '../../components/SearchableSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import SearchableSelect from "../../components/SearchableSelect";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { usePageExport } from "../../components/ExcelExport";
 import { authSession } from "../../utils/authSession";
 import React, {
@@ -232,7 +232,14 @@ export default function UserManagement({
   );
   const totalItems =
     activeTab === "staff" ? filteredUsers.length : memberPagination.total;
-  usePageExport({title:activeTab === "staff" ? "ผู้ใช้" : "สมาชิก",sources:activeTab === "staff" ? [{resource:"users",ids:filteredUsers.map(r=>r.id)}] : [{resource:"members",filters:{search,status:statusFilter}}],disabled:loading});
+  usePageExport({
+    title: activeTab === "staff" ? "ผู้ใช้" : "สมาชิก",
+    sources:
+      activeTab === "staff"
+        ? [{ resource: "users", ids: filteredUsers.map((r) => r.id) }]
+        : [{ resource: "members", filters: { search, status: statusFilter } }],
+    disabled: loading,
+  });
   const totalPages =
     activeTab === "staff" ? staffTotalPages : memberPagination.total_pages;
 
@@ -858,7 +865,11 @@ function StatusBadge({ status, staff = false }) {
       ? "ใช้งานปกติ"
       : "ระงับการใช้งาน"
     : memberStatusMap[status] || "ไม่ทราบสถานะ";
-  return <span className={`sum-status sum-status-${status}`}>{toDisplayText(label)}</span>;
+  return (
+    <span className={`sum-status sum-status-${status}`}>
+      {toDisplayText(label)}
+    </span>
+  );
 }
 
 function LoadingRows({ columns }) {

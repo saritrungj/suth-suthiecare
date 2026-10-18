@@ -16,20 +16,20 @@
 
 ## Components
 
-| Component | ใช้กับ | Props สำคัญ |
-| --- | --- | --- |
-| Button | ปุ่มคำสั่ง | variant: primary / secondary / ghost / danger; size: default / icon; busy; native button props |
-| PageHeader | ชื่อหน้าและคำสั่งหลัก | title, description, actions; children สำหรับหัวหน้าที่มี scope หรือ mode switch เฉพาะ |
-| FilterBar | รวมการค้นหาและตัวกรอง | children; className สำหรับการจัดขนาดช่องของงานนั้น |
-| TextInput / TextArea | ช่องกรอก | native props, ref, required, aria-invalid, aria-describedby |
-| DataTable | ตาราง | children, native table props; คง sort, columns และ mobile presentation ของงานเดิม |
-| Surface | พื้นที่ทำงาน | as (section/div/aside/article), children, aria-label หรือ aria-labelledby |
-| SelectionGroup | กลุ่มแท็บ/มุมมอง | as, children; ใช้ native links/buttons และ aria-current / aria-pressed / aria-selected ตามพฤติกรรมเดิม |
-| Badge | สถานะทั่วไป | tone หรือ class สถานะเดิม; ใช้ RiskPill เดิมสำหรับความเสี่ยงทางสุขภาพ |
-| EmptyState / EmptyRow | ไม่มีข้อมูล | title, hint, icon; EmptyRow รับจำนวน columns |
-| LoadingRows | ตารางกำลังโหลด | columns, rows |
-| Dialog | หน้าต่างที่ต้องโฟกัสงาน | title, subtitle, onClose, footer, size; เปิด/ปิดด้วยการ mount/unmount |
-| DialogFrame | โครงสำหรับหน้าต่างเฉพาะงานเดิม | as, onClose, dismissible, className, aria-label/aria-labelledby; ใช้ portal และ focus stack เดียวกับ Dialog |
+| Component             | ใช้กับ                         | Props สำคัญ                                                                                                 |
+| --------------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| Button                | ปุ่มคำสั่ง                     | variant: primary / secondary / ghost / danger; size: default / icon; busy; native button props              |
+| PageHeader            | ชื่อหน้าและคำสั่งหลัก          | title, description, actions; children สำหรับหัวหน้าที่มี scope หรือ mode switch เฉพาะ                       |
+| FilterBar             | รวมการค้นหาและตัวกรอง          | children; className สำหรับการจัดขนาดช่องของงานนั้น                                                          |
+| TextInput / TextArea  | ช่องกรอก                       | native props, ref, required, aria-invalid, aria-describedby                                                 |
+| DataTable             | ตาราง                          | children, native table props; คง sort, columns และ mobile presentation ของงานเดิม                           |
+| Surface               | พื้นที่ทำงาน                   | as (section/div/aside/article), children, aria-label หรือ aria-labelledby                                   |
+| SelectionGroup        | กลุ่มแท็บ/มุมมอง               | as, children; ใช้ native links/buttons และ aria-current / aria-pressed / aria-selected ตามพฤติกรรมเดิม      |
+| Badge                 | สถานะทั่วไป                    | tone หรือ class สถานะเดิม; ใช้ RiskPill เดิมสำหรับความเสี่ยงทางสุขภาพ                                       |
+| EmptyState / EmptyRow | ไม่มีข้อมูล                    | title, hint, icon; EmptyRow รับจำนวน columns                                                                |
+| LoadingRows           | ตารางกำลังโหลด                 | columns, rows                                                                                               |
+| Dialog                | หน้าต่างที่ต้องโฟกัสงาน        | title, subtitle, onClose, footer, size; เปิด/ปิดด้วยการ mount/unmount                                       |
+| DialogFrame           | โครงสำหรับหน้าต่างเฉพาะงานเดิม | as, onClose, dismissible, className, aria-label/aria-labelledby; ใช้ portal และ focus stack เดียวกับ Dialog |
 
 Dialog ใช้ `useDialogFocus` ตัวเดิม: โฟกัสช่องแรก, Tab อยู่ในหน้าต่าง, Escape ปิดหน้าต่างบนสุด และคืนโฟกัสให้ปุ่มเปิด หน้าจอเป็นผู้ตัดสินใจว่าจะอนุญาตปิดระหว่างบันทึกหรือไม่
 

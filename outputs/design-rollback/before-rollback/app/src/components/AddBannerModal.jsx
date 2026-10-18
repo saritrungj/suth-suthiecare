@@ -1,4 +1,4 @@
-import { DialogFrame } from './ui/index.jsx';
+import { DialogFrame } from "./ui/index.jsx";
 import React, { useState, useCallback } from "react";
 import Cropper from "react-easy-crop";
 import { FiPlus, FiArrowLeft } from "react-icons/fi";
@@ -117,177 +117,183 @@ export default function AddBannerModal({ onClose, onSave }) {
   };
 
   return (
-    <DialogFrame className="abm-card"
-        aria-label="เพิ่มแบนเนอร์ใหม่" onClose={onClose}>
-        <div className="abm-header">
-          <h3>เพิ่มแบนเนอร์ใหม่</h3>
-          <p>
-            {isCropping
-              ? "เลื่อนกรอบเพื่อจัดตำแหน่งรูปภาพ (ขนาด 1024 x 768px)"
-              : !croppedImage
-                ? "คลิกเพื่อเลือกภาพแบนเนอร์"
-                : "ระบุรายละเอียดแบนเนอร์"}
-          </p>
-          <button
-            className="abm-close-btn-custom"
-            onClick={onClose}
-            aria-label="ปิดหน้าต่าง"
-          >
-            <span className="close-cross"></span>
-          </button>
-        </div>
+    <DialogFrame
+      className="abm-card"
+      aria-label="เพิ่มแบนเนอร์ใหม่"
+      onClose={onClose}
+    >
+      <div className="abm-header">
+        <h3>เพิ่มแบนเนอร์ใหม่</h3>
+        <p>
+          {isCropping
+            ? "เลื่อนกรอบเพื่อจัดตำแหน่งรูปภาพ (ขนาด 1024 x 768px)"
+            : !croppedImage
+              ? "คลิกเพื่อเลือกภาพแบนเนอร์"
+              : "ระบุรายละเอียดแบนเนอร์"}
+        </p>
+        <button
+          className="abm-close-btn-custom"
+          onClick={onClose}
+          aria-label="ปิดหน้าต่าง"
+        >
+          <span className="close-cross"></span>
+        </button>
+      </div>
 
-        <div className="abm-body">
-          {isCropping ? (
-            <div className="abm-crop-section">
-              <div
-                style={{
-                  position: "relative",
-                  width: "100%",
-                  height: "clamp(160px, 42dvh, 350px)",
-                  background: "#1e293b",
-                  borderRadius: "12px",
-                  overflow: "hidden",
-                }}
-              >
-                <Cropper
-                  image={image}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={4 / 3}
-                  onCropChange={setCrop}
-                  onCropComplete={onCropComplete}
-                  onZoomChange={setZoom}
-                />
-              </div>
-              <div style={{ marginTop: "15px" }}>
-                <label className="abm-label">
-                  ซูม: {Math.round(zoom * 100)}%
-                </label>
-                <input
-                  type="range"
-                  aria-label="ระดับการซูมภาพ"
-                  min="1"
-                  max="3"
-                  step="0.1"
-                  value={zoom}
-                  onChange={(e) => setZoom(e.target.value)}
-                  style={{ width: "100%" }}
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="abm-preview-section">
-              {!croppedImage ? (
-                <label className="abm-upload-area">
-                  <FiPlus size={40} />
-                  <span>คลิกเพื่อเลือกรูปภาพ</span>
-                  <input
-                    type="file"
-                    aria-label="เลือกรูปภาพแบนเนอร์"
-                    className="suth-file-picker"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                  />
-                </label>
-              ) : (
-                <>
-                  <div style={{ marginBottom: "20px" }}>
-                    <label
-                      className="abm-label"
-                      style={{ marginBottom: "8px" }}
-                    >
-                      ภาพแบนเนอร์ที่พร้อมใช้งาน
-                    </label>
-                    <img
-                      src={croppedImage}
-                      alt="cropped"
-                      style={{
-                        width: "100%",
-                        maxWidth: "420px",
-                        height: "auto",
-                        aspectRatio: "4 / 3",
-                        objectFit: "cover",
-                        borderRadius: "12px",
-                        border: "2px solid #2563eb",
-                        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                        display: "block",
-                        marginBottom: "12px",
-                      }}
-                    />
-                    <button
-                      onClick={() => setIsCropping(true)}
-                      className="abm-btn-outline-sm"
-                      style={{ marginTop: 0 }}
-                    >
-                      ตัดใหม่
-                    </button>
-                  </div>
-                  <div className="abm-input-group">
-                    <label className="abm-label" htmlFor="new-banner-filename">ชื่อแบนเนอร์:</label>
-                    <input
-                      id="new-banner-filename"
-                      type="text"
-                      className="abm-input"
-                      value={filename}
-                      onChange={(e) => setFilename(e.target.value)}
-                      placeholder="เช่น ภาพปก"
-                    />
-                  </div>
-                  <div className="abm-input-group">
-                    <label className="abm-label" htmlFor="new-banner-link">
-                      ลิงก์ปลายทางเมื่อคลิกแบนเนอร์ (ถ้ามี):
-                    </label>
-                    <input
-                      id="new-banner-link"
-                      type="url"
-                      className="abm-input"
-                      placeholder="https://example.com"
-                      value={link}
-                      onChange={(e) => setLink(e.target.value)}
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className="abm-footer">
-          {isCropping && (
-            <button
-              className="abm-btn-outline-sm"
-              onClick={() => {
-                setImage(null);
-                setIsCropping(false);
-              }}
+      <div className="abm-body">
+        {isCropping ? (
+          <div className="abm-crop-section">
+            <div
               style={{
-                marginRight: "auto",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
+                position: "relative",
+                width: "100%",
+                height: "clamp(160px, 42dvh, 350px)",
+                background: "#1e293b",
+                borderRadius: "12px",
+                overflow: "hidden",
               }}
             >
-              <FiArrowLeft size={16} /> ย้อนกลับ
-            </button>
-          )}
-          <button className="abm-btn-cancel" onClick={onClose}>
-            ยกเลิก
+              <Cropper
+                image={image}
+                crop={crop}
+                zoom={zoom}
+                aspect={4 / 3}
+                onCropChange={setCrop}
+                onCropComplete={onCropComplete}
+                onZoomChange={setZoom}
+              />
+            </div>
+            <div style={{ marginTop: "15px" }}>
+              <label className="abm-label">
+                ซูม: {Math.round(zoom * 100)}%
+              </label>
+              <input
+                type="range"
+                aria-label="ระดับการซูมภาพ"
+                min="1"
+                max="3"
+                step="0.1"
+                value={zoom}
+                onChange={(e) => setZoom(e.target.value)}
+                style={{ width: "100%" }}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="abm-preview-section">
+            {!croppedImage ? (
+              <label className="abm-upload-area">
+                <FiPlus size={40} />
+                <span>คลิกเพื่อเลือกรูปภาพ</span>
+                <input
+                  type="file"
+                  aria-label="เลือกรูปภาพแบนเนอร์"
+                  className="suth-file-picker"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+              </label>
+            ) : (
+              <>
+                <div style={{ marginBottom: "20px" }}>
+                  <label className="abm-label" style={{ marginBottom: "8px" }}>
+                    ภาพแบนเนอร์ที่พร้อมใช้งาน
+                  </label>
+                  <img
+                    src={croppedImage}
+                    alt="cropped"
+                    style={{
+                      width: "100%",
+                      maxWidth: "420px",
+                      height: "auto",
+                      aspectRatio: "4 / 3",
+                      objectFit: "cover",
+                      borderRadius: "12px",
+                      border: "2px solid #2563eb",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                      display: "block",
+                      marginBottom: "12px",
+                    }}
+                  />
+                  <button
+                    onClick={() => setIsCropping(true)}
+                    className="abm-btn-outline-sm"
+                    style={{ marginTop: 0 }}
+                  >
+                    ตัดใหม่
+                  </button>
+                </div>
+                <div className="abm-input-group">
+                  <label className="abm-label" htmlFor="new-banner-filename">
+                    ชื่อแบนเนอร์:
+                  </label>
+                  <input
+                    id="new-banner-filename"
+                    type="text"
+                    className="abm-input"
+                    value={filename}
+                    onChange={(e) => setFilename(e.target.value)}
+                    placeholder="เช่น ภาพปก"
+                  />
+                </div>
+                <div className="abm-input-group">
+                  <label className="abm-label" htmlFor="new-banner-link">
+                    ลิงก์ปลายทางเมื่อคลิกแบนเนอร์ (ถ้ามี):
+                  </label>
+                  <input
+                    id="new-banner-link"
+                    type="url"
+                    className="abm-input"
+                    placeholder="https://example.com"
+                    value={link}
+                    onChange={(e) => setLink(e.target.value)}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="abm-footer">
+        {isCropping && (
+          <button
+            className="abm-btn-outline-sm"
+            onClick={() => {
+              setImage(null);
+              setIsCropping(false);
+            }}
+            style={{
+              marginRight: "auto",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+            }}
+          >
+            <FiArrowLeft size={16} /> ย้อนกลับ
           </button>
-          {isCropping ? (
-            <button className="abm-btn-save" onClick={handleConfirmCrop} disabled={!croppedAreaPixels}>
-              ยืนยันการตัดรูป
-            </button>
-          ) : (
-            <button
-              className="abm-btn-save"
-              onClick={handleSave}
-              disabled={!croppedImage}
-            >
-              บันทึกแบนเนอร์
-            </button>
-          )}
-        </div>
-      </DialogFrame>
+        )}
+        <button className="abm-btn-cancel" onClick={onClose}>
+          ยกเลิก
+        </button>
+        {isCropping ? (
+          <button
+            className="abm-btn-save"
+            onClick={handleConfirmCrop}
+            disabled={!croppedAreaPixels}
+          >
+            ยืนยันการตัดรูป
+          </button>
+        ) : (
+          <button
+            className="abm-btn-save"
+            onClick={handleSave}
+            disabled={!croppedImage}
+          >
+            บันทึกแบนเนอร์
+          </button>
+        )}
+      </div>
+    </DialogFrame>
   );
 }

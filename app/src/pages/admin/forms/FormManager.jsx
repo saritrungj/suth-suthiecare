@@ -1,5 +1,6 @@
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import SearchableSelect from "../../../components/SearchableSelect";
+import { useModuleActions } from "../../../permissions/useModuleActions";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import { usePageExport } from "../../../components/ExcelExport";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -16,8 +17,19 @@ import {
 import "./styles/FormManager.css";
 import { usePermissions } from "../../../permissions/PermissionsProvider";
 import { confirmAlert } from "../../../utils/alerts";
-import { getActiveOrganizationLabel } from "../../../permissions/organizationContext";
-import FilterDropdown from "../../../components/FilterDropdown";
+import ActiveOrganizationScope from "../../../components/OrganizationScope";
+import {
+  HEALTH_DOMAINS,
+  getClinicName,
+  getFormDomain,
+  getHealthDomainLabel,
+  getOrganizationProfile,
+  groupForms,
+} from "../../../permissions/organizationProfile";
+import FilterDropdown, {
+  FilterField,
+} from "../../../components/FilterDropdown";
+import ResultSummary from "../../../components/table/ResultSummary";
 
 import {
   FaFolderOpen,
@@ -40,6 +52,7 @@ import {
   FaLock,
   FaExclamationTriangle,
 } from "react-icons/fa";
+import { PageHero } from "../../../components/dashboard/DashboardKit";
 
 // 🟢 Component สำหรับ Dropdown
 const CustomDropdown = ({
@@ -71,9 +84,9 @@ const CustomDropdown = ({
 
   return (
     <div
-      className="fm-custom-select"
+      className={"fm-custom-select" + (isOpen ? " is-open" : "")}
       ref={ref}
-      style={{ ...style, zIndex: isOpen ? 999 : 1 }}
+      style={{ ...style, zIndex: isOpen ? "var(--z-dropdown)" : 1 }}
       onClick={() => setIsOpen(!isOpen)}
     >
       <Icon className="fm-filter-icon" style={iconStyle} />
@@ -103,7 +116,12 @@ const CustomDropdown = ({
 };
 
 const FormManager = () => {
-  const { activeOrganization, authorization } = usePermissions();
+  const { activeOrganization, activeOrganizationType } = usePermissions();
+  const profile = getOrganizationProfile(
+    activeOrganization === "all" ? null : activeOrganizationType,
+  );
+  const usesClinics = profile.formGroupAxis !== "health_domain";
+  const formRights = useModuleActions("forms");
   const [forms, setForms] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState("grid");
@@ -134,43 +152,17 @@ const FormManager = () => {
 
   // 🟢 เพิ่ม State สำหรับคลินิก
   const [clinics, setClinics] = useState([]);
-  const activeOrganizationLabel = getActiveOrganizationLabel(
-    authorization,
-    activeOrganization,
-  );
-  const clinicColors = [
-    "#e0f2fe",
-    "#dcfce7",
-    "#fce7f3",
-    "#fef3c7",
-    "#e0e7ff",
-    "#f3e8ff",
-  ];
-  const clinicTextColors = [
-    "#0284c7",
-    "#166534",
-    "#be185d",
-    "#d97706",
-    "#4338ca",
-    "#7e22ce",
-  ];
-
-  const getClinicLabel = (slug) => {
-    if (slug === "general")
-      return { text: "ทั่วไป", bg: "#f1f5f9", color: "#475569" };
-    const clinic = clinics.find((c) => c.slug === slug);
-    if (!clinic)
-      return { text: slug, bg: "#f1f5f9", color: "#475569", isDeleted: true };
-
-    const index = clinics.findIndex((c) => c.slug === slug);
-    const colorIndex = index % clinicColors.length;
-
-    return {
-      text: clinic.name,
-      bg: clinicColors[colorIndex],
-      color: clinicTextColors[colorIndex],
-    };
-  };
+  // Label of a form on the active grouping axis (clinic or health domain),
+  // shown with the organization in the all-organizations view.
+  const formAxisLabel = (form) =>
+    [
+      form.organization_name || "ยังไม่ระบุหน่วยงาน",
+      form.health_domain
+        ? getHealthDomainLabel(form.health_domain)
+        : getClinicName(form.clinic_type || "general", clinics),
+    ]
+      .filter(Boolean)
+      .join(" · ");
 
   const [toastMessage, setToastMessage] = useState(null);
   const toastTimer = useRef(null);
@@ -205,6 +197,11 @@ const FormManager = () => {
     fetchForms();
   }, [fetchForms]);
 
+  // Filter values belong to one organization type; start fresh on a switch.
+  useEffect(() => {
+    setClinicFilter("all");
+  }, [activeOrganization]);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       // ปิดเมนูการ์ดฟอร์ม
@@ -220,15 +217,23 @@ const FormManager = () => {
     const matchSearch = f.title
       ?.toLowerCase()
       .includes(searchTerm.toLowerCase());
-    const matchClinic =
-      clinicFilter === "all" || (f.clinic_type || "general") === clinicFilter;
+    const groupValue =
+      profile.formGroupAxis === "health_domain"
+        ? getFormDomain(f)
+        : f.clinic_type || "general";
+    const matchClinic = clinicFilter === "all" || groupValue === clinicFilter;
     const currentStatus = f.status || "draft";
     const matchStatus =
       statusFilter === "all" || currentStatus === statusFilter;
     return matchSearch && matchClinic && matchStatus;
   });
 
-  usePageExport({title:"แบบประเมิน",sources:[{resource:"forms",ids:filteredForms.map(r=>r.id)}]});
+  const formGroups = groupForms(filteredForms, profile, clinics);
+
+  usePageExport({
+    title: "แบบประเมิน",
+    sources: [{ resource: "forms", ids: filteredForms.map((r) => r.id) }],
+  });
   const handleToggleMenu = (e, formId) => {
     e.stopPropagation();
     setOpenMenuId(openMenuId === formId ? null : formId);
@@ -445,29 +450,28 @@ const FormManager = () => {
   return (
     <div className="fm-admin-layout">
       <main className="fm-main-content">
-        <header className="fm-content-header">
-          <div className="fm-header-info">
-            <h2>จัดการฟอร์ม</h2>
-            <p className="fm-header-hint">
-              สร้าง แก้ไข และจัดการสถานะของแบบประเมินในแต่ละคลินิกบริการ
-            </p>
-            <p className="fm-context-indicator">
-              <span>ขอบเขตข้อมูล</span>
-              {activeOrganizationLabel}
-            </p>
-          </div>
-          <button
-            className="fm-btn-add-form"
-            onClick={() => navigate("/admin/forms/create")}
-          >
-            + สร้างฟอร์ม
-          </button>
-        </header>
+        <PageHero
+          title="จัดการฟอร์ม"
+          description={profile.formsHint}
+          scope={<ActiveOrganizationScope />}
+          actions={
+            <button
+              hidden={!formRights.create}
+              className="fm-btn-add-form"
+              onClick={() => navigate("/admin/forms/create")}
+            >
+              + สร้างฟอร์ม
+            </button>
+          }
+        />
 
         <div className="fm-action-bar">
           {/* 🟢 ช่องค้นหาดีไซน์ใหม่ */}
           <div className="fm-search-group">
-            <FaSearch className="fm-filter-icon" style={{ color: "#64748b" }} />
+            <FaSearch
+              className="fm-filter-icon"
+              style={{ color: "var(--suth-muted)" }}
+            />
             <input
               type="text"
               placeholder="ค้นหาชื่อฟอร์ม..."
@@ -486,60 +490,150 @@ const FormManager = () => {
                   sortBy !== "เปิดล่าสุด" ? sortBy : "",
                 ].filter(Boolean).length
               }
+              onClear={() => {
+                setClinicFilter("all");
+                setStatusFilter("all");
+                setSortBy("เปิดล่าสุด");
+              }}
             >
-              <CustomDropdown
-                icon={FaFilter}
-                value={clinicFilter}
-                onChange={setClinicFilter}
-                options={[
-                  { value: "all", label: `ทุกคลินิก (${forms.length})` },
-                  { value: "general", label: "ทั่วไป" },
-                  ...clinics.map((c) => ({ value: c.slug, label: c.name })),
-                ]}
-              />
+              <FilterField
+                label={
+                  profile.formGroupAxis === "health_domain"
+                    ? "ด้านสุขภาพ"
+                    : "คลินิก"
+                }
+              >
+                <CustomDropdown
+                  icon={FaFilter}
+                  value={clinicFilter}
+                  onChange={setClinicFilter}
+                  options={
+                    profile.formGroupAxis === "health_domain"
+                      ? [
+                          {
+                            value: "all",
+                            label: `ทุกด้านสุขภาพ (${forms.length})`,
+                          },
+                          ...HEALTH_DOMAINS,
+                        ]
+                      : [
+                          {
+                            value: "all",
+                            label: `ทุกคลินิก (${forms.length})`,
+                          },
+                          { value: "general", label: "ทั่วไป" },
+                          ...clinics.map((c) => ({
+                            value: c.slug,
+                            label: c.name,
+                          })),
+                        ]
+                  }
+                />
+              </FilterField>
 
-              <CustomDropdown
-                icon={FaFileAlt}
-                value={statusFilter}
-                onChange={setStatusFilter}
-                options={[
-                  { value: "all", label: "ทุกสถานะ" },
-                  { value: "published", label: "เผยแพร่แล้ว" },
-                  { value: "draft", label: "ฉบับร่าง" },
-                ]}
-              />
+              <FilterField label="สถานะ">
+                <CustomDropdown
+                  icon={FaFileAlt}
+                  value={statusFilter}
+                  onChange={setStatusFilter}
+                  options={[
+                    { value: "all", label: "ทุกสถานะ" },
+                    { value: "published", label: "เผยแพร่แล้ว" },
+                    { value: "draft", label: "ฉบับร่าง" },
+                  ]}
+                />
+              </FilterField>
 
-              <CustomDropdown
-                icon={FaSort}
-                value={sortBy}
-                onChange={handleSortChange}
-                options={[
-                  { value: "เปิดล่าสุด", label: "เปิดล่าสุด" },
-                  { value: "แก้ไขล่าสุด", label: "แก้ไขล่าสุด" },
-                  { value: "ชื่อ", label: "เรียงตามชื่อ" },
-                ]}
-              />
+              <FilterField label="เรียงลำดับ">
+                <CustomDropdown
+                  icon={FaSort}
+                  value={sortBy}
+                  onChange={handleSortChange}
+                  options={[
+                    { value: "เปิดล่าสุด", label: "เปิดล่าสุด" },
+                    { value: "แก้ไขล่าสุด", label: "แก้ไขล่าสุด" },
+                    { value: "ชื่อ", label: "เรียงตามชื่อ" },
+                  ]}
+                />
+              </FilterField>
             </FilterDropdown>
 
             {/* สลับมุมมอง */}
-            <div className="fm-view-toggle">
-              <span className="fm-toggle-label">
-                {viewMode === "grid" ? "แบบตาราง" : "แบบรายการ"}
-              </span>
-
-              <label className="fm-switch">
-                <input
-                  type="checkbox"
-                  checked={viewMode === "grid"}
-                  onChange={() =>
-                    setViewMode(viewMode === "grid" ? "list" : "grid")
-                  }
-                />
-                <span className="fm-slider fm-round"></span>
-              </label>
+            <div
+              className="cw-mode fm-view-toggle"
+              role="group"
+              aria-label="มุมมองแบบฟอร์ม"
+            >
+              <button
+                type="button"
+                aria-pressed={viewMode === "grid"}
+                onClick={() => setViewMode("grid")}
+              >
+                แบบตาราง
+              </button>
+              <button
+                type="button"
+                aria-pressed={viewMode === "list"}
+                onClick={() => setViewMode("list")}
+              >
+                แบบรายการ
+              </button>
             </div>
           </div>
         </div>
+
+        <ResultSummary
+          pagination={{
+            page: 1,
+            total: filteredForms.length,
+            limit: filteredForms.length || 1,
+          }}
+          chips={[
+            {
+              key: "group",
+              label:
+                profile.formGroupAxis === "health_domain"
+                  ? "ด้านสุขภาพ"
+                  : "คลินิก",
+              value:
+                clinicFilter === "all"
+                  ? ""
+                  : clinicFilter === "general"
+                    ? "ทั่วไป"
+                    : [
+                        ...HEALTH_DOMAINS,
+                        ...clinics.map((c) => ({
+                          value: c.slug,
+                          label: c.name,
+                        })),
+                      ].find((o) => o.value === clinicFilter)?.label ||
+                      clinicFilter,
+              onRemove: () => setClinicFilter("all"),
+            },
+            {
+              key: "status",
+              label: "สถานะ",
+              value:
+                statusFilter === "published"
+                  ? "เผยแพร่แล้ว"
+                  : statusFilter === "draft"
+                    ? "ฉบับร่าง"
+                    : "",
+              onRemove: () => setStatusFilter("all"),
+            },
+            {
+              key: "sort",
+              label: "เรียง",
+              value: sortBy === "เปิดล่าสุด" ? "" : sortBy,
+              onRemove: () => setSortBy("เปิดล่าสุด"),
+            },
+          ]}
+          onClearAll={() => {
+            setClinicFilter("all");
+            setStatusFilter("all");
+            setSortBy("เปิดล่าสุด");
+          }}
+        />
 
         {isLoading ? (
           <div className="fm-loading-state">
@@ -547,286 +641,181 @@ const FormManager = () => {
             <p>กำลังโหลดฟอร์ม...</p>
           </div>
         ) : (
-          <section className={`fm-forms-container ${viewMode}`}>
-            {filteredForms.map((form) => {
-              const currentStatus = form.status || "draft";
-              const clinicType = form.clinic_type || "general";
-              const clinicInfo = getClinicLabel(clinicType);
-
-              return (
-                <div
-                  key={form.id}
-                  className="fm-form-card"
-                  onClick={() => navigate(`/admin/forms/edit/${form.id}`)}
-                  style={{ zIndex: openMenuId === form.id ? 50 : 1 }}
-                >
-                  <div
-                    className="fm-card-image-box"
-                    style={{ position: "relative" }}
-                  >
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "10px",
-                        left: "10px",
-                        background: clinicInfo.bg,
-                        color: clinicInfo.color,
-                        padding: "4px 10px",
-                        borderRadius: "12px",
-                        fontSize: "11px",
-                        fontWeight: "bold",
-                        zIndex: 2,
-                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "4px",
-                      }}
-                    >
-                      {toDisplayText(clinicInfo.text)}
-                      {clinicInfo.isDeleted && (
-                        <div
-                          title="คลินิกของฟอร์มนี้เกิดปัญหาหรือถูกลบออก กรุณาเลือกใหม่อีกครั้ง"
-                          style={{
-                            position: "relative",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            cursor: "help",
-                          }}
-                        >
-                          {/* สีพื้นหลังดำสำหรับตัวเครื่องหมายตกใจตรงกลาง */}
-                          <div
-                            style={{
-                              position: "absolute",
-                              backgroundColor: "#000",
-                              width: "4px",
-                              height: "8px",
-                              top: "4px",
-                              zIndex: 0,
-                            }}
-                          ></div>
-                          <FaExclamationTriangle
-                            style={{
-                              color: "#fbbf24",
-                              fontSize: "14px",
-                              position: "relative",
-                              zIndex: 1,
-                            }}
-                          />
-                        </div>
-                      )}
-                    </div>
-                    {/* ป้ายกำกับสถานะ */}
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "10px",
-                        right: "10px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                        zIndex: 2,
-                      }}
-                    >
-                      {form.login_enforcement === "strict" && (
-                        <div
-                          title="ต้องเข้าสู่ระบบก่อนทำแบบประเมิน"
-                          style={{
-                            background: "#fef3c7",
-                            color: "#92400e",
-                            padding: "4px 10px",
-                            borderRadius: "12px",
-                            fontSize: "11px",
-                            fontWeight: "bold",
-                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "4px",
-                          }}
-                        >
-                          <FaLock /> ต้องเข้าสู่ระบบ
-                        </div>
-                      )}
-                      {form.login_enforcement === "optional" && (
-                        <div
-                          title="แนะนำให้เข้าสู่ระบบ"
-                          style={{
-                            background: "#dcfce7",
-                            color: "#166534",
-                            padding: "4px 10px",
-                            borderRadius: "12px",
-                            fontSize: "11px",
-                            fontWeight: "bold",
-                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "4px",
-                          }}
-                        >
-                          <FaLock /> แนะนำเข้าสู่ระบบ
-                        </div>
-                      )}
+          <div className="fm-groups">
+            {formGroups.length === 0 && (
+              <p className="fm-empty-note">
+                {forms.length === 0
+                  ? "ยังไม่มีแบบประเมินในหน่วยงานนี้"
+                  : "ไม่พบแบบประเมินที่ตรงกับการค้นหาหรือตัวกรอง"}
+              </p>
+            )}
+            {formGroups.map((group, groupIndex) => (
+              <section
+                key={group.key}
+                className="fm-group"
+                aria-labelledby={`fm-group-${group.key}`}
+              >
+                <h2 className="fm-group-title" id={`fm-group-${group.key}`}>
+                  {toDisplayText(group.label)}
+                  <span className="fm-group-count">
+                    {group.forms.length.toLocaleString("th-TH")} ฟอร์ม
+                  </span>
+                  {group.missing && (
+                    <span className="fm-group-warning">
+                      <FaExclamationTriangle aria-hidden="true" />
+                      ไม่พบคลินิกนี้แล้ว กรุณาเปลี่ยนคลินิกของฟอร์ม
+                    </span>
+                  )}
+                </h2>
+                <div className={`fm-forms-container ${viewMode}`}>
+                  {group.forms.map((form) => {
+                    const currentStatus = form.status || "draft";
+                    return (
                       <div
+                        key={form.id}
+                        className="fm-form-card"
+                        onClick={() => navigate(`/admin/forms/edit/${form.id}`)}
                         style={{
-                          background:
-                            currentStatus === "published"
-                              ? "#dcfce7"
-                              : "#fff3e0",
-                          color:
-                            currentStatus === "published"
-                              ? "#166534"
-                              : "#e65100",
-                          padding: "4px 10px",
-                          borderRadius: "12px",
-                          fontSize: "11px",
-                          fontWeight: "bold",
-                          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "4px",
+                          zIndex:
+                            openMenuId === form.id ? "var(--z-raised)" : 1,
                         }}
                       >
-                        {currentStatus === "published" ? (
-                          <>
-                            <FaCheckCircle /> เผยแพร่แล้ว
-                          </>
-                        ) : (
-                          <>
-                            <FaFileAlt /> ฉบับร่าง
-                          </>
-                        )}
-                      </div>
-                    </div>
-                    {form.image ? (
-                      <img
-                        src={form.image}
-                        alt="Form Cover"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    ) : (
-                      <div className="fm-img-placeholder" />
-                    )}
-                  </div>
-
-                  <div className="fm-card-body">
-                    <h3>{toDisplayText(form.title || "ชื่อฟอร์ม")}</h3>
-                    <p className="fm-last-opened">
-                      แก้ไขล่าสุด {form.lastOpenedDate || "วว/ดด/ปป"}
-                    </p>
-                    <span
-                      className="fm-organization-tag"
-                      title={form.organization_code || "ยังไม่ระบุหน่วยงาน"}
-                    >
-                      {form.organization_name ||
-                        "โรงพยาบาลมหาวิทยาลัยเทคโนโลยีสุรนารี"}
-                    </span>
-
-                    <button
-                      className="fm-card-menu-btn"
-                      onClick={(e) => handleToggleMenu(e, form.id)}
-                    >
-                      ⋮
-                    </button>
-
-                    {openMenuId === form.id && (
-                      <div className="fm-dropdown-menu" ref={menuRef}>
-                        <button
-                          onClick={(e) => handleToggleStatus(e, form)}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
-                          {currentStatus === "published" ? (
-                            <>
-                              <FaEyeSlash /> ซ่อนเป็นฉบับร่าง
-                            </>
+                        <div className="fm-card-image-box">
+                          <div className="fm-card-pills">
+                            {form.login_enforcement === "strict" && (
+                              <span
+                                className="fm-pill fm-pill--login"
+                                title="ต้องเข้าสู่ระบบก่อนทำแบบประเมิน"
+                              >
+                                <FaLock aria-hidden="true" /> ต้องเข้าสู่ระบบ
+                              </span>
+                            )}
+                            {form.login_enforcement === "optional" && (
+                              <span
+                                className="fm-pill fm-pill--neutral"
+                                title="แนะนำให้เข้าสู่ระบบ"
+                              >
+                                <FaLock aria-hidden="true" /> แนะนำเข้าสู่ระบบ
+                              </span>
+                            )}
+                            <span
+                              className={`fm-pill fm-pill--status is-${currentStatus === "published" ? "published" : "draft"}`}
+                            >
+                              {currentStatus === "published"
+                                ? "เผยแพร่แล้ว"
+                                : "ฉบับร่าง"}
+                            </span>
+                          </div>
+                          {form.image ? (
+                            <img
+                              src={form.image}
+                              alt=""
+                              loading="lazy"
+                              decoding="async"
+                            />
                           ) : (
-                            <>
-                              <FaGlobe /> เปิดเผยแพร่
-                            </>
+                            <div className="fm-img-placeholder" />
                           )}
-                        </button>
-                        <div className="fm-dropdown-divider"></div>
-                        <button
-                          onClick={(e) => handleOpenRenameModal(e, form)}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
-                          <FaEdit /> เปลี่ยนชื่อ
-                        </button>
-                        <button
-                          onClick={(e) => handleOpenImageModal(e, form.id)}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
-                          <FaImage /> เปลี่ยนรูปปก
-                        </button>
-                        <button
-                          onClick={(e) => handleOpenClinicModal(e, form)}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
-                          <FaClinicMedical /> เปลี่ยนคลินิก
-                        </button>
-                        <button
-                          onClick={(e) => handleDuplicateForm(e, form)}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
-                          <FaCopy /> ทำสำเนา
-                        </button>
-                        <button
-                          onClick={(e) => handleOpenNewTab(e, form.id)}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
-                          <FaExternalLinkAlt /> เปิดในแท็บใหม่
-                        </button>
-                        <div className="fm-dropdown-divider"></div>
-                        <button
-                          className="fm-dropdown-danger"
-                          onClick={(e) => handleDeleteForm(e, form.id)}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
-                          <FaTrashAlt /> ลบทิ้ง
-                        </button>
+                        </div>
+
+                        <div className="fm-card-body">
+                          <h3>{toDisplayText(form.title || "ชื่อฟอร์ม")}</h3>
+                          <p className="fm-last-opened">
+                            แก้ไขล่าสุด {form.lastOpenedDate || "วว/ดด/ปป"}
+                          </p>
+                          {profile.kind === "all" && (
+                            <span
+                              className="fm-organization-tag"
+                              title={form.organization_code || undefined}
+                            >
+                              {toDisplayText(formAxisLabel(form))}
+                            </span>
+                          )}
+
+                          <button
+                            className="fm-card-menu-btn"
+                            aria-label={`ตัวเลือกของ ${toDisplayText(form.title || "ฟอร์ม")}`}
+                            onClick={(e) => handleToggleMenu(e, form.id)}
+                          >
+                            ⋮
+                          </button>
+
+                          {openMenuId === form.id && (
+                            <div className="fm-dropdown-menu" ref={menuRef}>
+                              <button
+                                hidden={!formRights.assign}
+                                onClick={(e) => handleToggleStatus(e, form)}
+                              >
+                                {currentStatus === "published" ? (
+                                  <>
+                                    <FaEyeSlash /> ซ่อนเป็นฉบับร่าง
+                                  </>
+                                ) : (
+                                  <>
+                                    <FaGlobe /> เปิดเผยแพร่
+                                  </>
+                                )}
+                              </button>
+                              <div className="fm-dropdown-divider"></div>
+                              <button
+                                hidden={!formRights.update}
+                                onClick={(e) => handleOpenRenameModal(e, form)}
+                              >
+                                <FaEdit /> เปลี่ยนชื่อ
+                              </button>
+                              <button
+                                hidden={!formRights.update}
+                                onClick={(e) =>
+                                  handleOpenImageModal(e, form.id)
+                                }
+                              >
+                                <FaImage /> เปลี่ยนรูปปก
+                              </button>
+                              <button
+                                hidden={!formRights.assign || !usesClinics}
+                                onClick={(e) => handleOpenClinicModal(e, form)}
+                              >
+                                <FaClinicMedical /> เปลี่ยนคลินิก
+                              </button>
+                              <button
+                                hidden={!formRights.create}
+                                onClick={(e) => handleDuplicateForm(e, form)}
+                              >
+                                <FaCopy /> ทำสำเนา
+                              </button>
+                              <button
+                                onClick={(e) => handleOpenNewTab(e, form.id)}
+                              >
+                                <FaExternalLinkAlt /> เปิดในแท็บใหม่
+                              </button>
+                              <div className="fm-dropdown-divider"></div>
+                              <button
+                                hidden={!formRights.delete}
+                                className="fm-dropdown-danger"
+                                onClick={(e) => handleDeleteForm(e, form.id)}
+                              >
+                                <FaTrashAlt /> ลบทิ้ง
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                  {formRights.create &&
+                    groupIndex === formGroups.length - 1 && (
+                      <div
+                        className="fm-form-card fm-add-empty-card"
+                        onClick={() => navigate("/admin/forms/create")}
+                      >
+                        <div className="fm-plus-icon">+</div>
+                        <p>สร้างฟอร์มใหม่</p>
                       </div>
                     )}
-                  </div>
                 </div>
-              );
-            })}
-
-            <div
-              className="fm-form-card fm-add-empty-card"
-              onClick={() => navigate("/admin/forms/create")}
-            >
-              <div className="fm-plus-icon">+</div>
-              <p>สร้างฟอร์มใหม่</p>
-            </div>
-          </section>
+              </section>
+            ))}
+          </div>
         )}
         <input
           type="file"
@@ -852,11 +841,11 @@ const FormManager = () => {
               style={{
                 width: "100%",
                 height: "250px",
-                borderRadius: "8px",
+                borderRadius: "var(--suth-radius)",
                 overflow: "hidden",
                 marginBottom: "20px",
-                border: previewImage ? "none" : "2px dashed #ccc",
-                backgroundColor: "#f8f9fa",
+                border: previewImage ? "none" : "2px dashed var(--suth-control-line)",
+                backgroundColor: "var(--suth-canvas)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -873,14 +862,14 @@ const FormManager = () => {
                 <div
                   style={{
                     textAlign: "center",
-                    color: "#666",
+                    color: "var(--suth-muted)",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                     gap: "10px",
                   }}
                 >
-                  <FaFolderOpen size={32} color="#a0aec0" />
+                  <FaFolderOpen size={32} color="var(--suth-control-line)" />
                   <p>ยังไม่ได้เลือกรูปภาพ</p>
                 </div>
               )}
@@ -892,8 +881,8 @@ const FormManager = () => {
               <button
                 className="fm-btn-cancel"
                 style={{
-                  backgroundColor: "#e8f0fe",
-                  color: "#1a73e8",
+                  backgroundColor: "var(--suth-tint)",
+                  color: "var(--suth-action-ink)",
                   border: "none",
                   fontWeight: "bold",
                 }}
@@ -975,9 +964,9 @@ const FormManager = () => {
               className="fm-modal-input"
               style={{
                 padding: "10px",
-                borderRadius: "8px",
-                border: "1px solid #ccc",
-                fontSize: "15px",
+                borderRadius: "var(--suth-radius)",
+                border: "1px solid var(--suth-control-line)",
+                fontSize: "var(--suth-fs-body)",
                 width: "100%",
                 marginTop: "10px",
                 boxSizing: "border-box",

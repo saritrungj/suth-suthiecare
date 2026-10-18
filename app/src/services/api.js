@@ -29,15 +29,20 @@ const resolveApiAssetUrl = (value) => {
 
 // ── Users ──
 export const getUsers = () => api.get("/users");
-export const getPatientMembers = (params) =>
-  api.get("/patient-members", { params });
-export const getPatientMember = (id) => api.get(`/patient-members/${id}`);
-export const updatePatientMember = (id, data) =>
-  api.put(`/patient-members/${id}`, data);
+export const getPatientMembers = (params, config = {}) =>
+  api.get("/patient-members", { ...config, params });
+export const getPatientMember = (id, config) =>
+  api.get(`/patient-members/${id}`, config);
+export const updatePatientMember = (id, data, config) =>
+  api.put(`/patient-members/${id}`, data, config);
 export const deletePatientMember = (id) => api.delete(`/patient-members/${id}`);
 export const getUserFull = (id) => api.get(`/users/${id}/full`);
+export const getUserAssignmentOptions = () =>
+  api.get("/users/assignment-options");
 export const createUser = (data) => api.post("/users", data);
 export const updateUser = (id, data) => api.put(`/users/${id}`, data);
+export const updateUserAssignments = (id, memberships) =>
+  api.put(`/users/${id}/assignments`, { memberships });
 export const deleteUser = (id) => api.delete(`/users/${id}`);
 
 // ── Auth ──
@@ -60,12 +65,6 @@ export const getOrganizations = () => api.get("/organizations");
 export const createOrganization = (data) => api.post("/organizations", data);
 export const updateOrganization = (id, data) =>
   api.put(`/organizations/${id}`, data);
-export const getOrganizationMembers = (id) =>
-  api.get(`/organizations/${id}/members`);
-export const createOrganizationMember = (id, data) =>
-  api.post(`/organizations/${id}/members`, data);
-export const updateOrganizationMember = (id, membershipId, data) =>
-  api.put(`/organizations/${id}/members/${membershipId}`, data);
 
 const patientApi = axios.create({
   baseURL: apiBaseUrl,
@@ -110,7 +109,8 @@ export const patientRegisterApi = (data) =>
   patientApi.post("/patient-auth/register", data);
 export const verifyPatientEmailApi = (data) =>
   patientApi.post("/patient-auth/email/verify", data);
-export const requestPatientOnboardingEmailApi = () => patientApi.post('/patient-auth/email/onboarding/request');
+export const requestPatientOnboardingEmailApi = () =>
+  patientApi.post("/patient-auth/email/onboarding/request");
 export const resendPatientEmailApi = (data) =>
   patientApi.post("/patient-auth/email/resend", data);
 export const requestPatientPasswordRecoveryApi = (data) =>
@@ -130,6 +130,10 @@ export const verifyPatientEmailChange = (data) =>
 export const resendPatientEmailChange = (data) =>
   patientApi.post("/patient/me/email/resend", data);
 export const getPatientHistory = () => patientApi.get("/patient/history");
+export const getPatientSchoolHealth = () =>
+  patientApi.get("/patient/me/school-health");
+export const updatePatientMemberType = (data) =>
+  patientApi.put("/patient/me/member-type", data);
 export const getPatientCaseLogs = (id) =>
   patientApi.get(`/patient/history/responses/${id}/logs`);
 export const getPatientCaseAnswers = (id) =>
@@ -163,12 +167,6 @@ export const deleteSchoolClassroom = (id) =>
 export const setClassroomTeachers = (id, teachers) =>
   api.put(`/school/classrooms/${id}/teachers`, { teachers });
 export const getSchoolTypes = (kind) => api.get(`/school/${kind}`);
-export const createSchoolType = (kind, data) =>
-  api.post(`/school/${kind}`, data);
-export const updateSchoolType = (kind, id, data) =>
-  api.put(`/school/${kind}/${id}`, data);
-export const deleteSchoolType = (kind, id) =>
-  api.delete(`/school/${kind}/${id}`);
 export const getSchoolTeachers = (params) =>
   api.get("/school/teachers", { params });
 export const getTeacherCandidates = (schoolId) =>
@@ -199,15 +197,16 @@ export const updateStudentPhysicalRecord = (id, data) =>
 export const deleteStudentPhysicalRecord = (id) =>
   api.delete(`/school/physical-records/${id}`);
 export const getSchoolCases = (params) => api.get("/school/cases", { params });
-export const getCaseFirstName = (id, school = false) =>
-  api.get(school ? `/school/students/${id}/first-name` : `/cases/${id}/first-name`);
 export const getCaseLastName = (id, school = false) =>
-  api.get(school ? `/school/students/${id}/last-name` : `/cases/${id}/last-name`);
+  api.get(
+    school ? `/school/students/${id}/last-name` : `/cases/${id}/last-name`,
+  );
 
 // ── Dashboard ──
-export const getDashboardSummary = () => api.get("/dashboard/summary");
-export const getRecentCases = (clinic, startDate, endDate) =>
-  api.get("/dashboard/recent", { params: { clinic, startDate, endDate } });
+export const getRecentCases = (clinic, startDate, endDate, formId) =>
+  api.get("/dashboard/recent", {
+    params: { clinic, startDate, endDate, form_id: formId || undefined },
+  });
 
 // ── Forms ──
 export const saveFormToDb = (formData) => api.post("/save-form", formData);
@@ -229,8 +228,6 @@ export const duplicateFormInDb = (formId) => {
 // ── Clinics ──
 export const getActiveClinics = () => api.get("/clinics");
 export const getAllClinics = () => api.get("/clinics/all");
-export const getClinicByIdOrSlug = (idOrSlug) =>
-  api.get(`/clinics/${idOrSlug}`);
 export const createClinic = (data) => api.post("/clinics", data);
 export const updateClinic = (id, data) => api.put(`/clinics/${id}`, data);
 export const deleteClinic = (id) => api.delete(`/clinics/${id}`);
@@ -251,22 +248,21 @@ export const renameFormInDb = (id, newTitle) =>
 // ── Form Submissions ──
 export const submitFormAnswers = (formId, data) =>
   patientApi.post(`/forms/${formId}/submit`, data);
-export const getFormSubmissionCount = (formId) =>
-  api.get(`/forms/${formId}/submission-count`); // ✅ แก้แล้ว ลบ /api ออก
-export const getFormResponses = (formId, params) =>
-  api.get(`/forms/${formId}/responses`, { params });
 export const updateFormStatus = (id, statusData) =>
   api.patch(`/forms/${id}/status`, statusData);
 export const updateFormClinicType = (id, data) =>
   api.patch(`/forms/${id}/clinic`, data);
+export const getFormResponses = (formId, params) =>
+  api.get(`/forms/${formId}/responses`, { params });
 
 // ── Roles & Permissions ──
-export const getRoles = () => api.get("/roles");
+export const getOrganizationRoles = (org) =>
+  api.get(`/organizations/${org}/roles`);
+export const createOrganizationRole = (org, data) =>
+  api.post(`/organizations/${org}/roles`, data);
+export const deleteOrganizationRole = (org, role) =>
+  api.delete(`/organizations/${org}/roles/${role}`);
 export const getRolePermissions = (id) => api.get(`/roles/${id}/permissions`);
-export const saveRolePermissions = (id, data) =>
-  api.post(`/roles/${id}/permissions`, data);
-export const createRole = (data) => api.post("/roles", data);
-export const deleteRole = (id) => api.delete(`/roles/${id}`);
 
 // ── Banner ──
 export const getBanners = () => api.get("/banners");
@@ -283,7 +279,6 @@ export const updateService = (id, data) => api.put(`/services/${id}`, data);
 export const deleteService = (id) => api.delete(`/services/${id}`);
 
 //--- risks ---//
-export const getRisks = () => api.get("/risks");
 
 //--- appointments ---//
 export const getAppointments = (params) => api.get("/appointments", { params });
@@ -300,7 +295,6 @@ export const getCaseLogs = (caseId, target = "response") =>
   api.get(`/cases/${caseId}/logs`, { params: { target } });
 export const addCaseLog = (caseId, logData) =>
   api.post(`/cases/${caseId}/logs`, logData);
-export const updateCase = (id, data) => api.put(`/cases/${id}`, data);
 export const deleteCase = (id) => api.delete(`/cases/${id}`);
 
 //--case detail --//
@@ -324,8 +318,6 @@ export const decodeSecureToken = (data) =>
   patientApi.post("/form-invitations/resolve", data);
 
 // ── Master Cases (ระบบจัดการเคสต่อเนื่อง) ──
-export const getMasterCasesByIdentity = (identity) =>
-  api.get(`/master-cases/${identity}`);
 export const getMasterCasesById = (id) => api.get(`/master-cases/by-id/${id}`); // 🟢 เพิ่มบรรทัดนี้
 // Every assessment of the person behind a Master Case, across forms and clinics.
 export const getPersonTimeline = (masterCaseId) =>
@@ -350,29 +342,23 @@ export const updateNoteTemplate = (id, data) =>
 export const deleteNoteTemplate = (id) => api.delete(`/templates/${id}`);
 
 //--- ดึงคำถามจากฟอร์ม---//
-export const getFormQuestions = (formId) =>
-  api.get(`/forms/${formId}/questions`);
 
 // - Dashboard Charts - //
 export const getMasterCaseStats = (clinic, formId, startDate, endDate) =>
   api.get("/admin/master-cases/stats", {
     params: { clinic, form_id: formId, startDate, endDate },
   });
-export const getChartData = (formId, questionId, startDate, endDate) => {
-  return api.get(`/charts/${formId}/${questionId}`, {
-    params: { startDate, endDate },
+export const getOrganizationsOverview = (startDate, endDate) =>
+  api.get("/dashboard/organizations-overview", {
+    params: {
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
+    },
   });
-};
 export const getDashboardSettings = () =>
   api.get("/dashboard-settings/settings");
-export const saveDashboardSettings = (data) =>
-  api.post("/dashboard-settings/settings", data);
 
 // ── History & Patient Portal ──
-export const getMasterCaseByIdentity = (identity) =>
-  api.get(`/master-cases/${identity}`);
-export const updateHistoryResponse = (id, data) =>
-  api.patch(`/history/response/${id}`, data);
 export const getCaseAnswers = (id) => api.get(`/cases/${id}/answers`);
 
 // ── System Evaluations (สำหรับ Dashboard) ──
@@ -431,8 +417,6 @@ api.interceptors.response.use(
 
 export default api;
 export const getPrivacyNotice = (id) => api.get(`/forms/${id}/privacy-notice`);
-export const getOrganizationForms = (id) =>
-  api.get("/forms", { headers: { "X-Organization-Id": String(id) } });
 export const getReferralDestinationsConfig = (id) =>
   api.get(`/organizations/${id}/referral-destinations`);
 export const setReferralDestinationsConfig = (id, destinations) =>
@@ -443,8 +427,6 @@ export const setNotificationTarget = (id, body) =>
   api.put(`/organizations/${id}/notification-target`, body);
 export const exportCaseData = (id, format) =>
   api.post(`/cases/${id}/export-data`, { format });
-export const exportStudentData = (ids) =>
-  api.post("/school/students/export-data", { ids });
 export const getOrganizationRolePermissions = (org, role) =>
   api.get(`/organizations/${org}/roles/${role}/permissions`);
 export const saveOrganizationRolePermissions = (org, role, body) =>

@@ -22,7 +22,6 @@ const bannerRoutes = require("./routes/bannerRoutes"); // <-- เส้นทา
 const dashboardRoutes = require("./routes/dashboardRoutes"); // <-- เส้นทางจัดการข้อมูล Dashboard
 const caseRoutes = require("./routes/caseRoutes"); // <-- เส้นทางจัดการเคส, นัดหมาย, และประวัติ
 const clinicRoutes = require("./routes/clinicRoutes"); // <-- เส้นทางจัดการข้อมูลคลินิก
-const staffRoutes = require("./routes/staffRoutes"); // <-- เส้นทางจัดการข้อมูลเจ้าหน้าที่
 const faqRoutes = require("./routes/faqRoutes"); // <-- เส้นทางจัดการข้อมูล FAQ
 const patientAuthRoutes = require("./routes/patientAuthRoutes");
 const patientRoutes = require("./routes/patientRoutes");
@@ -131,9 +130,10 @@ app.use("/api", (req, res, next) => {
   return verifyToken(req, res, () => resolveContext(req, res, next));
 });
 
-// Permission gate for every administrative write endpoint. Individual routes still
-// validate their own payload and any stricter hierarchy rules.
-const permissionForWrite = (path) => {
+// Permission gate for every administrative write endpoint. Returns the roles-page
+// key ("module.action"); routes still validate payloads and stricter rules, and
+// a few decide create/update/delete/assign from the body themselves.
+const permissionForWrite = (path, method) => {
   if (path.endsWith("/export-data")) return null;
   if (
     /^\/forms\/[^/]+\/submit$/.test(path) ||
@@ -143,14 +143,31 @@ const permissionForWrite = (path) => {
     path === "/decode-token"
   )
     return null;
-  if (path.startsWith("/forms") || path === "/save-form")
-    return "Form Management";
-  if (path.startsWith("/clinics")) return "Clinic Management";
-  if (path.startsWith("/admin/help-center")) return "Help Center Management";
-  if (path.startsWith("/banners")) return "Content Management";
-  if (path.startsWith("/dashboard-settings")) return "Dashboard";
-  if (path.startsWith("/appointments")) return "Appointments";
-  if (path.startsWith("/staffs")) return "User Management";
+  const verb =
+    method === "POST" ? "create" : method === "DELETE" ? "delete" : "update";
+  if (path.startsWith("/forms") || path === "/save-form") {
+    // Publishing and linking a form to a clinic is "assign".
+    if (/^\/forms\/[^/]+\/(status|clinic)$/.test(path)) return "forms.assign";
+    if (/^\/forms\/[^/]+\/duplicate$/.test(path) || path === "/save-form")
+      return "forms.create";
+    return `forms.${verb}`;
+  }
+  if (path.startsWith("/clinics")) {
+    // Ordering and help-center visibility of clinics is "assign".
+    if (path === "/clinics/reorder" || /\/toggle-help-center$/.test(path))
+      return "clinics.assign";
+    return `clinics.${verb}`;
+  }
+  if (path.startsWith("/admin/help-center")) return `help_center.${verb}`;
+  if (path.startsWith("/banners")) return `content.${verb}`;
+  // Chart create/update/delete is decided from the saved layout in the route.
+  if (path.startsWith("/dashboard-settings")) return "dashboard.view";
+  // Appointment status: cancelling is "delete", other changes "update" (route).
+  if (/^\/appointments\/[^/]+\/status$/.test(path)) return "appointments.view";
+  if (path.startsWith("/appointments")) return `appointments.${verb}`;
+  if (path.startsWith("/staffs"))
+    return `appointments.${verb === "update" ? "update" : verb}`;
+  if (/^\/cases\/[^/]+\/logs$/.test(path)) return "cases.update";
   if (
     path.startsWith("/cases") ||
     path.startsWith("/master-cases") ||
@@ -159,7 +176,7 @@ const permissionForWrite = (path) => {
     path.startsWith("/case-statuses") ||
     path.startsWith("/status-options")
   )
-    return "Case Management";
+    return `cases.${verb}`;
   return null;
 };
 
@@ -210,20 +227,41 @@ app.use("/api", (req, res, next) => {
     )
   )
     return res.status(422).json({ code: "SELECT_ONE_ORGANIZATION" });
-  const module = permissionForWrite(req.path);
-  if (!module) return next();
-  const action =
-    req.method === "POST"
-      ? "create"
-      : req.method === "DELETE"
-        ? "delete"
-        : "update";
-  return verifyToken(req, res, () =>
-    requirePermission(module, action)(req, res, next),
-  );
+  const key = permissionForWrite(req.path, req.method);
+  if (!key) return next();
+  return verifyToken(req, res, () => {
+    if (req.authorization?.isSystemAdmin) return next();
+    // Paths without a unit context keep the legacy account-role check.
+    if (!req.authorization?.permissions) {
+      const [resource, action] = key.split(".");
+      const legacy = {
+        forms: "Form Management",
+        clinics: "Clinic Management",
+        help_center: "Help Center Management",
+        content: "Content Management",
+        dashboard: "Dashboard",
+        appointments: "Appointments",
+        cases: "Case Management",
+      }[resource];
+      return requirePermission(
+        legacy,
+        ["create", "delete"].includes(action) ? action : "update",
+      )(req, res, next);
+    }
+    if (req.authorization.permissions.has(key)) return next();
+    return res.status(403).json({
+      success: false,
+      code: "PERMISSION_REQUIRED",
+      permission: key,
+      message: "คุณไม่มีสิทธิ์ดำเนินการนี้",
+    });
+  });
 });
 
-app.use("/api", require("./middleware/schoolPrivacyBoundary").schoolPrivacyBoundary);
+app.use(
+  "/api",
+  require("./middleware/schoolPrivacyBoundary").schoolPrivacyBoundary,
+);
 app.use("/api", require("./middleware/privateDisclosure").privateDisclosure);
 // 🟢 ตั้งค่าหน้าแรก (Root Route)
 app.get("/", (req, res) => {

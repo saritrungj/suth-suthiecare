@@ -24,7 +24,17 @@ const PII = new Set([
   "name",
 ]);
 const CLINICAL = new Set([
-  "insights", "guidance", "guardian_name", "guardian_relationship", "guardian_phone", "living_with", "family_status", "living_conditions", "support_needs", "issue", "support",
+  "insights",
+  "guidance",
+  "guardian_name",
+  "guardian_relationship",
+  "guardian_phone",
+  "living_with",
+  "family_status",
+  "living_conditions",
+  "support_needs",
+  "issue",
+  "support",
   "clinical_data",
   "risk_level",
   "overall_risk",
@@ -61,6 +71,7 @@ const CLINICAL = new Set([
 ]);
 const CASE_FIELDS = new Set([
   "first_name",
+  "last_name",
   "case_source",
   "latest_activity",
   "id",
@@ -146,7 +157,15 @@ const STORED_TEXT = new Set([
 ]);
 function serialize(
   value,
-  { pii = false, clinical = false, list = false, credential = false, caseNames = false } = {},
+  {
+    pii = false,
+    clinical = false,
+    list = false,
+    credential = false,
+    caseNames = false,
+    // The patient-member directory shows the full name to PII viewers.
+    memberNames = false,
+  } = {},
   scope = "root",
   decodedPayload = false,
 ) {
@@ -157,14 +176,19 @@ function serialize(
     return value.map((item) =>
       serialize(
         item,
-        { pii, clinical, list, credential, caseNames },
+        { pii, clinical, list, credential, caseNames, memberNames },
         scope,
         decodedPayload,
       ),
     );
   if (typeof value !== "object") return value;
   if (!decodedPayload && parseEnvelope(value))
-    return serialize(readJson(value), { pii, clinical, list, caseNames }, scope, true);
+    return serialize(
+      readJson(value),
+      { pii, clinical, list, caseNames, memberNames },
+      scope,
+      true,
+    );
   const record =
     ("summary_data" in value ||
       "identity_value" in value ||
@@ -205,13 +229,19 @@ function serialize(
     )
       decoded = decrypt(raw);
     if (key === "staff" && raw) decoded = decrypt(raw);
-    if (PII.has(key) && (!pii || (list && !(caseNames && key === "first_name")))) {
+    if (
+      PII.has(key) &&
+      (!pii ||
+        (list &&
+          !(caseNames && ["first_name", "last_name"].includes(key)) &&
+          !(memberNames && key === "full_name")))
+    ) {
       result[key] = mask(decoded, key);
       continue;
     }
     result[key] = serialize(
       decoded,
-      { pii, clinical, list, credential, caseNames },
+      { pii, clinical, list, credential, caseNames, memberNames },
       key === "summary_data"
         ? "summary"
         : key === "raw_answers"

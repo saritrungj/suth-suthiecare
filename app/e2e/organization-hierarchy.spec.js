@@ -137,6 +137,8 @@ async function mockApi(page, received) {
           { id: 13, username: "nurse1", name: "พยาบาลหนึ่ง", status: "active" },
         ],
       });
+    if (/\/api\/organizations\/\d+\/roles$/.test(pathname))
+      return route.fulfill({ json: [{ id: 3, name: "Staff" }] });
     if (pathname.endsWith("/api/roles"))
       return route.fulfill({ json: [{ id: 3, name: "Staff" }] });
     return route.fulfill({ json: {} });
@@ -153,7 +155,7 @@ test("system admin sees both school and hospital menus while changing unit conte
   await expect(
     nav.getByRole("link", { name: "นักเรียน", exact: true }),
   ).toBeVisible();
-  await expect(nav.getByRole("link", { name: "จัดการคลินิก" })).toHaveCount(1);
+  await expect(nav.getByRole("link", { name: "จัดการคลินิก" })).toHaveCount(0);
   await expect(
     page.locator('#active-organization optgroup[label="โรงเรียน"] option'),
   ).toHaveText(["โรงเรียนสุรวิวัฒน์ (โรงเรียน)"]);
@@ -163,7 +165,7 @@ test("system admin sees both school and hospital menus while changing unit conte
   await expect(nav.getByRole("link", { name: "จัดการคลินิก" })).toBeVisible();
   await expect(
     nav.getByRole("link", { name: "นักเรียน", exact: true }),
-  ).toHaveCount(1);
+  ).toHaveCount(0);
 });
 
 test("unit role rights are edited under the selected organization", async ({
@@ -186,16 +188,12 @@ test("unit role rights are edited under the selected organization", async ({
       });
     },
   );
-  await page.goto("/admin/organizations");
-  await page
-    .getByRole("complementary", { name: "โครงสร้างหน่วยงาน" })
-    .getByRole("button", { name: /โรงเรียนสุรวิวัฒน์/ })
-    .click();
+  await page.goto("/admin/roles");
   const section = page.getByRole("region", {
     name: "บทบาทและสิทธิ์ในหน่วยงาน",
     exact: true,
   });
-  await section.getByLabel("บทบาทที่ตั้งสิทธิ์").selectOption("3");
+  await section.getByRole("radio", { name: "Staff", exact: true }).check();
   await expect(
     section
       .getByRole("group", { name: "ข้อมูลเคสและเคสเสี่ยง" })
@@ -254,19 +252,19 @@ test("main organizations choose the type, sub-units inherit it, members are adde
       parent_id: 4,
     });
 
-  // Members of a sub-unit are picked with checkboxes and added together.
-  await directory.getByRole("button", { name: /โรงเรียนสุรวิวัฒน์/ }).click();
-  await page.getByRole("button", { name: "+ เพิ่มสมาชิก" }).click();
-  await page.getByRole("checkbox", { name: /ครูหนึ่ง/ }).check();
-  await page.getByRole("checkbox", { name: /ครูสอง/ }).check();
-  await page.getByLabel("บทบาทในหน่วยงานนี้").selectOption("3");
-  await page.getByRole("button", { name: "เพิ่ม 2 คน" }).click();
-  await expect
-    .poll(() => received.members)
-    .toEqual({
-      user_ids: [11, 12],
-      role_id: 3,
-    });
+  // Staff assignment now has one central page; role definitions no longer
+  // duplicate the member-assignment flow.
+  await page.goto("/admin/users");
+  await expect(
+    page.getByRole("heading", {
+      name: "ผู้ดูแลระบบและเจ้าหน้าที่",
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.goto("/admin/roles");
+  await expect(
+    page.getByRole("button", { name: "สมาชิกและบทบาท" }),
+  ).toHaveCount(0);
 });
 
 test("system-wide settings sit in their own admin section", async ({
@@ -276,8 +274,8 @@ test("system-wide settings sit in their own admin section", async ({
   await page.goto("/admin/organizations");
   const nav = page.locator("aside.sidebar nav");
   const headers = nav.locator(".menu-header-label");
-  await expect(headers.filter({ hasText: "จัดการหลักของระบบ" })).toContainText(
-    "ไม่ขึ้นกับหน่วยงานที่เลือก",
+  await expect(headers.filter({ hasText: "จัดการหลักของระบบ" })).toHaveText(
+    "จัดการหลักของระบบ",
   );
   const labels = await nav
     .locator(".menu-header-label, .menu-item .label")
@@ -289,15 +287,14 @@ test("system-wide settings sit in their own admin section", async ({
   expect(labels.slice(admin + 1, account)).toEqual([
     "หน่วยงานหลักและหน่วยงานย่อย",
     "ผู้ดูแลระบบและเจ้าหน้าที่",
+    "ผู้มารับบริการ",
     "บทบาทและสิทธิ์",
     "จัดการภาพแบนเนอร์",
   ]);
   const unit = labels.indexOf("จัดการหน่วยงาน");
   expect(labels.slice(unit + 1, admin)).toEqual([
     "จัดการฟอร์ม",
-    "จัดการคลินิก",
-    "ผู้มารับบริการ",
-    "จัดการศูนย์ช่วยเหลือ",
+    "จัดการข้อมูลหลัก",
   ]);
 });
 

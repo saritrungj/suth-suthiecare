@@ -79,6 +79,21 @@ test("DTO hides hashes, private storage, unknown case fields and unauthorized he
   assert.equal(full.summary_data.score_results[0].score, 0);
   assert.equal(full.identity_hash, undefined);
 });
+test("patient-member list shows the full name only to PII viewers", () => {
+  const { serialize } = require("../utils/privateDto");
+  const rows = [
+    { id: 15, username: "patient-member", full_name: "สมชาย ใจดี" },
+  ];
+  const list = { list: true, memberNames: true };
+  assert.equal(
+    serialize(rows, { ...list, pii: true })[0].full_name,
+    "สมชาย ใจดี",
+  );
+  assert.equal(serialize(rows, { ...list, pii: false })[0].full_name, "ส***");
+  // Other lists keep masking names.
+  assert.equal(serialize(rows, { list: true, pii: true })[0].full_name, "ส***");
+});
+
 test("context-bound field and school measurements reject copied data and retired plaintext", () => {
   const { writeField, readField } = require("../utils/privateField"),
     school = require("../utils/schoolPrivateData");

@@ -1,4 +1,4 @@
-import { toDisplayText } from '../utils/textPresentation.js';
+import { toDisplayText } from "../utils/textPresentation.js";
 import { useId, useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import "./StaffCheckboxPicker.css";
@@ -50,7 +50,7 @@ export default function StaffCheckboxPicker({
       aria-describedby={error ? errorId : undefined}
     >
       <legend>
-        {toDisplayText(label)}
+        {typeof label === "string" ? toDisplayText(label) : label}
         {required && (
           <span className="scp-sr-only"> (ต้องเลือกอย่างน้อย 1 คน)</span>
         )}

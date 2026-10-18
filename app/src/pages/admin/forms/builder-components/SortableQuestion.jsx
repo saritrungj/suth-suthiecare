@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../../../utils/textPresentation.js';
+import { toDisplayText } from "../../../../utils/textPresentation.js";
 import React, { useState, useRef, useEffect } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -34,6 +34,7 @@ import {
   FaFileAlt,
 } from "react-icons/fa";
 import RichTextInput from "./RichTextInput";
+import { DEFAULT_SCORE_BAND_COLOR } from "../formThemePalette";
 
 // 🟢 โครงสร้างข้อมูลประเภทคำถามพร้อม Icon
 const QUESTION_TYPES = [
@@ -237,7 +238,7 @@ const SortableQuestion = ({
   const addRule = () => {
     const newRules = [
       ...(q.scoringRules || []),
-      { min: 0, max: 0, label: "", color: "#4caf50", advice: "" },
+      { min: 0, max: 0, label: "", color: DEFAULT_SCORE_BAND_COLOR, advice: "" },
     ];
     updateScoringRules(q.id, newRules);
   };
@@ -468,6 +469,7 @@ const SortableQuestion = ({
       <div
         className="sfb-form-drag-handle sfb-smooth-element"
         {...attributes}
+        aria-label="ลากเพื่อย้ายคำถาม"
         {...listeners}
       >
         <FaGripHorizontal />

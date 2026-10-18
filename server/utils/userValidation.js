@@ -26,7 +26,9 @@ function validateUserInput(input, { requirePassword = false } = {}) {
     characterLength(username) > MAX_USERNAME_LENGTH ||
     /\s/.test(username)
   ) {
-    return { error: "ชื่อผู้ใช้งานต้องยาว 3-100 ตัวอักษร และห้ามมีช่องว่าง" };
+    return {
+      error: `ชื่อผู้ใช้งานต้องยาว 3-${MAX_USERNAME_LENGTH} ตัวอักษร และห้ามมีช่องว่าง`,
+    };
   }
   if (characterLength(name) < 2 || characterLength(name) > MAX_NAME_LENGTH) {
     return { error: `ชื่อ-นามสกุลต้องยาว 2-${MAX_NAME_LENGTH} ตัวอักษร` };
@@ -57,7 +59,17 @@ function validateUserInput(input, { requirePassword = false } = {}) {
   return { value: { username, name, email, password } };
 }
 
+// System account level: 1 = System Admin, anything else is an ordinary
+// account (stored as 3). Legacy 2 ("Admin") never granted rights of its own,
+// so it is folded into 3. Working rights come from unit roles.
+function normaliseSystemRoleId(value) {
+  const id = Number(value);
+  if (![1, 2, 3].includes(id)) return null;
+  return id === 1 ? 1 : 3;
+}
+
 module.exports = {
+  normaliseSystemRoleId,
   MAX_EMAIL_LENGTH,
   MAX_NAME_LENGTH,
   normaliseText,

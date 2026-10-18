@@ -5,20 +5,20 @@
   position: fixed;
   inset: 0;
   backdrop-filter: blur(6px);
-  background: rgba(15, 23, 42, 0.3) !important;
+  background: rgba(31, 47, 63, 0.3) !important;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000000;
+  z-index: var(--z-modal-nested);
 }
 .cdm-tpl-modal-card.cdm-tpl-popup {
   width: 1100px !important;
   max-width: 95%;
-  background: #ffffff;
-  border-radius: 12px;
+  background: var(--suth-surface);
+  border-radius: var(--suth-radius-panel);
   padding: 36px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  border: 1px solid #e2e8f0;
+  box-shadow: 0 25px 50px -12px rgba(31, 47, 63, 0.25);
+  border: 1px solid var(--suth-line-soft);
   max-height: 90vh;
   display: flex;
   flex-direction: column;
@@ -38,7 +38,7 @@
   min-width: 260px;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #f1f5f9;
+  border-right: 1px solid var(--suth-line-soft);
   padding-right: 24px;
 }
 .cdm-tpl-sidebar-list {
@@ -51,8 +51,8 @@
   width: 4px;
 }
 .cdm-tpl-sidebar-list::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 12px;
+  background: var(--suth-control-line);
+  border-radius: var(--suth-radius-panel);
 }
 /* 🟢 ปุ่มเลือกชุดคำถาม (เฟรนลี่ขึ้น) */
 .cdm-tpl-sidebar-item {
@@ -61,30 +61,30 @@
   justify-content: space-between;
   align-items: center;
   padding: 14px 16px;
-  background: #f8fafc;
+  background: var(--suth-surface-2);
   margin-bottom: 12px;
   cursor: pointer;
   transition: all 0.25s ease;
   border: 1px solid transparent !important;
-  border-radius: 12px !important;
+  border-radius: var(--suth-radius-panel) !important;
   box-sizing: border-box !important;
 }
 .cdm-tpl-sidebar-item:hover {
-  background: #f1f5f9;
+  background: var(--suth-surface-2);
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 12px -2px rgba(31, 47, 63, 0.05);
 }
 .cdm-tpl-sidebar-item.active {
-  background-color: #ffffff !important;
-  color: #0284c7 !important;
-  border: 2px solid #0ea5e9 !important;
+  background-color: var(--suth-surface) !important;
+  color: var(--suth-action-ink) !important;
+  border: 2px solid var(--suth-action) !important;
   font-weight: 800;
-  box-shadow: 0 6px 15px rgba(14, 165, 233, 0.15);
+  box-shadow: 0 6px 15px color-mix(in srgb, var(--suth-action) 15%, transparent);
   transform: translateX(4px);
 }
 .cdm-tpl-item-label {
   flex: 1;
-  font-size: 14px;
+  font-size: var(--suth-fs-sm);
   white-space: normal;
   word-break: break-word;
   line-height: 1.4;
@@ -101,13 +101,13 @@
   width: 6px;
 }
 .cdm-tpl-editor-main::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 12px;
+  background: var(--suth-control-line);
+  border-radius: var(--suth-radius-panel);
 }
 .cdm-tpl-label-title {
-  font-size: 15px;
+  font-size: var(--suth-fs-body);
   font-weight: 700;
-  color: #475569;
+  color: var(--suth-ink-2);
   margin-top: 10px;
   margin-bottom: 10px;
   display: block;
@@ -117,11 +117,11 @@
   width: 100%;
   min-height: 56px;
   padding: 12px 20px 16px;
-  border-radius: 12px;
-  border: 2px solid #e2e8f0;
-  background: #f8fafc;
+  border-radius: var(--suth-radius-panel);
+  border: 2px solid var(--suth-line-soft);
+  background: var(--suth-surface-2);
   margin-bottom: 25px !important;
-  font-size: 15.5px;
+  font-size: var(--suth-fs-body);
   transition: all 0.2s ease;
   font-family: inherit;
   box-sizing: border-box;
@@ -129,35 +129,35 @@
 }
 .cdm-tpl-field-input:focus {
   outline: none;
-  border-color: #0ea5e9;
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+  border-color: var(--suth-action);
+  background: var(--suth-surface);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--suth-action) 15%, transparent);
 }
 /* 🟢 พื้นที่กล่องคำถาม (Card UI) */
 .cdm-tpl-questions-builder-box {
-  background: #f8fafc;
+  background: var(--suth-surface-2);
   padding: 24px;
-  border-radius: 12px;
-  border: 1px dashed #cbd5e1;
+  border-radius: var(--suth-radius-panel);
+  border: 1px dashed var(--suth-line);
   margin-top: 10px;
 }
 .cdm-tpl-q-field-row {
-  background: #ffffff;
+  background: var(--suth-surface);
   padding: 24px;
-  border-radius: 12px;
+  border-radius: var(--suth-radius-panel);
   margin-bottom: 20px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--suth-line-soft);
+  box-shadow: 0 4px 15px rgba(31, 47, 63, 0.03);
   transition: all 0.3s;
 }
 .cdm-tpl-q-field-row:hover {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
-  border-color: #cbd5e1;
+  box-shadow: 0 8px 25px rgba(31, 47, 63, 0.06);
+  border-color: var(--suth-line);
 }
 /* ทำให้ข้อย่อยดูเป็นระเบียบ */
 .cdm-tpl-q-field-row.is-sub {
-  background: #fafaf9;
-  border-color: #d1fae5;
+  background: var(--suth-canvas);
+  border-color: var(--suth-success-line);
 }
 .cdm-tpl-q-input-group {
   display: flex;
@@ -167,10 +167,10 @@
 }
 .cdm-q-number {
   font-weight: 800;
-  color: #0ea5e9;
+  color: var(--suth-action-ink);
   min-width: 25px;
-  font-size: 16px;
-  background: #e0f2fe;
+  font-size: var(--suth-fs-md);
+  background: var(--suth-tint);
   width: 32px;
   height: 32px;
   display: flex;
@@ -181,10 +181,10 @@
 .cdm-tpl-q-input-group input,
 .cdm-tpl-q-input-group select {
   padding: 10px 14px;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  font-size: 14.5px;
-  background: #f8fafc;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius-panel);
+  font-size: var(--suth-fs-sm);
+  background: var(--suth-surface-2);
   transition: all 0.2s;
   font-family: inherit;
   min-height: 35px;
@@ -193,24 +193,24 @@
 }
 .cdm-tpl-q-input-group input:focus,
 .cdm-tpl-q-input-group select:focus {
-  background: #ffffff;
-  border-color: #0ea5e9;
+  background: var(--suth-surface);
+  border-color: var(--suth-action);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--suth-action) 15%, transparent);
 }
 /* 🟢 แถบเครื่องมือย่อย (Extras) */
 .cdm-tpl-q-extras-row {
   display: flex;
   gap: 16px;
   margin-top: 16px;
-  background: #f1f5f9;
+  background: var(--suth-surface-2);
   padding: 12px 16px;
-  border-radius: 12px;
+  border-radius: var(--suth-radius-panel);
   flex-wrap: wrap;
 }
 .cdm-extra-chk {
-  font-size: 13px;
-  color: #475569;
+  font-size: var(--suth-fs-label);
+  color: var(--suth-ink-2);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -220,22 +220,22 @@
 .cdm-extra-chk input {
   width: 16px;
   height: 16px;
-  accent-color: #0ea5e9;
+  accent-color: var(--suth-action);
   cursor: pointer;
 }
 /* ─── Buttons ─── */
 .cdm-btn-save-tpl {
   width: 100%;
-  background: linear-gradient(135deg, #0ea5e9, #0284c7);
-  color: white;
+  background: linear-gradient(135deg, var(--suth-action), var(--suth-action));
+  color: var(--suth-on-action);
   padding: 16px 24px;
-  border-radius: 12px;
-  font-size: 16px;
+  border-radius: var(--suth-radius-panel);
+  font-size: var(--suth-fs-md);
   font-weight: 700;
   border: none;
   cursor: pointer;
   transition: all 0.3s;
-  box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+  box-shadow: 0 4px 15px color-mix(in srgb, var(--suth-action) 30%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -243,17 +243,17 @@
 }
 .cdm-btn-save-tpl:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
+  box-shadow: 0 8px 25px color-mix(in srgb, var(--suth-action) 40%, transparent);
 }
 .cdm-btn-add-q-dotted {
   width: 100%;
   padding: 16px;
-  background: #f47932;
-  border: 2px solid #f47932;
-  color: #ffffff;
-  border-radius: 12px;
+  background: var(--suth-action);
+  border: 2px solid var(--suth-action);
+  color: var(--suth-on-action);
+  border-radius: var(--suth-radius-panel);
   cursor: pointer;
-  font-size: 15px;
+  font-size: var(--suth-fs-body);
   font-weight: 600;
   margin-top: 10px;
   transition: all 0.2s;
@@ -263,17 +263,17 @@
   gap: 8px;
 }
 .cdm-btn-add-q-dotted:hover {
-  border-color: #ea580c;
-  color: #ffffff;
-  background: #ea580c;
+  border-color: var(--suth-action);
+  color: var(--suth-on-action);
+  background: var(--suth-action-hover);
   transform: scale(1.01);
 }
 .cdm-icon-btn-red-sm {
   border: none;
-  color: #ef4444;
+  color: var(--suth-danger);
   background: transparent;
   height: 38px;
-  border-radius: 12px;
+  border-radius: var(--suth-radius-panel);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -309,13 +309,13 @@
   justify-content: center !important;
 
   /* ⚪ ปรับพื้นหลังให้เป็นสีขาวและมีเงา เพื่อให้ลอยเด่นออกมานอกขอบ Modal */
-  background: #ffffff !important;
-  color: #64748b !important;
-  border: 1px solid #e2e8f0 !important;
+  background: var(--suth-surface) !important;
+  color: var(--suth-muted) !important;
+  border: 1px solid var(--suth-line-soft) !important;
   border-radius: 50% !important;
   cursor: pointer !important;
-  z-index: 999999 !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important; /* เพิ่มเงาให้ดูมีมิติ */
+  z-index: 3 !important;
+  box-shadow: 0 4px 12px rgba(31, 47, 63, 0.15) !important; /* เพิ่มเงาให้ดูมีมิติ */
   padding: 0 !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
@@ -326,8 +326,8 @@
 }
 
 .cdm-tpl-close-btn:hover {
-  background: #fee2e2 !important;
-  color: #ef4444 !important;
+  background: var(--suth-danger-tint) !important;
+  color: var(--suth-danger) !important;
   transform: rotate(90deg) !important;
 }
 /* กลุ่ม checkbox */
@@ -361,7 +361,7 @@
 .cdm-opt-del-btn {
   height: 28px;
   border-radius: 50%;
-  color: #ef4444;
+  color: var(--suth-danger);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -372,7 +372,7 @@
   flex-shrink: 0;
 }
 .cdm-opt-del-btn:hover {
-  color: #ef4444;
+  color: var(--suth-danger);
   transform: scale(1.1);
 }
 .cdm-tpl-btn-delete {
@@ -382,13 +382,13 @@
   width: 32px;
   height: 32px;
   background: transparent !important;
-  color: #cbd5e1 !important;
+  color: var(--suth-muted) !important;
   border: none !important;
   cursor: pointer;
   transition: all 0.2s ease;
   z-index: 10;
   padding: 0;
-  border-radius: 12px !important;
+  border-radius: var(--suth-radius-panel) !important;
 }
 .cdm-tpl-btn-delete svg {
   width: 16px !important;
@@ -396,14 +396,14 @@
   display: block !important;
 }
 .cdm-tpl-sidebar-item:hover .cdm-tpl-btn-delete {
-  color: #ef4444 !important;
+  color: var(--suth-danger) !important;
 }
 .cdm-tpl-sidebar-item.active .cdm-tpl-btn-delete {
-  color: #ef4444 !important;
+  color: var(--suth-danger) !important;
 }
 .cdm-tpl-sidebar-item .cdm-tpl-btn-delete:hover {
   background-color: transparent !important;
-  color: #ef4444 !important;
+  color: var(--suth-danger) !important;
   transform: scale(1.2);
 }
 @media screen and (max-width: 768px) {
@@ -472,8 +472,8 @@
   .cdm-btn-save-tpl {
     width: fit-content; /* 🔥 ไม่ให้เต็มแถว */
     padding: 10px 16px; /* 🔥 ลดขนาด */
-    font-size: 14px; /* 🔥 ตัวหนังสือเล็กลง */
-    border-radius: 10px;
+    font-size: var(--suth-fs-sm); /* 🔥 ตัวหนังสือเล็กลง */
+    border-radius: var(--suth-radius);
     align-self: flex-end; /* 🔥 ชิดขวา */
     display: block;
     margin: 20px auto 0;

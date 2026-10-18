@@ -18,8 +18,11 @@ const FOCUSABLE =
 
 export const focusablesIn = (root) =>
   [...root.querySelectorAll(FOCUSABLE)].filter(
-    (el) => el.getClientRects().length > 0 && !el.matches(':disabled') &&
-      getComputedStyle(el).visibility !== 'hidden' && !el.closest("[inert]"),
+    (el) =>
+      el.getClientRects().length > 0 &&
+      !el.matches(":disabled") &&
+      getComputedStyle(el).visibility !== "hidden" &&
+      !el.closest("[inert]"),
   );
 
 // Only the inert flags set here are removed again.
@@ -65,19 +68,22 @@ export function useDialogFocus({
     const dialog = dialogRef.current;
     const firstField =
       initialFocus === "field"
-        ? [
-            ...dialog.querySelectorAll(
-              "input, select, textarea",
-            ),
-          ].find(
+        ? [...dialog.querySelectorAll("input, select, textarea")].find(
             (el) =>
-              !el.matches(':disabled') &&
+              !el.matches(":disabled") &&
               !el.readOnly &&
               el.type !== "hidden" &&
               el.getClientRects().length > 0,
           )
         : null;
-    (firstField || closeButtonRef?.current || dialog.querySelector('[aria-label="ปิดหน้าต่าง"], button:not(:disabled)') || dialog)?.focus({ preventScroll: true });
+    (
+      firstField ||
+      closeButtonRef?.current ||
+      dialog.querySelector(
+        '[aria-label="ปิดหน้าต่าง"], button:not(:disabled)',
+      ) ||
+      dialog
+    )?.focus({ preventScroll: true });
 
     const onKey = (event) => {
       if (event.key !== "Escape" || !isTop()) return;
@@ -94,9 +100,14 @@ export function useDialogFocus({
       if (index !== -1) openDialogs.splice(index, 1);
       syncInert();
       const parentDialog = openDialogs.at(-1)?.node;
-      const returnTarget = opener?.isConnected && opener !== document.body && !opener.closest('[inert]')
-        ? opener
-        : parentDialog?.querySelector('[aria-label="ปิดหน้าต่าง"], button:not(:disabled)');
+      const returnTarget =
+        opener?.isConnected &&
+        opener !== document.body &&
+        !opener.closest("[inert]")
+          ? opener
+          : parentDialog?.querySelector(
+              '[aria-label="ปิดหน้าต่าง"], button:not(:disabled)',
+            );
       returnTarget?.focus({ preventScroll: true });
     };
     // The dialog mounts once per id; refs are stable.

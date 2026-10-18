@@ -1,6 +1,6 @@
-import SearchableSelect from '../../components/SearchableSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
-import MasterSelect, {useMasterOptions} from "../../components/MasterSelect";
+import SearchableSelect from "../../components/SearchableSelect";
+import { toDisplayText } from "../../utils/textPresentation.js";
+import MasterSelect, { useMasterOptions } from "../../components/MasterSelect";
 import { usePageExport } from "../../components/ExcelExport";
 import { useState, useEffect, useMemo } from "react";
 import CaseTable from "../../components/case/CaseTable";
@@ -204,7 +204,10 @@ const STATUS_ORDER = [
 const NEW_CASE = "__new";
 
 function CreateCaseModal({ onClose, onSave, clinics = [] }) {
-  const facultyOptions=useMasterOptions("faculty",FACULTIES.map((label,index)=>({code:String(index),label})));
+  const facultyOptions = useMasterOptions(
+    "faculty",
+    FACULTIES.map((label, index) => ({ code: String(index), label })),
+  );
   const [formData, setFormData] = useState({
     prefix: "",
     citizenId: "",
@@ -350,7 +353,13 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
               <div className="scd-form-group">
                 <label htmlFor="create-case-field-2">คำนำหน้า</label>
 
-                <MasterSelect category="prefix" labelValues fallback={["นาย","นาง","นางสาว","อื่นๆ"].map(label=>({code:label,label}))}
+                <MasterSelect
+                  category="prefix"
+                  labelValues
+                  fallback={["นาย", "นาง", "นางสาว", "อื่นๆ"].map((label) => ({
+                    code: label,
+                    label,
+                  }))}
                   id="create-case-field-2"
                   value={formData.prefix}
                   onChange={(e) => handleChange("prefix", e.target.value)}
@@ -393,7 +402,7 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
                 >
                   <option value="">เลือกสำนักวิชา</option>
 
-                  {facultyOptions.map(({label:f}) => (
+                  {facultyOptions.map(({ label: f }) => (
                     <option key={f} value={f}>
                       {f}
                     </option>
@@ -439,7 +448,15 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
               <div className="scd-form-group">
                 <label htmlFor="create-case-field-8">สถานะเคส</label>
 
-                <MasterSelect category="case_statuses" labelValues id="create-case-field-8" value={formData.status} onChange={(e)=>handleChange("status",e.target.value)}><option value="">เลือกสถานะ</option></MasterSelect>
+                <MasterSelect
+                  category="case_statuses"
+                  labelValues
+                  id="create-case-field-8"
+                  value={formData.status}
+                  onChange={(e) => handleChange("status", e.target.value)}
+                >
+                  <option value="">เลือกสถานะ</option>
+                </MasterSelect>
               </div>
             </div>
           </div>
@@ -748,7 +765,18 @@ export default function CaseData() {
     return prioritizeCases(rows, "master");
   }, [scopedData, statusFilter, tableViewMode]);
 
-  usePageExport({title:"ข้อมูลเคส",sources:[{resource:"responses",id:selectedFormId,filters:{startDate,endDate},ids:filteredData.map(r=>r.id)}],disabled:!selectedFormId||isLoading});
+  usePageExport({
+    title: "ข้อมูลเคส",
+    sources: [
+      {
+        resource: "responses",
+        id: selectedFormId,
+        filters: { startDate, endDate },
+        ids: filteredData.map((r) => r.id),
+      },
+    ],
+    disabled: !selectedFormId || isLoading,
+  });
   useEffect(() => {
     if (
       statusFilter &&
@@ -900,7 +928,11 @@ export default function CaseData() {
           <div className="cw-header-text">
             <h1 title={pageTitle}>
               {pageTitle}
-              {cInfo && <span className="cw-clinic-tag">{toDisplayText(cInfo.text)}</span>}
+              {cInfo && (
+                <span className="cw-clinic-tag">
+                  {toDisplayText(cInfo.text)}
+                </span>
+              )}
             </h1>
             <p>ระบบจัดการข้อมูลและติดตามเคสผู้รับบริการ</p>
           </div>

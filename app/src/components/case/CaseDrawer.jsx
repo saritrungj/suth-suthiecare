@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { useId, useRef } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -11,6 +11,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import { useDialogFocus } from "../useDialogFocus";
+import { ExportButton } from "../ExcelExport";
 import { RISK_SHORT, riskLevel, statusTone } from "./caseDisplay";
 
 const RISK_ICONS = {
@@ -41,7 +42,9 @@ export function StatusPill({ status, emptyLabel = "เคสใหม่" }) {
       className={`cw-status cw-status--${statusTone(status)}`}
       title={status || emptyLabel}
     >
-      <span className="cw-status-label">{toDisplayText(status || emptyLabel)}</span>
+      <span className="cw-status-label">
+        {toDisplayText(status || emptyLabel)}
+      </span>
     </span>
   );
 }
@@ -52,6 +55,9 @@ export function StatusPill({ status, emptyLabel = "เคสใหม่" }) {
 // previous/next so staff can work down the queue without closing.
 // `after` renders inside the overlay but outside the drawer: sub-dialogs and
 // toasts that must stay reachable while the drawer is open.
+// `record` (usually <CaseActivity full />) and `exportSources` share one
+// ruled line at the top of the body, so every organization type opens on
+// the same "latest activity · Export Excel" row.
 export default function CaseDrawer({
   title,
   meta,
@@ -64,6 +70,9 @@ export default function CaseDrawer({
   onTabChange,
   onClose,
   after,
+  record,
+  exportSources,
+  exportTitle,
   children,
 }) {
   const titleId = useId();
@@ -180,10 +189,21 @@ export default function CaseDrawer({
                 tabIndex={activeTab === tab.id ? 0 : -1}
                 onClick={() => onTabChange(tab.id)}
               >
-                {tab.icon && <tab.icon className="cw-tab-icon" aria-hidden="true" />}
+                {tab.icon && (
+                  <tab.icon className="cw-tab-icon" aria-hidden="true" />
+                )}
                 <span className="cw-tab-text">
-                  <span className="cw-tab-label">{toDisplayText(tab.label)}</span>
-                  {tab.count > 0 && <small className="cw-tab-count" aria-label={`${tab.count} รายการ`}>{tab.count}</small>}
+                  <span className="cw-tab-label">
+                    {toDisplayText(tab.label)}
+                  </span>
+                  {tab.count > 0 && (
+                    <small
+                      className="cw-tab-count"
+                      aria-label={`${tab.count} รายการ`}
+                    >
+                      {tab.count}
+                    </small>
+                  )}
                 </span>
               </button>
             ))}
@@ -201,6 +221,14 @@ export default function CaseDrawer({
               }
             : {})}
         >
+          {(record || exportSources) && (
+            <div className="cw-record">
+              {record}
+              {exportSources && (
+                <ExportButton sources={exportSources} title={exportTitle} />
+              )}
+            </div>
+          )}
           {children}
         </div>
       </section>

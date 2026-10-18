@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
@@ -39,7 +39,9 @@ const SLIDE_INTERVAL = 6000;
 const CARD_THEMES = ["sut2-card--blue", "sut2-card--pink", "sut2-card--green"];
 const PROJECT_START_YEAR = 2026;
 
-function stripHtml(html) { return toDisplayText(html); }
+function stripHtml(html) {
+  return toDisplayText(html);
+}
 
 // ✅ FormCard ที่แก้ไขแล้ว
 function FormCard({ form, themeClass, count, isLoaded }) {
@@ -709,7 +711,7 @@ export default function SutLanding2() {
                           }}
                         >
                           <FiArrowLeft
-                            style={{ fontSize: "18px", flexShrink: 0 }}
+                            style={{ fontSize: "var(--suth-fs-section)", flexShrink: 0 }}
                           />{" "}
                           <span>{t("sutlanding.btn_back")}</span>
                         </button>
@@ -761,7 +763,7 @@ export default function SutLanding2() {
                       style={{
                         textAlign: "center",
                         width: "100%",
-                        color: "white",
+                        color: "var(--suth-on-action)",
                       }}
                     >
                       {t("sutlanding.loading")}
@@ -772,7 +774,7 @@ export default function SutLanding2() {
                         style={{
                           textAlign: "center",
                           width: "100%",
-                          color: "white",
+                          color: "var(--suth-on-action)",
                         }}
                       >
                         {t("sutlanding.no_clinic")}
@@ -843,7 +845,7 @@ export default function SutLanding2() {
                       style={{
                         textAlign: "center",
                         width: "100%",
-                        color: "white",
+                        color: "var(--suth-on-action)",
                       }}
                     >
                       {t("sutlanding.no_form_in_clinic")}
@@ -963,9 +965,9 @@ export default function SutLanding2() {
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  color: "#ffffff",
+                  color: "var(--suth-on-action)",
                   textDecoration: "underline",
-                  fontSize: "15px",
+                  fontSize: "var(--suth-fs-body)",
                   fontWeight: "500",
                   cursor: "pointer",
                   display: "inline-flex",

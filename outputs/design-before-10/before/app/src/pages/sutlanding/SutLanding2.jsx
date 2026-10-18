@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
@@ -39,7 +39,9 @@ const SLIDE_INTERVAL = 6000;
 const CARD_THEMES = ["sut2-card--blue", "sut2-card--pink", "sut2-card--green"];
 const PROJECT_START_YEAR = 2026;
 
-function stripHtml(html) { return toDisplayText(html); }
+function stripHtml(html) {
+  return toDisplayText(html);
+}
 
 // ✅ FormCard ที่แก้ไขแล้ว
 function FormCard({ form, themeClass, count, isLoaded }) {
@@ -500,7 +502,9 @@ export default function SutLanding2() {
 
   return (
     <div className="sut2-page">
-      <a className="suth-skip-link" href="#public-main">ข้ามไปยังเนื้อหาหลัก</a>
+      <a className="suth-skip-link" href="#public-main">
+        ข้ามไปยังเนื้อหาหลัก
+      </a>
       {/* NAVBAR */}
       <nav className={`sut2-nav ${isScrolled ? "sut2-nav--scrolled" : ""}`}>
         <div className="sut2-nav__logo">
@@ -524,10 +528,7 @@ export default function SutLanding2() {
           id="sut2-nav-actions"
           className={`sut2-nav__actions ${menuOpen ? "sut2-open" : ""}`}
         >
-          <LanguageSwitcher
-            className="sut2-nav__language"
-            darkText
-          />
+          <LanguageSwitcher className="sut2-nav__language" darkText />
           <PatientAccountMenu
             onDark={false}
             onNavigate={() => setMenuOpen(false)}
@@ -549,10 +550,7 @@ export default function SutLanding2() {
           <div className="sut2-hero__overlay"></div>
 
           <div className="sut2-hero__content">
-            <div
-              className="sut2-hero__text-box"
-
-            >
+            <div className="sut2-hero__text-box">
               <h1 className="sut2-hero__title">
                 {t("sutlanding.title")}
                 <br />
@@ -589,10 +587,7 @@ export default function SutLanding2() {
             </div>
 
             {/* ===== Banner ==== */}
-            <div
-              className="sut2-hero__banner-box"
-
-            >
+            <div className="sut2-hero__banner-box">
               {slides.length > 0 ? (
                 <div className="sut2-banner-slider">
                   {slides.map((slide, i) =>
@@ -638,7 +633,11 @@ export default function SutLanding2() {
                 </div>
               ) : (
                 <div className="sut2-banner-placeholder">
-                  <FiHeart size={48} color="var(--suth-action)" aria-hidden="true" />
+                  <FiHeart
+                    size={48}
+                    color="var(--suth-action)"
+                    aria-hidden="true"
+                  />
                   <p>ห่วงใยทุกสุขภาพของคุณ</p>
                 </div>
               )}

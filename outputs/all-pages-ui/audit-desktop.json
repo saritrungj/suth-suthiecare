@@ -24,9 +24,7 @@
           "impact": "serious",
           "nodes": [
             {
-              "target": [
-                ".patient-turnstile"
-              ],
+              "target": [".patient-turnstile"],
               "failureSummary": "Fix all of the following:\n  aria-label attribute cannot be used on a div with no valid role attribute.",
               "html": "<div class=\"patient-turnstile\" aria-label=\"การยืนยันความปลอดภัย\"></div>"
             }
@@ -48,9 +46,7 @@
           "impact": "serious",
           "nodes": [
             {
-              "target": [
-                ".patient-turnstile"
-              ],
+              "target": [".patient-turnstile"],
               "failureSummary": "Fix all of the following:\n  aria-label attribute cannot be used on a div with no valid role attribute.",
               "html": "<div class=\"patient-turnstile\" aria-label=\"การยืนยันความปลอดภัย\"></div>"
             }
@@ -72,9 +68,7 @@
           "impact": "serious",
           "nodes": [
             {
-              "target": [
-                ".patient-turnstile"
-              ],
+              "target": [".patient-turnstile"],
               "failureSummary": "Fix all of the following:\n  aria-label attribute cannot be used on a div with no valid role attribute.",
               "html": "<div class=\"patient-turnstile\" aria-label=\"การยืนยันความปลอดภัย\"></div>"
             }
@@ -85,16 +79,12 @@
           "impact": "serious",
           "nodes": [
             {
-              "target": [
-                ".patient-login-kicker"
-              ],
+              "target": [".patient-login-kicker"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.39 (foreground color: #ffc39e, background color: #fff0e5, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1",
               "html": "<p class=\"patient-login-kicker\">บัญชีสำหรับตรวจสอบประวัติ</p>"
             },
             {
-              "target": [
-                ".patient-optional-label[aria-hidden=\"true\"]"
-              ],
+              "target": [".patient-optional-label[aria-hidden=\"true\"]"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.18 (foreground color: #6c7e8e, background color: #ffffff, font size: 9.4pt (12.48px), font weight: normal). Expected contrast ratio of 4.5:1",
               "html": "<span class=\"patient-optional-label\" aria-hidden=\"true\">ไม่บังคับ</span>"
             },
@@ -133,9 +123,7 @@
           "impact": "serious",
           "nodes": [
             {
-              "target": [
-                ".patient-login-kicker"
-              ],
+              "target": [".patient-login-kicker"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.39 (foreground color: #ffc39e, background color: #fff0e5, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1",
               "html": "<p class=\"patient-login-kicker\">ความปลอดภัยของบัญชี</p>"
             }
@@ -167,16 +155,12 @@
           "impact": "serious",
           "nodes": [
             {
-              "target": [
-                "h1"
-              ],
+              "target": ["h1"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.27 (foreground color: #1f2f3f, background color: #a9430b, font size: 22.5pt (30px), font weight: bold). Expected contrast ratio of 3:1",
               "html": "<h1>คลินิกสาธิตสำหรับตรวจรูปแบบและการจัดวาง</h1>"
             },
             {
-              "target": [
-                ".hc-clinic-text-block > p"
-              ],
+              "target": [".hc-clinic-text-block > p"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.52 (foreground color: #344a5f, background color: #a9430b, font size: 11.3pt (15px), font weight: normal). Expected contrast ratio of 4.5:1",
               "html": "<p>คำแนะนำและคำถามที่พบบ่อยเกี่ยวกับคลินิกสาธิตสำหรับตรวจรูปแบบและการจัดวาง</p>"
             }
@@ -218,9 +202,7 @@
           "impact": "serious",
           "nodes": [
             {
-              "target": [
-                ".clear-all-btn"
-              ],
+              "target": [".clear-all-btn"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.46 (foreground color: #d93025, background color: #faf7f3, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1",
               "html": "<button type=\"button\" class=\"clear-all-btn\">"
             }
@@ -242,16 +224,12 @@
           "impact": "serious",
           "nodes": [
             {
-              "target": [
-                ".ar-btn-close"
-              ],
+              "target": [".ar-btn-close"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #64748b, background color: #f1f5f9, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1",
               "html": "<button class=\"ar-btn-close\">✕ ปิดหน้าต่าง</button>"
             },
             {
-              "target": [
-                ".ar-score__label"
-              ],
+              "target": [".ar-score__label"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.22 (foreground color: #64748b, background color: #ecf3ef, font size: 9.8pt (13px), font weight: bold). Expected contrast ratio of 4.5:1",
               "html": "<span class=\"ar-score__label\" style=\"color: rgb(100, 116, 139);\">คะแนน</span>"
             }
@@ -273,9 +251,7 @@
           "impact": "critical",
           "nodes": [
             {
-              "target": [
-                ".hr-id-toggle"
-              ],
+              "target": [".hr-id-toggle"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"hr-id-toggle\">"
             }
@@ -286,30 +262,22 @@
           "impact": "serious",
           "nodes": [
             {
-              "target": [
-                ".hr-badge-clinic:nth-child(1)"
-              ],
+              "target": [".hr-badge-clinic:nth-child(1)"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.05 (foreground color: #fff9f4, background color: #fff2e8, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",
               "html": "<span class=\"hr-badge-clinic\" style=\"background-color: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.5); border: 1px dashed rgba(255, 255, 255, 0.3);\">คลินิกวัยรุ่น</span>"
             },
             {
-              "target": [
-                ".hr-badge-clinic:nth-child(2)"
-              ],
+              "target": [".hr-badge-clinic:nth-child(2)"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.05 (foreground color: #fff9f4, background color: #fff2e8, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",
               "html": "<span class=\"hr-badge-clinic\" style=\"background-color: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.5); border: 1px dashed rgba(255, 255, 255, 0.3);\">คลินิกปรับเปลี่ยนพฤติกรรม</span>"
             },
             {
-              "target": [
-                ".hr-badge-clinic:nth-child(3)"
-              ],
+              "target": [".hr-badge-clinic:nth-child(3)"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.05 (foreground color: #fff9f4, background color: #fff2e8, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",
               "html": "<span class=\"hr-badge-clinic\" style=\"background-color: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.5); border: 1px dashed rgba(255, 255, 255, 0.3);\">คลินิกโรคติดต่อฯ</span>"
             },
             {
-              "target": [
-                ".hr-empty-state > p"
-              ],
+              "target": [".hr-empty-state > p"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.42 (foreground color: #657785, background color: #f8fafc, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
               "html": "<p>ไม่มีประวัติในหมวดหมู่นี้</p>"
             }
@@ -331,9 +299,7 @@
           "impact": "critical",
           "nodes": [
             {
-              "target": [
-                ".hr-id-toggle"
-              ],
+              "target": [".hr-id-toggle"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"hr-id-toggle\">"
             }
@@ -344,30 +310,22 @@
           "impact": "serious",
           "nodes": [
             {
-              "target": [
-                ".hr-badge-clinic:nth-child(1)"
-              ],
+              "target": [".hr-badge-clinic:nth-child(1)"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.05 (foreground color: #fff9f4, background color: #fff2e8, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",
               "html": "<span class=\"hr-badge-clinic\" style=\"background-color: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.5); border: 1px dashed rgba(255, 255, 255, 0.3);\">คลินิกวัยรุ่น</span>"
             },
             {
-              "target": [
-                ".hr-badge-clinic:nth-child(2)"
-              ],
+              "target": [".hr-badge-clinic:nth-child(2)"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.05 (foreground color: #fff9f4, background color: #fff2e8, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",
               "html": "<span class=\"hr-badge-clinic\" style=\"background-color: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.5); border: 1px dashed rgba(255, 255, 255, 0.3);\">คลินิกปรับเปลี่ยนพฤติกรรม</span>"
             },
             {
-              "target": [
-                ".hr-badge-clinic:nth-child(3)"
-              ],
+              "target": [".hr-badge-clinic:nth-child(3)"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.05 (foreground color: #fff9f4, background color: #fff2e8, font size: 8.3pt (11px), font weight: normal). Expected contrast ratio of 4.5:1",
               "html": "<span class=\"hr-badge-clinic\" style=\"background-color: rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.5); border: 1px dashed rgba(255, 255, 255, 0.3);\">คลินิกโรคติดต่อฯ</span>"
             },
             {
-              "target": [
-                ".hr-empty-state > p"
-              ],
+              "target": [".hr-empty-state > p"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.42 (foreground color: #657785, background color: #f8fafc, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
               "html": "<p>ไม่มีประวัติในหมวดหมู่นี้</p>"
             }
@@ -449,9 +407,7 @@
           "impact": "serious",
           "nodes": [
             {
-              "target": [
-                ".sfb-form-drag-handle"
-              ],
+              "target": [".sfb-form-drag-handle"],
               "failureSummary": "Fix any of the following:\n  Element does not have text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute",
               "html": "<div class=\"sfb-form-drag-handle sfb-smooth-element\" role=\"button\" tabindex=\"0\" aria-disabled=\"false\" aria-roledescription=\"sortable\" aria-describedby=\"DndDescribedBy-0\">"
             }
@@ -462,16 +418,12 @@
           "impact": "critical",
           "nodes": [
             {
-              "target": [
-                ".suth-button--secondary"
-              ],
+              "target": [".suth-button--secondary"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button type=\"submit\" class=\"suth-button suth-button--secondary sfb-btn-back\">"
             },
             {
-              "target": [
-                ".sfb-btn-close-theme"
-              ],
+              "target": [".sfb-btn-close-theme"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-btn-close-theme\">"
             },
@@ -532,30 +484,22 @@
               "html": "<button class=\"sfb-color-circle \" style=\"background-color: rgb(255, 152, 0);\"></button>"
             },
             {
-              "target": [
-                ".sfb-color-circle:nth-child(9)"
-              ],
+              "target": [".sfb-color-circle:nth-child(9)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle \" style=\"background-color: rgb(0, 150, 136);\"></button>"
             },
             {
-              "target": [
-                ".sfb-color-circle:nth-child(10)"
-              ],
+              "target": [".sfb-color-circle:nth-child(10)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle \" style=\"background-color: rgb(76, 175, 80);\"></button>"
             },
             {
-              "target": [
-                ".sfb-color-circle:nth-child(11)"
-              ],
+              "target": [".sfb-color-circle:nth-child(11)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle \" style=\"background-color: rgb(96, 125, 139);\"></button>"
             },
             {
-              "target": [
-                ".sfb-color-circle:nth-child(12)"
-              ],
+              "target": [".sfb-color-circle:nth-child(12)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle \" style=\"background-color: rgb(158, 158, 158);\"></button>"
             },
@@ -567,9 +511,7 @@
               "html": "<button class=\"sfb-color-circle sfb-custom-color-btn\" style=\"background-color: rgb(196, 84, 40);\">"
             },
             {
-              "target": [
-                ".sfb-bg-circle.sfb-color-circle:nth-child(1)"
-              ],
+              "target": [".sfb-bg-circle.sfb-color-circle:nth-child(1)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(255, 255, 255);\"></button>"
             },
@@ -581,44 +523,32 @@
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(240, 242, 245);\"></button>"
             },
             {
-              "target": [
-                ".sfb-bg-circle.sfb-color-circle:nth-child(3)"
-              ],
+              "target": [".sfb-bg-circle.sfb-color-circle:nth-child(3)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(248, 249, 250);\"></button>"
             },
             {
-              "target": [
-                ".sfb-bg-circle.sfb-color-circle:nth-child(4)"
-              ],
+              "target": [".sfb-bg-circle.sfb-color-circle:nth-child(4)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(253, 242, 248);\"></button>"
             },
             {
-              "target": [
-                ".sfb-bg-circle.sfb-color-circle:nth-child(5)"
-              ],
+              "target": [".sfb-bg-circle.sfb-color-circle:nth-child(5)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(243, 241, 250);\"></button>"
             },
             {
-              "target": [
-                ".sfb-bg-circle.sfb-color-circle:nth-child(6)"
-              ],
+              "target": [".sfb-bg-circle.sfb-color-circle:nth-child(6)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(232, 240, 254);\"></button>"
             },
             {
-              "target": [
-                ".sfb-bg-circle.sfb-color-circle:nth-child(7)"
-              ],
+              "target": [".sfb-bg-circle.sfb-color-circle:nth-child(7)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(230, 244, 234);\"></button>"
             },
             {
-              "target": [
-                ".sfb-bg-circle.sfb-color-circle:nth-child(8)"
-              ],
+              "target": [".sfb-bg-circle.sfb-color-circle:nth-child(8)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(252, 232, 230);\"></button>"
             },
@@ -636,16 +566,12 @@
           "impact": "serious",
           "nodes": [
             {
-              "target": [
-                "h3 > span:nth-child(1)"
-              ],
+              "target": ["h3 > span:nth-child(1)"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.15 (foreground color: #ff9800, background color: #ffffff, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1",
               "html": "<span style=\"font-size: 14px; color: rgb(255, 152, 0); margin-left: 8px; font-weight: bold; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle;\">"
             },
             {
-              "target": [
-                ".sfb-badge-clinic"
-              ],
+              "target": [".sfb-badge-clinic"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.02 (foreground color: #1976d2, background color: #e3f2fd, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1",
               "html": "<span class=\"sfb-badge-clinic\" style=\"font-size: 12px; background: rgb(227, 242, 253); color: rgb(25, 118, 210); padding: 2px 8px; border-radius: 4px; margin-left: 10px; font-weight: bold; display: inline-flex; align-items: center; vertical-align: middle;\">ทั่วไป</span>"
             },
@@ -657,16 +583,12 @@
               "html": "<span style=\"color: rgb(0, 188, 212); font-weight: bold;\">เพิ่ม BMI</span>"
             },
             {
-              "target": [
-                "button:nth-child(7) > span"
-              ],
+              "target": ["button:nth-child(7) > span"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.77 (foreground color: #4caf50, background color: #ffffff, font size: 9.8pt (13px), font weight: bold). Expected contrast ratio of 4.5:1",
               "html": "<span style=\"color: rgb(76, 175, 80); font-weight: bold;\">เพิ่ม 3อ.</span>"
             },
             {
-              "target": [
-                "button:nth-child(8) > span"
-              ],
+              "target": ["button:nth-child(8) > span"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #e91e63, background color: #ffffff, font size: 9.8pt (13px), font weight: bold). Expected contrast ratio of 4.5:1",
               "html": "<span style=\"color: rgb(233, 30, 99); font-weight: bold;\">เพิ่ม STIs</span>"
             }
@@ -677,16 +599,12 @@
           "impact": "critical",
           "nodes": [
             {
-              "target": [
-                "#custom-theme-color"
-              ],
+              "target": ["#custom-theme-color"],
               "failureSummary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element has no placeholder attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<input id=\"custom-theme-color\" type=\"color\" value=\"#c45428\" style=\"position: absolute; opacity: 0; width: 0px; height: 0px; pointer-events: none;\">"
             },
             {
-              "target": [
-                "#custom-bg-color"
-              ],
+              "target": ["#custom-bg-color"],
               "failureSummary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element has no placeholder attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<input id=\"custom-bg-color\" type=\"color\" value=\"#faf7f3\" style=\"position: absolute; opacity: 0; width: 0px; height: 0px; pointer-events: none;\">"
             }
@@ -708,16 +626,12 @@
           "impact": "critical",
           "nodes": [
             {
-              "target": [
-                ".suth-button--secondary"
-              ],
+              "target": [".suth-button--secondary"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button type=\"submit\" class=\"suth-button suth-button--secondary sfb-btn-back\">"
             },
             {
-              "target": [
-                ".sfb-btn-close-theme"
-              ],
+              "target": [".sfb-btn-close-theme"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-btn-close-theme\">"
             },
@@ -778,30 +692,22 @@
               "html": "<button class=\"sfb-color-circle \" style=\"background-color: rgb(255, 152, 0);\"></button>"
             },
             {
-              "target": [
-                ".sfb-color-circle:nth-child(9)"
-              ],
+              "target": [".sfb-color-circle:nth-child(9)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle \" style=\"background-color: rgb(0, 150, 136);\"></button>"
             },
             {
-              "target": [
-                ".sfb-color-circle:nth-child(10)"
-              ],
+              "target": [".sfb-color-circle:nth-child(10)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle \" style=\"background-color: rgb(76, 175, 80);\"></button>"
             },
             {
-              "target": [
-                ".sfb-color-circle:nth-child(11)"
-              ],
+              "target": [".sfb-color-circle:nth-child(11)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle \" style=\"background-color: rgb(96, 125, 139);\"></button>"
             },
             {
-              "target": [
-                ".sfb-color-circle:nth-child(12)"
-              ],
+              "target": [".sfb-color-circle:nth-child(12)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle \" style=\"background-color: rgb(158, 158, 158);\"></button>"
             },
@@ -813,9 +719,7 @@
               "html": "<button class=\"sfb-color-circle sfb-custom-color-btn\" style=\"background-color: rgb(196, 84, 40);\">"
             },
             {
-              "target": [
-                ".sfb-bg-circle.sfb-color-circle:nth-child(1)"
-              ],
+              "target": [".sfb-bg-circle.sfb-color-circle:nth-child(1)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(255, 255, 255);\"></button>"
             },
@@ -827,44 +731,32 @@
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(240, 242, 245);\"></button>"
             },
             {
-              "target": [
-                ".sfb-bg-circle.sfb-color-circle:nth-child(3)"
-              ],
+              "target": [".sfb-bg-circle.sfb-color-circle:nth-child(3)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(248, 249, 250);\"></button>"
             },
             {
-              "target": [
-                ".sfb-bg-circle.sfb-color-circle:nth-child(4)"
-              ],
+              "target": [".sfb-bg-circle.sfb-color-circle:nth-child(4)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(253, 242, 248);\"></button>"
             },
             {
-              "target": [
-                ".sfb-bg-circle.sfb-color-circle:nth-child(5)"
-              ],
+              "target": [".sfb-bg-circle.sfb-color-circle:nth-child(5)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(243, 241, 250);\"></button>"
             },
             {
-              "target": [
-                ".sfb-bg-circle.sfb-color-circle:nth-child(6)"
-              ],
+              "target": [".sfb-bg-circle.sfb-color-circle:nth-child(6)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(232, 240, 254);\"></button>"
             },
             {
-              "target": [
-                ".sfb-bg-circle.sfb-color-circle:nth-child(7)"
-              ],
+              "target": [".sfb-bg-circle.sfb-color-circle:nth-child(7)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(230, 244, 234);\"></button>"
             },
             {
-              "target": [
-                ".sfb-bg-circle.sfb-color-circle:nth-child(8)"
-              ],
+              "target": [".sfb-bg-circle.sfb-color-circle:nth-child(8)"],
               "failureSummary": "Fix any of the following:\n  Element does not have inner text that is visible to screen readers\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<button class=\"sfb-color-circle sfb-bg-circle \" style=\"background-color: rgb(252, 232, 230);\"></button>"
             },
@@ -882,9 +774,7 @@
           "impact": "serious",
           "nodes": [
             {
-              "target": [
-                ".sfb-badge-clinic"
-              ],
+              "target": [".sfb-badge-clinic"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.02 (foreground color: #1976d2, background color: #e3f2fd, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1",
               "html": "<span class=\"sfb-badge-clinic\" style=\"font-size: 12px; background: rgb(227, 242, 253); color: rgb(25, 118, 210); padding: 2px 8px; border-radius: 4px; margin-left: 10px; font-weight: bold; display: inline-flex; align-items: center; vertical-align: middle;\">ทั่วไป</span>"
             },
@@ -896,16 +786,12 @@
               "html": "<span style=\"color: rgb(0, 188, 212); font-weight: bold;\">เพิ่ม BMI</span>"
             },
             {
-              "target": [
-                "button:nth-child(7) > span"
-              ],
+              "target": ["button:nth-child(7) > span"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.77 (foreground color: #4caf50, background color: #ffffff, font size: 9.8pt (13px), font weight: bold). Expected contrast ratio of 4.5:1",
               "html": "<span style=\"color: rgb(76, 175, 80); font-weight: bold;\">เพิ่ม 3อ.</span>"
             },
             {
-              "target": [
-                "button:nth-child(8) > span"
-              ],
+              "target": ["button:nth-child(8) > span"],
               "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 4.34 (foreground color: #e91e63, background color: #ffffff, font size: 9.8pt (13px), font weight: bold). Expected contrast ratio of 4.5:1",
               "html": "<span style=\"color: rgb(233, 30, 99); font-weight: bold;\">เพิ่ม STIs</span>"
             }
@@ -916,16 +802,12 @@
           "impact": "critical",
           "nodes": [
             {
-              "target": [
-                "#custom-theme-color"
-              ],
+              "target": ["#custom-theme-color"],
               "failureSummary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element has no placeholder attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<input id=\"custom-theme-color\" type=\"color\" value=\"#c45428\" style=\"position: absolute; opacity: 0; width: 0px; height: 0px; pointer-events: none;\">"
             },
             {
-              "target": [
-                "#custom-bg-color"
-              ],
+              "target": ["#custom-bg-color"],
               "failureSummary": "Fix any of the following:\n  Element does not have an implicit (wrapped) <label>\n  Element does not have an explicit <label>\n  aria-label attribute does not exist or is empty\n  aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n  Element has no title attribute\n  Element has no placeholder attribute\n  Element's default semantics were not overridden with role=\"none\" or role=\"presentation\"",
               "html": "<input id=\"custom-bg-color\" type=\"color\" value=\"#faf7f3\" style=\"position: absolute; opacity: 0; width: 0px; height: 0px; pointer-events: none;\">"
             }

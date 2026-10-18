@@ -9,31 +9,8 @@ import {
   FaCheck,
   FaPlus,
 } from "react-icons/fa";
+import { BG_COLORS, THEME_COLORS } from "../formThemePalette";
 
-const THEME_COLORS = [
-  "#db4437",
-  "#673ab7",
-  "#3f51b5",
-  "#4285f4",
-  "#03a9f4",
-  "#00bcd4",
-  "#ff5722",
-  "#ff9800",
-  "#009688",
-  "#4caf50",
-  "#607d8b",
-  "#9e9e9e",
-];
-const BG_COLORS = [
-  "#ffffff",
-  "#f0f2f5",
-  "#f8f9fa",
-  "#fdf2f8",
-  "#f3f1fa",
-  "#e8f0fe",
-  "#e6f4ea",
-  "#fce8e6",
-];
 
 const ThemeSidebar = ({
   isOpen,
@@ -61,7 +38,12 @@ const ThemeSidebar = ({
           <div className="sfb-theme-title-group">
             <FaPalette /> <span>ตัวเลือกธีม</span>
           </div>
-          <button type="button" aria-label="ปิดการปรับแต่งธีม" className="sfb-btn-close-theme" onClick={onClose}>
+          <button
+            type="button"
+            aria-label="ปิดการปรับแต่งธีม"
+            className="sfb-btn-close-theme"
+            onClick={onClose}
+          >
             <FaTimes />
           </button>
         </div>
@@ -144,7 +126,7 @@ const ThemeSidebar = ({
                   className="sfb-theme-hint-text"
                   style={{
                     marginBottom: "8px",
-                    color: "#202124",
+                    color: "var(--suth-ink)",
                     fontWeight: 500,
                   }}
                 >
@@ -225,13 +207,13 @@ const ThemeSidebar = ({
                   style={
                     !THEME_COLORS.includes(themeColor)
                       ? { backgroundColor: themeColor }
-                      : { backgroundColor: "#f1f3f4" }
+                      : { backgroundColor: "var(--suth-neutral-tint)" }
                   }
                 >
                   {!THEME_COLORS.includes(themeColor) ? (
                     <FaCheck className="sfb-color-check-icon" />
                   ) : (
-                    <FaPlus size={14} color="#5f6368" />
+                    <FaPlus size={14} color="var(--suth-muted)" />
                   )}
                 </button>
               </div>
@@ -286,13 +268,13 @@ const ThemeSidebar = ({
                   style={
                     !BG_COLORS.includes(bgColor)
                       ? { backgroundColor: bgColor }
-                      : { backgroundColor: "#ffffff" }
+                      : { backgroundColor: "var(--suth-surface)" }
                   }
                 >
                   {!BG_COLORS.includes(bgColor) ? (
                     <FaCheck className="sfb-color-check-icon sfb-dark-check" />
                   ) : (
-                    <FaPlus size={14} color="#5f6368" />
+                    <FaPlus size={14} color="var(--suth-muted)" />
                   )}
                 </button>
               </div>

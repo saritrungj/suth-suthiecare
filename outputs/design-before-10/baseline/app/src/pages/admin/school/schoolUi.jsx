@@ -1,5 +1,5 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
-import {useMasterOptions} from "../../../components/MasterSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
+import { useMasterOptions } from "../../../components/MasterSelect";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useDialogFocus } from "../../../components/useDialogFocus";
@@ -40,11 +40,17 @@ export const STUDENT_STATUS_LABELS = {
   inactive: "ปิดใช้งาน",
 };
 
-export function useStudentStatusLabels(){
- const options=useMasterOptions("student_status",Object.entries(STUDENT_STATUS_LABELS).filter(([code])=>!["inactive","transferred"].includes(code)).map(([code,label])=>({code,label})));
- const labels=Object.fromEntries(options.map(o=>[o.code,o.label]));
- for(const [code,label] of Object.entries(STUDENT_STATUS_LABELS))if(!Object.hasOwn(labels,code))labels[code]=label;
- return labels;
+export function useStudentStatusLabels() {
+  const options = useMasterOptions(
+    "student_status",
+    Object.entries(STUDENT_STATUS_LABELS)
+      .filter(([code]) => !["inactive", "transferred"].includes(code))
+      .map(([code, label]) => ({ code, label })),
+  );
+  const labels = Object.fromEntries(options.map((o) => [o.code, o.label]));
+  for (const [code, label] of Object.entries(STUDENT_STATUS_LABELS))
+    if (!Object.hasOwn(labels, code)) labels[code] = label;
+  return labels;
 }
 
 export const TEACHER_ROLE_LABELS = {
@@ -99,12 +105,17 @@ const RISK_PILL_LEVEL = {
 
 // Risk as icon shape + word + color, the same pill as the case lists.
 export function RiskBadge({ risk }) {
-  const options=useMasterOptions("risk_level",Object.entries(RISK_LABELS).map(([code,label])=>({code,label})));
+  const options = useMasterOptions(
+    "risk_level",
+    Object.entries(RISK_LABELS).map(([code, label]) => ({ code, label })),
+  );
   if (!risk) return <span className="sch-badge">-</span>;
   return (
     <RiskPill
       level={RISK_PILL_LEVEL[risk] || "none"}
-      label={options.find(o=>o.code===risk)?.label || RISK_LABELS[risk] || risk}
+      label={
+        options.find((o) => o.code === risk)?.label || RISK_LABELS[risk] || risk
+      }
     />
   );
 }

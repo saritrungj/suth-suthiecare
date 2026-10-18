@@ -1,5 +1,5 @@
-import SearchableSelect from './SearchableSelect';
-import { toDisplayText } from '../utils/textPresentation.js';
+import SearchableSelect from "./SearchableSelect";
+import { toDisplayText } from "../utils/textPresentation.js";
 import React, { useState, useEffect, useRef } from "react";
 import "./Sidebar.css";
 import logo from "../assets/logoSUTH.png";
@@ -273,8 +273,22 @@ const rawMenuItems = [
     schoolCheck: (access) => access?.can_view_school,
   },
 
-  { href: "/admin/school/roles", icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />, label: "บทบาทโรงเรียน", key: "school-roles", orgTypes: ["school"], schoolCheck: access => access?.can_manage_staff },
-  { href: "/admin/school/workflows", icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />, label: "คัดกรองและติดตามโรงเรียน", key: "school-workflows", orgTypes: ["school"], schoolCheck: access => access?.can_view_school },
+  {
+    href: "/admin/school/roles",
+    icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />,
+    label: "บทบาทโรงเรียน",
+    key: "school-roles",
+    orgTypes: ["school"],
+    schoolCheck: (access) => access?.can_manage_staff,
+  },
+  {
+    href: "/admin/school/workflows",
+    icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />,
+    label: "คัดกรองและติดตามโรงเรียน",
+    key: "school-workflows",
+    orgTypes: ["school"],
+    schoolCheck: (access) => access?.can_view_school,
+  },
 
   // 🟠 งานของหน่วยงานที่เลือกอยู่ (ข้อมูลแยกตามหน่วยงาน)
   { type: "header", label: "จัดการหน่วยงาน", key: "header-setup" },
@@ -315,7 +329,13 @@ const rawMenuItems = [
     hint: "",
     key: "header-system",
   },
-  { href: "/admin/master-data", icon: <FontAwesomeIcon icon={faTags} fixedWidth />, label: "จัดการข้อมูลหลัก", key: "master-data", module: "master_data.view" },
+  {
+    href: "/admin/master-data",
+    icon: <FontAwesomeIcon icon={faTags} fixedWidth />,
+    label: "จัดการข้อมูลหลัก",
+    key: "master-data",
+    module: "master_data.view",
+  },
   {
     href: "/admin/organizations",
     icon: <FontAwesomeIcon icon={faSitemap} fixedWidth />,
@@ -401,35 +421,53 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
   useEffect(() => {
     if (!isMobileOpen) return;
     const drawer = sidebarRef.current;
-    const background = document.querySelectorAll('.admin-shell-content, .mobile-header-bar');
-    const previousInert = [...background].map(element => element.inert);
-    background.forEach(element => { element.inert = true; });
-    drawer?.querySelector('.mobile-close-btn')?.focus({ preventScroll: true });
-    const keyboard = event => {
+    const background = document.querySelectorAll(
+      ".admin-shell-content, .mobile-header-bar",
+    );
+    const previousInert = [...background].map((element) => element.inert);
+    background.forEach((element) => {
+      element.inert = true;
+    });
+    drawer?.querySelector(".mobile-close-btn")?.focus({ preventScroll: true });
+    const keyboard = (event) => {
       if (event.defaultPrevented || !drawer?.contains(event.target)) return;
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         event.preventDefault();
         setIsMobileOpen(false);
       }
-      if (event.key !== 'Tab') return;
-      const items = [...drawer.querySelectorAll('a[href], button:not(:disabled), select:not(:disabled), [tabindex="0"]')]
-        .filter(element => element.getClientRects().length && getComputedStyle(element).visibility !== 'hidden');
+      if (event.key !== "Tab") return;
+      const items = [
+        ...drawer.querySelectorAll(
+          'a[href], button:not(:disabled), select:not(:disabled), [tabindex="0"]',
+        ),
+      ].filter(
+        (element) =>
+          element.getClientRects().length &&
+          getComputedStyle(element).visibility !== "hidden",
+      );
       if (!items.length) return;
       if (event.shiftKey && document.activeElement === items[0]) {
-        event.preventDefault(); items.at(-1).focus();
+        event.preventDefault();
+        items.at(-1).focus();
       } else if (!event.shiftKey && document.activeElement === items.at(-1)) {
-        event.preventDefault(); items[0].focus();
+        event.preventDefault();
+        items[0].focus();
       }
     };
-    const desktop = window.matchMedia('(min-width: 1025px)');
-    const resize = event => { if (event.matches) setIsMobileOpen(false); };
-    desktop.addEventListener('change', resize);
-    document.addEventListener('keydown', keyboard);
+    const desktop = window.matchMedia("(min-width: 1025px)");
+    const resize = (event) => {
+      if (event.matches) setIsMobileOpen(false);
+    };
+    desktop.addEventListener("change", resize);
+    document.addEventListener("keydown", keyboard);
     return () => {
-      background.forEach((element, index) => { element.inert = previousInert[index]; });
-      document.removeEventListener('keydown', keyboard);
-      desktop.removeEventListener('change', resize);
-      if (!desktop.matches) menuButtonRef.current?.focus({ preventScroll: true });
+      background.forEach((element, index) => {
+        element.inert = previousInert[index];
+      });
+      document.removeEventListener("keydown", keyboard);
+      desktop.removeEventListener("change", resize);
+      if (!desktop.matches)
+        menuButtonRef.current?.focus({ preventScroll: true });
     };
   }, [isMobileOpen]);
 
@@ -489,8 +527,10 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
     if (active) {
       const item = active.getBoundingClientRect();
       const menu = container.getBoundingClientRect();
-      if (item.bottom > menu.bottom) container.scrollTop += item.bottom - menu.bottom + 12;
-      else if (item.top < menu.top) container.scrollTop -= menu.top - item.top + 12;
+      if (item.bottom > menu.bottom)
+        container.scrollTop += item.bottom - menu.bottom + 12;
+      else if (item.top < menu.top)
+        container.scrollTop -= menu.top - item.top + 12;
     }
   }, [location.pathname, isMobileOpen]);
 
@@ -674,7 +714,9 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
                   )}
                   {toDisplayText(item.label)}
                   {item.hint && (
-                    <small className="menu-header-hint">{toDisplayText(item.hint)}</small>
+                    <small className="menu-header-hint">
+                      {toDisplayText(item.hint)}
+                    </small>
                   )}
                 </div>
               );

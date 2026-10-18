@@ -1,6 +1,6 @@
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
-import {useMasterOptions} from "../../../components/MasterSelect";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
+import { useMasterOptions } from "../../../components/MasterSelect";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useDialogFocus } from "../../../components/useDialogFocus";
@@ -41,11 +41,17 @@ export const STUDENT_STATUS_LABELS = {
   inactive: "ปิดใช้งาน",
 };
 
-export function useStudentStatusLabels(){
- const options=useMasterOptions("student_status",Object.entries(STUDENT_STATUS_LABELS).filter(([code])=>!["inactive","transferred"].includes(code)).map(([code,label])=>({code,label})));
- const labels=Object.fromEntries(options.map(o=>[o.code,o.label]));
- for(const [code,label] of Object.entries(STUDENT_STATUS_LABELS))if(!Object.hasOwn(labels,code))labels[code]=label;
- return labels;
+export function useStudentStatusLabels() {
+  const options = useMasterOptions(
+    "student_status",
+    Object.entries(STUDENT_STATUS_LABELS)
+      .filter(([code]) => !["inactive", "transferred"].includes(code))
+      .map(([code, label]) => ({ code, label })),
+  );
+  const labels = Object.fromEntries(options.map((o) => [o.code, o.label]));
+  for (const [code, label] of Object.entries(STUDENT_STATUS_LABELS))
+    if (!Object.hasOwn(labels, code)) labels[code] = label;
+  return labels;
 }
 
 export const TEACHER_ROLE_LABELS = {
@@ -56,7 +62,15 @@ export const TEACHER_ROLE_LABELS = {
 
 // Current Thai academic year: a new year starts in mid-May.
 export const currentAcademicYear = () => {
-  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Bangkok', year: 'numeric', month: 'numeric' }).formatToParts(new Date()).map(p => [p.type, p.value]));
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Bangkok",
+      year: "numeric",
+      month: "numeric",
+    })
+      .formatToParts(new Date())
+      .map((p) => [p.type, p.value]),
+  );
   return Number(parts.year) + 543 - (Number(parts.month) < 5 ? 1 : 0);
 };
 
@@ -100,12 +114,17 @@ const RISK_PILL_LEVEL = {
 
 // Risk as icon shape + word + color, the same pill as the case lists.
 export function RiskBadge({ risk }) {
-  const options=useMasterOptions("risk_level",Object.entries(RISK_LABELS).map(([code,label])=>({code,label})));
+  const options = useMasterOptions(
+    "risk_level",
+    Object.entries(RISK_LABELS).map(([code, label]) => ({ code, label })),
+  );
   if (!risk) return <span className="sch-badge">-</span>;
   return (
     <RiskPill
       level={RISK_PILL_LEVEL[risk] || "none"}
-      label={options.find(o=>o.code===risk)?.label || RISK_LABELS[risk] || risk}
+      label={
+        options.find((o) => o.code === risk)?.label || RISK_LABELS[risk] || risk
+      }
     />
   );
 }
@@ -149,7 +168,10 @@ export function MenuSelect({ label, value, onChange, children }) {
   return (
     <label className="sch-native-filter">
       <span>{toDisplayText(label)}</span>
-      <SearchableSelect value={value} onChange={(event) => onChange(event.target.value)}>
+      <SearchableSelect
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      >
         {children}
       </SearchableSelect>
     </label>

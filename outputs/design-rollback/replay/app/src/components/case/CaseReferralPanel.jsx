@@ -1,5 +1,5 @@
-import { Button as UiButton } from '../ui/index.jsx';
-import SearchableSelect from '../SearchableSelect';
+import { Button as UiButton } from "../ui/index.jsx";
+import SearchableSelect from "../SearchableSelect";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiArrowUpRight, FiRefreshCw } from "react-icons/fi";
@@ -156,7 +156,8 @@ export default function CaseReferralPanel({ sourceResponseId, onUpdated }) {
             ข้อความนี้จะแชร์กับปลายทาง กรุณาสรุปเฉพาะข้อมูลที่จำเป็น
             ไม่ใส่เลขบัตรหรือรายละเอียดเชิงลึก
           </p>
-          <UiButton variant="primary"
+          <UiButton
+            variant="primary"
             className="cw-btn"
             type="submit"
             disabled={saving || loading || !destination || !reason.trim()}
@@ -173,7 +174,8 @@ export default function CaseReferralPanel({ sourceResponseId, onUpdated }) {
       )}
       <div className="ref-section-heading">
         <h3>รายการส่งต่อของเคสนี้</h3>
-        <UiButton variant="ghost"
+        <UiButton
+          variant="ghost"
           className="cw-btn-ghost"
           type="button"
           disabled={loading}

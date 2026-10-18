@@ -1,5 +1,5 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
-import {ExportButton} from "../ExcelExport";
+import { toDisplayText } from "../../utils/textPresentation.js";
+import { useModuleActions } from "../../permissions/useModuleActions";
 import CaseActivity, { responseActivity, logActivity } from "./CaseActivity";
 import { exportCaseData } from "../../services/api";
 import "./CaseDetailModal.css";
@@ -83,6 +83,10 @@ export default function CaseDetailModal({
   onCaseDeleted,
   nav,
 }) {
+  // Roles-page rights for the actions inside this modal.
+  const caseRights = useModuleActions("cases");
+  const clinicalRights = useModuleActions("clinical");
+  const appointmentRights = useModuleActions("appointments");
   const summary = data?.summary_data || {};
   const scoreResults = useMemo(
     () => summary.score_results || [],
@@ -490,7 +494,7 @@ export default function CaseDetailModal({
       let options = res.data;
       if (savedStatus && !options.some((o) => o.name === savedStatus)) {
         options = [
-          { id: "legacy", name: savedStatus, color: "#94a3b8" },
+          { id: "legacy", name: savedStatus, color: "var(--suth-muted)" },
           ...options,
         ];
       }
@@ -533,7 +537,9 @@ export default function CaseDetailModal({
           detail: log.detail,
         })),
       );
-      const apptRes = await getCaseAppointments(targetId, targetType).catch(() => ({ data: [] }));
+      const apptRes = await getCaseAppointments(targetId, targetType).catch(
+        () => ({ data: [] }),
+      );
       setAppointmentNo(apptRes.data.length + 1);
       await fetchServicesList();
       return activity;
@@ -563,7 +569,7 @@ export default function CaseDetailModal({
         icon: "error",
         title: "เพิ่มสถานะไม่สำเร็จ",
         text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง",
-        confirmButtonColor: "#f47932",
+        confirmButtonColor: "var(--suth-action)",
       });
     }
   };
@@ -574,8 +580,8 @@ export default function CaseDetailModal({
       text: `ยืนยันการเลิกใช้งานสถานะ "${name}"? (ข้อมูลเก่าจะไม่หายไป)`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#94a3b8",
+      confirmButtonColor: "var(--suth-risk-dot-high)",
+      cancelButtonColor: "var(--suth-control-line)",
       confirmButtonText: "ยืนยัน",
       cancelButtonText: "ยกเลิก",
     });
@@ -608,7 +614,7 @@ export default function CaseDetailModal({
         icon: "error",
         title: "เพิ่มบริการไม่สำเร็จ",
         text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง",
-        confirmButtonColor: "#f47932",
+        confirmButtonColor: "var(--suth-action)",
       });
     }
   };
@@ -629,7 +635,7 @@ export default function CaseDetailModal({
         icon: "error",
         title: "แก้ไขบริการไม่สำเร็จ",
         text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง",
-        confirmButtonColor: "#f47932",
+        confirmButtonColor: "var(--suth-action)",
       });
     }
   };
@@ -640,8 +646,8 @@ export default function CaseDetailModal({
       text: `ยืนยันการลบบริการ "${name}"?`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#94a3b8",
+      confirmButtonColor: "var(--suth-risk-dot-high)",
+      cancelButtonColor: "var(--suth-control-line)",
       confirmButtonText: "ลบ",
       cancelButtonText: "ยกเลิก",
     });
@@ -675,7 +681,7 @@ export default function CaseDetailModal({
         icon: "error",
         title: "ลบเคสไม่สำเร็จ",
         text: err.response?.data?.message || "กรุณาลองใหม่อีกครั้ง",
-        confirmButtonColor: "#f47932",
+        confirmButtonColor: "var(--suth-action)",
       });
       setIsDeleting(false);
     }
@@ -839,7 +845,7 @@ export default function CaseDetailModal({
             logParts.push(
               `การรับยา PrEP: ${prepLabels[savedClinicalData.prep] || "ไม่ได้รับ"} ➔ ${prepLabels[clinicalData.prep] || "ไม่ได้รับ"}`,
             );
-          if (targetMasterId)
+          if (targetMasterId && clinicalRights.create)
             await updateClinicalData(targetMasterId, {
               clinical_data: clinicalData,
             });
@@ -1173,9 +1179,9 @@ export default function CaseDetailModal({
   const overallOptions = (() => {
     if (!scoreResults || scoreResults.length === 0)
       return [
-        { label: "ต่ำ", color: "#10b981" },
-        { label: "ปานกลาง", color: "#f59e0b" },
-        { label: "สูง", color: "#ef4444" },
+        { label: "ต่ำ", color: "var(--suth-success)" },
+        { label: "ปานกลาง", color: "var(--suth-action)" },
+        { label: "สูง", color: "var(--suth-danger)" },
       ];
     const bmiScore = scoreResults.find((s) =>
       (s.title || "").toLowerCase().includes("bmi"),
@@ -1185,20 +1191,20 @@ export default function CaseDetailModal({
       if (ruleSource?.rules?.length > 0)
         return ruleSource.rules.map((r) => ({
           label: r.label,
-          color: r.color || "#64748b",
+          color: r.color || "var(--suth-muted)",
         }));
-      return [{ label: bmiScore.label, color: bmiScore.color || "#64748b" }];
+      return [{ label: bmiScore.label, color: bmiScore.color || "var(--suth-muted)" }];
     }
     const first = scoreResults[0];
     const ruleSource = formRules.find((f) => f.id === first.question_id);
     if (ruleSource?.rules?.length > 0)
       return ruleSource.rules.map((r) => ({
         label: r.label,
-        color: r.color || "#64748b",
+        color: r.color || "var(--suth-muted)",
       }));
     return scoreResults.map((s) => ({
       label: s.label,
-      color: s.color || "#64748b",
+      color: s.color || "var(--suth-muted)",
     }));
   })();
 
@@ -1352,6 +1358,10 @@ export default function CaseDetailModal({
         setStaffNote={setStaffNote}
         isAppointing={isAppointing}
         setIsAppointing={setIsAppointing}
+        rights={{
+          clinicalCreate: clinicalRights.create,
+          appointmentCreate: appointmentRights.create,
+        }}
         appointmentNo={appointmentNo}
         setAppointmentNo={setAppointmentNo}
         tempDate={tempDate}
@@ -1464,6 +1474,7 @@ export default function CaseDetailModal({
                   <button
                     type="button"
                     className="cw-menu-item is-danger"
+                    hidden={!(caseRights.delete && clinicalRights.delete)}
                     onClick={() => {
                       setShowDeleteConfirm(true);
                       closeMenus();
@@ -1617,9 +1628,10 @@ export default function CaseDetailModal({
           )}
         </>
       }
+      record={<CaseActivity full activity={latestActivity} />}
+      exportSources={[{ resource: "case", id: data.id }]}
+      exportTitle="รายละเอียดเคส"
     >
-      <ExportButton sources={[{resource:"case",id:data.id}]} title="รายละเอียดเคส" />
-      <CaseActivity full activity={latestActivity} />
       {tabPanels[activeTab]}
     </CaseDrawer>
   );

@@ -1,18 +1,37 @@
 const test = require("node:test"),
   assert = require("node:assert/strict");
 const { approveNotice } = require("../services/privacyNoticeService");
-const { getProcessingNotice, STANDARD_NOTICE } = require('../services/privacyNoticeService');
+const {
+  getProcessingNotice,
+  STANDARD_NOTICE,
+} = require("../services/privacyNoticeService");
 
-test('forms without configuration use the same fixed notice in read and submit flows',async()=>{
- const calls=[];
- const db={query:async(sql,params)=>{calls.push({sql,params});return [[]];}};
- assert.deepEqual(await getProcessingNotice(db,2,1),STANDARD_NOTICE);
- assert.equal(calls.length,1);
- assert.deepEqual(calls[0].params,[2,1]);
- assert.match(calls[0].sql,/approved_at IS NOT NULL/);
- assert.equal(calls.some(c=>/INSERT|UPDATE/.test(c.sql)),false);
- const existing={purpose:'service',legal_basis:'consent',notice_version:'approved-v2',notice_text:'Existing notice'};
- assert.deepEqual(await getProcessingNotice({query:async()=>[[existing]]},2,1),existing);
+test("forms without configuration use the same fixed notice in read and submit flows", async () => {
+  const calls = [];
+  const db = {
+    query: async (sql, params) => {
+      calls.push({ sql, params });
+      return [[]];
+    },
+  };
+  assert.deepEqual(await getProcessingNotice(db, 2, 1), STANDARD_NOTICE);
+  assert.equal(calls.length, 1);
+  assert.deepEqual(calls[0].params, [2, 1]);
+  assert.match(calls[0].sql, /approved_at IS NOT NULL/);
+  assert.equal(
+    calls.some((c) => /INSERT|UPDATE/.test(c.sql)),
+    false,
+  );
+  const existing = {
+    purpose: "service",
+    legal_basis: "consent",
+    notice_version: "approved-v2",
+    notice_text: "Existing notice",
+  };
+  assert.deepEqual(
+    await getProcessingNotice({ query: async () => [[existing]] }, 2, 1),
+    existing,
+  );
 });
 test("notice approval cannot change content or legal basis under an existing version", async () => {
   const calls = [],

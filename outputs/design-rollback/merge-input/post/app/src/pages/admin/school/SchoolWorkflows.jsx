@@ -1,7 +1,12 @@
-import { Surface as UiSurface } from '../../../components/ui/index.jsx';
-import { DataTable as UiDataTable, Button as UiButton, TextInput as UiTextInput, TextArea as UiTextArea } from '../../../components/ui/index.jsx';
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { Surface as UiSurface } from "../../../components/ui/index.jsx";
+import {
+  DataTable as UiDataTable,
+  Button as UiButton,
+  TextInput as UiTextInput,
+  TextArea as UiTextArea,
+} from "../../../components/ui/index.jsx";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api, {
@@ -26,7 +31,7 @@ import {
   saveTeacherWorkbook,
 } from "../../../utils/teacherImport";
 import "./school.css";
-import {RiskPill} from '../../../components/case/CaseDrawer';
+import { RiskPill } from "../../../components/case/CaseDrawer";
 
 function useLoad(url) {
   const [data, setData] = useState(null),
@@ -168,7 +173,14 @@ function FormSelect({ forms, value, onChange, domain, required = true }) {
 
 export default function SchoolWorkflows() {
   const { schoolAccess: access } = usePermissions(),
-    { schools, schoolId, setSchoolId, loading: schoolsLoading, error: schoolsError, reload: reloadSchools } = useSchools();
+    {
+      schools,
+      schoolId,
+      setSchoolId,
+      loading: schoolsLoading,
+      error: schoolsError,
+      reload: reloadSchools,
+    } = useSchools();
   const [tab, setTab] = useState(
       access?.can_view_risk === false ? "rounds" : "risk",
     ),
@@ -198,18 +210,46 @@ export default function SchoolWorkflows() {
           title="คัดกรองและติดตามโรงเรียน"
           description="จัดรอบประเมิน ติดตามนักเรียน และเตรียมข้อมูลก่อนเปิดภาคเรียน"
         >
-          <BarSelect label="โรงเรียน" value={schoolId} onChange={setSchoolId} disabled={schoolsLoading || !schools.length}>
-            {!schools.length && <option value="">{schoolsLoading ? "กำลังโหลด…" : "ยังไม่มีโรงเรียน"}</option>}
-            {schools.map(school => <option key={school.id} value={school.id}>{school.name}</option>)}
+          <BarSelect
+            label="โรงเรียน"
+            value={schoolId}
+            onChange={setSchoolId}
+            disabled={schoolsLoading || !schools.length}
+          >
+            {!schools.length && (
+              <option value="">
+                {schoolsLoading ? "กำลังโหลด…" : "ยังไม่มีโรงเรียน"}
+              </option>
+            )}
+            {schools.map((school) => (
+              <option key={school.id} value={school.id}>
+                {school.name}
+              </option>
+            ))}
           </BarSelect>
           <Link className="sch-btn-secondary" to="/admin/school/students">
             รายชื่อนักเรียน
           </Link>
         </PageHeader>
-        {schoolsError && <UiSurface as="div" className="sch-card"><p className="sch-error" role="alert">{schoolsError}</p><UiButton variant="secondary" type="button" className="sch-btn-secondary" onClick={reloadSchools}>โหลดโรงเรียนใหม่</UiButton></UiSurface>}
+        {schoolsError && (
+          <UiSurface as="div" className="sch-card">
+            <p className="sch-error" role="alert">
+              {schoolsError}
+            </p>
+            <UiButton
+              variant="secondary"
+              type="button"
+              className="sch-btn-secondary"
+              onClick={reloadSchools}
+            >
+              โหลดโรงเรียนใหม่
+            </UiButton>
+          </UiSurface>
+        )}
         <nav className="sch-workflow-nav" aria-label="งานโรงเรียน">
           {tabs.map(([key, label]) => (
-            <UiButton variant="secondary"
+            <UiButton
+              variant="secondary"
               type="button"
               key={key}
               className={tab === key ? "sch-btn" : "sch-btn-secondary"}
@@ -221,9 +261,17 @@ export default function SchoolWorkflows() {
           ))}
         </nav>
         {!schoolId ? (
-          <p role="status">{schoolsLoading ? "กำลังโหลดโรงเรียน…" : "ยังไม่มีโรงเรียนที่พร้อมใช้งาน"}</p>
+          <p role="status">
+            {schoolsLoading
+              ? "กำลังโหลดโรงเรียน…"
+              : "ยังไม่มีโรงเรียนที่พร้อมใช้งาน"}
+          </p>
         ) : (
-          <UiSurface as="section" className="sch-card" key={`${schoolId}-${tab}`}>
+          <UiSurface
+            as="section"
+            className="sch-card"
+            key={`${schoolId}-${tab}`}
+          >
             {tab === "risk" && <RiskSummary schoolId={schoolId} />}{" "}
             {tab === "rounds" && (
               <Rounds
@@ -269,7 +317,10 @@ function RiskSummary({ schoolId }) {
       <h2>ภาพรวมความเสี่ยงและคำแนะนำเบื้องต้น</h2>
       <div className="sch-form-grid">
         <Field label="ระดับความเสี่ยง">
-          <SearchableSelect value={risk} onChange={(e) => setRisk(e.target.value)}>
+          <SearchableSelect
+            value={risk}
+            onChange={(e) => setRisk(e.target.value)}
+          >
             <option value="">ทุกระดับ</option>
             {Object.entries(RISK_LABELS).map(([key, label]) => (
               <option key={key} value={key}>
@@ -289,7 +340,12 @@ function RiskSummary({ schoolId }) {
       </div>
       <Notice {...state} />
       {state.error && (
-        <UiButton variant="secondary" type="submit" className="sch-btn-secondary" onClick={state.load}>
+        <UiButton
+          variant="secondary"
+          type="submit"
+          className="sch-btn-secondary"
+          onClick={state.load}
+        >
           ลองใหม่
         </UiButton>
       )}
@@ -300,7 +356,16 @@ function RiskSummary({ schoolId }) {
           ["student_code", "รหัสนักเรียน"],
           ["classroom_name", "ห้อง"],
           ["is_boarder", "ที่พัก", (r) => (r.is_boarder ? "หอพัก" : "ไปกลับ")],
-          ["risk_status", "ความเสี่ยง", (r) => <RiskPill level={r.risk_status==='normal'?'low':r.risk_status} label={RISK_LABELS[r.risk_status]}/>],
+          [
+            "risk_status",
+            "ความเสี่ยง",
+            (r) => (
+              <RiskPill
+                level={r.risk_status === "normal" ? "low" : r.risk_status}
+                label={RISK_LABELS[r.risk_status]}
+              />
+            ),
+          ],
           [
             "assessed_on",
             "วันที่ประเมิน",
@@ -409,7 +474,12 @@ function Rounds({ schoolId, forms, manage }) {
             onChange={(v) => set("ends_on", v)}
           />
           <div className="sch-form-actions sch-full">
-            <UiButton variant="primary" type="submit" className="sch-btn" disabled={action.busy}>
+            <UiButton
+              variant="primary"
+              type="submit"
+              className="sch-btn"
+              disabled={action.busy}
+            >
               สร้างรอบประเมิน
             </UiButton>
           </div>
@@ -441,7 +511,8 @@ function Rounds({ schoolId, forms, manage }) {
             "ติดตาม",
             (r) => (
               <>
-                <UiButton variant="secondary"
+                <UiButton
+                  variant="secondary"
                   type="button"
                   className="sch-btn-secondary"
                   onClick={() => setSelected(String(r.id))}
@@ -449,7 +520,8 @@ function Rounds({ schoolId, forms, manage }) {
                   ดูผู้ยังไม่ประเมิน
                 </UiButton>
                 {manage && (
-                  <UiButton variant="secondary"
+                  <UiButton
+                    variant="secondary"
                     type="button"
                     className="sch-btn-secondary"
                     disabled={action.busy}
@@ -576,8 +648,8 @@ function Followup({ schoolId, forms }) {
             <option value="">เลือกผลประเมิน</option>
             {selectedHealth.data?.assessments?.mental?.map((r) => (
               <option key={r.id} value={r.id}>
-                {toDisplayText(r.form_title)} · {formatThaiDate(r.submitted_at)} ·{" "}
-                {RISK_LABELS[r.risk]}
+                {toDisplayText(r.form_title)} · {formatThaiDate(r.submitted_at)}{" "}
+                · {RISK_LABELS[r.risk]}
               </option>
             ))}
           </SearchableSelect>
@@ -613,7 +685,12 @@ function Followup({ schoolId, forms }) {
           onChange={(v) => setForm({ ...form, due_on: v })}
         />
         <div className="sch-form-actions sch-full">
-          <UiButton variant="primary" type="submit" className="sch-btn" disabled={action.busy}>
+          <UiButton
+            variant="primary"
+            type="submit"
+            className="sch-btn"
+            disabled={action.busy}
+          >
             สร้างงานติดตาม
           </UiButton>
         </div>
@@ -654,7 +731,9 @@ function Followup({ schoolId, forms }) {
             (r) =>
               r.status === "pending" && (
                 <>
-                  <UiButton variant="secondary" type="submit"
+                  <UiButton
+                    variant="secondary"
+                    type="submit"
                     className="sch-btn-secondary"
                     onClick={() => {
                       setComplete(r);
@@ -663,7 +742,9 @@ function Followup({ schoolId, forms }) {
                   >
                     เชื่อมผลประเมินซ้ำ
                   </UiButton>
-                  <UiButton variant="secondary" type="submit"
+                  <UiButton
+                    variant="secondary"
+                    type="submit"
                     className="sch-btn-secondary"
                     disabled={action.busy}
                     onClick={() =>
@@ -722,10 +803,16 @@ function Followup({ schoolId, forms }) {
                 ))}
             </SearchableSelect>
           </Field>
-          <UiButton variant="primary" type="submit" className="sch-btn" disabled={action.busy}>
+          <UiButton
+            variant="primary"
+            type="submit"
+            className="sch-btn"
+            disabled={action.busy}
+          >
             ยืนยันผลประเมินซ้ำ
           </UiButton>
-          <UiButton variant="secondary"
+          <UiButton
+            variant="secondary"
             type="button"
             className="sch-btn-secondary"
             onClick={() => setComplete(null)}
@@ -840,7 +927,12 @@ function Enrollment({ schoolId }) {
           />
         )}
         <div className="sch-full">
-          <UiButton variant="primary" type="submit" className="sch-btn" disabled={!selected || action.busy}>
+          <UiButton
+            variant="primary"
+            type="submit"
+            className="sch-btn"
+            disabled={!selected || action.busy}
+          >
             บันทึกสถานะนักเรียน
           </UiButton>
         </div>
@@ -907,7 +999,9 @@ function Enrollment({ schoolId }) {
         ))}
       </div>
       <div className="sch-form-actions">
-        <UiButton variant="secondary" type="submit"
+        <UiButton
+          variant="secondary"
+          type="submit"
           className="sch-btn-secondary"
           disabled={action.busy}
           onClick={() => {
@@ -920,7 +1014,9 @@ function Enrollment({ schoolId }) {
         >
           เพิ่มคู่ห้อง
         </UiButton>
-        <UiButton variant="secondary" type="submit"
+        <UiButton
+          variant="secondary"
+          type="submit"
           className="sch-btn-secondary"
           disabled={
             action.busy ||
@@ -940,7 +1036,9 @@ function Enrollment({ schoolId }) {
           ตรวจสอบจำนวนก่อนย้าย
         </UiButton>
         {preview && (
-          <UiButton variant="primary" type="submit"
+          <UiButton
+            variant="primary"
+            type="submit"
             className="sch-btn"
             disabled={action.busy}
             onClick={() =>
@@ -1018,7 +1116,9 @@ function TeacherImport({ schoolId }) {
       </p>
       <Notice {...action} />
       <div className="sch-form-actions">
-        <UiButton variant="secondary" type="submit"
+        <UiButton
+          variant="secondary"
+          type="submit"
           className="sch-btn-secondary"
           onClick={() =>
             action.run(() => saveTeacherWorkbook(), "ดาวน์โหลดไฟล์ต้นแบบแล้ว")
@@ -1055,14 +1155,18 @@ function TeacherImport({ schoolId }) {
         />
       </Field>
       <div className="sch-form-actions">
-        <UiButton variant="secondary" type="submit"
+        <UiButton
+          variant="secondary"
+          type="submit"
           className="sch-btn-secondary"
           disabled={!rows || done || action.busy}
           onClick={() => action.run(() => runImport(true), "ตรวจสอบข้อมูลแล้ว")}
         >
           ตรวจสอบก่อนนำเข้า
         </UiButton>
-        <UiButton variant="primary" type="submit"
+        <UiButton
+          variant="primary"
+          type="submit"
           className="sch-btn"
           disabled={!checked || action.busy || done}
           onClick={() =>
@@ -1072,7 +1176,9 @@ function TeacherImport({ schoolId }) {
           นำเข้าครู
         </UiButton>
         {results.some((r) => r.password) && (
-          <UiButton variant="secondary" type="submit"
+          <UiButton
+            variant="secondary"
+            type="submit"
             className="sch-btn-secondary"
             onClick={() =>
               action.run(
@@ -1162,7 +1268,9 @@ function Settings({ schoolId }) {
           />
         </Field>
         <div className="sch-full">
-          <UiButton variant="primary" type="submit"
+          <UiButton
+            variant="primary"
+            type="submit"
             className="sch-btn"
             disabled={action.busy || state.loading || Boolean(state.error)}
           >
@@ -1178,7 +1286,9 @@ function Settings({ schoolId }) {
         โดยยังรักษาบัญชีและเวชระเบียนที่ใช้ร่วมกับหน่วยงานอื่น
       </p>
       <div className="sch-form-actions">
-        <UiButton variant="secondary" type="submit"
+        <UiButton
+          variant="secondary"
+          type="submit"
           className="sch-btn-secondary"
           disabled={action.busy || !state.data?.retention_years}
           onClick={() =>
@@ -1193,7 +1303,9 @@ function Settings({ schoolId }) {
           ตรวจสอบข้อมูลครบกำหนด
         </UiButton>
         {preview?.data?.length > 0 && (
-          <UiButton variant="primary" type="submit"
+          <UiButton
+            variant="primary"
+            type="submit"
             className="sch-btn"
             disabled={action.busy}
             onClick={() =>
@@ -1348,7 +1460,12 @@ function RiskRules({ schoolId, forms }) {
           </datalist>
         </Field>
         <div className="sch-full">
-          <UiButton variant="primary" type="submit" className="sch-btn" disabled={action.busy}>
+          <UiButton
+            variant="primary"
+            type="submit"
+            className="sch-btn"
+            disabled={action.busy}
+          >
             บันทึกเกณฑ์ที่โรงเรียนยืนยัน
           </UiButton>
         </div>
@@ -1373,7 +1490,9 @@ function RiskRules({ schoolId, forms }) {
             "action",
             "จัดการ",
             (r) => (
-              <UiButton variant="secondary" type="submit"
+              <UiButton
+                variant="secondary"
+                type="submit"
                 className="sch-btn-secondary"
                 disabled={action.busy}
                 onClick={() =>

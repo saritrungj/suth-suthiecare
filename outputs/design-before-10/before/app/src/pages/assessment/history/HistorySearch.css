@@ -1,3 +1,21 @@
-.history-search-container { min-height: 100svh; background: #fff8f3; color: #263b45; display: grid; place-items: center; padding: 24px; font-family: "Sarabun", sans-serif; }
-.history-container { width: min(100%, 480px); }
-.history-card-premium { padding: 32px 24px; border-radius: 16px; background: #fff; box-shadow: 0 12px 32px rgb(91 47 20 / 8%); text-align: center; font-size: 1rem; line-height: 1.65; }
+.history-search-container {
+  min-height: 100svh;
+  background: #fff8f3;
+  color: #263b45;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  font-family: "Sarabun", sans-serif;
+}
+.history-container {
+  width: min(100%, 480px);
+}
+.history-card-premium {
+  padding: 32px 24px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 12px 32px rgb(91 47 20 / 8%);
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.65;
+}

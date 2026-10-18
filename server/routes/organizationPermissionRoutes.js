@@ -6,6 +6,11 @@ const {
 } = require("../middleware/authMiddleware");
 const keys = new Set(require("../authorization/permissionKeys"));
 const {
+  keysForOrganizationType,
+} = require("../authorization/permissionMatrix");
+const allowedKeysFor = (organization) =>
+  keysForOrganizationType(organization?.org_type);
+const {
   organizationRolePermissions,
 } = require("../authorization/organizationPermissions");
 const { requiredAudit } = require("../utils/pdpaAudit");
@@ -21,7 +26,7 @@ async function target(connection, organizationId, roleId, lock = false) {
       code: "INVALID_ORGANIZATION_ROLE",
     });
   const [units] = await connection.query(
-    "SELECT id FROM organizations WHERE id=? AND org_level='unit'" +
+    "SELECT id,org_type FROM organizations WHERE id=? AND org_level='unit'" +
       (lock ? " FOR UPDATE" : ""),
     [organizationId],
   );
@@ -34,25 +39,200 @@ async function target(connection, organizationId, roleId, lock = false) {
       status: 404,
       code: "ORGANIZATION_ROLE_NOT_FOUND",
     });
+  return units[0];
 }
 const fail = (res, error) =>
   res
     .status(error.status || 503)
     .json({ code: error.code || "ORGANIZATION_PERMISSIONS_UNAVAILABLE" });
 const endpoint = "/organizations/:id/roles/:roleId/permissions";
+async function unit(connection, id) {
+  if (!positive(id))
+    throw Object.assign(new Error(), {
+      status: 422,
+      code: "INVALID_ORGANIZATION",
+    });
+  const [rows] = await connection.query(
+    "SELECT id,org_type FROM organizations WHERE id=? AND org_level='unit'",
+    [id],
+  );
+  if (!rows.length)
+    throw Object.assign(new Error(), {
+      status: 404,
+      code: "ORGANIZATION_NOT_FOUND",
+    });
+  return rows[0];
+}
+router.get(
+  "/organizations/:id/roles",
+  verifyToken,
+  verifySuperAdmin,
+  async (req, res) => {
+    try {
+      await unit(db, req.params.id);
+      const [rows] = await db.query(
+        `SELECT r.id,r.name,r.description FROM roles r WHERE r.id<>1
+      AND r.name NOT IN ('SuperAdmin','school_guardian','school_import_staff','มีแม่แบบแต่ไม่มีสิทธิ์หน่วยงาน','demo_school_template_only')
+      AND (EXISTS (SELECT 1 FROM organization_role_permission_sets s WHERE s.role_id=r.id AND s.organization_id=?)
+        OR EXISTS (SELECT 1 FROM organization_memberships m WHERE m.role_id=r.id AND m.organization_id=?)
+        OR EXISTS (SELECT 1 FROM organization_role_permissions p WHERE p.role_id=r.id AND p.organization_id=?)) ORDER BY r.name,r.id`,
+        [req.params.id, req.params.id, req.params.id],
+      );
+      res.json(
+        rows.map((role) => ({
+          ...role,
+          name:
+            role.name === "Admin"
+              ? "ผู้ดูแลหน่วยงาน"
+              : role.name === "Staff"
+                ? "เจ้าหน้าที่"
+                : role.name,
+        })),
+      );
+    } catch (error) {
+      fail(res, error);
+    }
+  },
+);
+router.post(
+  "/organizations/:id/roles",
+  verifyToken,
+  verifySuperAdmin,
+  async (req, res) => {
+    const { normaliseText } = require("../utils/userValidation");
+    const name = normaliseText(req.body?.name),
+      description = normaliseText(req.body?.description);
+    if (
+      name.length < 2 ||
+      name.length > 100 ||
+      description.length > 255 ||
+      ["SuperAdmin", "school_guardian", "school_import_staff"].includes(name)
+    )
+      return res.status(422).json({
+        message:
+          "ชื่อบทบาทต้องยาว 2–100 ตัวอักษร และคำอธิบายไม่เกิน 255 ตัวอักษร",
+      });
+    let c;
+    try {
+      c = await db.getConnection();
+      await c.beginTransaction();
+      await unit(c, req.params.id);
+      const [[existing]] = await c.query(
+        "SELECT id,name FROM roles WHERE name=? FOR UPDATE",
+        [name],
+      );
+      let roleId = existing?.id;
+      if (!roleId) {
+        const [insert] = await c.query(
+          "INSERT INTO roles (name,description) VALUES (?,?)",
+          [name, description],
+        );
+        roleId = insert.insertId;
+      }
+      if (Number(roleId) === 1)
+        throw Object.assign(new Error(), {
+          status: 422,
+          code: "SYSTEM_ROLE_IS_SEPARATE",
+        });
+      const [[configured]] = await c.query(
+        "SELECT version FROM organization_role_permission_sets WHERE organization_id=? AND role_id=? FOR UPDATE",
+        [req.params.id, roleId],
+      );
+      if (configured)
+        throw Object.assign(new Error(), {
+          status: 409,
+          code: "ORGANIZATION_ROLE_EXISTS",
+        });
+      await c.query(
+        'INSERT INTO organization_role_permission_sets (organization_id,role_id,source,version,updated_by) VALUES (?,? ,"explicit",1,?)',
+        [req.params.id, roleId, req.user.id],
+      );
+      req.organizationContext = Number(req.params.id);
+      await requiredAudit(
+        req,
+        "permissions.unit_role.create",
+        "role",
+        roleId,
+        {},
+        c,
+      );
+      await c.commit();
+      res.status(201).json({ id: roleId, name, description });
+    } catch (error) {
+      if (c) await c.rollback();
+      fail(res, error);
+    } finally {
+      c?.release();
+    }
+  },
+);
+router.delete(
+  "/organizations/:id/roles/:roleId",
+  verifyToken,
+  verifySuperAdmin,
+  async (req, res) => {
+    let c;
+    try {
+      if (Number(req.params.roleId) === 1)
+        throw Object.assign(new Error(), {
+          status: 422,
+          code: "SYSTEM_ROLE_IS_SEPARATE",
+        });
+      c = await db.getConnection();
+      await c.beginTransaction();
+      await target(c, req.params.id, req.params.roleId, true);
+      const [members] = await c.query(
+        "SELECT id FROM organization_memberships WHERE organization_id=? AND role_id=? LIMIT 1 FOR UPDATE",
+        [req.params.id, req.params.roleId],
+      );
+      if (members.length)
+        throw Object.assign(new Error(), {
+          status: 409,
+          code: "ORGANIZATION_ROLE_IN_USE",
+        });
+      await c.query(
+        "DELETE FROM organization_role_permissions WHERE organization_id=? AND role_id=?",
+        [req.params.id, req.params.roleId],
+      );
+      const [removed] = await c.query(
+        "DELETE FROM organization_role_permission_sets WHERE organization_id=? AND role_id=?",
+        [req.params.id, req.params.roleId],
+      );
+      if (!removed.affectedRows)
+        throw Object.assign(new Error(), {
+          status: 404,
+          code: "ORGANIZATION_ROLE_NOT_FOUND",
+        });
+      req.organizationContext = Number(req.params.id);
+      await requiredAudit(
+        req,
+        "permissions.unit_role.delete",
+        "role",
+        req.params.roleId,
+        {},
+        c,
+      );
+      await c.commit();
+      res.json({ success: true });
+    } catch (error) {
+      if (c) await c.rollback();
+      fail(res, error);
+    } finally {
+      c?.release();
+    }
+  },
+);
 router.get(endpoint, verifyToken, verifySuperAdmin, async (req, res) => {
   try {
-    await target(db, req.params.id, req.params.roleId);
+    const organization = await target(db, req.params.id, req.params.roleId);
     const [sets] = await db.query(
       "SELECT version,source FROM organization_role_permission_sets WHERE organization_id=? AND role_id=?",
       [req.params.id, req.params.roleId],
     );
     res.json({
-      permissions: await organizationRolePermissions(
-        db,
-        req.params.id,
-        req.params.roleId,
-      ),
+      permissions: (
+        await organizationRolePermissions(db, req.params.id, req.params.roleId)
+      ).filter((key) => allowedKeysFor(organization).has(key)),
       version: sets[0]?.version || 0,
       configured: Boolean(sets.length),
     });
@@ -74,7 +254,18 @@ router.put(endpoint, verifyToken, verifySuperAdmin, async (req, res) => {
   try {
     connection = await db.getConnection();
     await connection.beginTransaction();
-    await target(connection, req.params.id, req.params.roleId, true);
+    const organization = await target(
+      connection,
+      req.params.id,
+      req.params.roleId,
+      true,
+    );
+    const allowed = allowedKeysFor(organization);
+    if (permissions.some((key) => !allowed.has(key)))
+      throw Object.assign(new Error(), {
+        status: 422,
+        code: "PERMISSION_NOT_AVAILABLE_FOR_ORGANIZATION",
+      });
     const [sets] = await connection.query(
       "SELECT version FROM organization_role_permission_sets WHERE organization_id=? AND role_id=? FOR UPDATE",
       [req.params.id, req.params.roleId],

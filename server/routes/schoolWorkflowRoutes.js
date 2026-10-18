@@ -2,10 +2,11 @@ const express = require("express");
 const db = require("../config/db");
 const { requiredAudit } = require("../utils/pdpaAudit");
 const {
-  canManageSchool,
+  canManageWorkflowsAt,
   canSeeStudent,
   canViewStudentHealth,
   canViewPhysicalHealth,
+  canHealthAction,
   studentScopeClause,
 } = require("../utils/schoolAccess");
 const {
@@ -15,6 +16,7 @@ const {
   questionById,
   responseRisk,
 } = require("../utils/schoolWorkflows");
+const { readField } = require("../utils/privateField");
 const router = express.Router();
 const fail = (res, status, message) => res.status(status).json({ message });
 const json = (value) => (typeof value === "string" ? JSON.parse(value) : value);
@@ -28,27 +30,32 @@ const authorizedDomain = (access, student, domain) =>
 router.use((req, res, next) =>
   req.schoolAccess ? next() : fail(res, 422, "กรุณาเลือกโรงเรียน"),
 );
-async function school(req, res, id, manage = false) {
+// action: the roles-page action on screening workflows this request needs.
+async function school(req, res, id, action = null) {
   const [[row]] = await db.query(
     "SELECT id FROM schools WHERE id=? AND organization_id=?",
     [positiveId(id), req.organizationContext],
   );
-  if (!row || (manage && !canManageSchool(req.schoolAccess, row.id))) {
+  if (
+    !row ||
+    (action && !canManageWorkflowsAt(req.schoolAccess, row.id, action))
+  ) {
     fail(res, 403, "ไม่มีสิทธิ์จัดการโรงเรียนนี้");
     return null;
   }
   return row;
 }
-async function student(req, res, id, manage = false) {
+// assign: moving a student between classrooms (students -> assign on the roles page).
+async function student(req, res, id, assign = false) {
   const [[row]] = await db.query(
     "SELECT ss.* FROM school_students ss JOIN schools s ON s.id=ss.school_id WHERE ss.id=? AND s.organization_id=? AND ss.archived_at IS NULL",
     [positiveId(id), req.organizationContext],
   );
   if (
     !row ||
-    !(manage
-      ? canManageSchool(req.schoolAccess, row.school_id)
-      : canSeeStudent(req.schoolAccess, row))
+    !canSeeStudent(req.schoolAccess, row) ||
+    (assign &&
+      !(req.schoolAccess.isSystemAdmin || req.schoolAccess.canAssignStudents))
   ) {
     fail(res, 404, "ไม่พบนักเรียนในขอบเขตสิทธิ์");
     return null;
@@ -104,7 +111,7 @@ router.get("/risk-summary", async (req, res) => {
   dateWindow(req.query);
   const scope = studentScopeClause(req.schoolAccess, "ss");
   const [students] = await db.query(
-    `SELECT ss.id,ss.school_id,ss.student_code,ss.is_boarder,ss.classroom_id,c.name AS classroom_name FROM school_students ss JOIN schools s ON s.id=ss.school_id LEFT JOIN school_classrooms c ON c.id=ss.classroom_id WHERE s.organization_id=? AND ss.archived_at IS NULL AND ss.status='active'${scope.sql}${positiveId(req.query.school_id) ? " AND ss.school_id=?" : ""}${req.query.is_boarder === "1" ? " AND ss.is_boarder=1" : ""}`,
+    `SELECT ss.id,ss.school_id,ss.student_code,ss.prefix,ss.first_name_encrypted,ss.last_name_encrypted,ss.is_boarder,ss.classroom_id,c.name AS classroom_name,g.name AS grade_name FROM school_students ss JOIN schools s ON s.id=ss.school_id LEFT JOIN school_classrooms c ON c.id=ss.classroom_id LEFT JOIN school_grade_levels g ON g.id=c.grade_level_id WHERE s.organization_id=? AND ss.archived_at IS NULL AND ss.status='active'${scope.sql}${positiveId(req.query.school_id) ? " AND ss.school_id=?" : ""}${req.query.is_boarder === "1" ? " AND ss.is_boarder=1" : ""}`,
     [
       req.organizationContext,
       ...scope.params,
@@ -139,15 +146,31 @@ router.get("/risk-summary", async (req, res) => {
     settings.map((s) => [s.school_id, json(s.care_advice_json) || {}]),
   );
   res.set("Cache-Control", "no-store");
-  // This is the deliberately minimal contract. No names, response IDs,
-  // answer-level advice, scores, family data or health history are returned.
+  // Keep the queue limited to student identity, enrollment context and the
+  // latest risk summary. Response IDs, answers, scores and history stay out.
   res.json({
     data: riskStudents.map((s) => {
       const latestResponse = latest.get(s.id),
         risk = latestResponse ? responseRisk(latestResponse) : "none";
+      const firstName = readField(
+        s.first_name_encrypted,
+        "school_students",
+        "first_name_encrypted",
+        req.organizationContext,
+      );
+      const lastName = readField(
+        s.last_name_encrypted,
+        "school_students",
+        "last_name_encrypted",
+        req.organizationContext,
+      );
       return {
         id: s.id,
         student_code: s.student_code,
+        student_name:
+          [s.prefix, firstName, lastName].filter(Boolean).join(" ") ||
+          "ไม่ระบุชื่อ",
+        grade_name: s.grade_name,
         classroom_name: s.classroom_name,
         is_boarder: Boolean(s.is_boarder),
         risk_status: risk,
@@ -192,7 +215,7 @@ router.get("/students/:id/enrollment-history", async (req, res) => {
 });
 router.post("/promotions", async (req, res) => {
   const { school_id, mappings, dry_run = true } = req.body || {};
-  if (!(await school(req, res, school_id, true))) return;
+  if (!(await school(req, res, school_id, "assign"))) return;
   if (
     typeof dry_run !== "boolean" ||
     !Array.isArray(mappings) ||
@@ -268,7 +291,7 @@ router.get("/screening-rounds", async (req, res) => {
     rows
       .filter(
         (r) =>
-          canManageSchool(req.schoolAccess, r.school_id) ||
+          canManageWorkflowsAt(req.schoolAccess, r.school_id, "view") ||
           authorizedDomain(
             req.schoolAccess,
             { school_id: r.school_id },
@@ -285,7 +308,7 @@ router.get("/screening-rounds", async (req, res) => {
 });
 router.post("/screening-rounds", async (req, res) => {
   const b = req.body || {};
-  if (!(await school(req, res, b.school_id, true))) return;
+  if (!(await school(req, res, b.school_id, "create"))) return;
   if (
     !["mental", "physical"].includes(b.health_domain) ||
     !validDate(b.starts_on) ||
@@ -330,7 +353,10 @@ router.put("/screening-rounds/:id", async (req, res) => {
     "SELECT r.* FROM school_screening_rounds r JOIN schools s ON s.id=r.school_id WHERE r.id=? AND s.organization_id=?",
     [req.params.id, req.organizationContext],
   );
-  if (!round || !canManageSchool(req.schoolAccess, round.school_id))
+  if (
+    !round ||
+    !canManageWorkflowsAt(req.schoolAccess, round.school_id, "update")
+  )
     return fail(res, 403, "ไม่มีสิทธิ์จัดการรอบนี้");
   if (!["active", "closed"].includes(req.body?.status))
     return fail(res, 422, "สถานะรอบไม่ถูกต้อง");
@@ -351,7 +377,7 @@ router.get("/screening-rounds/:id/progress", async (req, res) => {
   if (!req.schoolAccess.canViewStudents)
     return fail(res, 403, "ไม่มีสิทธิ์ดูนักเรียน");
   if (
-    !canManageSchool(req.schoolAccess, round.school_id) &&
+    !canManageWorkflowsAt(req.schoolAccess, round.school_id, "view") &&
     !authorizedDomain(
       req.schoolAccess,
       { school_id: round.school_id },
@@ -362,7 +388,7 @@ router.get("/screening-rounds/:id/progress", async (req, res) => {
     return fail(res, 403, "ไม่มีสิทธิ์ดูรอบนี้");
   const scope = studentScopeClause(req.schoolAccess, "ss");
   const [rows] = await db.query(
-    `SELECT ss.id,ss.student_code,c.name AS classroom_name,MAX(fr.submitted_at) AS completed_on FROM school_students ss LEFT JOIN school_classrooms c ON c.id=ss.classroom_id LEFT JOIN form_responses fr ON (fr.person_id=ss.person_id OR (fr.person_id IS NULL AND fr.patient_account_id=ss.patient_account_id)) AND fr.organization_id=? AND fr.form_id=? AND DATE(fr.submitted_at) BETWEEN ? AND ? WHERE ss.school_id=? AND ss.status='active' AND ss.archived_at IS NULL${scope.sql} GROUP BY ss.id,ss.student_code,c.name ORDER BY ss.student_code`,
+    `SELECT ss.id,ss.student_code,ss.prefix,ss.first_name_encrypted,ss.last_name_encrypted,g.name AS grade_name,c.name AS classroom_name,MAX(fr.submitted_at) AS completed_on FROM school_students ss LEFT JOIN school_classrooms c ON c.id=ss.classroom_id LEFT JOIN school_grade_levels g ON g.id=c.grade_level_id LEFT JOIN form_responses fr ON (fr.person_id=ss.person_id OR (fr.person_id IS NULL AND fr.patient_account_id=ss.patient_account_id)) AND fr.organization_id=? AND fr.form_id=? AND DATE(fr.submitted_at) BETWEEN ? AND ? WHERE ss.school_id=? AND ss.status='active' AND ss.archived_at IS NULL${scope.sql} GROUP BY ss.id,ss.student_code,ss.prefix,ss.first_name_encrypted,ss.last_name_encrypted,g.name,c.name ORDER BY ss.student_code`,
     [
       req.organizationContext,
       round.form_id,
@@ -372,12 +398,36 @@ router.get("/screening-rounds/:id/progress", async (req, res) => {
       ...scope.params,
     ],
   );
+  const progressRows = rows.map((row) => {
+    const firstName = readField(
+      row.first_name_encrypted,
+      "school_students",
+      "first_name_encrypted",
+      req.organizationContext,
+    );
+    const lastName = readField(
+      row.last_name_encrypted,
+      "school_students",
+      "last_name_encrypted",
+      req.organizationContext,
+    );
+    return {
+      id: row.id,
+      student_code: row.student_code,
+      student_name:
+        [row.prefix, firstName, lastName].filter(Boolean).join(" ") ||
+        "ไม่ระบุชื่อ",
+      grade_name: row.grade_name,
+      classroom_name: row.classroom_name,
+      completed_on: row.completed_on,
+    };
+  });
   res.json({
     round_id: round.id,
-    total: rows.length,
-    completed: rows.filter((r) => r.completed_on).length,
-    outstanding: rows.filter((r) => !r.completed_on).length,
-    data: rows,
+    total: progressRows.length,
+    completed: progressRows.filter((r) => r.completed_on).length,
+    outstanding: progressRows.filter((r) => !r.completed_on).length,
+    data: progressRows,
   });
 });
 
@@ -412,7 +462,7 @@ router.post("/rescreen-tasks", async (req, res) => {
   const b = req.body || {},
     ss = await student(req, res, b.student_id);
   if (!ss) return;
-  if (!canViewStudentHealth(req.schoolAccess, ss))
+  if (!canHealthAction(req.schoolAccess, "assign", ss))
     return fail(res, 403, "ไม่มีสิทธิ์ติดตามสุขภาพจิตของนักเรียนนี้");
   if (!validDate(b.due_on) || !(await form(req, b.target_form_id, "mental")))
     return fail(res, 422, "วันที่ติดตามหรือแบบประเมินไม่ถูกต้อง");
@@ -472,6 +522,8 @@ router.put("/rescreen-tasks/:id", async (req, res) => {
     !canViewStudentHealth(req.schoolAccess, task)
   )
     return fail(res, 404, "ไม่พบงานติดตามในขอบเขตสิทธิ์");
+  if (!canHealthAction(req.schoolAccess, "assign", task))
+    return fail(res, 403, "ไม่มีสิทธิ์ติดตามสุขภาพจิตของนักเรียนนี้");
   if (task.status !== "pending") return fail(res, 409, "งานนี้สิ้นสุดแล้ว");
   if (!["completed", "cancelled"].includes(req.body?.status))
     return fail(res, 422, "สถานะไม่ถูกต้อง");
@@ -527,14 +579,14 @@ router.get("/risk-triggers", async (req, res) => {
   res.json(
     rows.filter(
       (r) =>
-        canManageSchool(req.schoolAccess, r.school_id) &&
+        canManageWorkflowsAt(req.schoolAccess, r.school_id, "view") &&
         canViewStudentHealth(req.schoolAccess, { school_id: r.school_id }),
     ),
   );
 });
 router.post("/risk-triggers", async (req, res) => {
   const b = req.body || {};
-  if (!(await school(req, res, b.school_id, true))) return;
+  if (!(await school(req, res, b.school_id, "create"))) return;
   if (
     !canViewStudentHealth(req.schoolAccess, { school_id: Number(b.school_id) })
   )
@@ -591,7 +643,7 @@ router.put("/risk-triggers/:id", async (req, res) => {
   );
   if (
     !rule ||
-    !canManageSchool(req.schoolAccess, rule.school_id) ||
+    !canManageWorkflowsAt(req.schoolAccess, rule.school_id, "update") ||
     !canViewStudentHealth(req.schoolAccess, { school_id: rule.school_id })
   )
     return fail(res, 403, "ไม่มีสิทธิ์จัดการเกณฑ์นี้");
@@ -607,7 +659,7 @@ router.put("/risk-triggers/:id", async (req, res) => {
 });
 
 router.get("/workflow-settings/:schoolId", async (req, res) => {
-  if (!(await school(req, res, req.params.schoolId, true))) return;
+  if (!(await school(req, res, req.params.schoolId, "view"))) return;
   const [[settings]] = await db.query(
     "SELECT * FROM school_workflow_settings WHERE school_id=?",
     [req.params.schoolId],
@@ -623,7 +675,7 @@ router.get("/workflow-settings/:schoolId", async (req, res) => {
   });
 });
 router.put("/workflow-settings/:schoolId", async (req, res) => {
-  const s = await school(req, res, req.params.schoolId, true);
+  const s = await school(req, res, req.params.schoolId, "update");
   if (!s) return;
   const { care_advice, retention_years } = req.body || {};
   if (
@@ -649,7 +701,7 @@ router.put("/workflow-settings/:schoolId", async (req, res) => {
   res.json({ success: true });
 });
 router.post("/retention/:schoolId", async (req, res) => {
-  const s = await school(req, res, req.params.schoolId, true);
+  const s = await school(req, res, req.params.schoolId, "delete");
   if (!s) return;
   const { dry_run = true } = req.body || {};
   if (typeof dry_run !== "boolean")

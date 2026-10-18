@@ -83,10 +83,14 @@ test("physical admin API and exports return only physical data and reject insigh
     user: { id: 3 },
     organizationContext: 7,
     authorization: {
+      // physical_admin's unit role as written by the presets migration.
       permissions: new Set([
         "students.view",
         "students.export",
         "clinical.view",
+        "student_health.view",
+        "student_health.update",
+        "clinical.export",
       ]),
     },
   });
@@ -94,10 +98,14 @@ test("physical admin API and exports return only physical data and reject insigh
     user: { id: 3 },
     organizationContext: 7,
     authorization: {
+      // physical_admin's unit role as written by the presets migration.
       permissions: new Set([
         "students.view",
         "students.export",
         "clinical.view",
+        "student_health.view",
+        "student_health.update",
+        "clinical.export",
       ]),
       isSystemAdmin: false,
     },

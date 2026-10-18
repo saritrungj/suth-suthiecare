@@ -1,2 +1,13 @@
-.organization-workspace { display:flex; flex-direction:column; flex:1; min-height:0; min-width:0; overflow:hidden; }
-.organization-workspace-empty { padding:clamp(1rem,3vw,2.5rem); color:var(--suth-ink); font-family:var(--suth-font); }
+.organization-workspace {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+.organization-workspace-empty {
+  padding: clamp(1rem, 3vw, 2.5rem);
+  color: var(--suth-ink);
+  font-family: var(--suth-font);
+}

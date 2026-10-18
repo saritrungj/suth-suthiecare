@@ -27,7 +27,7 @@ const adminRoutes = [
   "/admin/organizations",
   "/admin/school",
   "/admin/school/students",
-  "/admin/school/students/import",
+  "/admin/school/import",
   "/admin/school/teachers",
   "/admin/school/types",
 ];

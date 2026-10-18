@@ -395,7 +395,6 @@ Empty states are centered in a dashed 12px frame: icon, a bold one-line title, a
 - **Don't** introduce a second accent hue for headings or primary actions; the clinical blue belongs to the in-progress status family only.
 - **Don't** add shadows inside work surfaces or drawers other than an open menu.
 
-
 ## Orange and white navigation (15 October 2026)
 
 The primary brand is exactly #f47932. Staff navigation uses this solid orange with
@@ -405,7 +404,6 @@ with a warm neutral canvas. Primary buttons use #c45428 with white text for AA
 contrast. Teal, blue and sage distinguish data series; clinical statuses retain
 their labels and semantic colors. Long navigation labels wrap, sidebar controls
 have 44px targets, and reduced-motion preferences disable sidebar transitions.
-
 
 ## All routed surfaces (15 October 2026)
 

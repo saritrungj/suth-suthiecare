@@ -506,6 +506,15 @@ router.get("/forms/:id", async (req, res) => {
       form.questions,
       usageRows,
     );
+    // Respondents see which organization asks for their answers.
+    const [[organization]] = await db.query(
+      "SELECT name, org_type FROM organizations WHERE id = ?",
+      [form.organization_id],
+    );
+    form.organization_name = organization?.name || null;
+    form.organization_type = organization
+      ? organization.org_type || "hospital"
+      : null;
 
     res.json(form);
   } catch (err) {
@@ -727,7 +736,12 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
         .json({ message: "เลขบัตรประชาชนไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง" });
 
     await connection.beginTransaction();
-    const processingPurpose = await require('../services/privacyNoticeService').getProcessingNotice(connection, formId, form.organization_id);
+    const processingPurpose =
+      await require("../services/privacyNoticeService").getProcessingNotice(
+        connection,
+        formId,
+        form.organization_id,
+      );
     if (
       processingPurpose?.legal_basis === "consent" &&
       (req.body.processing_consent !== true ||
@@ -772,12 +786,39 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
     // Clients cannot inject or suppress a school risk override. Evaluate
     // the approved rule against the actual submitted answers on the server.
     delete dbSummary.school_risk_override;
-    if(Array.isArray(dbSummary.score_results)) dbSummary.score_results=dbSummary.score_results.filter(r=>r.question_id!=='school_risk_trigger');
-    const [schoolTriggers] = await connection.query(`SELECT DISTINCT tr.id,tr.question_id,tr.answer_path,tr.answer_value,tr.enabled FROM school_risk_triggers tr JOIN schools s ON s.id=tr.school_id JOIN school_students ss ON ss.school_id=s.id WHERE tr.form_id=? AND tr.enabled=1 AND s.organization_id=? AND ss.archived_at IS NULL AND ss.status='active' AND (ss.person_id=? OR ss.patient_account_id=?)`,[formId,form.organization_id,owner.personId||0,owner.patientAccountId||0]);
-    const schoolOverride = require('../utils/schoolWorkflows').evaluateRiskTriggers(schoolTriggers,answers);
+    if (Array.isArray(dbSummary.score_results))
+      dbSummary.score_results = dbSummary.score_results.filter(
+        (r) => r.question_id !== "school_risk_trigger",
+      );
+    const [schoolTriggers] = await connection.query(
+      `SELECT DISTINCT tr.id,tr.question_id,tr.answer_path,tr.answer_value,tr.enabled FROM school_risk_triggers tr JOIN schools s ON s.id=tr.school_id JOIN school_students ss ON ss.school_id=s.id WHERE tr.form_id=? AND tr.enabled=1 AND s.organization_id=? AND ss.archived_at IS NULL AND ss.status='active' AND (ss.person_id=? OR ss.patient_account_id=?)`,
+      [
+        formId,
+        form.organization_id,
+        owner.personId || 0,
+        owner.patientAccountId || 0,
+      ],
+    );
+    const schoolOverride =
+      require("../utils/schoolWorkflows").evaluateRiskTriggers(
+        schoolTriggers,
+        answers,
+      );
     if (schoolOverride) {
       dbSummary.school_risk_override = schoolOverride;
-      dbSummary.score_results = [...(Array.isArray(dbSummary.score_results)?dbSummary.score_results:[]),{question_id:'school_risk_trigger',title:'เกณฑ์รายข้อที่โรงเรียนกำหนด',label:'เสี่ยงสูง',color:'#d93025',score:null,advice:''}];
+      dbSummary.score_results = [
+        ...(Array.isArray(dbSummary.score_results)
+          ? dbSummary.score_results
+          : []),
+        {
+          question_id: "school_risk_trigger",
+          title: "เกณฑ์รายข้อที่โรงเรียนกำหนด",
+          label: "เสี่ยงสูง",
+          color: "#d93025",
+          score: null,
+          advice: "",
+        },
+      ];
     }
     // A logged-in submitter is known: when the form asked no name (or phone),
     // record the account's own so every case view can show who submitted.
@@ -914,6 +955,12 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
     );
     await connection.commit();
 
+    // A new case may name the member's faculty or status: refresh their type.
+    require("../services/memberType").refreshMemberAnswerQuietly(
+      db,
+      owner.patientAccountId,
+    );
+
     require("../services/organizationNotificationService")
       .notifySubmission({
         organizationId: form.organization_id,
@@ -926,7 +973,7 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
       message: "บันทึกคำตอบสำเร็จ",
       responseId,
       masterCaseId: owner.masterCaseId,
-      ...(schoolOverride ? {score_results:dbSummary.score_results} : {}),
+      ...(schoolOverride ? { score_results: dbSummary.score_results } : {}),
     });
   } catch (err) {
     await connection.rollback();
@@ -999,7 +1046,12 @@ router.get(
         }),
       );
 
-      res.json(await require("../services/latestActivity").attachCaseActivities(db, decryptedRows));
+      res.json(
+        await require("../services/latestActivity").attachCaseActivities(
+          db,
+          decryptedRows,
+        ),
+      );
     } catch (err) {
       console.error(require("../utils/safeError").safeError(err));
       res.status(500).json({ message: "เกิดข้อผิดพลาดในการดึงข้อมูลคำตอบ" });

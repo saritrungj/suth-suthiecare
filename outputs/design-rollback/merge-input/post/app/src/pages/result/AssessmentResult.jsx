@@ -1,5 +1,5 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
-import { toSafeHtml } from '../../utils/richText.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
+import { toSafeHtml } from "../../utils/richText.js";
 import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -480,21 +480,24 @@ export default function AssessmentResult() {
                       className="ar-level-badge"
                       style={{ color: level.textColor }}
                     >
-                      <FiActivity size={24} /> <span>{toDisplayText(level.label)}</span>
+                      <FiActivity size={24} />{" "}
+                      <span>{toDisplayText(level.label)}</span>
                     </div>
                     <p className="ar-card-title">
-                      {toDisplayText(isTotal
-                        ? t("assessment_result.total_score_summary", {
-                            count: res.partCount,
-                          })
-                        : res.title ||
-                          t("assessment_result.score_section", {
-                            index:
-                              index +
-                              (displayResults[0]?.displayKind === "total"
-                                ? 0
-                                : 1),
-                          }))}
+                      {toDisplayText(
+                        isTotal
+                          ? t("assessment_result.total_score_summary", {
+                              count: res.partCount,
+                            })
+                          : res.title ||
+                              t("assessment_result.score_section", {
+                                index:
+                                  index +
+                                  (displayResults[0]?.displayKind === "total"
+                                    ? 0
+                                    : 1),
+                              }),
+                      )}
                     </p>
 
                     <div
@@ -538,7 +541,10 @@ export default function AssessmentResult() {
 
                     <ul className="ar-advice__list">
                       {level.advice.map((a, i) => (
-                        <li key={i} dangerouslySetInnerHTML={{__html:toSafeHtml(a)}} />
+                        <li
+                          key={i}
+                          dangerouslySetInnerHTML={{ __html: toSafeHtml(a) }}
+                        />
                       ))}
                     </ul>
                   </div>
@@ -557,7 +563,10 @@ export default function AssessmentResult() {
                         background: `radial-gradient(circle at 50% 50%, rgba(${level.rgb}, 0.25), transparent 70%)`,
                       }}
                     >
-                      <img src={level.visualImage} alt={toDisplayText(level.label)} />
+                      <img
+                        src={level.visualImage}
+                        alt={toDisplayText(level.label)}
+                      />
                     </div>
                   </div>
                 </div>

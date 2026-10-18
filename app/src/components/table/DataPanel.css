@@ -1,0 +1,160 @@
+/* Management list surface: the dashboard section card holding the toolbar,
+   the result line, the table and the pagination, 14px apart. */
+.dz-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 14px;
+  width: 100%;
+  max-width: 1500px;
+  min-width: 0;
+  box-sizing: border-box;
+  margin-inline: auto;
+  /* Room below the list so the floating "ขึ้นด้านบน" button never covers
+     the last page buttons. */
+  margin-bottom: 72px;
+  padding: clamp(0.9rem, 2vw, 1.25rem) !important;
+  border: 0 !important;
+  border-radius: var(--suth-radius-card) !important;
+  background: var(--suth-surface) !important;
+  box-shadow: var(--suth-shadow-soft) !important;
+}
+
+/* Children carry their own vertical rhythm through the grid gap. */
+.dz-panel > * {
+  min-width: 0;
+  margin-block: 0 !important;
+}
+
+/* The pagination footer is the panel's last row, on a hairline. */
+.dz-panel > .tp-pagination {
+  padding: 12px 0 0;
+  border-top: 1px solid var(--suth-line-soft);
+}
+
+/* ── Result line ─────────────────────────────────────────── */
+.dz-result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  min-width: 0;
+}
+
+.dz-result__count {
+  margin: 0;
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  color: var(--suth-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.dz-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dz-chip,
+.dz-chip-clear {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 4px 10px 4px 12px;
+  border-radius: var(--suth-radius-pill);
+  font: inherit;
+  font-size: var(--suth-fs-label);
+  cursor: pointer;
+  transition:
+    background-color 160ms var(--suth-ease-out),
+    border-color 160ms var(--suth-ease-out),
+    color 160ms var(--suth-ease-out);
+}
+
+.dz-chip {
+  border: 1px solid var(--suth-tint-line);
+  background: var(--suth-tint);
+  color: var(--suth-ink-2);
+}
+
+.dz-chip__label {
+  color: var(--suth-muted);
+}
+
+.dz-chip strong {
+  max-width: 18ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+  color: var(--suth-action-ink);
+}
+
+.dz-chip svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+
+.dz-chip:hover {
+  border-color: var(--suth-action);
+  background: var(--suth-tint-strong);
+}
+
+.dz-chip-clear {
+  border: 0;
+  background: transparent;
+  color: var(--suth-action-ink);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.dz-chip:focus-visible,
+.dz-chip-clear:focus-visible {
+  outline: 3px solid var(--suth-focus-ring);
+  outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .dz-panel {
+    gap: 12px;
+    padding: 10px !important;
+    border-radius: var(--suth-radius-inner) !important;
+  }
+
+  .dz-chip,
+  .dz-chip-clear {
+    min-height: 40px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dz-chip,
+  .dz-chip-clear {
+    transition: none;
+  }
+}
+
+/* Cards a page used to place inside its list card become plain content of
+   the panel, so a list never shows a card within a card. */
+.admin-shell .dz-panel .aptt-wrapper-card {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* A table frame that is also a page card keeps only its frame here. */
+.admin-shell .dz-panel .cm-table-container {
+  padding: 0;
+  border: 1px solid var(--suth-line-soft);
+  border-radius: var(--suth-radius-inner);
+  box-shadow: none;
+}

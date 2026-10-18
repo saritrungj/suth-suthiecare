@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import { usePageExport } from "../../../components/ExcelExport";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -227,7 +227,10 @@ const FormManager = () => {
     return matchSearch && matchClinic && matchStatus;
   });
 
-  usePageExport({title:"แบบประเมิน",sources:[{resource:"forms",ids:filteredForms.map(r=>r.id)}]});
+  usePageExport({
+    title: "แบบประเมิน",
+    sources: [{ resource: "forms", ids: filteredForms.map((r) => r.id) }],
+  });
   const handleToggleMenu = (e, formId) => {
     e.stopPropagation();
     setOpenMenuId(openMenuId === formId ? null : formId);

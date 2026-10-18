@@ -43,11 +43,13 @@ test("unit permission updates isolate units, require system authority, detect co
   let snapshot;
   const key = (params) => `${params[0]}:${params[1]}`;
   const query = async (sql, params = []) => {
-    if (sql.startsWith("SELECT id FROM organizations"))
+    if (sql.startsWith("SELECT id,org_type FROM organizations"))
       return [
-        [Number(params[0]) < 3 ? { id: Number(params[0]) } : undefined].filter(
-          Boolean,
-        ),
+        [
+          Number(params[0]) < 3
+            ? { id: Number(params[0]), org_type: "hospital" }
+            : undefined,
+        ].filter(Boolean),
       ];
     if (sql.startsWith("SELECT id FROM roles"))
       return [Number(params[0]) === 3 ? [{ id: 3 }] : []];
@@ -137,6 +139,10 @@ test("unit permission updates isolate units, require system authority, detect co
     system = true;
     assert.equal(
       (await put({ permissions: ["roles.manage"], version: 1 })).status,
+      422,
+    );
+    assert.equal(
+      (await put({ permissions: ["students.view"], version: 1 })).status,
       422,
     );
     assert.equal(

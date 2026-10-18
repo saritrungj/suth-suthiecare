@@ -119,7 +119,14 @@ async function mockPage(page, organization, store) {
           ? org === 1
           : org === 2);
       return route.fulfill({
-        json: { items: matches ? [project()] : [], has_more: false, page: 1 },
+        json: {
+          items: matches ? [project()] : [],
+          total: matches ? 1 : 0,
+          total_pages: 1,
+          limit: 10,
+          has_more: false,
+          page: 1,
+        },
       });
     }
     if (path.endsWith("/case-referrals/8/updates")) {
@@ -202,9 +209,7 @@ test("send, receive and sync only the shared status and summary across organizat
   const store = sharedStore();
   await mockPage(page, 1, store);
   await page.goto("/admin/cases");
-  await page
-    .locator(".cw-person-open").first()
-    .click();
+  await page.locator(".cw-person-open").first().click();
   await page.getByRole("tab", { name: "ส่งต่อ", exact: true }).click();
   await page.getByLabel("หน่วยงานปลายทาง", { exact: true }).selectOption("2");
   await page

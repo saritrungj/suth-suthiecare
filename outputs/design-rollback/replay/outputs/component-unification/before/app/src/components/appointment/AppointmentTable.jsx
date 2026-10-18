@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import "./AppointmentTable.css";
 import { FiCalendar } from "react-icons/fi";
 import { formatBangkokDate } from "../../utils/caseDateFilter";
@@ -19,7 +19,9 @@ export default function AppointmentTable({
     return !isClosedCase; // คืนค่า true เฉพาะเคสที่ยังไม่ถูกปิด
   });
 
-  const stripHtml = (html) => { return toDisplayText(html); };
+  const stripHtml = (html) => {
+    return toDisplayText(html);
+  };
 
   const getRiskBadge = (riskLevel) => {
     if (riskLevel === "สูง")

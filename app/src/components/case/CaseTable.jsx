@@ -1,16 +1,12 @@
-import SearchableSelect from '../SearchableSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
-import { useEffect, useId, useState } from "react";
-import { FiChevronLeft, FiChevronRight, FiInbox } from "react-icons/fi";
+import { toDisplayText } from "../../utils/textPresentation.js";
+import { useEffect, useState } from "react";
+import { FiInbox } from "react-icons/fi";
 import { RiskPill, StatusPill } from "./CaseDrawer";
 import CasePerson from "./CasePerson";
-import {
-  caseCode,
-  formatCaseDate,
-  rowRisk,
-  stripHtml,
-} from "./caseDisplay";
+import { caseCode, formatCaseDate, rowRisk, stripHtml } from "./caseDisplay";
 import { useMediaQuery } from "../useMediaQuery";
+import TablePagination, { DEFAULT_PAGE_SIZE } from "../table/TablePagination";
+import ResultSummary from "../table/ResultSummary";
 
 const findAnswerFlexible = (rawAnswers, qTitle) => {
   if (!rawAnswers || !qTitle) return undefined;
@@ -52,7 +48,7 @@ function Answer({ row, question }) {
       >
         <i
           aria-hidden="true"
-          style={{ backgroundColor: result.color || "#64748b" }}
+          style={{ backgroundColor: result.color || "var(--suth-muted)" }}
         />
         {toDisplayText(result.label)} ({result.score})
       </span>
@@ -75,11 +71,12 @@ export default function CaseTable({
   viewMode = "master",
   hasScoring = true,
   selectedId,
+  chips,
+  onClearAll,
 }) {
   const isPhone = useMediaQuery("(max-width: 760px)");
-  const rowsId = useId();
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -103,29 +100,57 @@ export default function CaseTable({
   const startIndex = (page - 1) * rowsPerPage;
   const currentData = data.slice(startIndex, startIndex + rowsPerPage);
 
+  // The result line rides above every state, so active filter chips stay
+  // visible (and removable) even when they empty the list.
+  const summary = chips ? (
+    <ResultSummary
+      loading={isLoading}
+      pagination={{ page, total: totalItems, limit: rowsPerPage }}
+      chips={chips}
+      onClearAll={onClearAll}
+    />
+  ) : null;
+
   if (isLoading)
     return (
-      <div className="cw-skeleton" role="status" aria-label="กำลังโหลดข้อมูล">
-        {Array.from({ length: 5 }, (_, index) => (
-          <span key={index} />
-        ))}
-      </div>
+      <>
+        {summary}
+        <div className="cw-skeleton" role="status" aria-label="กำลังโหลดข้อมูล">
+          {Array.from({ length: 5 }, (_, index) => (
+            <span key={index} />
+          ))}
+        </div>
+      </>
     );
 
   if (!data.length)
     return (
-      <div className="cw-empty" role="status">
-        <FiInbox aria-hidden="true" />
-        <strong>ไม่มีข้อมูลในขณะนี้</strong>
-        <p>ยังไม่มีข้อมูลในคลินิกนี้ หรือในช่วงเวลาที่เลือก</p>
-      </div>
+      <>
+        {summary}
+        <div className="cw-empty" role="status">
+          <FiInbox aria-hidden="true" />
+          <strong>ไม่มีข้อมูลในขณะนี้</strong>
+          <p>ยังไม่มีข้อมูลในคลินิกนี้ หรือในช่วงเวลาที่เลือก</p>
+        </div>
+      </>
     );
 
   const nameButton = (row) => (
-    <CasePerson id={row.id} name={row.first_name || "ไม่ระบุชื่อ"} code={caseCode(row)} onOpen={() => onSelectCase(row)} />
+    <CasePerson
+      id={row.id}
+      name={row.first_name || "ไม่ระบุชื่อ"}
+      lastName={row.last_name}
+      code={caseCode(row)}
+      onOpen={() => onSelectCase(row)}
+    />
   );
   const dateOf = (row) => {
-    const value = (viewMode === "master" && row.latest_activity?.occurred_at) || row.submitted_at || row.updated_at || row.created_at || row.createdAt;
+    const value =
+      (viewMode === "master" && row.latest_activity?.occurred_at) ||
+      row.submitted_at ||
+      row.updated_at ||
+      row.created_at ||
+      row.createdAt;
     const date = formatCaseDate(value);
     return date === "-" ? "—" : `${date} น.`;
   };
@@ -147,19 +172,17 @@ export default function CaseTable({
               {viewMode === "master" && <StatusPill status={row.status} />}
               <span className="cw-card-date">{dateOf(row)}</span>
             </div>
-            {viewMode !== "master" && (
-              dynamicQuestions.length > 0 && (
-                <dl className="cw-card-facts cw-card-facts--answers">
-                  {dynamicQuestions.map((q) => (
-                    <div key={q.id}>
-                      <dt>{stripHtml(q.title)}</dt>
-                      <dd>
-                        <Answer row={row} question={q} />
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              )
+            {viewMode !== "master" && dynamicQuestions.length > 0 && (
+              <dl className="cw-card-facts cw-card-facts--answers">
+                {dynamicQuestions.map((q) => (
+                  <div key={q.id}>
+                    <dt>{stripHtml(q.title)}</dt>
+                    <dd>
+                      <Answer row={row} question={q} />
+                    </dd>
+                  </div>
+                ))}
+              </dl>
             )}
           </li>
         ))}
@@ -190,15 +213,15 @@ export default function CaseTable({
                   String(row.id) === String(selectedId) ? "is-open" : ""
                 }
               >
-                <td className="cw-col-person">
-                  {nameButton(row)}
-                </td>
+                <td className="cw-col-person">{nameButton(row)}</td>
                 {showRisk && (
                   <td>
                     <RiskPill risk={rowRisk(row, "master")} short />
                   </td>
                 )}
-                <td className="cw-col-status"><StatusPill status={row.status} /></td>
+                <td className="cw-col-status">
+                  <StatusPill status={row.status} />
+                </td>
                 <td className="cw-col-date">{dateOf(row)}</td>
               </tr>
             ))}
@@ -235,9 +258,7 @@ export default function CaseTable({
                   String(row.id) === String(selectedId) ? "is-open" : ""
                 }
               >
-                <td className="cw-sticky cw-col-person">
-                  {nameButton(row)}
-                </td>
+                <td className="cw-sticky cw-col-person">{nameButton(row)}</td>
                 {hasScoring && (
                   <td>
                     <RiskPill risk={rowRisk(row, "form")} short />
@@ -259,52 +280,19 @@ export default function CaseTable({
 
   return (
     <>
+      {summary}
       {list}
-      <footer className="cw-pagination">
-        <div>
-          <label htmlFor={rowsId}>แสดง</label>
-          <SearchableSelect
-            id={rowsId}
-            value={rowsPerPage}
-            onChange={(event) => {
-              setRowsPerPage(Number(event.target.value));
-              setCurrentPage(1);
-            }}
-          >
-            {[10, 20, 50, 100].map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </SearchableSelect>
-          <span>
-            รายการ (รวมทั้งหมด {totalItems.toLocaleString("th-TH")} รายการ)
-          </span>
-        </div>
-        <div>
-          <button
-            type="button"
-            className="cw-icon-btn"
-            onClick={() => setCurrentPage(Math.max(page - 1, 1))}
-            disabled={page === 1}
-            aria-label="หน้าก่อนหน้า"
-          >
-            <FiChevronLeft aria-hidden="true" />
-          </button>
-          <span>
-            หน้า <strong>{page}</strong> จาก {totalPages}
-          </span>
-          <button
-            type="button"
-            className="cw-icon-btn"
-            onClick={() => setCurrentPage(Math.min(page + 1, totalPages))}
-            disabled={page === totalPages}
-            aria-label="หน้าถัดไป"
-          >
-            <FiChevronRight aria-hidden="true" />
-          </button>
-        </div>
-      </footer>
+      <TablePagination
+        page={page}
+        totalPages={totalPages}
+        total={totalItems}
+        limit={rowsPerPage}
+        onPage={setCurrentPage}
+        onLimit={(size) => {
+          setRowsPerPage(size);
+          setCurrentPage(1);
+        }}
+      />
     </>
   );
 }

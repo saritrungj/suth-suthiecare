@@ -18,7 +18,7 @@
   width: 100%;
   min-width: 0;
   min-height: 100%;
-  padding: clamp(1rem, 3vw, 2.5rem);
+  padding-bottom: clamp(1rem, 3vw, 2.5rem);
   box-sizing: border-box;
   color: var(--suth-ink);
   font-family: var(--suth-font);
@@ -31,37 +31,6 @@
 }
 
 /* Header: title and description left, actions right */
-.org-header {
-  max-width: 1500px;
-  margin: 0 auto 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-}
-
-.org-header h1 {
-  color: var(--suth-ink);
-  font-size: 1.5rem;
-  line-height: 1.3;
-  letter-spacing: -0.02em;
-}
-
-.org-header p {
-  max-width: 68ch;
-  margin: 6px 0 0;
-  color: var(--suth-muted);
-  font-size: 1rem;
-  line-height: 1.6;
-}
-
-.org-header-actions {
-  flex: 0 0 auto;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
 
 /* Buttons */
 .org-btn,
@@ -76,7 +45,7 @@
   box-sizing: border-box;
   border-radius: var(--suth-radius);
   font: inherit;
-  font-size: 0.95rem;
+  font-size: var(--suth-fs-body);
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
@@ -130,30 +99,6 @@
 :is(.org-btn, .org-btn-secondary, .org-btn-quiet):disabled {
   opacity: 0.55;
   cursor: not-allowed;
-}
-
-.org-icon-btn {
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  display: grid;
-  place-items: center;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--suth-muted);
-  font-size: 1.05rem;
-  cursor: pointer;
-  transition:
-    background-color 160ms ease-out,
-    border-color 160ms ease-out,
-    color 160ms ease-out;
-}
-
-.org-icon-btn--danger:hover:not(:disabled) {
-  border-color: var(--suth-danger-line);
-  background: var(--suth-danger-tint);
-  color: var(--suth-danger);
 }
 
 .org-page :is(button, select, input, textarea, [tabindex]):focus-visible {
@@ -211,7 +156,7 @@
 .org-tree-subtitle {
   padding: 8px 10px 4px;
   color: var(--suth-muted);
-  font-size: 0.8rem;
+  font-size: var(--suth-fs-label);
   font-weight: 700;
 }
 
@@ -233,7 +178,7 @@
   gap: 8px;
   box-sizing: border-box;
   border: 0;
-  border-radius: 9px;
+  border-radius: var(--suth-radius);
   background: transparent;
   color: var(--suth-ink-2);
   font: inherit;
@@ -276,7 +221,7 @@
   display: block;
   margin-top: 2px;
   color: var(--suth-muted);
-  font-size: 0.8rem;
+  font-size: var(--suth-fs-label);
   line-height: 1.45;
 }
 
@@ -286,8 +231,8 @@
   display: inline-flex;
   align-items: center;
   padding: 3px 9px;
-  border-radius: 999px;
-  font-size: 0.75rem;
+  border-radius: var(--suth-radius-pill);
+  font-size: var(--suth-fs-caption);
   font-weight: 800;
   white-space: nowrap;
 }
@@ -324,12 +269,12 @@
 
 .org-form-title h2,
 .org-members h2 {
-  font-size: 1.15rem;
+  font-size: var(--suth-fs-section);
 }
 
 .org-form-title h2 {
   scroll-margin-top: 16px;
-  border-radius: 4px;
+  border-radius: var(--suth-radius-xs);
 }
 
 .org-form-grid {
@@ -338,12 +283,11 @@
   gap: 16px;
 }
 
-.org-form label,
-.org-field {
+.org-form label {
   display: grid;
   gap: 7px;
   color: var(--suth-ink-2);
-  font-size: 0.9rem;
+  font-size: var(--suth-fs-sm);
   font-weight: 700;
 }
 
@@ -351,14 +295,13 @@
   grid-column: 1 / -1;
 }
 
-.org-form :is(input, select, textarea),
-.org-field select {
+.org-form :is(input, select, textarea) {
   width: 100%;
   min-height: var(--suth-control-h);
   padding: 10px 12px;
   box-sizing: border-box;
   border: 1px solid var(--suth-control-line);
-  border-radius: 9px;
+  border-radius: var(--suth-radius);
   background: var(--suth-surface);
   color: var(--suth-ink);
   font: inherit;
@@ -401,7 +344,7 @@
   margin-bottom: 7px;
   padding: 0;
   color: var(--suth-ink-2);
-  font-size: 0.9rem;
+  font-size: var(--suth-fs-sm);
   font-weight: 700;
 }
 
@@ -451,7 +394,7 @@
 .org-auto-code-note {
   margin: 14px 0 0;
   color: var(--suth-muted);
-  font-size: 0.875rem;
+  font-size: var(--suth-fs-sm);
   line-height: 1.5;
 }
 
@@ -467,18 +410,13 @@
   margin-top: 26px;
 }
 
-.org-section-head,
-.org-members-head {
+.org-section-head {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
   flex-wrap: wrap;
   margin-bottom: 12px;
-}
-
-.org-members-head {
-  align-items: center;
 }
 
 .org-section-head p {
@@ -497,8 +435,13 @@
   grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 12px;
-  padding: 12px 0;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--suth-line-soft);
+  transition: background-color 160ms ease-out;
+}
+
+.org-unit-row:hover {
+  background: var(--suth-surface-hover);
 }
 
 .org-unit-text {
@@ -508,7 +451,7 @@
 .org-unit-text strong {
   display: block;
   color: var(--suth-ink);
-  font-size: 0.95rem;
+  font-size: var(--suth-fs-body);
   overflow-wrap: anywhere;
 }
 
@@ -516,7 +459,7 @@
   display: block;
   margin-top: 3px;
   color: var(--suth-muted);
-  font-size: 0.8rem;
+  font-size: var(--suth-fs-label);
 }
 
 .org-empty {
@@ -524,192 +467,12 @@
   color: var(--suth-muted);
 }
 
-.org-count {
-  display: inline-block;
-  min-width: 26px;
-  margin-left: 6px;
-  padding: 2px 8px;
-  box-sizing: border-box;
-  border-radius: 999px;
-  background: var(--suth-tint-strong);
-  color: var(--suth-action-hover);
-  font-size: 0.8rem;
-  font-variant-numeric: tabular-nums;
-  text-align: center;
-  vertical-align: middle;
-}
-
-.org-add-panel {
-  margin-bottom: 16px;
-  padding: 16px;
-  border: 1px solid var(--suth-tint-line);
-  border-radius: 12px;
-  background: var(--suth-tint);
-}
-
-.org-add-panel-footer {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 12px;
-}
-
-.org-add-panel-footer .org-field {
-  min-width: min(100%, 240px);
-}
-
-.org-add-panel-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.org-member-search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-  padding: 0 12px;
-  border: 1px solid var(--suth-control-line);
-  border-radius: 9px;
-  background: var(--suth-surface);
-  color: var(--suth-muted);
-}
-
-.org-member-search:focus-within {
-  border-color: var(--suth-action);
-  box-shadow: 0 0 0 3px var(--suth-focus);
-}
-
-.org-member-search input {
-  flex: 1;
-  min-width: 0;
-  min-height: 42px;
-  padding: 0;
-  border: 0;
-  outline: none;
-  background: transparent;
-  color: var(--suth-ink);
-  font: inherit;
-}
-
-.org-member-search input::placeholder {
-  color: var(--suth-muted);
-  opacity: 1;
-}
-
-.org-member-search input:focus-visible {
-  outline: none;
-}
-
-.org-member-rows {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border: 1px solid var(--suth-line-soft);
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.org-member-rows li {
-  display: grid;
-  grid-template-columns: 36px minmax(0, 1fr) minmax(140px, 200px) 40px;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--suth-line-soft);
-}
-
-.org-member-rows li:last-child {
-  border-bottom: 0;
-}
-
-.org-member-rows li:hover {
-  background: var(--suth-surface-2);
-}
-
-.org-member-rows li.org-member-empty {
-  display: block;
-  color: var(--suth-muted);
-}
-
-.org-avatar {
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--suth-tint-strong);
-  color: var(--suth-action-ink);
-  font-weight: 800;
-}
-
-.org-member-identity {
-  min-width: 0;
-}
-
-.org-member-identity strong,
-.org-member-identity small {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.org-member-identity strong {
-  color: var(--suth-ink);
-  font-size: 0.95rem;
-}
-
-.org-member-identity small {
-  margin-top: 2px;
-  color: var(--suth-muted);
-  font-size: 0.8rem;
-}
-
-.org-role-select {
-  width: 100%;
-  min-height: 40px;
-  padding: 6px 8px;
-  box-sizing: border-box;
-  border: 1px solid var(--suth-control-line);
-  border-radius: 8px;
-  background: var(--suth-surface);
-  color: var(--suth-ink-2);
-  font: inherit;
-  font-size: 0.9rem;
-}
-
-.org-sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-}
-
 /* Tablet and phone: tree above the form, the tree scrolls on its own. */
 @media (max-width: 820px) {
-  .org-header {
-    align-items: stretch;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .org-header-actions {
-    justify-content: stretch;
-  }
-
-  .org-header-actions > * {
-    flex: 1 1 160px;
-  }
 
   .org-workspace {
     grid-template-columns: 1fr;
-    border-radius: 12px;
+    border-radius: var(--suth-radius-panel);
     box-shadow: none;
   }
 
@@ -734,33 +497,7 @@
 /* Phone: every control at least 44px tall. */
 @media (max-width: 760px) {
   .org-page {
-    padding: 18px 12px;
-  }
-
-  .org-member-search input,
-  .org-role-select {
-    min-height: var(--suth-control-h);
-  }
-
-  .org-icon-btn {
-    width: var(--suth-control-h);
-    height: var(--suth-control-h);
-  }
-
-  .org-member-rows li {
-    grid-template-columns: 36px minmax(0, 1fr) var(--suth-control-h);
-    padding: 12px;
-  }
-
-  .org-role-select {
-    font-size: 1rem;
-    grid-column: 2 / -1;
-    grid-row: 2;
-  }
-
-  .org-member-rows .org-icon-btn {
-    grid-column: 3;
-    grid-row: 1;
+    padding-bottom: 18px;
   }
 
   .org-unit-row {
@@ -771,17 +508,6 @@
     grid-column: 1 / -1;
   }
 
-  .org-add-panel {
-    padding: 12px;
-  }
-
-  .org-add-panel-footer,
-  .org-add-panel-actions {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .org-add-panel-actions > *,
   .org-form-actions > * {
     flex: 1 1 auto;
   }
@@ -798,4 +524,25 @@
     ) {
     transition: none;
   }
+}
+
+/* ── Kit shape (moved here from kit-system.css) ─────────────── */
+.admin-shell .org-wrapper {
+  background: var(--suth-canvas);
+}
+.admin-shell .org-workspace {
+  border-color: transparent;
+  border-radius: var(--suth-radius-card);
+  background: var(--suth-surface);
+  box-shadow: var(--suth-shadow-soft);
+}
+@media (max-width: 760px) {
+  .admin-shell .org-workspace {
+    border-radius: var(--suth-radius-inner);
+  }
+}
+
+/* Tree rows: soft rounded squares (moved from kit-system.css). */
+.admin-shell .org-tree-item {
+  border-radius: var(--suth-radius-icon);
 }

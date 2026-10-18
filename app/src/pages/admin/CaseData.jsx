@@ -1,6 +1,8 @@
-import SearchableSelect from '../../components/SearchableSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
-import MasterSelect, {useMasterOptions} from "../../components/MasterSelect";
+import SearchableSelect from "../../components/SearchableSelect";
+import DataPanel from "../../components/table/DataPanel";
+import { useModuleActions } from "../../permissions/useModuleActions";
+import { toDisplayText } from "../../utils/textPresentation.js";
+import MasterSelect, { useMasterOptions } from "../../components/MasterSelect";
 import { usePageExport } from "../../components/ExcelExport";
 import { useState, useEffect, useMemo } from "react";
 import CaseTable from "../../components/case/CaseTable";
@@ -32,7 +34,9 @@ import {
 } from "../../utils/caseDateFilter";
 import { usePermissions } from "../../permissions/PermissionsProvider";
 import { prioritizeCases } from "../../components/case/caseDisplay";
+import { PageHero } from "../../components/dashboard/DashboardKit";
 import { useMediaQuery } from "../../components/useMediaQuery";
+import ThaiDatePicker from "../../components/ThaiDatePicker";
 
 const FACULTIES = [
   "(1) สำนักวิชาวิทยาศาสตร์",
@@ -48,28 +52,28 @@ const FACULTIES = [
 ];
 
 const CLINIC_COLORS = [
-  "#e0f2fe",
-  "#dcfce7",
-  "#fce7f3",
-  "#fef3c7",
-  "#e0e7ff",
-  "#f3e8ff",
+  "var(--suth-info-tint)",
+  "var(--suth-success-tint)",
+  "var(--suth-tint)",
+  "var(--suth-warning-tint)",
+  "var(--suth-neutral-tint)",
+  "color-mix(in srgb, var(--suth-chart-purple) 10%, var(--suth-surface))",
 ];
 const CLINIC_TEXT_COLORS = [
-  "#0284c7",
-  "#166534",
-  "#be185d",
-  "#d97706",
-  "#4338ca",
-  "#7e22ce",
+  "var(--suth-info)",
+  "var(--suth-success)",
+  "var(--suth-action-ink)",
+  "var(--suth-warning)",
+  "var(--suth-ink-2)",
+  "var(--suth-chart-purple)",
 ];
 const CLINIC_BORDER_COLORS = [
-  "#7dd3fc",
-  "#86efac",
-  "#f9a8d4",
-  "#fcd34d",
-  "#a5b4fc",
-  "#d8b4fe",
+  "var(--suth-info-line)",
+  "var(--suth-success-line)",
+  "var(--suth-tint-line)",
+  "var(--suth-warning-line)",
+  "var(--suth-line)",
+  "color-mix(in srgb, var(--suth-chart-purple) 30%, var(--suth-surface))",
 ];
 
 function getClinicConfig(slug, clinicsList = []) {
@@ -77,18 +81,18 @@ function getClinicConfig(slug, clinicsList = []) {
     return {
       id: "general",
       text: "ทั่วไป",
-      color: "#475569",
-      bg: "#f1f5f9",
-      border: "#cbd5e1",
+      color: "var(--suth-ink-2)",
+      bg: "var(--suth-surface-2)",
+      border: "var(--suth-line)",
     };
   const clinic = clinicsList.find((c) => c.slug === slug);
   if (!clinic)
     return {
       id: slug,
       text: slug || "-",
-      color: "#475569",
-      bg: "#f1f5f9",
-      border: "#cbd5e1",
+      color: "var(--suth-ink-2)",
+      bg: "var(--suth-surface-2)",
+      border: "var(--suth-line)",
     };
 
   const index = clinicsList.findIndex((c) => c.slug === slug);
@@ -103,15 +107,15 @@ function getClinicConfig(slug, clinicsList = []) {
 }
 
 const caseRiskColors = {
-  "น้ำหนักน้อย / ผอม": { bg: "#d0f0fd", color: "#0c4a6e" },
-  "ปกติ (สุขภาพดี)": { bg: "#ecfdf5", color: "#065f46" },
-  "ท้วม / โรคอ้วนระดับ 1": { bg: "#fef9c3", color: "#713f12" },
-  "อ้วน / โรคอ้วนระดับ 2": { bg: "#fff7ed", color: "#7c2d12" },
-  "อ้วนมาก / โรคอ้วนระดับ 3": { bg: "#fef2f2", color: "#7f1d1d" },
-  "ปกติ / ไม่มีอาการซึมเศร้า": { bg: "#ecfdf5", color: "#065f46" },
-  มีอาการซึมเศร้าระดับน้อย: { bg: "#fef9c3", color: "#713f12" },
-  มีอาการซึมเศร้าระดับปานกลาง: { bg: "#fff7ed", color: "#7c2d12" },
-  มีอาการซึมเศร้าระดับรุนแรง: { bg: "#fef2f2", color: "#7f1d1d" },
+  "น้ำหนักน้อย / ผอม": { bg: "var(--suth-info-tint)", color: "var(--suth-info)" },
+  "ปกติ (สุขภาพดี)": { bg: "var(--suth-success-tint)", color: "var(--suth-success)" },
+  "ท้วม / โรคอ้วนระดับ 1": { bg: "var(--suth-warning-tint)", color: "var(--suth-warning)" },
+  "อ้วน / โรคอ้วนระดับ 2": { bg: "var(--suth-tint)", color: "var(--suth-warning)" },
+  "อ้วนมาก / โรคอ้วนระดับ 3": { bg: "var(--suth-danger-tint)", color: "var(--suth-danger)" },
+  "ปกติ / ไม่มีอาการซึมเศร้า": { bg: "var(--suth-success-tint)", color: "var(--suth-success)" },
+  มีอาการซึมเศร้าระดับน้อย: { bg: "var(--suth-warning-tint)", color: "var(--suth-warning)" },
+  มีอาการซึมเศร้าระดับปานกลาง: { bg: "var(--suth-tint)", color: "var(--suth-warning)" },
+  มีอาการซึมเศร้าระดับรุนแรง: { bg: "var(--suth-danger-tint)", color: "var(--suth-danger)" },
 };
 
 const CLINIC_RISK_OPTIONS = {
@@ -204,7 +208,10 @@ const STATUS_ORDER = [
 const NEW_CASE = "__new";
 
 function CreateCaseModal({ onClose, onSave, clinics = [] }) {
-  const facultyOptions=useMasterOptions("faculty",FACULTIES.map((label,index)=>({code:String(index),label})));
+  const facultyOptions = useMasterOptions(
+    "faculty",
+    FACULTIES.map((label, index) => ({ code: String(index), label })),
+  );
   const [formData, setFormData] = useState({
     prefix: "",
     citizenId: "",
@@ -298,8 +305,8 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
         score_results: [
           {
             label: formData.riskLevel,
-            bg: caseRiskColors[formData.riskLevel]?.bg || "#e5e7eb",
-            color: caseRiskColors[formData.riskLevel]?.color || "#374151",
+            bg: caseRiskColors[formData.riskLevel]?.bg || "var(--suth-neutral-tint)",
+            color: caseRiskColors[formData.riskLevel]?.color || "var(--suth-ink-2)",
           },
         ],
       },
@@ -350,7 +357,13 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
               <div className="scd-form-group">
                 <label htmlFor="create-case-field-2">คำนำหน้า</label>
 
-                <MasterSelect category="prefix" labelValues fallback={["นาย","นาง","นางสาว","อื่นๆ"].map(label=>({code:label,label}))}
+                <MasterSelect
+                  category="prefix"
+                  labelValues
+                  fallback={["นาย", "นาง", "นางสาว", "อื่นๆ"].map((label) => ({
+                    code: label,
+                    label,
+                  }))}
                   id="create-case-field-2"
                   value={formData.prefix}
                   onChange={(e) => handleChange("prefix", e.target.value)}
@@ -393,7 +406,7 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
                 >
                   <option value="">เลือกสำนักวิชา</option>
 
-                  {facultyOptions.map(({label:f}) => (
+                  {facultyOptions.map(({ label: f }) => (
                     <option key={f} value={f}>
                       {f}
                     </option>
@@ -439,7 +452,15 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
               <div className="scd-form-group">
                 <label htmlFor="create-case-field-8">สถานะเคส</label>
 
-                <MasterSelect category="case_statuses" labelValues id="create-case-field-8" value={formData.status} onChange={(e)=>handleChange("status",e.target.value)}><option value="">เลือกสถานะ</option></MasterSelect>
+                <MasterSelect
+                  category="case_statuses"
+                  labelValues
+                  id="create-case-field-8"
+                  value={formData.status}
+                  onChange={(e) => handleChange("status", e.target.value)}
+                >
+                  <option value="">เลือกสถานะ</option>
+                </MasterSelect>
               </div>
             </div>
           </div>
@@ -476,14 +497,20 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
   );
 }
 
-export default function CaseData() {
+// /admin/risk-cases renders this page with initialRisk="สูง": one case view
+// with a preset filter instead of a separate risk page (the school side does
+// the same with SchoolCaseData initialRisk="high").
+export default function CaseData({ initialRisk = "" }) {
   const { activeOrganization } = usePermissions();
+  // A walk-in case creates a case and records who the person is.
+  const caseRights = useModuleActions("cases");
+  const piiRights = useModuleActions("pii");
   const location = useLocation();
   const initialFormId = location.state?.defaultFormId || "";
 
   const [search, setSearch] = useState("");
   const [faculty, setFaculty] = useState("");
-  const [risk, setRisk] = useState("");
+  const [risk, setRisk] = useState(initialRisk);
   const [selectedCase, setSelectedCase] = useState(null);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isCreateCaseModalOpen, setIsCreateCaseModalOpen] = useState(false);
@@ -625,7 +652,7 @@ export default function CaseData() {
               : r.summary_data || {},
         }));
         setResponses(parsedResponses);
-        setRisk("");
+        setRisk(initialRisk);
       } catch (err) {
         setCurrentFormDetails(null);
         setResponses([]);
@@ -748,7 +775,18 @@ export default function CaseData() {
     return prioritizeCases(rows, "master");
   }, [scopedData, statusFilter, tableViewMode]);
 
-  usePageExport({title:"ข้อมูลเคส",sources:[{resource:"responses",id:selectedFormId,filters:{startDate,endDate},ids:filteredData.map(r=>r.id)}],disabled:!selectedFormId||isLoading});
+  usePageExport({
+    title: "ข้อมูลเคส",
+    sources: [
+      {
+        resource: "responses",
+        id: selectedFormId,
+        filters: { startDate, endDate },
+        ids: filteredData.map((r) => r.id),
+      },
+    ],
+    disabled: !selectedFormId || isLoading,
+  });
   useEffect(() => {
     if (
       statusFilter &&
@@ -834,9 +872,52 @@ export default function CaseData() {
   const moreFilterCount = [
     clinicFilter !== "all" ? clinicFilter : "",
     faculty,
-    risk,
+    risk !== initialRisk ? risk : "",
     formStatusFilter !== "published" ? formStatusFilter : "",
   ].filter(Boolean).length;
+  const clearMoreFilters = () => {
+    setClinicFilter("all");
+    setFaculty("");
+    setRisk(initialRisk);
+    setFormStatusFilter("published");
+  };
+  const filterChips = [
+    {
+      key: "clinic",
+      label: "คลินิก",
+      value:
+        clinicFilter === "all"
+          ? ""
+          : clinicFilter === "general"
+            ? "ทั่วไป"
+            : clinics.find((c) => c.slug === clinicFilter)?.name ||
+              clinicFilter,
+      onRemove: () => setClinicFilter("all"),
+    },
+    {
+      key: "faculty",
+      label: "สำนักวิชา",
+      value: faculty,
+      onRemove: () => setFaculty(""),
+    },
+    {
+      key: "risk",
+      label: "ความเสี่ยง",
+      value: risk !== initialRisk && risk ? "เสี่ยง" + risk : "",
+      onRemove: () => setRisk(initialRisk),
+    },
+    {
+      key: "formStatus",
+      label: "สถานะฟอร์ม",
+      value:
+        formStatusFilter === "published"
+          ? ""
+          : formStatusFilter === "draft"
+            ? "ฉบับร่าง/ซ่อนอยู่"
+            : "ทั้งหมด",
+      onRemove: () => setFormStatusFilter("published"),
+    },
+  ];
 
   // Form and date range: visible in the filter row on a computer, inside
   // the filter menu on a phone so the queue starts in the first screen.
@@ -860,34 +941,25 @@ export default function CaseData() {
       />
       <div className="cw-field" role="group" aria-labelledby="cw-dates-label">
         <span id="cw-dates-label">ช่วงวันที่</span>
-        <span className="cw-dates">
-          <FiCalendar aria-hidden="true" />
-          <span className="cw-date">
-            <output aria-hidden="true">
-              {displayThaiDate(startDate) || "วัน/เดือน/ปี"}
-            </output>
-            <input
-              type="date"
-              aria-label={`ตั้งแต่วันที่ ${displayThaiDate(startDate)}`}
-              value={startDate}
-              onChange={(e) => handleStartDateChange(e.target.value)}
-              onClick={(e) => e.target.showPicker && e.target.showPicker()}
-            />
-          </span>
+        <span className="cw-dates cw-dates--kit">
+          <ThaiDatePicker
+            label="ตั้งแต่วันที่"
+            value={startDate}
+            max={endDate || undefined}
+            rangeStart={startDate}
+            rangeEnd={endDate}
+            onChange={handleStartDateChange}
+          />
           <span>ถึง</span>
-          <span className="cw-date">
-            <output aria-hidden="true">
-              {displayThaiDate(endDate) || "วัน/เดือน/ปี"}
-            </output>
-            <input
-              type="date"
-              aria-label={`ถึงวันที่ ${displayThaiDate(endDate)}`}
-              value={endDate}
-              min={startDate || undefined}
-              onChange={(e) => handleEndDateChange(e.target.value)}
-              onClick={(e) => e.target.showPicker && e.target.showPicker()}
-            />
-          </span>
+          <ThaiDatePicker
+            label="ถึงวันที่"
+            value={endDate}
+            min={startDate || undefined}
+            rangeStart={startDate}
+            rangeEnd={endDate}
+            align="end"
+            onChange={handleEndDateChange}
+          />
         </span>
       </div>
     </>
@@ -896,49 +968,60 @@ export default function CaseData() {
   return (
     <div className="cw-wrapper">
       <main className="cw-page">
-        <header className="cw-header">
-          <div className="cw-header-text">
-            <h1 title={pageTitle}>
+        <PageHero
+          title={
+            <>
               {pageTitle}
-              {cInfo && <span className="cw-clinic-tag">{toDisplayText(cInfo.text)}</span>}
-            </h1>
-            <p>ระบบจัดการข้อมูลและติดตามเคสผู้รับบริการ</p>
-          </div>
-          <div className="cw-header-actions">
-            <div className="cw-mode" role="group" aria-label="มุมมองรายการ">
+              {cInfo && (
+                <span className="cw-clinic-tag">
+                  {toDisplayText(cInfo.text)}
+                </span>
+              )}
+            </>
+          }
+          description={
+            initialRisk
+              ? "เคสความเสี่ยงสูงของแบบฟอร์มที่เลือก เปลี่ยนตัวกรองระดับความเสี่ยงเพื่อดูเคสอื่น"
+              : "ระบบจัดการข้อมูลและติดตามเคสผู้รับบริการ"
+          }
+          actions={
+            <>
+              <div className="cw-mode" role="group" aria-label="มุมมองรายการ">
+                <button
+                  type="button"
+                  aria-pressed={tableViewMode === "master"}
+                  onClick={() => setTableViewMode("master")}
+                >
+                  <FiUsers aria-hidden="true" /> ภาพรวมเคสผู้ป่วย
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={tableViewMode === "form"}
+                  onClick={() => setTableViewMode("form")}
+                >
+                  <FiList aria-hidden="true" /> คำตอบแบบฟอร์ม
+                </button>
+              </div>
               <button
                 type="button"
-                aria-pressed={tableViewMode === "master"}
-                onClick={() => setTableViewMode("master")}
+                className="cw-btn-secondary"
+                onClick={() => setIsExportModalOpen(true)}
               >
-                <FiUsers aria-hidden="true" /> ภาพรวมเคสผู้ป่วย
+                <FiDownload aria-hidden="true" /> Export Excel
               </button>
               <button
+                hidden={!(caseRights.create && piiRights.create)}
                 type="button"
-                aria-pressed={tableViewMode === "form"}
-                onClick={() => setTableViewMode("form")}
+                className="cw-btn"
+                onClick={() => setIsCreateCaseModalOpen(true)}
               >
-                <FiList aria-hidden="true" /> คำตอบแบบฟอร์ม
+                <FiPlus aria-hidden="true" /> เพิ่มเคส
               </button>
-            </div>
-            <button
-              type="button"
-              className="cw-btn-secondary"
-              onClick={() => setIsExportModalOpen(true)}
-            >
-              <FiDownload aria-hidden="true" /> Export Excel
-            </button>
-            <button
-              type="button"
-              className="cw-btn"
-              onClick={() => setIsCreateCaseModalOpen(true)}
-            >
-              <FiPlus aria-hidden="true" /> เพิ่มเคส
-            </button>
-          </div>
-        </header>
+            </>
+          }
+        />
 
-        <section className="cw-surface" aria-label="รายการเคส">
+        <DataPanel className="cw-surface" aria-label="รายการเคส">
           {tableViewMode === "master" && statusCounts.length > 0 && isPhone && (
             <label className="cw-field cw-status-select">
               <span>สถานะเคส</span>
@@ -1005,6 +1088,7 @@ export default function CaseData() {
             <FilterDropdown
               activeCount={moreFilterCount}
               label={isPhone ? "ตัวกรอง" : undefined}
+              onClear={clearMoreFilters}
             >
               {isPhone && formAndDates}
               <FilterSelect
@@ -1089,6 +1173,8 @@ export default function CaseData() {
             viewMode={tableViewMode}
             hasScoring={hasScoring}
             selectedId={selectedCase?.id}
+            chips={filterChips}
+            onClearAll={clearMoreFilters}
           />
 
           {selectedCase && (
@@ -1172,7 +1258,7 @@ export default function CaseData() {
                     icon: "success",
                     title: "สำเร็จ",
                     text: "บันทึกเคสเรียบร้อยแล้ว",
-                    confirmButtonColor: "#c2410c",
+                    confirmButtonColor: "var(--suth-action)",
                   });
                 } catch (err) {
                   console.error(err);
@@ -1180,7 +1266,7 @@ export default function CaseData() {
                     icon: "error",
                     title: "เกิดข้อผิดพลาด",
                     text: "ไม่สามารถบันทึกเคสได้",
-                    confirmButtonColor: "#c2410c",
+                    confirmButtonColor: "var(--suth-action)",
                   });
                 }
               }}
@@ -1196,7 +1282,7 @@ export default function CaseData() {
               formTitle={currentFormDetails?.title}
             />
           )}
-        </section>
+        </DataPanel>
       </main>
     </div>
   );

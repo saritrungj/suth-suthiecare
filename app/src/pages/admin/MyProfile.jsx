@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { authSession, setAuthSession } from "../../utils/authSession";
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,6 +17,7 @@ import {
 } from "../../services/api";
 import { getErrorMessage, showSuccessAlert } from "../../utils/alerts";
 import "./MyProfile.css";
+import { PageHero } from "../../components/dashboard/DashboardKit";
 
 // The session lives in sessionStorage or localStorage depending on
 // "remember me"; write back to whichever one currently holds it.
@@ -87,6 +88,10 @@ const MyProfile = () => {
   useEffect(() => {
     getMyProfile()
       .then(({ data }) => {
+        if (!data?.profile) {
+          setLoadError("ไม่สามารถโหลดข้อมูลส่วนตัวได้");
+          return;
+        }
         setProfile(data.profile);
         setName(data.profile.name || "");
       })
@@ -192,10 +197,10 @@ const MyProfile = () => {
 
   return (
     <div className="profile-page">
-      <header className="profile-header">
-        <h1>ข้อมูลส่วนตัว</h1>
-        <p>จัดการชื่อที่แสดงในระบบ อีเมล และรหัสผ่านสำหรับบัญชีของคุณ</p>
-      </header>
+      <PageHero
+        title="ข้อมูลส่วนตัว"
+        description="จัดการชื่อที่แสดงในระบบ อีเมล และรหัสผ่านสำหรับบัญชีของคุณ"
+      />
 
       {loadError && (
         <div className="profile-alert" role="alert">

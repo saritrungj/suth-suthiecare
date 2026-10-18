@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { setAuthSession } from "../../utils/authSession";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";

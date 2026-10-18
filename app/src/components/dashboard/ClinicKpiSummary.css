@@ -1,0 +1,34 @@
+@import "../../styles/tokens.css";
+
+/* Clinic case counts, built on the dashboard kit tiles (DashboardKit.css). */
+.ckpi {
+  display: grid;
+  gap: 20px;
+  font-family: var(--suth-font);
+  color: var(--suth-ink);
+}
+
+.ckpi-split {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+
+.ckpi-result {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 9px;
+  border-radius: var(--suth-radius-pill);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.ckpi-result.tone-success {
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
+}
+
+.ckpi-result.tone-danger {
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
+}

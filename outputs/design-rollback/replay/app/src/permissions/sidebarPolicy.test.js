@@ -73,11 +73,17 @@ test("system admin sees every module only in the all-organizations overview", ()
     ),
     false,
   );
-  const hospital = visible(authorization, [], { activeOrganization: "1", organizationType: "hospital" });
+  const hospital = visible(authorization, [], {
+    activeOrganization: "1",
+    organizationType: "hospital",
+  });
   assert.ok(hospital.includes("schedule"));
   assert.equal(hospital.includes("school-students"), false);
   assert.ok(hospital.includes("organizations") && hospital.includes("users"));
-  const school = visible(authorization, [], { activeOrganization: "2", organizationType: "school" });
+  const school = visible(authorization, [], {
+    activeOrganization: "2",
+    organizationType: "school",
+  });
   assert.ok(school.includes("school-students"));
   assert.equal(school.includes("schedule"), false);
   assert.ok(school.includes("organizations") && school.includes("users"));

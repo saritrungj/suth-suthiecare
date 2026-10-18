@@ -26,7 +26,10 @@ const AdminLayout = () => {
           overflow: "hidden",
         }}
       >
-        <ExportProvider><ExportToolbar /><Outlet key={activeOrganization || "authorization-loading"} /></ExportProvider>
+        <ExportProvider>
+          <ExportToolbar />
+          <Outlet key={activeOrganization || "authorization-loading"} />
+        </ExportProvider>
       </div>
     </div>
   );

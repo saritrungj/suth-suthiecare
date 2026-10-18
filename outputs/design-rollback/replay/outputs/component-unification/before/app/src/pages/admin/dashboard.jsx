@@ -1,12 +1,7 @@
-import IconSelect from '../../components/IconSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import IconSelect from "../../components/IconSelect";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { usePageExport } from "../../components/ExcelExport";
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useMemo,
-} from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import CaseTable from "../../components/case/CaseTable";
 import CaseDetailModal from "../../components/case/CaseDetailModal";
 import FilterDropdown from "../../components/FilterDropdown";
@@ -98,7 +93,9 @@ function StatBoxModern({
   );
 }
 
-const CustomDropdown = props => <IconSelect {...props} className="db-custom-select" />;
+const CustomDropdown = (props) => (
+  <IconSelect {...props} className="db-custom-select" />
+);
 
 export default function Dashboard() {
   const { activeOrganization, can } = usePermissions();
@@ -138,7 +135,33 @@ export default function Dashboard() {
   const [initialDateRange] = useState(getCurrentMonthDateRange);
   const [startDate, setStartDate] = useState(initialDateRange.startDate);
   const [endDate, setEndDate] = useState(initialDateRange.endDate);
-  usePageExport({title:"แดชบอร์ด",sources:[...(can("clinical.view")?[{resource:"dashboard_stats",filters:{startDate,endDate,form_id:selectedFormId,clinic:selectedClinic}}]:[{resource:"dashboard"}]),...(selectedFormId&&can("cases.view")&&can("cases.export")?[{resource:"responses",id:selectedFormId,filters:{startDate,endDate}}]:[])]});
+  usePageExport({
+    title: "แดชบอร์ด",
+    sources: [
+      ...(can("clinical.view")
+        ? [
+            {
+              resource: "dashboard_stats",
+              filters: {
+                startDate,
+                endDate,
+                form_id: selectedFormId,
+                clinic: selectedClinic,
+              },
+            },
+          ]
+        : [{ resource: "dashboard" }]),
+      ...(selectedFormId && can("cases.view") && can("cases.export")
+        ? [
+            {
+              resource: "responses",
+              id: selectedFormId,
+              filters: { startDate, endDate },
+            },
+          ]
+        : []),
+    ],
+  });
   const hasDateRange = Boolean(startDate || endDate);
   const newCaseLabel = hasDateRange ? "เคสใหม่ในช่วงที่เลือก" : "เคสใหม่วันนี้";
   // 🟢 1. เพิ่ม State นี้เพื่อกั้นการโหลดข้อมูลก่อนเวลาอันควร
@@ -215,7 +238,6 @@ export default function Dashboard() {
             setSelectedClinic(lastForm.clinic_type);
             if (lastForm.status === "published") {
               setSelectedFormId(lastId);
-
             }
           }
         }
@@ -240,7 +262,6 @@ export default function Dashboard() {
       setSelectedFormId("");
     }
   }, [selectedClinic, formStatusFilter, filteredForms, selectedFormId]);
-
 
   useEffect(() => {
     if (!selectedFormId) {
@@ -726,7 +747,12 @@ export default function Dashboard() {
 
             <hr className="divider" />
 
-            <FormChartWorkspace key={activeOrganization} startDate={startDate} endDate={endDate} formId={selectedFormId} />
+            <FormChartWorkspace
+              key={activeOrganization}
+              startDate={startDate}
+              endDate={endDate}
+              formId={selectedFormId}
+            />
 
             <hr className="divider" />
 
@@ -799,11 +825,7 @@ export default function Dashboard() {
             </section>
           </div>
         )}
-
-
       </main>
-
-
     </div>
   );
 }

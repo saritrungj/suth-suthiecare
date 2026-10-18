@@ -1,8 +1,16 @@
-import { Surface as UiSurface, Badge as UiBadge } from '../../../components/ui/index.jsx';
-import { Button as UiButton, FilterBar as UiFilterBar, DataTable as UiDataTable, TextInput as UiTextInput } from '../../../components/ui/index.jsx';
-import SchoolManagementNav from './SchoolManagementNav';
-import SearchableSelect from '../../../components/SearchableSelect';
-import {usePageExport} from "../../../components/ExcelExport";
+import {
+  Surface as UiSurface,
+  Badge as UiBadge,
+} from "../../../components/ui/index.jsx";
+import {
+  Button as UiButton,
+  FilterBar as UiFilterBar,
+  DataTable as UiDataTable,
+  TextInput as UiTextInput,
+} from "../../../components/ui/index.jsx";
+import SchoolManagementNav from "./SchoolManagementNav";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { usePageExport } from "../../../components/ExcelExport";
 import { useCallback, useEffect, useState } from "react";
 import { FiEdit2, FiPlus, FiTrash2, FiUserCheck } from "react-icons/fi";
 import {
@@ -49,7 +57,13 @@ export default function TeacherList() {
       .catch(() => setTeacherTypes([]));
   }, []);
 
-  usePageExport({title:"ครู",sources:[{resource:"teachers",filters:{...filters,school_id:schoolId}}],disabled:loading});
+  usePageExport({
+    title: "ครู",
+    sources: [
+      { resource: "teachers", filters: { ...filters, school_id: schoolId } },
+    ],
+    disabled: loading,
+  });
   const load = useCallback(async () => {
     setLoading(true);
     try {
@@ -98,7 +112,8 @@ export default function TeacherList() {
           description="ครูคือบัญชีเจ้าหน้าที่ที่เป็นสมาชิกของหน่วยงานนี้ เมื่อกำหนดครูให้ห้องเรียน ครูจะเห็นนักเรียนและข้อมูลสุขภาพเฉพาะห้องนั้น"
         >
           {access?.can_create_school && (
-            <UiButton variant="primary"
+            <UiButton
+              variant="primary"
               type="button"
               className="sch-btn"
               disabled={!schools.length}
@@ -112,7 +127,8 @@ export default function TeacherList() {
               <FiPlus aria-hidden="true" /> เพิ่มครู
             </UiButton>
           )}
-        </PageHeader><SchoolManagementNav />
+        </PageHeader>
+        <SchoolManagementNav />
         <UiSurface as="section" className="sch-card">
           <UiFilterBar className="sch-filter-bar">
             <SearchField
@@ -196,14 +212,18 @@ export default function TeacherList() {
                         )}
                       </td>
                       <td>
-                        <UiBadge className={`sch-badge status-${teacher.status}`}>
+                        <UiBadge
+                          className={`sch-badge status-${teacher.status}`}
+                        >
                           {teacher.status === "active" ? "ใช้งาน" : "ปิดใช้งาน"}
                         </UiBadge>
                       </td>
                       <td>
                         <div className="sch-row-actions">
                           {access?.can_update_school && (
-                            <UiButton variant="secondary" size="icon"
+                            <UiButton
+                              variant="secondary"
+                              size="icon"
                               type="button"
                               className="sch-icon-btn"
                               aria-label={`แก้ไขข้อมูลครู ${teacher.name}`}
@@ -213,7 +233,9 @@ export default function TeacherList() {
                             </UiButton>
                           )}
                           {access?.can_delete_school && (
-                            <UiButton variant="danger" size="icon"
+                            <UiButton
+                              variant="danger"
+                              size="icon"
                               type="button"
                               className="sch-icon-btn sch-danger"
                               aria-label={`นำ ${teacher.name} ออกจากรายชื่อครู`}
@@ -321,10 +343,16 @@ function TeacherFormModal({ initial, teacherTypes, onClose, onSaved }) {
       onClose={onClose}
       footer={
         <>
-          <UiButton variant="secondary" type="button" className="sch-btn-secondary" onClick={onClose}>
+          <UiButton
+            variant="secondary"
+            type="button"
+            className="sch-btn-secondary"
+            onClick={onClose}
+          >
             ยกเลิก
           </UiButton>
-          <UiButton variant="primary"
+          <UiButton
+            variant="primary"
             type="submit"
             form="teacher-form"
             className="sch-btn"
@@ -380,7 +408,11 @@ function TeacherFormModal({ initial, teacherTypes, onClose, onSaved }) {
           >
             <option value="">ไม่ระบุ</option>
             {teacherTypes
-              .filter((type) => type.status === "active" || String(type.id) === String(initial.teacher_type_id))
+              .filter(
+                (type) =>
+                  type.status === "active" ||
+                  String(type.id) === String(initial.teacher_type_id),
+              )
               .map((type) => (
                 <option key={type.id} value={type.id}>
                   {type.name}

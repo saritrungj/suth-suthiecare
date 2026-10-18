@@ -1,6 +1,6 @@
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toSafeHtml } from '../../../utils/richText.js';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toSafeHtml } from "../../../utils/richText.js";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { FiRefreshCw, FiCheck, FiXCircle } from "react-icons/fi";
@@ -72,7 +72,9 @@ const QuestionRenderer = ({
         <div className="preview-group-header">
           <h3
             className="preview-sec__title"
-            dangerouslySetInnerHTML={{ __html: toSafeHtml(displayTitle || "กลุ่มคำถาม") }}
+            dangerouslySetInnerHTML={{
+              __html: toSafeHtml(displayTitle || "กลุ่มคำถาม"),
+            }}
           />
           {displayText && (
             <div
@@ -111,7 +113,13 @@ const QuestionRenderer = ({
   const hasError = !!errors[q.id];
   const fieldA11y = {
     "aria-labelledby": titleId,
-    "aria-describedby": [q.hasDescription && displayText ? hintId : null, hasError ? errorId : null].filter(Boolean).join(" ") || undefined,
+    "aria-describedby":
+      [
+        q.hasDescription && displayText ? hintId : null,
+        hasError ? errorId : null,
+      ]
+        .filter(Boolean)
+        .join(" ") || undefined,
     "aria-invalid": hasError || undefined,
     "aria-required": q.required || undefined,
   };
@@ -203,7 +211,7 @@ const QuestionRenderer = ({
                   paddingBottom: "56.25%",
                   height: 0,
                   overflow: "hidden",
-                  borderRadius: "8px",
+                  borderRadius: "var(--suth-radius-sm)",
                   marginBottom: "15px",
                 }}
               >
@@ -274,7 +282,7 @@ const QuestionRenderer = ({
                     style={{
                       maxWidth: "100%",
                       maxHeight: "300px",
-                      borderRadius: "8px",
+                      borderRadius: "var(--suth-radius-sm)",
                     }}
                   />
                 ) : ans.type.startsWith("audio/") ? (
@@ -289,10 +297,10 @@ const QuestionRenderer = ({
                     display: "block",
                     marginTop: "10px",
                     padding: "6px 12px",
-                    background: "#f44336",
-                    color: "#fff",
+                    background: "var(--suth-risk-dot-high)",
+                    color: "var(--suth-on-action)",
                     border: "none",
-                    borderRadius: "4px",
+                    borderRadius: "var(--suth-radius-xs)",
                     cursor: "pointer",
                   }}
                 >
@@ -372,10 +380,11 @@ const QuestionRenderer = ({
             return (
               <div style={{ display: "flex", gap: "15px", flexWrap: "wrap" }}>
                 <div style={{ flex: 1, minWidth: "120px" }}>
-                  <label htmlFor={`bmi-weight-${q.id}`}
+                  <label
+                    htmlFor={`bmi-weight-${q.id}`}
                     style={{
-                      fontSize: "14px",
-                      color: "#5f6368",
+                      fontSize: "var(--suth-fs-sm)",
+                      color: "var(--suth-muted)",
                       marginBottom: "6px",
                       display: "block",
                       fontWeight: 600,
@@ -400,10 +409,11 @@ const QuestionRenderer = ({
                   />
                 </div>
                 <div style={{ flex: 1, minWidth: "120px" }}>
-                  <label htmlFor={`bmi-height-${q.id}`}
+                  <label
+                    htmlFor={`bmi-height-${q.id}`}
                     style={{
-                      fontSize: "14px",
-                      color: "#5f6368",
+                      fontSize: "var(--suth-fs-sm)",
+                      color: "var(--suth-muted)",
                       marginBottom: "6px",
                       display: "block",
                       fontWeight: 600,
@@ -496,7 +506,7 @@ const QuestionRenderer = ({
                         ? {
                             opacity: 0.5,
                             cursor: "not-allowed",
-                            backgroundColor: "#f1f5f9",
+                            backgroundColor: "var(--suth-surface-2)",
                           }
                         : {}
                     }
@@ -520,18 +530,20 @@ const QuestionRenderer = ({
                     >
                       <div
                         style={{ display: "inline" }}
-                        dangerouslySetInnerHTML={{ __html: toSafeHtml(displayOpt) }}
+                        dangerouslySetInnerHTML={{
+                          __html: toSafeHtml(displayOpt),
+                        }}
                       />
                       {isLimited && (
                         <span
                           style={{
                             marginLeft: "8px",
                             fontSize: "0.85em",
-                            color: isFull ? "#d32f2f" : "#2e7d32",
+                            color: isFull ? "var(--suth-danger)" : "var(--suth-success)",
                             fontWeight: "bold",
-                            background: isFull ? "#ffebee" : "#e8f5e9",
+                            background: isFull ? "var(--suth-danger-tint)" : "var(--suth-success-tint)",
                             padding: "2px 8px",
-                            borderRadius: "12px",
+                            borderRadius: "var(--suth-radius)",
                             flexShrink: 0,
                           }}
                         >
@@ -558,7 +570,7 @@ const QuestionRenderer = ({
                           handleOptionInputChange(q.id, opt, e.target.value)
                         }
                         style={{
-                          fontSize: "14px",
+                          fontSize: "var(--suth-fs-sm)",
                           padding: "6px 0",
                           borderBottomColor: "var(--theme-color)",
                           maxWidth: "300px",
@@ -602,7 +614,9 @@ const QuestionRenderer = ({
                     />
                     <div
                       style={{ display: "inline" }}
-                      dangerouslySetInnerHTML={{ __html: toSafeHtml(displayOpt) }}
+                      dangerouslySetInnerHTML={{
+                        __html: toSafeHtml(displayOpt),
+                      }}
                     />
                   </label>
 
@@ -623,7 +637,7 @@ const QuestionRenderer = ({
                           handleOptionInputChange(q.id, opt, e.target.value)
                         }
                         style={{
-                          fontSize: "14px",
+                          fontSize: "var(--suth-fs-sm)",
                           padding: "6px 0",
                           borderBottomColor: "var(--theme-color)",
                           maxWidth: "300px",
@@ -668,7 +682,9 @@ const QuestionRenderer = ({
                     </span>
                     <div
                       style={{ display: "inline" }}
-                      dangerouslySetInnerHTML={{ __html: toSafeHtml(displayOpt) }}
+                      dangerouslySetInnerHTML={{
+                        __html: toSafeHtml(displayOpt),
+                      }}
                     />
                   </label>
 
@@ -689,7 +705,7 @@ const QuestionRenderer = ({
                           handleOptionInputChange(q.id, opt, e.target.value)
                         }
                         style={{
-                          fontSize: "14px",
+                          fontSize: "var(--suth-fs-sm)",
                           padding: "6px 0",
                           borderBottomColor: "var(--theme-color)",
                           maxWidth: "300px",

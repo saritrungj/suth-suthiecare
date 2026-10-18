@@ -35,7 +35,9 @@
   border-radius: 16px 16px 4px 16px;
   background: var(--fab-paper);
   box-shadow: 0 8px 24px -8px rgb(24 94 93 / 28%);
-  transition: transform 240ms var(--fab-ease), background-color 240ms var(--fab-ease);
+  transition:
+    transform 240ms var(--fab-ease),
+    background-color 240ms var(--fab-ease);
 }
 .sut-fab-invite::after {
   content: "";
@@ -56,10 +58,23 @@
   line-height: 1.4;
   white-space: nowrap;
 }
-.sut-fab-invite strong { font-size: 0.98rem; font-weight: 800; }
-.sut-fab-invite strong svg { width: 17px; height: 17px; }
-.sut-fab-invite > span { font-size: 0.8rem; color: #426b67; }
-.sut-fab-invite > span svg { width: 13px; height: 13px; color: #ae466b; }
+.sut-fab-invite strong {
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+.sut-fab-invite strong svg {
+  width: 17px;
+  height: 17px;
+}
+.sut-fab-invite > span {
+  font-size: 0.8rem;
+  color: #426b67;
+}
+.sut-fab-invite > span svg {
+  width: 13px;
+  height: 13px;
+  color: #ae466b;
+}
 .sut-fab-mascot {
   position: relative;
   display: grid;
@@ -75,7 +90,14 @@
   inset: -3px;
   z-index: -1;
   border-radius: 50%;
-  background: conic-gradient(from 25deg, var(--fab-mint), #d4f8f1, var(--fab-peach), var(--fab-pink), var(--fab-mint));
+  background: conic-gradient(
+    from 25deg,
+    var(--fab-mint),
+    #d4f8f1,
+    var(--fab-peach),
+    var(--fab-pink),
+    var(--fab-mint)
+  );
   box-shadow: 0 10px 26px -7px rgb(24 94 93 / 38%);
   animation: sut-fab-orbit 4.6s linear infinite;
 }
@@ -108,7 +130,11 @@
   line-height: 1.2;
   letter-spacing: 0.04em;
 }
-.sut-fab-mascot__confetti { position: absolute; inset: 0; pointer-events: none; }
+.sut-fab-mascot__confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
 .sut-fab-spark,
 .sut-fab-heart {
   position: absolute;
@@ -116,18 +142,46 @@
   height: 15px;
   animation: sut-fab-twinkle 2.3s var(--fab-ease) infinite;
 }
-.sut-fab-spark--mint { top: 1px; left: -9px; color: var(--fab-mint); }
-.sut-fab-spark--peach { top: -11px; right: 12px; width: 19px; height: 19px; color: var(--fab-peach); animation-delay: 100ms; }
-.sut-fab-spark--pink { right: -10px; bottom: 26px; width: 12px; height: 12px; color: var(--fab-pink); animation-delay: 200ms; }
-.sut-fab-heart { left: -6px; bottom: 4px; color: var(--fab-pink); fill: var(--fab-pink); animation-delay: 300ms; }
+.sut-fab-spark--mint {
+  top: 1px;
+  left: -9px;
+  color: var(--fab-mint);
+}
+.sut-fab-spark--peach {
+  top: -11px;
+  right: 12px;
+  width: 19px;
+  height: 19px;
+  color: var(--fab-peach);
+  animation-delay: 100ms;
+}
+.sut-fab-spark--pink {
+  right: -10px;
+  bottom: 26px;
+  width: 12px;
+  height: 12px;
+  color: var(--fab-pink);
+  animation-delay: 200ms;
+}
+.sut-fab-heart {
+  left: -6px;
+  bottom: 4px;
+  color: var(--fab-pink);
+  fill: var(--fab-pink);
+  animation-delay: 300ms;
+}
 .sut-fab-chat:focus-visible,
 .sut-fab-round:focus-visible {
   outline: 3px solid var(--fab-teal-ink);
   outline-offset: 5px;
   box-shadow: 0 0 0 5px var(--fab-paper);
 }
-.sut-fab-chat:focus-visible .sut-fab-invite { background: #e9fcf6; }
-.sut-fab-chat:active .sut-fab-mascot { transform: scale(0.95); }
+.sut-fab-chat:focus-visible .sut-fab-invite {
+  background: #e9fcf6;
+}
+.sut-fab-chat:active .sut-fab-mascot {
+  transform: scale(0.95);
+}
 .sut-fab-stack .sut-fab-round {
   display: grid;
   place-items: center;
@@ -140,43 +194,100 @@
   color: var(--fab-paper);
   box-shadow: 0 6px 16px -5px rgb(24 94 93 / 35%);
   cursor: pointer;
-  transition: transform 200ms var(--fab-ease), background-color 200ms var(--fab-ease);
+  transition:
+    transform 200ms var(--fab-ease),
+    background-color 200ms var(--fab-ease);
 }
-.sut-fab-round svg { width: 21px; height: 21px; }
-.sut-fab-stack .sut-fab-top { background: #1f2f3f; }
-.sut-fab-round:active { transform: scale(0.94); }
+.sut-fab-round svg {
+  width: 21px;
+  height: 21px;
+}
+.sut-fab-stack .sut-fab-top {
+  background: #1f2f3f;
+}
+.sut-fab-round:active {
+  transform: scale(0.94);
+}
 @media (hover: hover) {
-  .sut-fab-chat:hover .sut-fab-mascot { transform: translateY(-3px) rotate(-5deg); }
-  .sut-fab-chat:hover .sut-fab-invite { transform: translateX(-3px); background: #e9fcf6; }
-  .sut-fab-round:hover { transform: translateY(-2px); background: var(--fab-teal-ink); }
+  .sut-fab-chat:hover .sut-fab-mascot {
+    transform: translateY(-3px) rotate(-5deg);
+  }
+  .sut-fab-chat:hover .sut-fab-invite {
+    transform: translateX(-3px);
+    background: #e9fcf6;
+  }
+  .sut-fab-round:hover {
+    transform: translateY(-2px);
+    background: var(--fab-teal-ink);
+  }
 }
 /* The welcome wave settles; the ring and sparkles keep looping during hover. */
-@keyframes sut-fab-orbit { to { transform: rotate(360deg); } }
+@keyframes sut-fab-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
 @keyframes sut-fab-wave {
-  0%, 42%, 100% { transform: rotate(0); }
-  10%, 27% { transform: rotate(-7deg); }
-  18%, 35% { transform: rotate(4deg); }
+  0%,
+  42%,
+  100% {
+    transform: rotate(0);
+  }
+  10%,
+  27% {
+    transform: rotate(-7deg);
+  }
+  18%,
+  35% {
+    transform: rotate(4deg);
+  }
 }
 @keyframes sut-fab-twinkle {
-  0%, 100% { transform: scale(1) rotate(0); opacity: 1; }
-  30% { transform: scale(0.45) rotate(-20deg); opacity: 0.35; }
-  65% { transform: scale(1.15) rotate(15deg); opacity: 1; }
+  0%,
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+  30% {
+    transform: scale(0.45) rotate(-20deg);
+    opacity: 0.35;
+  }
+  65% {
+    transform: scale(1.15) rotate(15deg);
+    opacity: 1;
+  }
 }
-.sut-fab-stack.is-paused * { animation-play-state: paused; }
+.sut-fab-stack.is-paused * {
+  animation-play-state: paused;
+}
 @media (max-width: 640px) {
   .sut-fab-stack {
     right: max(16px, env(safe-area-inset-right));
     bottom: calc(16px + env(safe-area-inset-bottom));
     gap: 12px;
   }
-  .sut-fab-mascot { width: 68px; height: 68px; }
-  .sut-fab-stack .sut-fab-chat { gap: 12px; }
-  .sut-fab-stack .sut-fab-invite { padding: 10px 12px; }
-  .sut-fab-invite strong { font-size: 0.9rem; }
-  .sut-fab-stack .sut-fab-round { width: 44px; height: 44px; margin-right: 12px; }
+  .sut-fab-mascot {
+    width: 68px;
+    height: 68px;
+  }
+  .sut-fab-stack .sut-fab-chat {
+    gap: 12px;
+  }
+  .sut-fab-stack .sut-fab-invite {
+    padding: 10px 12px;
+  }
+  .sut-fab-invite strong {
+    font-size: 0.9rem;
+  }
+  .sut-fab-stack .sut-fab-round {
+    width: 44px;
+    height: 44px;
+    margin-right: 12px;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .sut-fab-stack *, .sut-fab-stack *::after {
+  .sut-fab-stack *,
+  .sut-fab-stack *::after {
     animation: none !important;
     transition: none !important;
   }
@@ -184,5 +295,7 @@
   .sut-fab-chat:hover .sut-fab-invite,
   .sut-fab-chat:active .sut-fab-mascot,
   .sut-fab-round:hover,
-  .sut-fab-round:active { transform: none; }
+  .sut-fab-round:active {
+    transform: none;
+  }
 }

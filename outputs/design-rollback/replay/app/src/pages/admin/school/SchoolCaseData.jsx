@@ -1,11 +1,14 @@
-import { Surface as UiSurface } from '../../../components/ui/index.jsx';
-import { FilterBar as UiFilterBar, DataTable as UiDataTable } from '../../../components/ui/index.jsx';
-import SearchableSelect from '../../../components/SearchableSelect';
-import { toDisplayText } from '../../../utils/textPresentation.js';
+import { Surface as UiSurface } from "../../../components/ui/index.jsx";
+import {
+  FilterBar as UiFilterBar,
+  DataTable as UiDataTable,
+} from "../../../components/ui/index.jsx";
+import SearchableSelect from "../../../components/SearchableSelect";
+import { toDisplayText } from "../../../utils/textPresentation.js";
 import { usePageExport } from "../../../components/ExcelExport";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FiActivity } from "react-icons/fi";
-import api from '../../../services/api';
+import api from "../../../services/api";
 import {
   getForms,
   getSchoolCases,
@@ -70,7 +73,8 @@ export default function SchoolCaseData({ initialRisk = "" }) {
   const [grades, setGrades] = useState([]);
   const [classrooms, setClassrooms] = useState([]);
   const [forms, setForms] = useState([]);
-  const [rounds,setRounds]=useState([]),[roundId,setRoundId]=useState('');
+  const [rounds, setRounds] = useState([]),
+    [roundId, setRoundId] = useState("");
   const [filters, setFilters] = useState({
     grade_id: "",
     classroom_id: "",
@@ -78,9 +82,18 @@ export default function SchoolCaseData({ initialRisk = "" }) {
     form_id: "",
     risk: initialRisk,
     search: "",
-    start_date: '', end_date: '',
+    start_date: "",
+    end_date: "",
   });
-  usePageExport({title:"ผลประเมินนักเรียน",sources:[{resource:"school_cases",filters:{...filters,school_id:schoolId}}]});
+  usePageExport({
+    title: "ผลประเมินนักเรียน",
+    sources: [
+      {
+        resource: "school_cases",
+        filters: { ...filters, school_id: schoolId },
+      },
+    ],
+  });
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
   const [result, setResult] = useState(null);
@@ -88,7 +101,12 @@ export default function SchoolCaseData({ initialRisk = "" }) {
   const [error, setError] = useState("");
   const [viewing, setViewing] = useState(null);
   const requestId = useRef(0);
-  useEffect(()=>{api.get('/school/screening-rounds').then(({data})=>setRounds(Array.isArray(data)?data:[])).catch(()=>setRounds([]));},[schoolId]);
+  useEffect(() => {
+    api
+      .get("/school/screening-rounds")
+      .then(({ data }) => setRounds(Array.isArray(data) ? data : []))
+      .catch(() => setRounds([]));
+  }, [schoolId]);
 
   useEffect(() => {
     getForms("latest")
@@ -236,50 +254,56 @@ export default function SchoolCaseData({ initialRisk = "" }) {
           description="ติดตามเคสและเปิดแฟ้มสุขภาพนักเรียน"
         />
 
-        <UiSurface as="section" className="cw-surface" aria-label="รายการนักเรียน">
+        <UiSurface
+          as="section"
+          className="cw-surface"
+          aria-label="รายการนักเรียน"
+        >
           {isPhone ? (
             <label className="cw-field cw-school-risk-filter">
               <span>ความเสี่ยง</span>
-              <SearchableSelect aria-label="ความเสี่ยง" value={filters.risk} onChange={(event) => update("risk", event.target.value)}>
+              <SearchableSelect
+                aria-label="ความเสี่ยง"
+                value={filters.risk}
+                onChange={(event) => update("risk", event.target.value)}
+              >
                 <option value="">ทั้งหมด ({total})</option>
                 {["high", "medium", "normal", "none"].map((risk) => (
-                  <option key={risk} value={risk}>{RISK_LABELS[risk]} ({counts[risk] || 0})</option>
+                  <option key={risk} value={risk}>
+                    {RISK_LABELS[risk]} ({counts[risk] || 0})
+                  </option>
                 ))}
               </SearchableSelect>
             </label>
           ) : (
-          <ul
-            className="cw-strip"
-            aria-label="กรองตามระดับความเสี่ยง"
-          >
-            <li>
-              <button
-                type="button"
-                className="cw-chip"
-                aria-pressed={filters.risk === ""}
-                onClick={() => update("risk", "")}
-              >
-                ทั้งหมด <strong>{total}</strong>
-              </button>
-            </li>
-            {["high", "medium", "normal", "none"].map((risk) => (
-              <li key={risk}>
+            <ul className="cw-strip" aria-label="กรองตามระดับความเสี่ยง">
+              <li>
                 <button
                   type="button"
-                  className={`cw-chip cw-chip--${RISK_LEVEL[risk]}`}
-                  aria-pressed={filters.risk === risk}
-                  onClick={() =>
-                    update("risk", filters.risk === risk ? "" : risk)
-                  }
+                  className="cw-chip"
+                  aria-pressed={filters.risk === ""}
+                  onClick={() => update("risk", "")}
                 >
-                  <span className="cw-dot" aria-hidden="true" />
-                  {RISK_LABELS[risk]}
-                  <strong>{counts[risk]}</strong>
+                  ทั้งหมด <strong>{total}</strong>
                 </button>
               </li>
-            ))}
-          </ul>
-
+              {["high", "medium", "normal", "none"].map((risk) => (
+                <li key={risk}>
+                  <button
+                    type="button"
+                    className={`cw-chip cw-chip--${RISK_LEVEL[risk]}`}
+                    aria-pressed={filters.risk === risk}
+                    onClick={() =>
+                      update("risk", filters.risk === risk ? "" : risk)
+                    }
+                  >
+                    <span className="cw-dot" aria-hidden="true" />
+                    {RISK_LABELS[risk]}
+                    <strong>{counts[risk]}</strong>
+                  </button>
+                </li>
+              ))}
+            </ul>
           )}
 
           <UiFilterBar className="sch-filter-bar">
@@ -301,9 +325,49 @@ export default function SchoolCaseData({ initialRisk = "" }) {
               }
             >
               {isPhone && classFilters}
-              <MenuSelect label="รอบประเมิน" value={roundId} onChange={value=>{setRoundId(value);const r=rounds.find(r=>String(r.id)===value);setFilters(old=>({...old,start_date:r?.starts_on||'',end_date:r?.ends_on||'',form_id:r?String(r.form_id):'',domain:r?.health_domain||''}));setPage(1);}}><option value="">ทุกช่วงเวลา</option>{rounds.filter(r=>String(r.school_id)===String(schoolId)).map(r=><option key={r.id} value={r.id}>{r.name} · {r.semester}/{r.academic_year}</option>)}</MenuSelect>
-              <ThaiDateField label="ประเมินตั้งแต่" allowFuture value={filters.start_date} onChange={value=>{setRoundId('');update('start_date',value);}}/>
-              <ThaiDateField label="ประเมินถึง" allowFuture value={filters.end_date} onChange={value=>{setRoundId('');update('end_date',value);}}/>
+              <MenuSelect
+                label="รอบประเมิน"
+                value={roundId}
+                onChange={(value) => {
+                  setRoundId(value);
+                  const r = rounds.find((r) => String(r.id) === value);
+                  setFilters((old) => ({
+                    ...old,
+                    start_date: r?.starts_on || "",
+                    end_date: r?.ends_on || "",
+                    form_id: r ? String(r.form_id) : "",
+                    domain: r?.health_domain || "",
+                  }));
+                  setPage(1);
+                }}
+              >
+                <option value="">ทุกช่วงเวลา</option>
+                {rounds
+                  .filter((r) => String(r.school_id) === String(schoolId))
+                  .map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.name} · {r.semester}/{r.academic_year}
+                    </option>
+                  ))}
+              </MenuSelect>
+              <ThaiDateField
+                label="ประเมินตั้งแต่"
+                allowFuture
+                value={filters.start_date}
+                onChange={(value) => {
+                  setRoundId("");
+                  update("start_date", value);
+                }}
+              />
+              <ThaiDateField
+                label="ประเมินถึง"
+                allowFuture
+                value={filters.end_date}
+                onChange={(value) => {
+                  setRoundId("");
+                  update("end_date", value);
+                }}
+              />
               <MenuSelect
                 label="หมวดสุขภาพ"
                 value={filters.domain}
@@ -354,14 +418,24 @@ export default function SchoolCaseData({ initialRisk = "" }) {
                   className={`cw-card ${viewing === row.id ? "is-open" : ""}`}
                 >
                   <div className="cw-card-top">
-                    <CasePerson school id={row.id} name={row.first_name} code={`รหัส ${row.student_code}`} onOpen={() => setViewing(row.id)} />
+                    <CasePerson
+                      school
+                      id={row.id}
+                      name={row.first_name}
+                      code={`รหัส ${row.student_code}`}
+                      onOpen={() => setViewing(row.id)}
+                    />
                     {row.overall_risk !== "none" && (
                       <SchoolRisk risk={row.overall_risk} />
                     )}
                   </div>
                   <div className="cw-card-summary">
                     <span>{classroomLabel(row)}</span>
-                    <span className="cw-card-date">{row.latest_activity?.occurred_at ? formatThaiDate(row.latest_activity.occurred_at) : "ยังไม่มีข้อมูล"}</span>
+                    <span className="cw-card-date">
+                      {row.latest_activity?.occurred_at
+                        ? formatThaiDate(row.latest_activity.occurred_at)
+                        : "ยังไม่มีข้อมูล"}
+                    </span>
                   </div>
                 </li>
               ))}
@@ -389,7 +463,13 @@ export default function SchoolCaseData({ initialRisk = "" }) {
                       className={viewing === row.id ? "is-open" : ""}
                     >
                       <td className="cw-col-person">
-                        <CasePerson school id={row.id} name={row.first_name} code={`รหัส ${row.student_code}`} onOpen={() => setViewing(row.id)} />
+                        <CasePerson
+                          school
+                          id={row.id}
+                          name={row.first_name}
+                          code={`รหัส ${row.student_code}`}
+                          onOpen={() => setViewing(row.id)}
+                        />
                       </td>
                       <td>
                         <SchoolRisk
@@ -401,7 +481,11 @@ export default function SchoolCaseData({ initialRisk = "" }) {
                         />
                       </td>
                       <td>{classroomLabel(row)}</td>
-                      <td className="cw-col-date">{row.latest_activity?.occurred_at ? formatThaiDate(row.latest_activity.occurred_at) : "ยังไม่มีข้อมูล"}</td>
+                      <td className="cw-col-date">
+                        {row.latest_activity?.occurred_at
+                          ? formatThaiDate(row.latest_activity.occurred_at)
+                          : "ยังไม่มีข้อมูล"}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -419,7 +503,8 @@ export default function SchoolCaseData({ initialRisk = "" }) {
         </UiSurface>
 
         {result?.classrooms?.length > 1 && (
-          <UiSurface as="section"
+          <UiSurface
+            as="section"
             className="cw-surface cw-surface--gap"
             aria-labelledby="by-classroom-title"
           >

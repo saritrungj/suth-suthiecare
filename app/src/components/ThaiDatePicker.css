@@ -1,0 +1,521 @@
+@import "../styles/tokens.css";
+
+/* Buddhist-era date field with a calendar popover in the dashboard's
+   rounded, warm look: orange for the chosen day, apricot for the range. */
+.tdp {
+  position: relative;
+  display: inline-flex;
+  font-family: var(--suth-font);
+}
+
+.tdp-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--suth-control-h, 44px);
+  padding: 0 16px 0 13px;
+  line-height: 1.2;
+  border: 1px solid var(--suth-control-line);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  font: inherit;
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--suth-muted);
+  cursor: pointer;
+  transition:
+    border-color 160ms var(--suth-ease-out),
+    background-color 160ms var(--suth-ease-out),
+    box-shadow 160ms var(--suth-ease-out);
+}
+
+.tdp-trigger.has-value {
+  color: var(--suth-ink);
+}
+
+.tdp-trigger svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--suth-action-ink);
+}
+
+.tdp-trigger:hover {
+  border-color: var(--suth-action);
+  background: var(--suth-surface-hover);
+}
+
+.tdp.is-open .tdp-trigger {
+  border-color: var(--suth-action);
+  background: var(--suth-tint);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--suth-action) 22%, transparent);
+}
+
+.tdp-trigger:focus-visible {
+  outline: 3px solid var(--suth-action);
+  outline-offset: 2px;
+}
+
+.tdp-native {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Popover */
+.tdp-pop {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: var(--z-popover, 1100);
+  --tdp-day: 36px;
+  width: 316px;
+  max-width: calc(100vw - 24px);
+  padding: 16px;
+  border: 1px solid var(--suth-line-soft);
+  border-radius: var(--suth-radius-card);
+  background: var(--suth-surface);
+  box-shadow:
+    0 22px 48px -18px rgba(31, 47, 63, 0.35),
+    0 4px 12px rgba(31, 47, 63, 0.06);
+  transform-origin: top left;
+  animation: tdpIn 220ms var(--suth-ease-out);
+}
+
+.tdp.align-end .tdp-pop {
+  left: auto;
+  right: 0;
+  transform-origin: top right;
+}
+
+.tdp.is-up .tdp-pop,
+.sch-date-input > .tdp.is-up.is-icon .tdp-pop {
+  top: auto;
+  bottom: calc(100% + 10px);
+  transform-origin: bottom left;
+}
+
+@keyframes tdpIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.97);
+  }
+}
+
+.tdp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.tdp-month {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 14px;
+  line-height: 1.2;
+  border: 0;
+  border-radius: var(--suth-radius-pill);
+  background: transparent;
+  font: inherit;
+  font-size: var(--suth-fs-md);
+  font-weight: 800;
+  color: var(--suth-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+button.tdp-month {
+  cursor: pointer;
+}
+
+button.tdp-month:hover {
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
+}
+
+button.tdp-month:focus-visible {
+  outline: 3px solid var(--suth-action);
+  outline-offset: 2px;
+}
+
+/* Month and year grids */
+.tdp-choices {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.tdp-choice {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--suth-radius-icon);
+  background: var(--suth-surface-2);
+  font: inherit;
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--suth-ink);
+  cursor: pointer;
+  transition: background-color 140ms var(--suth-ease-out);
+}
+
+.tdp-choice:hover:not(:disabled) {
+  background: var(--suth-tint-strong);
+  color: var(--suth-action-ink);
+}
+
+.tdp-choice.is-selected {
+  background: var(--suth-action);
+  color: var(--suth-on-action);
+}
+
+.tdp-choice:disabled {
+  color: var(--suth-control-line);
+  background: transparent;
+  cursor: not-allowed;
+}
+
+.tdp-choice:focus-visible {
+  outline: 3px solid var(--suth-action);
+  outline-offset: 2px;
+}
+
+/* Time row (withTime) */
+.tdp-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 6px 6px 6px 14px;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface-2);
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  color: var(--suth-ink-2);
+}
+
+.tdp-time svg {
+  width: 16px;
+  height: 16px;
+  color: var(--suth-action-ink);
+}
+
+.tdp-time input.tdp-time__input {
+  margin-left: auto;
+  min-height: 36px;
+  padding: 0 12px;
+  line-height: 1.2;
+  border: 1px solid var(--suth-control-line);
+  border-radius: var(--suth-radius-pill) !important;
+  background: var(--suth-surface);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  color: var(--suth-ink);
+}
+
+/* Icon-only trigger beside a typed field */
+.tdp.is-icon .tdp-trigger {
+  justify-content: center;
+  width: 40px;
+  min-width: 40px;
+  padding: 0;
+  border-radius: var(--suth-radius-icon);
+}
+
+.tdp-trigger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.tdp-nav {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: var(--suth-fs-md);
+  line-height: 1;
+  border: 0;
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface-2);
+  color: var(--suth-ink-2);
+  cursor: pointer;
+  transition: background-color 160ms var(--suth-ease-out);
+}
+
+.tdp-nav:hover {
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
+}
+
+.tdp-nav svg {
+  width: 18px;
+  height: 18px;
+}
+
+.tdp-grid {
+  display: grid;
+  row-gap: 4px;
+}
+
+.tdp-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.tdp-weekday {
+  padding: 2px 0 4px;
+  font-size: var(--suth-fs-caption);
+  font-weight: 800;
+  text-align: center;
+  color: var(--suth-muted);
+}
+
+.tdp-weekday.is-sun {
+  color: var(--suth-danger);
+}
+
+.tdp-cell {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+/* Range band: one soft apricot strip as tall as a day pill. It runs
+   under the start and end pills and closes, rounded, on the edge of
+   the pill where the week or the month breaks. */
+.tdp-cell.in-range::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: var(--tdp-day);
+  transform: translateY(-50%);
+  background: var(--suth-tint);
+}
+
+.tdp-cell.range-start::before {
+  left: 50%;
+}
+
+.tdp-cell.range-end::before {
+  right: 50%;
+}
+
+.tdp-cell.cap-start::before {
+  left: calc(50% - var(--tdp-day) / 2);
+  border-top-left-radius: var(--suth-radius-pill);
+  border-bottom-left-radius: var(--suth-radius-pill);
+}
+
+.tdp-cell.cap-end::before {
+  right: calc(50% - var(--tdp-day) / 2);
+  border-top-right-radius: var(--suth-radius-pill);
+  border-bottom-right-radius: var(--suth-radius-pill);
+}
+
+.tdp-cell.range-start.range-end::before {
+  display: none;
+}
+
+.tdp-day {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: var(--tdp-day);
+  height: var(--tdp-day);
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: var(--suth-radius-pill);
+  background: transparent;
+  font: inherit;
+  font-size: var(--suth-fs-sm);
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--suth-ink);
+  cursor: pointer;
+  transition:
+    background-color 140ms var(--suth-ease-out),
+    color 140ms var(--suth-ease-out);
+}
+
+.tdp-day:hover:not(:disabled):not(.is-selected) {
+  background: var(--suth-tint-strong);
+  color: var(--suth-action-ink);
+}
+
+.tdp-day.is-outside {
+  color: var(--suth-muted);
+}
+
+.tdp-day.is-today::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  margin-left: -2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--suth-action);
+}
+
+/* The other end of the range: a quiet outlined pill. */
+.tdp-day.is-edge {
+  background: var(--suth-surface);
+  box-shadow: inset 0 0 0 2px var(--suth-action);
+  color: var(--suth-action-ink);
+  font-weight: 800;
+}
+
+.tdp-day.is-selected {
+  background: var(--suth-action);
+  color: var(--suth-on-action);
+  font-weight: 800;
+  box-shadow: 0 6px 14px -6px color-mix(in srgb, var(--suth-action) 80%, transparent);
+}
+
+.tdp-day.is-selected::after {
+  background: var(--suth-surface);
+}
+
+.tdp-day:disabled {
+  color: var(--suth-control-line);
+  background: transparent;
+  cursor: not-allowed;
+}
+
+.tdp-day:focus-visible {
+  outline: 3px solid var(--suth-action);
+  outline-offset: 1px;
+}
+
+.tdp-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--suth-line);
+}
+
+.tdp-link,
+.tdp-today {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  line-height: 1.2;
+  border-radius: var(--suth-radius-pill);
+  font: inherit;
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tdp-link svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+.tdp-link {
+  border: 0;
+  background: transparent;
+  color: var(--suth-muted);
+}
+
+.tdp-link:hover:not(:disabled) {
+  background: var(--suth-surface-2);
+  color: var(--suth-ink);
+}
+
+.tdp-today {
+  border: 1px solid var(--suth-tint-line);
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
+}
+
+.tdp-today:hover:not(:disabled) {
+  background: var(--suth-tint-strong);
+}
+
+.tdp-link:disabled,
+.tdp-today:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.tdp-nav:focus-visible,
+.tdp-link:focus-visible,
+.tdp-today:focus-visible {
+  outline: 3px solid var(--suth-action);
+  outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .tdp:not(.is-icon) {
+    flex: 1;
+  }
+
+  .tdp.is-icon .tdp-trigger {
+    width: 44px;
+    min-width: 44px;
+  }
+
+  .tdp-trigger {
+    width: 100%;
+    min-height: 44px;
+    padding: 0 14px;
+    justify-content: center;
+  }
+
+  .tdp-pop {
+    --tdp-day: 40px;
+  }
+
+  .tdp-nav {
+    width: 44px;
+    height: 44px;
+  }
+
+  .tdp-link,
+  .tdp-today {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tdp-pop {
+    animation: none;
+  }
+
+  .tdp-trigger,
+  .tdp-nav,
+  .tdp-day {
+    transition: none;
+  }
+}
+
+/* Phones: the calendar trigger reaches the 44px touch target. */
+@media (max-width: 760px) {
+  .tdp-trigger {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

@@ -19,7 +19,7 @@ export default function SortableBannerRow({ banner, onDelete, onEdit }) {
     transition,
     zIndex: isDragging ? 10 : 1,
     position: "relative",
-    backgroundColor: isDragging ? "#fffaf7" : "white",
+    backgroundColor: isDragging ? "var(--suth-surface-hover)" : "var(--suth-surface)",
     opacity: isDragging ? 0.8 : 1,
     cursor: isDragging ? "grabbing" : "default",
   };

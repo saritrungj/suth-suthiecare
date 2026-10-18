@@ -1,5 +1,5 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
-import { toSafeHtml } from '../../utils/richText.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
+import { toSafeHtml } from "../../utils/richText.js";
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
@@ -202,7 +202,9 @@ export default function ClinicHelpDetail() {
 
   return (
     <div className="hc-clinic-detail-wrapper">
-      <a className="suth-skip-link" href="#public-main">ข้ามไปยังเนื้อหาคำตอบ</a>
+      <a className="suth-skip-link" href="#public-main">
+        ข้ามไปยังเนื้อหาคำตอบ
+      </a>
       <Navbar showBack={true} backText="กลับ" />
 
       {/* ── HERO BANNER ── */}
@@ -210,7 +212,8 @@ export default function ClinicHelpDetail() {
         <div className="hc-user-container hc-clinic-hero-inner">
           {/* กรอบโลโก้คลินิกขนาดลงตัว */}
           <div className="hc-clinic-logo-frame">
-            {selectedClinic.image && selectedClinic.image !== failedClinicImage ? (
+            {selectedClinic.image &&
+            selectedClinic.image !== failedClinicImage ? (
               <img
                 src={selectedClinic.image}
                 alt={selectedClinic.name}
@@ -223,7 +226,6 @@ export default function ClinicHelpDetail() {
 
           {/* บล็อกข้อความชิดซ้ายพร้อมป้ายส้มระบบ */}
           <div className="hc-clinic-text-block">
-
             <h1>{selectedClinic.name}</h1>
             <p>คำแนะนำและคำถามที่พบบ่อยเกี่ยวกับ{selectedClinic.name}</p>
           </div>
@@ -276,19 +278,24 @@ export default function ClinicHelpDetail() {
                   (parseInt(b.display_order) || 0),
               )
               .map((faq) => (
-                <li key={faq.faq_id}><button type="button"
-                  className={`hc-sub-question-item ${selectedFaq?.faq_id === faq.faq_id ? "active" : ""}`}
-                  aria-pressed={selectedFaq?.faq_id === faq.faq_id}
-                  onClick={() => setSelectedFaq(faq)}
-                  style={{
-                    border: "1px solid #f1f5f9",
-                    borderRadius: "10px",
-                    marginBottom: "6px",
-                  }}
-                >
-                  <FiFileText className="sub-q-icon" />
-                  <span className="sub-q-text">{toDisplayText(faq.question)}</span>
-                </button></li>
+                <li key={faq.faq_id}>
+                  <button
+                    type="button"
+                    className={`hc-sub-question-item ${selectedFaq?.faq_id === faq.faq_id ? "active" : ""}`}
+                    aria-pressed={selectedFaq?.faq_id === faq.faq_id}
+                    onClick={() => setSelectedFaq(faq)}
+                    style={{
+                      border: "1px solid #f1f5f9",
+                      borderRadius: "10px",
+                      marginBottom: "6px",
+                    }}
+                  >
+                    <FiFileText className="sub-q-icon" />
+                    <span className="sub-q-text">
+                      {toDisplayText(faq.question)}
+                    </span>
+                  </button>
+                </li>
               ))}
 
             {/* เส้นปะคั่นแบบ Dynamic ระหว่างข้อคำถามเดี่ยว กับกลุ่มที่เป็นโฟลเดอร์หมวดหมู่ */}
@@ -298,7 +305,9 @@ export default function ClinicHelpDetail() {
                 (!f.category_name || f.category_name.trim() === ""),
             ) &&
               clinicCategories.length > 0 && (
-                <li role="presentation" aria-hidden="true"
+                <li
+                  role="presentation"
+                  aria-hidden="true"
                   style={{
                     border: "0",
                     borderTop: "1px dashed #e2e8f0",
@@ -344,14 +353,19 @@ export default function ClinicHelpDetail() {
                   {isCategoryOpen && (
                     <ul className="hc-sidebar-sub-question-list">
                       {catQuestions.map((faq) => (
-                        <li key={faq.faq_id}><button type="button"
-                          className={`hc-sub-question-item ${selectedFaq?.faq_id === faq.faq_id ? "active" : ""}`}
-                  aria-pressed={selectedFaq?.faq_id === faq.faq_id}
-                  onClick={() => setSelectedFaq(faq)}
-                        >
-                          <FiFileText className="sub-q-icon" />
-                          <span className="sub-q-text">{toDisplayText(faq.question)}</span>
-                        </button></li>
+                        <li key={faq.faq_id}>
+                          <button
+                            type="button"
+                            className={`hc-sub-question-item ${selectedFaq?.faq_id === faq.faq_id ? "active" : ""}`}
+                            aria-pressed={selectedFaq?.faq_id === faq.faq_id}
+                            onClick={() => setSelectedFaq(faq)}
+                          >
+                            <FiFileText className="sub-q-icon" />
+                            <span className="sub-q-text">
+                              {toDisplayText(faq.question)}
+                            </span>
+                          </button>
+                        </li>
                       ))}
                     </ul>
                   )}
@@ -382,7 +396,9 @@ export default function ClinicHelpDetail() {
               <div className="hc-answer-body-content">
                 <div
                   className="hc-faq-answer suth-rich-content"
-                  dangerouslySetInnerHTML={{ __html: toSafeHtml(selectedFaq.answer) }}
+                  dangerouslySetInnerHTML={{
+                    __html: toSafeHtml(selectedFaq.answer),
+                  }}
                 />
               </div>
             </div>

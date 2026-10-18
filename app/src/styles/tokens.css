@@ -1,16 +1,18 @@
 /* Shared design tokens for the admin pages (organizations, school module,
-   staff picker). Brand orange #f47932 stays for decoration (selection
-   tints, focus, chart lines); solid buttons with white text use the darker
-   action orange so the text keeps WCAG AA contrast (5.2:1). */
+   staff picker). Brand orange #ff8a3d is the single fill colour (selection
+   tints, focus, chart lines) and solid buttons. Text on orange fills is
+   white (owner decision 16 Oct 2026; about 2.3:1, below WCAG AA). */
 :root {
-  --suth-font: "Sarabun", "Noto Sans Thai", system-ui, sans-serif;
+  --suth-font: "Anuphan", system-ui, sans-serif;
 
   /* Action: solid buttons, current step, links styled as actions */
-  --suth-action: #c2410c;
-  --suth-action-hover: #9a3412;
-  --suth-action-ink: #a9430b; /* orange text on white or tint, 5.9:1 */
-  --suth-accent: #f47932; /* decoration only, never under white text */
-  --suth-focus: #c2410c;
+  --suth-action: #ff8a3d;
+  --suth-action-hover: #f47932;
+  --suth-action-pressed: #e8590c; /* selected/active/pressed state, darker than hover */
+  --suth-action-ink: #b4470c; /* orange text on white or tint, >=5:1 */
+  --suth-accent: #ff8a3d; /* brand fill; text on it is --suth-on-action (white, by owner choice; about 2.3:1) */
+  --suth-focus: #e8650f;
+  --suth-focus-ring: rgba(232, 101, 15, 0.32);
   --suth-on-action: #ffffff;
 
   /* Text: muted holds 4.5:1 on white, canvas, line-soft and tint */
@@ -23,9 +25,9 @@
   --suth-surface: #ffffff;
   --suth-surface-2: #f3f6f8;
   --suth-surface-hover: #fffaf6;
-  --suth-tint: #fff4ec;
-  --suth-tint-strong: #ffeadc;
-  --suth-tint-line: #f5c3a3;
+  --suth-tint: #fff6ef;
+  --suth-tint-strong: #ffe9d9;
+  --suth-tint-line: #ffc59c;
   --suth-line: #d8e0e7;
   --suth-line-soft: #e8edf1;
   --suth-control-line: #afbdc7;
@@ -42,6 +44,23 @@
   --suth-success: #17663a;
   --suth-success-tint: #e4f6eb;
   --suth-neutral-tint: #eef2f6;
+  --suth-info-line: #bad5e8;
+  --suth-success-line: #bfe5cd;
+  /* Saturated 8px markers beside a risk word; never text colours. */
+  --suth-risk-dot-high: #d92d20;
+  --suth-risk-dot-medium: #f79009;
+  --suth-risk-dot-low: #12b76a;
+  /* Care teal: the public assessment and result register (live results,
+     result cards). Not used on admin pages. */
+  --suth-care: #2f7d7a;
+  --suth-care-ink: #1d5a4c;
+  --suth-care-deep: #142738;
+  --suth-care-tint: #e3f1ef;
+  --suth-care-line: #c5d8d5;
+  --suth-care-surface: #f5f8f8;
+  /* Overlays */
+  --suth-scrim: rgba(31, 47, 63, 0.45);
+  --suth-shadow-sm: 0 1px 3px rgba(31, 47, 63, 0.14);
   /* Calm categorical charts; clinical colors remain in the risk tokens. */
   --suth-chart-apricot: #c4814f;
   --suth-chart-teal: #588d88;
@@ -51,11 +70,65 @@
   --suth-chart-blue: #6b8ba6;
   --suth-chart-purple: #6d28d9;
 
+  /* Type scale. Hierarchy comes from weight first; these are the only
+     sizes. Display sizes are for public heroes and KPI numbers. */
+  --suth-fs-caption: 0.75rem; /* counts, badges, micro meta */
+  --suth-fs-label: 0.82rem; /* field labels, table heads, pills */
+  --suth-fs-sm: 0.88rem; /* secondary body, toolbars, pagination */
+  --suth-fs-body: 0.94rem; /* table cells, inputs, buttons */
+  --suth-fs-md: 1rem; /* lead text, public form inputs */
+  --suth-fs-section: 1.15rem; /* section titles (800) */
+  --suth-fs-title: 1.35rem; /* drawer / modal titles */
+  --suth-fs-hero: 1.5rem; /* page title */
+  --suth-fs-display: 2rem; /* KPI numbers, public section heads */
+  --suth-fs-display-lg: clamp(2rem, 4.4vw, 3rem); /* public hero */
+
   /* Sizes */
   --suth-control-h: 44px;
   --suth-button-h: 44px;
-  --suth-radius: 10px;
-  --suth-radius-lg: 14px;
-  --suth-shadow-card: 0 6px 16px rgba(21, 40, 61, 0.08);
+  /* Dashboard kit look (2026-10-17): rounded cards, soft lifted shadows,
+     pill controls. Every admin page reads these. */
+  --suth-radius-xs: 6px; /* checkboxes, tiny markers inside a control */
+  --suth-radius-sm: 8px; /* badges, thumbnails, inline chips */
+  --suth-radius: 12px; /* inputs, textareas, small controls */
+  --suth-radius-icon: 14px; /* icon-only and close buttons */
+  --suth-radius-panel: 16px; /* frames inside a card: tables, menus */
+  --suth-radius-lg: 22px; /* cards, modals, work surfaces */
+  --suth-radius-card: 22px;
+  --suth-radius-inner: 16px;
+  --suth-radius-hero: 28px;
+  --suth-radius-pill: 999px;
+  --suth-shadow-soft:
+    0 10px 28px -14px rgba(31, 47, 63, 0.22), 0 2px 6px rgba(31, 47, 63, 0.04);
+  --suth-shadow-hover:
+    0 16px 34px -14px rgba(180, 71, 12, 0.3), 0 2px 6px rgba(31, 47, 63, 0.05);
+  --suth-shadow-card: var(--suth-shadow-soft);
+  --suth-shadow-pop:
+    0 22px 48px -18px rgba(31, 47, 63, 0.35), 0 4px 12px rgba(31, 47, 63, 0.06);
+  --suth-hero-bg:
+    radial-gradient(
+      120% 140% at 100% 0%,
+      var(--suth-tint-strong) 0%,
+      transparent 55%
+    ),
+    linear-gradient(135deg, #fff9f4 0%, var(--suth-tint) 100%);
+  --suth-hero-line: #fde3d0;
   --suth-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Stacking order, lowest first. Use these instead of raw numbers:
+     anything that opens over the page picks the layer it belongs to. */
+  --z-sticky: 10; /* sticky table heads, footers, sticky modal bars */
+  --z-raised: 50; /* an active card or the control whose menu is open */
+  --z-fab: 90; /* scroll-to-top */
+  --z-sidebar: 100;
+  --z-dropdown: 1000; /* selects, filter menus, row menus, toolbars */
+  --z-popover: 1100; /* date picker, editor tooltips */
+  --z-mobile-topbar: 9000;
+  --z-modal: 10000;
+  --z-modal-nested: 10050; /* a modal opened from a modal, school dialogs */
+  --z-drawer: 10100; /* case drawer: also opens from the student file */
+  --z-mobile-nav: 10200;
+  --z-toast: 10500;
+  --z-alert: 11000; /* SweetAlert confirmations */
+  --z-portal-menu: 12000; /* SearchableSelect menu portalled to body */
 }

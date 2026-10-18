@@ -1,11 +1,13 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import React, { useState, useEffect, useMemo } from "react";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import { FiX, FiDownload, FiCheckSquare, FiSquare } from "react-icons/fi";
 import "./ExportExcelModal.css";
 
-const stripHtml = (html) => { return toDisplayText(html); };
+const stripHtml = (html) => {
+  return toDisplayText(html);
+};
 
 const findAnswerFlexible = (rawAnswers, qTitle) => {
   if (!rawAnswers || !qTitle) return undefined;

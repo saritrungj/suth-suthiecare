@@ -1,9 +1,11 @@
-import { toDisplayText } from '../../../utils/textPresentation.js';
-import { toSafeHtml } from '../../../utils/richText.js';
+import { toDisplayText } from "../../../utils/textPresentation.js";
+import { toSafeHtml } from "../../../utils/richText.js";
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./HistoryResult.css";
+import MemberTypePanel from "../../../components/patient/MemberTypePanel";
+import SchoolHealthPanel from "../../../components/patient/SchoolHealthPanel";
 import Navbar from "../../../components/Navbar";
 
 import {
@@ -147,9 +149,9 @@ const ExpandableText = ({ text, color }) => {
                       ? "600"
                       : "400",
                   color: isMainHeader
-                    ? "#1e40af"
+                    ? "var(--suth-info)"
                     : isSubHeader
-                      ? "#0f766e"
+                      ? "var(--suth-care)"
                       : "inherit",
                   marginLeft: `${level * 20}px`,
                   marginTop: isMainHeader && idx > 0 ? "12px" : "4px",
@@ -199,6 +201,7 @@ export default function HistoryResult() {
   const [masterCases, setMasterCases] = useState([]);
   const [patientProfile, setPatientProfile] = useState(null);
   const [identityMasked, setIdentityMasked] = useState("ยืนยันตัวตนแล้ว");
+  const [memberType, setMemberType] = useState(null);
 
   const [showId, setShowId] = useState(false);
   const [expanded, setExpanded] = useState(null);
@@ -452,6 +455,7 @@ export default function HistoryResult() {
         setMasterCases(mCases);
         setPatientProfile(res.data.profile || getPatientSession().user || null);
         setIdentityMasked(res.data.identity_masked || "ยืนยันตัวตนแล้ว");
+        setMemberType(res.data.member_type || null);
 
         if (fetchedResponses && fetchedResponses.length > 0) {
           const logPromises = fetchedResponses.map((c) =>
@@ -645,7 +649,8 @@ export default function HistoryResult() {
 
   useEffect(() => {
     const requestedId = location.state?.expandResponseId;
-    if (loading || requestedId == null || openedRequestedResponse.current) return;
+    if (loading || requestedId == null || openedRequestedResponse.current)
+      return;
     const record = data.find((item) => String(item.id) === String(requestedId));
     if (!record) return;
     openedRequestedResponse.current = true;
@@ -653,7 +658,9 @@ export default function HistoryResult() {
     loadAnswers(record);
     setActiveInnerTab((previous) => ({
       ...previous,
-      [record.id]: record.summary_data?.score_results?.length ? "scores" : "answers",
+      [record.id]: record.summary_data?.score_results?.length
+        ? "scores"
+        : "answers",
     }));
   }, [data, loading, location.state?.expandResponseId]);
 
@@ -984,7 +991,15 @@ export default function HistoryResult() {
                   <button
                     className="hr-id-toggle"
                     aria-pressed={showId}
-                    aria-label={showId ? (i18n.language === "en" ? "Hide identity status" : "ซ่อนสถานะยืนยันตัวตน") : (i18n.language === "en" ? "Show identity status" : "แสดงสถานะยืนยันตัวตน")}
+                    aria-label={
+                      showId
+                        ? i18n.language === "en"
+                          ? "Hide identity status"
+                          : "ซ่อนสถานะยืนยันตัวตน"
+                        : i18n.language === "en"
+                          ? "Show identity status"
+                          : "แสดงสถานะยืนยันตัวตน"
+                    }
                     onClick={() => setShowId(!showId)}
                   >
                     {showId ? <FiEyeOff size={13} /> : <FiEye size={13} />}
@@ -1017,7 +1032,12 @@ export default function HistoryResult() {
                 </div>
               </div>
 
-              <div className="hr-clinic-badges" style={{ marginTop: 12 }}>
+              <div
+                className={`hr-clinic-badges${
+                  memberType?.type === "school_student" ? " is-hidden" : ""
+                }`}
+                style={{ marginTop: 12 }}
+              >
                 {Object.values(CLINIC_INFO)
                   .filter(
                     (c) =>
@@ -1037,9 +1057,9 @@ export default function HistoryResult() {
                                 border: `1px solid ${clinic.border}`,
                               }
                             : {
-                                backgroundColor: "rgba(255,255,255,0.1)",
-                                color: "rgba(255,255,255,0.5)",
-                                border: "1px dashed rgba(255,255,255,0.3)",
+                                backgroundColor: "color-mix(in srgb, var(--suth-surface) 10%, transparent)",
+                                color: "color-mix(in srgb, var(--suth-on-action) 50%, transparent)",
+                                border: "1px dashed color-mix(in srgb, var(--suth-surface) 30%, transparent)",
                               }
                         }
                       >
@@ -1121,8 +1141,26 @@ export default function HistoryResult() {
           </div>
         </div>
 
-        {/* แบนเนอร์แนะนำดาวน์โหลดแอป */}
-        <div className="hr-suth-promo-banner">
+        {/* The member's own type: school, university or general. */}
+        {memberType && (
+          <MemberTypePanel
+            memberType={memberType}
+            language={i18n.language}
+            onChange={setMemberType}
+          />
+        )}
+
+        {/* School students only: their own physical health and its trends. */}
+        {memberType?.type === "school_student" && (
+          <SchoolHealthPanel language={i18n.language} />
+        )}
+
+        {/* แบนเนอร์แนะนำดาวน์โหลดแอป: hospital app, not shown to school students */}
+        <div
+          className={`hr-suth-promo-banner${
+            memberType?.type === "school_student" ? " is-hidden" : ""
+          }`}
+        >
           {/* ฝั่งซ้าย */}
           <div className="promo-left">
             <img
@@ -1352,7 +1390,7 @@ export default function HistoryResult() {
                                 : "-"}
                             </span>
                             <span
-                              style={{ display: "block", color: "#94a3b8" }}
+                              style={{ display: "block", color: "var(--suth-muted)" }}
                             >
                               {displayHeight && displayHeight !== "-"
                                 ? `${displayHeight} cm`
@@ -1415,7 +1453,7 @@ export default function HistoryResult() {
                           className="hr-advice-item"
                           style={{
                             borderLeftColor: cInfo.color,
-                            backgroundColor: "rgba(255,255,255,0.7)",
+                            backgroundColor: "color-mix(in srgb, var(--suth-surface) 70%, transparent)",
                           }}
                         >
                           <ExpandableText
@@ -1490,7 +1528,7 @@ export default function HistoryResult() {
                       ? {
                           backgroundColor: c.color,
                           borderColor: c.color,
-                          color: "white",
+                          color: "var(--suth-on-action)",
                         }
                       : {}
                   }
@@ -1671,8 +1709,8 @@ export default function HistoryResult() {
                           display: "flex",
                           gap: "8px",
                           padding: "12px 20px",
-                          background: "#f8fafc",
-                          borderBottom: "1px solid #e2e8f0",
+                          background: "var(--suth-canvas)",
+                          borderBottom: "1px solid var(--suth-line-soft)",
                         }}
                       >
                         {scoreResults.length > 0 && (
@@ -1685,17 +1723,17 @@ export default function HistoryResult() {
                             }
                             style={{
                               padding: "6px 12px",
-                              borderRadius: "8px",
-                              fontSize: "13.5px",
+                              borderRadius: "var(--suth-radius-sm)",
+                              fontSize: "var(--suth-fs-label)",
                               fontWeight: "bold",
                               border: "none",
                               cursor: "pointer",
                               background:
                                 currentTab === "scores"
-                                  ? "#ffffff"
+                                  ? "var(--suth-surface)"
                                   : "transparent",
                               color:
-                                currentTab === "scores" ? "#2563eb" : "#64748b",
+                                currentTab === "scores" ? "var(--suth-info)" : "var(--suth-muted)",
                               boxShadow:
                                 currentTab === "scores"
                                   ? "0 1px 3px rgba(0,0,0,0.1)"
@@ -1714,17 +1752,17 @@ export default function HistoryResult() {
                           }
                           style={{
                             padding: "6px 12px",
-                            borderRadius: "8px",
-                            fontSize: "13.5px",
+                            borderRadius: "var(--suth-radius-sm)",
+                            fontSize: "var(--suth-fs-label)",
                             fontWeight: "bold",
                             border: "none",
                             cursor: "pointer",
                             background:
                               currentTab === "answers"
-                                ? "#ffffff"
+                                ? "var(--suth-surface)"
                                 : "transparent",
                             color:
-                              currentTab === "answers" ? "#10b981" : "#64748b",
+                              currentTab === "answers" ? "var(--suth-care)" : "var(--suth-muted)",
                             boxShadow:
                               currentTab === "answers"
                                 ? "0 1px 3px rgba(0,0,0,0.1)"
@@ -1742,17 +1780,17 @@ export default function HistoryResult() {
                           }
                           style={{
                             padding: "6px 12px",
-                            borderRadius: "8px",
-                            fontSize: "13.5px",
+                            borderRadius: "var(--suth-radius-sm)",
+                            fontSize: "var(--suth-fs-label)",
                             fontWeight: "bold",
                             border: "none",
                             cursor: "pointer",
                             background:
                               currentTab === "editable"
-                                ? "#ffffff"
+                                ? "var(--suth-surface)"
                                 : "transparent",
                             color:
-                              currentTab === "editable" ? "#f59e0b" : "#64748b",
+                              currentTab === "editable" ? "var(--suth-action)" : "var(--suth-muted)",
                             boxShadow:
                               currentTab === "editable"
                                 ? "0 1px 3px rgba(0,0,0,0.1)"
@@ -1774,11 +1812,11 @@ export default function HistoryResult() {
                               <div
                                 key={i}
                                 className="hr-score-chip"
-                                style={{ borderColor: s.color || "#e2e8f0" }}
+                                style={{ borderColor: s.color || "var(--suth-line-soft)" }}
                               >
                                 <span
                                   className="hr-score-big"
-                                  style={{ color: s.color || "#334155" }}
+                                  style={{ color: s.color || "var(--suth-ink-2)" }}
                                 >
                                   {s.score}
                                 </span>
@@ -2110,7 +2148,9 @@ export default function HistoryResult() {
                                                       <div
                                                         dangerouslySetInnerHTML={{
                                                           __html:
-                                                            toSafeHtml(displayRowTitle),
+                                                            toSafeHtml(
+                                                              displayRowTitle,
+                                                            ),
                                                         }}
                                                       />
                                                     ) : (
@@ -2136,10 +2176,9 @@ export default function HistoryResult() {
                                         style={{
                                           marginTop: "12px",
                                           padding: "10px 14px",
-                                          background:
-                                            `${scoreObj.color}15` || "#f1f5f9",
-                                          borderLeft: `4px solid ${scoreObj.color || "#94a3b8"}`,
-                                          borderRadius: "6px",
+                                          background: `color-mix(in srgb, ${scoreObj.color || "var(--suth-control-line)"} 8%, var(--suth-surface))`,
+                                          border: `1px solid color-mix(in srgb, ${scoreObj.color || "var(--suth-control-line)"} 35%, var(--suth-line))`,
+                                          borderRadius: "var(--suth-radius-sm)",
                                           display: "flex",
                                           alignItems: "center",
                                           gap: "10px",
@@ -2148,16 +2187,16 @@ export default function HistoryResult() {
                                         <div
                                           style={{
                                             fontWeight: "bold",
-                                            fontSize: "18px",
-                                            color: scoreObj.color || "#334155",
+                                            fontSize: "var(--suth-fs-section)",
+                                            color: scoreObj.color || "var(--suth-ink-2)",
                                           }}
                                         >
                                           {scoreObj.score}
                                         </div>
                                         <div
                                           style={{
-                                            fontSize: "13.5px",
-                                            color: "#475569",
+                                            fontSize: "var(--suth-fs-label)",
+                                            color: "var(--suth-ink-2)",
                                           }}
                                         >
                                           <strong>

@@ -30,6 +30,8 @@ import {
   showSuccessAlert,
   showSuccessToast,
 } from "../../utils/alerts";
+import { PageHero } from "../../components/dashboard/DashboardKit";
+import DataPanel from "../../components/table/DataPanel";
 
 export default function BannerManagement() {
   const [showModal, setShowModal] = useState(false);
@@ -79,8 +81,8 @@ export default function BannerManagement() {
       text: "หากลบแล้วจะไม่สามารถกู้คืนข้อมูลได้!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      cancelButtonColor: "#94a3b8",
+      confirmButtonColor: "var(--suth-risk-dot-high)",
+      cancelButtonColor: "var(--suth-control-line)",
       confirmButtonText: "ใช่, ลบเลย!",
       cancelButtonText: "ยกเลิก",
       reverseButtons: true,
@@ -135,28 +137,31 @@ export default function BannerManagement() {
   return (
     <div className="bm-wrapper">
       <div className="bm-page">
-        <div className="bm-header">
-          <h2 className="bm-title">จัดการภาพแบนเนอร์</h2>
-          <button
-            className="bm-add-btn"
-            onClick={() => {
-              if (isLimitReached) {
-                showInfoAlert({
-                  title: "เพิ่มแบนเนอร์ไม่ได้",
-                  text: "คุณมีแบนเนอร์ครบ 5 รูปแล้ว กรุณาลบแบนเนอร์เก่าออกก่อนเพิ่มรูปใหม่",
-                });
-                return;
-              }
-              setShowModal(true);
-            }}
-            style={{
-              opacity: isLimitReached ? 0.5 : 1,
-              cursor: isLimitReached ? "not-allowed" : "pointer",
-            }}
-          >
-            <FiPlus /> เพิ่มแบนเนอร์ใหม่
-          </button>
-        </div>
+        <PageHero
+          title="จัดการภาพแบนเนอร์"
+          description="ภาพแบนเนอร์ที่หมุนเวียนบนหน้าแรกของเว็บไซต์"
+          actions={
+            <button
+              className="bm-add-btn"
+              onClick={() => {
+                if (isLimitReached) {
+                  showInfoAlert({
+                    title: "เพิ่มแบนเนอร์ไม่ได้",
+                    text: "คุณมีแบนเนอร์ครบ 5 รูปแล้ว กรุณาลบแบนเนอร์เก่าออกก่อนเพิ่มรูปใหม่",
+                  });
+                  return;
+                }
+                setShowModal(true);
+              }}
+              style={{
+                opacity: isLimitReached ? 0.5 : 1,
+                cursor: isLimitReached ? "not-allowed" : "pointer",
+              }}
+            >
+              <FiPlus /> เพิ่มแบนเนอร์ใหม่
+            </button>
+          }
+        />
 
         {isLoading ? (
           <div className="bm-loading-state">
@@ -167,48 +172,27 @@ export default function BannerManagement() {
           <div className="bm-content-grid">
             {/* --- คอลัมน์ซ้าย: ตารางจัดการแบนเนอร์ --- */}
             <div className="bm-table-container">
-              <div className="bm-table-card">
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: "25px",
-                    flexWrap: "wrap",
-                    gap: "10px",
-                  }}
-                >
-                  <h3
-                    style={{
-                      margin: 0,
-                      fontWeight: "800",
-                      color: "#334155",
-                      fontSize: "20px",
-                    }}
-                  >
-                    รายการภาพ Banner ทั้งหมด
-                  </h3>
-                  <span
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      fontSize: "13px",
-                      color: "#ea580c",
-                      background: "#fffcf9",
-                      border: "1.5px dashed #fed7aa",
-                      padding: "8px 18px",
-                      borderRadius: "100px",
-                      fontWeight: "700",
-                      boxShadow: "0 4px 12px rgba(244, 121, 50, 0.08)",
-                    }}
-                  >
-                    <FiInfo size={16} strokeWidth={2.5} />
-                    สามารถเพิ่มรูปได้สูงสุด 5 รูป ({banners.length}/5)
+              <DataPanel
+                as="div"
+                className="bm-table-card"
+                tabIndex={0}
+                role="region"
+                aria-label="ตารางจัดการภาพแบนเนอร์"
+              >
+                <div className="dz-section__head bm-list-head">
+                  <div>
+                    <h2 className="dz-section__title">
+                      รายการภาพ Banner ทั้งหมด
+                    </h2>
+                    <p className="dz-section__desc">
+                      ลากแถวเพื่อเรียงลำดับแบนเนอร์ —
+                      ลำดับจะแสดงผลบนหน้าเว็บทันที
+                    </p>
+                  </div>
+                  <span className="bm-limit-chip">
+                    <FiInfo aria-hidden="true" />
+                    เพิ่มได้สูงสุด 5 รูป ({banners.length}/5)
                   </span>
-                  <p className="bm-header-hint">
-                    ลากแถวเพื่อเรียงลำดับคลินิก — ลำดับจะแสดงผลบนหน้าเว็บทันที
-                  </p>
                 </div>
                 <DndContext
                   collisionDetection={closestCenter}
@@ -218,7 +202,10 @@ export default function BannerManagement() {
                     items={banners.map((b) => b.id)}
                     strategy={verticalListSortingStrategy}
                   >
-                    <table>
+                    <table
+                      className="admin-data-table"
+                      aria-label="รายการภาพแบนเนอร์"
+                    >
                       <thead>
                         <tr>
                           <th className="bm-col-image">ภาพ</th>
@@ -254,7 +241,7 @@ export default function BannerManagement() {
                     </table>
                   </SortableContext>
                 </DndContext>
-              </div>
+              </DataPanel>
             </div>
 
             {/* --- คอลัมน์ขวา: พรีวิวแบนเนอร์ --- */}

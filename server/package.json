@@ -30,7 +30,12 @@
     "configure:operational-defaults": "node scripts/configureOperationalDefaults.js",
     "backfill:persons": "node scripts/backfillPersons.js",
     "seed:school-demo": "node scripts/seedSchoolDemo.mjs",
-    "migrate:organization-permissions": "node scripts/migrateOrganizationPermissions.js"
+    "seed:school-roles-demo": "node scripts/seedSchoolRoleDemo.js",
+    "verify:school-roles-demo": "node scripts/seedSchoolRoleDemo.js --verify-only && node scripts/verifySchoolRoleDemo.js",
+    "migrate:organization-permissions": "node scripts/migrateOrganizationPermissions.js",
+    "migrate:roles-page-only": "node scripts/migrateRolesPageOnly.js",
+    "migrate:patient-member-types": "node scripts/migratePatientMemberTypes.js",
+    "backfill:member-types": "node scripts/backfillMemberTypes.js"
   },
   "dependencies": {
     "axios": "^1.13.6",

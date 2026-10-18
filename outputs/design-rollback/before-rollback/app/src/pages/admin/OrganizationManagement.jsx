@@ -1,6 +1,11 @@
-import { PageHeader as UiPageHeader, Button as UiButton, TextInput as UiTextInput, TextArea as UiTextArea } from '../../components/ui/index.jsx';
-import SearchableSelect from '../../components/SearchableSelect';
-import { toDisplayText } from '../../utils/textPresentation.js';
+import {
+  PageHeader as UiPageHeader,
+  Button as UiButton,
+  TextInput as UiTextInput,
+  TextArea as UiTextArea,
+} from "../../components/ui/index.jsx";
+import SearchableSelect from "../../components/SearchableSelect";
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { usePageExport } from "../../components/ExcelExport";
 import OrganizationServiceSettings from "../../components/OrganizationServiceSettings";
 import OrganizationRolePermissions from "../../components/OrganizationRolePermissions";
@@ -48,7 +53,15 @@ export default function OrganizationManagement() {
   const [roles, setRoles] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   // "view" an existing organization, or create a "main" one or a "unit".
-  usePageExport({title:"หน่วยงาน",sources:[{resource:"organizations"},...(selectedId?[{resource:"organization_members",id:selectedId}]:[])]});
+  usePageExport({
+    title: "หน่วยงาน",
+    sources: [
+      { resource: "organizations" },
+      ...(selectedId
+        ? [{ resource: "organization_members", id: selectedId }]
+        : []),
+    ],
+  });
   const [mode, setMode] = useState("view");
   const [form, setForm] = useState(blankForm);
   const [members, setMembers] = useState([]);
@@ -314,14 +327,16 @@ export default function OrganizationManagement() {
             </p>
           </div>
           <div className="org-header-actions">
-            <UiButton variant="primary"
+            <UiButton
+              variant="primary"
               className="org-btn"
               type="button"
               onClick={() => startCreate("main")}
             >
               + หน่วยงานหลัก
             </UiButton>
-            <UiButton variant="secondary"
+            <UiButton
+              variant="secondary"
               className="org-btn-secondary"
               type="button"
               disabled={!mains.length}
@@ -520,7 +535,8 @@ export default function OrganizationManagement() {
                 )}
                 <div className="org-form-actions">
                   {mode !== "view" && (
-                    <UiButton variant="secondary"
+                    <UiButton
+                      variant="secondary"
                       type="button"
                       className="org-btn-secondary"
                       onClick={() => setMode("view")}
@@ -528,7 +544,12 @@ export default function OrganizationManagement() {
                       ยกเลิก
                     </UiButton>
                   )}
-                  <UiButton variant="primary" type="submit" className="org-btn" disabled={saving}>
+                  <UiButton
+                    variant="primary"
+                    type="submit"
+                    className="org-btn"
+                    disabled={saving}
+                  >
                     {saving ? "กำลังบันทึก…" : "บันทึกหน่วยงาน"}
                   </UiButton>
                 </div>
@@ -545,7 +566,8 @@ export default function OrganizationManagement() {
                       เพิ่มเจ้าหน้าที่ที่หน่วยงานย่อยที่ทำงานจริง
                     </p>
                   </div>
-                  <UiButton variant="primary"
+                  <UiButton
+                    variant="primary"
                     type="button"
                     className="org-btn"
                     disabled={!selected.org_type}
@@ -577,7 +599,8 @@ export default function OrganizationManagement() {
                         >
                           {child.status === "active" ? "ใช้งาน" : "ปิด"}
                         </span>
-                        <UiButton variant="secondary"
+                        <UiButton
+                          variant="secondary"
                           type="button"
                           className="org-btn-secondary"
                           onClick={() => select(child.id)}
@@ -704,7 +727,8 @@ function MemberSection({
           สมาชิก <span className="org-count">{members.length}</span>
         </h2>
         {!adding && (
-          <UiButton variant="primary"
+          <UiButton
+            variant="primary"
             type="button"
             className="org-btn"
             onClick={() => setAdding(true)}
@@ -740,14 +764,17 @@ function MemberSection({
               </SearchableSelect>
             </label>
             <div className="org-add-panel-actions">
-              <UiButton variant="secondary"
+              <UiButton
+                variant="secondary"
                 type="button"
                 className="org-btn-secondary"
                 onClick={closeAdd}
               >
                 ยกเลิก
               </UiButton>
-              <UiButton variant="primary" type="submit"
+              <UiButton
+                variant="primary"
+                type="submit"
                 className="org-btn"
                 disabled={saving || !picked.size || !roleId}
               >
@@ -807,7 +834,9 @@ function MemberSection({
                   </option>
                 ))}
               </SearchableSelect>
-              <UiButton variant="danger" size="icon"
+              <UiButton
+                variant="danger"
+                size="icon"
                 type="button"
                 className="org-icon-btn org-icon-btn--danger"
                 aria-label={`ถอด ${member.username} ออกจากหน่วยงาน`}

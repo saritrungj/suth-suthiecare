@@ -12,6 +12,8 @@ test("dashboard applies the selected date range to statistics and recent cases",
       "suth_user",
       JSON.stringify({ id: 1, username: "e2e-admin", role_id: 1 }),
     );
+    // One organization: "all" now shows the cross-organization overview.
+    localStorage.setItem("suth_active_organization_1", "1");
   });
   await page.route("**/api/**", async (route) => {
     const request = route.request();
@@ -100,9 +102,14 @@ test("dashboard applies the selected date range to statistics and recent cases",
 
   await page.goto("/admin/dashboard");
   await expect.poll(() => pageErrors).toEqual([]);
+  // KPI tiles (dashboard kit): high risk, waiting contact, new, active, closed.
   await expect
-    .poll(async () => page.locator(".stat-modern-value").allTextContents())
-    .toEqual(["07", "02", "01", "03"]);
+    .poll(async () =>
+      (await page.locator(".dz-kpi__value").allTextContents()).map((text) =>
+        text.replace(/\D/g, ""),
+      ),
+    )
+    .toEqual(["1", "0", "2", "7", "3"]);
   await expect(page.locator('input[type="date"]').first()).toBeVisible();
   const dateInputs = page.locator('input[type="date"]');
   const expectedDefaultRange = await page.evaluate(() => {

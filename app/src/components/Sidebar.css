@@ -1,65 +1,63 @@
-@import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@400; 500; 600; 700&display=swap"); /* ═══════════════════════════════════════════
+/* ═══════════════════════════════════════════
    SIDEBAR
 ═══════════════════════════════════════════ */
 .organization-switcher {
   margin: 0 0.75rem 1rem;
   padding: 0.7rem;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 12px;
-  background: rgba(107, 43, 8, 0.19);
+  border: 1px solid color-mix(in srgb, var(--suth-surface) 28%, transparent);
+  border-radius: var(--suth-radius);
+  background: color-mix(in srgb, var(--suth-warning) 19%, transparent);
   transition: background-color 180ms ease-out;
 }
 .organization-switcher:hover {
-  background: rgba(107, 43, 8, 0.29);
+  background: color-mix(in srgb, var(--suth-warning) 29%, transparent);
 }
 .organization-switcher label {
   display: flex;
   align-items: center;
   gap: 6px;
   margin: 0 0 7px;
-  color: rgba(255, 255, 255, 0.88);
-  font-size: 0.76rem;
+  color: color-mix(in srgb, var(--suth-on-action) 92%, transparent);
+  font-size: var(--suth-fs-caption);
   font-weight: 700;
 }
 .organization-switcher label::before {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #9be2c3;
-  box-shadow: 0 0 0 3px rgba(155, 226, 195, 0.18);
+  background: var(--suth-success-line);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--suth-success) 18%, transparent);
   content: "";
 }
 .organization-switcher select {
   width: 100%;
   min-height: 38px;
   padding: 7px 30px 7px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 8px;
-  background: #fff;
-  color: #344a5f;
-  font:
-    700 0.82rem "Noto Sans Thai",
-    sans-serif;
+  border: 1px solid rgba(31, 47, 63, 0.35);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  font: 700 0.82rem var(--suth-font);
   cursor: pointer;
   outline: 0;
 }
 .organization-switcher select:focus-visible {
-  outline: 3px solid rgba(255, 255, 255, 0.55);
+  outline: 3px solid rgba(31, 47, 63, 0.55);
   outline-offset: 2px;
 }
 .organization-switcher option {
-  background: #fff;
-  color: #1f2f3f;
+  background: var(--suth-surface);
+  color: var(--suth-ink);
 }
 .organization-switcher optgroup {
-  color: #8d3809;
+  color: var(--suth-warning);
   font-weight: 800;
 }
 .organization-switcher-detail {
   display: block;
   margin-top: 6px;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.72rem;
+  color: color-mix(in srgb, var(--suth-on-action) 92%, transparent);
+  font-size: var(--suth-fs-caption);
   line-height: 1.4;
 }
 .sidebar.collapsed .organization-switcher {
@@ -68,15 +66,15 @@
 .sidebar {
   width: 280px;
   min-width: 280px;
-  background: linear-gradient(180deg, #ff8a2a 0%, #e36414 50%, #c94e07 100%);
-  color: #fff;
+  background: linear-gradient(180deg, var(--suth-accent) 0%, var(--suth-action) 100%);
+  color: var(--suth-on-action);
   height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: "Noto Sans Thai", sans-serif;
+  font-family: var(--suth-font);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: var(--z-sidebar);
   overflow: visible;
   flex-shrink: 0;
   transition:
@@ -135,22 +133,22 @@
   right: -16px;
   width: 32px;
   height: 32px;
-  background: #ffffff;
-  border: 1px solid #d6d6d6;
+  background: var(--suth-surface);
+  border: 1px solid var(--suth-line);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  z-index: 999;
+  box-shadow: 0 2px 8px rgba(31, 47, 63, 0.15);
+  z-index: calc(var(--z-sidebar) + 1);
   transition:
     background 0.2s ease,
     transform 0.2s ease;
   padding: 0;
 }
 .toggle-btn:hover {
-  background: #f4f4f4;
+  background: var(--suth-surface-2);
   transform: translateY(-50%) scale(1.05);
 }
 /* ═══════════════════════════════════════════
@@ -169,7 +167,7 @@
 /* 🟢 ตั้งค่าสำหรับ Firefox */
 .menu {
   scrollbar-width: thin; /* ทำให้ Scrollbar บางลง */
-  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  scrollbar-color: rgba(31, 47, 63, 0.3) transparent;
 }
 /* 🟢 ตั้งค่าสำหรับ Chrome, Safari, Edge */
 .menu::-webkit-scrollbar {
@@ -179,21 +177,21 @@
   background: transparent; /* พื้นหลังโปร่งใส เนียนไปกับ Sidebar */
 }
 .menu::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3); /* สี Scrollbar เป็นสีขาวจางๆ */
-  border-radius: 10px; /* ทำให้ปลายมน */
+  background: rgba(31, 47, 63, 0.3); /* สี Scrollbar เป็นสีขาวจางๆ */
+  border-radius: var(--suth-radius); /* ทำให้ปลายมน */
 }
 .menu::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5); /* สว่างขึ้นเล็กน้อยตอนเอาเมาส์ชี้ */
+  background: rgba(31, 47, 63, 0.5); /* สว่างขึ้นเล็กน้อยตอนเอาเมาส์ชี้ */
 }
 .menu-item {
   display: flex;
   align-items: center;
-  color: rgba(255, 255, 255, 0.9);
+  color: color-mix(in srgb, var(--suth-on-action) 92%, transparent);
   padding: 0 1rem;
   min-height: 48px;
-  border-radius: 12px;
+  border-radius: var(--suth-radius);
   text-decoration: none;
-  font-size: 0.95rem;
+  font-size: var(--suth-fs-body);
   font-weight: 500;
   white-space: nowrap;
   transition: all 0.2s ease;
@@ -201,15 +199,22 @@
   line-height: 1.6;
 }
 .menu-item:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
+  background: color-mix(in srgb, var(--suth-surface) 15%, transparent);
+  color: var(--suth-on-action);
 }
-.menu-item.active {
-  background: linear-gradient(135deg, #2f8f94 0%, #22686c 100%);
-  color: #ffffff;
+/* The current page is a white pill with orange ink: a selected dashboard
+   pill turned inside out. */
+.menu-item.active,
+.submenu-item.active {
+  background: var(--suth-surface);
+  color: var(--suth-action-ink);
   font-weight: 600;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  border-radius: 12px;
+  box-shadow: 0 8px 18px -10px
+    color-mix(in srgb, var(--suth-action-ink) 70%, transparent);
+}
+.menu-item,
+.submenu-item {
+  border-radius: var(--suth-radius-icon);
 }
 .menu-item:active {
   transform: scale(0.98);
@@ -245,11 +250,11 @@ button.menu-item {
 }
 .menu-header-label {
   padding: 1.2rem 1.2rem 0.4rem;
-  font-size: 0.82rem;
+  font-size: var(--suth-fs-label);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: rgba(255, 255, 255, 0.8);
+  color: color-mix(in srgb, var(--suth-on-action) 92%, transparent);
   transition: opacity 0.3s ease;
 }
 .menu-header-label:first-of-type {
@@ -263,14 +268,14 @@ button.menu-item {
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  border-top: 1px solid rgba(255, 255, 255, 0.28);
-  color: #ffffff;
+  border-top: 1px solid color-mix(in srgb, var(--suth-surface) 28%, transparent);
+  color: var(--suth-on-action);
 }
 .menu-header-hint {
   display: block;
   flex-basis: 100%;
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 0.72rem;
+  color: color-mix(in srgb, var(--suth-on-action) 92%, transparent);
+  font-size: var(--suth-fs-caption);
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
@@ -311,23 +316,17 @@ button.menu-item {
   align-items: center;
   gap: 12px;
   padding: 0.65rem 1rem 0.65rem 3.4rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: color-mix(in srgb, var(--suth-on-action) 92%, transparent);
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: var(--suth-fs-sm);
   font-weight: 400;
-  border-radius: 12px;
+  border-radius: var(--suth-radius);
   transition: all 0.2s ease;
   margin: 2px 0;
 }
 .submenu-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-.submenu-item.active {
-  background: linear-gradient(135deg, #2d7d81 0%, #236366 100%);
-  color: #ffffff;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: color-mix(in srgb, var(--suth-surface) 10%, transparent);
+  color: var(--suth-on-action);
 }
 .sub-icon {
   display: flex;
@@ -336,14 +335,14 @@ button.menu-item {
 }
 .submenu-item.active .sub-icon {
   opacity: 1;
-  color: #4fd1d9;
+  color: var(--suth-action-ink);
 }
 .sidebar.collapsed .submenu,
 .sidebar.collapsed .arrow {
   display: none;
 }
 .sidebar.collapsed .menu-group .menu-item.active {
-  background: linear-gradient(135deg, #2f8f94 0%, #22686c 100%);
+  background: var(--suth-action-pressed);
 }
 .icon {
   width: 36px;
@@ -352,14 +351,14 @@ button.menu-item {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 1.25rem;
+  font-size: var(--suth-fs-title);
   margin-right: 0.75rem;
-  transition: margin 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: none;
 }
-.label {
+.sidebar .label {
   opacity: 1;
   max-width: 200px;
-  color: white !important;
+  color: var(--suth-on-action);
   display: flex;
   align-items: center;
   padding-bottom: 2px;
@@ -388,12 +387,12 @@ button.menu-item {
   left: calc(100% + 14px);
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(30, 30, 30, 0.88);
-  color: #fff;
-  font-size: 13px;
+  background: rgba(31, 47, 63, 0.88);
+  color: var(--suth-on-action);
+  font-size: var(--suth-fs-label);
   font-weight: 500;
   padding: 5px 12px;
-  border-radius: 12px;
+  border-radius: var(--suth-radius);
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
@@ -416,14 +415,14 @@ button.menu-item::-moz-focus-inner {
 .sidebar-bottom {
   padding: 0.75rem;
   margin-top: auto;
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: 1px solid color-mix(in srgb, var(--suth-surface) 15%, transparent);
 }
 .logout-btn {
-  color: rgba(255, 255, 255, 0.9);
+  color: color-mix(in srgb, var(--suth-on-action) 92%, transparent);
 }
 .logout-btn:hover {
-  background: rgba(255, 80, 80, 0.25) !important;
-  color: #ffffff;
+  background: color-mix(in srgb, var(--suth-risk-dot-high) 25%, transparent) !important;
+  color: var(--suth-on-action);
 }
 .sidebar.collapsed .logout-btn {
   justify-content: center;
@@ -471,6 +470,14 @@ button.menu-item::-moz-focus-inner {
     padding-top: 65px !important;
     padding-bottom: 0 !important;
   }
+  /* The admin shell sits under that 65px bar, so it is that much shorter
+     than the screen; at full height the last 65px of every admin page
+     (pagination, last rows) fell below the window. AdminLayout sets the
+     height inline, hence !important. */
+  .admin-shell,
+  .admin-shell-content {
+    height: calc(100dvh - 65px) !important;
+  }
   /* แถบ Header สีขาวด้านบนสุด */
   .mobile-header-bar {
     display: flex !important;
@@ -481,9 +488,9 @@ button.menu-item::-moz-focus-inner {
     left: 0;
     right: 0;
     height: 65px;
-    background: #ffffff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    z-index: 9998;
+    background: var(--suth-surface);
+    box-shadow: 0 2px 10px rgba(31, 47, 63, 0.08);
+    z-index: var(--z-mobile-topbar);
     padding: 0 15px;
   }
   .mobile-hamburger-btn {
@@ -511,7 +518,7 @@ button.menu-item::-moz-focus-inner {
     min-width: 24px !important;
     min-height: 24px !important;
     display: block !important;
-    stroke: #ffffff !important;
+    stroke: var(--suth-on-action) !important;
   }
   .mobile-hamburger-btn:active {
     transform: scale(0.9);
@@ -528,19 +535,18 @@ button.menu-item::-moz-focus-inner {
     height: 100dvh !important;
     width: 280px !important;
     min-width: 280px !important;
-    z-index: 100000 !important;
+    z-index: var(--z-mobile-nav) !important;
     flex-direction: column !important;
     background: linear-gradient(
       180deg,
-      #ff8a2a 0%,
-      #e36414 50%,
-      #c94e07 100%
+      var(--suth-accent) 0%,
+      var(--suth-action) 100%
     ) !important;
     border-radius: 0 !important;
     padding: 0 !important;
     transform: translateX(-100%) !important;
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 4px 0 25px rgba(31, 47, 63, 0.2) !important;
   }
   .sidebar.mobile-open {
     transform: translateX(0) !important;
@@ -554,19 +560,19 @@ button.menu-item::-moz-focus-inner {
     left: auto !important;
     width: 44px !important;
     height: 44px !important; /* ขยายขนาดให้กดง่าย */
-    background: rgba(255, 255, 255, 0.2) !important; /* พื้นหลังวงกลมสว่างๆ */
+    background: color-mix(in srgb, var(--suth-surface) 20%, transparent) !important; /* พื้นหลังวงกลมสว่างๆ */
     border-radius: 50% !important;
-    border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
+    border: 1.5px solid color-mix(in srgb, var(--suth-surface) 40%, transparent) !important;
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer !important;
-    z-index: 100001 !important;
-    color: #ffffff !important; /* บังคับไอคอนสีขาว */
+    z-index: calc(var(--z-mobile-nav) + 1) !important;
+    color: var(--suth-on-action) !important; /* บังคับไอคอนสีขาว */
     transition: all 0.2s ease;
   }
   .mobile-close-btn:active {
     transform: scale(0.9);
-    background: rgba(255, 255, 255, 0.35) !important;
+    background: color-mix(in srgb, var(--suth-surface) 35%, transparent) !important;
   }
   .sidebar .top,
   .sidebar.collapsed .top {
@@ -598,8 +604,8 @@ button.menu-item::-moz-focus-inner {
     position: relative !important;
     z-index: 2 !important;
     line-height: 1.2 !important;
-    font-size: 13px !important;
-    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: var(--suth-fs-label) !important;
+    color: color-mix(in srgb, var(--suth-on-action) 92%, transparent) !important;
   }
   .sidebar .menu,
   .sidebar.collapsed .menu {
@@ -625,20 +631,20 @@ button.menu-item::-moz-focus-inner {
     background: transparent !important;
     width: 100% !important;
     box-sizing: border-box !important;
-    border-radius: 12px !important;
+    border-radius: var(--suth-radius) !important;
     position: relative !important;
     z-index: 1 !important;
     transform: none !important;
   }
   .sidebar .menu-item.active,
   .sidebar.collapsed .menu-item.active {
-    background: linear-gradient(135deg, #2f8f94 0%, #22686c 100%) !important;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
+    background: var(--suth-surface) !important;
+    color: var(--suth-action-ink) !important;
   }
   .sidebar .icon,
   .sidebar.collapsed .icon {
     margin: 0 0.75rem 0 0 !important;
-    font-size: 1.25rem !important;
+    font-size: var(--suth-fs-title) !important;
     width: 36px !important;
     height: 36px !important;
   }
@@ -646,7 +652,7 @@ button.menu-item::-moz-focus-inner {
   .sidebar.collapsed .label {
     opacity: 1 !important;
     max-width: 100% !important;
-    font-size: 0.95rem !important;
+    font-size: var(--suth-fs-body) !important;
     display: flex !important;
     pointer-events: auto !important;
   }
@@ -675,20 +681,20 @@ button.menu-item::-moz-focus-inner {
     justify-content: flex-start !important;
     padding: 0.65rem 1rem 0.65rem 3.4rem !important;
     background: transparent !important;
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: color-mix(in srgb, var(--suth-on-action) 92%, transparent) !important;
     margin: 2px 0 !important;
     box-sizing: border-box !important;
     width: 100% !important;
   }
   .sidebar .submenu-item.active,
   .sidebar.collapsed .submenu-item.active {
-    background: linear-gradient(135deg, #2d7d81 0%, #236366 100%) !important;
-    color: #ffffff !important;
+    background: var(--suth-surface) !important;
+    color: var(--suth-action-ink) !important;
   }
   .sidebar .sidebar-bottom,
   .sidebar.collapsed .sidebar-bottom {
     margin-top: auto !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-top: 1px solid color-mix(in srgb, var(--suth-surface) 15%, transparent) !important;
     padding: 16px !important;
     display: block !important;
     border-left: none !important;
@@ -702,9 +708,9 @@ button.menu-item::-moz-focus-inner {
   .mobile-drawer-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(31, 47, 63, 0.5);
     backdrop-filter: blur(2px);
-    z-index: 99999;
+    z-index: calc(var(--z-mobile-nav) - 1);
     opacity: 0;
     visibility: hidden;
     transition: all 0.35s ease;
@@ -715,7 +721,7 @@ button.menu-item::-moz-focus-inner {
   }
   /* 🔥 Header หมวด (หน้าหลัก / ทั่วไป / การจัดการ) */
   .sidebar .menu-header-label {
-    font-size: 14px !important; /* ⬆️ จาก 12 → 14 */
+    font-size: var(--suth-fs-sm) !important; /* ⬆️ จาก 12 → 14 */
     font-weight: 700;
     padding: 14px 12px 6px 12px !important;
     line-height: 1.3;
@@ -723,13 +729,13 @@ button.menu-item::-moz-focus-inner {
   }
   /* 🔥 เมนูหลัก */
   .sidebar .menu-item {
-    font-size: 15px !important; /* ⬆️ ใหญ่ขึ้น */
+    font-size: var(--suth-fs-body) !important; /* ⬆️ ใหญ่ขึ้น */
     min-height: 46px !important;
     margin: 4px 0 !important;
   }
   /* 🔥 submenu */
   .sidebar .submenu-item {
-    font-size: 14px !important;
+    font-size: var(--suth-fs-sm) !important;
   }
 }
 
@@ -739,6 +745,11 @@ button.menu-item::-moz-focus-inner {
   margin: 0.6rem 0.9rem;
   padding: 0;
   opacity: 1;
-  border-top: 1px solid rgba(255, 255, 255, 0.45);
+  border-top: 1px solid color-mix(in srgb, var(--suth-surface) 45%, transparent);
   font-size: 0;
+}
+
+/* Current-page labels and icons take the orange ink of the white pill. */
+.sidebar :is(.menu-item.active, .submenu-item.active) :is(svg, .label, .sub-icon) {
+  color: var(--suth-action-ink);
 }

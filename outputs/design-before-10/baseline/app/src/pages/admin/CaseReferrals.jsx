@@ -1,5 +1,5 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
-import {usePageExport,ExportButton} from "../../components/ExcelExport";
+import { toDisplayText } from "../../utils/textPresentation.js";
+import { usePageExport, ExportButton } from "../../components/ExcelExport";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { FiArrowDownLeft, FiArrowUpRight, FiRefreshCw } from "react-icons/fi";
@@ -31,7 +31,10 @@ export default function CaseReferrals() {
   const [error, setError] = useState("");
   const [reload, setReload] = useState(0);
   const selectedId = searchParams.get("referral");
-  usePageExport({title:"การส่งต่อ",sources:[{resource:"referrals",filters:{direction,status}}]});
+  usePageExport({
+    title: "การส่งต่อ",
+    sources: [{ resource: "referrals", filters: { direction, status } }],
+  });
   const hasOrganization = /^\d+$/.test(String(activeOrganization));
 
   useEffect(() => {
@@ -371,7 +374,10 @@ function ReferralDetail({ id, onClose, onUpdated }) {
         )
       }
     >
-      <ExportButton sources={[{resource:"referral",id}]} title="รายละเอียดการส่งต่อ" />
+      <ExportButton
+        sources={[{ resource: "referral", id }]}
+        title="รายละเอียดการส่งต่อ"
+      />
       <div className="ref-panel">
         {error && (
           <p className="ref-error" role="alert">

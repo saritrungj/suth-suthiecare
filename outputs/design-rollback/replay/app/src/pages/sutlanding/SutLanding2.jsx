@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
@@ -39,7 +39,9 @@ const SLIDE_INTERVAL = 6000;
 const CARD_THEMES = ["sut2-card--blue", "sut2-card--pink", "sut2-card--green"];
 const PROJECT_START_YEAR = 2026;
 
-function stripHtml(html) { return toDisplayText(html); }
+function stripHtml(html) {
+  return toDisplayText(html);
+}
 
 // ✅ FormCard ที่แก้ไขแล้ว
 function FormCard({ form, themeClass, count, isLoaded }) {

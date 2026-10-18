@@ -37,7 +37,7 @@ export default function CaseHistoryTab({
           style={{
             textAlign: "center",
             padding: "40px 20px",
-            color: "#94a3b8",
+            color: "var(--suth-muted)",
           }}
         >
           ยังไม่มีประวัติการติดตาม

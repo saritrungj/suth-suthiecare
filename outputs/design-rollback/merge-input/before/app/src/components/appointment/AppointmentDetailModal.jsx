@@ -1,4 +1,4 @@
-import { toDisplayText } from '../../utils/textPresentation.js';
+import { toDisplayText } from "../../utils/textPresentation.js";
 import "./AppointmentDetailModal.css";
 import AppointmentFormModal from "./AppointmentFormModal";
 
@@ -58,7 +58,9 @@ export default function AppointmentDetailModal({
                   <div className={`appoint-status ${a.status}`}>
                     <div className="status-icon">{status.icon}</div>
 
-                    <span className="status-text">{toDisplayText(status.label)}</span>
+                    <span className="status-text">
+                      {toDisplayText(status.label)}
+                    </span>
                   </div>
 
                   <button className="edit-btn" onClick={() => onEdit(a)}>

@@ -1,4 +1,4 @@
-import { toDisplayText } from '../utils/textPresentation.js';
+import { toDisplayText } from "../utils/textPresentation.js";
 import { useEffect, useRef, useState } from "react";
 import { FiRefreshCw, FiSave } from "react-icons/fi";
 import { PERMISSION_GROUPS } from "../permissions/permissionRegistry";
