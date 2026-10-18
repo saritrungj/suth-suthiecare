@@ -18,6 +18,10 @@ import "./ClinicHelpDetail.css";
 import Navbar from "../../components/Navbar";
 import PublicBackdrop from "../../components/public/PublicBackdrop";
 
+// The public FAQ endpoint already returns only published rows and omits
+// `status`; only filter on it when a row actually carries one.
+const isPublished = (item) => !item.status || item.status === "published";
+
 export default function ClinicHelpDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -64,7 +68,7 @@ export default function ClinicHelpDetail() {
 
           const resCat = await getPublicFaqCategories(currentClinic.id);
           const catData = resCat.data?.data || [];
-          const publishedCats = catData.filter((c) => c.status === "published");
+          const publishedCats = catData.filter(isPublished);
 
           setClinicCategories(publishedCats);
 
@@ -106,7 +110,7 @@ export default function ClinicHelpDetail() {
     const clinicQuestions = faqs
       .filter(
         (faq) =>
-          faq.status === "published" && Number(faq.clinic_id) === Number(id),
+          isPublished(faq) && Number(faq.clinic_id) === Number(id),
       )
       .sort(
         (a, b) =>
@@ -158,7 +162,7 @@ export default function ClinicHelpDetail() {
   const normalizedSearch = clinicSearchQuery.trim().toLowerCase();
   const publishedClinicFaqs = allFaqs.filter(
     (faq) =>
-      faq.status === "published" &&
+      isPublished(faq) &&
       Number(faq.clinic_id) === Number(selectedClinic?.id),
   );
   const matchingFaqs = publishedClinicFaqs.filter((faq) =>
@@ -250,7 +254,8 @@ export default function ClinicHelpDetail() {
 
           <div className="hc-sidebar-title">เลือกคำถามที่ต้องการดู</div>
           <ul className="hc-sidebar-nested-menu">
-            {matchingFaqs.length === 0 && (
+            {matchingFaqs.length === 0 &&
+              (normalizedSearch || clinicCategories.length === 0) && (
               <li className="hc-sidebar-empty-state">
                 <FiMessageCircle aria-hidden="true" />
                 <strong>
@@ -346,6 +351,11 @@ export default function ClinicHelpDetail() {
 
                   {isCategoryOpen && (
                     <ul className="hc-sidebar-sub-question-list">
+                      {catQuestions.length === 0 && (
+                        <li className="hc-sub-question-empty">
+                          ยังไม่มีคำถามในหมวดนี้
+                        </li>
+                      )}
                       {catQuestions.map((faq) => (
                         <li
                           key={faq.faq_id}

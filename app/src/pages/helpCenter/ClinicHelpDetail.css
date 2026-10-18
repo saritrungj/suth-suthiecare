@@ -695,3 +695,9 @@
   border-radius: var(--pub-card-radius);
   background: color-mix(in srgb, var(--suth-surface) 80%, transparent);
 }
+.hc-sub-question-empty {
+  padding: 10px 14px;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-sm);
+  list-style: none;
+}
