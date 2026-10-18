@@ -289,13 +289,10 @@
   background-image: linear-gradient(170deg, var(--pub-lilac) 0%, #f4f1ff 62%, var(--pub-sky) 100%);
   color: var(--suth-ink);
 }
-/* Staff get their own cartoon group: a health worker, a teacher and a
-   stethoscope (Fluent Emoji 3D, MIT, see assets/cartoons). */
+/* Staff get their own care team: a doctor, a teacher/counsellor and a
+   staff member with a laptop (AI-generated, see assets/cartoons/README.md). */
 .staff-login-intro::after {
-  background:
-    url("../../assets/cartoons/stethoscope.webp") right 0 top 0 / 26% auto no-repeat,
-    url("../../assets/cartoons/teacher-woman.webp") right 0 bottom 0 / 50% auto no-repeat,
-    url("../../assets/cartoons/health-worker-man.webp") left 0 bottom 0 / 62% auto no-repeat;
+  background-image: url("../../assets/cartoons/care-team-staff.webp");
 }
 .staff-login-page .patient-login-kicker {
   color: var(--pub-lilac-ink);
