@@ -15,6 +15,8 @@
   --cfp-muted: var(--suth-ink-2);
   --cfp-dim: var(--suth-muted);
   --cfp-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Same near-white as the homepage canvas so the sticky toolbar blends in. */
+  --cfp-page: #fbfcfe;
   position: relative;
   z-index: 20;
   /* Matches the other homepage sections: 1200px of content plus gutters. */
@@ -190,18 +192,6 @@
   background: var(--suth-action);
   color: var(--suth-ink);
 }
-.cfp-tile__org {
-  max-width: 100%;
-  margin-bottom: 2px;
-  padding: 1px 8px;
-  overflow: hidden;
-  border-radius: var(--suth-radius-pill);
-  background: color-mix(in srgb, var(--suth-ink) 72%, transparent);
-  font-size: var(--suth-fs-caption);
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 .cfp-scope__glyph {
   margin-left: 8px;
 }
@@ -210,78 +200,106 @@
   color: var(--suth-info);
 }
 
-/* ---------- Clinic tiles (portrait, like the original clinic cards) ---------- */
+/* ---------- Service-unit tiles: pastel cards ---------- */
 .cfp-tiles {
   display: grid;
-  /* auto-fill keeps tiles card-sized when an organization has only a few clinics. */
-  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  /* auto-fill keeps tiles card-sized when an organization has only a few units. */
+  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
   gap: 14px;
   margin-bottom: 22px;
 }
 .cfp-tile {
+  --tone-bg: var(--suth-surface);
+  --tone-ink: var(--suth-ink);
+  --tone-deep: var(--suth-line);
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: flex-end;
   gap: 2px;
-  aspect-ratio: 4 / 5;
-  max-width: 100%;
-  padding: 14px 12px 16px;
+  min-height: 176px;
+  padding: 18px 16px 16px;
   overflow: hidden;
-  border: 0;
+  border: 2px solid transparent;
   border-radius: var(--suth-radius-card);
-  background-color: var(--suth-ink);
-  background-position: center 25%;
-  background-size: cover;
-  color: var(--suth-on-action);
+  background: var(--tone-bg);
+  color: var(--suth-ink);
   font: inherit;
-  text-align: center;
+  text-align: left;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(31, 47, 63, 0.18);
   transition:
     transform 0.3s var(--cfp-ease),
-    box-shadow 0.3s var(--cfp-ease);
+    box-shadow 0.3s var(--cfp-ease),
+    border-color 0.2s;
 }
+/* A soft bubble in the corner gives each pastel card some depth. */
 .cfp-tile::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(31, 47, 63, 0.05) 0%,
-    rgba(31, 47, 63, 0.25) 45%,
-    rgba(31, 47, 63, 0.85) 100%
-  );
+  top: -34px;
+  right: -30px;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: color-mix(in srgb, white 45%, transparent);
+  transition: transform 0.5s var(--cfp-ease);
 }
 .cfp-tile > * {
   position: relative;
 }
 .cfp-tile:hover {
-  transform: translateY(-6px) rotate(-1.5deg);
-  box-shadow: 0 16px 30px rgba(31, 47, 63, 0.24);
+  transform: translateY(-4px);
+  box-shadow: 0 14px 26px color-mix(in srgb, var(--tone-deep) 35%, transparent);
+}
+.cfp-tile:hover::before {
+  transform: scale(1.25);
 }
 .cfp-tile:focus-visible {
-  outline: 3px solid var(--cfp-teal-light);
+  outline: 3px solid var(--suth-ink);
   outline-offset: 3px;
 }
 .cfp-tile[aria-pressed="true"] {
-  box-shadow: 0 0 0 4px var(--suth-canvas), 0 0 0 7px var(--suth-ink),
-    0 14px 30px rgba(31, 47, 63, 0.24);
+  border-color: var(--tone-ink);
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--tone-deep) 40%, transparent);
+}
+.cfp-tone--peach {
+  --tone-bg: #ffe6d5;
+  --tone-ink: var(--suth-action-ink);
+  --tone-deep: #f5a46e;
+}
+.cfp-tone--mint {
+  --tone-bg: #d9f3ea;
+  --tone-ink: var(--suth-care-ink);
+  --tone-deep: #6cc3a6;
+}
+.cfp-tone--sky {
+  --tone-bg: #dcefff;
+  --tone-ink: var(--suth-info);
+  --tone-deep: #7fb6e6;
+}
+.cfp-tone--pink {
+  --tone-bg: #ffe1ec;
+  --tone-ink: #a2345f;
+  --tone-deep: #ee8db0;
+}
+.cfp-tone--lilac {
+  --tone-bg: #ebe5ff;
+  --tone-ink: #5a45a8;
+  --tone-deep: #a998ea;
 }
 .cfp-tile__check {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 12px;
+  right: 12px;
   display: none;
   place-items: center;
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: var(--suth-ink);
+  background: var(--tone-ink);
   color: var(--suth-surface);
   font-size: var(--suth-fs-body);
-  box-shadow: 0 2px 6px rgba(31, 47, 63, 0.3);
 }
 .cfp-tile[aria-pressed="true"] .cfp-tile__check {
   display: grid;
@@ -299,45 +317,62 @@
   height: 100%;
   object-fit: cover;
 }
-.cfp-tile__icon {
-  width: 76px;
-  height: 76px;
-  margin-bottom: 10px;
-  border: 3px solid color-mix(in srgb, var(--suth-surface) 90%, transparent);
-  box-shadow: 0 4px 12px rgba(31, 47, 63, 0.3);
-}
-.cfp-tile__name {
-  font-family: var(--suth-font);
-  font-size: var(--suth-fs-section);
-  font-weight: 700;
-  line-height: 1.35;
-  text-shadow: 0 2px 6px rgba(31, 47, 63, 0.55);
-}
-.cfp-tile__count {
-  font-size: var(--suth-fs-sm);
-  opacity: 0.9;
-}
-.cfp-tile--all {
-  justify-content: center;
-  background: var(--suth-action);
-  color: var(--suth-ink);
-}
-.cfp-tile--all::before {
-  background: none;
+.cfp-tile__icon,
+.cfp-tile__glyph {
+  width: 56px;
+  height: 56px;
+  margin-bottom: auto;
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--tone-deep) 35%, transparent);
 }
 .cfp-tile__glyph {
   display: grid;
   place-items: center;
-  width: 76px;
-  height: 76px;
-  margin-bottom: 10px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--suth-surface) 95%, transparent);
-  color: var(--suth-action-ink);
-  font-size: var(--suth-fs-display);
+  border-radius: 18px;
+  background: var(--suth-surface);
+  color: var(--tone-ink);
+  font-size: 1.5rem;
+  transform: rotate(-6deg);
+  transition: transform 0.3s var(--cfp-ease);
 }
-.cfp-tile--all .cfp-tile__name {
-  text-shadow: none;
+.cfp-tile:hover .cfp-tile__glyph {
+  transform: rotate(6deg) scale(1.05);
+}
+.cfp-tile__name {
+  margin-top: 14px;
+  font-family: var(--suth-font);
+  font-size: var(--suth-fs-section);
+  font-weight: 700;
+  line-height: 1.35;
+}
+.cfp-tile__count {
+  color: var(--tone-ink);
+  font-size: var(--suth-fs-sm);
+  font-weight: 600;
+}
+.cfp-tile__org {
+  max-width: 100%;
+  margin-top: 14px;
+  padding: 1px 8px;
+  overflow: hidden;
+  border-radius: var(--suth-radius-pill);
+  background: color-mix(in srgb, white 70%, transparent);
+  color: var(--tone-ink);
+  font-size: var(--suth-fs-caption);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cfp-tile__org + .cfp-tile__name {
+  margin-top: 4px;
+}
+.cfp-tile--all {
+  --tone-bg: var(--suth-action);
+  --tone-ink: var(--suth-ink);
+  --tone-deep: var(--suth-action);
+  color: var(--suth-ink);
+}
+.cfp-tile--all .cfp-tile__count {
+  color: var(--suth-ink);
 }
 .cfp-tile--skeleton {
   background: linear-gradient(110deg, var(--suth-line-soft) 30%, var(--suth-surface) 50%, var(--suth-line-soft) 70%);
@@ -372,12 +407,12 @@
   margin-bottom: 18px;
   padding: 10px 0;
   border-top: 1px solid var(--cfp-line);
-  background: var(--suth-canvas);
+  background: var(--cfp-page);
 }
 .cfp-toolbar.is-stuck {
   border-top-color: transparent;
   /* Full-bleed backdrop that also fills the transparent navbar area above. */
-  box-shadow: 0 0 0 100vmax var(--suth-canvas),
+  box-shadow: 0 0 0 100vmax var(--cfp-page),
     0 12px 20px -8px rgba(31, 47, 63, 0.18);
   clip-path: inset(-4.5rem -100vmax -24px -100vmax);
 }
@@ -574,19 +609,19 @@
   --band-ink: var(--suth-info);
   background:
     radial-gradient(circle at 92% 20%, color-mix(in srgb, white 55%, transparent) 0 22px, transparent 23px),
-    var(--suth-info-tint);
+    #dcefff;
 }
 .cfp-band--pink {
-  --band-ink: var(--suth-action-ink);
+  --band-ink: #a2345f;
   background:
     radial-gradient(circle at 92% 20%, color-mix(in srgb, white 55%, transparent) 0 22px, transparent 23px),
-    var(--suth-tint-strong);
+    #ffe1ec;
 }
 .cfp-band--green {
   --band-ink: var(--suth-care-ink);
   background:
     radial-gradient(circle at 92% 20%, color-mix(in srgb, white 55%, transparent) 0 22px, transparent 23px),
-    var(--suth-care-tint);
+    #d9f3ea;
 }
 .cfp-card__glyph {
   display: grid;
@@ -816,14 +851,14 @@
     display: none;
   }
   .cfp-tile {
-    flex: 0 0 138px;
+    flex: 0 0 148px;
+    min-height: 156px;
     scroll-snap-align: start;
   }
   .cfp-tile__icon,
   .cfp-tile__glyph {
-    width: 58px;
-    height: 58px;
-    font-size: var(--suth-fs-hero);
+    width: 48px;
+    height: 48px;
   }
   .cfp-tile__name {
     font-size: var(--suth-fs-body);

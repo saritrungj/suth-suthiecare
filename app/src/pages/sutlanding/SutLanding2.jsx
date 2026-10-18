@@ -1,17 +1,17 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
-  FiArrowDown,
+  FiArrowRight,
   FiClipboard,
   FiDownload,
   FiEdit3,
   FiExternalLink,
   FiGrid,
+  FiHeart,
   FiHome,
   FiLock,
   FiMenu,
   FiPhoneCall,
-  FiSmartphone,
   FiSmile,
   FiX,
   FiZap,
@@ -27,7 +27,10 @@ import "./SutLanding2.css";
 import ClinicFormPicker from "./ClinicFormPicker.jsx";
 
 import logo from "../../assets/logoSUTH.png";
-import peeHom from "../../assets/pee-hom-ai.webp";
+import heroHospital from "../../assets/hero-hospital.webp";
+import heroAmbulance from "../../assets/hero-ambulance.webp";
+import heroDoctorF from "../../assets/hero-doctor-f.webp";
+import heroDoctorM from "../../assets/hero-doctor-m.webp";
 import siteVitalcare from "../../assets/vitalcare.png";
 import siteAct from "../../assets/act.suth.png";
 import { formCache } from "../../services/cache";
@@ -45,15 +48,6 @@ function scrollToId(id) {
   document
     .getElementById(id)
     ?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
-}
-
-// Four-point twinkle used as decoration around the hero.
-function Sparkle({ className }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 0c.9 6.6 4.5 10.6 12 12-7.5 1.4-11.1 5.4-12 12-.9-6.6-4.5-10.6-12-12C7.5 10.6 11.1 6.6 12 0Z" />
-    </svg>
-  );
 }
 
 export default function SutLanding2() {
@@ -258,11 +252,9 @@ export default function SutLanding2() {
       <main className="sut2-main-wrapper">
         {/* ================= 1. HERO ================= */}
         <section className="sut2-hero" aria-labelledby="sut2-hero-title">
-          <span className="sut2-hero__blob sut2-hero__blob--a" aria-hidden="true" />
-          <span className="sut2-hero__blob sut2-hero__blob--b" aria-hidden="true" />
-          <Sparkle className="sut2-sparkle sut2-sparkle--1" />
-          <Sparkle className="sut2-sparkle sut2-sparkle--2" />
-          <Sparkle className="sut2-sparkle sut2-sparkle--3" />
+          <span className="sut2-blob sut2-blob--peach" aria-hidden="true" />
+          <span className="sut2-blob sut2-blob--mint" aria-hidden="true" />
+          <span className="sut2-blob sut2-blob--pink" aria-hidden="true" />
 
           <div className="sut2-hero__content">
             <div className="sut2-hero__text-box">
@@ -270,6 +262,14 @@ export default function SutLanding2() {
                 {t("sutlanding.title")}
                 <span className="sut2-hero__highlight">
                   {t("sutlanding.subtitle_highlight")}
+                  <svg
+                    className="sut2-hero__swash"
+                    viewBox="0 0 300 16"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                  >
+                    <path d="M3 11C60 3 120 3 160 8s90 6 137-4" />
+                  </svg>
                 </span>
               </h1>
               <p className="sut2-hero__subtitle">
@@ -282,7 +282,7 @@ export default function SutLanding2() {
                   onClick={() => scrollToId("services")}
                 >
                   {t("sutlanding.btn_start")}
-                  <FiArrowDown aria-hidden="true" />
+                  <FiArrowRight aria-hidden="true" />
                 </button>
                 <button
                   type="button"
@@ -298,19 +298,19 @@ export default function SutLanding2() {
                   aria-label={t("sutlanding.stats_label")}
                 >
                   {organizationCount > 1 && (
-                    <li>
+                    <li className="is-peach">
                       <FiHome aria-hidden="true" />
                       <strong>{organizationCount}</strong>
                       {t("sutlanding.stat_orgs")}
                     </li>
                   )}
-                  <li>
+                  <li className="is-mint">
                     <FiGrid aria-hidden="true" />
                     <strong>{clinics.length}</strong>
                     {t("sutlanding.stat_clinics")}
                   </li>
                   {!loading && (
-                    <li>
+                    <li className="is-sky">
                       <FiClipboard aria-hidden="true" />
                       <strong>{forms.length}</strong>
                       {t("sutlanding.stat_forms")}
@@ -320,30 +320,50 @@ export default function SutLanding2() {
               )}
             </div>
 
-            {/* Pee Hom with the promises she makes, as floating stickers */}
-            <div className="sut2-mascot" aria-hidden="true">
-              <p className="sut2-mascot__bubble">
-                {t("sutlanding.hero_greeting")}
-              </p>
-              <div className="sut2-mascot__stage">
-                <span className="sut2-mascot__ring" />
+            {/* Illustrated scene: the care team in front of the hospital */}
+            <div className="sut2-scene" aria-hidden="true">
+              <div className="sut2-scene__sky">
+                <span className="sut2-cloud sut2-cloud--1" />
+                <span className="sut2-cloud sut2-cloud--2" />
+                <span className="sut2-cloud sut2-cloud--3" />
+                <span className="sut2-scene__sun" />
                 <img
-                  className="sut2-mascot__img"
-                  src={peeHom}
+                  className="sut2-scene__hospital"
+                  src={heroHospital}
                   alt=""
-                  width="256"
-                  height="256"
+                  width="900"
+                  height="294"
                 />
               </div>
-              <span className="sut2-chip sut2-chip--1">
+              <img
+                className="sut2-scene__ambulance"
+                src={heroAmbulance}
+                alt=""
+                width="520"
+                height="239"
+              />
+              <img
+                className="sut2-scene__doctor sut2-scene__doctor--f"
+                src={heroDoctorF}
+                alt=""
+                width="325"
+                height="488"
+              />
+              <img
+                className="sut2-scene__doctor sut2-scene__doctor--m"
+                src={heroDoctorM}
+                alt=""
+                width="278"
+                height="344"
+              />
+              <span className="sut2-tag sut2-tag--1">
                 <FiZap /> {t("sutlanding.chip_instant")}
               </span>
-              <span className="sut2-chip sut2-chip--2">
+              <span className="sut2-tag sut2-tag--2">
                 <FiLock /> {t("sutlanding.chip_private")}
               </span>
-              <span className="sut2-chip sut2-chip--3">
-                <FiSmartphone /> {t("sutlanding.chip_anywhere")}
-              </span>
+              <FiHeart className="sut2-scene__heart sut2-scene__heart--1" />
+              <FiHeart className="sut2-scene__heart sut2-scene__heart--2" />
             </div>
           </div>
         </section>
@@ -365,10 +385,7 @@ export default function SutLanding2() {
 
         {/* ================= 3. NEWS BANNERS ================= */}
         {slides.length > 0 && (
-          <section
-            className="sut2-news"
-            aria-labelledby="sut2-news-title"
-          >
+          <section className="sut2-news" aria-labelledby="sut2-news-title">
             <h2 id="sut2-news-title" className="sut2-section-title">
               {t("sutlanding.news_title")}
             </h2>

@@ -9,17 +9,25 @@ import {
   FiChevronUp,
   FiClipboard,
   FiGrid,
+  FiHeart,
   FiHome,
   FiSearch,
   FiUsers,
   FiX,
 } from "react-icons/fi";
 import { translateTextSmart } from "../../utils/translator";
-import bgClinicFallback from "../../assets/bg-new.jpg";
 import "./ClinicFormPicker.css";
 
 const ALL = "all";
 const BAND_THEMES = ["cfp-band--blue", "cfp-band--pink", "cfp-band--green"];
+// Service-unit tiles cycle through the homepage's pastel palette.
+const TILE_TONES = [
+  "cfp-tone--peach",
+  "cfp-tone--mint",
+  "cfp-tone--sky",
+  "cfp-tone--pink",
+  "cfp-tone--lilac",
+];
 const POPULAR_LIMIT = 3;
 // "All clinics" shows a preview row per clinic; filtered views page in batches.
 const GROUP_LIMIT = 3;
@@ -72,9 +80,13 @@ function useLocalizedText(text) {
   return value;
 }
 
-function ClinicIcon({ clinic, className = "" }) {
+function hasClinicIcon(clinic) {
   const showIcon = clinic.show_icon === 1 || clinic.show_icon === undefined;
-  if (!showIcon || !clinic.image) return null;
+  return Boolean(showIcon && clinic.image);
+}
+
+function ClinicIcon({ clinic, className = "" }) {
+  if (!hasClinicIcon(clinic)) return null;
   return (
     <span className={`cfp-icon ${className}`}>
       <img src={clinic.image} alt="" loading="lazy" decoding="async" />
@@ -482,21 +494,24 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
           ? Array.from({ length: 4 }, (_, i) => (
               <span key={i} className="cfp-tile cfp-tile--skeleton" />
             ))
-          : visibleClinics.map((clinic) => (
+          : visibleClinics.map((clinic, index) => (
               <button
                 type="button"
                 key={clinic.slug}
-                className="cfp-tile"
+                className={`cfp-tile ${TILE_TONES[index % TILE_TONES.length]}`}
                 aria-pressed={clinicSlug === clinic.slug}
                 onClick={() => setClinicSlug(clinic.slug)}
-                style={{
-                  backgroundImage: `url(${clinic.bg || bgClinicFallback})`,
-                }}
               >
                 <span className="cfp-tile__check" aria-hidden="true">
                   <FiCheck />
                 </span>
-                <ClinicIcon clinic={clinic} className="cfp-tile__icon" />
+                {hasClinicIcon(clinic) ? (
+                  <ClinicIcon clinic={clinic} className="cfp-tile__icon" />
+                ) : (
+                  <span className="cfp-tile__glyph" aria-hidden="true">
+                    <FiHeart />
+                  </span>
+                )}
                 {showOrgOnCards && orgName(clinic) && (
                   <span className="cfp-tile__org">{orgName(clinic)}</span>
                 )}
