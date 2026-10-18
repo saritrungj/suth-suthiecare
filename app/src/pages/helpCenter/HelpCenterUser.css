@@ -851,3 +851,179 @@
     flex: 0 0 82% !important;
   }
 }
+
+/* =========================================
+   Pastel public theme (matches the homepage)
+========================================= */
+.hc-user-page {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+}
+.hc-user-hero {
+  position: relative;
+  overflow: visible;
+  padding: 56px 0 72px;
+  background: none;
+  border-bottom: 0;
+}
+.hc-user-hero .hc-user-container {
+  position: relative;
+}
+.hc-user-hero h1 {
+  margin-bottom: 12px;
+  color: var(--suth-ink);
+  font-size: clamp(2rem, 4.6vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-shadow: none;
+  text-wrap: balance;
+}
+.hc-hero-highlight {
+  position: relative;
+  color: var(--suth-action-ink);
+  white-space: nowrap;
+}
+/* Hand-drawn style underline under the highlighted word. */
+.hc-hero-highlight::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -0.08em;
+  left: 0;
+  height: 0.18em;
+  border-radius: 999px;
+  background: var(--suth-action);
+  opacity: 0.85;
+  transform: rotate(-1deg);
+}
+.hc-user-hero p {
+  color: var(--suth-ink-2);
+}
+.hc-hero-art {
+  position: absolute;
+  bottom: -72px;
+  z-index: -1;
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 14px 16px color-mix(in srgb, var(--suth-ink) 14%, transparent));
+}
+.hc-hero-art--left {
+  left: 0;
+  width: 150px;
+}
+.hc-hero-art--right {
+  right: 0;
+  width: 140px;
+}
+.hc-user-search-wrapper {
+  border: 2px solid var(--suth-line);
+  border-radius: var(--suth-radius-pill);
+  box-shadow: var(--pub-soft-shadow);
+}
+.hc-user-search-wrapper.has-suggestions {
+  border-radius: 26px 26px 0 0 !important;
+}
+.hc-user-search-wrapper:focus-within:not(.has-suggestions) {
+  box-shadow: 0 0 0 4px var(--pub-peach);
+}
+.hc-search-suggestions-dropdown {
+  border-radius: 0 0 22px 22px;
+}
+.hc-header-icon {
+  box-sizing: content-box;
+  padding: 8px !important;
+  border-radius: 14px;
+  background: var(--pub-peach) !important;
+  font-size: 1.4rem !important;
+  transform: rotate(-6deg);
+}
+.hc-header-title h2 {
+  font-weight: 700;
+}
+
+/* Clinic cards cycle through the pastel palette. */
+.hc-user-clinic-card,
+.hc-user-clinic-card-scroll {
+  --tone-bg: var(--pub-peach);
+  --tone-ink: var(--pub-peach-ink);
+  border: 0 !important;
+  border-radius: var(--pub-card-radius) !important;
+  background: var(--tone-bg) !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+.hc-user-clinic-card:nth-child(5n + 2),
+.hc-user-clinic-card-scroll:nth-child(5n + 2) {
+  --tone-bg: var(--pub-mint);
+  --tone-ink: var(--pub-mint-ink);
+}
+.hc-user-clinic-card:nth-child(5n + 3),
+.hc-user-clinic-card-scroll:nth-child(5n + 3) {
+  --tone-bg: var(--pub-sky);
+  --tone-ink: var(--pub-sky-ink);
+}
+.hc-user-clinic-card:nth-child(5n + 4),
+.hc-user-clinic-card-scroll:nth-child(5n + 4) {
+  --tone-bg: var(--pub-pink);
+  --tone-ink: var(--pub-pink-ink);
+}
+.hc-user-clinic-card:nth-child(5n + 5),
+.hc-user-clinic-card-scroll:nth-child(5n + 5) {
+  --tone-bg: var(--pub-lilac);
+  --tone-ink: var(--pub-lilac-ink);
+}
+.hc-user-clinic-card:hover,
+.hc-user-clinic-card-scroll:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 14px 26px color-mix(in srgb, var(--tone-ink) 18%, transparent) !important;
+}
+.hc-card-logo-circle {
+  border: 4px solid var(--suth-surface) !important;
+}
+.hc-btn-view-clinic {
+  border: 0 !important;
+  border-radius: var(--suth-radius-pill) !important;
+  background: var(--suth-surface) !important;
+  color: var(--tone-ink) !important;
+}
+.hc-btn-view-clinic:hover {
+  background: var(--suth-ink) !important;
+  color: var(--suth-surface) !important;
+}
+
+.hc-faq-item {
+  border: 2px solid var(--suth-line-soft);
+  border-radius: 20px;
+  transition: border-color 0.2s var(--pub-ease);
+}
+.hc-faq-item.open {
+  border-color: var(--suth-tint-line);
+}
+.hc-faq-question:hover {
+  background: var(--pub-peach);
+}
+.hc-user-empty-state {
+  border: 0;
+  border-radius: var(--pub-card-radius);
+  background: color-mix(in srgb, var(--suth-surface) 80%, transparent);
+}
+.hc-user-contact-box {
+  border: 0;
+  border-radius: 28px;
+  background: linear-gradient(120deg, var(--pub-peach), var(--pub-pink));
+}
+
+@media (max-width: 900px) {
+  .hc-hero-art {
+    display: none;
+  }
+}
+@media (max-width: 768px) {
+  .hc-user-hero {
+    padding: 32px 0 48px !important;
+  }
+  .hc-user-hero h1 {
+    font-size: clamp(1.7rem, 7.5vw, 2.1rem) !important;
+  }
+}

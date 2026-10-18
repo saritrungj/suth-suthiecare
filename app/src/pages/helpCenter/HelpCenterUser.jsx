@@ -11,6 +11,9 @@ import {
 import { getActiveClinics, getPublicFaqs } from "../../services/api";
 import "./HelpCenterUser.css";
 import Navbar from "../../components/Navbar";
+import PublicBackdrop from "../../components/public/PublicBackdrop";
+import heroDoctorF from "../../assets/hero-doctor-f.webp";
+import heroDoctorM from "../../assets/hero-doctor-m.webp";
 
 export default function HelpCenterUser() {
   const navigate = useNavigate();
@@ -120,13 +123,28 @@ export default function HelpCenterUser() {
 
   return (
     <div className="hc-user-page">
+      <PublicBackdrop />
       {/* ── NAVBAR ── */}
       <Navbar showBack={true} backText="กลับหน้าหลัก" />
       {/* ── HERO SECTION ── */}
       <header className="hc-user-hero">
         <div className="hc-user-container">
-          <h1>ศูนย์ช่วยเหลือ SUTHieCare</h1>
-          <p>ค้นหาคำถามที่คุณต้องการ</p>
+          <img
+            className="hc-hero-art hc-hero-art--left"
+            src={heroDoctorF}
+            alt=""
+            aria-hidden="true"
+          />
+          <img
+            className="hc-hero-art hc-hero-art--right"
+            src={heroDoctorM}
+            alt=""
+            aria-hidden="true"
+          />
+          <h1>
+            ศูนย์ช่วยเหลือ <span className="hc-hero-highlight">SUTHieCare</span>
+          </h1>
+          <p>มีคำถามเรื่องไหน พิมพ์ค้นหาได้เลย หรือเลือกหน่วยบริการด้านล่าง</p>
 
           <div
             className="hc-search-absolute-container"

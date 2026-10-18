@@ -7,6 +7,7 @@ import "./HistoryResult.css";
 import MemberTypePanel from "../../../components/patient/MemberTypePanel";
 import SchoolHealthPanel from "../../../components/patient/SchoolHealthPanel";
 import Navbar from "../../../components/Navbar";
+import PublicBackdrop from "../../../components/public/PublicBackdrop";
 
 import {
   getPatientHistory,
@@ -838,6 +839,7 @@ export default function HistoryResult() {
 
   return (
     <div className="hr-page">
+      <PublicBackdrop />
       {toast && <Toast msg={toast.msg} type={toast.type} />}
 
       <Navbar

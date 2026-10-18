@@ -2201,3 +2201,100 @@
 .hr-suth-promo-banner.is-hidden {
   display: none !important;
 }
+
+/* =========================================
+   Pastel public theme (matches the homepage)
+========================================= */
+.hr-page {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+}
+/* Keep the orange profile card (white text needs it) but soften its shape. */
+.hr-hero {
+  overflow: hidden;
+  border-radius: 28px;
+  background: var(--suth-action);
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--suth-action) 28%, transparent);
+}
+.hr-hero::before,
+.hr-hero::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  border-radius: 46% 54% 60% 40% / 52% 44% 56% 48%;
+  pointer-events: none;
+}
+.hr-hero::before {
+  top: -70px;
+  right: 18%;
+  width: 200px;
+  height: 180px;
+  background: color-mix(in srgb, white 20%, transparent);
+}
+.hr-hero::after {
+  bottom: -60px;
+  left: -40px;
+  width: 160px;
+  height: 140px;
+  border: 14px solid color-mix(in srgb, white 22%, transparent);
+}
+.hr-avatar {
+  border: 4px solid var(--suth-surface);
+  background: var(--pub-peach);
+  color: var(--suth-action-ink);
+}
+.hr-btn-new-assess {
+  border-radius: var(--suth-radius-pill);
+}
+
+.hr-suth-promo-banner {
+  border: 0;
+  border-radius: 28px;
+  background: linear-gradient(120deg, var(--pub-peach) 0%, var(--pub-pink) 100%);
+}
+.download-btn {
+  border-radius: var(--suth-radius-pill);
+}
+
+.hr-section-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--suth-action);
+  box-shadow: 0 0 0 4px var(--pub-peach);
+}
+.hr-filter-btn {
+  border: 2px solid var(--suth-line);
+  border-radius: var(--suth-radius-pill);
+}
+.hr-filter-btn:hover {
+  border-color: var(--suth-tint-line);
+}
+.hr-filter-btn.active {
+  border-color: var(--suth-ink);
+  background: var(--suth-ink);
+  color: var(--suth-surface);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--suth-ink) 22%, transparent);
+}
+.hr-timeline {
+  border-left: 3px dashed var(--suth-tint-line);
+}
+.hr-card,
+.hr-widget,
+.hr-active-case-card {
+  border: 0;
+  border-radius: var(--pub-card-radius);
+  box-shadow: var(--pub-soft-shadow);
+}
+.hr-empty-state,
+.hr-empty {
+  border-radius: var(--pub-card-radius);
+}
+.hr-email-banner {
+  border-radius: var(--pub-card-radius);
+}
+/* The sticky filter row blends with the page instead of a grey strip. */
+.hr-timeline-filter {
+  border-bottom: 0;
+  background: color-mix(in srgb, var(--pub-page) 92%, transparent);
+}

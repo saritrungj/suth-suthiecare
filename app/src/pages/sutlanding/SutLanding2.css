@@ -154,20 +154,20 @@
   --sut2-gutter: clamp(16px, 4vw, 40px);
   --sut2-max: 1200px;
   --sut2-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --sut2-peach: #ffe6d5;
+  --sut2-peach: var(--pub-peach);
   --sut2-peach-ink: var(--suth-action-ink);
-  --sut2-mint: #d9f3ea;
+  --sut2-mint: var(--pub-mint);
   --sut2-mint-ink: var(--suth-care-ink);
-  --sut2-sky: #dcefff;
+  --sut2-sky: var(--pub-sky);
   --sut2-sky-ink: var(--suth-info);
-  --sut2-pink: #ffe1ec;
-  --sut2-pink-ink: #a2345f;
-  --sut2-lilac: #ebe5ff;
-  --sut2-lilac-ink: #5a45a8;
+  --sut2-pink: var(--pub-pink);
+  --sut2-pink-ink: var(--pub-pink-ink);
+  --sut2-lilac: var(--pub-lilac);
+  --sut2-lilac-ink: var(--pub-lilac-ink);
   --sut2-soft-shadow: 0 10px 30px color-mix(in srgb, var(--suth-ink) 8%, transparent);
 }
 .sut2-main-wrapper {
-  background: #fbfcfe;
+  background: var(--pub-page);
 }
 .sut2-section-title {
   margin: 0 0 clamp(1.25rem, 3vw, 2rem);
@@ -230,8 +230,13 @@
 }
 .sut2-nav__actions {
   display: flex;
+  flex: 1;
   align-items: center;
+  justify-content: flex-end;
   gap: 10px;
+}
+.sut2-nav__links {
+  margin: 0 auto;
 }
 .sut2-nav__menu-btn {
   display: none;
@@ -702,7 +707,7 @@
   width: 88px;
   height: 88px;
   margin-bottom: 1rem;
-  border: 6px solid #fbfcfe;
+  border: 6px solid var(--pub-page);
   border-radius: 34% 66% 58% 42% / 44% 40% 60% 56%;
   background: var(--tone-bg);
   color: var(--tone);
@@ -901,6 +906,9 @@
   }
   .sut2-nav__actions.sut2-open {
     display: flex;
+  }
+  .sut2-nav__links {
+    margin: 0;
   }
 }
 @media (max-width: 960px) {

@@ -16,6 +16,7 @@ import {
 } from "../../services/api";
 import "./ClinicHelpDetail.css";
 import Navbar from "../../components/Navbar";
+import PublicBackdrop from "../../components/public/PublicBackdrop";
 
 export default function ClinicHelpDetail() {
   const { id } = useParams();
@@ -202,6 +203,7 @@ export default function ClinicHelpDetail() {
 
   return (
     <div className="hc-clinic-detail-wrapper">
+      <PublicBackdrop />
       <Navbar showBack={true} backText="กลับ" />
 
       {/* ── HERO BANNER ── */}

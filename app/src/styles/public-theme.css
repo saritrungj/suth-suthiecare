@@ -1,0 +1,120 @@
+/* =========================================
+   Public (patient-facing) theme: bright pastels shared by the homepage,
+   sign-in, help center and history pages. Admin pages do not use it.
+========================================= */
+:root {
+  --pub-page: #fbfcfe;
+  --pub-peach: #ffe6d5;
+  --pub-peach-ink: var(--suth-action-ink);
+  --pub-mint: #d9f3ea;
+  --pub-mint-ink: var(--suth-care-ink);
+  --pub-sky: #dcefff;
+  --pub-sky-ink: var(--suth-info);
+  --pub-pink: #ffe1ec;
+  --pub-pink-ink: #a2345f;
+  --pub-lilac: #ebe5ff;
+  --pub-lilac-ink: #5a45a8;
+  --pub-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --pub-soft-shadow: 0 10px 30px color-mix(in srgb, var(--suth-ink) 8%, transparent);
+  --pub-card-radius: 24px;
+}
+
+/* Soft morphing blobs fixed behind a page's content. */
+.pub-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--pub-page);
+  pointer-events: none;
+}
+.pub-backdrop span {
+  position: absolute;
+  border-radius: 46% 54% 60% 40% / 52% 44% 56% 48%;
+  animation: pubMorph 18s ease-in-out infinite alternate;
+}
+.pub-backdrop span:nth-child(1) {
+  top: -160px;
+  left: -180px;
+  width: 520px;
+  height: 460px;
+  background: var(--pub-peach);
+}
+.pub-backdrop span:nth-child(2) {
+  right: -140px;
+  bottom: -180px;
+  width: 480px;
+  height: 440px;
+  background: var(--pub-mint);
+  animation-delay: -6s;
+}
+.pub-backdrop span:nth-child(3) {
+  top: 30%;
+  right: 8%;
+  width: 140px;
+  height: 130px;
+  background: var(--pub-sky);
+  animation-delay: -11s;
+}
+@keyframes pubMorph {
+  to {
+    border-radius: 58% 42% 46% 54% / 44% 58% 42% 56%;
+    translate: 20px 14px;
+  }
+}
+
+/* Section links shared by the homepage navbar and the public Navbar. */
+.pub-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.pub-nav-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: var(--suth-radius-pill);
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-body);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s var(--pub-ease),
+    color 0.2s var(--pub-ease);
+}
+.pub-nav-links a:hover {
+  background: var(--pub-peach);
+  color: var(--suth-action-ink);
+}
+.pub-nav-links a[aria-current="page"],
+.pub-nav-links a.is-active {
+  background: var(--pub-peach);
+  color: var(--suth-action-ink);
+}
+.pub-nav-links a:focus-visible {
+  outline: 3px solid var(--suth-action);
+  outline-offset: 2px;
+}
+@media (max-width: 1024px) {
+  .pub-nav-links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--suth-line-soft);
+  }
+  .pub-nav-links a {
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pub-backdrop span {
+    animation: none;
+  }
+}

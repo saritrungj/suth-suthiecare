@@ -610,3 +610,88 @@
     font-size: var(--suth-fs-title) !important;
   }
 }
+
+/* =========================================
+   Pastel public theme (matches the homepage)
+========================================= */
+.hc-clinic-detail-wrapper {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+}
+.hc-clinic-loading-container {
+  background: var(--pub-page);
+}
+/* The clinic header becomes a rounded pastel banner. */
+.hc-clinic-detail-hero {
+  max-width: 1160px;
+  margin: 12px auto 0;
+  padding: 40px 0;
+  border: 0;
+  border-radius: 28px;
+  background: linear-gradient(120deg, var(--pub-peach) 0%, var(--pub-pink) 55%, var(--pub-lilac) 100%);
+}
+@media (max-width: 1200px) {
+  .hc-clinic-detail-hero {
+    margin-inline: 20px;
+  }
+}
+.hc-clinic-detail-hero::after {
+  content: "";
+  position: absolute;
+  top: -60px;
+  right: -40px;
+  width: 220px;
+  height: 200px;
+  border-radius: 46% 54% 60% 40% / 52% 44% 56% 48%;
+  background: color-mix(in srgb, white 45%, transparent);
+}
+.hc-clinic-logo-frame {
+  border: 5px solid var(--suth-surface);
+  color: var(--suth-action-ink);
+}
+.hc-clinic-badge-label {
+  border: 0 !important;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface) !important;
+  color: var(--suth-action-ink) !important;
+}
+.hc-clinic-badge-label .mini-heart {
+  color: var(--pub-pink-ink) !important;
+}
+.hc-clinic-detail-hero h1 {
+  color: var(--suth-ink);
+  font-weight: 700;
+  text-shadow: none;
+}
+.hc-clinic-detail-hero p {
+  color: var(--suth-ink-2);
+}
+.hc-clinic-sidebar-menu {
+  border: 0;
+  border-radius: var(--pub-card-radius);
+  box-shadow: var(--pub-soft-shadow);
+}
+.hc-clinic-internal-search-box input {
+  border: 2px solid var(--suth-line);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+}
+.hc-clinic-internal-search-box input:focus {
+  border-color: var(--suth-action);
+  box-shadow: 0 0 0 4px var(--pub-peach);
+}
+.hc-clinic-main-content-pane .hc-answer-display-card {
+  border: 0;
+  border-radius: var(--pub-card-radius);
+  box-shadow: var(--pub-soft-shadow);
+}
+.hc-clinic-main-content-pane .hc-answer-header-zone {
+  background: linear-gradient(180deg, var(--pub-sky) 0%, var(--suth-surface) 100%) !important;
+  border-bottom: 0 !important;
+}
+.hc-answer-placeholder-card {
+  border: 2px dashed var(--suth-tint-line);
+  border-radius: var(--pub-card-radius);
+  background: color-mix(in srgb, var(--suth-surface) 80%, transparent);
+}

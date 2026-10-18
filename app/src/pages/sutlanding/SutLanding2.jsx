@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   FiArrowRight,
@@ -22,6 +22,7 @@ import PatientAccountMenu from "../../components/PatientAccountMenu.jsx";
 import { getPatientSession } from "../../utils/patientSession";
 import { authSession } from "../../utils/authSession";
 import FloatingActions from "../../components/floating/FloatingActions.jsx";
+import PublicNavLinks from "../../components/public/PublicNavLinks.jsx";
 // Page styles load first so the picker's rules win over the page-wide reset.
 import "./SutLanding2.css";
 import ClinicFormPicker from "./ClinicFormPicker.jsx";
@@ -53,6 +54,7 @@ function scrollToId(id) {
 export default function SutLanding2() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { hash } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [appVersion, setAppVersion] = useState("");
@@ -170,6 +172,16 @@ export default function SutLanding2() {
     return () => clearInterval(t);
   }, [slides]);
 
+  // Links such as /#services from other pages land here; scroll once the
+  // picker has data so the section is at its final height.
+  useEffect(() => {
+    if (!hash || loading || loadingClinics) return;
+    const frame = window.requestAnimationFrame(() =>
+      scrollToId(decodeURIComponent(hash.slice(1))),
+    );
+    return () => window.cancelAnimationFrame(frame);
+  }, [hash, loading, loadingClinics]);
+
   const organizationCount = useMemo(
     () =>
       new Set(
@@ -186,7 +198,7 @@ export default function SutLanding2() {
       const response = await api.post("/counts", {
         formIds: formList.map((f) => f.id),
       });
-      setCounts(response.data.data);
+      setCounts(response.data?.data || {});
     } catch (err) {}
   }, []);
 
@@ -240,6 +252,10 @@ export default function SutLanding2() {
             id="sut2-nav-actions"
             className={`sut2-nav__actions ${menuOpen ? "sut2-open" : ""}`}
           >
+            <PublicNavLinks
+              className="sut2-nav__links"
+              onNavigate={() => setMenuOpen(false)}
+            />
             <LanguageSwitcher className="sut2-nav__language" darkText />
             <PatientAccountMenu
               onNavigate={() => setMenuOpen(false)}

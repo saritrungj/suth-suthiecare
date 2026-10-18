@@ -1,103 +1,86 @@
+/* Public navbar: transparent over the pastel page, white once scrolled. */
 .main-nav {
   position: sticky;
   top: 0;
   z-index: 100;
   min-height: 4.5rem;
-  padding: 0.625rem clamp(1rem, 3vw, 2.25rem);
+  padding: 0.5rem clamp(1rem, 4vw, 2.5rem);
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
-  border-bottom: 1px solid var(--suth-line);
-  background: var(--suth-surface);
+  background: transparent;
   color: var(--suth-ink);
   font-family: var(--suth-font);
+  transition:
+    background-color 0.3s var(--pub-ease),
+    box-shadow 0.3s var(--pub-ease);
+}
+.main-nav.is-scrolled {
+  background: color-mix(in srgb, var(--suth-surface) 94%, transparent);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--suth-ink) 8%, transparent);
 }
 
 .main-nav__brand {
-  min-width: 0;
+  flex-shrink: 0;
   padding: 0;
   display: inline-flex;
   align-items: center;
-  gap: 0.625rem;
   border: 0;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   background: transparent;
-  color: inherit;
-  text-align: left;
+  cursor: pointer;
 }
 
-.main-nav__brand:hover .main-nav__brand-copy strong {
-  color: var(--suth-action-ink);
-}
-
+/* The logo file has wide transparent margins, so crop it with the frame. */
 .main-nav__logo-frame {
   position: relative;
-  width: 5rem;
-  height: 3.25rem;
-  flex: 0 0 5rem;
-  display: grid;
-  place-items: center;
+  width: 76px;
+  height: 48px;
+  flex: 0 0 76px;
+  display: block;
   overflow: hidden;
 }
-
 .main-nav__logo-img {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 7.25rem;
-  height: 7.25rem;
+  width: 116px;
+  height: 116px;
   max-width: none;
-  flex: 0 0 7.25rem;
   object-fit: contain;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -48%);
 }
 
-.main-nav__brand-copy {
+.main-nav__menu {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.75rem;
   min-width: 0;
-  display: grid;
-  gap: 0.0625rem;
-  line-height: 1.25;
 }
-
-.main-nav__brand-copy strong {
-  color: var(--suth-ink);
-  font-size: var(--suth-fs-md);
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  transition: color 180ms ease-out;
+.main-nav__links {
+  margin: 0 auto;
 }
-
-.main-nav__brand-copy small {
-  overflow: hidden;
-  color: var(--suth-muted);
-  font-size: var(--suth-fs-caption);
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .main-nav__actions {
-  min-width: 0;
-  margin-left: auto;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  gap: 0.5rem;
+}
+.main-nav__end {
+  display: flex;
+  align-items: center;
   gap: 0.5rem;
 }
 
-.main-nav__actions > button {
-  margin-left: 0 !important;
-}
-
-.main-nav__back {
+.main-nav__back,
+.main-nav__login {
   min-height: 2.75rem;
-  padding: 0.625rem 0.875rem;
+  padding: 0 1rem;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  border: 1px solid var(--suth-control-line);
-  border-radius: 0.5rem;
+  border: 2px solid var(--suth-line);
+  border-radius: var(--suth-radius-pill);
   background: var(--suth-surface);
   color: var(--suth-ink-2);
   font: inherit;
@@ -106,100 +89,102 @@
   line-height: 1;
   cursor: pointer;
   transition:
-    border-color 180ms ease-out,
-    background-color 180ms ease-out,
-    color 180ms ease-out;
+    border-color 0.2s var(--pub-ease),
+    color 0.2s var(--pub-ease);
+}
+.main-nav__back:hover,
+.main-nav__login:hover {
+  border-color: var(--suth-tint-line);
+  color: var(--suth-action-ink);
+}
+.main-nav__login {
+  border-color: var(--suth-action);
+  background: var(--suth-action);
+  color: var(--suth-on-action);
 }
 
-.main-nav__back:hover {
-  border-color: var(--suth-action);
-  background: var(--suth-tint);
-  color: var(--suth-warning);
+.main-nav__toggle {
+  display: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--pub-peach);
+  color: var(--suth-action-ink);
+  font-size: 1.35rem;
+  cursor: pointer;
 }
 
 .main-nav__brand:focus-visible,
-.main-nav__back:focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--suth-action) 34%, transparent);
+.main-nav__back:focus-visible,
+.main-nav__login:focus-visible,
+.main-nav__toggle:focus-visible {
+  outline: 3px solid var(--suth-action);
   outline-offset: 2px;
 }
 
-@media screen and (max-width: 900px) {
+/* Tablets and phones: links and account move into a dropdown panel. */
+@media screen and (max-width: 1024px) {
   .main-nav {
-    min-height: 4rem;
-    padding: 0.375rem 1rem;
+    justify-content: space-between;
   }
-
-  .main-nav__brand-copy small {
+  .main-nav__toggle {
+    display: grid;
+  }
+  .main-nav__menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: clamp(1rem, 4vw, 2.5rem);
     display: none;
+    flex: none;
+    flex-direction: column;
+    align-items: stretch;
+    width: min(260px, calc(100vw - 2rem));
+    padding: 12px;
+    border-radius: var(--suth-radius-panel);
+    background: var(--suth-surface);
+    box-shadow: var(--suth-shadow-pop);
   }
-
-  .main-nav__logo-frame {
-    width: 4.25rem;
-    height: 3.25rem;
-    flex-basis: 4.25rem;
+  .main-nav__menu.is-open {
+    display: flex;
   }
-
-  .main-nav__logo-img {
-    width: 6.75rem;
-    height: 6.75rem;
-    flex-basis: 6.75rem;
+  .main-nav__links {
+    margin: 0;
   }
-
   .main-nav__actions {
-    gap: 0.375rem;
-  }
-
-  .main-nav__back {
-    min-width: 2.75rem;
-    padding: 0.625rem;
-    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 
 @media screen and (max-width: 640px) {
-  .main-nav__brand-copy,
-  .main-nav__back span,
-  .main-nav__actions .patient-account-copy {
+  .main-nav {
+    min-height: 4rem;
+  }
+  .main-nav__back {
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+  .main-nav__back span {
     display: none;
   }
-
-  .main-nav__brand {
-    gap: 0;
-  }
-
   .main-nav__logo-frame {
-    width: 3.75rem;
-    height: 3rem;
-    flex-basis: 3.75rem;
+    width: 64px;
+    height: 40px;
+    flex-basis: 64px;
   }
-
   .main-nav__logo-img {
-    width: 6.25rem;
-    height: 6.25rem;
-    flex-basis: 6.25rem;
-  }
-
-  .main-nav__actions .patient-account-trigger {
-    padding-right: 0.4375rem;
-  }
-
-  .main-nav__actions .patient-account-dropdown {
-    position: fixed;
-    top: 4.125rem;
-    right: 0.75rem;
-    width: min(15rem, calc(100vw - 1.5rem));
-  }
-}
-
-@media screen and (max-width: 420px) {
-  .main-nav {
-    padding-inline: 0.75rem;
+    width: 98px;
+    height: 98px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .main-nav__brand-copy strong,
-  .main-nav__back {
+  .main-nav,
+  .main-nav__back,
+  .main-nav__login {
     transition-duration: 0.01ms;
   }
 }

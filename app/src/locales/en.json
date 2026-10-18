@@ -404,5 +404,11 @@
     "orgs_label": "Organization",
     "all_orgs": "All organizations",
     "remove_org_filter": "Clear organization filter"
+  },
+  "public_nav": {
+    "services": "Services",
+    "steps": "How it works",
+    "help": "Help center",
+    "history": "My history"
   }
 }

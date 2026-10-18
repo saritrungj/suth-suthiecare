@@ -1310,3 +1310,232 @@
       url("../../assets/login-image.png");
   }
 }
+
+/* =========================================
+   Pastel public theme (matches the homepage)
+   Applies to sign-in, register, verify email and change password.
+========================================= */
+.patient-auth-page,
+.patient-civic-auth-page,
+.patient-login-page.patient-civic-auth-page {
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
+  background: var(--pub-page);
+  background-image: none;
+}
+/* Peach and mint blobs behind the card, as on the homepage. */
+.patient-auth-page::before,
+.patient-auth-page::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  border-radius: 46% 54% 60% 40% / 52% 44% 56% 48%;
+  pointer-events: none;
+  animation: pubMorph 18s ease-in-out infinite alternate;
+}
+.patient-auth-page::before {
+  top: -160px;
+  left: -180px;
+  width: 520px;
+  height: 460px;
+  background: var(--pub-peach);
+}
+.patient-auth-page::after {
+  right: -140px;
+  bottom: -180px;
+  width: 480px;
+  height: 440px;
+  background: var(--pub-mint);
+  animation-delay: -6s;
+}
+
+.patient-auth-page .patient-auth-home,
+.patient-civic-auth-page .patient-auth-home {
+  border: 2px solid var(--suth-line);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  backdrop-filter: none;
+}
+.patient-auth-page .patient-auth-home:hover {
+  border-color: var(--suth-tint-line);
+  background: var(--suth-surface);
+  color: var(--suth-action-ink);
+}
+.patient-language-switcher {
+  border: 2px solid var(--suth-line);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.patient-language-switcher button {
+  border-radius: var(--suth-radius-pill);
+}
+
+.patient-login-shell,
+.patient-civic-shell {
+  border: 0;
+  border-radius: 28px;
+  background: var(--suth-surface);
+  box-shadow: 0 24px 60px color-mix(in srgb, var(--suth-ink) 10%, transparent);
+}
+
+/* Intro panel: a pastel sky with the care team, instead of navy. */
+.patient-login-intro,
+.patient-civic-intro,
+.staff-login-intro {
+  isolation: isolate;
+  background: linear-gradient(170deg, var(--pub-sky) 0%, #eef7ff 62%, var(--pub-mint) 100%);
+  background-image: linear-gradient(170deg, var(--pub-sky) 0%, #eef7ff 62%, var(--pub-mint) 100%);
+  color: var(--suth-ink);
+}
+.patient-login-intro::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -70px;
+  right: -60px;
+  width: 220px;
+  height: 200px;
+  border-radius: 46% 54% 60% 40% / 52% 44% 56% 48%;
+  background: var(--pub-peach);
+}
+.patient-login-intro::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  right: 18px;
+  bottom: 0;
+  width: 150px;
+  height: 225px;
+  background: url("../../assets/hero-doctor-f.webp") bottom center / contain no-repeat;
+  filter: drop-shadow(0 12px 14px color-mix(in srgb, var(--suth-ink) 14%, transparent));
+}
+.patient-login-logo {
+  filter: none;
+}
+.patient-login-kicker,
+.patient-civic-auth-page .patient-login-kicker {
+  display: inline-flex;
+  width: fit-content;
+  padding: 4px 12px;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  color: var(--suth-action-ink);
+  letter-spacing: 0;
+}
+.patient-login-intro h2 {
+  color: var(--suth-ink);
+}
+.patient-login-intro-copy > p:last-child {
+  color: var(--suth-ink-2);
+}
+.patient-login-benefits {
+  max-width: calc(100% - 150px);
+}
+.patient-login-benefit,
+.patient-civic-auth-page .patient-login-benefit {
+  min-height: 48px;
+  border: 0;
+  color: var(--suth-ink-2);
+}
+.patient-civic-auth-page .patient-login-benefit:last-child {
+  border: 0;
+}
+.patient-login-benefit svg {
+  box-sizing: content-box;
+  padding: 7px;
+  border-radius: 12px;
+  background: var(--suth-surface);
+  color: var(--suth-action-ink);
+  font-size: 1.1rem;
+}
+
+/* Form side */
+.patient-login-role-switcher {
+  border: 0;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-neutral-tint);
+}
+.patient-login-role-switcher button {
+  border-radius: var(--suth-radius-pill);
+}
+.patient-login-role-switcher button.is-active {
+  background: var(--suth-ink);
+}
+.patient-login-heading-icon,
+.patient-civic-auth-page .patient-login-heading-icon {
+  border: 0;
+  border-radius: 14px;
+  background: var(--pub-peach);
+  transform: rotate(-6deg);
+}
+.patient-auth-field input,
+.patient-civic-auth-page .patient-auth-field input {
+  border: 2px solid var(--suth-line);
+  border-radius: 14px;
+  background: var(--suth-surface);
+  transition: border-color 0.2s var(--pub-ease), box-shadow 0.2s var(--pub-ease);
+}
+.patient-auth-field input:focus,
+.patient-civic-auth-page .patient-auth-field input:focus {
+  border-color: var(--suth-action);
+  box-shadow: 0 0 0 4px var(--pub-peach);
+}
+.patient-auth-button,
+.patient-civic-auth-page .patient-auth-button {
+  border-radius: var(--suth-radius-pill);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--suth-action) 35%, transparent);
+  transition: transform 0.3s var(--pub-ease), box-shadow 0.3s var(--pub-ease), background-color 0.2s;
+}
+.patient-auth-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+.patient-login-page .patient-login-register {
+  border: 0;
+  border-radius: 18px;
+  background: var(--pub-peach);
+  color: var(--suth-ink-2);
+}
+.patient-auth-card,
+.patient-email-verification {
+  border-radius: 28px;
+}
+
+@media (max-width: 899px) {
+  .patient-login-intro::after {
+    width: 96px;
+    height: 144px;
+  }
+  .patient-login-intro-copy {
+    max-width: calc(100% - 100px);
+  }
+}
+@media (max-width: 480px) {
+  .patient-auth-page,
+  .patient-login-page.patient-civic-auth-page {
+    background: var(--pub-page);
+    background-image: none;
+  }
+  .patient-login-shell,
+  .patient-auth-card {
+    border-radius: 24px;
+    box-shadow: 0 14px 34px color-mix(in srgb, var(--suth-ink) 8%, transparent);
+  }
+  .patient-login-intro::after {
+    right: 8px;
+    width: 76px;
+    height: 114px;
+  }
+  .patient-login-intro-copy {
+    max-width: calc(100% - 76px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .patient-auth-page::before,
+  .patient-auth-page::after {
+    animation: none;
+  }
+}
