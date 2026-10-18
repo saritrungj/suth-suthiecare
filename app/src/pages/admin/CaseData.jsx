@@ -627,6 +627,8 @@ export default function CaseData({ initialRisk = "" }) {
         if (typeof formDetails.questions === "string") {
           formDetails.questions = JSON.parse(formDetails.questions);
         }
+        // A form saved without questions must still open its case list.
+        if (!Array.isArray(formDetails.questions)) formDetails.questions = [];
         setCurrentFormDetails(formDetails);
 
         const realQuestions = formDetails.questions.filter(
@@ -861,13 +863,16 @@ export default function CaseData({ initialRisk = "" }) {
     setEndDate(safeEndDate);
   };
 
+  // Fall back to the list's title, so a form whose details could not load
+  // never leaves the page saying it is still loading.
   const pageTitle =
     currentFormDetails?.title ||
-    (isInitialSetup
+    (isInitialSetup || isLoading
       ? "กำลังโหลด..."
       : filteredFormsList.length === 0
         ? "ไม่มีข้อมูลแบบฟอร์ม"
-        : "กำลังโหลด...");
+        : forms.find((f) => String(f.id) === String(selectedFormId))?.title ||
+          "เลือกแบบฟอร์ม");
   const isPhone = useMediaQuery("(max-width: 760px)");
   const moreFilterCount = [
     clinicFilter !== "all" ? clinicFilter : "",
