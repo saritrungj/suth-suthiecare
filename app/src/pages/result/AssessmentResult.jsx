@@ -8,14 +8,15 @@ import {
   FiInfo,
   FiCheck,
   FiClock,
+  FiX,
 } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import { translateTextSmart } from "../../utils/translator";
-import LanguageSwitcher from "../../components/LanguageSwitcher.jsx";
+import Navbar from "../../components/Navbar";
+import PublicBackdrop from "../../components/public/PublicBackdrop";
 import riskLow from "../../assets/01.png";
 import riskMedium from "../../assets/02.png";
 import riskHigh from "../../assets/03.png";
-import logoSUTH from "../../assets/logoSUTH.png";
 import "./AssessmentResult.css";
 import { buildAssessmentResultSections } from "./assessmentResultUtils";
 
@@ -388,21 +389,15 @@ export default function AssessmentResult() {
 
   return (
     <div className="ar-page">
+      <PublicBackdrop />
       {/* ─── NAV ─── */}
-      <nav className="ar-nav">
-        <div className="ar-nav__logo-wrap">
-          <img src={logoSUTH} alt="SUTH Healthcare" className="ar-nav__logo" />
-        </div>
-        <div
-          className="ar-nav__actions"
-          style={{ display: "flex", alignItems: "center", gap: "15px" }}
-        >
-          <LanguageSwitcher darkText={true} />
-          <button className="ar-btn-close" onClick={() => navigate("/")}>
-            {t("assessment_result.close_window")}
-          </button>
-        </div>
-      </nav>
+      <Navbar
+        showBack
+        showLanguage
+        backText={t("assessment_result.close_window")}
+        backIcon={FiX}
+        onBack={() => navigate("/")}
+      />
 
       {/* ─── CONTENT ─── */}
       <div className="ar-container">
@@ -410,8 +405,7 @@ export default function AssessmentResult() {
         <div
           className="ar-success-hero"
           style={{
-            backgroundColor: isSaved ? "var(--suth-surface-2)" : "var(--suth-canvas)",
-            borderColor: isSaved ? "var(--suth-success-line)" : "var(--suth-line-soft)",
+            backgroundColor: isSaved ? "var(--pub-mint)" : "var(--pub-sky)",
           }}
         >
           <div

@@ -413,3 +413,63 @@
     font-size: var(--suth-fs-display);
   }
 }
+
+/* =========================================
+   Pastel public theme (matches the homepage)
+========================================= */
+.clinic-detail-shell {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+}
+.clinic-detail-page {
+  max-width: 1200px;
+  padding-top: 8px;
+  background: transparent;
+}
+.clinic-hero {
+  border-radius: 28px;
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--suth-action) 28%, transparent);
+}
+.bmi-card,
+.advice-card,
+.timeline-section {
+  border: 0;
+  border-radius: var(--pub-card-radius);
+  box-shadow: var(--pub-soft-shadow);
+}
+.card-icon {
+  border-radius: 14px;
+  background: var(--pub-peach);
+  transform: rotate(-6deg);
+}
+.advice-card .card-icon {
+  background: var(--pub-mint);
+  color: var(--pub-mint-ink);
+}
+.timeline-card {
+  border: 0;
+  border-radius: 20px;
+  background: var(--pub-sky);
+}
+.timeline-card:nth-child(3n + 2) {
+  background: var(--pub-peach);
+}
+.timeline-card:nth-child(3n + 3) {
+  background: var(--pub-mint);
+}
+.timeline-card:hover {
+  box-shadow: 0 12px 22px color-mix(in srgb, var(--suth-ink) 8%, transparent);
+}
+.timeline-btn {
+  background: var(--suth-surface);
+}
+.timeline-btn:hover {
+  background: var(--suth-ink);
+  color: var(--suth-surface);
+}
+.advice-box {
+  border: 0;
+  border-radius: 20px;
+  background: var(--pub-peach);
+}

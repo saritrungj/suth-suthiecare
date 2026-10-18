@@ -15,6 +15,7 @@ export default function Navbar({
   showPatientAccount = false,
   showLanguage = false,
   backText = "กลับ",
+  backIcon: BackIcon = FiArrowLeft,
   onBack,
 }) {
   const navigate = useNavigate();
@@ -78,7 +79,7 @@ export default function Navbar({
             onClick={onBack ? onBack : () => navigate(-1)}
             aria-label={backText}
           >
-            <FiArrowLeft size={16} aria-hidden="true" /> <span>{backText}</span>
+            <BackIcon size={16} aria-hidden="true" /> <span>{backText}</span>
           </button>
         )}
         <button

@@ -724,3 +724,55 @@ body {
   --eval-input-size: 14px;
   --eval-radio-size: 18px;
 }
+
+/* =========================================
+   Pastel public theme (matches the homepage)
+========================================= */
+.ar-page {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+}
+.ar-success-hero {
+  position: relative;
+  overflow: hidden;
+  border: 0;
+  border-radius: 28px;
+  box-shadow: none;
+}
+/* Soft blob in the corner of the "done" banner. */
+.ar-success-hero::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -40px;
+  width: 180px;
+  height: 160px;
+  border-radius: 46% 54% 60% 40% / 52% 44% 56% 48%;
+  background: color-mix(in srgb, white 45%, transparent);
+}
+.ar-success-hero > * {
+  position: relative;
+}
+.ar-success-icon {
+  box-shadow: 0 0 0 8px color-mix(in srgb, white 70%, transparent);
+}
+.ar-hero-title {
+  font-weight: 700;
+}
+/* Result cards keep their risk colour; only the shape changes. */
+.ar-result-card {
+  border-width: 2px;
+  border-radius: var(--pub-card-radius);
+  box-shadow: var(--pub-soft-shadow);
+}
+.ar-score-wrapper,
+.ar-advice-box {
+  border-radius: 18px;
+}
+.ar-btn {
+  border-radius: var(--suth-radius-pill);
+}
+.ar-btn--ghost {
+  border: 2px solid var(--suth-line);
+}

@@ -255,3 +255,85 @@
     backdrop-filter: none;
   }
 }
+
+/* =========================================
+   Pastel public theme (matches the homepage and patient sign-in)
+========================================= */
+.staff-login-page,
+.staff-login-page.patient-civic-auth-page {
+  overflow-x: hidden;
+  overflow-y: visible;
+  background: var(--pub-page);
+  background-image: none;
+}
+.staff-login-page .patient-auth-home {
+  border: 2px solid var(--suth-line);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  backdrop-filter: none;
+}
+.staff-login-page .patient-auth-home:hover {
+  border-color: var(--suth-tint-line);
+  background: var(--suth-surface);
+  color: var(--suth-action-ink);
+}
+.staff-login-page .patient-login-shell {
+  border: 0;
+  border-radius: 28px;
+  box-shadow: 0 24px 60px color-mix(in srgb, var(--suth-ink) 10%, transparent);
+}
+/* Staff panel uses lilac and the male doctor so the two roles read apart. */
+.staff-login-intro {
+  background: linear-gradient(170deg, var(--pub-lilac) 0%, #f4f1ff 62%, var(--pub-sky) 100%);
+  background-image: linear-gradient(170deg, var(--pub-lilac) 0%, #f4f1ff 62%, var(--pub-sky) 100%);
+  color: var(--suth-ink);
+}
+.staff-login-intro::after {
+  width: 140px;
+  height: 172px;
+  background-image: url("../../assets/hero-doctor-m.webp");
+}
+.staff-login-page .patient-login-kicker {
+  color: var(--pub-lilac-ink);
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+.staff-login-page .patient-login-intro-copy > p:last-child {
+  color: var(--suth-ink-2);
+}
+.staff-login-page .patient-login-benefit {
+  border: 0;
+  color: var(--suth-ink-2);
+}
+.staff-login-page .patient-login-benefit:last-child {
+  border: 0;
+}
+.staff-login-page .patient-login-benefit svg {
+  color: var(--pub-lilac-ink);
+}
+.staff-login-page .patient-login-heading-icon {
+  border: 0;
+  border-radius: 14px;
+  background: var(--pub-lilac);
+  color: var(--pub-lilac-ink);
+}
+.staff-login-page .patient-auth-field input {
+  border: 2px solid var(--suth-line);
+  border-radius: 14px;
+}
+.staff-login-page .patient-auth-button {
+  border-radius: var(--suth-radius-pill);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--suth-action) 35%, transparent);
+}
+@media (max-width: 480px) {
+  .staff-login-page,
+  .staff-login-page.patient-civic-auth-page {
+    background: var(--pub-page);
+    background-image: none;
+  }
+  .staff-login-intro::after {
+    width: 72px;
+    height: 90px;
+  }
+}

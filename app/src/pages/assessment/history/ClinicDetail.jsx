@@ -2,9 +2,10 @@ import { toDisplayText } from "../../../utils/textPresentation.js";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import Navbar from "../../../components/Navbar";
+import PublicBackdrop from "../../../components/public/PublicBackdrop";
 import "./ClinicDetail.css";
 import {
-  FiArrowLeft,
   FiTrendingUp,
   FiActivity,
   FiCalendar,
@@ -139,230 +140,237 @@ export default function ClinicDetail() {
       : latestRecord?.label || "-";
 
   return (
-    <div className="clinic-detail-page">
-      <button className="clinic-back-btn" onClick={() => navigate(-1)}>
-        <FiArrowLeft />
-        <span>
-          {t("history.result.back") ||
-            (currentLang === "en" ? "Back" : "ย้อนกลับ")}
-        </span>
-      </button>
+    <div className="clinic-detail-shell">
+      <PublicBackdrop />
+      <Navbar
+        showBack
+        showLanguage
+        showPatientAccount
+        backText={
+          t("history.result.back") ||
+          (currentLang === "en" ? "Back" : "ย้อนกลับ")
+        }
+        onBack={() => navigate(-1)}
+      />
+      <div className="clinic-detail-page">
+        {/* HERO */}
+        <div className="clinic-hero">
+          <div className="hero-content">
+            <h1>{clinicName}</h1>
 
-      {/* HERO */}
-      <div className="clinic-hero">
-        <div className="hero-content">
-          <h1>{clinicName}</h1>
+            <div className="hero-health-status">
+              <div className="hero-main-value">
+                {clinicType === "behavior"
+                  ? `${currentLang === "en" ? "Current BMI" : "BMI ปัจจุบัน"} ${graphData.length ? latestValue : "-"}`
+                  : `${currentLang === "en" ? "Latest Score" : "คะแนนล่าสุด"} ${graphData.length ? latestValue : "-"}`}
 
-          <div className="hero-health-status">
-            <div className="hero-main-value">
-              {clinicType === "behavior"
-                ? `${currentLang === "en" ? "Current BMI" : "BMI ปัจจุบัน"} ${graphData.length ? latestValue : "-"}`
-                : `${currentLang === "en" ? "Latest Score" : "คะแนนล่าสุด"} ${graphData.length ? latestValue : "-"}`}
+                <span>({latestLabel})</span>
+              </div>
 
-              <span>({latestLabel})</span>
-            </div>
-
-            <div className="hero-trend">
-              {graphData.length > 1
-                ? trendText
-                : currentLang === "en"
-                  ? "More assessments are needed to show a trend"
-                  : "ต้องมีผลประเมินเพิ่มเติมเพื่อแสดงแนวโน้ม"}
+              <div className="hero-trend">
+                {graphData.length > 1
+                  ? trendText
+                  : currentLang === "en"
+                    ? "More assessments are needed to show a trend"
+                    : "ต้องมีผลประเมินเพิ่มเติมเพื่อแสดงแนวโน้ม"}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* CHART + ADVICE */}
+        {/* CHART + ADVICE */}
 
-      <div className="clinic-top-section">
-        <div className="bmi-card">
-          <div className="card-header">
-            <div className="card-icon">
-              <FiTrendingUp />
+        <div className="clinic-top-section">
+          <div className="bmi-card">
+            <div className="card-header">
+              <div className="card-icon">
+                <FiTrendingUp />
+              </div>
+
+              <div>
+                <h3>
+                  {clinicType === "behavior"
+                    ? currentLang === "en"
+                      ? "BMI Trend"
+                      : "แนวโน้ม BMI"
+                    : currentLang === "en"
+                      ? "Risk Score Trend"
+                      : "แนวโน้มคะแนนความเสี่ยง"}
+                </h3>
+
+                <span>
+                  {currentLang === "en"
+                    ? "All Historical Data"
+                    : "ข้อมูลย้อนหลังทั้งหมด"}
+                </span>
+              </div>
             </div>
 
-            <div>
-              <h3>
-                {clinicType === "behavior"
-                  ? currentLang === "en"
-                    ? "BMI Trend"
-                    : "แนวโน้ม BMI"
-                  : currentLang === "en"
-                    ? "Risk Score Trend"
-                    : "แนวโน้มคะแนนความเสี่ยง"}
-              </h3>
+            <div className="hr-trend-chart">
+              {!graphData.length && (
+                <p className="empty-timeline">
+                  {currentLang === "en"
+                    ? "No assessment data yet"
+                    : "ยังไม่มีข้อมูลผลประเมิน"}
+                </p>
+              )}
+              {graphData.map((item, i) => {
+                const value =
+                  clinicType === "behavior"
+                    ? Number(item.bmi || item.score || 0)
+                    : Number(item.score || 0);
 
-              <span>
-                {currentLang === "en"
-                  ? "All Historical Data"
-                  : "ข้อมูลย้อนหลังทั้งหมด"}
-              </span>
-            </div>
-          </div>
+                const maxValue = clinicType === "behavior" ? 40 : 30;
 
-          <div className="hr-trend-chart">
-            {!graphData.length && (
-              <p className="empty-timeline">
-                {currentLang === "en"
-                  ? "No assessment data yet"
-                  : "ยังไม่มีข้อมูลผลประเมิน"}
-              </p>
-            )}
-            {graphData.map((item, i) => {
-              const value =
-                clinicType === "behavior"
-                  ? Number(item.bmi || item.score || 0)
-                  : Number(item.score || 0);
+                const heightPct = Math.min((value / maxValue) * 100, 100);
 
-              const maxValue = clinicType === "behavior" ? 40 : 30;
-
-              const heightPct = Math.min((value / maxValue) * 100, 100);
-
-              return (
-                <div key={i} className="hr-trend-bar-wrapper">
-                  <div
-                    className="hr-trend-bar"
-                    style={{
-                      height: `${Math.max(heightPct * 1.8, 4)}px`,
-                      background: item.color || "var(--suth-success)",
-                    }}
-                  >
-                    <span className="hr-trend-val">{value}</span>
-                  </div>
-
-                  <div className="hr-trend-date">
-                    {item.date
-                      ? new Date(item.date).toLocaleDateString(
-                          currentLang === "en" ? "en-GB" : "th-TH",
-                          {
-                            month: "short",
-                            day: "numeric",
-                          },
-                        )
-                      : "-"}
-                  </div>
-
-                  {clinicType === "behavior" ? (
-                    <div className="hr-trend-wh">
-                      <span>{item.weight ? `${item.weight} kg` : "-"}</span>
-
-                      <span>{item.height ? `${item.height} cm` : "-"}</span>
-                    </div>
-                  ) : (
+                return (
+                  <div key={i} className="hr-trend-bar-wrapper">
                     <div
-                      className="risk-label"
+                      className="hr-trend-bar"
                       style={{
-                        color: item.color || "var(--suth-success)",
+                        height: `${Math.max(heightPct * 1.8, 4)}px`,
+                        background: item.color || "var(--suth-success)",
                       }}
                     >
-                      {toDisplayText(item.label)}
+                      <span className="hr-trend-val">{value}</span>
                     </div>
-                  )}
-                </div>
-              );
-            })}
+
+                    <div className="hr-trend-date">
+                      {item.date
+                        ? new Date(item.date).toLocaleDateString(
+                            currentLang === "en" ? "en-GB" : "th-TH",
+                            {
+                              month: "short",
+                              day: "numeric",
+                            },
+                          )
+                        : "-"}
+                    </div>
+
+                    {clinicType === "behavior" ? (
+                      <div className="hr-trend-wh">
+                        <span>{item.weight ? `${item.weight} kg` : "-"}</span>
+
+                        <span>{item.height ? `${item.height} cm` : "-"}</span>
+                      </div>
+                    ) : (
+                      <div
+                        className="risk-label"
+                        style={{
+                          color: item.color || "var(--suth-success)",
+                        }}
+                      >
+                        {toDisplayText(item.label)}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="advice-card">
+            {/* HEADER */}
+            <div className="card-header">
+              <div className="card-icon">
+                <FiFileText />
+              </div>
+
+              <div>
+                <h3>
+                  {currentLang === "en"
+                    ? "Expert Advice"
+                    : "คำแนะนำจากผู้เชี่ยวชาญ"}
+                </h3>
+                <span>{clinicName}</span>
+              </div>
+            </div>
+
+            <div className="advice-box">
+              <div className="advice-header">
+                <FiShield />
+                <span>
+                  {currentLang === "en"
+                    ? "Health Recommendations"
+                    : "ข้อเสนอแนะด้านสุขภาพ"}
+                </span>
+              </div>
+
+              <p>
+                {advice?.detail?.trim()
+                  ? advice.detail
+                  : currentLang === "en"
+                    ? "No expert advice available at the moment. Please check back later."
+                    : "ยังไม่มีคำแนะนำจากผู้เชี่ยวชาญในขณะนี้ กรุณาติดตามผลครั้งถัดไป"}
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="advice-card">
-          {/* HEADER */}
-          <div className="card-header">
-            <div className="card-icon">
-              <FiFileText />
-            </div>
+        {/* TIMELINE */}
 
-            <div>
-              <h3>
-                {currentLang === "en"
-                  ? "Expert Advice"
-                  : "คำแนะนำจากผู้เชี่ยวชาญ"}
-              </h3>
-              <span>{clinicName}</span>
-            </div>
-          </div>
-
-          <div className="advice-box">
-            <div className="advice-header">
-              <FiShield />
+        <div className="timeline-section">
+          <div className="timeline-header">
+            <div className="section-title">
+              <FiCalendar />
               <span>
                 {currentLang === "en"
-                  ? "Health Recommendations"
-                  : "ข้อเสนอแนะด้านสุขภาพ"}
+                  ? "Service History"
+                  : "ประวัติการเข้ารับบริการ"}
               </span>
             </div>
 
-            <p>
-              {advice?.detail?.trim()
-                ? advice.detail
-                : currentLang === "en"
-                  ? "No expert advice available at the moment. Please check back later."
-                  : "ยังไม่มีคำแนะนำจากผู้เชี่ยวชาญในขณะนี้ กรุณาติดตามผลครั้งถัดไป"}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* TIMELINE */}
-
-      <div className="timeline-section">
-        <div className="timeline-header">
-          <div className="section-title">
-            <FiCalendar />
-            <span>
-              {currentLang === "en"
-                ? "Service History"
-                : "ประวัติการเข้ารับบริการ"}
+            <span className="timeline-count">
+              {clinicTimeline.length}{" "}
+              {currentLang === "en" ? "records" : "รายการ"}
             </span>
           </div>
 
-          <span className="timeline-count">
-            {clinicTimeline.length}{" "}
-            {currentLang === "en" ? "records" : "รายการ"}
-          </span>
-        </div>
-
-        {clinicTimeline.length > 0 ? (
-          clinicTimeline.map((item, index) => (
-            <div key={index} className="timeline-card">
-              <div className="timeline-icon">
-                <FiCalendar />
-              </div>
-
-              <div className="timeline-content">
-                <div className="timeline-title">
-                  {toDisplayText(item.title || item.form_title)}
+          {clinicTimeline.length > 0 ? (
+            clinicTimeline.map((item, index) => (
+              <div key={index} className="timeline-card">
+                <div className="timeline-icon">
+                  <FiCalendar />
                 </div>
 
-                <div className="timeline-date">
-                  {new Date(item.date || item.submitted_at).toLocaleDateString(
-                    currentLang === "en" ? "en-GB" : "th-TH",
-                  )}
-                </div>
-              </div>
+                <div className="timeline-content">
+                  <div className="timeline-title">
+                    {toDisplayText(item.title || item.form_title)}
+                  </div>
 
-              <button
-                className="timeline-btn"
-                onClick={() =>
-                  navigate("/history/result", {
-                    state: {
-                      expandResponseId:
-                        item.case_id || item.response_id || item.id,
-                    },
-                  })
-                }
-              >
-                {currentLang === "en" ? "View More" : "ดูเพิ่มเติม"}
-              </button>
+                  <div className="timeline-date">
+                    {new Date(
+                      item.date || item.submitted_at,
+                    ).toLocaleDateString(
+                      currentLang === "en" ? "en-GB" : "th-TH",
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  className="timeline-btn"
+                  onClick={() =>
+                    navigate("/history/result", {
+                      state: {
+                        expandResponseId:
+                          item.case_id || item.response_id || item.id,
+                      },
+                    })
+                  }
+                >
+                  {currentLang === "en" ? "View More" : "ดูเพิ่มเติม"}
+                </button>
+              </div>
+            ))
+          ) : (
+            <div className="empty-timeline">
+              {currentLang === "en"
+                ? "No service history"
+                : "ไม่มีประวัติการเข้ารับบริการ"}
             </div>
-          ))
-        ) : (
-          <div className="empty-timeline">
-            {currentLang === "en"
-              ? "No service history"
-              : "ไม่มีประวัติการเข้ารับบริการ"}
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
