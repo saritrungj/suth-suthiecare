@@ -2210,29 +2210,39 @@
   isolation: isolate;
   background: transparent;
 }
-/* Keep the orange profile card (white text needs it) but soften its shape. */
+/* Keep the orange profile card (white text needs it) but soften its shape.
+   The card stays overflow-visible so the "new assessment" menu and tooltips
+   can extend past it; only the decorative layer is clipped. */
 .hr-hero {
-  overflow: hidden;
+  overflow: visible;
   border-radius: 28px;
   background: var(--suth-action);
   box-shadow: 0 18px 40px color-mix(in srgb, var(--suth-action) 28%, transparent);
 }
-.hr-hero::before,
-.hr-hero::after {
+.hr-hero-deco {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.hr-hero-deco::before,
+.hr-hero-deco::after {
   content: "";
   position: absolute;
   z-index: 0;
   border-radius: 46% 54% 60% 40% / 52% 44% 56% 48%;
   pointer-events: none;
 }
-.hr-hero::before {
+.hr-hero-deco::before {
   top: -70px;
   right: 18%;
   width: 200px;
   height: 180px;
   background: color-mix(in srgb, white 20%, transparent);
 }
-.hr-hero::after {
+.hr-hero-deco::after {
   bottom: -60px;
   left: -40px;
   width: 160px;
@@ -2246,6 +2256,75 @@
 }
 .hr-btn-new-assess {
   border-radius: var(--suth-radius-pill);
+}
+.hr-btn-new-assess__chevron {
+  margin-left: 2px;
+  transition: transform 0.2s var(--pub-ease);
+}
+.hr-btn-new-assess[aria-expanded="true"] .hr-btn-new-assess__chevron {
+  transform: rotate(180deg);
+}
+/* Clinic picker that drops from the profile card. */
+.hr-reentry-menu {
+  top: calc(100% + 10px);
+  width: 280px;
+  padding: 8px;
+  border: 1px solid var(--suth-line-soft);
+  border-radius: 20px;
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--suth-ink) 14%, transparent);
+}
+.hr-reentry-header {
+  padding: 8px 10px 10px;
+  border-bottom: 0;
+  background: transparent;
+  color: var(--suth-muted);
+}
+.hr-reentry-item {
+  gap: 10px;
+  min-height: 48px;
+  padding: 10px;
+  border-radius: 14px;
+  color: var(--suth-ink);
+  font: inherit;
+  font-size: var(--suth-fs-sm);
+  font-weight: 600;
+}
+.hr-reentry-item:hover,
+.hr-reentry-item:focus-visible {
+  background: var(--pub-peach);
+  color: var(--suth-action-ink);
+  outline: none;
+}
+.hr-reentry-dot {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--clinic-color);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--clinic-color) 16%, transparent);
+}
+.hr-reentry-label {
+  flex: 1;
+  min-width: 0;
+}
+.hr-reentry-arrow {
+  flex-shrink: 0;
+  color: var(--suth-muted);
+}
+.hr-reentry-item--all {
+  margin-top: 4px;
+  border-top: 1px solid var(--suth-line-soft);
+  border-radius: 0 0 14px 14px;
+  color: var(--suth-ink-2);
+  font-weight: 500;
+}
+@media (max-width: 600px) {
+  .hr-reentry-wrapper {
+    width: 100%;
+  }
+  .hr-reentry-menu {
+    width: 100%;
+  }
 }
 
 .hr-suth-promo-banner {

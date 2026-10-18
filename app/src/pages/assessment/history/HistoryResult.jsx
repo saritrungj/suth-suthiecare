@@ -33,6 +33,7 @@ import {
   FiX,
   FiAlertCircle,
   FiChevronDown,
+  FiChevronRight,
   FiChevronUp,
   FiDownload,
 } from "react-icons/fi";
@@ -439,8 +440,15 @@ export default function HistoryResult() {
       if (reentryRef.current && !reentryRef.current.contains(e.target))
         setShowNewAssessMenu(false);
     };
+    const handleEscape = (e) => {
+      if (e.key === "Escape") setShowNewAssessMenu(false);
+    };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, []);
 
   useEffect(() => {
@@ -958,6 +966,7 @@ export default function HistoryResult() {
         )}
         {/* 🟢 ส่วนหัวแฟ้มประวัติ (Hero Profile) */}
         <div className="hr-hero">
+          <span className="hr-hero-deco" aria-hidden="true" />
           <div className="hr-hero-grid">
             <div className="hr-avatar">
               {latestName !== "-" ? latestName.charAt(0).toUpperCase() : "?"}
@@ -1059,9 +1068,9 @@ export default function HistoryResult() {
                                 border: `1px solid ${clinic.border}`,
                               }
                             : {
-                                backgroundColor: "color-mix(in srgb, var(--suth-surface) 10%, transparent)",
-                                color: "color-mix(in srgb, var(--suth-on-action) 50%, transparent)",
-                                border: "1px dashed color-mix(in srgb, var(--suth-surface) 30%, transparent)",
+                                backgroundColor: "color-mix(in srgb, var(--suth-surface) 14%, transparent)",
+                                color: "color-mix(in srgb, var(--suth-on-action) 88%, transparent)",
+                                border: "1px dashed color-mix(in srgb, var(--suth-surface) 55%, transparent)",
                               }
                         }
                       >
@@ -1076,14 +1085,29 @@ export default function HistoryResult() {
             <div className="hr-hero-actions" ref={reentryRef}>
               <div className="hr-reentry-wrapper">
                 <button
+                  type="button"
                   className="hr-btn-new-assess"
+                  aria-haspopup="menu"
+                  aria-expanded={showNewAssessMenu}
+                  aria-controls="hr-reentry-menu"
                   onClick={() => setShowNewAssessMenu(!showNewAssessMenu)}
                 >
-                  <FiPlusCircle size={16} /> {t("history.result.new_assess")}
+                  <FiPlusCircle size={16} aria-hidden="true" />
+                  {t("history.result.new_assess")}
+                  <FiChevronDown
+                    size={16}
+                    aria-hidden="true"
+                    className="hr-btn-new-assess__chevron"
+                  />
                 </button>
                 {showNewAssessMenu && (
-                  <div className="hr-reentry-menu">
-                    <div className="hr-reentry-header">
+                  <div
+                    id="hr-reentry-menu"
+                    className="hr-reentry-menu"
+                    role="menu"
+                    aria-label={t("history.result.select_clinic")}
+                  >
+                    <div className="hr-reentry-header" aria-hidden="true">
                       {t("history.result.select_clinic")}
                     </div>
                     {Object.values(CLINIC_INFO)
@@ -1091,7 +1115,10 @@ export default function HistoryResult() {
                       .map((c) => (
                         <button
                           key={c.id}
+                          type="button"
+                          role="menuitem"
                           className="hr-reentry-item"
+                          style={{ "--clinic-color": c.color }}
                           onClick={() =>
                             navigate("/", {
                               state: {
@@ -1101,40 +1128,31 @@ export default function HistoryResult() {
                             })
                           }
                         >
-                          <div
-                            style={{
-                              width: 12,
-                              height: 12,
-                              borderRadius: "50%",
-                              backgroundColor: c.color,
-                              marginRight: 10,
-                            }}
-                          ></div>
-                          <span
-                            style={{
-                              fontSize: 13,
-                              fontWeight: 600,
-                              color: "var(--gray-800)",
-                            }}
-                          >
+                          <span className="hr-reentry-dot" aria-hidden="true" />
+                          <span className="hr-reentry-label">
                             {getClinicName(c, i18n.language)}
                           </span>
+                          <FiChevronRight
+                            size={16}
+                            aria-hidden="true"
+                            className="hr-reentry-arrow"
+                          />
                         </button>
                       ))}
                     <button
-                      className="hr-reentry-item"
-                      onClick={() => navigate("/")}
-                      style={{ borderTop: "1px solid var(--gray-100)" }}
+                      type="button"
+                      role="menuitem"
+                      className="hr-reentry-item hr-reentry-item--all"
+                      onClick={() => navigate("/#services")}
                     >
-                      <span
-                        style={{
-                          fontSize: 13,
-                          color: "var(--gray-500)",
-                          paddingLeft: 22,
-                        }}
-                      >
+                      <span className="hr-reentry-label">
                         {t("history.result.view_all_forms")}
                       </span>
+                      <FiChevronRight
+                        size={16}
+                        aria-hidden="true"
+                        className="hr-reentry-arrow"
+                      />
                     </button>
                   </div>
                 )}

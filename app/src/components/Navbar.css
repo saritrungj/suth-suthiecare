@@ -1,25 +1,43 @@
-/* Public navbar: transparent over the pastel page, white once scrolled. */
+/* Public navbar: a floating white bar over the pastel page, so the page
+   backdrop never shows through behind the links. */
 .main-nav {
   position: sticky;
   top: 0;
   z-index: 100;
-  min-height: 4.5rem;
-  padding: 0.5rem clamp(1rem, 4vw, 2.5rem);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: transparent;
+  padding: 12px clamp(12px, 3vw, 24px) 0;
   color: var(--suth-ink);
   font-family: var(--suth-font);
+}
+.main-nav__bar {
+  position: relative;
+  width: min(100%, 1160px);
+  min-height: 64px;
+  margin: 0 auto;
+  padding: 8px 10px 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid color-mix(in srgb, var(--suth-line) 70%, transparent);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--suth-surface) 86%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--suth-ink) 6%, transparent);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
   transition:
     background-color 0.3s var(--pub-ease),
     box-shadow 0.3s var(--pub-ease);
 }
-.main-nav.is-scrolled {
-  background: color-mix(in srgb, var(--suth-surface) 94%, transparent);
-  box-shadow: 0 6px 20px color-mix(in srgb, var(--suth-ink) 8%, transparent);
+.main-nav.is-scrolled .main-nav__bar {
+  background: color-mix(in srgb, var(--suth-surface) 96%, transparent);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--suth-ink) 10%, transparent);
 }
 
+.main-nav__start {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
 .main-nav__brand {
   flex-shrink: 0;
   padding: 0;
@@ -34,9 +52,9 @@
 /* The logo file has wide transparent margins, so crop it with the frame. */
 .main-nav__logo-frame {
   position: relative;
-  width: 76px;
-  height: 48px;
-  flex: 0 0 76px;
+  width: 68px;
+  height: 44px;
+  flex: 0 0 68px;
   display: block;
   overflow: hidden;
 }
@@ -44,8 +62,8 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 116px;
-  height: 116px;
+  width: 104px;
+  height: 104px;
   max-width: none;
   object-fit: contain;
   transform: translate(-50%, -48%);
@@ -55,52 +73,74 @@
   display: flex;
   flex: 1;
   align-items: center;
-  gap: 0.75rem;
+  gap: 12px;
   min-width: 0;
 }
-.main-nav__links {
+/* Two classes so the shared .pub-nav-links reset cannot undo the centring. */
+.main-nav__menu > .main-nav__links {
   margin: 0 auto;
 }
 .main-nav__actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-}
-.main-nav__end {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
-.main-nav__back,
-.main-nav__login {
-  min-height: 2.75rem;
-  padding: 0 1rem;
+/* Back sits beside the logo, split from it by a thin rule. */
+.main-nav__back {
+  position: relative;
+  min-height: 40px;
+  margin-left: 6px;
+  padding: 0 14px 0 10px;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  border: 2px solid var(--suth-line);
+  gap: 6px;
+  border: 0;
   border-radius: var(--suth-radius-pill);
-  background: var(--suth-surface);
+  background: var(--suth-surface-2);
   color: var(--suth-ink-2);
   font: inherit;
   font-size: var(--suth-fs-sm);
   font-weight: 700;
   line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
   transition:
-    border-color 0.2s var(--pub-ease),
+    background-color 0.2s var(--pub-ease),
     color 0.2s var(--pub-ease);
 }
-.main-nav__back:hover,
-.main-nav__login:hover {
-  border-color: var(--suth-tint-line);
+.main-nav__back::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: -9px;
+  width: 1px;
+  background: var(--suth-line);
+}
+.main-nav__back:hover {
+  background: var(--pub-peach);
   color: var(--suth-action-ink);
 }
+
 .main-nav__login {
-  border-color: var(--suth-action);
+  min-height: 2.75rem;
+  padding: 0 1.125rem;
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  border-radius: var(--suth-radius-pill);
   background: var(--suth-action);
   color: var(--suth-on-action);
+  font: inherit;
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.2s var(--pub-ease);
+}
+.main-nav__login:hover {
+  background: var(--suth-action-hover);
 }
 
 .main-nav__toggle {
@@ -108,8 +148,9 @@
   place-items: center;
   width: 44px;
   height: 44px;
+  margin-left: auto;
   border: 0;
-  border-radius: 50%;
+  border-radius: 14px;
   background: var(--pub-peach);
   color: var(--suth-action-ink);
   font-size: 1.35rem;
@@ -124,46 +165,62 @@
   outline-offset: 2px;
 }
 
-/* Tablets and phones: links and account move into a dropdown panel. */
+/* Tablets and phones: links and account move into a dropdown panel that
+   hangs from the bar. */
 @media screen and (max-width: 1024px) {
-  .main-nav {
-    justify-content: space-between;
-  }
   .main-nav__toggle {
     display: grid;
   }
   .main-nav__menu {
     position: absolute;
-    top: calc(100% + 4px);
-    right: clamp(1rem, 4vw, 2.5rem);
+    top: calc(100% + 8px);
+    right: 0;
     display: none;
     flex: none;
     flex-direction: column;
     align-items: stretch;
-    width: min(260px, calc(100vw - 2rem));
+    width: min(300px, calc(100vw - 24px));
     padding: 12px;
-    border-radius: var(--suth-radius-panel);
+    border: 1px solid var(--suth-line-soft);
+    border-radius: 20px;
     background: var(--suth-surface);
     box-shadow: var(--suth-shadow-pop);
   }
   .main-nav__menu.is-open {
     display: flex;
+    animation: mainNavDrop 0.2s var(--pub-ease);
   }
-  .main-nav__links {
+  .main-nav__menu > .main-nav__links {
     margin: 0;
+  }
+  .main-nav__menu .pub-nav-links a {
+    display: flex;
   }
   .main-nav__actions {
     flex-direction: column;
     align-items: stretch;
   }
+  /* Pages without language or account controls keep a plain link list. */
+  .main-nav__actions:empty {
+    display: none;
+  }
+  .main-nav__menu > .main-nav__links:has(+ .main-nav__actions:empty) {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
 }
 
 @media screen and (max-width: 640px) {
   .main-nav {
-    min-height: 4rem;
+    padding: 8px 12px 0;
+  }
+  .main-nav__bar {
+    min-height: 56px;
+    padding: 6px 6px 6px 10px;
+    border-radius: 18px;
   }
   .main-nav__back {
-    width: 44px;
+    width: 40px;
     padding: 0;
     justify-content: center;
   }
@@ -171,20 +228,30 @@
     display: none;
   }
   .main-nav__logo-frame {
-    width: 64px;
-    height: 40px;
-    flex-basis: 64px;
+    width: 60px;
+    height: 38px;
+    flex-basis: 60px;
   }
   .main-nav__logo-img {
-    width: 98px;
-    height: 98px;
+    width: 92px;
+    height: 92px;
+  }
+}
+
+@keyframes mainNavDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .main-nav,
+  .main-nav__bar,
   .main-nav__back,
   .main-nav__login {
     transition-duration: 0.01ms;
+  }
+  .main-nav__menu.is-open {
+    animation: none;
   }
 }

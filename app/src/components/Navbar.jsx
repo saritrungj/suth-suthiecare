@@ -32,56 +32,58 @@ export default function Navbar({
 
   return (
     <nav className={`main-nav ${scrolled ? "is-scrolled" : ""}`}>
-      <button
-        type="button"
-        className="main-nav__brand"
-        onClick={() => navigate("/")}
-        aria-label="ไปหน้าแรก"
-      >
-        <span className="main-nav__logo-frame" aria-hidden="true">
-          <img src={logo} alt="" className="main-nav__logo-img" />
-        </span>
-      </button>
-
-      <div
-        id="main-nav-menu"
-        className={`main-nav__menu ${menuOpen ? "is-open" : ""}`}
-      >
-        <PublicNavLinks
-          className="main-nav__links"
-          onNavigate={() => setMenuOpen(false)}
-        />
-        <div className="main-nav__actions">
-          {showLanguage && <LanguageSwitcher darkText />}
-          {showLogin && (
-            <button
-              type="button"
-              className="main-nav__login"
-              onClick={() => navigate("/login")}
-            >
-              เข้าสู่ระบบ
-            </button>
-          )}
-          {showPatientAccount && (
-            <PatientAccountMenu
-              onNavigate={() => setMenuOpen(false)}
-              stackOnMobile
-            />
-          )}
-        </div>
-      </div>
-
-      <div className="main-nav__end">
-        {showBack && (
+      <div className="main-nav__bar">
+        <div className="main-nav__start">
           <button
             type="button"
-            className="main-nav__back"
-            onClick={onBack ? onBack : () => navigate(-1)}
-            aria-label={backText}
+            className="main-nav__brand"
+            onClick={() => navigate("/")}
+            aria-label="ไปหน้าแรก"
           >
-            <BackIcon size={16} aria-hidden="true" /> <span>{backText}</span>
+            <span className="main-nav__logo-frame" aria-hidden="true">
+              <img src={logo} alt="" className="main-nav__logo-img" />
+            </span>
           </button>
-        )}
+          {showBack && (
+            <button
+              type="button"
+              className="main-nav__back"
+              onClick={onBack ? onBack : () => navigate(-1)}
+              aria-label={backText}
+            >
+              <BackIcon size={16} aria-hidden="true" /> <span>{backText}</span>
+            </button>
+          )}
+        </div>
+
+        <div
+          id="main-nav-menu"
+          className={`main-nav__menu ${menuOpen ? "is-open" : ""}`}
+        >
+          <PublicNavLinks
+            className="main-nav__links"
+            onNavigate={() => setMenuOpen(false)}
+          />
+          <div className="main-nav__actions">
+            {showLanguage && <LanguageSwitcher darkText />}
+            {showLogin && (
+              <button
+                type="button"
+                className="main-nav__login"
+                onClick={() => navigate("/login")}
+              >
+                เข้าสู่ระบบ
+              </button>
+            )}
+            {showPatientAccount && (
+              <PatientAccountMenu
+                onNavigate={() => setMenuOpen(false)}
+                stackOnMobile
+              />
+            )}
+          </div>
+        </div>
+
         <button
           type="button"
           className="main-nav__toggle"
@@ -94,7 +96,11 @@ export default function Navbar({
           aria-controls="main-nav-menu"
           onClick={() => setMenuOpen((open) => !open)}
         >
-          {menuOpen ? <FiX aria-hidden="true" /> : <FiMenu aria-hidden="true" />}
+          {menuOpen ? (
+            <FiX aria-hidden="true" />
+          ) : (
+            <FiMenu aria-hidden="true" />
+          )}
         </button>
       </div>
     </nav>
