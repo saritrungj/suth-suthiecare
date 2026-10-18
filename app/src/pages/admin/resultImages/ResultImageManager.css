@@ -173,14 +173,14 @@
   color: var(--suth-action-ink);
 }
 .rim-btn--primary {
-  border-color: var(--suth-action);
-  background: var(--suth-action);
+  border-color: var(--suth-action-strong);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   box-shadow: 0 6px 14px color-mix(in srgb, var(--suth-action) 28%, transparent);
 }
 .rim-btn--primary:hover:not(:disabled) {
-  border-color: var(--suth-action-hover);
-  background: var(--suth-action-hover);
+  border-color: var(--suth-action-strong-hover);
+  background: var(--suth-action-strong-hover);
   color: var(--suth-on-action);
 }
 .rim-btn:disabled {

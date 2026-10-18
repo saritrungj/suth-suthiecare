@@ -97,11 +97,11 @@
   background-color: var(--suth-warning-line);
 }
 .sfb-btn-save--published {
-  background-color: var(--suth-action);
+  background-color: var(--suth-action-strong);
   color: var(--suth-on-action);
 }
 .sfb-btn-save--published:hover:not(:disabled) {
-  background-color: var(--suth-action-hover);
+  background-color: var(--suth-action-strong-hover);
 }
 .sfb-btn-save:disabled {
   opacity: 0.7;
@@ -1968,7 +1968,7 @@ div.sfb-description-input:focus {
   position: absolute;
   top: -12px;
   left: 16px;
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   padding: 4px 10px;
   border-radius: var(--suth-radius-panel);

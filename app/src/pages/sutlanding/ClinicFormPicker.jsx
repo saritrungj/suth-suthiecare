@@ -584,9 +584,11 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
           )}
           <label className="cfp-sort">
             <span>{t("clinic_picker.sort_label")}</span>
+            {/* The visible label is hidden on phones; keep the name. */}
             <SearchableSelect
               value={sort}
               onChange={(e) => setSort(e.target.value)}
+              aria-label={t("clinic_picker.sort_label")}
             >
               <option value="default">{t("clinic_picker.sort_default")}</option>
               <option value="popular">{t("clinic_picker.sort_popular")}</option>

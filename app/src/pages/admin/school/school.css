@@ -223,15 +223,15 @@
 }
 
 .sch-btn {
-  border: 1px solid var(--suth-action);
-  background: var(--suth-action);
+  border: 1px solid var(--suth-action-strong);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   font-weight: 800;
 }
 
 .sch-btn:hover:not(:disabled) {
-  background: var(--suth-action-hover);
-  border-color: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
+  border-color: var(--suth-action-strong-hover);
 }
 
 .sch-btn-secondary {
@@ -1145,8 +1145,8 @@ button.sch-tile.is-active {
 }
 
 .sch-steps li[aria-current="step"] {
-  border-color: var(--suth-action);
-  background: var(--suth-action);
+  border-color: var(--suth-action-strong);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
 }
 
@@ -1982,7 +1982,7 @@ button.sch-tile.is-active {
   --suth-filter-muted: var(--suth-muted);
 }
 .sch-page .filter-more__trigger strong {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
 }
 :is(.sch-page, .sch-section) .cw-risk {

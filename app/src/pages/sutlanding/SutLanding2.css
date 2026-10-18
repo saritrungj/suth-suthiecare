@@ -409,7 +409,7 @@
   padding: 0 28px;
   border: 0;
   border-radius: var(--suth-radius-pill);
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   font: inherit;
   font-size: var(--suth-fs-md);
@@ -425,7 +425,7 @@
   transition: transform 0.3s var(--sut2-ease);
 }
 .sut2-hero__cta:hover {
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
   transform: translateY(-2px);
   box-shadow: 0 14px 28px color-mix(in srgb, var(--suth-action) 45%, transparent);
 }

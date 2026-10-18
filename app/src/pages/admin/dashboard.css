@@ -292,9 +292,9 @@ button {
   transition: transform 0.3s ease;
 }
 .db-view-all-btn:hover {
-  background-color: var(--suth-action) !important;
+  background-color: var(--suth-action-strong) !important;
   color: var(--suth-on-action) !important;
-  border-color: var(--suth-action) !important;
+  border-color: var(--suth-action-strong) !important;
   box-shadow: 0 4px 12px color-mix(in srgb, var(--suth-action) 20%, transparent);
   transform: translateY(-1px);
 }

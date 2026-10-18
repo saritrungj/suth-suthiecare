@@ -130,7 +130,7 @@
   align-items: center;
   border: 0;
   border-radius: var(--suth-radius-pill);
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   font: inherit;
   font-size: var(--suth-fs-sm);
@@ -140,7 +140,7 @@
   transition: background-color 0.2s var(--pub-ease);
 }
 .main-nav__login:hover {
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
 }
 
 .main-nav__toggle {

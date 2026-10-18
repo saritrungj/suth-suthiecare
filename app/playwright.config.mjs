@@ -17,6 +17,11 @@ export default defineConfig({
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
+    // Without a UTF-8 locale Chromium saves downloads with Thai names as
+    // "download", so pin one for machines and CI images that set no LANG.
+    launchOptions: {
+      env: { ...process.env, LANG: "C.UTF-8", LC_ALL: "C.UTF-8" },
+    },
   },
   expect: { timeout: 10_000 },
   projects: [

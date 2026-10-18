@@ -236,7 +236,7 @@ select.form-control {
 }
 
 .btn-primary {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   border: none;
   border-radius: var(--suth-radius-panel);
@@ -249,7 +249,7 @@ select.form-control {
 }
 
 .btn-primary:hover {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   transform: translateY(-1px);
 }
 .btn-primary:active {

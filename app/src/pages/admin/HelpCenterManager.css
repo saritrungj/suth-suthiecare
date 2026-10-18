@@ -38,7 +38,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background-color: var(--suth-action);
+  background-color: var(--suth-action-strong);
   color: var(--suth-on-action);
   border: none;
   padding: 12px 26px;
@@ -397,14 +397,14 @@
 }
 
 .hc-btn-save {
-  background-color: var(--suth-action);
+  background-color: var(--suth-action-strong);
   color: var(--suth-on-action);
   box-shadow: 0 4px 15px color-mix(in srgb, var(--suth-action) 30%, transparent);
   transition: all 0.2s;
 }
 
 .hc-btn-save:hover {
-  background-color: var(--suth-action-hover);
+  background-color: var(--suth-action-strong-hover);
   transform: translateY(-1px);
 }
 

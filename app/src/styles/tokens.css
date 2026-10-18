@@ -1,7 +1,8 @@
 /* Shared design tokens for the admin pages (organizations, school module,
    staff picker). Brand orange #ff8a3d is the single fill colour (selection
-   tints, focus, chart lines) and solid buttons. Text on orange fills is
-   white (owner decision 16 Oct 2026; about 2.3:1, below WCAG AA). */
+   tints, focus, chart lines). Buttons and other fills with white text use
+   the deeper --suth-action-strong so labels meet WCAG AA (owner decision
+   18 Oct 2026, replacing white on #ff8a3d at about 2.3:1). */
 :root {
   --suth-font: "Anuphan", system-ui, sans-serif;
 
@@ -10,7 +11,13 @@
   --suth-action-hover: #f47932;
   --suth-action-pressed: #e8590c; /* selected/active/pressed state, darker than hover */
   --suth-action-ink: #b4470c; /* orange text on white or tint, >=5:1 */
-  --suth-accent: #ff8a3d; /* brand fill; text on it is --suth-on-action (white, by owner choice; about 2.3:1) */
+  /* Solid fills that carry white text (buttons, active pills): a deeper
+     orange so the label holds WCAG AA. Bright --suth-action stays for
+     icons, borders, glows and other decoration. */
+  --suth-action-strong: #c2410c; /* white text 5.2:1 */
+  --suth-action-strong-hover: #9a3412; /* 7.3:1 */
+  --suth-action-strong-pressed: #7c2d12; /* 9.4:1 */
+  --suth-accent: #ff8a3d; /* brand fill for decoration; white text goes on --suth-action-strong */
   --suth-focus: #e8650f;
   --suth-focus-ring: rgba(232, 101, 15, 0.32);
   --suth-on-action: #ffffff;

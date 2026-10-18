@@ -2,8 +2,8 @@
    The earlier colorize-only page, table and export overrides were reverted. */
 .admin-shell {
   /* Remap the older shared button/filter contracts inside admin as well. */
-  --suth-brand-orange: var(--suth-action);
-  --suth-brand-orange-hover: var(--suth-action-hover);
+  --suth-brand-orange: var(--suth-action-strong);
+  --suth-brand-orange-hover: var(--suth-action-strong-hover);
   --suth-filter-muted: var(--suth-muted);
   --suth-filter-focus: var(--suth-focus);
   --suth-admin-canvas: oklch(97.8% 0.009 65);

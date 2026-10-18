@@ -28,7 +28,7 @@
   gap: 9px;
   border: 0;
   border-radius: var(--suth-radius);
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   font: inherit;
   font-weight: 800;
@@ -40,7 +40,7 @@
 }
 
 .sum-add-btn:hover:not(:disabled) {
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
   transform: translateY(-1px);
 }
 

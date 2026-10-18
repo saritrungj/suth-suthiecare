@@ -99,6 +99,9 @@
   font-variant-numeric: tabular-nums;
   user-select: none;
 }
+.status-card__code::before {
+  content: attr(data-code);
+}
 .status-card h1 {
   position: relative;
   margin: 0;
@@ -176,14 +179,14 @@
   color: var(--suth-action-ink);
 }
 .status-btn--primary {
-  border-color: var(--suth-action);
-  background: var(--suth-action);
+  border-color: var(--suth-action-strong);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   box-shadow: 0 8px 18px color-mix(in srgb, var(--suth-action) 32%, transparent);
 }
 .status-btn--primary:hover {
-  border-color: var(--suth-action-hover);
-  background: var(--suth-action-hover);
+  border-color: var(--suth-action-strong-hover);
+  background: var(--suth-action-strong-hover);
   color: var(--suth-on-action);
   transform: translateY(-1px);
 }

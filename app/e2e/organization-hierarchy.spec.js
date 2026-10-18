@@ -294,6 +294,7 @@ test("system-wide settings sit in their own admin section", async ({
   const unit = labels.indexOf("จัดการหน่วยงาน");
   expect(labels.slice(unit + 1, admin)).toEqual([
     "จัดการฟอร์ม",
+    "ภาพผลลัพธ์การประเมิน",
     "จัดการข้อมูลหลัก",
   ]);
 });

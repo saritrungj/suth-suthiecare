@@ -314,7 +314,7 @@
     [class*="--active"],
     [class*="is-active"]
   ) {
-  background: var(--suth-action) !important;
+  background: var(--suth-action-strong) !important;
   color: var(--suth-on-action) !important;
   box-shadow: 0 4px 10px -4px
     color-mix(in srgb, var(--suth-action-hover) 70%, transparent) !important;

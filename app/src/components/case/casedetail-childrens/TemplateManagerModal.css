@@ -248,8 +248,8 @@
 .cdm-btn-add-q-dotted {
   width: 100%;
   padding: 16px;
-  background: var(--suth-action);
-  border: 2px solid var(--suth-action);
+  background: var(--suth-action-strong);
+  border: 2px solid var(--suth-action-strong);
   color: var(--suth-on-action);
   border-radius: var(--suth-radius-panel);
   cursor: pointer;
@@ -263,9 +263,9 @@
   gap: 8px;
 }
 .cdm-btn-add-q-dotted:hover {
-  border-color: var(--suth-action);
+  border-color: var(--suth-action-strong);
   color: var(--suth-on-action);
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
   transform: scale(1.01);
 }
 .cdm-icon-btn-red-sm {

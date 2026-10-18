@@ -242,7 +242,7 @@
 /* สลับมุมมอง (Grid/List) */
 
 .fm-btn-add-form {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   border: none;
   padding: 0 20px;
@@ -726,7 +726,7 @@
 }
 
 .fm-modal-actions .fm-btn-save {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   box-shadow: 0 2px 6px color-mix(in srgb, var(--suth-success) 20%, transparent);
 }

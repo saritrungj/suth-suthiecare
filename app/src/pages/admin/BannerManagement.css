@@ -17,7 +17,7 @@
 }
 
 .bm-add-btn {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   border: none;
   padding: 12px 28px;
@@ -33,7 +33,7 @@
 }
 
 .bm-add-btn:hover {
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
   transform: translateY(-2px);
   box-shadow: 0 8px 25px color-mix(in srgb, var(--suth-action) 40%, transparent);
 }

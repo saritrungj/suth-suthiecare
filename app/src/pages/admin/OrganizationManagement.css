@@ -56,14 +56,14 @@
 }
 
 .org-btn {
-  border: 1px solid var(--suth-action);
-  background: var(--suth-action);
+  border: 1px solid var(--suth-action-strong);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
 }
 
 .org-btn:hover:not(:disabled) {
-  border-color: var(--suth-action-hover);
-  background: var(--suth-action-hover);
+  border-color: var(--suth-action-strong-hover);
+  background: var(--suth-action-strong-hover);
 }
 
 .org-btn-secondary {

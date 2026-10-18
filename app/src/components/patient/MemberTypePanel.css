@@ -96,13 +96,13 @@
 }
 
 .mt-panel__primary {
-  border-color: var(--suth-action);
-  background: var(--suth-action);
+  border-color: var(--suth-action-strong);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
 }
 
 .mt-panel__primary:hover:not(:disabled) {
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
 }
 
 .mt-panel__primary:disabled {

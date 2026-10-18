@@ -123,13 +123,13 @@
   border-color: var(--suth-action);
 }
 .settings-button--primary {
-  background: var(--suth-action);
-  border-color: var(--suth-action);
+  background: var(--suth-action-strong);
+  border-color: var(--suth-action-strong);
   color: var(--suth-on-action);
 }
 .settings-button--primary:hover:not(:disabled) {
-  background: var(--suth-action-hover);
-  border-color: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
+  border-color: var(--suth-action-strong-hover);
 }
 .settings-button--danger {
   color: var(--suth-danger);

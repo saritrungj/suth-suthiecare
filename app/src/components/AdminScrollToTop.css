@@ -9,17 +9,17 @@
   gap: 8px;
   min-height: 48px;
   padding: 12px 18px;
-  border: 1px solid var(--suth-action);
+  border: 1px solid var(--suth-action-strong);
   border-radius: var(--suth-radius-pill);
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   font: 600 0.875rem var(--suth-font);
   box-shadow: 0 4px 16px rgba(31, 47, 63, 0.16);
   cursor: pointer;
 }
 .admin-scroll-top:hover {
-  background: var(--suth-action-hover);
-  border-color: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
+  border-color: var(--suth-action-strong-hover);
 }
 .admin-scroll-top:focus-visible {
   outline: 3px solid var(--suth-focus);

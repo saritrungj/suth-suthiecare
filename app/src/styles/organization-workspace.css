@@ -45,12 +45,12 @@
   min-height: 44px;
   padding: 10px 18px;
   border-radius: var(--suth-radius);
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   text-decoration: none;
 }
 .organization-workspace-action:hover {
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
   color: var(--suth-on-action);
 }
 .organization-workspace-action:focus-visible {

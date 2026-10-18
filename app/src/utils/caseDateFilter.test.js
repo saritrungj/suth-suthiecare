@@ -9,10 +9,14 @@ import {
 } from "./caseDateFilter.js";
 
 test("defaults to the first day of the current month through today", () => {
-  assert.deepEqual(getCurrentMonthDateRange(new Date(2026, 7, 13, 23, 59)), {
-    startDate: "2026-08-01",
-    endDate: "2026-08-13",
-  });
+  // 23:59 in Bangkok, so the result does not depend on the machine's zone.
+  assert.deepEqual(
+    getCurrentMonthDateRange(new Date("2026-08-13T23:59:00+07:00")),
+    {
+      startDate: "2026-08-01",
+      endDate: "2026-08-13",
+    },
+  );
 });
 
 test("includes both boundary dates regardless of the time of submission", () => {

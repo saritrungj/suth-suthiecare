@@ -65,14 +65,14 @@
 }
 
 .cw-btn {
-  border: 1px solid var(--suth-action);
-  background: var(--suth-action);
+  border: 1px solid var(--suth-action-strong);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
 }
 
 .cw-btn:hover:not(:disabled) {
-  border-color: var(--suth-action-hover);
-  background: var(--suth-action-hover);
+  border-color: var(--suth-action-strong-hover);
+  background: var(--suth-action-strong-hover);
 }
 
 .cw-btn-secondary {
@@ -1467,8 +1467,8 @@ body:has(.cw-drawer-overlay) {
 }
 
 .cw-step.is-current .cw-step-mark {
-  border-color: var(--suth-action);
-  background: var(--suth-action);
+  border-color: var(--suth-action-strong);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
 }
 
@@ -1517,7 +1517,7 @@ body:has(.cw-drawer-overlay) {
 }
 
 .cw-tabs .cw-tab[aria-selected="true"] {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   box-shadow: 0 4px 10px -4px color-mix(in srgb, var(--suth-action) 70%, transparent);
 }

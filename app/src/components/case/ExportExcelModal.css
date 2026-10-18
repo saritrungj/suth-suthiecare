@@ -150,7 +150,7 @@
   padding: 10px 24px;
   border-radius: var(--suth-radius);
   border: none;
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   font-weight: 600;
   cursor: pointer;
@@ -161,7 +161,7 @@
 }
 
 .eem-export-btn:hover {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
 }
 
 .eem-export-btn:disabled {

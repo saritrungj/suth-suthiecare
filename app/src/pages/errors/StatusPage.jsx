@@ -111,10 +111,13 @@ export function StatusLayout({
           <span className="status-card__icon" aria-hidden="true">
             <Icon />
           </span>
+          {/* Decorative watermark, drawn by CSS so it is not read as text. */}
           {status && (
-            <p className="status-card__code" aria-hidden="true">
-              {status}
-            </p>
+            <span
+              className="status-card__code"
+              data-code={status}
+              aria-hidden="true"
+            />
           )}
           <h1 id="status-title">{title}</h1>
           <p className="status-card__detail">{detail}</p>

@@ -394,7 +394,7 @@
 
 .adm-btn-save {
   padding: 12px 32px;
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   border: none;
   border-radius: var(--suth-radius-panel);
   font-weight: 700;
@@ -404,7 +404,7 @@
 }
 
 .adm-btn-save:hover {
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
   transform: translateY(-1px);
 }
 

@@ -326,7 +326,7 @@
   display: grid;
   place-items: center;
   border-radius: var(--suth-radius-pill);
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   font-size: var(--suth-fs-caption);
   line-height: 1;
@@ -537,8 +537,8 @@
 }
 
 .filter-more__done {
-  border: 1px solid var(--suth-action);
-  background: var(--suth-action);
+  border: 1px solid var(--suth-action-strong);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
 }
 

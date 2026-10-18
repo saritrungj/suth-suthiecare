@@ -172,7 +172,7 @@ button.tdp-month:focus-visible {
 }
 
 .tdp-choice.is-selected {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
 }
 
@@ -381,7 +381,7 @@ button.tdp-month:focus-visible {
 }
 
 .tdp-day.is-selected {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   font-weight: 800;
   box-shadow: 0 6px 14px -6px color-mix(in srgb, var(--suth-action) 80%, transparent);

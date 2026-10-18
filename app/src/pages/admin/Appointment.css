@@ -510,7 +510,7 @@
   transform: scale(1.1);
 }
 .fc .fc-day-today .fc-daygrid-day-number {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   box-shadow: 0 4px 10px color-mix(in srgb, var(--suth-action) 30%, transparent);
 }

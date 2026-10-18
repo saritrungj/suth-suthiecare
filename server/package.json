@@ -20,7 +20,7 @@
     "migrate:operational-organization-scope": "node scripts/migrateOperationalOrganizationScope.js",
     "migrate:all-forward": "node scripts/migrateAllForward.js",
     "migrate:user-name-storage": "node scripts/migrateUserNameStorage.js",
-    "test": "node --test test/*.test.js",
+    "test": "node --test --require ./test/testEnv.js test/*.test.js",
     "migrate:school-module": "node scripts/migrateSchoolModule.js",
     "migrate:case-referrals": "node scripts/migrateCaseReferrals.js",
     "migrate:pdpa": "node scripts/migratePdpaSecurity.js",

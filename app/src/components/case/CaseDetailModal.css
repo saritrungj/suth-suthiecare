@@ -465,7 +465,7 @@ textarea.cdm-form-input {
   font-family: inherit;
 }
 .cdm-service-add-row button {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   border: none;
   padding: 0 12px;
@@ -546,7 +546,7 @@ textarea.cdm-form-input {
   animation: cdmModalFadeIn 0.2s ease-out;
 }
 .cdm-btn-confirm-sm {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   border: none;
   padding: 6px 14px;
@@ -557,7 +557,7 @@ textarea.cdm-form-input {
   transition: background 0.2s;
 }
 .cdm-btn-confirm-sm:hover {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
 }
 .cdm-btn-cancel-sm {
   background: var(--suth-line);
@@ -634,7 +634,7 @@ textarea.cdm-form-input {
   border-top: 1px dashed var(--suth-line);
 }
 .cdm-btn-unified-save {
-  background: var(--suth-action) !important;
+  background: var(--suth-action-strong) !important;
   width: 100% !important; /* ยาวจนสุด */
   display: flex !important;
   justify-content: center;
@@ -653,11 +653,11 @@ textarea.cdm-form-input {
   box-shadow: none !important;
 }
 .cdm-btn-unified-save:hover {
-  background: var(--suth-action-hover) !important;
+  background: var(--suth-action-strong-hover) !important;
   transform: none !important; /* ไม่ต้องให้ขยับลอยขึ้น */
 }
 .cdm-btn-unified-save:active {
-  background: var(--suth-action-hover) !important;
+  background: var(--suth-action-strong-hover) !important;
 }
 .cdm-comment-input {
   background: var(--suth-tint) !important; /* พื้นหลังเหลืองอ่อนเหมือนกระดาษโน้ต */
@@ -1143,7 +1143,7 @@ textarea.cdm-form-input {
   background: var(--suth-control-line);
 }
 .cdm-btn-confirm {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   border: none;
   padding: 8px 20px;
@@ -1156,7 +1156,7 @@ textarea.cdm-form-input {
   gap: 6px;
 }
 .cdm-btn-confirm:hover {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
 }
 /* TOAST */
 .cdm-toast-msg {

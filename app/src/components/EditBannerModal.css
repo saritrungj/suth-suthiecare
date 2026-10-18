@@ -258,7 +258,7 @@
 }
 
 .ebm-btn-save {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   border: none;
   padding: 10px 25px;

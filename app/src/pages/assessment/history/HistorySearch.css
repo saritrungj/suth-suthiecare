@@ -159,7 +159,7 @@
 .history-submit-btn {
   width: 100%;
   padding: 14px;
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   border: none;
   border-radius: var(--suth-radius);
@@ -171,12 +171,12 @@
   margin-top: 12px;
 }
 .history-submit-btn:hover:not(:disabled) {
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
   transform: translateY(-2px);
   box-shadow: 0 4px 16px color-mix(in srgb, var(--suth-info) 30%, transparent);
 }
 .history-submit-btn:disabled {
-  background: var(--suth-action) !important;
+  background: var(--suth-action-strong) !important;
   color: color-mix(in srgb, var(--suth-on-action) 90%, transparent);
   cursor: not-allowed;
   transform: none !important;
@@ -473,7 +473,7 @@
 .history-submit-btn {
   width: 100%;
   padding: 16px;
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   border: none;
   border-radius: var(--suth-radius);
@@ -488,7 +488,7 @@
 }
 
 .history-submit-btn:hover:not(:disabled) {
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
   transform: translateY(-2px);
   /* 🟠 Button Hover Shadow เปลี่ยนเป็นสีส้ม */
   box-shadow: 0 6px 20px color-mix(in srgb, var(--suth-action) 35%, transparent);

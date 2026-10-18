@@ -73,7 +73,7 @@
   padding: 9px 18px;
   border: 0;
   border-radius: var(--suth-radius);
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   font: inherit;
   font-weight: 600;
@@ -535,9 +535,9 @@
 }
 
 .hc-btn-view-clinic:hover {
-  background: var(--suth-action-hover) !important;
+  background: var(--suth-action-strong-hover) !important;
   color: var(--suth-on-action) !important;
-  border-color: var(--suth-action) !important;
+  border-color: var(--suth-action-strong) !important;
   transform: translateY(-1px) !important;
 }
 
@@ -655,7 +655,7 @@
 }
 
 .hc-btn-contact-live {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   border: none;
   padding: 15px 30px;
@@ -669,7 +669,7 @@
 }
 
 .hc-btn-contact-live:hover {
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
 }
 
 /* MOBILE RESPONSIVE */

@@ -1068,8 +1068,8 @@ export default function HistoryResult() {
                                 border: `1px solid ${clinic.border}`,
                               }
                             : {
-                                backgroundColor: "color-mix(in srgb, var(--suth-surface) 14%, transparent)",
-                                color: "color-mix(in srgb, var(--suth-on-action) 88%, transparent)",
+                                backgroundColor: "transparent",
+                                color: "var(--suth-on-action)",
                                 border: "1px dashed color-mix(in srgb, var(--suth-surface) 55%, transparent)",
                               }
                         }

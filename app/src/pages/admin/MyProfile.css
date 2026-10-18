@@ -137,14 +137,14 @@
   border: 0;
   border-radius: var(--suth-radius);
   padding: 9px 18px;
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   font: 700 0.9rem inherit;
   cursor: pointer;
   transition: background-color 180ms ease-out;
 }
 .profile-card button[type="submit"]:hover:not(:disabled) {
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
 }
 .profile-card button[type="submit"]:disabled {
   opacity: 0.55;

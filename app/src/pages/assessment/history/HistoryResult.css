@@ -2181,7 +2181,7 @@
   padding: 6px 0;
   justify-content: center;
   align-items: center;
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   border: none;
   border-radius: var(--suth-radius-card);
@@ -2193,7 +2193,7 @@
 .download-btn:hover {
   transform: translateY(-3px);
   box-shadow: 0 5px 15px color-mix(in srgb, var(--suth-action) 40%, transparent);
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
 }
 
 /* Hospital-only parts are hidden for school students (MemberTypePanel). */
@@ -2216,8 +2216,12 @@
 .hr-hero {
   overflow: visible;
   border-radius: 28px;
-  background: var(--suth-action);
-  box-shadow: 0 18px 40px color-mix(in srgb, var(--suth-action) 28%, transparent);
+  /* White text sits on the card, so it takes the deeper button orange. */
+  background: var(--suth-action-strong);
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--suth-action-strong) 28%, transparent);
+}
+.hr-name {
+  text-shadow: none;
 }
 .hr-hero-deco {
   position: absolute;

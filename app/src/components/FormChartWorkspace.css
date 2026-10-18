@@ -54,8 +54,8 @@
 }
 .fc-workspace .fc-primary,
 .fc-editor .fc-primary {
-  background: var(--suth-action);
-  border-color: var(--suth-action);
+  background: var(--suth-action-strong);
+  border-color: var(--suth-action-strong);
   color: var(--suth-on-action);
 }
 .fc-workspace button:hover,
@@ -64,7 +64,7 @@
 }
 .fc-workspace .fc-primary:hover,
 .fc-editor .fc-primary:hover {
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
 }
 .fc-workspace button:disabled,
 .fc-editor button:disabled {

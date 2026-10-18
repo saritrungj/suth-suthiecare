@@ -104,8 +104,8 @@
 }
 
 .tp-pagination__page[aria-current="page"] {
-  border-color: var(--suth-action);
-  background: var(--suth-action);
+  border-color: var(--suth-action-strong);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   box-shadow: 0 4px 10px -4px color-mix(in srgb, var(--suth-action) 70%, transparent);
 }

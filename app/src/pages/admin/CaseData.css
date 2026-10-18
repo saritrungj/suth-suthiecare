@@ -103,7 +103,7 @@
 .scd-create-case-header {
   padding: 22px 26px;
 
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
 
   color: var(--suth-on-action);
 
@@ -334,7 +334,7 @@
   border: none;
   border-radius: var(--suth-radius-panel);
 
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
 
   color: var(--suth-on-action);
 
@@ -348,7 +348,7 @@
 }
 
 .scd-save-btn:hover {
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
 }
 
 /* =========================
@@ -395,8 +395,8 @@
    !important (its :is() list scores 0,2,1); white text needs the darker
    action orange for AA, so this selector outranks it. */
 .scd-create-case-modal .scd-create-case-footer > button.scd-save-btn {
-  border-color: var(--suth-action) !important;
-  background: var(--suth-action) !important;
+  border-color: var(--suth-action-strong) !important;
+  background: var(--suth-action-strong) !important;
   color: var(--suth-on-action) !important;
 }
 

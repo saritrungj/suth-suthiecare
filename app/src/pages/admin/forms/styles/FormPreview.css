@@ -276,12 +276,12 @@ div.swal2-container .swal2-popup.assessment-consent-dialog {
 }
 
 .assessment-auth-dialog__button--primary {
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
 }
 
 .assessment-auth-dialog__button--primary:hover {
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
 }
 
 .assessment-auth-dialog__button--secondary {
@@ -457,7 +457,7 @@ div.swal2-container .swal2-popup.assessment-consent-dialog {
   gap: 8px;
   border: 0;
   border-radius: var(--suth-radius-sm);
-  background: var(--suth-action);
+  background: var(--suth-action-strong);
   color: var(--suth-on-action);
   font: inherit;
   font-size: var(--suth-fs-sm);
@@ -466,7 +466,7 @@ div.swal2-container .swal2-popup.assessment-consent-dialog {
 }
 
 .preview-auth-notice button:hover {
-  background: var(--suth-action-hover);
+  background: var(--suth-action-strong-hover);
 }
 
 .preview-auth-notice button:focus-visible {

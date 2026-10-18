@@ -1,7 +1,7 @@
 /* Shared action-button contract: brand orange with white text. */
 :root {
-  --suth-brand-orange: var(--suth-action);
-  --suth-brand-orange-hover: var(--suth-action-hover);
+  --suth-brand-orange: var(--suth-action-strong);
+  --suth-brand-orange-hover: var(--suth-action-strong-hover);
 }
 
 :is(
@@ -84,9 +84,9 @@
   .hc-btn-search
 ) {
   min-height: var(--suth-button-h);
-  border: 1px solid var(--suth-action) !important;
+  border: 1px solid var(--suth-action-strong) !important;
   border-radius: var(--suth-radius) !important;
-  background: var(--suth-action) !important;
+  background: var(--suth-action-strong) !important;
   color: var(--suth-on-action) !important;
   font-family: var(--suth-font);
   font-weight: 700;
@@ -101,8 +101,8 @@
     .sfb-btn-save,
     .hc-btn-search
   ):hover:not(:disabled) {
-  border-color: var(--suth-action-hover) !important;
-  background: var(--suth-action-hover) !important;
+  border-color: var(--suth-action-strong-hover) !important;
+  background: var(--suth-action-strong-hover) !important;
   transform: none;
 }
 
@@ -191,6 +191,6 @@
     .hc-btn-save,
     .fm-btn-save
   ):active:not(:disabled) {
-  border-color: var(--suth-action-pressed) !important;
-  background: var(--suth-action-pressed) !important;
+  border-color: var(--suth-action-strong-pressed) !important;
+  background: var(--suth-action-strong-pressed) !important;
 }
