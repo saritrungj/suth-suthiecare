@@ -7,6 +7,7 @@ import {
   FiArrowRight,
   FiCheck,
   FiChevronUp,
+  FiClipboard,
   FiGrid,
   FiHome,
   FiSearch,
@@ -106,8 +107,12 @@ function FormCard({
       <div
         className={`cfp-card__media ${form.image ? "" : BAND_THEMES[index % BAND_THEMES.length]}`}
       >
-        {form.image && (
+        {form.image ? (
           <img src={form.image} alt="" loading="lazy" decoding="async" />
+        ) : (
+          <span className="cfp-card__glyph" aria-hidden="true">
+            <FiClipboard />
+          </span>
         )}
       </div>
       <div className="cfp-card__body">

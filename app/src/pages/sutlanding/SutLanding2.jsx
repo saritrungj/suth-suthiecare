@@ -1,13 +1,20 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
-  FiCheckCircle,
-  FiShield,
-  FiHeart,
-  FiPhoneCall,
-  FiMenu,
-  FiX,
+  FiArrowDown,
+  FiClipboard,
+  FiDownload,
+  FiEdit3,
   FiExternalLink,
+  FiGrid,
+  FiHome,
+  FiLock,
+  FiMenu,
+  FiPhoneCall,
+  FiSmartphone,
+  FiSmile,
+  FiX,
+  FiZap,
 } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "../../components/LanguageSwitcher.jsx";
@@ -20,8 +27,7 @@ import "./SutLanding2.css";
 import ClinicFormPicker from "./ClinicFormPicker.jsx";
 
 import logo from "../../assets/logoSUTH.png";
-import bgHealth from "../../assets/bg-health.jpg";
-import bgClinic from "../../assets/bg-new.jpg";
+import peeHom from "../../assets/pee-hom-ai.webp";
 import siteVitalcare from "../../assets/vitalcare.png";
 import siteAct from "../../assets/act.suth.png";
 import { formCache } from "../../services/cache";
@@ -34,12 +40,27 @@ import api, {
 const SLIDE_INTERVAL = 6000;
 const PROJECT_START_YEAR = 2026;
 
+function scrollToId(id) {
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document
+    .getElementById(id)
+    ?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+}
+
+// Four-point twinkle used as decoration around the hero.
+function Sparkle({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 0c.9 6.6 4.5 10.6 12 12-7.5 1.4-11.1 5.4-12 12-.9-6.6-4.5-10.6-12-12C7.5 10.6 11.1 6.6 12 0Z" />
+    </svg>
+  );
+}
+
 export default function SutLanding2() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
   const [appVersion, setAppVersion] = useState("");
   const currentYear = new Date().getFullYear();
   const copyrightYears =
@@ -78,7 +99,6 @@ export default function SutLanding2() {
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          setScrollY(window.scrollY);
           setIsScrolled(window.scrollY > 40);
           ticking = false;
         });
@@ -193,63 +213,61 @@ export default function SutLanding2() {
     return () => observer.disconnect();
   }, []);
 
+  const stepItems = [
+    { icon: FiClipboard, tone: "orange" },
+    { icon: FiEdit3, tone: "teal" },
+    { icon: FiSmile, tone: "blue" },
+    { icon: FiPhoneCall, tone: "amber" },
+  ];
+
   return (
     <div className="sut2-page">
       {/* NAVBAR */}
       <nav className={`sut2-nav ${isScrolled ? "sut2-nav--scrolled" : ""}`}>
-        <div className="sut2-nav__logo">
-          <img src={logo} alt="SUTH Logo" />
-        </div>
-        <button
-          type="button"
-          className="sut2-nav__menu-btn"
-          aria-label={menuOpen ? "ปิดเมนู" : "เปิดเมนู"}
-          aria-expanded={menuOpen}
-          aria-controls="sut2-nav-actions"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? (
-            <FiX aria-hidden="true" />
-          ) : (
-            <FiMenu aria-hidden="true" />
-          )}
-        </button>
-        <div
-          id="sut2-nav-actions"
-          className={`sut2-nav__actions ${menuOpen ? "sut2-open" : ""}`}
-        >
-          <LanguageSwitcher
-            className="sut2-nav__language"
-            darkText={isScrolled || menuOpen}
-          />
-          <PatientAccountMenu
-            onDark={!isScrolled && !menuOpen}
-            onNavigate={() => setMenuOpen(false)}
-            stackOnMobile
-          />
+        <div className="sut2-nav__bar">
+          <Link to="/" className="sut2-nav__logo" aria-label="SUTHie Care">
+            <img src={logo} alt="SUTH Logo" />
+          </Link>
+          <button
+            type="button"
+            className="sut2-nav__menu-btn"
+            aria-label={menuOpen ? "ปิดเมนู" : "เปิดเมนู"}
+            aria-expanded={menuOpen}
+            aria-controls="sut2-nav-actions"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {menuOpen ? (
+              <FiX aria-hidden="true" />
+            ) : (
+              <FiMenu aria-hidden="true" />
+            )}
+          </button>
+          <div
+            id="sut2-nav-actions"
+            className={`sut2-nav__actions ${menuOpen ? "sut2-open" : ""}`}
+          >
+            <LanguageSwitcher className="sut2-nav__language" darkText />
+            <PatientAccountMenu
+              onNavigate={() => setMenuOpen(false)}
+              stackOnMobile
+            />
+          </div>
         </div>
       </nav>
 
-      <div className="sut2-main-wrapper">
-        {/* ================= 1. HERO SPLIT SECTION ================= */}
-        <section className="sut2-hero">
-          <div
-            className="sut2-hero__bg"
-            style={{
-              backgroundImage: `url(${bgHealth})`,
-              transform: `translateY(${scrollY * 0.4}px)`,
-            }}
-          />
-          <div className="sut2-hero__overlay"></div>
+      <main className="sut2-main-wrapper">
+        {/* ================= 1. HERO ================= */}
+        <section className="sut2-hero" aria-labelledby="sut2-hero-title">
+          <span className="sut2-hero__blob sut2-hero__blob--a" aria-hidden="true" />
+          <span className="sut2-hero__blob sut2-hero__blob--b" aria-hidden="true" />
+          <Sparkle className="sut2-sparkle sut2-sparkle--1" />
+          <Sparkle className="sut2-sparkle sut2-sparkle--2" />
+          <Sparkle className="sut2-sparkle sut2-sparkle--3" />
 
           <div className="sut2-hero__content">
-            <div
-              className="sut2-hero__text-box"
-              style={{ transform: `translateY(${scrollY * -0.15}px)` }}
-            >
-              <h1 className="sut2-hero__title">
+            <div className="sut2-hero__text-box">
+              <h1 id="sut2-hero-title" className="sut2-hero__title">
                 {t("sutlanding.title")}
-                <br />
                 <span className="sut2-hero__highlight">
                   {t("sutlanding.subtitle_highlight")}
                 </span>
@@ -259,22 +277,17 @@ export default function SutLanding2() {
               </p>
               <div className="sut2-hero__cta-group">
                 <button
+                  type="button"
                   className="sut2-hero__cta"
-                  onClick={() =>
-                    document
-                      .getElementById("services")
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
+                  onClick={() => scrollToId("services")}
                 >
                   {t("sutlanding.btn_start")}
+                  <FiArrowDown aria-hidden="true" />
                 </button>
                 <button
+                  type="button"
                   className="sut2-hero__cta sut2-hero__cta--secondary"
-                  onClick={() =>
-                    document
-                      .getElementById("steps")
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
+                  onClick={() => scrollToId("steps")}
                 >
                   {t("sutlanding.btn_steps")}
                 </button>
@@ -286,16 +299,19 @@ export default function SutLanding2() {
                 >
                   {organizationCount > 1 && (
                     <li>
+                      <FiHome aria-hidden="true" />
                       <strong>{organizationCount}</strong>
                       {t("sutlanding.stat_orgs")}
                     </li>
                   )}
                   <li>
+                    <FiGrid aria-hidden="true" />
                     <strong>{clinics.length}</strong>
                     {t("sutlanding.stat_clinics")}
                   </li>
                   {!loading && (
                     <li>
+                      <FiClipboard aria-hidden="true" />
                       <strong>{forms.length}</strong>
                       {t("sutlanding.stat_forms")}
                     </li>
@@ -304,60 +320,30 @@ export default function SutLanding2() {
               )}
             </div>
 
-            {/* ===== Banner ==== */}
-            <div
-              className="sut2-hero__banner-box"
-              style={{ transform: `translateY(${scrollY * 0.1}px)` }}
-            >
-              {slides.length > 0 ? (
-                <div className="sut2-banner-slider">
-                  {slides.map((slide, i) =>
-                    slide.link ? (
-                      <a
-                        href={slide.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        key={i}
-                        className={`sut2-banner-slide ${i === currentSlide ? "active" : ""}`}
-                        style={{
-                          display: i === currentSlide ? "block" : "none",
-                        }}
-                      >
-                        <img
-                          src={slide.image}
-                          alt={slide.alt || "banner"}
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            objectFit: "cover",
-                          }}
-                        />
-                      </a>
-                    ) : (
-                      <img
-                        key={i}
-                        src={slide.image}
-                        alt={slide.alt || "banner"}
-                        className={`sut2-banner-slide ${i === currentSlide ? "active" : ""}`}
-                      />
-                    ),
-                  )}
-                  <div className="sut2-banner-dots">
-                    {slides.map((_, i) => (
-                      <button
-                        key={i}
-                        className={`sut2-banner-dot ${i === currentSlide ? "active" : ""}`}
-                        onClick={() => setCurrentSlide(i)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div className="sut2-banner-placeholder">
-                  <FiHeart size={48} color="rgba(255,255,255,0.5)" />
-                  <p>{t("sutlanding.banner_placeholder")}</p>
-                </div>
-              )}
+            {/* Pee Hom with the promises she makes, as floating stickers */}
+            <div className="sut2-mascot" aria-hidden="true">
+              <p className="sut2-mascot__bubble">
+                {t("sutlanding.hero_greeting")}
+              </p>
+              <div className="sut2-mascot__stage">
+                <span className="sut2-mascot__ring" />
+                <img
+                  className="sut2-mascot__img"
+                  src={peeHom}
+                  alt=""
+                  width="256"
+                  height="256"
+                />
+              </div>
+              <span className="sut2-chip sut2-chip--1">
+                <FiZap /> {t("sutlanding.chip_instant")}
+              </span>
+              <span className="sut2-chip sut2-chip--2">
+                <FiLock /> {t("sutlanding.chip_private")}
+              </span>
+              <span className="sut2-chip sut2-chip--3">
+                <FiSmartphone /> {t("sutlanding.chip_anywhere")}
+              </span>
             </div>
           </div>
         </section>
@@ -366,7 +352,7 @@ export default function SutLanding2() {
         <section
           id="services"
           ref={pickerSectionRef}
-          className="sut2-3d-section sut2-picker-section"
+          className="sut2-picker-section"
           aria-label={t("clinic_picker.title")}
         >
           <ClinicFormPicker
@@ -377,114 +363,150 @@ export default function SutLanding2() {
           />
         </section>
 
-        {/* ================= 3. HOW IT WORKS ================= */}
-        <section id="steps" className="sut2-steps-section">
-          <div
-            className="sut2-steps__bg"
-            style={{
-              backgroundImage: `url(${bgClinic})`,
-              transform: `translateY(${(scrollY - window.innerHeight) * 0.25}px)`,
+        {/* ================= 3. NEWS BANNERS ================= */}
+        {slides.length > 0 && (
+          <section
+            className="sut2-news"
+            aria-labelledby="sut2-news-title"
+          >
+            <h2 id="sut2-news-title" className="sut2-section-title">
+              {t("sutlanding.news_title")}
+            </h2>
+            <div className="sut2-banner-slider">
+              {slides.map((slide, i) => {
+                const image = (
+                  <img
+                    src={slide.image}
+                    alt={slide.alt || t("sutlanding.news_title")}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                  />
+                );
+                const className = `sut2-banner-slide ${i === currentSlide ? "active" : ""}`;
+                return slide.link ? (
+                  <a
+                    key={i}
+                    href={slide.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={className}
+                    aria-hidden={i !== currentSlide}
+                    tabIndex={i === currentSlide ? 0 : -1}
+                  >
+                    {image}
+                  </a>
+                ) : (
+                  <div
+                    key={i}
+                    className={className}
+                    aria-hidden={i !== currentSlide}
+                  >
+                    {image}
+                  </div>
+                );
+              })}
+              {slides.length > 1 && (
+                <div className="sut2-banner-dots">
+                  {slides.map((_, i) => (
+                    <button
+                      type="button"
+                      key={i}
+                      className={`sut2-banner-dot ${i === currentSlide ? "active" : ""}`}
+                      aria-label={`${i + 1} / ${slides.length}`}
+                      aria-current={i === currentSlide}
+                      onClick={() => setCurrentSlide(i)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* ================= 4. HOW IT WORKS ================= */}
+        <section
+          id="steps"
+          className="sut2-steps-section"
+          aria-labelledby="sut2-steps-title"
+        >
+          <h2 id="sut2-steps-title" className="sut2-section-title">
+            {t("sutlanding.steps_title")}
+          </h2>
+          <ol className="sut2-steps">
+            {stepItems.map(({ icon: Icon, tone }, index) => (
+              <li key={tone} className={`sut2-step sut2-step--${tone}`}>
+                <span className="sut2-step__icon" aria-hidden="true">
+                  <Icon />
+                  <span className="sut2-step__num">{index + 1}</span>
+                </span>
+                <h3>{t(`sutlanding.step${index + 1}_title`)}</h3>
+                <p>{t(`sutlanding.step${index + 1}_desc`)}</p>
+              </li>
+            ))}
+          </ol>
+          <a
+            className="sut2-manual-link"
+            href="/api/private-files/user_manual.pdf"
+            onClick={(event) => {
+              if (
+                !getPatientSession().authenticated &&
+                !authSession("staff").user
+              ) {
+                event.preventDefault();
+                navigate("/account/login?returnTo=%2F");
+              }
             }}
-          />
-          <div className="sut2-steps-overlay"></div>
-
-          <div className="sut2-steps-content">
-            <h2 className="sut2-steps-title">{t("sutlanding.steps_title")}</h2>
-            <div className="sut2-steps-grid">
-              <div className="sut2-step-glass">
-                <div className="sut2-step-icon">
-                  <FiCheckCircle />
-                </div>
-                <h3>{t("sutlanding.step1_title")}</h3>
-                <p>{t("sutlanding.step1_desc")}</p>
-              </div>
-              <div className="sut2-step-glass">
-                <div className="sut2-step-icon">
-                  <FiShield />
-                </div>
-                <h3>{t("sutlanding.step2_title")}</h3>
-                <p>{t("sutlanding.step2_desc")}</p>
-              </div>
-              <div className="sut2-step-glass">
-                <div className="sut2-step-icon">
-                  <FiHeart />
-                </div>
-                <h3>{t("sutlanding.step3_title")}</h3>
-                <p>{t("sutlanding.step3_desc")}</p>
-              </div>
-              <div className="sut2-step-glass">
-                <div className="sut2-step-icon">
-                  <FiPhoneCall />
-                </div>
-                <h3>{t("sutlanding.step4_title")}</h3>
-                <p>{t("sutlanding.step4_desc")}</p>
-              </div>
-            </div>
-
-            <div style={{ textAlign: "center", marginTop: "45px" }}>
-              <a
-                href="/api/private-files/user_manual.pdf"
-                onClick={(event) => {
-                  if (
-                    !getPatientSession().authenticated &&
-                    !authSession("staff").user
-                  ) {
-                    event.preventDefault();
-                    navigate("/account/login?returnTo=%2F");
-                  }
-                }}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  color: "var(--suth-on-action)",
-                  textDecoration: "underline",
-                  fontSize: "var(--suth-fs-body)",
-                  fontWeight: "500",
-                  cursor: "pointer",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  opacity: 0.9,
-                  transition: "opacity 0.2s",
-                }}
-                onMouseOver={(e) => (e.target.style.opacity = 1)}
-                onMouseOut={(e) => (e.target.style.opacity = 0.9)}
-              >
-                {t("sutlanding.download_manual")}
-              </a>
-            </div>
-          </div>
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FiDownload aria-hidden="true" />
+            {t("sutlanding.download_manual")}
+          </a>
         </section>
 
-        {/* ================= 4. OUR OTHER WEBSITES ================= */}
+        {/* ================= 5. OUR OTHER WEBSITES ================= */}
         <section
           className="sut2-sites-section"
           aria-labelledby="sut2-sites-title"
         >
-          <div className="sut2-sites-content">
-            <h2 id="sut2-sites-title" className="sut2-sites-title">
-              {t("sutlanding.sites_title")}
-            </h2>
-            <div className="sut2-sites-grid">
+          <h2 id="sut2-sites-title" className="sut2-section-title">
+            {t("sutlanding.sites_title")}
+          </h2>
+          <div className="sut2-sites-grid">
+            {[
+              {
+                href: "https://vitalcare.suth.go.th",
+                image: siteVitalcare,
+                alt: "SUTH Vitalcare",
+                key: "vitalcare",
+              },
+              {
+                href: "https://act.suth.go.th/",
+                image: siteAct,
+                alt: "SUTH Activities",
+                key: "act",
+              },
+            ].map((site) => (
               <a
-                href="https://vitalcare.suth.go.th"
+                key={site.key}
+                href={site.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="sut2-site-card"
               >
-                {/* Banner image: vitalcare.suth.go.th screenshot (imported from /assets/vitalcare.png) */}
                 <img
                   className="sut2-site-banner"
-                  src={siteVitalcare}
-                  alt="SUTH Vitalcare"
+                  src={site.image}
+                  alt={site.alt}
                   loading="lazy"
                   decoding="async"
                 />
                 <div className="sut2-site-body">
                   <h3 className="sut2-site-name">
-                    {t("sutlanding.sites_vitalcare_name")}
+                    {t(`sutlanding.sites_${site.key}_name`)}
                   </h3>
                   <p className="sut2-site-desc">
-                    {t("sutlanding.sites_vitalcare_desc")}
+                    {t(`sutlanding.sites_${site.key}_desc`)}
                   </p>
                   <span className="sut2-site-link">
                     {t("sutlanding.sites_visit")}
@@ -492,40 +514,11 @@ export default function SutLanding2() {
                   </span>
                 </div>
               </a>
-
-              <a
-                href="https://act.suth.go.th/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="sut2-site-card"
-              >
-                {/* Banner image: act.suth.go.th screenshot (imported from /assets/act.suth.png) */}
-                <img
-                  className="sut2-site-banner"
-                  src={siteAct}
-                  alt="Vaccine Registration"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="sut2-site-body">
-                  <h3 className="sut2-site-name">
-                    {t("sutlanding.sites_act_name")}
-                  </h3>
-                  <p className="sut2-site-desc">
-                    {t("sutlanding.sites_act_desc")}
-                  </p>
-                  <span className="sut2-site-link">
-                    {t("sutlanding.sites_visit")}
-                    <FiExternalLink aria-hidden="true" />
-                  </span>
-                </div>
-              </a>
-            </div>
+            ))}
           </div>
         </section>
-      </div>
+      </main>
 
-      {/* ================= 4. REVEAL FOOTER ================= */}
       <footer className="sut2-footer">
         <div className="sut2-footer-content">
           <section className="sut2-footer-col sut2-footer-brand">

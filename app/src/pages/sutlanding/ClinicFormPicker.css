@@ -8,15 +8,17 @@
   --cfp-orange-soft: var(--suth-danger-tint);
   --cfp-teal: var(--suth-care);
   --cfp-teal-dark: var(--suth-care);
-  --cfp-teal-light: var(--suth-info-line);
-  --cfp-surface: var(--suth-ink);
-  --cfp-line: var(--suth-ink);
-  --cfp-text: var(--suth-on-action);
-  --cfp-muted: var(--suth-info-line);
-  --cfp-dim: var(--suth-control-line);
+  --cfp-teal-light: var(--suth-care);
+  --cfp-surface: var(--suth-surface);
+  --cfp-line: var(--suth-line);
+  --cfp-text: var(--suth-ink);
+  --cfp-muted: var(--suth-ink-2);
+  --cfp-dim: var(--suth-muted);
+  --cfp-ease: cubic-bezier(0.22, 1, 0.36, 1);
   position: relative;
   z-index: 20;
-  width: min(1200px, 100%);
+  /* Matches the other homepage sections: 1200px of content plus gutters. */
+  width: min(1280px, 100%);
   margin: 0 auto;
   padding: 0 clamp(16px, 4vw, 40px);
   color: var(--cfp-text);
@@ -54,9 +56,10 @@
   min-width: 0;
   height: 48px;
   padding: 0 8px 0 14px;
-  border: 2px solid transparent;
-  border-radius: var(--suth-radius-icon);
+  border: 2px solid var(--suth-line);
+  border-radius: var(--suth-radius-pill);
   background: var(--suth-surface);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--suth-ink) 6%, transparent);
   color: var(--suth-muted);
   font-size: var(--suth-fs-section);
 }
@@ -134,37 +137,39 @@
   min-height: 44px;
   max-width: 100%;
   padding: 0 8px 0 14px;
-  border: 1.5px solid color-mix(in srgb, var(--suth-info-line) 45%, transparent);
+  border: 2px solid var(--suth-line);
   border-radius: var(--suth-radius-pill);
-  background: color-mix(in srgb, var(--suth-surface) 6%, transparent);
+  background: var(--suth-surface);
   color: var(--cfp-text);
   font: inherit;
   font-size: var(--suth-fs-body);
   font-weight: 600;
   cursor: pointer;
   transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease;
+    background-color 0.2s var(--cfp-ease),
+    border-color 0.2s var(--cfp-ease),
+    transform 0.2s var(--cfp-ease);
 }
 .cfp-org svg {
   flex-shrink: 0;
   color: var(--cfp-muted);
 }
 .cfp-org:hover {
-  border-color: var(--cfp-teal-light);
-  background: color-mix(in srgb, var(--suth-surface) 12%, transparent);
+  border-color: var(--suth-tint-line);
+  transform: translateY(-2px);
 }
 .cfp-org:focus-visible {
   outline: 3px solid var(--cfp-teal-light);
   outline-offset: 2px;
 }
 .cfp-org[aria-pressed="true"] {
-  border-color: var(--suth-surface);
-  background: var(--suth-surface);
-  color: var(--suth-ink);
+  border-color: var(--suth-ink);
+  background: var(--suth-ink);
+  color: var(--suth-surface);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--suth-ink) 25%, transparent);
 }
 .cfp-org[aria-pressed="true"] svg {
-  color: var(--suth-action-ink);
+  color: var(--suth-tint-line);
 }
 .cfp-org__name {
   overflow: hidden;
@@ -175,15 +180,15 @@
   min-width: 28px;
   padding: 1px 8px;
   border-radius: var(--suth-radius-pill);
-  background: color-mix(in srgb, var(--suth-surface) 14%, transparent);
+  background: var(--suth-neutral-tint);
   font-size: var(--suth-fs-caption);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   text-align: center;
 }
 .cfp-org[aria-pressed="true"] .cfp-org__count {
-  background: var(--suth-tint);
-  color: var(--suth-action-ink);
+  background: var(--suth-action);
+  color: var(--suth-ink);
 }
 .cfp-tile__org {
   max-width: 100%;
@@ -233,10 +238,10 @@
   font: inherit;
   text-align: center;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(31, 47, 63, 0.3);
+  box-shadow: 0 6px 18px rgba(31, 47, 63, 0.18);
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+    transform 0.3s var(--cfp-ease),
+    box-shadow 0.3s var(--cfp-ease);
 }
 .cfp-tile::before {
   content: "";
@@ -253,16 +258,16 @@
   position: relative;
 }
 .cfp-tile:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 30px rgba(31, 47, 63, 0.4);
+  transform: translateY(-6px) rotate(-1.5deg);
+  box-shadow: 0 16px 30px rgba(31, 47, 63, 0.24);
 }
 .cfp-tile:focus-visible {
   outline: 3px solid var(--cfp-teal-light);
   outline-offset: 3px;
 }
 .cfp-tile[aria-pressed="true"] {
-  box-shadow: 0 0 0 3px var(--cfp-orange),
-    0 14px 30px rgba(31, 47, 63, 0.4);
+  box-shadow: 0 0 0 4px var(--suth-canvas), 0 0 0 7px var(--suth-ink),
+    0 14px 30px rgba(31, 47, 63, 0.24);
 }
 .cfp-tile__check {
   position: absolute;
@@ -273,7 +278,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: var(--cfp-orange);
+  background: var(--suth-ink);
+  color: var(--suth-surface);
   font-size: var(--suth-fs-body);
   box-shadow: 0 2px 6px rgba(31, 47, 63, 0.3);
 }
@@ -313,11 +319,8 @@
 }
 .cfp-tile--all {
   justify-content: center;
-  background: linear-gradient(
-    150deg,
-    var(--cfp-orange) 0%,
-    var(--cfp-orange-2) 100%
-  );
+  background: var(--suth-action);
+  color: var(--suth-ink);
 }
 .cfp-tile--all::before {
   background: none;
@@ -337,7 +340,7 @@
   text-shadow: none;
 }
 .cfp-tile--skeleton {
-  background: linear-gradient(110deg, var(--suth-ink) 30%, var(--suth-ink) 50%, var(--suth-ink) 70%);
+  background: linear-gradient(110deg, var(--suth-line-soft) 30%, var(--suth-surface) 50%, var(--suth-line-soft) 70%);
   background-size: 200% 100%;
   animation: cfpShimmer 1.4s linear infinite;
   cursor: default;
@@ -369,13 +372,13 @@
   margin-bottom: 18px;
   padding: 10px 0;
   border-top: 1px solid var(--cfp-line);
-  background: var(--suth-ink);
+  background: var(--suth-canvas);
 }
 .cfp-toolbar.is-stuck {
   border-top-color: transparent;
   /* Full-bleed backdrop that also fills the transparent navbar area above. */
-  box-shadow: 0 0 0 100vmax rgba(31, 47, 63, 1),
-    0 12px 20px -8px rgba(31, 47, 63, 0.6);
+  box-shadow: 0 0 0 100vmax var(--suth-canvas),
+    0 12px 20px -8px rgba(31, 47, 63, 0.18);
   clip-path: inset(-4.5rem -100vmax -24px -100vmax);
 }
 .cfp-toolbar__info {
@@ -525,18 +528,19 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-radius: var(--suth-radius-panel);
+  border: 1px solid var(--suth-line-soft);
+  border-radius: var(--suth-radius-card);
   background: var(--suth-surface);
   color: var(--suth-ink);
   text-decoration: none;
-  box-shadow: 0 6px 18px rgba(31, 47, 63, 0.25);
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--suth-ink) 6%, transparent);
   transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease;
+    transform 0.3s var(--cfp-ease),
+    box-shadow 0.3s var(--cfp-ease);
 }
 .cfp-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 14px 28px rgba(31, 47, 63, 0.35);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 30px rgba(31, 47, 63, 0.14);
 }
 .cfp-card:focus-visible {
   outline: 3px solid var(--cfp-teal-light);
@@ -558,20 +562,47 @@
   height: 100%;
   object-fit: contain;
 }
-.cfp-band--blue {
+/* Cards without a cover get a soft pastel header with a friendly glyph. */
+.cfp-band--blue,
+.cfp-band--pink,
+.cfp-band--green {
+  display: flex;
+  align-items: center;
   aspect-ratio: auto;
-  height: 8px;
-  background: linear-gradient(90deg, var(--suth-info), var(--suth-info));
+  height: 72px;
+  padding: 0 16px;
+  --band-ink: var(--suth-info);
+  background:
+    radial-gradient(circle at 92% 20%, color-mix(in srgb, white 55%, transparent) 0 22px, transparent 23px),
+    var(--suth-info-tint);
 }
 .cfp-band--pink {
-  aspect-ratio: auto;
-  height: 8px;
-  background: linear-gradient(90deg, var(--suth-risk-dot-high), var(--suth-risk-dot-high));
+  --band-ink: var(--suth-action-ink);
+  background:
+    radial-gradient(circle at 92% 20%, color-mix(in srgb, white 55%, transparent) 0 22px, transparent 23px),
+    var(--suth-tint-strong);
 }
 .cfp-band--green {
-  aspect-ratio: auto;
-  height: 8px;
-  background: linear-gradient(90deg, var(--suth-risk-dot-low), var(--suth-care));
+  --band-ink: var(--suth-care-ink);
+  background:
+    radial-gradient(circle at 92% 20%, color-mix(in srgb, white 55%, transparent) 0 22px, transparent 23px),
+    var(--suth-care-tint);
+}
+.cfp-card__glyph {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--suth-surface);
+  color: var(--band-ink);
+  font-size: 1.35rem;
+  box-shadow: 0 3px 0 color-mix(in srgb, var(--suth-ink) 10%, transparent);
+  transform: rotate(-6deg);
+  transition: transform 0.3s var(--cfp-ease);
+}
+.cfp-card:hover .cfp-card__glyph {
+  transform: rotate(4deg) scale(1.06);
 }
 .cfp-card__body {
   display: flex;
@@ -649,14 +680,16 @@
   align-items: center;
   gap: 4px;
   padding: 6px 12px;
-  border-radius: var(--suth-radius-sm);
-  background: var(--cfp-teal);
-  color: var(--suth-on-action);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-ink);
+  color: var(--suth-surface);
   font-weight: 600;
   white-space: nowrap;
+  transition: background-color 0.2s var(--cfp-ease), gap 0.2s var(--cfp-ease);
 }
 .cfp-card:hover .cfp-card__go {
-  background: var(--cfp-teal-dark);
+  gap: 8px;
+  background: var(--suth-action-ink);
 }
 
 /* "N more in this clinic" under each preview row */
@@ -679,7 +712,7 @@
 }
 .cfp-more:hover {
   border-color: var(--cfp-teal-light);
-  background: color-mix(in srgb, var(--suth-info-line) 8%, transparent);
+  background: var(--suth-care-tint);
 }
 
 /* Paging for a single clinic or search results */
@@ -843,7 +876,7 @@
     grid-template-rows: 1fr auto;
   }
   .cfp-card--no-image {
-    grid-template-columns: 8px 1fr;
+    grid-template-columns: 72px 1fr;
   }
   .cfp-card__media {
     grid-row: 1;
@@ -853,10 +886,15 @@
     overflow: hidden;
   }
   .cfp-card--no-image .cfp-card__media {
-    align-self: stretch;
-    height: auto;
-    margin: 0;
-    border-radius: 0;
+    align-self: start;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    margin: 12px 0 0 12px;
+    padding: 0;
+    border-radius: 16px;
+    background: none;
+    background-color: var(--suth-neutral-tint);
   }
   .cfp-card__body {
     padding: 12px 12px 10px;

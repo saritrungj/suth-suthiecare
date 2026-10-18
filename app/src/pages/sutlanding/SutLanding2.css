@@ -19,6 +19,8 @@
   z-index: 2;
   background-color: var(--suth-canvas);
   margin-bottom: 22rem;
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+  border-radius: 0 0 var(--suth-radius-hero) var(--suth-radius-hero);
   box-shadow: 0 20px 50px rgba(31, 47, 63, 0.5);
   transform: translateZ(0);
   will-change: transform;
@@ -144,771 +146,804 @@
     flex-wrap: wrap;
   }
 }
+
 /* =========================================
-   3. NAVBAR
+   Shared page tokens for the playful homepage
+========================================= */
+.sut2-page {
+  --sut2-gutter: clamp(16px, 4vw, 40px);
+  --sut2-max: 1200px;
+  --sut2-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --sut2-orange: var(--suth-action);
+  --sut2-orange-soft: color-mix(in srgb, var(--suth-action) 55%, white);
+  --sut2-sticker-shadow: 0 6px 0 color-mix(in srgb, var(--suth-ink) 14%, transparent);
+}
+.sut2-section-title {
+  margin: 0 0 clamp(1.25rem, 3vw, 2rem);
+  color: var(--suth-ink);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+/* =========================================
+   3. NAVBAR (a floating white pill)
 ========================================= */
 .sut2-nav {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 4.5rem;
-  padding: 0.5rem 5%;
+  inset: 0 0 auto;
   z-index: 100;
-  transition:
-    background-color 180ms ease-out,
-    box-shadow 180ms ease-out;
-  transform: translateZ(0);
-}
-.sut2-nav--scrolled {
+  padding: 12px var(--sut2-gutter) 0;
   background: transparent;
-  backdrop-filter: none;
-  padding: 0.5rem 5%;
-  box-shadow: none;
+  pointer-events: none;
 }
+.sut2-nav__bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: var(--sut2-max);
+  min-height: 60px;
+  margin: 0 auto;
+  padding: 6px 8px 6px 16px;
+  border: 1px solid color-mix(in srgb, var(--suth-ink) 8%, transparent);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--suth-ink) 8%, transparent);
+  pointer-events: auto;
+  transition: box-shadow 0.3s var(--sut2-ease);
+}
+.sut2-nav--scrolled .sut2-nav__bar {
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--suth-ink) 16%, transparent);
+}
+/* The logo file has wide transparent margins, so crop it with the frame. */
 .sut2-nav__logo {
   position: relative;
-  width: 7.5rem;
-  height: 3.5rem;
-  display: grid;
-  place-items: center;
+  display: block;
+  width: 76px;
+  height: 48px;
   overflow: hidden;
 }
 .sut2-nav__logo img {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 5.5rem;
-  height: 8.5rem;
+  width: 116px;
+  height: 116px;
   max-width: none;
-  display: block;
-  object-fit: contain;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -48%);
 }
 .sut2-nav__actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-}
-.sut2-nav__actions > .language-switcher,
-.sut2-nav__actions > .patient-account-menu,
-.sut2-nav__actions > .patient-account-login {
-  margin: 0;
-}
-.sut2-nav__actions > .patient-account-menu:not(.is-mobile-stack) {
-  width: min(calc(18rem + 10px), 40vw);
-}
-.sut2-nav__btn {
-  min-height: 2.75rem;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0.625rem 0.875rem;
-  border-radius: var(--suth-radius);
-  font-family: var(--suth-font);
-  font-size: var(--suth-fs-sm);
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-  transition: 0.3s;
-}
-.sut2-nav__btn--history {
-  background: rgba(31, 47, 63, 0.6);
-  color: var(--suth-on-action);
-  border: 1px solid color-mix(in srgb, var(--suth-surface) 15%, transparent);
-  backdrop-filter: blur(8px);
-}
-.sut2-nav__btn--history:hover {
-  background: var(--suth-action-hover);
-  color: var(--suth-on-action);
-  border: none;
-}
-.sut2-nav--scrolled .sut2-nav__btn--history:hover {
-  background: var(--suth-action-hover);
-  color: var(--suth-on-action);
-}
-.sut2-nav__btn--staff {
-  width: 2.75rem;
-  padding: 0;
-  justify-content: center;
-  border: 1px solid color-mix(in srgb, var(--suth-surface) 34%, transparent);
-  background: rgba(31, 47, 63, 0.72);
-  color: var(--suth-on-action);
-}
-.sut2-nav__btn--staff:hover {
-  border-color: var(--suth-action);
-  background: var(--suth-action-hover);
-  color: var(--suth-on-action);
-}
-.sut2-nav--scrolled .sut2-nav__btn--staff {
-  border-color: var(--suth-line);
-  background: var(--suth-surface);
-  color: var(--suth-ink-2);
-}
-.sut2-nav--scrolled .sut2-nav__btn--staff:hover {
-  border-color: var(--suth-action);
-  background: var(--suth-danger-tint);
-  color: var(--suth-warning);
-}
-.sut2-nav__sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  gap: 10px;
 }
 .sut2-nav__menu-btn {
   display: none;
-  width: 2.75rem;
-  min-height: 2.75rem;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  font-size: var(--suth-fs-display);
-  cursor: pointer;
-  color: var(--suth-ink);
+  place-items: center;
+  width: 44px;
+  height: 44px;
   border: 0;
-  background: transparent;
+  border-radius: 50%;
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
+  font-size: 1.35rem;
+  cursor: pointer;
 }
-@media (max-width: 1024px) {
-  .sut2-nav__menu-btn {
-    display: inline-flex;
-    border: 1px solid color-mix(in srgb, var(--suth-surface) 42%, transparent);
-    border-radius: var(--suth-radius);
-    background: rgba(31, 47, 63, 0.82);
-    color: var(--suth-on-action);
-    font-size: var(--suth-fs-title);
-    box-shadow: 0 4px 14px rgba(31, 47, 63, 0.18);
-  }
-  .sut2-nav--scrolled .sut2-nav__menu-btn {
-    border-color: color-mix(in srgb, var(--suth-surface) 42%, transparent);
-    background: rgba(31, 47, 63, 0.92);
-    color: var(--suth-on-action);
-  }
-  .sut2-nav__actions {
-    position: absolute;
-    top: calc(100% + 0.5rem);
-    right: 1rem;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 0.75rem;
-    background: var(--suth-canvas);
-    width: min(22rem, calc(100vw - 2rem));
-    padding: 1rem;
-    border-radius: var(--suth-radius);
-    box-shadow: 0 10px 30px rgba(31, 47, 63, 0.14);
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(-10px);
-    transition: 0.3s;
-    z-index: 101;
-  }
-  .sut2-open {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-  }
-  .sut2-nav__language {
-    grid-column: 1;
-    grid-row: 1;
-  }
-  .sut2-nav__actions > .patient-account-menu,
-  .sut2-nav__actions > .patient-account-login {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-  .sut2-nav__actions > .sut2-nav__btn--staff {
-    grid-column: 2;
-    grid-row: 1;
-  }
-  .sut2-nav__actions .patient-account-login {
-    box-shadow: 0 6px 18px color-mix(in srgb, var(--suth-action-pressed) 24%, transparent);
-  }
-  .sut2-nav {
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: 0.5rem 1rem !important;
-  }
-  .sut2-nav--scrolled {
-    background: transparent !important;
-    box-shadow: none !important;
-    min-height: 4.5rem;
-  }
+.sut2-nav__menu-btn:focus-visible {
+  outline: 3px solid var(--suth-focus, var(--suth-action));
+  outline-offset: 2px;
 }
+
 /* =========================================
-   4. HERO SPLIT SECTION 
+   4. HERO (drenched brand orange panel)
 ========================================= */
+.sut2-main-wrapper {
+  padding-top: 84px;
+}
 .sut2-hero {
   position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  padding: 100px 5%;
-  overflow: hidden;
-  transform: translateZ(0);
-  z-index: 1;
-  background-color: var(--suth-ink);
+  isolation: isolate;
+  max-width: calc(var(--sut2-max) + 2 * var(--sut2-gutter));
+  margin: 0 auto;
+  padding: 0 var(--sut2-gutter);
 }
-.sut2-hero__bg {
+.sut2-hero::before {
+  /* The panel itself; padding above lets the nav breathe. */
+  content: "";
   position: absolute;
-  top: -30%;
-  left: 0;
-  width: 100%;
-  height: 160%;
-  background-position: center;
-  background-size: cover;
-  z-index: 0;
+  inset: 0 var(--sut2-gutter);
+  z-index: -2;
+  border-radius: calc(var(--suth-radius-hero) + 8px);
+  background:
+    radial-gradient(circle at 12% 110%, color-mix(in srgb, var(--suth-action) 70%, white) 0 18%, transparent 18.5%),
+    var(--sut2-orange);
+}
+.sut2-hero__blob {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
   pointer-events: none;
-  will-change: transform;
 }
-.sut2-hero__overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(31, 47, 63, 0.9) 0%,
-    rgba(31, 47, 63, 0.4) 100%
-  );
-  z-index: 1;
-  transform: translateZ(0);
+.sut2-hero__blob--a {
+  top: -40px;
+  right: 18%;
+  width: 220px;
+  height: 220px;
+  background: color-mix(in srgb, white 22%, transparent);
+}
+.sut2-hero__blob--b {
+  right: calc(var(--sut2-gutter) + 24px);
+  bottom: 28px;
+  width: 120px;
+  height: 120px;
+  border: 14px solid color-mix(in srgb, white 30%, transparent);
 }
 .sut2-hero__content {
-  position: relative;
-  z-index: 2;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 1300px;
-  margin: 0 auto;
-  gap: 40px;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(2.5rem, 6vw, 5rem) clamp(1.25rem, 5vw, 4rem);
+  overflow: hidden;
+  border-radius: calc(var(--suth-radius-hero) + 8px);
 }
 .sut2-hero__text-box {
-  flex: 1;
-  font-family: var(--suth-font);
-  color: var(--suth-on-action);
-  animation: sut2FadeInUp 1s ease-out;
-  will-change: transform;
-  width: 100%;
-}
-.sut2-hero__badge {
-  display: none;
-  background: color-mix(in srgb, var(--suth-surface) 10%, transparent);
-  backdrop-filter: blur(5px);
-  border: 1px solid color-mix(in srgb, var(--suth-surface) 20%, transparent);
-  border-radius: var(--suth-radius-hero);
-  font-size: var(--suth-fs-sm);
-  font-weight: 600;
-  letter-spacing: 1px;
-  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+  animation: sut2Rise 0.8s var(--sut2-ease) both;
 }
 .sut2-hero__title {
-  font-size: var(--suth-fs-display-lg);
-  line-height: 1.3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35em;
+  margin: 0;
+  color: var(--suth-ink);
+  font-size: clamp(2.1rem, 5.2vw, 3.6rem);
   font-weight: 700;
-  margin-bottom: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
 }
+/* The highlight sits on a tilted white "sticker". */
 .sut2-hero__highlight {
+  display: inline-block;
+  padding: 0.08em 0.45em 0.14em;
+  border-radius: 0.45em;
+  background: var(--suth-surface);
   color: var(--suth-action-ink);
-  font-size: var(--suth-fs-display-lg);
+  box-shadow: var(--sut2-sticker-shadow);
+  transform: rotate(-2deg);
+  transform-origin: left center;
 }
 .sut2-hero__subtitle {
-  font-size: var(--suth-fs-title);
-  line-height: 1.6;
-  color: var(--suth-control-line);
-  margin-bottom: 40px;
-  max-width: 500px;
-}
-.sut2-hero__cta {
-  padding: 16px 32px;
-  font-size: var(--suth-fs-section);
-  font-weight: 700;
-  font-family: inherit;
-  border-radius: var(--suth-radius-pill);
-  border: none;
-  cursor: pointer;
-  background: var(--suth-action);
-  color: var(--suth-on-action);
-  transition: 0.3s;
-  box-shadow: 0 10px 30px color-mix(in srgb, var(--suth-action) 40%, transparent);
+  max-width: 34rem;
+  margin: 1.4rem 0 0;
+  color: var(--suth-ink);
+  font-size: var(--suth-fs-md);
+  line-height: 1.7;
+  text-wrap: pretty;
 }
 .sut2-hero__cta-group {
   display: flex;
-  gap: 16px;
   flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 1.75rem;
 }
-/* Live counts that tell visitors the site serves several organizations. */
+.sut2-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 26px;
+  border: 2px solid var(--suth-ink);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-ink);
+  color: var(--suth-surface);
+  font: inherit;
+  font-size: var(--suth-fs-md);
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--suth-ink) 35%, transparent);
+  transition:
+    transform 0.25s var(--sut2-ease),
+    box-shadow 0.25s var(--sut2-ease);
+}
+.sut2-hero__cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 color-mix(in srgb, var(--suth-ink) 35%, transparent);
+}
+.sut2-hero__cta:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--suth-ink) 35%, transparent);
+}
+.sut2-hero__cta:focus-visible {
+  outline: 3px solid var(--suth-surface);
+  outline-offset: 3px;
+}
+.sut2-hero__cta--secondary {
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+}
 .sut2-hero__stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 24px;
-  margin: 28px 0 0;
+  gap: 8px;
+  margin: 1.75rem 0 0;
   padding: 0;
   list-style: none;
-  color: color-mix(in srgb, var(--suth-on-action) 85%, transparent);
-  font-size: var(--suth-fs-body);
 }
 .sut2-hero__stats li {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 6px;
-}
-.sut2-hero__stats li + li {
-  padding-left: 24px;
-  border-left: 1px solid color-mix(in srgb, var(--suth-on-action) 30%, transparent);
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: var(--suth-radius-pill);
+  background: color-mix(in srgb, white 30%, transparent);
+  color: var(--suth-ink);
+  font-size: var(--suth-fs-sm);
 }
 .sut2-hero__stats strong {
-  color: var(--suth-on-action);
-  font-size: var(--suth-fs-title);
-  font-weight: 800;
+  font-size: var(--suth-fs-md);
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
-.sut2-hero__cta--secondary {
-  background: var(--suth-care);
-  border: 2px solid var(--suth-care);
-  color: var(--suth-on-action);
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--suth-info) 20%, transparent);
-  transition: all 0.3s ease;
+
+/* ---------- Mascot ---------- */
+.sut2-mascot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 380px;
+  animation: sut2Rise 0.9s var(--sut2-ease) 0.12s both;
 }
-.sut2-hero__cta--secondary:hover {
-  background: var(--suth-care-ink);
-  border-color: var(--suth-care);
-  transform: translateY(-2px);
-  color: var(--suth-on-action);
+.sut2-mascot__stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(300px, 70vw);
+  aspect-ratio: 1;
+  animation: sut2Float 5s ease-in-out infinite;
 }
-.sut2-hero__banner-box {
-  flex: 1;
-  max-width: 500px;
-  animation: sut2FadeInUp 1s ease-out 0.2s backwards;
-  will-change: transform;
+.sut2-mascot__ring {
+  position: absolute;
+  inset: -16px;
+  border: 3px dashed color-mix(in srgb, var(--suth-ink) 30%, transparent);
+  border-radius: 50%;
+  animation: sut2Spin 40s linear infinite;
+}
+.sut2-mascot__img {
+  width: 100%;
+  height: 100%;
+  border: 8px solid var(--suth-surface);
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 18px 40px color-mix(in srgb, var(--suth-action-ink) 45%, transparent);
+}
+.sut2-mascot__bubble {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 2;
+  margin: 0;
+  padding: 10px 16px;
+  border-radius: 18px 18px 18px 4px;
+  background: var(--suth-ink);
+  color: var(--suth-surface);
+  font-size: var(--suth-fs-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  transform: translateX(-10%);
+  box-shadow: var(--sut2-sticker-shadow);
+}
+.sut2-chip {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+  font-size: var(--suth-fs-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: var(--sut2-sticker-shadow);
+  animation: sut2Float 6s ease-in-out infinite;
+}
+.sut2-chip svg {
+  color: var(--suth-action-ink);
+}
+.sut2-chip--1 {
+  top: 26%;
+  left: 0;
+  transform: rotate(-4deg);
+  animation-delay: -1s;
+}
+.sut2-chip--2 {
+  top: 48%;
+  right: 0;
+  transform: rotate(3deg);
+  animation-delay: -3s;
+}
+.sut2-chip--2 svg {
+  color: var(--suth-care);
+}
+.sut2-chip--3 {
+  bottom: 4%;
+  left: 12%;
+  transform: rotate(-2deg);
+  animation-delay: -4.5s;
+}
+.sut2-chip--3 svg {
+  color: var(--suth-info);
+}
+.sut2-sparkle {
+  position: absolute;
+  z-index: -1;
+  fill: var(--suth-surface);
+  animation: sut2Twinkle 3.2s ease-in-out infinite;
+}
+.sut2-sparkle--1 {
+  top: 14%;
+  left: 47%;
+  width: 26px;
+}
+.sut2-sparkle--2 {
+  bottom: 14%;
+  left: 40%;
+  width: 16px;
+  animation-delay: -1.2s;
+}
+.sut2-sparkle--3 {
+  top: 10%;
+  right: calc(var(--sut2-gutter) + 32px);
+  width: 20px;
+  fill: var(--suth-ink);
+  opacity: 0.6;
+  animation-delay: -2.1s;
+}
+
+/* =========================================
+   5. PICKER SECTION
+========================================= */
+.sut2-picker-section {
+  position: relative;
+  padding-top: clamp(3rem, 7vw, 5rem);
+  scroll-margin-top: 72px;
+}
+
+/* =========================================
+   6. NEWS BANNERS
+========================================= */
+.sut2-news,
+.sut2-steps-section,
+.sut2-sites-section {
+  max-width: calc(var(--sut2-max) + 2 * var(--sut2-gutter));
+  margin: 0 auto;
+  padding: clamp(3rem, 7vw, 5rem) var(--sut2-gutter) 0;
 }
 .sut2-banner-slider {
   position: relative;
-  width: 100%;
-  aspect-ratio: 4/3;
-  border-radius: var(--suth-radius-card);
   overflow: hidden;
-  background: color-mix(in srgb, var(--suth-surface) 10%, transparent);
-  backdrop-filter: blur(15px);
-  border: 1px solid color-mix(in srgb, var(--suth-surface) 20%, transparent);
-  box-shadow: 0 20px 50px rgba(31, 47, 63, 0.3);
-  transform: translateZ(0);
+  aspect-ratio: 21 / 9;
+  border-radius: var(--suth-radius-hero);
+  background: var(--suth-line-soft);
+  box-shadow: var(--suth-shadow-card);
 }
 .sut2-banner-slide {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  display: block;
   opacity: 0;
-  transition: opacity 0.8s ease-in-out;
-  transform: translateZ(0);
-  backface-visibility: hidden;
+  visibility: hidden;
+  transition:
+    opacity 0.6s var(--sut2-ease),
+    visibility 0.6s;
 }
 .sut2-banner-slide.active {
   opacity: 1;
+  visibility: visible;
+}
+.sut2-banner-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .sut2-banner-dots {
   position: absolute;
-  bottom: 20px;
-  width: 100%;
+  bottom: 14px;
+  left: 50%;
   display: flex;
-  justify-content: center;
-  gap: 8px;
-  z-index: 10;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: var(--suth-radius-pill);
+  background: color-mix(in srgb, var(--suth-ink) 45%, transparent);
+  transform: translateX(-50%);
 }
 .sut2-banner-dot {
   width: 10px;
   height: 10px;
-  border-radius: 50%;
-  border: none;
+  padding: 0;
+  border: 0;
+  border-radius: var(--suth-radius-pill);
+  background: color-mix(in srgb, white 60%, transparent);
   cursor: pointer;
-  background: color-mix(in srgb, var(--suth-surface) 40%, transparent);
-  transition: 0.3s;
+  transition: width 0.3s var(--sut2-ease);
 }
 .sut2-banner-dot.active {
+  width: 26px;
   background: var(--suth-surface);
-  transform: scale(1.3);
-}
-.sut2-banner-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: var(--suth-on-action);
-  background: color-mix(in srgb, var(--suth-surface) 5%, transparent);
-  border-radius: var(--suth-radius-card);
-}
-@media (max-width: 992px) {
-  .sut2-hero__content {
-    flex-direction: column;
-    text-align: center;
-  }
-  .sut2-hero__subtitle {
-    margin: 0 auto 30px auto;
-  }
-  .sut2-hero__banner-box {
-    width: 100%;
-    max-width: 600px;
-  }
-}
-.sut2-3d-section {
-  position: relative;
-  padding: 100px 0;
-  margin-top: -80px;
-  margin-bottom: -80px;
-  background: linear-gradient(
-    to bottom,
-    rgba(31, 47, 63, 0) 0px,
-    rgba(31, 47, 63, 0.05) 10px,
-    rgba(31, 47, 63, 0.15) 20px,
-    rgba(31, 47, 63, 0.3) 30px,
-    rgba(31, 47, 63, 0.5) 40px,
-    rgba(31, 47, 63, 0.7) 50px,
-    rgba(31, 47, 63, 0.85) 60px,
-    rgba(31, 47, 63, 0.95) 70px,
-    var(--suth-ink) 80px,
-    var(--suth-ink) calc(100% - 80px),
-    rgba(31, 47, 63, 0.95) calc(100% - 70px),
-    rgba(31, 47, 63, 0.85) calc(100% - 60px),
-    rgba(31, 47, 63, 0.7) calc(100% - 50px),
-    rgba(31, 47, 63, 0.5) calc(100% - 40px),
-    rgba(31, 47, 63, 0.3) calc(100% - 30px),
-    rgba(31, 47, 63, 0.15) calc(100% - 20px),
-    rgba(31, 47, 63, 0.05) calc(100% - 10px),
-    rgba(31, 47, 63, 0) 100%
-  );
-  overflow: visible;
-  z-index: 10;
-  transform: translateZ(0);
-}
-/* =========================================
-   8. HOW IT WORKS
-========================================= */
-.sut2-steps-section {
-  position: relative;
-  padding: 150px 5%;
-  overflow: hidden;
-  transform: translateZ(0);
-  z-index: 1;
-}
-.sut2-steps__bg {
-  position: absolute;
-  top: -30%;
-  left: 0;
-  width: 100%;
-  height: 160%;
-  background-position: center;
-  background-size: cover;
-  z-index: 0;
-  will-change: transform;
-  transform: translateZ(0);
-}
-.sut2-steps-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(31, 47, 63, 0.85);
-  z-index: 1;
-  transform: translateZ(0);
-}
-.sut2-steps-content {
-  font-family: var(--suth-font);
-  position: relative;
-  z-index: 2;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-.sut2-steps-title {
-  text-align: center;
-  color: var(--suth-on-action);
-  font-size: var(--suth-fs-display-lg);
-  margin-bottom: 60px;
-}
-.sut2-steps-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 50px;
-}
-.sut2-step-glass {
-  background: color-mix(in srgb, var(--suth-surface) 10%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid color-mix(in srgb, var(--suth-surface) 20%, transparent);
-  border-radius: var(--suth-radius-card);
-  padding: 40px 30px;
-  text-align: center;
-  color: var(--suth-on-action);
-  transition:
-    box-shadow 0.3s,
-    transform 0.3s,
-    background 0.3s;
-  will-change: transform;
-}
-.sut2-step-glass:hover {
-  transform: translateY(-8px);
-  background: color-mix(in srgb, var(--suth-surface) 15%, transparent);
-  box-shadow: 0 10px 30px rgba(31, 47, 63, 0.3);
-}
-.sut2-step-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--suth-action) 20%, transparent);
-  color: var(--suth-action-ink);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--suth-fs-display);
-  margin: 0 auto 24px auto;
-}
-.sut2-step-glass h3 {
-  font-size: var(--suth-fs-title);
-  margin-bottom: 16px;
-}
-.sut2-step-glass p {
-  font-size: var(--suth-fs-section);
-  color: var(--suth-control-line);
-  line-height: 1.6;
 }
 
 /* =========================================
-   8b. OUR OTHER WEBSITES
+   7. HOW IT WORKS (a dotted path of four stops)
 ========================================= */
-.sut2-sites-section {
-  position: relative;
-  padding: 120px 5%;
-  /* Smooth Apple-style gradient using the brand colors (#f47932 → #038f9f) */
-  background: linear-gradient(135deg, var(--suth-action) 0%, var(--suth-care) 100%);
-  overflow: hidden;
+.sut2-steps-section {
+  scroll-margin-top: 72px;
 }
-/* Soft blur shades at the top & bottom that blend the section gradient into
-   the neighbouring sections, plus soft light glows for a premium Apple-style finish */
-.sut2-sites-section::before {
+.sut2-steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1rem, 3vw, 2rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sut2-steps::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-      to bottom,
-      rgba(31, 47, 63, 0.8) 0%,
-      rgba(31, 47, 63, 0) 26%
-    ),
-    linear-gradient(
-      to top,
-      color-mix(in srgb, var(--suth-canvas) 90%, transparent) 0%,
-      color-mix(in srgb, var(--suth-canvas) 0%, transparent) 26%
-    ),
-    radial-gradient(
-      circle at 15% 20%,
-      color-mix(in srgb, var(--suth-surface) 18%, transparent) 0%,
-      transparent 45%
-    ),
-    radial-gradient(
-      circle at 85% 80%,
-      color-mix(in srgb, var(--suth-surface) 14%, transparent) 0%,
-      transparent 45%
-    ),
-    radial-gradient(
-      circle at 70% 10%,
-      color-mix(in srgb, var(--suth-care) 35%, transparent) 0%,
-      transparent 50%
-    );
-  pointer-events: none;
-  z-index: 0;
+  top: 44px;
+  right: 12%;
+  left: 12%;
+  border-top: 3px dashed var(--suth-tint-line);
 }
-.sut2-sites-content {
+.sut2-step {
+  --tone: var(--suth-action-ink);
+  --tone-bg: var(--suth-tint-strong);
   position: relative;
-  z-index: 1;
-  max-width: 800px;
-  margin: 0 auto;
-}
-.sut2-sites-title {
   text-align: center;
-  color: var(--suth-on-action);
-  font-size: var(--suth-fs-display-lg);
-  margin-bottom: 60px;
-  text-shadow: 0 2px 12px rgba(31, 47, 63, 0.14);
 }
+.sut2-step--teal {
+  --tone: var(--suth-care-ink);
+  --tone-bg: var(--suth-care-tint);
+}
+.sut2-step--blue {
+  --tone: var(--suth-info);
+  --tone-bg: var(--suth-info-tint);
+}
+.sut2-step--amber {
+  --tone: var(--suth-warning);
+  --tone-bg: var(--suth-warning-tint);
+}
+.sut2-step__icon {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  margin-bottom: 1rem;
+  border: 6px solid var(--suth-canvas);
+  border-radius: 34% 66% 58% 42% / 44% 40% 60% 56%;
+  background: var(--tone-bg);
+  color: var(--tone);
+  font-size: 2rem;
+  transition: transform 0.4s var(--sut2-ease), border-radius 0.6s var(--sut2-ease);
+}
+.sut2-step:hover .sut2-step__icon {
+  border-radius: 50%;
+  transform: translateY(-4px) rotate(-6deg);
+}
+.sut2-step__num {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--suth-ink);
+  color: var(--suth-surface);
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+}
+.sut2-step h3 {
+  margin: 0 0 6px;
+  color: var(--suth-ink);
+  font-size: var(--suth-fs-section);
+  font-weight: 700;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+.sut2-step p {
+  max-width: 26ch;
+  margin: 0 auto;
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-body);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.sut2-manual-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: fit-content;
+  min-height: 44px;
+  margin: 2.5rem auto 0;
+  padding: 0 20px;
+  border: 2px solid var(--suth-line);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-body);
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+.sut2-manual-link:hover {
+  border-color: var(--suth-action);
+  color: var(--suth-action-ink);
+}
+
+/* =========================================
+   8. OUR OTHER WEBSITES
+========================================= */
 .sut2-sites-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 50px;
+  gap: clamp(1rem, 3vw, 1.75rem);
 }
 .sut2-site-card {
-  display: flex;
-  flex-direction: column;
-  background: var(--suth-surface);
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+  overflow: hidden;
   border: 1px solid var(--suth-line-soft);
   border-radius: var(--suth-radius-card);
-  overflow: hidden;
-  color: var(--suth-ink);
+  background: var(--suth-surface);
+  color: inherit;
   text-decoration: none;
-  transition:
-    box-shadow 0.3s,
-    transform 0.3s,
-    border-color 0.3s;
-  will-change: transform;
+  transition: transform 0.3s var(--sut2-ease), box-shadow 0.3s var(--sut2-ease);
 }
 .sut2-site-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 10px 30px rgba(31, 47, 63, 0.1);
-  border-color: var(--suth-action);
+  transform: translateY(-4px);
+  box-shadow: var(--suth-shadow-hover);
+}
+.sut2-site-card:focus-visible {
+  outline: 3px solid var(--suth-action);
+  outline-offset: 3px;
 }
 .sut2-site-banner {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100%;
+  min-height: 160px;
   object-fit: cover;
-  display: block;
   background: var(--suth-line-soft);
 }
 .sut2-site-body {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  padding: 24px 24px 28px;
+  padding: 20px;
 }
 .sut2-site-name {
-  font-size: var(--suth-fs-title);
-  margin-bottom: 12px;
+  margin: 0 0 6px;
   color: var(--suth-ink);
+  font-size: var(--suth-fs-section);
+  font-weight: 700;
 }
 .sut2-site-desc {
-  font-size: var(--suth-fs-section);
+  display: -webkit-box;
+  margin: 0 0 14px;
+  overflow: hidden;
   color: var(--suth-ink-2);
+  font-size: var(--suth-fs-sm);
   line-height: 1.6;
-  margin-bottom: 24px;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 .sut2-site-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--suth-action-ink);
-  font-size: var(--suth-fs-body);
-  font-weight: 600;
   margin-top: auto;
+  color: var(--suth-action-ink);
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
 }
-.sut2-site-link svg {
-  font-size: var(--suth-fs-md);
-}
+
 /* =========================================
-   11. ANIMATIONS
+   9. MOTION
 ========================================= */
-@keyframes sut2FadeInUp {
+@keyframes sut2Rise {
   from {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(24px);
   }
+}
+@keyframes sut2Float {
+  50% {
+    translate: 0 -10px;
+  }
+}
+@keyframes sut2Spin {
   to {
-    opacity: 1;
-    transform: translateY(0);
+    rotate: 360deg;
+  }
+}
+@keyframes sut2Twinkle {
+  50% {
+    scale: 0.6;
+    opacity: 0.5;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sut2-page *,
+  .sut2-page *::before {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
 /* =========================================
    10. RESPONSIVE
 ========================================= */
+/* Collapse the nav actions into a menu on tablets and phones. */
 @media (max-width: 1024px) {
-  .sut2-hero__cta-group {
-    justify-content: center !important;
-    width: 100% !important;
-    display: flex !important;
+  .sut2-nav__menu-btn {
+    display: grid;
   }
-  .sut2-hero__stats {
-    justify-content: center;
+  .sut2-nav__actions {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 220px;
+    max-width: calc(100vw - 2 * var(--sut2-gutter));
+    padding: 12px;
+    border-radius: var(--suth-radius-panel);
+    background: var(--suth-surface);
+    box-shadow: var(--suth-shadow-pop);
+  }
+  .sut2-nav__actions.sut2-open {
+    display: flex;
+  }
+}
+@media (max-width: 960px) {
+  .sut2-hero__content {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+  .sut2-mascot {
+    min-height: 340px;
+    order: -1;
+  }
+  .sut2-mascot__stage {
+    width: min(220px, 56vw);
+  }
+  .sut2-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 2.5rem;
+  }
+  .sut2-steps::before {
+    display: none;
   }
 }
 @media (max-width: 768px) {
-  .sut2-step-glass {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    background: rgba(31, 47, 63, 0.95);
-    border-color: color-mix(in srgb, var(--suth-surface) 5%, transparent);
-    box-shadow: none;
-  }
-  .sut2-sites-section {
-    padding: 80px 5%;
-  }
-  .sut2-sites-title {
-    font-size: var(--suth-fs-display);
-    margin-bottom: 40px;
-  }
-  .sut2-sites-grid {
-    gap: 30px;
-  }
-  .sut2-site-body {
-    padding: 20px 20px 24px;
-  }
-  .sut2-hero__title {
-    font-size: var(--suth-fs-display) !important;
-    line-height: 1.35;
-  }
-  .sut2-hero__highlight {
-    font-size: var(--suth-fs-title) !important;
-  }
-  .sut2-hero__subtitle {
-    font-size: var(--suth-fs-body) !important;
-    line-height: 1.6;
-    margin: 0 auto 30px auto !important;
-  }
   .sut2-nav__logo {
-    width: 4.25rem;
-    height: 3.25rem;
-    margin-left: 0;
+    width: 64px;
+    height: 40px;
   }
   .sut2-nav__logo img {
-    width: 7rem;
-    height: 7rem !important;
-    max-width: none;
+    width: 98px;
+    height: 98px;
   }
-  .sut2-nav__menu-btn {
-    font-size: var(--suth-fs-title);
-    color: var(--suth-on-action);
+  .sut2-nav__bar {
+    min-height: 54px;
   }
-  .sut2-nav--scrolled .sut2-nav__menu-btn {
-    color: var(--suth-on-action);
+  .sut2-main-wrapper {
+    padding-top: 76px;
   }
-  .sut2-nav__actions {
-    right: 1rem;
+  .sut2-hero__content {
+    padding: 2rem 1.25rem 2.25rem;
   }
-  .sut2-nav__btn {
-    font-size: var(--suth-fs-sm);
-    padding: 0.625rem 0.875rem;
-  }
-  .sut2-nav__btn--staff {
-    width: 2.75rem;
-    padding: 0;
+  .sut2-hero__blob--a {
+    right: -40px;
   }
   .sut2-hero__cta-group {
-    flex-wrap: nowrap !important;
-    justify-content: center !important;
-    gap: 10px;
-    width: 100%;
+    flex-direction: column;
   }
   .sut2-hero__cta {
-    padding: 10px 14px !important;
-    font-size: var(--suth-fs-sm) !important;
-    flex: 1;
-    white-space: nowrap;
+    width: 100%;
+  }
+  .sut2-mascot {
+    min-height: 250px;
+  }
+  .sut2-mascot__stage {
+    width: min(170px, 46vw);
+  }
+  .sut2-mascot__img {
+    border-width: 6px;
+  }
+  .sut2-hero__title {
+    font-size: clamp(1.9rem, 8.5vw, 2.4rem);
+  }
+  .sut2-chip {
+    padding: 6px 11px;
+    font-size: var(--suth-fs-caption);
+  }
+  .sut2-chip--1 {
+    left: 2%;
+  }
+  .sut2-chip--3 {
+    left: 6%;
+  }
+  .sut2-mascot__bubble {
+    font-size: var(--suth-fs-caption);
+    transform: translateX(-30%);
+  }
+  .sut2-banner-slider {
+    aspect-ratio: 16 / 9;
+    border-radius: var(--suth-radius-card);
+  }
+  .sut2-steps {
+    grid-template-columns: 1fr;
+    row-gap: 1.25rem;
+  }
+  /* On phones the path runs down the left edge. */
+  .sut2-steps::before {
+    display: block;
+    top: 40px;
+    bottom: 40px;
+    left: 40px;
+    right: auto;
+    border-top: 0;
+    border-left: 3px dashed var(--suth-tint-line);
+  }
+  .sut2-step {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    column-gap: 14px;
+    align-items: center;
+    text-align: left;
+  }
+  .sut2-step__icon {
+    grid-row: span 2;
+    width: 80px;
+    height: 80px;
+    margin: 0;
+    font-size: 1.75rem;
+  }
+  .sut2-step h3 {
+    align-self: end;
+    margin: 0;
+  }
+  .sut2-step p {
+    align-self: start;
+    max-width: none;
+    margin: 0;
+  }
+  .sut2-site-card {
+    grid-template-columns: 1fr;
+  }
+  .sut2-site-banner {
+    aspect-ratio: 16 / 7;
+    min-height: 0;
   }
 }
 
-/* Keep the landing navigation over the hero on touch layouts. */
-@media (max-width: 1024px) {
-  .sut2-page > .sut2-nav,
-  .sut2-page > .sut2-nav.sut2-nav--scrolled {
-    background: transparent !important;
-    background-color: transparent !important;
-    background-image: none !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-  }
+/* Keep the landing navigation transparent; only the inner pill has a surface. */
+.sut2-page > .sut2-nav,
+.sut2-page > .sut2-nav.sut2-nav--scrolled {
+  background: transparent;
+  box-shadow: none;
 }
