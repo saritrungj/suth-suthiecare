@@ -2355,8 +2355,158 @@
   color: var(--suth-surface);
   box-shadow: 0 4px 0 color-mix(in srgb, var(--suth-ink) 22%, transparent);
 }
+/* Timeline steps: a date tile per visit on a soft rail, card beside it. */
 .hr-timeline {
-  border-left: 3px dashed var(--suth-tint-line);
+  padding-left: 0;
+  border-left: 0;
+}
+.hr-timeline::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: 27px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(
+    var(--suth-tint-line),
+    color-mix(in srgb, var(--suth-tint-line) 20%, transparent)
+  );
+}
+.hr-timeline:has(> .hr-empty-state)::before {
+  display: none;
+}
+.hr-timeline-item {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  margin-bottom: 14px;
+}
+.hr-timeline-marker {
+  position: relative;
+  top: auto;
+  left: auto;
+  z-index: 1;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  width: 56px;
+  height: 60px;
+  border: 0;
+  border-top: 4px solid var(--clinic);
+  border-radius: 16px;
+  background: var(--suth-surface);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--suth-ink) 8%, transparent);
+  transition:
+    background-color 0.2s ease-out,
+    transform 0.2s ease-out;
+}
+.hr-timeline-day {
+  color: var(--suth-ink);
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.hr-timeline-month {
+  margin-top: 3px;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-caption);
+  font-weight: 600;
+  line-height: 1;
+}
+.hr-timeline-item:hover .hr-timeline-marker {
+  transform: translateY(-2px);
+}
+.hr-timeline-item.is-open .hr-timeline-marker {
+  background: var(--clinic-bg);
+}
+.hr-timeline-item.is-open .hr-timeline-day {
+  color: var(--clinic);
+}
+.hr-card:hover {
+  transform: none;
+}
+.hr-card-head {
+  min-height: 60px;
+  gap: 12px;
+}
+.hr-card-title {
+  color: var(--suth-ink);
+  font-weight: 700;
+  line-height: 1.4;
+}
+.hr-card-date {
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  color: var(--suth-muted);
+}
+.hr-card-clinic {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 9px;
+  border-radius: var(--suth-radius-pill);
+  background: var(--clinic-bg);
+  color: var(--clinic);
+  font-size: var(--suth-fs-caption);
+  font-weight: 700;
+}
+.hr-card-clinic::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--clinic);
+}
+.hr-risk-tag {
+  border-radius: var(--suth-radius-pill);
+  padding: 4px 12px;
+}
+.hr-chevron {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--suth-surface-2);
+  color: var(--suth-ink-2);
+  font-size: 1rem;
+  transition:
+    transform 0.25s ease-out,
+    background-color 0.2s ease-out;
+}
+.hr-card-head:hover .hr-chevron {
+  background: var(--pub-peach);
+  color: var(--suth-action-ink);
+}
+.hr-chevron.open {
+  background: var(--clinic-bg);
+  color: var(--clinic);
+}
+@media (max-width: 600px) {
+  .hr-timeline::before {
+    left: 21px;
+  }
+  .hr-timeline-item {
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 10px;
+  }
+  .hr-timeline-marker {
+    width: 44px;
+    height: 50px;
+    border-radius: 14px;
+  }
+  .hr-timeline-day {
+    font-size: 1.1rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hr-timeline-marker,
+  .hr-chevron {
+    transition: none;
+  }
 }
 .hr-card,
 .hr-widget,

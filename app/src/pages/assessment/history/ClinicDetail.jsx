@@ -1,377 +1,436 @@
 import { toDisplayText } from "../../../utils/textPresentation.js";
-import React from "react";
+import { useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Navbar from "../../../components/Navbar";
 import PublicBackdrop from "../../../components/public/PublicBackdrop";
+import { CLINIC_INFO } from "./historyUtils";
+import { bmiCategory, buildClinicDetail } from "./clinicDetailData";
 import "./ClinicDetail.css";
 import {
-  FiTrendingUp,
   FiActivity,
   FiCalendar,
-  FiShield,
+  FiChevronRight,
+  FiClipboard,
   FiFileText,
+  FiMessageCircle,
+  FiTrendingDown,
+  FiTrendingUp,
+  FiMinus,
 } from "react-icons/fi";
+
+const CLINIC_COPY = {
+  th: {
+    behavior: ["คลินิกปรับเปลี่ยนพฤติกรรม", "ปรับพฤติกรรมเพื่อสุขภาพที่ดีขึ้น"],
+    sti: ["คลินิกโรคติดต่อฯ", "ป้องกัน ดูแล และเฝ้าระวังโรคติดต่อ"],
+    teenager: [
+      "คลินิกวัยรุ่น",
+      "ดูแล เข้าใจ ปรับเปลี่ยน เพื่อวัยรุ่นที่แข็งแรงทั้งใจ",
+    ],
+    general: ["บริการทั่วไป", "ดูแลสุขภาพอย่างครบวงจร"],
+  },
+  en: {
+    behavior: ["Behavioral Clinic", "Behavior modification for better health"],
+    sti: [
+      "STI Clinic",
+      "Prevention, care and monitoring of communicable diseases",
+    ],
+    teenager: [
+      "Teen Clinic",
+      "Care, understand and adapt for healthy teenagers",
+    ],
+    general: ["General Services", "Comprehensive health care"],
+  },
+};
+
+const BMI_LABELS = {
+  th: {
+    underweight: "น้ำหนักน้อย",
+    normal: "ปกติ",
+    overweight: "น้ำหนักเกิน",
+    obese: "อ้วน",
+  },
+  en: {
+    underweight: "Underweight",
+    normal: "Normal",
+    overweight: "Overweight",
+    obese: "Obese",
+  },
+};
+
+const STATUS_EN = [
+  ["รอติดต่อ", "Pending contact"],
+  ["กำลังดำเนินการ", "In progress"],
+  ["เสร็จสิ้น", "Completed"],
+];
 
 export default function ClinicDetail() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t, i18n } = useTranslation();
+  const state = location.state;
+  const clinicType = state?.clinicType;
+  const lang = i18n.language === "en" ? "en" : "th";
+  const L = (th, en) => (lang === "en" ? en : th);
 
-  const {
-    clinicType,
-    masterCase,
+  // The page is built from the history page's data; opened on its own (a
+  // typed URL or a bookmark) it has nothing to show, so go back there.
+  useEffect(() => {
+    if (!clinicType) navigate("/history/result", { replace: true });
+  }, [clinicType, navigate]);
 
-    bmiRecords = [],
-    adviceByClinic = {},
-    timelineEvents = [],
+  const detail = useMemo(() => buildClinicDetail(state || {}), [state]);
+  if (!clinicType) return null;
 
-    responses = [],
-    logs = [],
-  } = location.state || {};
+  const clinic = CLINIC_INFO[clinicType] || CLINIC_INFO.general;
+  const [clinicName, clinicDescription] =
+    CLINIC_COPY[lang][clinicType] || CLINIC_COPY[lang].general;
+  const isBmi = detail.metric === "bmi";
 
-  const clinicTimeline = timelineEvents.filter(
-    (item) => item.clinic_type === clinicType,
-  );
-
-  const clinicBMI = bmiRecords.filter((item) => item.clinicId === clinicType);
-
-  const clinicAdvice = adviceByClinic?.[clinicType] || [];
-
-  const advice = clinicAdvice.length > 0 ? clinicAdvice[0] : null;
-
-  const clinicResponses = responses.filter((r) => r.clinic_type === clinicType);
-
-  const riskRecords = clinicResponses.map((r) => {
-    const result = r.summary_data?.score_results?.[0];
-
-    return {
-      score: result?.score || 0,
-      label: result?.label || "-",
-      color: result?.color || "var(--suth-info)",
-      date: r.submitted_at,
-    };
-  });
-
-  const graphData = clinicType === "behavior" ? clinicBMI : riskRecords;
-
-  const clinicNameMap = {
-    en: {
-      behavior: "Behavioral Clinic",
-      sti: "STI Clinic",
-      teenager: "Teen Clinic",
-    },
-    th: {
-      behavior: "คลินิกปรับเปลี่ยนพฤติกรรม",
-      sti: "คลินิกโรคติดต่อฯ",
-      teenager: "คลินิกวัยรุ่น",
-    },
+  const formatDate = (value, options = { dateStyle: "medium" }) =>
+    value
+      ? new Date(value).toLocaleString(
+          lang === "en" ? "en-GB" : "th-TH",
+          options,
+        )
+      : "-";
+  const formatStatus = (status) => {
+    if (!status) return L("รอดำเนินการ", "Pending");
+    if (lang !== "en") return status;
+    return STATUS_EN.find(([th]) => status.includes(th))?.[1] || status;
+  };
+  const valueLabel = (record) => {
+    if (!record) return null;
+    if (isBmi) return BMI_LABELS[lang][bmiCategory(record.value)];
+    return record.label ? toDisplayText(record.label) : null;
   };
 
-  const clinicDescriptionMap = {
-    en: {
-      behavior: "Behavior modification for better health",
-      sti: "Prevention, care and monitoring of communicable diseases",
-      teenager: "Care, understand and adapt for healthy teenagers",
-    },
-    th: {
-      behavior: "ปรับพฤติกรรมเพื่อสุขภาพที่ดีขึ้น",
-      sti: "ป้องกัน ดูแล และเฝ้าระวังโรคติดต่อ",
-      teenager: "ดูแล เข้าใจ ปรับเปลี่ยน เพื่อวัยรุ่นที่แข็งแรงทั้งใจ",
-    },
-  };
+  const trendCopy = {
+    better: [FiTrendingDown, L("แนวโน้มดีขึ้น", "Improving")],
+    worse: [FiTrendingUp, L("ควรติดตามใกล้ชิด", "Needs attention")],
+    same: [FiMinus, L("คงที่", "No change")],
+  }[detail.trend];
+  const TrendIcon = trendCopy?.[0];
 
-  const currentLang = i18n.language === "en" ? "en" : "th";
-  const clinicDescription =
-    clinicDescriptionMap[currentLang][clinicType] ||
-    (currentLang === "en"
-      ? "Comprehensive health care"
-      : "ดูแลสุขภาพอย่างครบวงจร");
-  const clinicName = clinicNameMap[currentLang][clinicType] || clinicType;
+  const chartMax = isBmi
+    ? Math.max(40, ...detail.series.map((r) => r.value))
+    : Math.max(1, ...detail.series.map((r) => r.value)) * 1.15;
 
-  const latestRecord = graphData[graphData.length - 1];
-  const firstRecord = graphData[0];
-
-  const latestValue =
-    clinicType === "behavior"
-      ? Number(latestRecord?.bmi || 0)
-      : Number(latestRecord?.score || 0);
-
-  const firstValue =
-    clinicType === "behavior"
-      ? Number(firstRecord?.bmi || 0)
-      : Number(firstRecord?.score || 0);
-
-  const diff = latestValue - firstValue;
-
-  const trendText =
-    diff < 0
-      ? currentLang === "en"
-        ? "Improving Health Trend"
-        : "แนวโน้มสุขภาพดีขึ้น"
-      : diff > 0
-        ? currentLang === "en"
-          ? "Increased Risk"
-          : "มีความเสี่ยงเพิ่มขึ้น"
-        : currentLang === "en"
-          ? "No Change"
-          : "ไม่มีการเปลี่ยนแปลง";
-
-  const latestLabel = !graphData.length
-    ? currentLang === "en"
-      ? "No assessment yet"
-      : "ยังไม่มีผลประเมิน"
-    : clinicType === "behavior"
-      ? latestValue < 18.5
-        ? currentLang === "en"
-          ? "Underweight"
-          : "น้ำหนักน้อย"
-        : latestValue < 23
-          ? currentLang === "en"
-            ? "Normal"
-            : "ปกติ"
-          : latestValue < 25
-            ? currentLang === "en"
-              ? "Overweight"
-              : "น้ำหนักเกิน"
-            : currentLang === "en"
-              ? "Obese"
-              : "อ้วน"
-      : latestRecord?.label || "-";
+  const latestLabel = valueLabel(detail.latest);
 
   return (
-    <div className="clinic-detail-shell">
+    <div
+      className="clinic-detail-shell"
+      style={{ "--clinic": clinic.color, "--clinic-bg": clinic.bg }}
+    >
       <PublicBackdrop />
       <Navbar
         showBack
         showLanguage
         showPatientAccount
-        backText={
-          t("history.result.back") ||
-          (currentLang === "en" ? "Back" : "ย้อนกลับ")
-        }
+        backText={t("history.result.back") || L("ย้อนกลับ", "Back")}
         onBack={() => navigate(-1)}
       />
-      <div className="clinic-detail-page">
-        {/* HERO */}
-        <div className="clinic-hero">
-          <div className="hero-content">
-            <h1>{clinicName}</h1>
 
-            <div className="hero-health-status">
-              <div className="hero-main-value">
-                {clinicType === "behavior"
-                  ? `${currentLang === "en" ? "Current BMI" : "BMI ปัจจุบัน"} ${graphData.length ? latestValue : "-"}`
-                  : `${currentLang === "en" ? "Latest Score" : "คะแนนล่าสุด"} ${graphData.length ? latestValue : "-"}`}
-
-                <span>({latestLabel})</span>
-              </div>
-
-              <div className="hero-trend">
-                {graphData.length > 1
-                  ? trendText
-                  : currentLang === "en"
-                    ? "More assessments are needed to show a trend"
-                    : "ต้องมีผลประเมินเพิ่มเติมเพื่อแสดงแนวโน้ม"}
-              </div>
+      <main className="clinic-detail-page">
+        {/* HEADER */}
+        <section className="cd-hero" aria-labelledby="cd-title">
+          <div className="cd-hero__top">
+            <span className="cd-hero__icon" aria-hidden="true">
+              <FiActivity />
+            </span>
+            <div className="cd-hero__text">
+              <h1 id="cd-title">{clinicName}</h1>
+              <p>{clinicDescription}</p>
             </div>
-          </div>
-        </div>
-
-        {/* CHART + ADVICE */}
-
-        <div className="clinic-top-section">
-          <div className="bmi-card">
-            <div className="card-header">
-              <div className="card-icon">
-                <FiTrendingUp />
-              </div>
-
-              <div>
-                <h3>
-                  {clinicType === "behavior"
-                    ? currentLang === "en"
-                      ? "BMI Trend"
-                      : "แนวโน้ม BMI"
-                    : currentLang === "en"
-                      ? "Risk Score Trend"
-                      : "แนวโน้มคะแนนความเสี่ยง"}
-                </h3>
-
-                <span>
-                  {currentLang === "en"
-                    ? "All Historical Data"
-                    : "ข้อมูลย้อนหลังทั้งหมด"}
+            {detail.caseInfo && (
+              <div className="cd-case-badge">
+                <span className="cd-case-badge__code">
+                  {detail.caseInfo.code}
+                </span>
+                <span className="cd-case-badge__status">
+                  {formatStatus(detail.caseInfo.status)}
                 </span>
               </div>
-            </div>
+            )}
+          </div>
 
-            <div className="hr-trend-chart">
-              {!graphData.length && (
-                <p className="empty-timeline">
-                  {currentLang === "en"
-                    ? "No assessment data yet"
-                    : "ยังไม่มีข้อมูลผลประเมิน"}
+          <dl className="cd-stats">
+            <div className="cd-stat cd-stat--main">
+              <dt>
+                {isBmi
+                  ? L("BMI ล่าสุด", "Latest BMI")
+                  : L("คะแนนล่าสุด", "Latest score")}
+              </dt>
+              <dd>
+                <strong>{detail.latest ? detail.latest.value : "-"}</strong>
+                {latestLabel && (
+                  <span
+                    className="cd-chip"
+                    style={
+                      detail.latest?.color
+                        ? { "--chip": detail.latest.color }
+                        : undefined
+                    }
+                  >
+                    {latestLabel}
+                  </span>
+                )}
+              </dd>
+            </div>
+            <div className="cd-stat">
+              <dt>{L("จำนวนการประเมิน", "Assessments")}</dt>
+              <dd>
+                <strong>{detail.assessmentCount}</strong>
+                <span>{L("ครั้ง", "times")}</span>
+              </dd>
+            </div>
+            <div className="cd-stat">
+              <dt>{L("เข้ารับบริการล่าสุด", "Last visit")}</dt>
+              <dd>
+                <strong className="cd-stat__date">
+                  {formatDate(detail.lastVisit)}
+                </strong>
+              </dd>
+            </div>
+          </dl>
+        </section>
+
+        <div className="cd-grid">
+          {/* TREND */}
+          <section
+            className="cd-card cd-card--trend"
+            aria-labelledby="cd-trend"
+          >
+            <header className="cd-card__head">
+              <span className="cd-card__icon" aria-hidden="true">
+                <FiTrendingUp />
+              </span>
+              <div>
+                <h2 id="cd-trend">
+                  {isBmi
+                    ? L("แนวโน้ม BMI", "BMI trend")
+                    : L("แนวโน้มคะแนนประเมิน", "Score trend")}
+                </h2>
+                <p>
+                  {detail.series.length
+                    ? L(
+                        `${detail.series.length} ครั้งล่าสุด เรียงตามวันที่`,
+                        `Last ${detail.series.length} results by date`,
+                      )
+                    : L("ยังไม่มีผลที่มีคะแนน", "No scored results yet")}
+                </p>
+              </div>
+              {trendCopy && (
+                <span className={`cd-trend cd-trend--${detail.trend}`}>
+                  <TrendIcon aria-hidden="true" /> {trendCopy[1]}
+                </span>
+              )}
+            </header>
+
+            {detail.series.length ? (
+              <>
+                <ol className="cd-chart">
+                  {detail.series.map((record, index) => (
+                    <li key={`${record.date}-${index}`} className="cd-bar">
+                      <span className="cd-bar__value">{record.value}</span>
+                      <span className="cd-bar__track" aria-hidden="true">
+                        <span
+                          className="cd-bar__fill"
+                          style={{
+                            height: `${Math.max((record.value / chartMax) * 100, 4)}%`,
+                            background: record.color || "var(--clinic)",
+                          }}
+                        />
+                      </span>
+                      <span className="cd-bar__date">
+                        {formatDate(record.date, {
+                          day: "numeric",
+                          month: "short",
+                        })}
+                      </span>
+                      {isBmi ? (
+                        <span className="cd-bar__meta">
+                          {record.weight ? `${record.weight} kg` : "-"}
+                          <br />
+                          {record.height ? `${record.height} cm` : "-"}
+                        </span>
+                      ) : (
+                        record.label && (
+                          <span className="cd-bar__meta">
+                            {toDisplayText(record.label)}
+                          </span>
+                        )
+                      )}
+                    </li>
+                  ))}
+                </ol>
+                {detail.series.length === 1 && (
+                  <p className="cd-note">
+                    {L(
+                      "ต้องมีผลประเมินอย่างน้อย 2 ครั้งจึงจะแสดงแนวโน้ม",
+                      "At least two results are needed to show a trend",
+                    )}
+                  </p>
+                )}
+              </>
+            ) : (
+              <p className="cd-empty">
+                {L("ยังไม่มีข้อมูลผลประเมิน", "No assessment data yet")}
+              </p>
+            )}
+          </section>
+
+          {/* ADVICE */}
+          <section className="cd-card" aria-labelledby="cd-advice">
+            <header className="cd-card__head">
+              <span className="cd-card__icon" aria-hidden="true">
+                <FiMessageCircle />
+              </span>
+              <div>
+                <h2 id="cd-advice">
+                  {L("คำแนะนำจากผู้เชี่ยวชาญ", "Expert advice")}
+                </h2>
+                <p>{clinicName}</p>
+              </div>
+            </header>
+            {detail.advice.length ? (
+              <ul className="cd-notes">
+                {detail.advice.map((log, index) => (
+                  <li key={log.id || index} className="cd-note-item">
+                    <p>{toDisplayText(log.detail)}</p>
+                    <span>
+                      {log.staff ? `${log.staff} · ` : ""}
+                      {formatDate(log.created_at)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="cd-empty">
+                {L(
+                  "ยังไม่มีคำแนะนำจากผู้เชี่ยวชาญ กรุณาติดตามผลครั้งถัดไป",
+                  "No expert advice yet. Please check back later.",
+                )}
+              </p>
+            )}
+          </section>
+
+          {/* CASE PROGRESS */}
+          {detail.caseInfo && (
+            <section className="cd-card" aria-labelledby="cd-case">
+              <header className="cd-card__head">
+                <span className="cd-card__icon" aria-hidden="true">
+                  <FiClipboard />
+                </span>
+                <div>
+                  <h2 id="cd-case">
+                    {L("ความคืบหน้าการดูแล", "Care progress")}
+                  </h2>
+                  <p>
+                    {detail.caseInfo.code}
+                    {detail.caseInfo.openedAt &&
+                      ` · ${L("เปิดเคส", "Opened")} ${formatDate(detail.caseInfo.openedAt)}`}
+                  </p>
+                </div>
+              </header>
+              {detail.caseInfo.updates.length ? (
+                <ol className="cd-steps">
+                  {detail.caseInfo.updates.map((log, index) => (
+                    <li key={log.id || index}>
+                      <p>{toDisplayText(log.detail)}</p>
+                      <span>
+                        {log.staff ? `${log.staff} · ` : ""}
+                        {formatDate(log.created_at, {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <p className="cd-empty">
+                  {L(
+                    "เจ้าหน้าที่ได้รับข้อมูลแล้ว และจะติดต่อกลับเพื่อวางแผนการดูแล",
+                    "Staff have your information and will contact you to plan your care.",
+                  )}
                 </p>
               )}
-              {graphData.map((item, i) => {
-                const value =
-                  clinicType === "behavior"
-                    ? Number(item.bmi || item.score || 0)
-                    : Number(item.score || 0);
-
-                const maxValue = clinicType === "behavior" ? 40 : 30;
-
-                const heightPct = Math.min((value / maxValue) * 100, 100);
-
-                return (
-                  <div key={i} className="hr-trend-bar-wrapper">
-                    <div
-                      className="hr-trend-bar"
-                      style={{
-                        height: `${Math.max(heightPct * 1.8, 4)}px`,
-                        background: item.color || "var(--suth-success)",
-                      }}
-                    >
-                      <span className="hr-trend-val">{value}</span>
-                    </div>
-
-                    <div className="hr-trend-date">
-                      {item.date
-                        ? new Date(item.date).toLocaleDateString(
-                            currentLang === "en" ? "en-GB" : "th-TH",
-                            {
-                              month: "short",
-                              day: "numeric",
-                            },
-                          )
-                        : "-"}
-                    </div>
-
-                    {clinicType === "behavior" ? (
-                      <div className="hr-trend-wh">
-                        <span>{item.weight ? `${item.weight} kg` : "-"}</span>
-
-                        <span>{item.height ? `${item.height} cm` : "-"}</span>
-                      </div>
-                    ) : (
-                      <div
-                        className="risk-label"
-                        style={{
-                          color: item.color || "var(--suth-success)",
-                        }}
-                      >
-                        {toDisplayText(item.label)}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="advice-card">
-            {/* HEADER */}
-            <div className="card-header">
-              <div className="card-icon">
-                <FiFileText />
-              </div>
-
-              <div>
-                <h3>
-                  {currentLang === "en"
-                    ? "Expert Advice"
-                    : "คำแนะนำจากผู้เชี่ยวชาญ"}
-                </h3>
-                <span>{clinicName}</span>
-              </div>
-            </div>
-
-            <div className="advice-box">
-              <div className="advice-header">
-                <FiShield />
-                <span>
-                  {currentLang === "en"
-                    ? "Health Recommendations"
-                    : "ข้อเสนอแนะด้านสุขภาพ"}
-                </span>
-              </div>
-
-              <p>
-                {advice?.detail?.trim()
-                  ? advice.detail
-                  : currentLang === "en"
-                    ? "No expert advice available at the moment. Please check back later."
-                    : "ยังไม่มีคำแนะนำจากผู้เชี่ยวชาญในขณะนี้ กรุณาติดตามผลครั้งถัดไป"}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* TIMELINE */}
-
-        <div className="timeline-section">
-          <div className="timeline-header">
-            <div className="section-title">
-              <FiCalendar />
-              <span>
-                {currentLang === "en"
-                  ? "Service History"
-                  : "ประวัติการเข้ารับบริการ"}
-              </span>
-            </div>
-
-            <span className="timeline-count">
-              {clinicTimeline.length}{" "}
-              {currentLang === "en" ? "records" : "รายการ"}
-            </span>
-          </div>
-
-          {clinicTimeline.length > 0 ? (
-            clinicTimeline.map((item, index) => (
-              <div key={index} className="timeline-card">
-                <div className="timeline-icon">
-                  <FiCalendar />
-                </div>
-
-                <div className="timeline-content">
-                  <div className="timeline-title">
-                    {toDisplayText(item.title || item.form_title)}
-                  </div>
-
-                  <div className="timeline-date">
-                    {new Date(
-                      item.date || item.submitted_at,
-                    ).toLocaleDateString(
-                      currentLang === "en" ? "en-GB" : "th-TH",
-                    )}
-                  </div>
-                </div>
-
-                <button
-                  className="timeline-btn"
-                  onClick={() =>
-                    navigate("/history/result", {
-                      state: {
-                        expandResponseId:
-                          item.case_id || item.response_id || item.id,
-                      },
-                    })
-                  }
-                >
-                  {currentLang === "en" ? "View More" : "ดูเพิ่มเติม"}
-                </button>
-              </div>
-            ))
-          ) : (
-            <div className="empty-timeline">
-              {currentLang === "en"
-                ? "No service history"
-                : "ไม่มีประวัติการเข้ารับบริการ"}
-            </div>
+            </section>
           )}
+
+          {/* HISTORY */}
+          <section
+            className="cd-card cd-card--wide"
+            aria-labelledby="cd-history"
+          >
+            <header className="cd-card__head">
+              <span className="cd-card__icon" aria-hidden="true">
+                <FiCalendar />
+              </span>
+              <div>
+                <h2 id="cd-history">
+                  {L("ประวัติการเข้ารับบริการ", "Service history")}
+                </h2>
+                <p>
+                  {detail.history.length} {L("รายการ", "records")}
+                </p>
+              </div>
+            </header>
+            {detail.history.length ? (
+              <ul className="cd-history">
+                {detail.history.map((record) => (
+                  <li key={record.id}>
+                    <button
+                      type="button"
+                      className="cd-history__item"
+                      onClick={() =>
+                        navigate("/history/result", {
+                          state: { expandResponseId: record.id },
+                        })
+                      }
+                    >
+                      <span className="cd-history__icon" aria-hidden="true">
+                        <FiFileText />
+                      </span>
+                      <span className="cd-history__text">
+                        <strong>{toDisplayText(record.title)}</strong>
+                        <span>
+                          {formatDate(record.date, {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                          })}
+                        </span>
+                      </span>
+                      {record.label && (
+                        <span
+                          className="cd-chip"
+                          style={
+                            record.color
+                              ? { "--chip": record.color }
+                              : undefined
+                          }
+                        >
+                          {toDisplayText(record.label)}
+                        </span>
+                      )}
+                      <span className="cd-history__more">
+                        {L("ดูเพิ่มเติม", "View")}
+                        <FiChevronRight aria-hidden="true" />
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="cd-empty">
+                {L("ไม่มีประวัติการเข้ารับบริการ", "No service history")}
+              </p>
+            )}
+          </section>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

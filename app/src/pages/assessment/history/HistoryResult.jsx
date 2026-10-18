@@ -1655,14 +1655,22 @@ export default function HistoryResult() {
             });
 
             return (
-              <div key={`form-${record.id}`} className="hr-timeline-item">
-                <div
-                  className="hr-timeline-marker"
-                  style={{
-                    backgroundColor: cInfo.color,
-                    borderColor: cInfo.bg,
-                  }}
-                ></div>
+              <div
+                key={`form-${record.id}`}
+                className={`hr-timeline-item ${isOpen ? "is-open" : ""}`}
+                style={{ "--clinic": cInfo.color, "--clinic-bg": cInfo.bg }}
+              >
+                <div className="hr-timeline-marker" aria-hidden="true">
+                  <span className="hr-timeline-day">
+                    {new Date(record.submitted_at).getDate()}
+                  </span>
+                  <span className="hr-timeline-month">
+                    {new Date(record.submitted_at).toLocaleDateString(
+                      i18n.language === "en" ? "en-GB" : "th-TH",
+                      { month: "short" },
+                    )}
+                  </span>
+                </div>
                 <div
                   className={`hr-card ${isOpen ? "is-open" : ""}`}
                   style={isOpen ? { borderColor: cInfo.color } : {}}
@@ -1690,17 +1698,7 @@ export default function HistoryResult() {
                         <div className="hr-card-date">
                           <FiClock size={11} />
                           {getFormatDate(record.submitted_at, i18n.language)}
-                          <span
-                            style={{
-                              marginLeft: 8,
-                              padding: "2px 6px",
-                              background: cInfo.bg,
-                              color: cInfo.color,
-                              borderRadius: 4,
-                              fontSize: 10,
-                              fontWeight: 700,
-                            }}
-                          >
+                          <span className="hr-card-clinic">
                             {getClinicName(cInfo, i18n.language)}
                           </span>
                         </div>
@@ -1713,8 +1711,11 @@ export default function HistoryResult() {
                       >
                         ● {getRiskLabel(risk.label, i18n.language)}
                       </span>
-                      <span className={`hr-chevron ${isOpen ? "open" : ""}`}>
-                        ▾
+                      <span
+                        className={`hr-chevron ${isOpen ? "open" : ""}`}
+                        aria-hidden="true"
+                      >
+                        <FiChevronDown />
                       </span>
                     </div>
                   </div>
