@@ -1,11 +1,14 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
+  FiActivity,
   FiArrowRight,
+  FiArrowUpRight,
+  FiCalendar,
   FiClipboard,
   FiDownload,
   FiEdit3,
-  FiExternalLink,
+  FiGlobe,
   FiGrid,
   FiHeart,
   FiHome,
@@ -32,8 +35,8 @@ import heroHospital from "../../assets/hero-hospital.webp";
 import heroAmbulance from "../../assets/hero-ambulance.webp";
 import heroDoctorF from "../../assets/hero-doctor-f.webp";
 import heroDoctorM from "../../assets/hero-doctor-m.webp";
-import siteVitalcare from "../../assets/vitalcare.png";
-import siteAct from "../../assets/act.suth.png";
+import siteVitalcare from "../../assets/site-vitalcare.webp";
+import siteAct from "../../assets/site-act.webp";
 import { formCache } from "../../services/cache";
 import api, {
   getForms,
@@ -43,6 +46,26 @@ import api, {
 
 const SLIDE_INTERVAL = 6000;
 const PROJECT_START_YEAR = 2026;
+
+// Other SUTH services linked from the homepage; text lives in sutlanding.sites_*.
+const OTHER_SITES = [
+  {
+    key: "vitalcare",
+    href: "https://vitalcare.suth.go.th",
+    domain: "vitalcare.suth.go.th",
+    image: siteVitalcare,
+    tone: "peach",
+    icon: FiActivity,
+  },
+  {
+    key: "act",
+    href: "https://act.suth.go.th/",
+    domain: "act.suth.go.th",
+    image: siteAct,
+    tone: "teal",
+    icon: FiCalendar,
+  },
+];
 
 function scrollToId(id) {
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -513,53 +536,79 @@ export default function SutLanding2() {
           className="sut2-sites-section"
           aria-labelledby="sut2-sites-title"
         >
-          <h2 id="sut2-sites-title" className="sut2-section-title">
-            {t("sutlanding.sites_title")}
-          </h2>
-          <div className="sut2-sites-grid">
-            {[
-              {
-                href: "https://vitalcare.suth.go.th",
-                image: siteVitalcare,
-                alt: "SUTH Vitalcare",
-                key: "vitalcare",
-              },
-              {
-                href: "https://act.suth.go.th/",
-                image: siteAct,
-                alt: "SUTH Activities",
-                key: "act",
-              },
-            ].map((site) => (
-              <a
-                key={site.key}
-                href={site.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="sut2-site-card"
-              >
-                <img
-                  className="sut2-site-banner"
-                  src={site.image}
-                  alt={site.alt}
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="sut2-site-body">
-                  <h3 className="sut2-site-name">
-                    {t(`sutlanding.sites_${site.key}_name`)}
-                  </h3>
-                  <p className="sut2-site-desc">
-                    {t(`sutlanding.sites_${site.key}_desc`)}
-                  </p>
-                  <span className="sut2-site-link">
-                    {t("sutlanding.sites_visit")}
-                    <FiExternalLink aria-hidden="true" />
-                  </span>
-                </div>
-              </a>
-            ))}
+          <div className="sut2-sites-head">
+            <h2 id="sut2-sites-title" className="sut2-section-title">
+              {t("sutlanding.sites_title")}
+            </h2>
+            <p>{t("sutlanding.sites_subtitle")}</p>
           </div>
+          <ul className="sut2-sites-grid">
+            {OTHER_SITES.map(
+              ({ key, href, domain, image, tone, icon: Icon }) => (
+                <li key={key}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`sut2-site-card sut2-site-card--${tone}`}
+                  >
+                    <span className="sut2-site-media">
+                      <img
+                        className="sut2-site-banner"
+                        src={image}
+                        alt=""
+                        width="1000"
+                        height="563"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <span className="sut2-site-tag">
+                        <Icon aria-hidden="true" />
+                        {t(`sutlanding.sites_${key}_tag`)}
+                      </span>
+                    </span>
+                    <span className="sut2-site-body">
+                      <span className="sut2-site-name">
+                        {t(`sutlanding.sites_${key}_name`)}
+                      </span>
+                      <span className="sut2-site-desc">
+                        {t(`sutlanding.sites_${key}_desc`)}
+                      </span>
+                      <span className="sut2-site-footer">
+                        <span className="sut2-site-domain">{domain}</span>
+                        <span className="sut2-site-link">
+                          {t("sutlanding.sites_visit")}
+                          <FiArrowUpRight aria-hidden="true" />
+                        </span>
+                      </span>
+                    </span>
+                    <span className="sr-only">
+                      {t("sutlanding.opens_new_tab")}
+                    </span>
+                  </a>
+                </li>
+              ),
+            )}
+          </ul>
+          <a
+            className="sut2-site-main"
+            href="https://www.suth.go.th"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="sut2-site-main__icon" aria-hidden="true">
+              <FiGlobe />
+            </span>
+            <span className="sut2-site-main__text">
+              <strong>{t("sutlanding.sites_main_name")}</strong>
+              <span>{t("sutlanding.sites_main_desc")}</span>
+            </span>
+            <span className="sut2-site-main__go">
+              www.suth.go.th
+              <FiArrowUpRight aria-hidden="true" />
+            </span>
+            <span className="sr-only">{t("sutlanding.opens_new_tab")}</span>
+          </a>
         </section>
       </main>
 

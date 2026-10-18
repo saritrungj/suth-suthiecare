@@ -40,7 +40,7 @@
     "step4_title": "Wait for staff to contact you",
     "step4_desc": "Staff of the organization you chose will review your information and contact you as soon as possible",
     "download_manual": "Download User Manual (PDF)",
-    "sites_title": "Our Other Websites",
+    "sites_title": "Our other online services",
     "sites_visit": "Visit website",
     "sites_vitalcare_name": "SUTH Vitalcare",
     "sites_vitalcare_desc": "A health promotion and activity system.",
@@ -66,7 +66,13 @@
     "chip_instant": "Instant results",
     "chip_private": "Kept confidential",
     "chip_anywhere": "Anywhere, anytime",
-    "banner_alt": "Announcement banner"
+    "banner_alt": "Announcement banner",
+    "sites_subtitle": "Websites from Suranaree University of Technology Hospital for students, staff and the public.",
+    "sites_vitalcare_tag": "Health promotion",
+    "sites_act_tag": "Vaccine sign-up",
+    "sites_main_name": "Suranaree University of Technology Hospital",
+    "sites_main_desc": "News, doctor schedules and every hospital service.",
+    "opens_new_tab": "(opens in a new tab)"
   },
   "nav": {
     "history": "Check History",
