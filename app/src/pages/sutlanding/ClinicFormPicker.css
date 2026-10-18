@@ -407,7 +407,10 @@
   margin-bottom: 18px;
   padding: 10px 0;
   border-top: 1px solid var(--cfp-line);
-  background: var(--cfp-page);
+  /* Frosted so the homepage gradient shows through while it sticks. */
+  background: color-mix(in srgb, var(--cfp-page) 70%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 .cfp-toolbar.is-stuck {
   border-top-color: transparent;

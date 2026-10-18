@@ -166,8 +166,54 @@
   --sut2-lilac-ink: var(--pub-lilac-ink);
   --sut2-soft-shadow: 0 10px 30px color-mix(in srgb, var(--suth-ink) 8%, transparent);
 }
+/* The page flows through the brand tones top to bottom: warm peach behind
+   the hero, sky by the service picker, mint by the steps, then peach and
+   teal again by the other services. Soft glows over a cream-to-mint base. */
 .sut2-main-wrapper {
-  background: var(--pub-page);
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(55% 24% at 0% 0%, var(--pub-peach), transparent 72%),
+    radial-gradient(45% 20% at 100% 4%, var(--pub-sky), transparent 72%),
+    linear-gradient(
+      180deg,
+      #fff3e8 0%,
+      #fffaf6 16%,
+      #eef6ff 34%,
+      #eaf8f2 52%,
+      #fdfbf8 66%,
+      #fff1e6 84%,
+      #e8f4f2 100%
+    );
+}
+/* Drifting colour glows layered over the base, kept behind the content. */
+.sut2-main-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(30% 14% at 88% 30%, color-mix(in srgb, var(--suth-action) 22%, transparent), transparent 70%),
+    radial-gradient(34% 14% at 6% 44%, var(--pub-sky), transparent 70%),
+    radial-gradient(36% 14% at 96% 58%, var(--pub-mint), transparent 70%),
+    radial-gradient(30% 12% at 12% 74%, var(--pub-peach), transparent 70%),
+    radial-gradient(34% 12% at 90% 92%, color-mix(in srgb, var(--suth-care) 22%, transparent), transparent 70%);
+  background-size: 120% 100%;
+  animation: sut2Glow 26s ease-in-out infinite alternate;
+}
+@keyframes sut2Glow {
+  from {
+    background-position: 0% 0%;
+  }
+  to {
+    background-position: 100% 0%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sut2-main-wrapper::before {
+    animation: none;
+  }
 }
 .sut2-section-title {
   margin: 0 0 clamp(1.25rem, 3vw, 2rem);
