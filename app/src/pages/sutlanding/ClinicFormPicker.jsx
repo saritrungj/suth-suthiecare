@@ -1,13 +1,14 @@
 import SearchableSelect from "../../components/SearchableSelect";
 import { toDisplayText } from "../../utils/textPresentation.js";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   FiArrowRight,
   FiCheck,
   FiChevronUp,
   FiGrid,
+  FiHome,
   FiSearch,
   FiUsers,
   FiX,
@@ -22,6 +23,15 @@ const POPULAR_LIMIT = 3;
 // "All clinics" shows a preview row per clinic; filtered views page in batches.
 const GROUP_LIMIT = 3;
 const PAGE_SIZE = 12;
+// Shared links can preselect an organization: /?org=<organization code>.
+const ORG_PARAM = "org";
+
+// Clinics carry their organization from GET /clinics; code is stable for URLs.
+function organizationKey(clinic) {
+  if (clinic.organization_code) return String(clinic.organization_code);
+  if (clinic.organization_id != null) return `id-${clinic.organization_id}`;
+  return "";
+}
 
 function stripHtml(html) {
   return toDisplayText(html);
@@ -71,7 +81,15 @@ function ClinicIcon({ clinic, className = "" }) {
   );
 }
 
-function FormCard({ form, index, query, clinicLabel, isPopular, count }) {
+function FormCard({
+  form,
+  index,
+  query,
+  clinicLabel,
+  orgLabel,
+  isPopular,
+  count,
+}) {
   const { t } = useTranslation();
   const rawTitle = toDisplayText(form.title) || t("form_card.no_title");
   const rawDesc = stripHtml(form.description) || t("form_card.default_desc");
@@ -93,8 +111,13 @@ function FormCard({ form, index, query, clinicLabel, isPopular, count }) {
         )}
       </div>
       <div className="cfp-card__body">
-        {(clinicLabel || isPopular) && (
+        {(clinicLabel || orgLabel || isPopular) && (
           <div className="cfp-card__meta">
+            {orgLabel && (
+              <span className="cfp-tag cfp-tag--org">
+                <Highlight text={orgLabel} query={query} />
+              </span>
+            )}
             {clinicLabel && (
               <span className="cfp-tag">
                 <Highlight text={clinicLabel} query={query} />
@@ -138,6 +161,7 @@ function FormCard({ form, index, query, clinicLabel, isPopular, count }) {
 
 export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
   const { t, i18n } = useTranslation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [clinicSlug, setClinicSlug] = useState(ALL);
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("default");
@@ -154,6 +178,47 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
     () => Object.fromEntries(clinics.map((c) => [c.slug, c])),
     [clinics],
   );
+  const organizations = useMemo(() => {
+    const list = [];
+    const byKey = {};
+    clinics.forEach((clinic) => {
+      const key = organizationKey(clinic);
+      if (!key) return;
+      if (!byKey[key]) {
+        byKey[key] = {
+          key,
+          name: clinic.organization_name || clinic.organization_code || key,
+          slugs: [],
+        };
+        list.push(byKey[key]);
+      }
+      byKey[key].slugs.push(clinic.slug);
+    });
+    return list;
+  }, [clinics]);
+  // A single-organization deployment keeps the plain clinic picker.
+  const multiOrg = organizations.length > 1;
+  const requestedOrg = searchParams.get(ORG_PARAM) || ALL;
+  const selectedOrg = multiOrg
+    ? organizations.find((org) => org.key === requestedOrg) || null
+    : null;
+  const orgKey = selectedOrg ? selectedOrg.key : ALL;
+  const orgName = (clinic) =>
+    multiOrg
+      ? organizations.find((o) => o.key === organizationKey(clinic))?.name || ""
+      : "";
+  const visibleClinics = selectedOrg
+    ? clinics.filter((clinic) => organizationKey(clinic) === orgKey)
+    : clinics;
+
+  const selectOrg = (key) => {
+    const next = new URLSearchParams(searchParams);
+    if (key === ALL) next.delete(ORG_PARAM);
+    else next.set(ORG_PARAM, key);
+    setSearchParams(next, { replace: true, preventScrollReset: true });
+    setClinicSlug(ALL);
+  };
+
   const formsByClinic = useMemo(() => {
     const map = {};
     forms.forEach((form) => {
@@ -183,12 +248,23 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
     return list;
   };
 
-  const scoped = clinicSlug === ALL ? forms : formsByClinic[clinicSlug] || [];
+  const orgFormCount = (org) =>
+    org.slugs.reduce(
+      (sum, slug) => sum + (formsByClinic[slug] || []).length,
+      0,
+    );
+  const orgForms = selectedOrg
+    ? forms.filter((f) =>
+        selectedOrg.slugs.includes(f.clinic_type || "general"),
+      )
+    : forms;
+  const scoped =
+    clinicSlug === ALL ? orgForms : formsByClinic[clinicSlug] || [];
   const results = sortForms(
     q
       ? scoped.filter((f) => {
           const clinic = clinicBySlug[f.clinic_type || "general"];
-          const haystack = `${f.title || ""} ${stripHtml(f.description)} ${clinic ? clinicName(clinic) : ""}`;
+          const haystack = `${f.title || ""} ${stripHtml(f.description)} ${clinic ? `${clinicName(clinic)} ${orgName(clinic)}` : ""}`;
           return haystack.toLowerCase().includes(q);
         })
       : scoped,
@@ -196,14 +272,16 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
   const selectedClinic = clinicSlug === ALL ? null : clinicBySlug[clinicSlug];
   const scopeLabel = selectedClinic
     ? clinicName(selectedClinic)
-    : t("clinic_picker.all_clinics");
+    : selectedOrg
+      ? selectedOrg.name
+      : t("clinic_picker.all_clinics");
   const grouped = clinicSlug === ALL && !q;
   const visibleResults = results.slice(0, visibleCount);
   const remaining = results.length - visibleResults.length;
 
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
-  }, [clinicSlug, q, sort]);
+  }, [clinicSlug, orgKey, q, sort]);
 
   // Move focus to the first newly revealed card after "show more".
   useEffect(() => {
@@ -260,6 +338,8 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
     setClinicSlug(ALL);
     setQuery("");
   };
+  // Organization is already shown by the group or the chosen chip.
+  const showOrgOnCards = multiOrg && !selectedOrg;
 
   const renderCard = (form, index, showClinic) => {
     const clinic = clinicBySlug[form.clinic_type || "general"];
@@ -270,6 +350,7 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
         index={index}
         query={q}
         clinicLabel={showClinic && clinic ? clinicName(clinic) : ""}
+        orgLabel={showClinic && showOrgOnCards && clinic ? orgName(clinic) : ""}
         isPopular={popularIds.has(form.id)}
         count={counts[form.id]}
       />
@@ -280,8 +361,16 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
     <div className="cfp">
       <div className="cfp-head">
         <div>
-          <h2 className="cfp-title">{t("clinic_picker.title")}</h2>
-          <p className="cfp-sub">{t("clinic_picker.subtitle")}</p>
+          <h2 className="cfp-title">
+            {selectedOrg
+              ? t("clinic_picker.title_org", { org: selectedOrg.name })
+              : t("clinic_picker.title")}
+          </h2>
+          <p className="cfp-sub">
+            {multiOrg
+              ? t("clinic_picker.subtitle_multi")
+              : t("clinic_picker.subtitle")}
+          </p>
         </div>
         <label className="cfp-search">
           <FiSearch aria-hidden="true" />
@@ -320,6 +409,45 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
         </label>
       </div>
 
+      {multiOrg && (
+        <div
+          className="cfp-orgs"
+          role="group"
+          aria-label={t("clinic_picker.orgs_label")}
+        >
+          <span className="cfp-orgs__label" aria-hidden="true">
+            {t("clinic_picker.orgs_label")}
+          </span>
+          <div className="cfp-orgs__list">
+            <button
+              type="button"
+              className="cfp-org"
+              aria-pressed={!selectedOrg}
+              onClick={() => selectOrg(ALL)}
+            >
+              <FiGrid aria-hidden="true" />
+              <span className="cfp-org__name">
+                {t("clinic_picker.all_orgs")}
+              </span>
+              <span className="cfp-org__count">{forms.length}</span>
+            </button>
+            {organizations.map((org) => (
+              <button
+                type="button"
+                key={org.key}
+                className="cfp-org"
+                aria-pressed={selectedOrg?.key === org.key}
+                onClick={() => selectOrg(org.key)}
+              >
+                <FiHome aria-hidden="true" />
+                <span className="cfp-org__name">{org.name}</span>
+                <span className="cfp-org__count">{orgFormCount(org)}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div
         ref={tilesRef}
         className="cfp-tiles"
@@ -342,14 +470,14 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
             {t("clinic_picker.all_clinics")}
           </span>
           <span className="cfp-tile__count">
-            {t("clinic_picker.form_count", { count: forms.length })}
+            {t("clinic_picker.form_count", { count: orgForms.length })}
           </span>
         </button>
         {loading
           ? Array.from({ length: 4 }, (_, i) => (
               <span key={i} className="cfp-tile cfp-tile--skeleton" />
             ))
-          : clinics.map((clinic) => (
+          : visibleClinics.map((clinic) => (
               <button
                 type="button"
                 key={clinic.slug}
@@ -364,6 +492,9 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
                   <FiCheck />
                 </span>
                 <ClinicIcon clinic={clinic} className="cfp-tile__icon" />
+                {showOrgOnCards && orgName(clinic) && (
+                  <span className="cfp-tile__org">{orgName(clinic)}</span>
+                )}
                 <span className="cfp-tile__name">{clinicName(clinic)}</span>
                 <span className="cfp-tile__count">
                   {t("clinic_picker.form_count", {
@@ -386,6 +517,20 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
               <FiChevronUp aria-hidden="true" />
               {t("clinic_picker.pick_clinic")}
             </button>
+          )}
+          {selectedOrg && !selectedClinic && (
+            <span className="cfp-scope">
+              <FiHome aria-hidden="true" className="cfp-scope__glyph" />
+              {selectedOrg.name}
+              <button
+                type="button"
+                className="cfp-scope__remove"
+                onClick={() => selectOrg(ALL)}
+                aria-label={t("clinic_picker.remove_org_filter")}
+              >
+                <FiX aria-hidden="true" />
+              </button>
+            </span>
           )}
           {selectedClinic && (
             <span className="cfp-scope">
@@ -441,14 +586,21 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
                 ? t("clinic_picker.empty_search", { query: query.trim() })
                 : t("sutlanding.no_form_in_clinic")}
             </h3>
-            {(q || clinicSlug !== ALL) && (
-              <button type="button" className="cfp-link" onClick={resetFilters}>
+            {(q || clinicSlug !== ALL || selectedOrg) && (
+              <button
+                type="button"
+                className="cfp-link"
+                onClick={() => {
+                  resetFilters();
+                  if (selectedOrg) selectOrg(ALL);
+                }}
+              >
                 {t("clinic_picker.show_all")}
               </button>
             )}
           </div>
         ) : grouped ? (
-          clinics
+          visibleClinics
             .filter((clinic) => (formsByClinic[clinic.slug] || []).length)
             .map((clinic) => {
               const list = sortForms(formsByClinic[clinic.slug]);
@@ -458,6 +610,11 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
                   <header className="cfp-group__head">
                     <ClinicIcon clinic={clinic} className="cfp-group__icon" />
                     <h3>{clinicName(clinic)}</h3>
+                    {showOrgOnCards && orgName(clinic) && (
+                      <span className="cfp-tag cfp-tag--org">
+                        {orgName(clinic)}
+                      </span>
+                    )}
                     <span className="cfp-group__count">
                       {t("clinic_picker.form_count", { count: list.length })}
                     </span>

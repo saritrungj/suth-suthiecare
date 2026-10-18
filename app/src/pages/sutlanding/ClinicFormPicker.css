@@ -108,10 +108,108 @@
   background: var(--suth-line-soft);
 }
 
+/* ---------- Organization chips (only when clinics span several organizations) ---------- */
+.cfp-orgs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.cfp-orgs__label {
+  flex-shrink: 0;
+  color: var(--cfp-muted);
+  font-size: var(--suth-fs-sm);
+  font-weight: 600;
+}
+.cfp-orgs__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+.cfp-org {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  max-width: 100%;
+  padding: 0 8px 0 14px;
+  border: 1.5px solid color-mix(in srgb, var(--suth-info-line) 45%, transparent);
+  border-radius: var(--suth-radius-pill);
+  background: color-mix(in srgb, var(--suth-surface) 6%, transparent);
+  color: var(--cfp-text);
+  font: inherit;
+  font-size: var(--suth-fs-body);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+.cfp-org svg {
+  flex-shrink: 0;
+  color: var(--cfp-muted);
+}
+.cfp-org:hover {
+  border-color: var(--cfp-teal-light);
+  background: color-mix(in srgb, var(--suth-surface) 12%, transparent);
+}
+.cfp-org:focus-visible {
+  outline: 3px solid var(--cfp-teal-light);
+  outline-offset: 2px;
+}
+.cfp-org[aria-pressed="true"] {
+  border-color: var(--suth-surface);
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+}
+.cfp-org[aria-pressed="true"] svg {
+  color: var(--suth-action-ink);
+}
+.cfp-org__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cfp-org__count {
+  min-width: 28px;
+  padding: 1px 8px;
+  border-radius: var(--suth-radius-pill);
+  background: color-mix(in srgb, var(--suth-surface) 14%, transparent);
+  font-size: var(--suth-fs-caption);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.cfp-org[aria-pressed="true"] .cfp-org__count {
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
+}
+.cfp-tile__org {
+  max-width: 100%;
+  margin-bottom: 2px;
+  padding: 1px 8px;
+  overflow: hidden;
+  border-radius: var(--suth-radius-pill);
+  background: color-mix(in srgb, var(--suth-ink) 72%, transparent);
+  font-size: var(--suth-fs-caption);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cfp-scope__glyph {
+  margin-left: 8px;
+}
+.cfp-tag--org {
+  background: var(--suth-info-tint);
+  color: var(--suth-info);
+}
+
 /* ---------- Clinic tiles (portrait, like the original clinic cards) ---------- */
 .cfp-tiles {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  /* auto-fill keeps tiles card-sized when an organization has only a few clinics. */
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 14px;
   margin-bottom: 22px;
 }
@@ -647,6 +745,25 @@
   .cfp-search {
     flex-basis: 100%;
   }
+  .cfp-orgs {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .cfp-orgs__list {
+    flex-wrap: nowrap;
+    margin-inline: -16px;
+    padding: 2px 16px 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .cfp-orgs__list::-webkit-scrollbar {
+    display: none;
+  }
+  .cfp-org {
+    flex-shrink: 0;
+    max-width: 78vw;
+  }
   .cfp-search__kbd {
     display: none;
   }
@@ -708,6 +825,13 @@
   }
   .cfp-group__count {
     display: none;
+  }
+  .cfp-group__head {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+  .cfp-group__head .cfp-tag--org {
+    white-space: nowrap;
   }
   .cfp-group__more {
     font-size: var(--suth-fs-sm);

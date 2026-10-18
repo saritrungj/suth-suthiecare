@@ -127,9 +127,6 @@ test("landing form titles and descriptions contain readable content", async ({
     }),
   );
   await page.goto("/");
-  await page
-    .getByRole("heading", { name: "คลินิกสุขภาพทั่วไป", exact: true })
-    .click();
   await expect(
     page
       .getByRole("heading", {
@@ -138,7 +135,7 @@ test("landing form titles and descriptions contain readable content", async ({
       })
       .first(),
   ).toBeVisible();
-  await expect(page.locator(".sut2-card__desc").first()).toHaveText(
+  await expect(page.locator(".cfp-card__desc").first()).toHaveText(
     "สำหรับคะแนน > 10",
   );
 });

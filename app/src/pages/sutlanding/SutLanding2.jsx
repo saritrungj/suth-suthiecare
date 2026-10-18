@@ -1,15 +1,10 @@
-import { toDisplayText } from "../../utils/textPresentation.js";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
-  FiChevronLeft,
-  FiChevronRight,
   FiCheckCircle,
   FiShield,
   FiHeart,
   FiPhoneCall,
-  FiArrowLeft,
-  FiHelpCircle,
   FiMenu,
   FiX,
   FiExternalLink,
@@ -20,7 +15,9 @@ import PatientAccountMenu from "../../components/PatientAccountMenu.jsx";
 import { getPatientSession } from "../../utils/patientSession";
 import { authSession } from "../../utils/authSession";
 import FloatingActions from "../../components/floating/FloatingActions.jsx";
+// Page styles load first so the picker's rules win over the page-wide reset.
 import "./SutLanding2.css";
+import ClinicFormPicker from "./ClinicFormPicker.jsx";
 
 import logo from "../../assets/logoSUTH.png";
 import bgHealth from "../../assets/bg-health.jpg";
@@ -33,110 +30,12 @@ import api, {
   getBanners,
   getActiveClinics,
 } from "../../services/api";
-import { translateTextSmart } from "../../utils/translator";
 
 const SLIDE_INTERVAL = 6000;
-const CARD_THEMES = ["sut2-card--blue", "sut2-card--pink", "sut2-card--green"];
 const PROJECT_START_YEAR = 2026;
 
-function stripHtml(html) {
-  return toDisplayText(html);
-}
-
-// ✅ FormCard ที่แก้ไขแล้ว
-function FormCard({ form, themeClass, count, isLoaded }) {
-  const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
-  const displayImage = form.image;
-
-  const [displayTitle, setDisplayTitle] = useState(
-    form.title || t("form_card.no_title"),
-  );
-  const [displayDesc, setDisplayDesc] = useState(
-    stripHtml(form.description || t("form_card.default_desc")),
-  );
-  const participantCount = Number(count).toLocaleString();
-  const participantText = t("form_card.participants", {
-    count: participantCount,
-  });
-  const participantCountPosition = participantText.indexOf(participantCount);
-
-  useEffect(() => {
-    const title = form.title || t("form_card.no_title");
-    const desc = stripHtml(form.description || t("form_card.default_desc"));
-
-    if (i18n.language === "en") {
-      translateTextSmart(title).then(setDisplayTitle);
-      translateTextSmart(desc).then(setDisplayDesc);
-    } else {
-      setDisplayTitle(title);
-      setDisplayDesc(desc);
-    }
-  }, [i18n.language, form.title, form.description, t]);
-
-  return (
-    <article
-      className={`sut2-card ${themeClass}`}
-      onClick={() => navigate(`/assessment/${form.id}`)}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          navigate(`/assessment/${form.id}`);
-        }
-      }}
-      role="button"
-      tabIndex={0}
-      aria-label={toDisplayText(displayTitle)}
-    >
-      {/* ===== Band ด้านบน ===== */}
-      <div
-        className={`sut2-card__band ${displayImage ? "sut2-card__band--has-img" : ""}`}
-      >
-        {displayImage && (
-          <img
-            className="sut2-card__band-img"
-            src={displayImage}
-            alt={toDisplayText(form.title)}
-            loading="lazy"
-            decoding="async"
-          />
-        )}
-      </div>
-
-      {/* ===== Body ตัวหนังสือ ===== */}
-      <div className="sut2-card__body">
-        <h3 className="sut2-card__title">{toDisplayText(displayTitle)}</h3>
-        <p className="sut2-card__desc">{toDisplayText(displayDesc)}</p>
-      </div>
-
-      {/* ===== Count ด้านล่าง ===== */}
-      <div className="sut2-card__count">
-        {!isLoaded ? (
-          <span className="sut2-card__count-text">
-            {t("form_card.loading")}
-          </span>
-        ) : (
-          <span className="sut2-card__count-text">
-            {participantCountPosition >= 0 ? (
-              <>
-                {participantText.slice(0, participantCountPosition)}
-                <strong>{participantCount}</strong>
-                {participantText.slice(
-                  participantCountPosition + participantCount.length,
-                )}
-              </>
-            ) : (
-              participantText
-            )}
-          </span>
-        )}
-      </div>
-    </article>
-  );
-}
-
 export default function SutLanding2() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -158,171 +57,8 @@ export default function SutLanding2() {
   const [clinics, setClinics] = useState([]);
   const [loadingClinics, setLoadingClinics] = useState(true);
 
-  const [activeIdx, setActiveIdx] = useState(0);
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [selectedClinic, setSelectedClinic] = useState(null);
-  const [animatingClinic, setAnimatingClinic] = useState(null);
-  const [animationStage, setAnimationStage] = useState("idle");
-
+  const pickerSectionRef = useRef(null);
   const pollRef = useRef(null);
-  const scrollContainerRef = useRef(null);
-  const dragStateRef = useRef({
-    pointerId: null,
-    startX: 0,
-    startScrollLeft: 0,
-    lastX: 0,
-    lastTime: 0,
-    velocity: 0,
-    hasMoved: false,
-    momentumFrame: null,
-  });
-  const suppressClickRef = useRef(false);
-
-  const stopScrollerMomentum = useCallback(
-    (container = scrollContainerRef.current) => {
-      if (dragStateRef.current.momentumFrame) {
-        window.cancelAnimationFrame(dragStateRef.current.momentumFrame);
-        dragStateRef.current.momentumFrame = null;
-      }
-      container?.classList.remove("sut2-is-dragging");
-    },
-    [],
-  );
-
-  const startScrollerMomentum = useCallback((container, initialVelocity) => {
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (reducedMotion || Math.abs(initialVelocity) < 0.08) {
-      container.classList.remove("sut2-is-dragging");
-      return;
-    }
-
-    let velocity = initialVelocity;
-    let previousTime = performance.now();
-    const animate = (time) => {
-      const elapsed = Math.min(time - previousTime, 32);
-      previousTime = time;
-
-      const maxScroll = container.scrollWidth - container.clientWidth;
-      const nextScroll = Math.max(
-        0,
-        Math.min(maxScroll, container.scrollLeft + velocity * elapsed),
-      );
-      const reachedEdge = nextScroll === 0 || nextScroll === maxScroll;
-      container.scrollLeft = nextScroll;
-      velocity *= Math.pow(0.9, elapsed / 16);
-
-      if (!reachedEdge && Math.abs(velocity) > 0.02) {
-        dragStateRef.current.momentumFrame =
-          window.requestAnimationFrame(animate);
-      } else {
-        dragStateRef.current.momentumFrame = null;
-        container.classList.remove("sut2-is-dragging");
-      }
-    };
-
-    dragStateRef.current.momentumFrame = window.requestAnimationFrame(animate);
-  }, []);
-
-  const handleScrollerPointerDown = useCallback(
-    (event) => {
-      if (
-        !event.isPrimary ||
-        (event.pointerType === "mouse" && event.button !== 0)
-      ) {
-        return;
-      }
-
-      const container = event.currentTarget;
-      stopScrollerMomentum(container);
-      dragStateRef.current = {
-        pointerId: event.pointerId,
-        startX: event.clientX,
-        startScrollLeft: container.scrollLeft,
-        lastX: event.clientX,
-        lastTime: performance.now(),
-        velocity: 0,
-        hasMoved: false,
-        momentumFrame: null,
-      };
-    },
-    [stopScrollerMomentum],
-  );
-
-  const handleScrollerPointerMove = useCallback((event) => {
-    const dragState = dragStateRef.current;
-    if (dragState.pointerId !== event.pointerId) return;
-
-    const distance = event.clientX - dragState.startX;
-    if (!dragState.hasMoved && Math.abs(distance) < 6) return;
-
-    if (!dragState.hasMoved) {
-      dragState.hasMoved = true;
-      event.currentTarget.setPointerCapture(event.pointerId);
-      event.currentTarget.classList.add("sut2-is-dragging");
-    }
-
-    event.preventDefault();
-    const now = performance.now();
-    const elapsed = Math.max(now - dragState.lastTime, 1);
-    const scrollDelta = dragState.lastX - event.clientX;
-    dragState.velocity =
-      dragState.velocity * 0.75 + (scrollDelta / elapsed) * 0.25;
-    dragState.lastX = event.clientX;
-    dragState.lastTime = now;
-    event.currentTarget.scrollLeft = dragState.startScrollLeft - distance;
-  }, []);
-
-  const finishScrollerDrag = useCallback(
-    (event) => {
-      const dragState = dragStateRef.current;
-      if (dragState.pointerId !== event.pointerId) return;
-      const hasMoved = dragState.hasMoved;
-      const releaseVelocity = dragState.velocity;
-
-      if (hasMoved) {
-        suppressClickRef.current = true;
-        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-          event.currentTarget.releasePointerCapture(event.pointerId);
-        }
-        window.setTimeout(() => {
-          suppressClickRef.current = false;
-        }, 0);
-      }
-
-      dragStateRef.current = {
-        pointerId: null,
-        startX: 0,
-        startScrollLeft: 0,
-        lastX: 0,
-        lastTime: 0,
-        velocity: 0,
-        hasMoved: false,
-        momentumFrame: null,
-      };
-
-      if (hasMoved) {
-        startScrollerMomentum(event.currentTarget, releaseVelocity);
-      }
-    },
-    [startScrollerMomentum],
-  );
-
-  const preventClickAfterDrag = useCallback((event) => {
-    if (!suppressClickRef.current) return;
-    event.preventDefault();
-    event.stopPropagation();
-  }, []);
-
-  useEffect(() => {
-    const handleResize = () => {};
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      stopScrollerMomentum();
-    };
-  }, [stopScrollerMomentum]);
 
   useEffect(() => {
     let isActive = true;
@@ -411,58 +147,6 @@ export default function SutLanding2() {
       });
   }, []);
 
-  const filteredForms = useMemo(
-    () =>
-      selectedClinic
-        ? forms.filter((f) => (f.clinic_type || "general") === selectedClinic)
-        : [],
-    [selectedClinic, forms],
-  );
-
-  useEffect(() => {
-    if (activeIdx >= filteredForms.length && filteredForms.length > 0) {
-      setActiveIdx(0);
-    }
-  }, [filteredForms, activeIdx]);
-
-  useEffect(() => {
-    setActiveIdx(0);
-    if (scrollContainerRef.current) {
-      setTimeout(() => {
-        if (scrollContainerRef.current) {
-          scrollContainerRef.current.scrollTo({ left: 0, behavior: "smooth" });
-        }
-      }, 50);
-    }
-  }, [selectedClinic]);
-
-  const handleNextForm = useCallback(() => {
-    const maxLength = !selectedClinic ? clinics.length : filteredForms.length;
-    if (activeIdx < maxLength - 1) {
-      setActiveIdx((prev) => prev + 1);
-      if (scrollContainerRef.current) {
-        const cardWidth = window.innerWidth <= 768 ? 280 : 340;
-        scrollContainerRef.current.scrollBy({
-          left: cardWidth,
-          behavior: "smooth",
-        });
-      }
-    }
-  }, [activeIdx, filteredForms.length, selectedClinic, clinics.length]);
-
-  const handlePrevForm = useCallback(() => {
-    if (activeIdx > 0) {
-      setActiveIdx((prev) => prev - 1);
-      if (scrollContainerRef.current) {
-        const cardWidth = window.innerWidth <= 768 ? 280 : 340;
-        scrollContainerRef.current.scrollBy({
-          left: -cardWidth,
-          behavior: "smooth",
-        });
-      }
-    }
-  }, [activeIdx]);
-
   useEffect(() => {
     if (!slides.length) return;
     const t = setInterval(
@@ -471,6 +155,16 @@ export default function SutLanding2() {
     );
     return () => clearInterval(t);
   }, [slides]);
+
+  const organizationCount = useMemo(
+    () =>
+      new Set(
+        clinics
+          .map((c) => c.organization_code || c.organization_id)
+          .filter((key) => key != null && key !== ""),
+      ).size,
+    [clinics],
+  );
 
   const fetchAllCounts = useCallback(async (formList) => {
     if (!formList.length) return;
@@ -495,8 +189,7 @@ export default function SutLanding2() {
     const observer = new IntersectionObserver(([entry]) => {
       setIsInViewport(entry.isIntersecting);
     });
-    const section = document.querySelector(".sut2-3d-section");
-    if (section) observer.observe(section);
+    if (pickerSectionRef.current) observer.observe(pickerSectionRef.current);
     return () => observer.disconnect();
   }, []);
 
@@ -568,10 +261,9 @@ export default function SutLanding2() {
                 <button
                   className="sut2-hero__cta"
                   onClick={() =>
-                    window.scrollTo({
-                      top: window.innerHeight * 0.9,
-                      behavior: "smooth",
-                    })
+                    document
+                      .getElementById("services")
+                      ?.scrollIntoView({ behavior: "smooth" })
                   }
                 >
                   {t("sutlanding.btn_start")}
@@ -587,6 +279,29 @@ export default function SutLanding2() {
                   {t("sutlanding.btn_steps")}
                 </button>
               </div>
+              {!loadingClinics && clinics.length > 0 && (
+                <ul
+                  className="sut2-hero__stats"
+                  aria-label={t("sutlanding.stats_label")}
+                >
+                  {organizationCount > 1 && (
+                    <li>
+                      <strong>{organizationCount}</strong>
+                      {t("sutlanding.stat_orgs")}
+                    </li>
+                  )}
+                  <li>
+                    <strong>{clinics.length}</strong>
+                    {t("sutlanding.stat_clinics")}
+                  </li>
+                  {!loading && (
+                    <li>
+                      <strong>{forms.length}</strong>
+                      {t("sutlanding.stat_forms")}
+                    </li>
+                  )}
+                </ul>
+              )}
             </div>
 
             {/* ===== Banner ==== */}
@@ -640,270 +355,26 @@ export default function SutLanding2() {
               ) : (
                 <div className="sut2-banner-placeholder">
                   <FiHeart size={48} color="rgba(255,255,255,0.5)" />
-                  <p>ห่วงใยทุกสุขภาพของคุณ</p>
+                  <p>{t("sutlanding.banner_placeholder")}</p>
                 </div>
               )}
             </div>
           </div>
         </section>
 
-        {/* ================= 2. STACKED SLIDER SECTION ================= */}
-        <section className="sut2-3d-section">
-          {selectedClinic && (
-            <p
-              id="sut2-form-guidance"
-              className="sut2-clinic-guidance"
-              role="note"
-              aria-label={t("sutlanding.form_guidance_title")}
-            >
-              <span>{t("sutlanding.form_guidance_mouse")}</span>
-              <span>{t("sutlanding.form_guidance_touch")}</span>
-            </p>
-          )}
-          <div
-            className="sut2-3d-layout-container"
-            ref={scrollContainerRef}
-            tabIndex={0}
-            role="region"
-            aria-label="รายการคลินิกและแบบประเมิน"
-            aria-describedby={selectedClinic ? "sut2-form-guidance" : undefined}
-            onPointerDown={handleScrollerPointerDown}
-            onPointerMove={handleScrollerPointerMove}
-            onPointerUp={finishScrollerDrag}
-            onPointerCancel={finishScrollerDrag}
-            onClickCapture={preventClickAfterDrag}
-          >
-            {/* ด้านซ้าย: Static Promo Card */}
-            <div className="sut2-left-column">
-              <div
-                className={`sut2-promo-static-card ${isFlipped ? "promo-flip" : ""}`}
-              >
-                <div className="promo-inner">
-                  {/* ด้านหน้า */}
-                  <div className="promo-front">
-                    <div className="sut2-promo-content">
-                      <h2 className="sut2-promo-title">
-                        {t("sutlanding.select_clinic")}
-                      </h2>
-                      <p className="sut2-promo-desc">
-                        {t("sutlanding.select_clinic_desc")}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* ด้านหลัง (ตอน flip) */}
-                  <div className="promo-back">
-                    <div className="sut2-promo-content">
-                      <h2 className="sut2-promo-title">
-                        {t("sutlanding.assessment_form")}
-                      </h2>
-                      <p className="sut2-promo-desc">
-                        {t("sutlanding.assessment_form_desc")}
-                      </p>
-                      {selectedClinic && (
-                        <button
-                          className="back-btn"
-                          onClick={() => {
-                            setSelectedClinic(null);
-                            setActiveIdx(0);
-                            setAnimationStage("idle");
-                            setIsFlipped(false);
-                          }}
-                        >
-                          <FiArrowLeft
-                            style={{ fontSize: "var(--suth-fs-section)", flexShrink: 0 }}
-                          />{" "}
-                          <span>{t("sutlanding.btn_back")}</span>
-                        </button>
-                      )}
-                    </div>
-                    {filteredForms.length > 0 && (
-                      <div className="promo-back-forms">
-                        {filteredForms.map((form, index) => (
-                          <FormCard
-                            key={form.id}
-                            form={form}
-                            themeClass={CARD_THEMES[index % CARD_THEMES.length]}
-                            count={counts[form.id] || 0}
-                            isLoaded={counts[form.id] !== undefined}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className={`sut2-dots-wrapper-left ${!selectedClinic ? "show" : ""}`}
-              >
-                <div className="sut2-3d-dots">
-                  {(!selectedClinic ? clinics : filteredForms).map((_, i) => (
-                    <span
-                      key={i}
-                      className={`sut2-3d-dot ${activeIdx === i ? "active" : ""}`}
-                      onClick={() => setActiveIdx(i)}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* ด้านขวา */}
-            <div className="sut2-3d-main-content">
-              <div
-                className={`sut2-stacked-viewport ${selectedClinic ? "is-form-mode" : ""} ${animationStage === "flip" ? "show-forms" : ""}`}
-              >
-                <div
-                  className="sut2-stacked-list"
-                  key={selectedClinic ? "forms" : "clinics"}
-                >
-                  {loading || loadingClinics ? (
-                    <p
-                      style={{
-                        textAlign: "center",
-                        width: "100%",
-                        color: "var(--suth-on-action)",
-                      }}
-                    >
-                      {t("sutlanding.loading")}
-                    </p>
-                  ) : !selectedClinic ? (
-                    clinics.length === 0 ? (
-                      <p
-                        style={{
-                          textAlign: "center",
-                          width: "100%",
-                          color: "var(--suth-on-action)",
-                        }}
-                      >
-                        {t("sutlanding.no_clinic")}
-                      </p>
-                    ) : (
-                      clinics.map((clinic, index) => {
-                        const offset = index - activeIdx;
-                        let statusClass =
-                          offset === 0
-                            ? "active"
-                            : offset < 0
-                              ? "exit"
-                              : offset < 3
-                                ? "visible"
-                                : "hidden";
-
-                        return (
-                          <div
-                            key={clinic.slug}
-                            className={`sut2-stacked-item ${statusClass}`}
-                            style={{
-                              "--display-index": offset,
-                              zIndex: clinics.length - index,
-                            }}
-                            onClick={() => {
-                              if (animatingClinic) return;
-                              setAnimatingClinic(clinic.slug);
-                              setAnimationStage("flying");
-
-                              setTimeout(() => {
-                                setAnimationStage("flip");
-                                setSelectedClinic(clinic.slug);
-                                setActiveIdx(0);
-                                setIsFlipped(true);
-                              }, 500);
-
-                              setTimeout(() => {
-                                setAnimatingClinic(null);
-                                setAnimationStage("done");
-                              }, 1100);
-                            }}
-                          >
-                            <div
-                              className={`clinic-card ${animatingClinic === clinic.slug && animationStage === "flying" ? "clinic-fly" : ""}`}
-                              style={{
-                                backgroundImage: `url(${clinic.bg || bgClinic})`,
-                              }}
-                            >
-                              {(clinic.show_icon === 1 ||
-                                clinic.show_icon === undefined) &&
-                                clinic.image && (
-                                  <div className="clinic-icon">
-                                    <img src={clinic.image} alt={clinic.name} />
-                                  </div>
-                                )}
-                              <h3>
-                                {i18n.language === "en" && clinic.name_en
-                                  ? clinic.name_en
-                                  : clinic.name}
-                              </h3>
-                            </div>
-                          </div>
-                        );
-                      })
-                    )
-                  ) : filteredForms.length === 0 ? (
-                    <p
-                      style={{
-                        textAlign: "center",
-                        width: "100%",
-                        color: "var(--suth-on-action)",
-                      }}
-                    >
-                      {t("sutlanding.no_form_in_clinic")}
-                    </p>
-                  ) : (
-                    filteredForms.map((form, index) => {
-                      const offset = index - activeIdx;
-                      let statusClass =
-                        offset === 0
-                          ? "active"
-                          : offset < 0
-                            ? "exit"
-                            : offset < 3
-                              ? "visible"
-                              : "hidden";
-
-                      return (
-                        <div
-                          key={form.id}
-                          className={`sut2-stacked-item ${statusClass}`}
-                          style={{
-                            "--display-index": offset,
-                            zIndex: filteredForms.length - index,
-                          }}
-                        >
-                          <FormCard
-                            form={form}
-                            themeClass={CARD_THEMES[index % CARD_THEMES.length]}
-                            count={counts[form.id] || 0}
-                            isLoaded={counts[form.id] !== undefined}
-                          />
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
-              </div>
-
-              {selectedClinic && (
-                <div className="sut2-compact-controls">
-                  <button
-                    className="sut2-control-btn"
-                    onClick={handlePrevForm}
-                    disabled={activeIdx === 0}
-                  >
-                    <FiChevronLeft />
-                  </button>
-                  <button
-                    className="sut2-control-btn"
-                    onClick={handleNextForm}
-                    disabled={activeIdx >= filteredForms.length - 1}
-                  >
-                    <FiChevronRight />
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+        {/* ================= 2. ORGANIZATION / CLINIC / FORM PICKER ================= */}
+        <section
+          id="services"
+          ref={pickerSectionRef}
+          className="sut2-3d-section sut2-picker-section"
+          aria-label={t("clinic_picker.title")}
+        >
+          <ClinicFormPicker
+            clinics={clinics}
+            forms={forms}
+            counts={counts}
+            loading={loading || loadingClinics}
+          />
         </section>
 
         {/* ================= 3. HOW IT WORKS ================= */}
