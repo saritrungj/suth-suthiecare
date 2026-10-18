@@ -8,3 +8,9 @@ trimmed to the characters and saved as transparent WebP.
 
 - Patient sign-in: a doctor, a university student and a nurse holding a heart.
 - Staff sign-in: a doctor, a teacher/counsellor and a staff member with a laptop.
+
+`../site-vitalcare.webp` and `../site-act.webp` (the homepage "other online
+services" cards) were generated the same way on 18 October 2026: students
+jogging among health-promotion icons for SUTH Vitalcare, and a student and a
+nurse booking a vaccine appointment for SUTH Activities. They are cropped to
+16:9 and saved as 1200×675 WebP.
