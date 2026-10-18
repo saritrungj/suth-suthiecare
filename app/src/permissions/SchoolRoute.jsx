@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { usePermissions } from "./PermissionsProvider";
 import OrganizationWorkspace from "./OrganizationWorkspace";
 
@@ -14,6 +14,7 @@ export default function SchoolRoute({ check, children }) {
 }
 
 function SchoolAccessRoute({ check, children }) {
+  const location = useLocation();
   const { loading, activeOrganizationType, schoolAccess, schoolAccessLoading } =
     usePermissions();
   if (loading || (activeOrganizationType === "school" && schoolAccessLoading))
@@ -31,6 +32,6 @@ function SchoolAccessRoute({ check, children }) {
       </main>
     );
   if (!schoolAccess || (check && !schoolAccess[check]))
-    return <Navigate to="/403" replace />;
+    return <Navigate to="/403" replace state={{ from: location.pathname }} />;
   return children;
 }

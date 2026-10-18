@@ -1,53 +1,232 @@
+/* Status and error pages, in the back-office style: canvas background,
+   white rounded card, peach header band and orange pill actions. */
 .status-page {
+  --status-tint: var(--suth-tint);
+  --status-ink: var(--suth-action-ink);
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 2rem;
-  background: var(--suth-surface-2);
-  color: var(--suth-care-ink);
+  padding: clamp(16px, 4vw, 40px);
+  background: var(--suth-canvas);
+  color: var(--suth-ink);
   font-family: var(--suth-font);
 }
-.status-page section {
-  max-width: 34rem;
-  border: 1px solid var(--suth-tint-line);
-  border-radius: var(--suth-radius-card);
-  padding: 2rem 2.25rem;
-  background: var(--suth-surface-hover);
-  box-shadow: 0 16px 40px rgba(31, 47, 63, 0.09);
+.status-page--danger {
+  --status-tint: var(--suth-danger-tint);
+  --status-ink: var(--suth-danger);
 }
-.status-code {
-  margin: 0;
-  color: var(--suth-action-ink);
-  font-size: var(--suth-fs-display-lg);
-  font-weight: 800;
-  line-height: 1;
+.status-page--info {
+  --status-tint: var(--suth-info-tint);
+  --status-ink: var(--suth-info);
 }
-.status-page h1 {
-  margin: 0.75rem 0;
-  font-size: var(--suth-fs-display);
+.status-page--neutral {
+  --status-tint: var(--suth-neutral-tint);
+  --status-ink: var(--suth-ink-2);
 }
-.status-page p:not(.status-code) {
-  color: var(--suth-care);
-  line-height: 1.7;
+
+.status-card {
+  width: min(100%, 560px);
+  overflow: hidden;
+  border: 1px solid var(--suth-line-soft);
+  border-radius: 28px;
+  background: var(--suth-surface);
+  box-shadow: 0 18px 44px color-mix(in srgb, var(--suth-ink) 8%, transparent);
+  animation: statusRise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.status-actions {
+
+/* Header band mirrors the back-office page headers. */
+.status-card__head {
   display: flex;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--suth-tint-line);
+  background: linear-gradient(110deg, var(--suth-surface-hover) 0%, var(--suth-tint-strong) 100%);
+}
+.status-card__logo {
+  position: relative;
+  display: block;
+  width: 64px;
+  height: 40px;
+  overflow: hidden;
+}
+.status-card__logo img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 98px;
+  height: 98px;
+  max-width: none;
+  transform: translate(-50%, -48%);
+}
+.status-card__badge {
+  padding: 5px 12px;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  color: var(--status-ink);
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-card__body {
+  position: relative;
+  padding: clamp(24px, 5vw, 36px);
+}
+.status-card__icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 18px;
+  border-radius: 20px;
+  background: var(--status-tint);
+  color: var(--status-ink);
+  font-size: 1.75rem;
+}
+/* The big code sits quietly behind the title as a watermark. */
+.status-card__code {
+  position: absolute;
+  top: clamp(16px, 4vw, 28px);
+  right: clamp(20px, 5vw, 36px);
+  margin: 0;
+  color: color-mix(in srgb, var(--status-ink) 14%, transparent);
+  font-size: clamp(4rem, 14vw, 6rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+.status-card h1 {
+  position: relative;
+  margin: 0;
+  color: var(--suth-ink);
+  font-size: clamp(1.4rem, 4vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+.status-card__detail {
+  position: relative;
+  margin: 10px 0 0;
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-md);
+  line-height: 1.7;
+  text-wrap: pretty;
+}
+.status-card__hints {
+  display: grid;
+  gap: 8px;
+  margin: 20px 0 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--suth-surface-2);
+  list-style: none;
+}
+.status-card__hints li {
+  position: relative;
+  padding-left: 22px;
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-body);
+  line-height: 1.55;
+}
+.status-card__hints li::before {
+  content: "";
+  position: absolute;
+  top: 0.6em;
+  left: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--suth-action);
+}
+
+.status-card__actions {
+  display: flex;
   flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
 }
-.status-actions a,
-.status-actions button {
-  border: 0;
-  padding: 0.7rem 1rem;
-  background: var(--suth-care-ink);
-  color: var(--suth-on-action);
-  text-decoration: none;
+.status-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1.5px solid var(--suth-line);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
   font: inherit;
+  font-size: var(--suth-fs-body);
+  font-weight: 700;
+  text-decoration: none;
   cursor: pointer;
+  transition:
+    background-color 0.2s ease-out,
+    border-color 0.2s ease-out,
+    color 0.2s ease-out,
+    transform 0.2s ease-out;
 }
-.status-actions a {
+.status-btn:hover {
+  border-color: var(--suth-tint-line);
+  color: var(--suth-action-ink);
+}
+.status-btn--primary {
+  border-color: var(--suth-action);
+  background: var(--suth-action);
+  color: var(--suth-on-action);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--suth-action) 32%, transparent);
+}
+.status-btn--primary:hover {
+  border-color: var(--suth-action-hover);
+  background: var(--suth-action-hover);
+  color: var(--suth-on-action);
+  transform: translateY(-1px);
+}
+.status-btn--ghost {
+  border-color: transparent;
   background: transparent;
-  color: var(--suth-care-ink);
-  border: 1px solid var(--suth-success);
+}
+.status-btn:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--suth-action) 40%, transparent);
+  outline-offset: 2px;
+}
+
+.status-card__ref {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 16px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--suth-line-soft);
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-caption);
+  word-break: break-all;
+}
+
+@keyframes statusRise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@media (max-width: 480px) {
+  .status-card__actions {
+    flex-direction: column;
+  }
+  .status-btn {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .status-card {
+    animation: none;
+  }
+  .status-btn {
+    transition: none;
+  }
 }

@@ -176,9 +176,11 @@ function App() {
               path="/help-center/clinic/:id"
               element={<ClinicHelpDetail />}
             />
+            <Route path="/401" element={<StatusPage status={401} />} />
             <Route path="/403" element={<StatusPage status={403} />} />
             <Route path="/404" element={<StatusPage status={404} />} />
             <Route path="/500" element={<StatusPage status={500} />} />
+            <Route path="/503" element={<StatusPage status={503} />} />
             <Route path="/terms" element={<LegalPage kind="terms" />} />
             <Route
               path="/privacy-policy"

@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { usePermissions } from "./PermissionsProvider";
 
 export default function PermissionRoute({
@@ -6,6 +6,7 @@ export default function PermissionRoute({
   children,
   systemAdminOnly = false,
 }) {
+  const location = useLocation();
   const { loading, can, authorization, schoolAccess, schoolAccessLoading } =
     usePermissions();
   if (loading) return <div role="status">กำลังตรวจสอบสิทธิ์...</div>;
@@ -13,7 +14,9 @@ export default function PermissionRoute({
     return <div role="status">กำลังตรวจสอบสิทธิ์...</div>;
   if (module === "Dashboard" && schoolAccess?.is_guardian)
     return <Navigate to="/admin/school/students" replace />;
-  if (systemAdminOnly && !authorization?.is_system_admin)
-    return <Navigate to="/403" replace />;
-  return can(module) ? children : <Navigate to="/403" replace />;
+  const denied = (
+    <Navigate to="/403" replace state={{ from: location.pathname }} />
+  );
+  if (systemAdminOnly && !authorization?.is_system_admin) return denied;
+  return can(module) ? children : denied;
 }
