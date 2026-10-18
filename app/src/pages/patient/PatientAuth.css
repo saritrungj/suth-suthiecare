@@ -1402,16 +1402,21 @@
   border-radius: 46% 54% 60% 40% / 52% 44% 56% 48%;
   background: var(--pub-peach);
 }
-/* A cute cartoon friend waves from the corner of the intro panel. */
+/* Cute cartoon friends (Fluent Emoji 3D, MIT, see assets/cartoons) wave
+   from the corner: a health worker, a student and a hearts face. Sizes are
+   in % of the box so the group scales as one on small screens. */
 .patient-login-intro::after {
   content: "";
   position: absolute;
   z-index: -1;
-  top: 26px;
-  right: 26px;
-  width: 150px;
-  height: 163px;
-  background: url("../../assets/cute-girl.webp") bottom center / contain no-repeat;
+  top: 22px;
+  right: 22px;
+  width: 200px;
+  height: 140px;
+  background:
+    url("../../assets/cartoons/smile-hearts.webp") right 2% top 0 / 26% auto no-repeat,
+    url("../../assets/cartoons/student-woman.webp") right 0 bottom 0 / 50% auto no-repeat,
+    url("../../assets/cartoons/health-worker-woman.webp") left 0 bottom 0 / 62% auto no-repeat;
   filter: drop-shadow(0 10px 12px color-mix(in srgb, var(--suth-ink) 12%, transparent));
   animation: patientCuteBob 3.6s ease-in-out infinite;
 }
@@ -1513,11 +1518,11 @@
   .patient-login-intro::after {
     top: auto;
     bottom: 10px;
-    width: 104px;
-    height: 114px;
+    width: 140px;
+    height: 98px;
   }
   .patient-login-intro-copy {
-    max-width: calc(100% - 100px);
+    max-width: calc(100% - 140px);
   }
 }
 @media (max-width: 480px) {
@@ -1533,11 +1538,11 @@
   }
   .patient-login-intro::after {
     right: 8px;
-    width: 80px;
-    height: 88px;
+    width: 104px;
+    height: 73px;
   }
   .patient-login-intro-copy {
-    max-width: calc(100% - 76px);
+    max-width: calc(100% - 100px);
   }
 }
 @media (prefers-reduced-motion: reduce) {
