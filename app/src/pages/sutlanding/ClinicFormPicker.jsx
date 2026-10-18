@@ -293,6 +293,18 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
       ? selectedOrg.name
       : t("clinic_picker.all_clinics");
   const grouped = clinicSlug === ALL && !q;
+  // Forms whose clinic is not listed (the shared "general" type, or a
+  // clinic not shown in the picker) still belong in the overview.
+  const otherForms = grouped
+    ? sortForms(
+        orgForms.filter(
+          (form) =>
+            !visibleClinics.some(
+              (clinic) => clinic.slug === (form.clinic_type || "general"),
+            ),
+        ),
+      )
+    : [];
   const visibleResults = results.slice(0, visibleCount);
   const remaining = results.length - visibleResults.length;
 
@@ -622,58 +634,75 @@ export default function ClinicFormPicker({ clinics, forms, counts, loading }) {
             )}
           </div>
         ) : grouped ? (
-          visibleClinics
-            .filter((clinic) => (formsByClinic[clinic.slug] || []).length)
-            .map((clinic) => {
-              const list = sortForms(formsByClinic[clinic.slug]);
-              const hidden = list.length - GROUP_LIMIT;
-              return (
-                <section className="cfp-group" key={clinic.slug}>
-                  <header className="cfp-group__head">
-                    <ClinicIcon clinic={clinic} className="cfp-group__icon" />
-                    <h3>{clinicName(clinic)}</h3>
-                    {showOrgOnCards && orgName(clinic) && (
-                      <span className="cfp-tag cfp-tag--org">
-                        {orgName(clinic)}
+          <>
+            {visibleClinics
+              .filter((clinic) => (formsByClinic[clinic.slug] || []).length)
+              .map((clinic) => {
+                const list = sortForms(formsByClinic[clinic.slug]);
+                const hidden = list.length - GROUP_LIMIT;
+                return (
+                  <section className="cfp-group" key={clinic.slug}>
+                    <header className="cfp-group__head">
+                      <ClinicIcon clinic={clinic} className="cfp-group__icon" />
+                      <h3>{clinicName(clinic)}</h3>
+                      {showOrgOnCards && orgName(clinic) && (
+                        <span className="cfp-tag cfp-tag--org">
+                          {orgName(clinic)}
+                        </span>
+                      )}
+                      <span className="cfp-group__count">
+                        {t("clinic_picker.form_count", { count: list.length })}
                       </span>
+                      <button
+                        type="button"
+                        className="cfp-group__more"
+                        onClick={() => openClinic(clinic.slug)}
+                      >
+                        {hidden > 0
+                          ? t("clinic_picker.view_all_count", {
+                              count: list.length,
+                            })
+                          : t("clinic_picker.only_this_clinic")}{" "}
+                        <FiArrowRight aria-hidden="true" />
+                      </button>
+                    </header>
+                    <div className="cfp-grid">
+                      {list
+                        .slice(0, GROUP_LIMIT)
+                        .map((form, i) => renderCard(form, i, false))}
+                    </div>
+                    {hidden > 0 && (
+                      <button
+                        type="button"
+                        className="cfp-more"
+                        onClick={() => openClinic(clinic.slug)}
+                      >
+                        {t("clinic_picker.more_in_clinic", {
+                          count: hidden,
+                          clinic: clinicName(clinic),
+                        })}
+                        <FiArrowRight aria-hidden="true" />
+                      </button>
                     )}
-                    <span className="cfp-group__count">
-                      {t("clinic_picker.form_count", { count: list.length })}
-                    </span>
-                    <button
-                      type="button"
-                      className="cfp-group__more"
-                      onClick={() => openClinic(clinic.slug)}
-                    >
-                      {hidden > 0
-                        ? t("clinic_picker.view_all_count", {
-                            count: list.length,
-                          })
-                        : t("clinic_picker.only_this_clinic")}{" "}
-                      <FiArrowRight aria-hidden="true" />
-                    </button>
-                  </header>
-                  <div className="cfp-grid">
-                    {list
-                      .slice(0, GROUP_LIMIT)
-                      .map((form, i) => renderCard(form, i, false))}
-                  </div>
-                  {hidden > 0 && (
-                    <button
-                      type="button"
-                      className="cfp-more"
-                      onClick={() => openClinic(clinic.slug)}
-                    >
-                      {t("clinic_picker.more_in_clinic", {
-                        count: hidden,
-                        clinic: clinicName(clinic),
-                      })}
-                      <FiArrowRight aria-hidden="true" />
-                    </button>
-                  )}
-                </section>
-              );
-            })
+                  </section>
+                );
+              })}
+            {otherForms.length > 0 && (
+              <section className="cfp-group">
+                <header className="cfp-group__head">
+                  <h3>{t("clinic_picker.other_forms")}</h3>
+                  <span className="cfp-group__count">
+                    {t("clinic_picker.form_count", {
+                      count: otherForms.length,
+                    })}
+                  </span>
+                </header>
+                <div className="cfp-grid">
+                  {otherForms.map((form, i) => renderCard(form, i, false))}
+                </div>
+              </section>
+            )}
+          </>
         ) : (
           <>
             <div className="cfp-grid">
