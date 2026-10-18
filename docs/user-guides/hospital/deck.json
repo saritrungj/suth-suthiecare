@@ -1,0 +1,21 @@
+{
+  "title": "คู่มือแอดมินโรงพยาบาล SUTHie Care",
+  "order": [
+    "cover",
+    "overview",
+    "login",
+    "dashboard",
+    "cases",
+    "risk-cases",
+    "schedule",
+    "referrals",
+    "forms",
+    "form-builder",
+    "result-images",
+    "clinics",
+    "members",
+    "help-center",
+    "master-data",
+    "tips"
+  ]
+}

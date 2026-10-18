@@ -1,0 +1,19 @@
+{
+  "title": "คู่มือผู้รับบริการ SUTHie Care",
+  "order": [
+    "cover",
+    "overview",
+    "home",
+    "services",
+    "form",
+    "result",
+    "register",
+    "login",
+    "history",
+    "history-detail",
+    "new-assessment",
+    "clinic-detail",
+    "help-center",
+    "tips"
+  ]
+}

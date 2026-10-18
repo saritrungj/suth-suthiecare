@@ -1,0 +1,20 @@
+{
+  "title": "คู่มือแอดมินโรงเรียน SUTHie Care",
+  "order": [
+    "cover",
+    "overview",
+    "login",
+    "dashboard",
+    "classes",
+    "import",
+    "students",
+    "teachers",
+    "staff",
+    "workflows",
+    "cases",
+    "risk-cases",
+    "forms",
+    "result-images",
+    "tips"
+  ]
+}

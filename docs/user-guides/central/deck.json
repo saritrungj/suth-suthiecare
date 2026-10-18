@@ -1,0 +1,17 @@
+{
+  "title": "คู่มือแอดมินกลาง SUTHie Care",
+  "order": [
+    "cover",
+    "overview",
+    "login",
+    "dashboard",
+    "organizations",
+    "users",
+    "roles",
+    "banners",
+    "forms",
+    "result-images",
+    "master-data",
+    "tips"
+  ]
+}
