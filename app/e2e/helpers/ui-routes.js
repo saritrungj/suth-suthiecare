@@ -42,4 +42,5 @@ export const adminRoutes = [
   "school/roles",
   "school/workflows",
   "profile",
+  "manual",
 ].map((route) => "/admin/" + route);

@@ -54,6 +54,7 @@ const PatientVerifyEmail = lazy(
   () => import("./pages/patient/PatientVerifyEmail"),
 );
 const MyProfile = lazy(() => import("./pages/admin/MyProfile"));
+const ManualCenter = lazy(() => import("./pages/admin/manual/ManualCenter"));
 const FormView = lazy(() => import("./pages/assessment/formView/FormView"));
 const HistorySearch = lazy(
   () => import("./pages/assessment/history/HistorySearch"),
@@ -451,6 +452,8 @@ function App() {
               />
               {/* Every signed-in staff member manages their own account. */}
               <Route path="profile" element={<MyProfile />} />
+              {/* User guides, filtered by role inside the page. */}
+              <Route path="manual" element={<ManualCenter />} />
             </Route>
             <Route path="*" element={<StatusPage status={404} />} />
           </Routes>

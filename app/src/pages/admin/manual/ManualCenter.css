@@ -1,0 +1,102 @@
+/* Manual center: back-office page listing the downloadable user guides. */
+.mc-page {
+  display: grid;
+  gap: 20px;
+  padding: clamp(16px, 3vw, 28px);
+  font-family: var(--suth-font);
+  color: var(--suth-ink);
+}
+.mc-panel {
+  display: grid;
+  gap: 18px;
+  padding: clamp(18px, 3vw, 28px);
+}
+.mc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.mc-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 14px 16px;
+  align-items: start;
+  padding: 18px;
+  border: 1px solid var(--suth-line-soft);
+  border-radius: 20px;
+  background: var(--suth-surface);
+  transition:
+    border-color 0.2s ease-out,
+    box-shadow 0.2s ease-out;
+}
+.mc-card:hover {
+  border-color: var(--suth-tint-line);
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--suth-ink) 7%, transparent);
+}
+.mc-card__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: var(--suth-tint);
+  color: var(--suth-action-ink);
+  font-size: 1.35rem;
+}
+.mc-card--legacy .mc-card__icon {
+  background: var(--suth-surface-2);
+  color: var(--suth-ink-2);
+}
+.mc-card__body {
+  display: grid;
+  gap: 4px;
+}
+.mc-card__body h3 {
+  margin: 0;
+  font-size: var(--suth-fs-md);
+  font-weight: 700;
+}
+.mc-card__body p {
+  margin: 0;
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-sm);
+  line-height: 1.55;
+}
+.mc-card__body .mc-card__meta {
+  margin-top: 4px;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-caption);
+}
+
+.mc-btn {
+  grid-column: 1 / -1;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-action-strong);
+  color: var(--suth-on-action);
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s ease-out;
+}
+.mc-btn:hover {
+  background: var(--suth-action-strong-hover);
+  color: var(--suth-on-action);
+}
+.mc-btn:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--suth-action) 45%, transparent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mc-card,
+  .mc-btn {
+    transition: none;
+  }
+}

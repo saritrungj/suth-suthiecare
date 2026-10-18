@@ -260,12 +260,11 @@ const rawMenuItems = [
     key: "profile",
   },
   {
-    href: "/api/private-files/admin_manual.pdf",
+    // Every staff member gets the guides for their role.
+    href: "/admin/manual",
     icon: <FontAwesomeIcon icon={faBookOpen} fixedWidth />,
     label: "คู่มือการใช้งาน",
     key: "manual",
-    systemAdminOnly: true,
-    isExternal: true,
   },
 ];
 

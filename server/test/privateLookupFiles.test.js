@@ -157,6 +157,30 @@ test("private files require authentication, an explicit allowlist and a durable 
       ).status,
       403,
     );
+    // Unit guides are for any signed-in staff; the central guide is not.
+    assert.equal(
+      (
+        await request("/private-files/guide_central.pdf", {
+          headers: { Cookie: "synthetic=1" },
+        })
+      ).status,
+      403,
+    );
+    assert.equal(
+      (await request("/private-files/guide_hospital.pdf")).status,
+      401,
+    );
+    for (const guide of ["guide_hospital.pdf", "guide_school.pdf"]) {
+      const response = await request(`/private-files/${guide}`, {
+        headers: { Cookie: "synthetic=1" },
+      });
+      assert.equal(response.status, 200, guide);
+      assert.equal(
+        response.headers.get("content-type"),
+        "application/pdf",
+        guide,
+      );
+    }
     auditFailure = true;
     try {
       assert.equal(

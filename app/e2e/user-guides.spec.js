@@ -232,6 +232,19 @@ const CLINIC_STATE = {
   ],
 };
 
+// The manual page lists the guides a role may download, in this order.
+async function expectManuals(page, titles) {
+  await openFromSidebar(page, "คู่มือการใช้งาน");
+  await expectHeading(page);
+  const cards = page.locator(".mc-card h3");
+  await expect(cards).toHaveText(titles);
+  for (const link of await page.locator(".mc-card a").all())
+    await expect(link).toHaveAttribute(
+      "href",
+      /^\/api\/private-files\/[a-z_]+\.pdf$/,
+    );
+}
+
 test.describe("user", () => {
   test("service user: choose a service, answer, read the result and history", async ({
     page,
@@ -365,6 +378,16 @@ test.describe("central-admin", () => {
       await expectHeading(page);
       await shot(page, testInfo, name);
     }
+
+    await expectManuals(page, [
+      "คู่มือแอดมินกลาง",
+      "คู่มือแอดมินโรงพยาบาล",
+      "คู่มือแอดมินโรงเรียน",
+      "คู่มือผู้รับบริการ",
+      "คู่มือผู้ดูแลระบบ (ฉบับเต็ม)",
+      "คู่มือการใช้งานระบบ (ฉบับเต็ม)",
+    ]);
+    await shot(page, testInfo, "10-manuals");
   });
 });
 
@@ -403,6 +426,13 @@ test.describe("hospital-admin", () => {
     await page.goto("/admin/forms/create");
     await expect(page.locator("main").first()).toBeVisible();
     await shot(page, testInfo, "12-form-builder");
+
+    await expectManuals(page, [
+      "คู่มือแอดมินโรงพยาบาล",
+      "คู่มือผู้รับบริการ",
+      "คู่มือการใช้งานระบบ (ฉบับเต็ม)",
+    ]);
+    await shot(page, testInfo, "13-manuals");
   });
 });
 
@@ -437,5 +467,12 @@ test.describe("school-admin", () => {
       await expectHeading(page);
       await shot(page, testInfo, name);
     }
+
+    await expectManuals(page, [
+      "คู่มือแอดมินโรงเรียน",
+      "คู่มือผู้รับบริการ",
+      "คู่มือการใช้งานระบบ (ฉบับเต็ม)",
+    ]);
+    await shot(page, testInfo, "12-manuals");
   });
 });

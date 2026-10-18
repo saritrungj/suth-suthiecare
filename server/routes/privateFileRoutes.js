@@ -5,9 +5,15 @@ const { verifyPatientToken } = require("../middleware/patientAuthMiddleware");
 const { cookieName } = require("../services/sessionService");
 const { requiredAudit, requiredPatientAudit } = require("../utils/pdpaAudit");
 const router = express.Router();
+// Who may download each manual: "patient" = service users and any staff,
+// "staff" = any signed-in staff member, "system" = system administrators.
 const FILES = new Map([
-  ["user_manual.pdf", { patient: true }],
-  ["admin_manual.pdf", { patient: false }],
+  ["user_manual.pdf", { access: "patient" }],
+  ["admin_manual.pdf", { access: "system" }],
+  ["guide_user.pdf", { access: "patient" }],
+  ["guide_central.pdf", { access: "system" }],
+  ["guide_hospital.pdf", { access: "staff" }],
+  ["guide_school.pdf", { access: "staff" }],
 ]);
 router.get("/private-files/:name", async (req, res, next) => {
   const file = FILES.get(req.params.name);
@@ -24,7 +30,10 @@ router.get("/private-files/:name", async (req, res, next) => {
           format: "pdf",
         });
       else {
-        if (!file.patient && !req.authorizationProfile?.isSystemAdmin)
+        if (
+          file.access === "system" &&
+          !req.authorizationProfile?.isSystemAdmin
+        )
           return res.status(403).json({ code: "FILE_PERMISSION_REQUIRED" });
         await requiredAudit(req, "file.download", "manual", req.params.name, {
           format: "pdf",
@@ -45,7 +54,7 @@ router.get("/private-files/:name", async (req, res, next) => {
     }
   };
   if (req.cookies?.[cookieName("staff")]) return verifyToken(req, res, send);
-  if (file.patient) return verifyPatientToken(req, res, send);
+  if (file.access === "patient") return verifyPatientToken(req, res, send);
   return res.status(401).json({ code: "STAFF_LOGIN_REQUIRED" });
 });
 module.exports = router;
