@@ -19,9 +19,10 @@ import riskMedium from "../../assets/02.png";
 import riskHigh from "../../assets/03.png";
 import "./AssessmentResult.css";
 import { buildAssessmentResultSections } from "./assessmentResultUtils";
+import { resultImageLevel } from "../../utils/resultImageLevel";
 
 // 🟢 1. แก้บัค: นำเข้า api ให้ถูกต้อง
-import api from "../../services/api";
+import api, { getFormResultImages } from "../../services/api";
 import Swal from "sweetalert2";
 import { DEFAULT_RESULT_COLOR } from "../admin/forms/formThemePalette";
 
@@ -41,6 +42,8 @@ const isColorTooBright = (hex) => {
   return brightness > 190;
 };
 
+const DEFAULT_IMAGES = { low: riskLow, medium: riskMedium, high: riskHigh };
+
 // 🟢 ฟังก์ชันสร้าง Config การ์ดแบบไดนามิก + เลือกรูปภาพ + จัดการ Contrast สี
 const getLevelConfig = (result, t) => {
   if (!result) {
@@ -59,6 +62,7 @@ const getLevelConfig = (result, t) => {
       colorBanner:
         "linear-gradient(135deg, rgba(45, 125, 129, 0.7) 0%, rgba(45, 125, 129, 1) 100%)",
       visualImage: riskLow,
+      imageLevel: "low",
     };
   }
 
@@ -69,24 +73,8 @@ const getLevelConfig = (result, t) => {
   const isTooBright = isColorTooBright(hexCriteriaColor);
   const readableTextColor = isTooBright ? DEFAULT_RESULT_COLOR : hexCriteriaColor;
 
-  let visualImage = riskLow;
-  if (
-    lowerColor.includes("d93025") ||
-    lowerColor.includes("e53935") ||
-    lowerColor.includes("f44336") ||
-    lowerColor.includes("ef4444") ||
-    lowerColor.includes("d32f2f")
-  ) {
-    visualImage = riskHigh;
-  } else if (
-    lowerColor.includes("fbbc04") ||
-    lowerColor.includes("ff9800") ||
-    lowerColor.includes("ffb300") ||
-    lowerColor.includes("f59e0b") ||
-    lowerColor.includes("f57c00")
-  ) {
-    visualImage = riskMedium;
-  }
+  const imageLevel = resultImageLevel(lowerColor);
+  const visualImage = DEFAULT_IMAGES[imageLevel];
 
   const rgbColor = hexToRgbArray(hexCriteriaColor);
 
@@ -105,7 +93,8 @@ const getLevelConfig = (result, t) => {
     colorBg: `rgba(${rgbString}, 0.08)`,
     colorBorder: `rgba(${rgbString}, 0.25)`,
     colorBanner: `linear-gradient(135deg, rgba(${rgbString}, 0.7) 0%, rgba(${rgbString}, 1) 100%)`,
-    visualImage: visualImage,
+    visualImage,
+    imageLevel,
   };
 };
 
@@ -165,6 +154,21 @@ export default function AssessmentResult() {
       navigate("/");
     }
   }, [navigate, formId]);
+
+  // Organizations may replace the bundled result pictures with their own.
+  const [customImages, setCustomImages] = useState({});
+  useEffect(() => {
+    if (!formId) return undefined;
+    let active = true;
+    getFormResultImages(formId)
+      .then((response) => {
+        if (active) setCustomImages(response.data?.images || {});
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [formId]);
 
   const [hasEvaluated, setHasEvaluated] = useState(false);
   useEffect(() => {
@@ -558,7 +562,9 @@ export default function AssessmentResult() {
                       }}
                     >
                       <img
-                        src={level.visualImage}
+                        src={
+                          customImages[level.imageLevel] || level.visualImage
+                        }
                         alt={toDisplayText(level.label)}
                       />
                     </div>

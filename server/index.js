@@ -160,6 +160,8 @@ const permissionForWrite = (path, method) => {
   }
   if (path.startsWith("/admin/help-center")) return `help_center.${verb}`;
   if (path.startsWith("/banners")) return `content.${verb}`;
+  // Uploading or resetting an organization's result pictures edits its forms.
+  if (path.startsWith("/admin/result-images")) return "forms.update";
   // Chart create/update/delete is decided from the saved layout in the route.
   if (path.startsWith("/dashboard-settings")) return "dashboard.view";
   // Appointment status: cancelling is "delete", other changes "update" (route).
@@ -186,6 +188,7 @@ const permissionForRead = (path) => {
   )
     return "Form Management";
   if (/^\/forms\/[^/]+\/questions$/.test(path)) return "Form Management";
+  if (path.startsWith("/admin/result-images")) return "Form Management";
   if (path.startsWith("/evaluations/")) return "Dashboard";
   if (
     path.startsWith("/dashboard") ||
@@ -306,6 +309,7 @@ app.use("/api", roleRoutes);
 app.use("/api", organizationRoutes);
 app.use("/api", require("./routes/organizationPermissionRoutes"));
 app.use("/api", bannerRoutes);
+app.use("/api", require("./routes/resultImageRoutes"));
 app.use("/api", dashboardRoutes);
 app.use("/api", require("./routes/operationalLookupRoutes"));
 app.use("/api", caseRoutes);

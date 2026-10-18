@@ -22,6 +22,7 @@ function needsOrganizationContext(path, hasAuthorization = false) {
     path.startsWith("/exports/") ||
     path === "/case-referrals" ||
     path.startsWith("/case-referrals/") ||
+    path.startsWith("/admin/result-images") ||
     ((path === "/counts" ||
       path === "/forms" ||
       path === "/save-form" ||

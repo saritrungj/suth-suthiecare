@@ -29,3 +29,15 @@ test("school module routes always run inside the active organization", () => {
   assert.equal(needsOrganizationContext("/school/students", false), true);
   assert.equal(needsOrganizationContext("/school/access", true), true);
 });
+
+test("result image management needs an organization, the public lookup does not", () => {
+  assert.equal(needsOrganizationContext("/admin/result-images", false), true);
+  assert.equal(
+    needsOrganizationContext("/admin/result-images/high", true),
+    true,
+  );
+  assert.equal(
+    needsOrganizationContext("/result-images/forms/12", false),
+    false,
+  );
+});

@@ -19,6 +19,7 @@ import {
   faFileImport,
   faFolderOpen,
   faGaugeHigh,
+  faImage,
   faImages,
   faQuestionCircle,
   faSchool,
@@ -160,6 +161,13 @@ const rawMenuItems = [
     icon: <FontAwesomeIcon icon={faFilePen} fixedWidth />,
     label: "จัดการฟอร์ม",
     key: "forms",
+    module: "Form Management",
+  },
+  {
+    href: "/admin/result-images",
+    icon: <FontAwesomeIcon icon={faImage} fixedWidth />,
+    label: "ภาพผลลัพธ์การประเมิน",
+    key: "result-images",
     module: "Form Management",
   },
   {

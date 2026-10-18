@@ -272,6 +272,15 @@ export const updateBannerImage = (id, data) =>
 export const deleteBanner = (id) => api.delete(`/banners/${id}`);
 export const reorderBanners = (data) => api.post("/banners/reorder", data);
 
+// ── Result images (per organization) ──
+export const getFormResultImages = (formId) =>
+  api.get(`/result-images/forms/${formId}`);
+export const getResultImages = () => api.get("/admin/result-images");
+export const saveResultImage = (level, data) =>
+  api.put(`/admin/result-images/${level}`, data);
+export const resetResultImage = (level) =>
+  api.delete(`/admin/result-images/${level}`);
+
 //--- services ---//
 export const getServices = () => api.get("/services");
 export const createService = (data) => api.post("/services", data);

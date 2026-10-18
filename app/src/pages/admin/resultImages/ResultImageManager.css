@@ -1,0 +1,251 @@
+/* Result image management: back-office page with one card per result level. */
+.rim-page {
+  display: grid;
+  gap: 20px;
+  padding: clamp(16px, 3vw, 28px);
+  font-family: var(--suth-font);
+  color: var(--suth-ink);
+}
+
+.rim-panel {
+  display: grid;
+  gap: 20px;
+  padding: clamp(18px, 3vw, 28px);
+}
+.rim-panel__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.rim-chip {
+  padding: 6px 12px;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface-2);
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-caption);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.rim-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.rim-card {
+  --level: var(--suth-risk-dot-low);
+  --level-tint: var(--suth-success-tint);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--suth-line-soft);
+  border-radius: 22px;
+  background: var(--suth-surface);
+  transition:
+    border-color 0.2s ease-out,
+    box-shadow 0.2s ease-out;
+}
+.rim-card:hover {
+  border-color: var(--suth-tint-line);
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--suth-ink) 7%, transparent);
+}
+.rim-card--medium {
+  --level: var(--suth-risk-dot-medium);
+  --level-tint: var(--suth-warning-tint);
+}
+.rim-card--high {
+  --level: var(--suth-risk-dot-high);
+  --level-tint: var(--suth-danger-tint);
+}
+.rim-card[aria-busy="true"] {
+  opacity: 0.7;
+}
+
+/* Preview mirrors the soft glow the result page puts behind the picture. */
+.rim-card__preview {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  padding: 18px;
+  background:
+    radial-gradient(
+      circle at 50% 55%,
+      color-mix(in srgb, var(--level) 22%, transparent),
+      transparent 68%
+    ),
+    var(--level-tint);
+}
+.rim-card__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.rim-card__status {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--suth-radius-pill);
+  background: color-mix(in srgb, var(--suth-surface) 92%, transparent);
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-caption);
+  font-weight: 700;
+}
+.rim-card__status.is-custom {
+  color: var(--suth-success);
+}
+
+.rim-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px 18px;
+}
+.rim-card__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: var(--suth-fs-md);
+  font-weight: 700;
+}
+.rim-card__dot {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--level);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--level) 18%, transparent);
+}
+.rim-card__hint {
+  margin: 0;
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-sm);
+  line-height: 1.55;
+}
+.rim-card__meta {
+  margin: 0;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-caption);
+  overflow-wrap: anywhere;
+}
+.rim-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+.rim-card__file {
+  display: none;
+}
+
+.rim-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1.5px solid var(--suth-line);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  font: inherit;
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease-out,
+    border-color 0.2s ease-out,
+    color 0.2s ease-out;
+}
+.rim-btn:hover:not(:disabled) {
+  border-color: var(--suth-tint-line);
+  color: var(--suth-action-ink);
+}
+.rim-btn--primary {
+  border-color: var(--suth-action);
+  background: var(--suth-action);
+  color: var(--suth-on-action);
+  box-shadow: 0 6px 14px color-mix(in srgb, var(--suth-action) 28%, transparent);
+}
+.rim-btn--primary:hover:not(:disabled) {
+  border-color: var(--suth-action-hover);
+  background: var(--suth-action-hover);
+  color: var(--suth-on-action);
+}
+.rim-btn:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+.rim-btn:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--suth-action) 40%, transparent);
+  outline-offset: 2px;
+}
+
+.rim-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--suth-surface-2);
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-sm);
+  line-height: 1.55;
+}
+.rim-tip svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: var(--suth-action-ink);
+}
+
+.rim-loading {
+  padding: 40px 0;
+  color: var(--suth-muted);
+  text-align: center;
+}
+
+.rim-empty {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--suth-ink-2);
+}
+.rim-empty svg {
+  width: 32px;
+  height: 32px;
+  color: var(--suth-action-ink);
+}
+.rim-empty strong {
+  color: var(--suth-ink);
+  font-size: var(--suth-fs-md);
+}
+
+@media (max-width: 480px) {
+  .rim-card__preview {
+    aspect-ratio: auto;
+    height: 220px;
+  }
+  .rim-card__actions .rim-btn {
+    flex: 1 1 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rim-card,
+  .rim-btn {
+    transition: none;
+  }
+}

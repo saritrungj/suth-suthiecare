@@ -43,6 +43,9 @@ const CaseReferrals = lazy(() => import("./pages/admin/CaseReferrals"));
 const RolesPermissions = lazy(() => import("./pages/admin/RolesPermissions"));
 const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
 const BannerManagement = lazy(() => import("./pages/admin/BannerManagement"));
+const ResultImageManager = lazy(
+  () => import("./pages/admin/resultImages/ResultImageManager"),
+);
 const MasterData = lazy(() => import("./pages/admin/MasterData"));
 const SchoolWorkflows = lazy(
   () => import("./pages/admin/school/SchoolWorkflows"),
@@ -335,6 +338,14 @@ function App() {
                       <CaseData key="risk-cases" initialRisk="สูง" />
                     </PermissionRoute>
                   </OrganizationTypeSwitch>
+                }
+              />
+              <Route
+                path="result-images"
+                element={
+                  <PermissionRoute module="Form Management">
+                    <ResultImageManager />
+                  </PermissionRoute>
                 }
               />
               <Route

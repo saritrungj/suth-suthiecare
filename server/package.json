@@ -35,6 +35,7 @@
     "migrate:organization-permissions": "node scripts/migrateOrganizationPermissions.js",
     "migrate:roles-page-only": "node scripts/migrateRolesPageOnly.js",
     "migrate:patient-member-types": "node scripts/migratePatientMemberTypes.js",
+    "migrate:result-images": "node scripts/migrateResultImages.js",
     "backfill:member-types": "node scripts/backfillMemberTypes.js"
   },
   "dependencies": {
