@@ -66,6 +66,9 @@ export default function SutLanding2() {
 
   const [slides, setSlides] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
+  // Until banners arrive the hero shows neither banner nor fallback art,
+  // so the illustration never flashes before an admin banner replaces it.
+  const [bannersReady, setBannersReady] = useState(false);
 
   const [forms, setForms] = useState([]);
   const [counts, setCounts] = useState({});
@@ -121,15 +124,18 @@ export default function SutLanding2() {
       });
 
     // Load Banners
-    getBanners().then((res) =>
-      setSlides(
-        res.data.map((b) => ({
-          image: b.image,
-          alt: b.filename,
-          link: b.link,
-        })),
-      ),
-    );
+    getBanners()
+      .then((res) =>
+        setSlides(
+          (Array.isArray(res.data) ? res.data : []).map((b) => ({
+            image: b.image,
+            alt: b.filename,
+            link: b.link,
+          })),
+        ),
+      )
+      .catch(() => setSlides([]))
+      .finally(() => setBannersReady(true));
 
     // Load Forms
     const cachedForms = formCache.get("forms");
@@ -336,51 +342,113 @@ export default function SutLanding2() {
               )}
             </div>
 
-            {/* Illustrated scene: the care team in front of the hospital */}
-            <div className="sut2-scene" aria-hidden="true">
-              <div className="sut2-scene__sky">
-                <span className="sut2-cloud sut2-cloud--1" />
-                <span className="sut2-cloud sut2-cloud--2" />
-                <span className="sut2-cloud sut2-cloud--3" />
-                <span className="sut2-scene__sun" />
-                <img
-                  className="sut2-scene__hospital"
-                  src={heroHospital}
-                  alt=""
-                  width="900"
-                  height="294"
-                />
+            {/* Admin banners lead the hero; without any, the illustrated
+                scene of the care team in front of the hospital stands in. */}
+            {!bannersReady ? (
+              <div className="sut2-hero-media-placeholder" aria-hidden="true" />
+            ) : slides.length > 0 ? (
+              <div className="sut2-hero-banner">
+                <div className="sut2-banner-slider">
+                  {slides.map((slide, i) => {
+                    const image = (
+                      <img
+                        src={slide.image}
+                        alt={slide.alt || t("sutlanding.banner_alt")}
+                        loading={i === 0 ? "eager" : "lazy"}
+                        decoding="async"
+                      />
+                    );
+                    const className = `sut2-banner-slide ${i === currentSlide ? "active" : ""}`;
+                    return slide.link ? (
+                      <a
+                        key={i}
+                        href={slide.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={className}
+                        aria-hidden={i !== currentSlide}
+                        tabIndex={i === currentSlide ? 0 : -1}
+                      >
+                        {image}
+                      </a>
+                    ) : (
+                      <div
+                        key={i}
+                        className={className}
+                        aria-hidden={i !== currentSlide}
+                      >
+                        {image}
+                      </div>
+                    );
+                  })}
+                  {slides.length > 1 && (
+                    <div className="sut2-banner-dots">
+                      {slides.map((_, i) => (
+                        <button
+                          type="button"
+                          key={i}
+                          className={`sut2-banner-dot ${i === currentSlide ? "active" : ""}`}
+                          aria-label={`${i + 1} / ${slides.length}`}
+                          aria-current={i === currentSlide}
+                          onClick={() => setCurrentSlide(i)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <span className="sut2-tag sut2-tag--1" aria-hidden="true">
+                  <FiZap /> {t("sutlanding.chip_instant")}
+                </span>
+                <span className="sut2-tag sut2-tag--2" aria-hidden="true">
+                  <FiLock /> {t("sutlanding.chip_private")}
+                </span>
               </div>
-              <img
-                className="sut2-scene__ambulance"
-                src={heroAmbulance}
-                alt=""
-                width="520"
-                height="239"
-              />
-              <img
-                className="sut2-scene__doctor sut2-scene__doctor--f"
-                src={heroDoctorF}
-                alt=""
-                width="325"
-                height="488"
-              />
-              <img
-                className="sut2-scene__doctor sut2-scene__doctor--m"
-                src={heroDoctorM}
-                alt=""
-                width="278"
-                height="344"
-              />
-              <span className="sut2-tag sut2-tag--1">
-                <FiZap /> {t("sutlanding.chip_instant")}
-              </span>
-              <span className="sut2-tag sut2-tag--2">
-                <FiLock /> {t("sutlanding.chip_private")}
-              </span>
-              <FiHeart className="sut2-scene__heart sut2-scene__heart--1" />
-              <FiHeart className="sut2-scene__heart sut2-scene__heart--2" />
-            </div>
+            ) : (
+              <div className="sut2-scene" aria-hidden="true">
+                <div className="sut2-scene__sky">
+                  <span className="sut2-cloud sut2-cloud--1" />
+                  <span className="sut2-cloud sut2-cloud--2" />
+                  <span className="sut2-cloud sut2-cloud--3" />
+                  <span className="sut2-scene__sun" />
+                  <img
+                    className="sut2-scene__hospital"
+                    src={heroHospital}
+                    alt=""
+                    width="900"
+                    height="294"
+                  />
+                </div>
+                <img
+                  className="sut2-scene__ambulance"
+                  src={heroAmbulance}
+                  alt=""
+                  width="520"
+                  height="239"
+                />
+                <img
+                  className="sut2-scene__doctor sut2-scene__doctor--f"
+                  src={heroDoctorF}
+                  alt=""
+                  width="325"
+                  height="488"
+                />
+                <img
+                  className="sut2-scene__doctor sut2-scene__doctor--m"
+                  src={heroDoctorM}
+                  alt=""
+                  width="278"
+                  height="344"
+                />
+                <span className="sut2-tag sut2-tag--1">
+                  <FiZap /> {t("sutlanding.chip_instant")}
+                </span>
+                <span className="sut2-tag sut2-tag--2">
+                  <FiLock /> {t("sutlanding.chip_private")}
+                </span>
+                <FiHeart className="sut2-scene__heart sut2-scene__heart--1" />
+                <FiHeart className="sut2-scene__heart sut2-scene__heart--2" />
+              </div>
+            )}
           </div>
         </section>
 
@@ -398,63 +466,6 @@ export default function SutLanding2() {
             loading={loading || loadingClinics}
           />
         </section>
-
-        {/* ================= 3. NEWS BANNERS ================= */}
-        {slides.length > 0 && (
-          <section className="sut2-news" aria-labelledby="sut2-news-title">
-            <h2 id="sut2-news-title" className="sut2-section-title">
-              {t("sutlanding.news_title")}
-            </h2>
-            <div className="sut2-banner-slider">
-              {slides.map((slide, i) => {
-                const image = (
-                  <img
-                    src={slide.image}
-                    alt={slide.alt || t("sutlanding.news_title")}
-                    loading={i === 0 ? "eager" : "lazy"}
-                    decoding="async"
-                  />
-                );
-                const className = `sut2-banner-slide ${i === currentSlide ? "active" : ""}`;
-                return slide.link ? (
-                  <a
-                    key={i}
-                    href={slide.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={className}
-                    aria-hidden={i !== currentSlide}
-                    tabIndex={i === currentSlide ? 0 : -1}
-                  >
-                    {image}
-                  </a>
-                ) : (
-                  <div
-                    key={i}
-                    className={className}
-                    aria-hidden={i !== currentSlide}
-                  >
-                    {image}
-                  </div>
-                );
-              })}
-              {slides.length > 1 && (
-                <div className="sut2-banner-dots">
-                  {slides.map((_, i) => (
-                    <button
-                      type="button"
-                      key={i}
-                      className={`sut2-banner-dot ${i === currentSlide ? "active" : ""}`}
-                      aria-label={`${i + 1} / ${slides.length}`}
-                      aria-current={i === currentSlide}
-                      onClick={() => setCurrentSlide(i)}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </section>
-        )}
 
         {/* ================= 4. HOW IT WORKS ================= */}
         <section

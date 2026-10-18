@@ -1402,16 +1402,23 @@
   border-radius: 46% 54% 60% 40% / 52% 44% 56% 48%;
   background: var(--pub-peach);
 }
+/* A cute cartoon friend waves from the corner of the intro panel. */
 .patient-login-intro::after {
   content: "";
   position: absolute;
   z-index: -1;
-  right: 18px;
-  bottom: 0;
+  top: 26px;
+  right: 26px;
   width: 150px;
-  height: 225px;
-  background: url("../../assets/hero-doctor-f.webp") bottom center / contain no-repeat;
-  filter: drop-shadow(0 12px 14px color-mix(in srgb, var(--suth-ink) 14%, transparent));
+  height: 163px;
+  background: url("../../assets/cute-girl.webp") bottom center / contain no-repeat;
+  filter: drop-shadow(0 10px 12px color-mix(in srgb, var(--suth-ink) 12%, transparent));
+  animation: patientCuteBob 3.6s ease-in-out infinite;
+}
+@keyframes patientCuteBob {
+  50% {
+    translate: 0 -6px;
+  }
 }
 .patient-login-logo {
   filter: none;
@@ -1432,9 +1439,7 @@
 .patient-login-intro-copy > p:last-child {
   color: var(--suth-ink-2);
 }
-.patient-login-benefits {
-  max-width: calc(100% - 150px);
-}
+
 .patient-login-benefit,
 .patient-civic-auth-page .patient-login-benefit {
   min-height: 48px;
@@ -1506,8 +1511,10 @@
 
 @media (max-width: 899px) {
   .patient-login-intro::after {
-    width: 96px;
-    height: 144px;
+    top: auto;
+    bottom: 10px;
+    width: 104px;
+    height: 114px;
   }
   .patient-login-intro-copy {
     max-width: calc(100% - 100px);
@@ -1526,8 +1533,8 @@
   }
   .patient-login-intro::after {
     right: 8px;
-    width: 76px;
-    height: 114px;
+    width: 80px;
+    height: 88px;
   }
   .patient-login-intro-copy {
     max-width: calc(100% - 76px);
@@ -1535,7 +1542,8 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .patient-auth-page::before,
-  .patient-auth-page::after {
+  .patient-auth-page::after,
+  .patient-login-intro::after {
     animation: none;
   }
 }
