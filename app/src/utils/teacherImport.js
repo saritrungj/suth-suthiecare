@@ -24,6 +24,7 @@ export function mapTeacherRows(table) {
     ครูทั่วไป: "other",
     ครูประจำชั้น: "homeroom",
     ครูแนะแนว: "counselor",
+    ครูรายวิชา: "subject_teacher",
     เจ้าหน้าที่หอพัก: "dorm_staff",
   };
   return body

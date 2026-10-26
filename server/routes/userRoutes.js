@@ -59,6 +59,8 @@ const {
   SCHOOL_ROLE_LABELS: schoolRoleLabels,
   TEACHER_ROLE_CODES: teacherSchoolRoles,
   STAFF_ROLE_CODES: staffSchoolRoles,
+  normalizeGradeIds,
+  saveCounselorGrades,
 } = require("../utils/schoolStaffRoles");
 const positiveId = (value) =>
   /^\d+$/.test(String(value)) &&
@@ -105,7 +107,10 @@ function normalizeUserAssignments(body = {}) {
       const position = String(assignment.position || "").trim();
       if (employeeCode.length > 50 || position.length > 100)
         return { error: "รหัสบุคลากรหรือตำแหน่งยาวเกินกำหนด" };
+      const grades = normalizeGradeIds(assignment.grade_level_ids);
+      if (grades.error) return { error: grades.error };
       schoolAssignment = {
+        grade_level_ids: grades.value,
         school_id: Number(assignment.school_id),
         role_code: assignment.role_code,
         personnel_kind: assignment.personnel_kind,
@@ -183,7 +188,9 @@ router.get(
       return res.status(422).json({ message: "สถานะสมาชิกไม่ถูกต้อง" });
     }
     if (memberType && !typeRules.FILTERABLE_TYPES.has(memberType)) {
-      return res.status(422).json({ message: "ประเภทผู้มารับบริการไม่ถูกต้อง" });
+      return res
+        .status(422)
+        .json({ message: "ประเภทผู้มารับบริการไม่ถูกต้อง" });
     }
 
     const conditions = [];
@@ -667,6 +674,14 @@ router.get(
           WHERE t.status='active' AND o.status='active' AND o.org_type='school'
           ORDER BY t.sort_order,t.name`,
       );
+      const [grades] = await db.query(
+        `SELECT g.id, g.name, g.school_id, s.organization_id
+           FROM school_grade_levels g
+           JOIN schools s ON s.id=g.school_id
+           JOIN organizations o ON o.id=s.organization_id
+          WHERE g.status='active' AND o.status='active' AND o.org_type='school'
+          ORDER BY g.level_order,g.id`,
+      );
       const organizationIds = new Set([
         ...schools.map((row) => Number(row.organization_id)),
         ...teacherTypes.map((row) => Number(row.organization_id)),
@@ -682,6 +697,9 @@ router.get(
               teacher_types: teacherTypes.filter(
                 (row) => Number(row.organization_id) === organizationId,
               ),
+              grades: grades
+                .filter((row) => Number(row.organization_id) === organizationId)
+                .map(({ id, name, school_id }) => ({ id, name, school_id })),
               role_labels: schoolRoleLabels,
             },
           ]),
@@ -725,6 +743,9 @@ router.get(
       const [schoolAssignments] = await db.query(
         `SELECT s.organization_id, s.id AS school_id, s.name AS school_name,
                 COALESCE(sr.role_code,'other') AS role_code,
+                COALESCE(sr.grade_scoped,0) AS grade_scoped,
+                (SELECT JSON_ARRAYAGG(rg.grade_level_id) FROM school_staff_role_grades rg
+                  WHERE rg.school_id=s.id AND rg.user_id=?) AS grade_level_ids,
                 CASE WHEN t.id IS NULL OR t.status <> 'active' THEN 'staff' ELSE 'teacher' END AS personnel_kind,
                 t.id AS teacher_id, t.teacher_type_id, t.employee_code, t.position
            FROM schools s
@@ -734,8 +755,19 @@ router.get(
              ON t.school_id=s.id AND t.user_id=? AND t.status='active'
           WHERE sr.user_id IS NOT NULL OR t.user_id IS NOT NULL
           ORDER BY s.name`,
-        [row.id, row.id],
+        [row.id, row.id, row.id],
       );
+      // null = the whole school; a list = a counselor limited to those grades.
+      for (const assignment of schoolAssignments) {
+        const ids =
+          typeof assignment.grade_level_ids === "string"
+            ? JSON.parse(assignment.grade_level_ids)
+            : assignment.grade_level_ids;
+        assignment.grade_level_ids = Number(assignment.grade_scoped)
+          ? (ids || []).map(Number)
+          : null;
+        delete assignment.grade_scoped;
+      }
       const actorRoleId = Number(req.user.role_id);
       if (
         actorRoleId !== 1 &&
@@ -1002,6 +1034,13 @@ router.put(
            ON DUPLICATE KEY UPDATE role_code=VALUES(role_code),status='active',updated_by=VALUES(updated_by)`,
           [school.id, userId, assignment.role_code, req.user.id],
         );
+        await saveCounselorGrades(connection, {
+          schoolId: school.id,
+          userId,
+          roleCode: assignment.role_code,
+          gradeLevelIds: assignment.grade_level_ids,
+          actorId: req.user.id,
+        });
         if (assignment.personnel_kind === "teacher") {
           await upsertSchoolTeacher(connection, {
             schoolId: school.id,

@@ -1,0 +1,166 @@
+/* Behaviour reports and physical follow-up (school care). */
+.behavior-sub {
+  display: block;
+  font-size: var(--suth-fs-sm);
+}
+.behavior-tab-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.behavior-tab-head h3 {
+  margin: 0;
+}
+.behavior-levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
+}
+.behavior-levels legend {
+  padding: 0 4px;
+  font-weight: 600;
+  font-size: var(--suth-fs-sm);
+}
+.behavior-levels label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  cursor: pointer;
+}
+.behavior-levels input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--suth-action-strong);
+}
+.behavior-detail {
+  display: grid;
+  gap: 18px;
+}
+.behavior-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px 18px;
+  margin: 0;
+}
+.behavior-facts dt {
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-sm);
+}
+.behavior-facts dd {
+  margin: 4px 0 0;
+  font-weight: 600;
+}
+.behavior-block h3 {
+  margin: 0 0 8px;
+  font-size: var(--suth-fs-md);
+}
+.behavior-text {
+  margin: 4px 0 0;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.behavior-history {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.behavior-history li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  padding: 10px 12px;
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface-2);
+}
+.behavior-history li .behavior-text {
+  flex-basis: 100%;
+}
+.behavior-cancel {
+  color: var(--suth-danger);
+}
+.care-steps {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: care-step;
+}
+.care-steps li {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 10px;
+  align-items: baseline;
+  counter-increment: care-step;
+}
+.care-steps strong::before {
+  content: counter(care-step) ". ";
+}
+.care-steps span {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.care-guidance-box {
+  border-left: 4px solid var(--suth-action-strong);
+  background: var(--suth-surface-2);
+  padding: 12px 16px;
+  border-radius: var(--suth-radius);
+}
+.care-guidance-box h3 {
+  margin: 0 0 6px;
+}
+.care-risk-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.care-risk-tabs button {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+  font: inherit;
+  cursor: pointer;
+}
+.care-risk-tabs button.is-active {
+  border-color: var(--suth-action-strong);
+  background: var(--suth-action-strong);
+  color: var(--suth-on-action, #2b1a0e);
+  font-weight: 600;
+}
+.care-approve {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-weight: 600;
+}
+.care-approve input {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  accent-color: var(--suth-action-strong);
+}
+.appointment-topic {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+.appointment-topic .sch-field {
+  flex: 1;
+}
+.appointment-topic .care-approve {
+  min-height: 44px;
+  align-items: center;
+}

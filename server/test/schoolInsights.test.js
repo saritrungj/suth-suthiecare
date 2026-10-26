@@ -14,6 +14,9 @@ const connection = {
   rollback: async () => {},
   release() {},
   query: async (sql, values) => {
+    // The insight save first reads the stored record to merge into it.
+    if (sql.startsWith("SELECT payload_encrypted FROM school_student_insights"))
+      return [[]];
     writes.push({ sql, values });
     return [{ insertId: 8 }];
   },
@@ -105,7 +108,8 @@ test("insight endpoints deny before private reads and encrypt permitted optional
     const insight = await insightResponse.json();
     assert.equal(insight.records[0].recorded_by_name, "ครู สมใจ ดูแล");
     assert.equal(insight.records[0].issue, "ติดตามการปรับตัว");
-    const body = { guardian_name: "ผู้ปกครองทดสอบ" };
+    // Guardian details moved to the contacts endpoint; insight fields stay.
+    const body = { living_with: "อยู่กับยายทดสอบ" };
     assert.equal(
       (
         await fetch(url + "/insights", {
@@ -117,13 +121,13 @@ test("insight endpoints deny before private reads and encrypt permitted optional
       200,
     );
     const saved = writes.at(-1).values[1];
-    assert.ok(!saved.includes(body.guardian_name));
+    assert.ok(!saved.includes(body.living_with));
     assert.equal(
       readJson(
         saved,
         fieldContext("school_student_insights", "payload_encrypted", 7),
-      ).guardian_name,
-      body.guardian_name,
+      ).living_with,
+      body.living_with,
     );
     assert.throws(() =>
       readJson(
@@ -133,7 +137,7 @@ test("insight endpoints deny before private reads and encrypt permitted optional
     );
     assert.ok(
       !JSON.stringify(audits.map((a) => a.slice(1, 5))).includes(
-        body.guardian_name,
+        body.living_with,
       ),
     );
     assert.equal(

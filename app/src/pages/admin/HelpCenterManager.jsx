@@ -1133,7 +1133,10 @@ export default function HelpCenterManager() {
                             }}
                           ></th>
                           <th
-                            style={{ padding: "10px 15px", fontSize: "var(--suth-fs-label)" }}
+                            style={{
+                              padding: "10px 15px",
+                              fontSize: "var(--suth-fs-label)",
+                            }}
                           >
                             ชื่อหมวดหมู่
                           </th>
@@ -1498,7 +1501,10 @@ export default function HelpCenterManager() {
                       {homepageFaqCount >= 6 && (
                         <span className="hc-toggle-error-msg">
                           <FaTimesCircle
-                            style={{ fontSize: "var(--suth-fs-sm)", flexShrink: 0 }}
+                            style={{
+                              fontSize: "var(--suth-fs-sm)",
+                              flexShrink: 0,
+                            }}
                           />{" "}
                           โควตาเต็มแล้ว
                         </span>

@@ -1,0 +1,118 @@
+/* Checkboxes and radios drawn in the site's own style instead of the
+   browser's: a rounded square (checkbox) or a ring (radio) on the control
+   line, filled with the strong action orange when chosen.
+
+   Every selector is wrapped in :where() so it has no specificity: a page or
+   component that sizes, hides (toggle switches, chip pickers) or recolours
+   its inputs keeps doing so. To recolour one group, set --choice-color on it
+   or on a parent (public forms use their theme colour). */
+:root {
+  --choice-size: 1.125rem;
+  --choice-color: var(--suth-action-strong, #c2410c);
+  --choice-mark: #ffffff;
+  --choice-line: var(--suth-control-line, #afbdc7);
+  --choice-surface: var(--suth-surface, #ffffff);
+}
+
+:where(input[type="checkbox"], input[type="radio"]) {
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  inline-size: var(--choice-size);
+  block-size: var(--choice-size);
+  flex: none;
+  padding: 0;
+  display: inline-block;
+  vertical-align: -0.2em;
+  border: 1.5px solid var(--choice-line);
+  border-radius: 6px;
+  background-color: var(--choice-surface);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  color: var(--choice-color);
+  cursor: pointer;
+  transition:
+    background-color 140ms ease-out,
+    border-color 140ms ease-out,
+    box-shadow 140ms ease-out;
+}
+
+:where(input[type="radio"]) {
+  border-radius: 50%;
+}
+
+:where(input[type="checkbox"], input[type="radio"]):where(:hover):where(
+    :not(:disabled)
+  ) {
+  border-color: var(--choice-color);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--choice-color) 12%, transparent);
+}
+
+:where(input[type="checkbox"]):where(:checked, :indeterminate) {
+  border-color: var(--choice-color);
+  background-color: var(--choice-color);
+}
+
+/* The tick and the dash are white strokes; the fill gives them >= 4.5:1. */
+:where(input[type="checkbox"]):where(:checked) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M4.6 9.3l3 3 5.8-6.4' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+:where(input[type="checkbox"]):where(:indeterminate) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5 9h8' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* Radio: a ring with a filled centre. */
+:where(input[type="radio"]):where(:checked) {
+  border-color: var(--choice-color);
+  background-color: var(--choice-color);
+  box-shadow: inset 0 0 0 3.5px var(--choice-surface);
+}
+
+:where(input[type="radio"]):where(:checked):where(:hover):where(
+    :not(:disabled)
+  ) {
+  box-shadow:
+    inset 0 0 0 3.5px var(--choice-surface),
+    0 0 0 4px color-mix(in srgb, var(--choice-color) 12%, transparent);
+}
+
+:where(input[type="checkbox"], input[type="radio"]):where(:focus-visible) {
+  outline: 3px solid var(--suth-focus-ring, rgba(232, 101, 15, 0.32));
+  outline-offset: 2px;
+}
+
+:where(input[type="checkbox"], input[type="radio"]):where(:disabled) {
+  cursor: not-allowed;
+  border-color: var(--suth-line, #d8e0e6);
+  background-color: var(--suth-canvas, #f5f7fa);
+}
+
+:where(input[type="checkbox"], input[type="radio"]):where(:disabled):where(
+    :checked,
+    :indeterminate
+  ) {
+  opacity: 0.45;
+  border-color: var(--choice-color);
+  background-color: var(--choice-color);
+}
+
+:where(input[type="checkbox"], input[type="radio"]):where(
+  [aria-invalid="true"]
+) {
+  border-color: var(--suth-danger, #c62828);
+}
+
+@media (forced-colors: active) {
+  :where(input[type="checkbox"], input[type="radio"]) {
+    appearance: auto;
+    -webkit-appearance: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(input[type="checkbox"], input[type="radio"]) {
+    transition: none;
+  }
+}

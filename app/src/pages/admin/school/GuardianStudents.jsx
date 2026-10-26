@@ -9,7 +9,7 @@ import {
   Pagination,
   studentName,
 } from "./schoolUi";
-import StudentDetailModal from "./StudentDetailModal";
+import { useOpenStudentFile } from "./studentFileLink";
 import { DEFAULT_PAGE_SIZE } from "../../../components/table/TablePagination";
 import DataPanel from "../../../components/table/DataPanel";
 import ResultSummary from "../../../components/table/ResultSummary";
@@ -21,7 +21,7 @@ export default function GuardianStudents() {
   const [revision, setRevision] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [viewing, setViewing] = useState(null);
+  const openFile = useOpenStudentFile();
   useEffect(() => {
     let alive = true;
     setLoading(true);
@@ -50,7 +50,7 @@ export default function GuardianStudents() {
       <main className="sch-page">
         <PageHeader
           title="นักเรียนในความดูแล"
-          description="ดูข้อมูลทั่วไป สุขภาพกาย สุขภาพจิต และข้อมูลเชิงลึกของนักเรียนในความดูแล"
+          description="ดูข้อมูลทั่วไป ข้อมูลติดต่อ สุขภาพกาย และผลประเมินสุขภาพจิตของนักเรียนในความดูแล"
         />
         <DataPanel className="sch-card" aria-label="นักเรียนในความดูแล">
           <p className="sch-muted">
@@ -101,7 +101,11 @@ export default function GuardianStudents() {
                       <td>
                         <button
                           className="sch-btn sch-btn-secondary"
-                          onClick={() => setViewing(student.id)}
+                          onClick={() =>
+                            openFile(student.id, {
+                              ids: result.data.map((s) => s.id),
+                            })
+                          }
                         >
                           <FiEye aria-hidden="true" />
                           ดูข้อมูล
@@ -124,12 +128,6 @@ export default function GuardianStudents() {
             />
           )}
         </DataPanel>
-        {viewing && (
-          <StudentDetailModal
-            studentId={viewing}
-            onClose={() => setViewing(null)}
-          />
-        )}
       </main>
     </div>
   );

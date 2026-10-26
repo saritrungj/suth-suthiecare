@@ -210,7 +210,11 @@
 
 /*  ปุ่มบันทึก */
 .abm-btn-save {
-  background: linear-gradient(135deg, var(--suth-action), var(--suth-action-ink));
+  background: linear-gradient(
+    135deg,
+    var(--suth-action),
+    var(--suth-action-ink)
+  );
   color: var(--suth-on-action);
   border: none;
   padding: 12px 32px;
@@ -223,7 +227,8 @@
 
 .abm-btn-save:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 10px 20px color-mix(in srgb, var(--suth-action) 35%, transparent);
+  box-shadow: 0 10px 20px
+    color-mix(in srgb, var(--suth-action) 35%, transparent);
   filter: brightness(1.05);
 }
 

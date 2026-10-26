@@ -1,5 +1,10 @@
 /* Result image management: back-office page with one card per result level. */
+/* The admin shell clips overflow, so the page scrolls itself. */
 .rim-page {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  align-content: start;
   display: grid;
   gap: 20px;
   padding: clamp(16px, 3vw, 28px);
@@ -11,6 +16,10 @@
   display: grid;
   gap: 20px;
   padding: clamp(18px, 3vw, 28px);
+}
+/* The page grid spaces the stacked panels. */
+.rim-page > .rim-panel {
+  margin: 0;
 }
 .rim-panel__head {
   display: flex;
@@ -208,6 +217,115 @@
   flex-shrink: 0;
   margin-top: 3px;
   color: var(--suth-action-ink);
+}
+
+/* Picture library used by individual scoring ranges. */
+.rim-library {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rim-library__item {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--suth-line-soft);
+  border-radius: 16px;
+  background: var(--suth-surface);
+}
+.rim-library__item[aria-busy="true"] {
+  opacity: 0.6;
+}
+.rim-library__item img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  border-radius: 10px;
+  background: var(--suth-surface-2);
+}
+.rim-library__name {
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-caption);
+  overflow-wrap: anywhere;
+}
+.rim-library__remove {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--suth-line);
+  border-radius: 50%;
+  background: var(--suth-surface);
+  color: var(--suth-danger);
+  cursor: pointer;
+}
+.rim-library__remove:hover:not(:disabled) {
+  background: var(--suth-danger-tint);
+}
+.rim-library__remove:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--suth-danger) 40%, transparent);
+  outline-offset: 2px;
+}
+.rim-library-empty {
+  margin: 0;
+  padding: 24px;
+  border: 1.5px dashed var(--suth-line);
+  border-radius: 16px;
+  color: var(--suth-muted);
+  text-align: center;
+}
+
+/* Result page wording. */
+.rim-texts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px 16px;
+}
+.rim-field {
+  display: grid;
+  gap: 6px;
+}
+.rim-field--wide {
+  grid-column: 1 / -1;
+}
+.rim-field__label {
+  color: var(--suth-ink);
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+}
+.rim-field__input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--suth-control-line);
+  border-radius: 12px;
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+  font: inherit;
+  font-size: var(--suth-fs-sm);
+  line-height: 1.5;
+  resize: vertical;
+}
+.rim-field__input::placeholder {
+  color: var(--suth-muted);
+}
+.rim-field__input:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--suth-action) 35%, transparent);
+  outline-offset: 1px;
+  border-color: var(--suth-action-strong);
+}
+.rim-texts__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .rim-loading {

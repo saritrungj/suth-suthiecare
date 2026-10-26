@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   FiActivity,
   FiArrowRight,
@@ -9,9 +9,7 @@ import {
   FiDownload,
   FiEdit3,
   FiGlobe,
-  FiGrid,
   FiHeart,
-  FiHome,
   FiLock,
   FiMenu,
   FiPhoneCall,
@@ -211,16 +209,6 @@ export default function SutLanding2() {
     return () => window.cancelAnimationFrame(frame);
   }, [hash, loading, loadingClinics]);
 
-  const organizationCount = useMemo(
-    () =>
-      new Set(
-        clinics
-          .map((c) => c.organization_code || c.organization_id)
-          .filter((key) => key != null && key !== ""),
-      ).size,
-    [clinics],
-  );
-
   const fetchAllCounts = useCallback(async (formList) => {
     if (!formList.length) return;
     try {
@@ -337,32 +325,6 @@ export default function SutLanding2() {
                   {t("sutlanding.btn_steps")}
                 </button>
               </div>
-              {!loadingClinics && clinics.length > 0 && (
-                <ul
-                  className="sut2-hero__stats"
-                  aria-label={t("sutlanding.stats_label")}
-                >
-                  {organizationCount > 1 && (
-                    <li className="is-peach">
-                      <FiHome aria-hidden="true" />
-                      <strong>{organizationCount}</strong>
-                      {t("sutlanding.stat_orgs")}
-                    </li>
-                  )}
-                  <li className="is-mint">
-                    <FiGrid aria-hidden="true" />
-                    <strong>{clinics.length}</strong>
-                    {t("sutlanding.stat_clinics")}
-                  </li>
-                  {!loading && (
-                    <li className="is-sky">
-                      <FiClipboard aria-hidden="true" />
-                      <strong>{forms.length}</strong>
-                      {t("sutlanding.stat_forms")}
-                    </li>
-                  )}
-                </ul>
-              )}
             </div>
 
             {/* Admin banners lead the hero; without any, the illustrated

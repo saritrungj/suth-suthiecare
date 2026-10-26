@@ -659,7 +659,8 @@ function MasterDataContent() {
                         maxLength={key === "name" && !hasCode ? 100 : 255}
                         type={key === "color" ? "color" : "text"}
                         value={
-                          editing[key] || (key === "color" ? DEFAULT_RECORD_COLOR : "")
+                          editing[key] ||
+                          (key === "color" ? DEFAULT_RECORD_COLOR : "")
                         }
                         onChange={(event) =>
                           setEditing({ ...editing, [key]: event.target.value })

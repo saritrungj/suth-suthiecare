@@ -1,4 +1,5 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   FiCalendar,
   FiChevronLeft,
@@ -59,6 +60,36 @@ const splitValue = (value, withTime) => {
   return { date: m?.[1] || "", time: m?.[2] || "" };
 };
 
+// The nearest element that fixed-position descendants are placed against
+// instead of the viewport.
+const containingBlock = (el) => {
+  for (; el && el !== document.body; el = el.parentElement) {
+    const cs = getComputedStyle(el);
+    if (
+      cs.transform !== "none" ||
+      cs.filter !== "none" ||
+      cs.perspective !== "none" ||
+      (cs.backdropFilter && cs.backdropFilter !== "none") ||
+      /paint|layout|strict|content/.test(cs.contain) ||
+      /transform|filter|perspective/.test(cs.willChange)
+    )
+      return el;
+  }
+  return null;
+};
+// The outermost fixed layer (a modal overlay) holding the field, so the
+// calendar joins that layer above the modal's own scrolling body.
+const outermostFixed = (el) => {
+  let found = null;
+  for (
+    el = el?.parentElement;
+    el && el !== document.body;
+    el = el.parentElement
+  )
+    if (getComputedStyle(el).position === "fixed") found = el;
+  return found;
+};
+
 // A Buddhist-era date field with a calendar in the app's own look.
 // - value: "YYYY-MM-DD" (or "YYYY-MM-DDTHH:mm" with `withTime`), or "".
 // - rangeStart/rangeEnd tint the days between a from/to pair.
@@ -88,10 +119,12 @@ export default function ThaiDatePicker({
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("days");
   const [dropUp, setDropUp] = useState(false);
+  const [position, setPosition] = useState(null);
   const [view, setView] = useState(() => parse(date) || parse(today));
   const [focusKey, setFocusKey] = useState(date || today);
   const rootRef = useRef(null);
   const gridRef = useRef(null);
+  const popRef = useRef(null);
   const triggerRef = useRef(null);
   const dialogId = useId();
 
@@ -102,9 +135,12 @@ export default function ThaiDatePicker({
     setView(parse(start));
     setFocusKey(start);
     setMode("days");
-    setDropUp(false);
     const onDown = (e) => {
-      if (!rootRef.current?.contains(e.target)) setOpen(false);
+      if (
+        !rootRef.current?.contains(e.target) &&
+        !popRef.current?.contains(e.target)
+      )
+        setOpen(false);
     };
     document.addEventListener("mousedown", onDown);
     return () => document.removeEventListener("mousedown", onDown);
@@ -112,33 +148,67 @@ export default function ThaiDatePicker({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  // Place the open calendar inside the page's own scroll area (the admin
-  // shell keeps a toolbar above it): below the field by default, above it
-  // only when it really fits there, otherwise scroll it into view.
-  useEffect(() => {
-    if (!open) return undefined;
-    const frame = requestAnimationFrame(() => {
-      const pop = rootRef.current?.querySelector(".tdp-pop");
-      const trigger = triggerRef.current?.getBoundingClientRect();
-      if (!pop || !trigger) return;
-      let box = { top: 0, bottom: window.innerHeight };
-      for (let el = rootRef.current.parentElement; el; el = el.parentElement) {
-        if (/(auto|scroll|hidden)/.test(getComputedStyle(el).overflowY)) {
-          const r = el.getBoundingClientRect();
-          box = {
-            top: Math.max(0, r.top),
-            bottom: Math.min(window.innerHeight, r.bottom),
-          };
-          break;
-        }
+  // The calendar is portalled out of the field and pinned with fixed
+  // coordinates, so a modal's scrolling body, sticky footer or stacking
+  // context can never clip or cover it. Below the field by default, above it
+  // only when it fits there better.
+  const place = () => {
+    const trigger = triggerRef.current?.getBoundingClientRect();
+    const pop = popRef.current;
+    if (!trigger || !pop) return;
+    const gap = 10;
+    const margin = 8;
+    const width = pop.offsetWidth;
+    const height = pop.offsetHeight;
+    const below = window.innerHeight - trigger.bottom - gap - margin;
+    const above = trigger.top - gap - margin;
+    const up = height > below && above > below;
+    let left = align === "end" ? trigger.right - width : trigger.left;
+    left = Math.max(margin, Math.min(left, window.innerWidth - width - margin));
+    let top = up ? trigger.top - gap - height : trigger.bottom + gap;
+    top = Math.max(margin, Math.min(top, window.innerHeight - height - margin));
+    // A transformed or filtered ancestor becomes the containing block of
+    // fixed elements; offset by it so the popup still lands on the field.
+    const box = containingBlock(pop.parentElement)?.getBoundingClientRect() || {
+      left: 0,
+      top: 0,
+    };
+    setDropUp(up);
+    setPosition({ left: left - box.left, top: top - box.top });
+  };
+
+  useLayoutEffect(() => {
+    if (!open) {
+      setPosition(null);
+      return undefined;
+    }
+    place();
+    // A scroll that moves the field (a modal body, the page) keeps the
+    // calendar attached to it; once the field leaves the screen it closes.
+    const move = (e) => {
+      if (popRef.current?.contains(e.target)) return;
+      const r = triggerRef.current?.getBoundingClientRect();
+      if (!r || r.bottom < 0 || r.top > window.innerHeight) {
+        setOpen(false);
+        return;
       }
-      const need = pop.getBoundingClientRect().height + 12;
-      if (trigger.bottom + need > box.bottom && trigger.top - need >= box.top)
-        setDropUp(true);
-      else pop.scrollIntoView({ block: "nearest", behavior: "smooth" });
-    });
-    return () => cancelAnimationFrame(frame);
+      place();
+    };
+    const resize = () => place();
+    document.addEventListener("scroll", move, true);
+    window.addEventListener("resize", resize);
+    return () => {
+      document.removeEventListener("scroll", move, true);
+      window.removeEventListener("resize", resize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
+
+  // The month, year and time views have different heights.
+  useLayoutEffect(() => {
+    if (open) place();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, view.y, view.m]);
 
   useEffect(() => {
     if (open && mode === "days")
@@ -214,6 +284,12 @@ export default function ThaiDatePicker({
   const minYear = min ? parse(min)?.y : null;
   const shown =
     (isoToThai(date) || "") + (withTime && date && time ? ` ${time} น.` : "");
+  // Mount inside the open drawer or dialog so its focus trap, inert tree and
+  // outside-click handling still treat the calendar as part of it.
+  const portalHost =
+    rootRef.current?.closest(".cw-drawer-overlay") ||
+    outermostFixed(rootRef.current) ||
+    document.body;
 
   return (
     <div
@@ -260,273 +336,283 @@ export default function ThaiDatePicker({
         />
       )}
 
-      {open && (
-        <div
-          className="tdp-pop"
-          id={dialogId}
-          role="dialog"
-          aria-label={"เลือก" + label}
-          onKeyDown={onKeyDown}
-        >
-          <div className="tdp-head">
-            <button
-              type="button"
-              className="tdp-nav"
-              aria-label={
-                mode === "days"
-                  ? "เดือนก่อนหน้า"
-                  : mode === "months"
-                    ? "ปีก่อนหน้า"
-                    : "ช่วงปีก่อนหน้า"
-              }
-              onClick={() =>
-                mode === "days"
-                  ? stepMonth(-1)
-                  : setView({
-                      ...view,
-                      y: view.y - (mode === "months" ? 1 : 12),
-                    })
-              }
-            >
-              <FiChevronLeft aria-hidden="true" />
-            </button>
-            {mode === "days" && (
+      {open &&
+        createPortal(
+          <div
+            className={"tdp-pop" + (dropUp ? " is-up" : "")}
+            ref={popRef}
+            id={dialogId}
+            role="dialog"
+            aria-label={"เลือก" + label}
+            onKeyDown={onKeyDown}
+            style={
+              position
+                ? { left: position.left, top: position.top }
+                : { visibility: "hidden" }
+            }
+          >
+            <div className="tdp-head">
               <button
                 type="button"
-                className="tdp-month"
-                aria-live="polite"
-                aria-label={`${MONTHS[view.m]} ${view.y + 543} เลือกเดือนและปี`}
-                onClick={() => setMode("months")}
+                className="tdp-nav"
+                aria-label={
+                  mode === "days"
+                    ? "เดือนก่อนหน้า"
+                    : mode === "months"
+                      ? "ปีก่อนหน้า"
+                      : "ช่วงปีก่อนหน้า"
+                }
+                onClick={() =>
+                  mode === "days"
+                    ? stepMonth(-1)
+                    : setView({
+                        ...view,
+                        y: view.y - (mode === "months" ? 1 : 12),
+                      })
+                }
               >
-                {MONTHS[view.m]} {view.y + 543}
+                <FiChevronLeft aria-hidden="true" />
               </button>
-            )}
-            {mode === "months" && (
+              {mode === "days" && (
+                <button
+                  type="button"
+                  className="tdp-month"
+                  aria-live="polite"
+                  aria-label={`${MONTHS[view.m]} ${view.y + 543} เลือกเดือนและปี`}
+                  onClick={() => setMode("months")}
+                >
+                  {MONTHS[view.m]} {view.y + 543}
+                </button>
+              )}
+              {mode === "months" && (
+                <button
+                  type="button"
+                  className="tdp-month"
+                  aria-live="polite"
+                  aria-label={`ปี ${view.y + 543} เลือกปี`}
+                  onClick={() => setMode("years")}
+                >
+                  พ.ศ. {view.y + 543}
+                </button>
+              )}
+              {mode === "years" && (
+                <strong className="tdp-month" aria-live="polite">
+                  {decadeStart + 543} – {decadeStart + 11 + 543}
+                </strong>
+              )}
               <button
                 type="button"
-                className="tdp-month"
-                aria-live="polite"
-                aria-label={`ปี ${view.y + 543} เลือกปี`}
-                onClick={() => setMode("years")}
+                className="tdp-nav"
+                aria-label={
+                  mode === "days"
+                    ? "เดือนถัดไป"
+                    : mode === "months"
+                      ? "ปีถัดไป"
+                      : "ช่วงปีถัดไป"
+                }
+                onClick={() =>
+                  mode === "days"
+                    ? stepMonth(1)
+                    : setView({
+                        ...view,
+                        y: view.y + (mode === "months" ? 1 : 12),
+                      })
+                }
               >
-                พ.ศ. {view.y + 543}
+                <FiChevronRight aria-hidden="true" />
               </button>
-            )}
-            {mode === "years" && (
-              <strong className="tdp-month" aria-live="polite">
-                {decadeStart + 543} – {decadeStart + 11 + 543}
-              </strong>
-            )}
-            <button
-              type="button"
-              className="tdp-nav"
-              aria-label={
-                mode === "days"
-                  ? "เดือนถัดไป"
-                  : mode === "months"
-                    ? "ปีถัดไป"
-                    : "ช่วงปีถัดไป"
-              }
-              onClick={() =>
-                mode === "days"
-                  ? stepMonth(1)
-                  : setView({
-                      ...view,
-                      y: view.y + (mode === "months" ? 1 : 12),
-                    })
-              }
-            >
-              <FiChevronRight aria-hidden="true" />
-            </button>
-          </div>
+            </div>
 
-          {mode === "days" && (
-            <div className="tdp-grid" role="grid" ref={gridRef}>
-              <div className="tdp-row" role="row">
-                {WEEKDAYS.map((w, i) => (
-                  <span
-                    key={w}
-                    role="columnheader"
-                    className={"tdp-weekday" + (i === 0 ? " is-sun" : "")}
-                  >
-                    {w}
-                  </span>
+            {mode === "days" && (
+              <div className="tdp-grid" role="grid" ref={gridRef}>
+                <div className="tdp-row" role="row">
+                  {WEEKDAYS.map((w, i) => (
+                    <span
+                      key={w}
+                      role="columnheader"
+                      className={"tdp-weekday" + (i === 0 ? " is-sun" : "")}
+                    >
+                      {w}
+                    </span>
+                  ))}
+                </div>
+                {Array.from({ length: 6 }, (_, row) => (
+                  <div className="tdp-row" role="row" key={row}>
+                    {days.slice(row * 7, row * 7 + 7).map((key) => {
+                      const p = parse(key);
+                      const outside = p.m !== view.m;
+                      const ok = allowed(key);
+                      const selected = key === date;
+                      const inRange = lo && hi && key > lo && key < hi;
+                      const edge = (lo && key === lo) || (hi && key === hi);
+                      const cls = ["tdp-day"];
+                      if (outside) cls.push("is-outside");
+                      if (key === today) cls.push("is-today");
+                      if (selected) cls.push("is-selected");
+                      else if (edge) cls.push("is-edge");
+                      // The range is a band on the cells; start and end close it.
+                      const hasRange = lo && hi && lo < hi;
+                      // Days of other months stay off the band, so it closes
+                      // on the month's first and last day too.
+                      const cell = ["tdp-cell"];
+                      const banded =
+                        hasRange &&
+                        !outside &&
+                        (inRange || key === lo || key === hi);
+                      if (banded) {
+                        const col = days.indexOf(key) % 7;
+                        const prev = days[days.indexOf(key) - 1];
+                        const next = days[days.indexOf(key) + 1];
+                        cell.push("in-range");
+                        if (key === lo) cell.push("range-start");
+                        else if (col === 0 || !prev || parse(prev).m !== view.m)
+                          cell.push("cap-start");
+                        if (key === hi) cell.push("range-end");
+                        else if (col === 6 || !next || parse(next).m !== view.m)
+                          cell.push("cap-end");
+                      }
+                      return (
+                        <span
+                          role="gridcell"
+                          key={key}
+                          className={cell.join(" ")}
+                        >
+                          <button
+                            type="button"
+                            data-day={key}
+                            className={cls.join(" ")}
+                            tabIndex={key === focusKey ? 0 : -1}
+                            disabled={!ok}
+                            aria-pressed={selected}
+                            aria-label={
+                              p.d +
+                              " " +
+                              MONTHS[p.m] +
+                              " " +
+                              (p.y + 543) +
+                              (key === today ? " (วันนี้)" : "")
+                            }
+                            onClick={() => pick(key)}
+                            onFocus={() => setFocusKey(key)}
+                          >
+                            {p.d}
+                          </button>
+                        </span>
+                      );
+                    })}
+                  </div>
                 ))}
               </div>
-              {Array.from({ length: 6 }, (_, row) => (
-                <div className="tdp-row" role="row" key={row}>
-                  {days.slice(row * 7, row * 7 + 7).map((key) => {
-                    const p = parse(key);
-                    const outside = p.m !== view.m;
-                    const ok = allowed(key);
-                    const selected = key === date;
-                    const inRange = lo && hi && key > lo && key < hi;
-                    const edge = (lo && key === lo) || (hi && key === hi);
-                    const cls = ["tdp-day"];
-                    if (outside) cls.push("is-outside");
-                    if (key === today) cls.push("is-today");
-                    if (selected) cls.push("is-selected");
-                    else if (edge) cls.push("is-edge");
-                    // The range is a band on the cells; start and end close it.
-                    const hasRange = lo && hi && lo < hi;
-                    // Days of other months stay off the band, so it closes
-                    // on the month's first and last day too.
-                    const cell = ["tdp-cell"];
-                    const banded =
-                      hasRange &&
-                      !outside &&
-                      (inRange || key === lo || key === hi);
-                    if (banded) {
-                      const col = days.indexOf(key) % 7;
-                      const prev = days[days.indexOf(key) - 1];
-                      const next = days[days.indexOf(key) + 1];
-                      cell.push("in-range");
-                      if (key === lo) cell.push("range-start");
-                      else if (col === 0 || !prev || parse(prev).m !== view.m)
-                        cell.push("cap-start");
-                      if (key === hi) cell.push("range-end");
-                      else if (col === 6 || !next || parse(next).m !== view.m)
-                        cell.push("cap-end");
-                    }
-                    return (
-                      <span
-                        role="gridcell"
-                        key={key}
-                        className={cell.join(" ")}
-                      >
-                        <button
-                          type="button"
-                          data-day={key}
-                          className={cls.join(" ")}
-                          tabIndex={key === focusKey ? 0 : -1}
-                          disabled={!ok}
-                          aria-pressed={selected}
-                          aria-label={
-                            p.d +
-                            " " +
-                            MONTHS[p.m] +
-                            " " +
-                            (p.y + 543) +
-                            (key === today ? " (วันนี้)" : "")
-                          }
-                          onClick={() => pick(key)}
-                          onFocus={() => setFocusKey(key)}
-                        >
-                          {p.d}
-                        </button>
-                      </span>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          )}
+            )}
 
-          {mode === "months" && (
-            <div className="tdp-choices" role="group" aria-label="เลือกเดือน">
-              {MONTHS_SHORT.map((name, m) => {
-                const lastDay = keyOf(
-                  view.y,
-                  m,
-                  new Date(Date.UTC(view.y, m + 1, 0)).getUTCDate(),
-                );
-                const firstDay = keyOf(view.y, m, 1);
-                const ok = allowed(lastDay) || allowed(firstDay);
-                const current = parse(date);
-                const isCurrent =
-                  current && current.y === view.y && current.m === m;
-                return (
-                  <button
-                    key={name}
-                    type="button"
-                    className={"tdp-choice" + (isCurrent ? " is-selected" : "")}
-                    aria-label={MONTHS[m] + " " + (view.y + 543)}
-                    disabled={!ok}
-                    onClick={() => showMonth(view.y, m)}
-                  >
-                    {name}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-
-          {mode === "years" && (
-            <div className="tdp-choices" role="group" aria-label="เลือกปี">
-              {Array.from({ length: 12 }, (_, i) => decadeStart + i).map(
-                (y) => {
-                  const ok =
-                    (maxYear == null || y <= maxYear) &&
-                    (minYear == null || y >= minYear);
-                  const isCurrent = parse(date)?.y === y;
+            {mode === "months" && (
+              <div className="tdp-choices" role="group" aria-label="เลือกเดือน">
+                {MONTHS_SHORT.map((name, m) => {
+                  const lastDay = keyOf(
+                    view.y,
+                    m,
+                    new Date(Date.UTC(view.y, m + 1, 0)).getUTCDate(),
+                  );
+                  const firstDay = keyOf(view.y, m, 1);
+                  const ok = allowed(lastDay) || allowed(firstDay);
+                  const current = parse(date);
+                  const isCurrent =
+                    current && current.y === view.y && current.m === m;
                   return (
                     <button
-                      key={y}
+                      key={name}
                       type="button"
                       className={
                         "tdp-choice" + (isCurrent ? " is-selected" : "")
                       }
+                      aria-label={MONTHS[m] + " " + (view.y + 543)}
                       disabled={!ok}
-                      onClick={() => {
-                        setView({ ...view, y });
-                        setMode("months");
-                      }}
+                      onClick={() => showMonth(view.y, m)}
                     >
-                      {y + 543}
+                      {name}
                     </button>
                   );
-                },
+                })}
+              </div>
+            )}
+
+            {mode === "years" && (
+              <div className="tdp-choices" role="group" aria-label="เลือกปี">
+                {Array.from({ length: 12 }, (_, i) => decadeStart + i).map(
+                  (y) => {
+                    const ok =
+                      (maxYear == null || y <= maxYear) &&
+                      (minYear == null || y >= minYear);
+                    const isCurrent = parse(date)?.y === y;
+                    return (
+                      <button
+                        key={y}
+                        type="button"
+                        className={
+                          "tdp-choice" + (isCurrent ? " is-selected" : "")
+                        }
+                        disabled={!ok}
+                        onClick={() => {
+                          setView({ ...view, y });
+                          setMode("months");
+                        }}
+                      >
+                        {y + 543}
+                      </button>
+                    );
+                  },
+                )}
+              </div>
+            )}
+
+            {withTime && (
+              <label className="tdp-time">
+                <FiClock aria-hidden="true" />
+                <span>เวลา</span>
+                <input
+                  type="time"
+                  className="tdp-time__input"
+                  value={time}
+                  disabled={!date}
+                  onChange={(e) => emit(date, e.target.value)}
+                />
+              </label>
+            )}
+
+            <div className="tdp-foot">
+              <button
+                type="button"
+                className="tdp-link"
+                onClick={() => {
+                  onChange("");
+                  close();
+                }}
+                disabled={!value}
+              >
+                <FiX aria-hidden="true" /> ล้างวันที่
+              </button>
+              {withTime ? (
+                <button
+                  type="button"
+                  className="tdp-today"
+                  onClick={() => close()}
+                >
+                  เสร็จ
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="tdp-today"
+                  disabled={!allowed(today)}
+                  onClick={() => pick(today)}
+                >
+                  วันนี้
+                </button>
               )}
             </div>
-          )}
-
-          {withTime && (
-            <label className="tdp-time">
-              <FiClock aria-hidden="true" />
-              <span>เวลา</span>
-              <input
-                type="time"
-                className="tdp-time__input"
-                value={time}
-                disabled={!date}
-                onChange={(e) => emit(date, e.target.value)}
-              />
-            </label>
-          )}
-
-          <div className="tdp-foot">
-            <button
-              type="button"
-              className="tdp-link"
-              onClick={() => {
-                onChange("");
-                close();
-              }}
-              disabled={!value}
-            >
-              <FiX aria-hidden="true" /> ล้างวันที่
-            </button>
-            {withTime ? (
-              <button
-                type="button"
-                className="tdp-today"
-                onClick={() => close()}
-              >
-                เสร็จ
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="tdp-today"
-                disabled={!allowed(today)}
-                onClick={() => pick(today)}
-              >
-                วันนี้
-              </button>
-            )}
-          </div>
-        </div>
-      )}
+          </div>,
+          portalHost,
+        )}
     </div>
   );
 }

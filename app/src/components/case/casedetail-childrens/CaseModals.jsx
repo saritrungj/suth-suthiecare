@@ -173,7 +173,9 @@ export default function CaseModals({
                         border: isSelected
                           ? `2px solid ${style.color}`
                           : "1px solid var(--suth-line-soft)",
-                        backgroundColor: isSelected ? style.bg : "var(--suth-surface)",
+                        backgroundColor: isSelected
+                          ? style.bg
+                          : "var(--suth-surface)",
                         boxShadow: isSelected
                           ? `0 4px 12px ${style.color}20`
                           : "none",
@@ -319,8 +321,12 @@ export default function CaseModals({
                       fontSize: "var(--suth-fs-sm)",
                       transition: "background 0.2s",
                     }}
-                    onMouseOver={(e) => (e.target.style.background = "var(--suth-action-ink)")}
-                    onMouseOut={(e) => (e.target.style.background = "var(--suth-action-pressed)")}
+                    onMouseOver={(e) =>
+                      (e.target.style.background = "var(--suth-action-ink)")
+                    }
+                    onMouseOut={(e) =>
+                      (e.target.style.background = "var(--suth-action-pressed)")
+                    }
                   >
                     <FaLink /> คัดลอก
                   </button>

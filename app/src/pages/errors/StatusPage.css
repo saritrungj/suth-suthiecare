@@ -42,7 +42,11 @@
   gap: 12px;
   padding: 14px 20px;
   border-bottom: 1px solid var(--suth-tint-line);
-  background: linear-gradient(110deg, var(--suth-surface-hover) 0%, var(--suth-tint-strong) 100%);
+  background: linear-gradient(
+    110deg,
+    var(--suth-surface-hover) 0%,
+    var(--suth-tint-strong) 100%
+  );
 }
 .status-card__logo {
   position: relative;

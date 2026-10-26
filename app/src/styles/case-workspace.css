@@ -1519,7 +1519,8 @@ body:has(.cw-drawer-overlay) {
 .cw-tabs .cw-tab[aria-selected="true"] {
   background: var(--suth-action-strong);
   color: var(--suth-on-action);
-  box-shadow: 0 4px 10px -4px color-mix(in srgb, var(--suth-action) 70%, transparent);
+  box-shadow: 0 4px 10px -4px
+    color-mix(in srgb, var(--suth-action) 70%, transparent);
 }
 
 .cw-tab:focus-visible {
@@ -1793,9 +1794,12 @@ body:has(.cw-drawer-overlay) {
   .cw-tabs {
     margin: 10px 10px 0;
     border-radius: var(--suth-radius-card);
+    /* A student file can have up to seven tabs: wrap rather than scroll. */
+    flex-wrap: wrap;
   }
 
   .cw-tabs .cw-tab {
+    flex: 1 1 64px;
     flex-direction: column;
     min-height: 58px;
     padding: 7px 2px;
@@ -1869,4 +1873,83 @@ body:has(.cw-drawer-overlay) {
 /* A mode switch inside the header band: translucent white over the apricot. */
 .admin-shell .dz-hero .cw-mode {
   background: color-mix(in srgb, var(--suth-surface) 72%, transparent);
+}
+
+/* ---------- Case file as its own page (CaseDrawer variant="page") ---------- */
+/* Same header, tabs and body as the drawer, laid out in the page flow: no
+   overlay or slide, the body grows with its content and the page scrolls. */
+.cw-drawer.cw-drawer--page {
+  width: 100%;
+  max-width: 1500px;
+  height: auto;
+  margin: 0 auto;
+  border-radius: var(--suth-radius-card);
+  box-shadow: var(--suth-shadow-soft);
+  animation: none;
+}
+
+.cw-drawer--page .cw-drawer-head {
+  padding: 16px 24px 16px;
+}
+
+.cw-drawer--page .cw-drawer-head h2 {
+  font-size: var(--suth-fs-hero, var(--suth-fs-title));
+}
+
+/* The tabs stay in reach while a long tab is scrolled. */
+.cw-drawer--page .cw-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--suth-surface);
+}
+
+.cw-drawer--page .cw-drawer-body {
+  flex: none;
+  overflow: visible;
+  padding: 22px 24px 4px;
+}
+
+.cw-back-btn {
+  min-height: var(--suth-control-h);
+  padding: 0 14px 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  font: inherit;
+  font-size: var(--suth-fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease-out,
+    color 160ms ease-out;
+}
+
+.cw-back-btn:hover {
+  border-color: var(--suth-action);
+  color: var(--suth-action-ink);
+}
+
+.cw-back-btn:focus-visible {
+  outline: 3px solid var(--suth-focus, var(--suth-action));
+  outline-offset: 2px;
+}
+
+@media (max-width: 760px) {
+  .cw-drawer.cw-drawer--page {
+    width: 100%;
+    border-radius: var(--suth-radius-inner);
+  }
+
+  .cw-drawer--page .cw-drawer-head {
+    padding: 10px 14px 12px;
+  }
+
+  .cw-drawer--page .cw-drawer-body {
+    padding: 14px 14px 0;
+  }
 }

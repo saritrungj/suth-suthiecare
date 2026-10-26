@@ -380,7 +380,9 @@ export default function HelpCenterUser() {
                             {toDisplayText(faq.question)}
                           </span>
                         </div>
-                        <FiChevronRight style={{ color: "var(--suth-muted)" }} />
+                        <FiChevronRight
+                          style={{ color: "var(--suth-muted)" }}
+                        />
                       </div>
                     </div>
                   ))

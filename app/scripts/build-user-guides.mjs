@@ -15,7 +15,10 @@ import { renderToStaticMarkup } from "react-dom/server";
 import * as Fi from "react-icons/fi";
 import { chromium } from "@playwright/test";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const root = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "../..",
+);
 const sources = path.join(root, "docs/user-guides");
 const output = path.join(root, "server/private/docs");
 const GUIDES = ["user", "central", "hospital", "school"];
@@ -96,7 +99,9 @@ const browser = await chromium.launch({
   executablePath: process.env.CHROMIUM_PATH || undefined,
 });
 try {
-  const tab = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+  const tab = await browser.newPage({
+    viewport: { width: 1920, height: 1080 },
+  });
   for (const guide of GUIDES) {
     // Opened from a file beside the slides so their images/ paths resolve.
     const html = path.join(sources, guide, ".print.html");

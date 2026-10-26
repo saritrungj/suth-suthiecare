@@ -5,7 +5,7 @@ import GuardianStudents from "./GuardianStudents";
 import MasterSelect from "../../../components/MasterSelect";
 import { usePageExport } from "../../../components/ExcelExport";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useSearchParams } from "react-router-dom";
 import {
   FiEdit2,
   FiEye,
@@ -54,8 +54,25 @@ import {
   FilterDropdown,
   MenuSelect,
   SearchField,
+  MENTAL_STATUS_LABELS,
+  MentalStatusBadge,
+  RiskBadge,
+  formatThaiDate,
 } from "./schoolUi";
-import StudentDetailModal from "./StudentDetailModal";
+import ThaiDatePicker from "../../../components/ThaiDatePicker";
+import { useAcademicYears } from "./AcademicYearSelect";
+import {
+  CUSTOM_PERIOD,
+  LATEST_PERIOD,
+  periodOptions,
+  periodRange,
+  periodSummary,
+} from "./mentalPeriod";
+import {
+  studentFilePath,
+  useOpenStudentFile,
+  useSessionState,
+} from "./studentFileLink";
 import "./school.css";
 import { DEFAULT_PAGE_SIZE } from "../../../components/table/TablePagination";
 import DataPanel from "../../../components/table/DataPanel";
@@ -68,6 +85,7 @@ const emptyFilters = {
   status: "active",
   search: "",
   is_boarder: "",
+  mental_status: "",
 };
 
 export default function StudentList() {
@@ -84,18 +102,45 @@ function StaffStudentList() {
   // Adding or removing students records or removes who they are (PII rights).
   const piiRights = useModuleActions("pii");
   const { schoolId } = useSchools();
-  const [filters, setFilters] = useState(emptyFilters);
+  // Kept while the student file is open on its own page, so "กลับ" lands
+  // on the same filters and page.
+  const [filters, setFilters] = useSessionState(
+    "sch-students:filters",
+    emptyFilters,
+  );
   const [grades, setGrades] = useState([]);
   const [classrooms, setClassrooms] = useState([]);
   const [studentTypes, setStudentTypes] = useState([]);
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(DEFAULT_PAGE_SIZE);
+  const [page, setPage] = useSessionState("sch-students:page", 1);
+  const [limit, setLimit] = useSessionState(
+    "sch-students:limit",
+    DEFAULT_PAGE_SIZE,
+  );
   const [result, setResult] = useState({ data: [], pagination: null });
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
-  const [viewing, setViewing] = useState(null);
+  const [searchParams] = useSearchParams();
+  // ?student=<id> (older notification links) goes to that student's file;
+  // the API still decides whether the caller may see it.
+  const linkedStudent =
+    Number.parseInt(searchParams.get("student"), 10) || null;
+  const openFile = useOpenStudentFile();
   const [editing, setEditing] = useState(null);
   const requestId = useRef(0);
+  // Mental-health status is shown to staff who may see the risk queue.
+  const showMental = Boolean(access?.can_view_risk);
+  const academic = useAcademicYears(showMental ? schoolId : null);
+  const [period, setPeriod] = useSessionState(
+    "sch-students:period",
+    LATEST_PERIOD,
+  );
+  const [customRange, setCustomRange] = useSessionState("sch-students:range", {
+    from: "",
+    to: "",
+  });
+  const periods = periodOptions(academic);
+  const range = periodRange(period, academic, customRange);
+  const rangeKey = range ? `${range.from}|${range.to}` : "";
 
   useEffect(() => {
     getSchoolTypes("student-types")
@@ -128,8 +173,17 @@ function StaffStudentList() {
       const { data } = await getSchoolStudents({
         school_id: schoolId || undefined,
         ...Object.fromEntries(
-          Object.entries(filters).filter(([, value]) => value !== ""),
+          Object.entries(filters).filter(
+            ([key, value]) =>
+              value !== "" && (showMental || key !== "mental_status"),
+          ),
         ),
+        ...(showMental && rangeKey
+          ? {
+              mental_from: rangeKey.split("|")[0] || undefined,
+              mental_to: rangeKey.split("|")[1] || undefined,
+            }
+          : {}),
         page,
         limit,
       });
@@ -142,7 +196,7 @@ function StaffStudentList() {
     } finally {
       if (id === requestId.current) setLoading(false);
     }
-  }, [schoolId, filters, page, limit]);
+  }, [schoolId, filters, page, limit, showMental, rangeKey]);
 
   useEffect(() => {
     const timer = setTimeout(load, 250);
@@ -215,23 +269,23 @@ function StaffStudentList() {
     disabled: loading,
   });
   const students = result.data || [];
-  // Previous/next inside the student file follow this page of the list.
-  const viewingIndex = students.findIndex((student) => student.id === viewing);
-  const studentNav =
-    viewingIndex === -1
-      ? undefined
-      : {
-          position: viewingIndex + 1,
-          total: students.length,
-          onPrev:
-            viewingIndex > 0
-              ? () => setViewing(students[viewingIndex - 1].id)
-              : undefined,
-          onNext:
-            viewingIndex < students.length - 1
-              ? () => setViewing(students[viewingIndex + 1].id)
-              : undefined,
-        };
+  const columnCount = showMental ? 9 : 7;
+  // The file opens on its own page; previous/next there follow this page of
+  // the list, and the mental tab shows the period picked here.
+  const filePeriod =
+    showMental && period !== LATEST_PERIOD && range
+      ? {
+          range,
+          label: periodSummary(period, range, periods).replace(
+            "ผลประเมินสุขภาพจิตครั้งล่าสุดใน",
+            "แสดงผลประเมินใน",
+          ),
+        }
+      : null;
+  const view = (id) =>
+    openFile(id, { ids: students.map((s) => s.id), period: filePeriod });
+  if (linkedStudent)
+    return <Navigate replace to={studentFilePath(linkedStudent)} />;
   return (
     <div className="sch-wrapper">
       <main className="sch-page">
@@ -261,7 +315,11 @@ function StaffStudentList() {
         </PageHeader>
 
         <DataPanel className="sch-card">
-          <div className="sch-filter-bar">
+          <div
+            className={
+              "sch-filter-bar" + (showMental ? " sch-filter-bar--wrap" : "")
+            }
+          >
             <SearchField
               label="ค้นหานักเรียน"
               placeholder="ค้นหาชื่อ ชื่อเล่น รหัสนักเรียน หรือชื่อผู้ใช้"
@@ -294,6 +352,72 @@ function StaffStudentList() {
                 </option>
               ))}
             </BarSelect>
+            {showMental && (
+              <>
+                <BarSelect
+                  label="ช่วงเวลาผลประเมินสุขภาพจิต"
+                  value={period}
+                  onChange={(value) => {
+                    setPage(1);
+                    setPeriod(value);
+                  }}
+                >
+                  {periods.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </BarSelect>
+                {period === CUSTOM_PERIOD && (
+                  <div className="sch-period-range">
+                    <ThaiDatePicker
+                      label="ตั้งแต่วันที่"
+                      placeholder="ตั้งแต่วันที่"
+                      value={customRange.from}
+                      max={customRange.to || undefined}
+                      allowFuture={false}
+                      rangeStart={customRange.from}
+                      rangeEnd={customRange.to}
+                      onChange={(value) => {
+                        setPage(1);
+                        setCustomRange((r) => ({ ...r, from: value }));
+                      }}
+                    />
+                    <ThaiDatePicker
+                      label="ถึงวันที่"
+                      placeholder="ถึงวันที่"
+                      align="end"
+                      allowFuture={false}
+                      value={customRange.to}
+                      min={customRange.from || undefined}
+                      rangeStart={customRange.from}
+                      rangeEnd={customRange.to}
+                      onChange={(value) => {
+                        setPage(1);
+                        setCustomRange((r) => ({ ...r, to: value }));
+                      }}
+                    />
+                  </div>
+                )}
+                <BarSelect
+                  label="สถานะสุขภาพจิต"
+                  value={filters.mental_status}
+                  onChange={(value) => updateFilter("mental_status", value)}
+                >
+                  <option value="">ทุกสถานะสุขภาพจิต</option>
+                  {Object.entries(MENTAL_STATUS_LABELS).map(
+                    ([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                        {result.mental_counts
+                          ? ` (${result.mental_counts[value] ?? 0})`
+                          : ""}
+                      </option>
+                    ),
+                  )}
+                </BarSelect>
+              </>
+            )}
             <FilterDropdown
               activeCount={
                 [
@@ -393,6 +517,24 @@ function StaffStudentList() {
                 onRemove: () => updateFilter("status", emptyFilters.status),
               },
               {
+                key: "period",
+                label: "ช่วงเวลา",
+                value:
+                  showMental && period !== LATEST_PERIOD
+                    ? periods.find((o) => o.value === period)?.label
+                    : "",
+                onRemove: () => {
+                  setPage(1);
+                  setPeriod(LATEST_PERIOD);
+                },
+              },
+              {
+                key: "mental",
+                label: "สถานะสุขภาพจิต",
+                value: MENTAL_STATUS_LABELS[filters.mental_status],
+                onRemove: () => updateFilter("mental_status", ""),
+              },
+              {
                 key: "boarder",
                 label: "ที่พัก",
                 value:
@@ -406,6 +548,7 @@ function StaffStudentList() {
             ]}
             onClearAll={() => {
               setPage(1);
+              setPeriod(LATEST_PERIOD);
               setFilters((current) => ({
                 ...emptyFilters,
                 search: current.search,
@@ -422,6 +565,15 @@ function StaffStudentList() {
             </p>
           )}
 
+          {showMental && (
+            <p className="sch-muted sch-period-note" role="status">
+              {periodSummary(period, range, periods)}
+              {period === CUSTOM_PERIOD && !range
+                ? " — เลือกวันที่เพื่อกรองช่วงเวลา"
+                : ""}
+            </p>
+          )}
+
           <TableScroll label="ตารางรายชื่อนักเรียน">
             <table className="sch-table admin-data-table">
               <thead>
@@ -429,6 +581,8 @@ function StaffStudentList() {
                   <th>รหัส</th>
                   <th>ชื่อ-นามสกุล</th>
                   <th>ชั้น/ห้อง</th>
+                  {showMental && <th>ผลประเมินสุขภาพจิตล่าสุด</th>}
+                  {showMental && <th>สถานะสุขภาพจิต</th>}
                   <th>ประเภท</th>
                   <th>บัญชีผู้ใช้</th>
                   <th>สถานะ</th>
@@ -437,10 +591,10 @@ function StaffStudentList() {
               </thead>
               <tbody>
                 {loading ? (
-                  <LoadingRows columns={7} />
+                  <LoadingRows columns={columnCount} />
                 ) : !students.length ? (
                   <EmptyRow
-                    columns={7}
+                    columns={columnCount}
                     title="ไม่พบนักเรียน"
                     hint={
                       access?.can_create_students
@@ -456,7 +610,7 @@ function StaffStudentList() {
                         <button
                           type="button"
                           className="sch-name-btn"
-                          onClick={() => setViewing(student.id)}
+                          onClick={() => view(student.id)}
                         >
                           <span className="sch-name">
                             {studentName(student)}
@@ -467,6 +621,30 @@ function StaffStudentList() {
                         </span>
                       </td>
                       <td>{classroomLabel(student)}</td>
+                      {showMental && (
+                        <td>
+                          <MentalResult mental={student.mental} />
+                        </td>
+                      )}
+                      {showMental && (
+                        <td>
+                          {student.mental ? (
+                            <>
+                              <MentalStatusBadge
+                                status={student.mental.status}
+                              />
+                              {student.mental.care_since && (
+                                <span className="sch-sub">
+                                  ตั้งแต่{" "}
+                                  {formatThaiDate(student.mental.care_since)}
+                                </span>
+                              )}
+                            </>
+                          ) : (
+                            <span className="sch-muted">-</span>
+                          )}
+                        </td>
+                      )}
                       <td>{student.student_type_name || "-"}</td>
                       <td>
                         {student.username || "-"}
@@ -491,7 +669,7 @@ function StaffStudentList() {
                             type="button"
                             className="sch-icon-btn"
                             aria-label={`ดูข้อมูล ${studentName(student)}`}
-                            onClick={() => setViewing(student.id)}
+                            onClick={() => view(student.id)}
                           >
                             <FiEye aria-hidden="true" />
                           </button>
@@ -547,13 +725,6 @@ function StaffStudentList() {
           />
         </DataPanel>
 
-        {viewing && (
-          <StudentDetailModal
-            studentId={viewing}
-            nav={studentNav}
-            onClose={() => setViewing(null)}
-          />
-        )}
         {editing && (
           <StudentFormModal
             initial={editing}
@@ -839,5 +1010,28 @@ function StudentFormModal({ initial, studentTypes, onClose, onSaved }) {
         }
       </form>
     </SchoolModal>
+  );
+}
+
+// Latest mental assessment in the period: risk, date, and the semester and
+// class it was taken in. "-" when the caller may not see this student's
+// mental status.
+function MentalResult({ mental }) {
+  if (!mental) return <span className="sch-muted">-</span>;
+  if (!mental.risk)
+    return <span className="sch-muted">ยังไม่มีการประเมินในช่วงนี้</span>;
+  return (
+    <div className="sch-mental-result">
+      <RiskBadge risk={mental.risk} />
+      <span className="sch-sub">
+        {formatThaiDate(mental.assessed_on)}
+        {mental.form_title ? ` · ${mental.form_title}` : ""}
+      </span>
+      <span className="sch-sub">
+        {[mental.term_label, mental.classroom_label]
+          .filter(Boolean)
+          .join(" · ")}
+      </span>
+    </div>
   );
 }

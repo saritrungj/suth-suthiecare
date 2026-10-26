@@ -261,7 +261,9 @@ export default function SystemEvaluationWidget() {
           }}
         >
           จำนวนผู้ประเมินทั้งหมด{" "}
-          <span style={{ color: "var(--suth-info)", fontSize: "var(--suth-fs-md)" }}>
+          <span
+            style={{ color: "var(--suth-info)", fontSize: "var(--suth-fs-md)" }}
+          >
             {stats.total_votes}
           </span>{" "}
           คน
@@ -329,7 +331,11 @@ export default function SystemEvaluationWidget() {
                   dataKey="name"
                   type="category"
                   width={80}
-                  tick={{ fill: "var(--suth-ink-2)", fontSize: 12, fontWeight: 500 }}
+                  tick={{
+                    fill: "var(--suth-ink-2)",
+                    fontSize: 12,
+                    fontWeight: 500,
+                  }}
                 />
                 <Tooltip
                   cursor={{ fill: "var(--suth-control-line)" }}
@@ -384,7 +390,12 @@ export default function SystemEvaluationWidget() {
               }}
             >
               {Number(stats.avg_sus).toFixed(1)}{" "}
-              <span style={{ fontSize: "var(--suth-fs-sm)", color: "var(--suth-muted)" }}>
+              <span
+                style={{
+                  fontSize: "var(--suth-fs-sm)",
+                  color: "var(--suth-muted)",
+                }}
+              >
                 / 100
               </span>
             </div>
@@ -402,7 +413,11 @@ export default function SystemEvaluationWidget() {
                 <PolarGrid stroke="var(--suth-line-soft)" />
                 <PolarAngleAxis
                   dataKey="subject"
-                  tick={{ fill: "var(--suth-ink-2)", fontSize: 10, fontWeight: 600 }}
+                  tick={{
+                    fill: "var(--suth-ink-2)",
+                    fontSize: 10,
+                    fontWeight: 600,
+                  }}
                 />
                 <PolarRadiusAxis
                   angle={30}
@@ -546,7 +561,7 @@ export default function SystemEvaluationWidget() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            zIndex: 9999,
+            zIndex: "var(--z-modal)",
           }}
         >
           <div
@@ -654,7 +669,10 @@ export default function SystemEvaluationWidget() {
                           >
                             {calculateLikertAvg(item)}{" "}
                             <span
-                              style={{ color: "var(--suth-muted)", fontSize: "var(--suth-fs-caption)" }}
+                              style={{
+                                color: "var(--suth-muted)",
+                                fontSize: "var(--suth-fs-caption)",
+                              }}
                             >
                               / 5.0
                             </span>
@@ -726,7 +744,9 @@ export default function SystemEvaluationWidget() {
                   borderRadius: "var(--suth-radius)",
                   border: "1px solid var(--suth-control-line)",
                   background:
-                    currentPage === 1 ? "var(--suth-surface-2)" : "var(--suth-surface)",
+                    currentPage === 1
+                      ? "var(--suth-surface-2)"
+                      : "var(--suth-surface)",
                   color:
                     currentPage === 1
                       ? "var(--suth-muted)"

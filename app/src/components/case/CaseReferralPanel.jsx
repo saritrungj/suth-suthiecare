@@ -12,9 +12,11 @@ import {
 } from "react-icons/fi";
 import { usePermissions } from "../../permissions/PermissionsProvider";
 import {
+  cancelReferralRequest,
   createCaseReferral,
   getCaseReferrals,
   getReferralDestinations,
+  getReferralRequests,
 } from "../../services/api";
 import {
   REFERRAL_STATUSES,
@@ -23,10 +25,19 @@ import {
 } from "./referralDisplay";
 import "../../pages/admin/CaseReferrals.css";
 
+export const REQUEST_STATUSES = {
+  pending: "รออนุมัติในโรงเรียน",
+  approved: "อนุมัติแล้ว",
+  declined: "ไม่อนุมัติ",
+  cancelled: "ยกเลิกคำขอ",
+};
+
 export default function CaseReferralPanel({ sourceResponseId, onUpdated }) {
   const { activeOrganization, can } = usePermissions();
   const [destinations, setDestinations] = useState([]);
   const [items, setItems] = useState([]);
+  // Requests still waiting for approval inside the school (to a hospital).
+  const [requests, setRequests] = useState([]);
   const [destination, setDestination] = useState("");
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(true);
@@ -54,6 +65,13 @@ export default function CaseReferralPanel({ sourceResponseId, onUpdated }) {
           source_response_id: sourceResponseId,
         });
         if (active && request === sequence) setItems(data.items || []);
+        const pending = await getReferralRequests({
+          source_response_id: sourceResponseId,
+        }).catch(() => ({ data: { data: [] } }));
+        if (active && request === sequence)
+          setRequests(
+            (pending.data?.data || []).filter((r) => r.status !== "approved"),
+          );
       } catch (err) {
         if (active && request === sequence) setError(referralError(err));
       } finally {
@@ -88,14 +106,18 @@ export default function CaseReferralPanel({ sourceResponseId, onUpdated }) {
     setError("");
     setMessage("");
     try {
-      await createCaseReferral({
+      const { data } = await createCaseReferral({
         source_response_id: sourceResponseId,
         destination_organization_id: Number(destination),
         reason: reason.trim(),
       });
       setDestination("");
       setReason("");
-      setMessage("ส่งต่อแล้ว ปลายทางสามารถรับเรื่องและบันทึกผลสรุปได้");
+      setMessage(
+        data?.status === "awaiting_approval"
+          ? "ส่งคำขอแล้ว การส่งต่อโรงพยาบาลต้องรอผู้มีสิทธิ์ในโรงเรียนอนุมัติก่อน"
+          : "ส่งต่อแล้ว ปลายทางสามารถรับเรื่องและบันทึกผลสรุปได้",
+      );
       setReload((value) => value + 1);
       await onUpdated?.();
     } catch (err) {
@@ -203,6 +225,49 @@ export default function CaseReferralPanel({ sourceResponseId, onUpdated }) {
           </p>
         )}
       </section>
+      {requests.length > 0 && (
+        <section className="cw-section">
+          <h3>คำขอส่งต่อโรงพยาบาล</h3>
+          <ul className="ref-case-list">
+            {requests.map((item) => (
+              <li key={`q${item.id}`} className="ref-case-row">
+                <span className="ref-case-main">
+                  <strong>{item.destination_name}</strong>
+                  <small>
+                    <FiClock aria-hidden="true" />
+                    ขอเมื่อ {referralDate(item.created_at)} โดย{" "}
+                    {item.requested_by_name || "-"}
+                  </small>
+                  {item.status === "declined" && item.decision_note && (
+                    <small>เหตุผลที่ไม่อนุมัติ: {item.decision_note}</small>
+                  )}
+                </span>
+                <span
+                  className={`ref-status ref-status--request-${item.status}`}
+                >
+                  {REQUEST_STATUSES[item.status]}
+                </span>
+                {item.can_cancel && (
+                  <button
+                    type="button"
+                    className="cw-btn-ghost"
+                    onClick={async () => {
+                      try {
+                        await cancelReferralRequest(item.id);
+                        setReload((value) => value + 1);
+                      } catch (err) {
+                        setError(referralError(err));
+                      }
+                    }}
+                  >
+                    ยกเลิกคำขอ
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       <section className="cw-section">
         <div className="ref-section-heading">
           <h3>

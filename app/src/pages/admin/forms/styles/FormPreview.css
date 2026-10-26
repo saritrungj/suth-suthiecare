@@ -760,6 +760,7 @@ select.preview-input:disabled {
 }
 .preview-chip input {
   accent-color: var(--theme-color);
+  --choice-color: var(--theme-color);
 }
 /* ─── CHECKS (CHECKBOX) ─── */
 .preview-check-col {
@@ -865,6 +866,7 @@ select.preview-input:disabled {
   cursor: pointer;
   transform: scale(1.2);
   accent-color: var(--theme-color);
+  --choice-color: var(--theme-color);
 }
 .preview-grid-table tbody tr:hover {
   background-color: var(--suth-canvas);
@@ -1027,6 +1029,7 @@ select.preview-input--error {
   width: 20px;
   height: 20px;
   accent-color: var(--theme-color);
+  --choice-color: var(--theme-color);
   cursor: pointer;
 }
 /* =========================================
@@ -1108,7 +1111,8 @@ select.preview-input--error {
   background: var(--suth-surface-2);
   border-color: var(--suth-success);
   color: var(--suth-success);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--suth-success) 15%, transparent);
+  box-shadow: 0 4px 12px
+    color-mix(in srgb, var(--suth-success) 15%, transparent);
 }
 .pdpa-status-card.active {
   background: var(--suth-success-tint);

@@ -41,3 +41,8 @@ test("result image management needs an organization, the public lookup does not"
     false,
   );
 });
+
+test("the change history runs inside the active organization", () => {
+  assert.equal(needsOrganizationContext("/audit-logs", false), true);
+  assert.equal(needsOrganizationContext("/audit-logs/actors", true), true);
+});

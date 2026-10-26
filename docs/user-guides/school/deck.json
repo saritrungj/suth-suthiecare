@@ -11,10 +11,20 @@
     "teachers",
     "staff",
     "workflows",
+    "rescreen",
+    "care-settings",
     "cases",
     "risk-cases",
+    "behavior",
+    "follow-ups",
+    "appointments",
+    "documents",
+    "reports",
+    "audit",
+    "notifications",
     "forms",
     "result-images",
+    "result-images-more",
     "tips"
   ]
 }

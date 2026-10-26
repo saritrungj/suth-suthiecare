@@ -181,7 +181,12 @@ test("search changes a year, supports keyboard and resets to current on return",
 }, info) => {
   const { reads } = await setup(page);
   await page.goto("/admin/school");
-  const select = page.getByLabel("ปีการศึกษา (พ.ศ.)", { exact: true });
+  // The semester-dates form has its own year picker; this is the rooms one.
+  const select = page
+    .getByRole("region", { name: "จัดการห้องเรียนตามปีการศึกษา" })
+    .getByLabel("ปีการศึกษา (พ.ศ.)", {
+      exact: true,
+    });
   await expect(select).toHaveValue("2569");
   await page.screenshot({
     path: `../outputs/school-structure-search-${info.project.name}.png`,
@@ -240,11 +245,14 @@ test("master year creation validates boundary and updates room editor options", 
     .click();
   await expect(
     page
+      .getByRole("region", { name: "จัดการห้องเรียนตามปีการศึกษา" })
       .getByLabel("ปีการศึกษา (พ.ศ.)", { exact: true })
       .locator('option[value="2571"]'),
   ).toHaveCount(1);
   await expect(
-    page.getByLabel("ปีการศึกษา (พ.ศ.)", { exact: true }),
+    page
+      .getByRole("region", { name: "จัดการห้องเรียนตามปีการศึกษา" })
+      .getByLabel("ปีการศึกษา (พ.ศ.)", { exact: true }),
   ).toHaveValue("2569");
   await page
     .getByRole("button", { name: "แก้ไข ม.1 ห้อง 1", exact: true })

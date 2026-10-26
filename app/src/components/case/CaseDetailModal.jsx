@@ -1193,7 +1193,9 @@ export default function CaseDetailModal({
           label: r.label,
           color: r.color || "var(--suth-muted)",
         }));
-      return [{ label: bmiScore.label, color: bmiScore.color || "var(--suth-muted)" }];
+      return [
+        { label: bmiScore.label, color: bmiScore.color || "var(--suth-muted)" },
+      ];
     }
     const first = scoreResults[0];
     const ruleSource = formRules.find((f) => f.id === first.question_id);

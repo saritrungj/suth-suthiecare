@@ -25,7 +25,7 @@ import {
   ThaiDateField,
 } from "./schoolUi";
 import CasePerson from "../../../components/case/CasePerson";
-import StudentDetailModal from "./StudentDetailModal";
+import { useOpenStudentFile, useSessionState } from "./studentFileLink";
 import { RiskPill } from "../../../components/case/CaseDrawer";
 import "./school.css";
 import { DEFAULT_PAGE_SIZE } from "../../../components/table/TablePagination";
@@ -73,17 +73,25 @@ export default function SchoolCaseData({ initialRisk = "" }) {
   const [classrooms, setClassrooms] = useState([]);
   const [forms, setForms] = useState([]);
   const [rounds, setRounds] = useState([]),
-    [roundId, setRoundId] = useState("");
-  const [filters, setFilters] = useState({
-    grade_id: "",
-    classroom_id: "",
-    domain: "",
-    form_id: "",
-    risk: initialRisk,
-    search: "",
-    start_date: "",
-    end_date: "",
-  });
+    [roundId, setRoundId] = useSessionState(
+      `sch-cases${initialRisk}:round`,
+      "",
+    );
+  // Kept while a student file is open on its own page, so "กลับ" lands on
+  // the same filters and page.
+  const [filters, setFilters] = useSessionState(
+    `sch-cases${initialRisk}:filters`,
+    {
+      grade_id: "",
+      classroom_id: "",
+      domain: "",
+      form_id: "",
+      risk: initialRisk,
+      search: "",
+      start_date: "",
+      end_date: "",
+    },
+  );
   usePageExport({
     title: "ผลประเมินนักเรียน",
     sources: [
@@ -93,12 +101,15 @@ export default function SchoolCaseData({ initialRisk = "" }) {
       },
     ],
   });
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(DEFAULT_PAGE_SIZE);
+  const [page, setPage] = useSessionState(`sch-cases${initialRisk}:page`, 1);
+  const [limit, setLimit] = useSessionState(
+    `sch-cases${initialRisk}:limit`,
+    DEFAULT_PAGE_SIZE,
+  );
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [viewing, setViewing] = useState(null);
+  const openFile = useOpenStudentFile();
   const requestId = useRef(0);
   useEffect(() => {
     api
@@ -181,23 +192,10 @@ export default function SchoolCaseData({ initialRisk = "" }) {
     0,
   );
   const rows = result?.data || [];
-  // Previous/next inside the student file follow this page of the list.
-  const viewingIndex = rows.findIndex((row) => row.id === viewing);
-  const studentNav =
-    viewingIndex === -1
-      ? undefined
-      : {
-          position: viewingIndex + 1,
-          total: rows.length,
-          onPrev:
-            viewingIndex > 0
-              ? () => setViewing(rows[viewingIndex - 1].id)
-              : undefined,
-          onNext:
-            viewingIndex < rows.length - 1
-              ? () => setViewing(rows[viewingIndex + 1].id)
-              : undefined,
-        };
+  // The file opens on its own page on the mental tab; previous/next there
+  // follow this page of the list.
+  const view = (id) =>
+    openFile(id, { ids: rows.map((row) => row.id), tab: "mental" });
   const visibleForms = forms.filter(
     (form) => !filters.domain || form.health_domain === filters.domain,
   );
@@ -515,10 +513,7 @@ export default function SchoolCaseData({ initialRisk = "" }) {
           ) : isPhone ? (
             <ul className="cw-cards">
               {rows.map((row) => (
-                <li
-                  key={row.id}
-                  className={`cw-card ${viewing === row.id ? "is-open" : ""}`}
-                >
+                <li key={row.id} className="cw-card">
                   <div className="cw-card-top">
                     <CasePerson
                       school
@@ -528,7 +523,7 @@ export default function SchoolCaseData({ initialRisk = "" }) {
                         .join(" ")}
                       lastName={row.last_name}
                       code={`รหัส ${row.student_code}`}
-                      onOpen={() => setViewing(row.id)}
+                      onOpen={() => view(row.id)}
                     />
                     {row.overall_risk !== "none" && (
                       <SchoolRisk risk={row.overall_risk} />
@@ -563,10 +558,7 @@ export default function SchoolCaseData({ initialRisk = "" }) {
                 </thead>
                 <tbody>
                   {rows.map((row) => (
-                    <tr
-                      key={row.id}
-                      className={viewing === row.id ? "is-open" : ""}
-                    >
+                    <tr key={row.id}>
                       <td className="cw-col-person">
                         <CasePerson
                           school
@@ -576,7 +568,7 @@ export default function SchoolCaseData({ initialRisk = "" }) {
                             .join(" ")}
                           lastName={row.last_name}
                           code={`รหัส ${row.student_code}`}
-                          onOpen={() => setViewing(row.id)}
+                          onOpen={() => view(row.id)}
                         />
                       </td>
                       <td>
@@ -671,16 +663,6 @@ export default function SchoolCaseData({ initialRisk = "" }) {
               </div>
             )}
           </section>
-        )}
-
-        {viewing && (
-          <StudentDetailModal
-            studentId={viewing}
-            onUpdated={load}
-            initialTab="mental"
-            nav={studentNav}
-            onClose={() => setViewing(null)}
-          />
         )}
       </main>
     </div>

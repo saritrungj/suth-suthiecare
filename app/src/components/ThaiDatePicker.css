@@ -66,11 +66,19 @@
 }
 
 /* Popover */
+/* Portalled to the open overlay (or body) and placed by the component with
+   fixed coordinates, above every modal layer. */
 .tdp-pop {
-  position: absolute;
-  top: calc(100% + 10px);
+  position: fixed;
+  top: 0;
   left: 0;
-  z-index: var(--z-popover, 1100);
+  z-index: var(--z-portal-menu, 12000);
+  box-sizing: border-box;
+  font-family: var(--suth-font);
+  font-size: var(--suth-fs-sm);
+  line-height: 1.5;
+  color: var(--suth-ink);
+  text-align: left;
   --tdp-day: 36px;
   width: 316px;
   max-width: calc(100vw - 24px);
@@ -85,16 +93,7 @@
   animation: tdpIn 220ms var(--suth-ease-out);
 }
 
-.tdp.align-end .tdp-pop {
-  left: auto;
-  right: 0;
-  transform-origin: top right;
-}
-
-.tdp.is-up .tdp-pop,
-.sch-date-input > .tdp.is-up.is-icon .tdp-pop {
-  top: auto;
-  bottom: calc(100% + 10px);
+.tdp-pop.is-up {
   transform-origin: bottom left;
 }
 
@@ -384,7 +383,8 @@ button.tdp-month:focus-visible {
   background: var(--suth-action-strong);
   color: var(--suth-on-action);
   font-weight: 800;
-  box-shadow: 0 6px 14px -6px color-mix(in srgb, var(--suth-action) 80%, transparent);
+  box-shadow: 0 6px 14px -6px
+    color-mix(in srgb, var(--suth-action) 80%, transparent);
 }
 
 .tdp-day.is-selected::after {

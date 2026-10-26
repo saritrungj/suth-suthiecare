@@ -10,6 +10,10 @@ const sensitivePath = (path) =>
   path === "/admin/master-cases/stats";
 function privateDisclosure(req, res, next) {
   if (!sensitivePath(req.path)) return next();
+  // Read now: by the time a route answers, Express has cut the router's
+  // mount ("/school") off req.path, and the credential check below would
+  // never match (imported students' passwords were dropped from the reply).
+  const requestPath = req.path;
   const canClinical =
     req.authorization?.isSystemAdmin ||
     (req.schoolAccess
@@ -53,7 +57,7 @@ function privateDisclosure(req, res, next) {
         const credential =
           req.method === "POST" &&
           /^\/school\/(?:students(?:\/(import|\d+\/reset-password))?|teachers\/import)$/.test(
-            req.path,
+            requestPath,
           );
         if (
           credential ||

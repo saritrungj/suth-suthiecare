@@ -31,7 +31,8 @@
   border: 1px solid var(--suth-tint-line);
   border-radius: var(--suth-radius-pill);
   background: var(--suth-surface);
-  box-shadow: 0 6px 16px -10px color-mix(in srgb, var(--suth-danger) 45%, transparent);
+  box-shadow: 0 6px 16px -10px
+    color-mix(in srgb, var(--suth-danger) 45%, transparent);
   font: inherit;
   font-size: var(--suth-fs-sm);
   font-weight: 700;
@@ -64,7 +65,8 @@
   background: var(--suth-tint);
   color: var(--suth-action-ink);
   transform: translateY(-1px);
-  box-shadow: 0 10px 20px -10px color-mix(in srgb, var(--suth-danger) 55%, transparent);
+  box-shadow: 0 10px 20px -10px
+    color-mix(in srgb, var(--suth-danger) 55%, transparent);
 }
 
 .excel-export__button:hover:not(:disabled) .excel-export__icon svg {

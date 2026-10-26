@@ -16,6 +16,8 @@ const query = async (sql, params = []) => {
     compact.includes("JOIN organizations o")
   )
     return [[{ id: 31, name: "ครูประจำการ", organization_id: 2 }]];
+  if (compact.includes("FROM school_grade_levels g"))
+    return [[{ id: 51, name: "ม.1", school_id: 21, organization_id: 2 }]];
   if (compact.startsWith("SELECT id,status FROM users"))
     return [[{ id: 8, status: "active" }]];
   if (
@@ -78,6 +80,9 @@ test("user assignment options and save link a teacher without duplicate entry", 
     assert.equal(optionsResponse.status, 200);
     const options = await optionsResponse.json();
     assert.equal(options.organizations[2].schools[0].id, 21);
+    assert.deepEqual(options.organizations[2].grades, [
+      { id: 51, name: "ม.1", school_id: 21 },
+    ]);
     assert.equal(options.organizations[2].teacher_types[0].id, 31);
 
     const response = await fetch(`${base}/users/8/assignments`, {

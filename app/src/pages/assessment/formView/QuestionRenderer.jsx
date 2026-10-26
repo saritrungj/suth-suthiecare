@@ -539,9 +539,13 @@ const QuestionRenderer = ({
                           style={{
                             marginLeft: "8px",
                             fontSize: "0.85em",
-                            color: isFull ? "var(--suth-danger)" : "var(--suth-success)",
+                            color: isFull
+                              ? "var(--suth-danger)"
+                              : "var(--suth-success)",
                             fontWeight: "bold",
-                            background: isFull ? "var(--suth-danger-tint)" : "var(--suth-success-tint)",
+                            background: isFull
+                              ? "var(--suth-danger-tint)"
+                              : "var(--suth-success-tint)",
                             padding: "2px 8px",
                             borderRadius: "var(--suth-radius)",
                             flexShrink: 0,

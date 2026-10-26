@@ -18,7 +18,15 @@ import usePagedRows from "../../../components/table/usePagedRows";
 import DataPanel from "../../../components/table/DataPanel";
 import ResultSummary from "../../../components/table/ResultSummary";
 import { usePermissions } from "../../../permissions/PermissionsProvider";
-const TEACHER_ROLE_CODES = ["counselor", "homeroom", "other"];
+import CounselorGradeScope, {
+  gradeScopeError,
+} from "../../../components/CounselorGradeScope";
+const TEACHER_ROLE_CODES = [
+  "counselor",
+  "homeroom",
+  "subject_teacher",
+  "other",
+];
 
 export default function SchoolRoles({ embedded = false }) {
   const Container = embedded ? "section" : "main";
@@ -54,6 +62,7 @@ export default function SchoolRoles({ embedded = false }) {
       role_code: "other",
       status: "active",
       student_ids: [],
+      grade_level_ids: null,
     }),
     [error, setError] = useState(""),
     [saving, setSaving] = useState(false),
@@ -82,10 +91,17 @@ export default function SchoolRoles({ embedded = false }) {
     setError("");
     setNotice("");
     try {
+      const gradeError = gradeScopeError(form.role_code, form.grade_level_ids);
+      if (gradeError) {
+        setError(gradeError);
+        return;
+      }
+      const { grade_level_ids, ...rest } = form;
       await api.put("/school/staff-roles", {
-        ...form,
+        ...rest,
         school_id: Number(form.school_id),
         user_id: Number(form.user_id),
+        ...(form.role_code === "counselor" && { grade_level_ids }),
       });
       await load();
       setEditorOpen(false);
@@ -100,6 +116,30 @@ export default function SchoolRoles({ embedded = false }) {
   const memberName = (id) => {
     const member = data?.members.find((m) => m.id === id);
     return member?.name || member?.username || id;
+  };
+  // A counselor's saved grade limit: null = whole school.
+  const savedGrades = (schoolId, userId) => {
+    const role = (data?.roles || []).find(
+      (r) =>
+        String(r.school_id) === String(schoolId) &&
+        String(r.user_id) === String(userId),
+    );
+    if (!Number(role?.grade_scoped)) return null;
+    return (data?.role_grades || [])
+      .filter(
+        (g) =>
+          String(g.school_id) === String(schoolId) &&
+          String(g.user_id) === String(userId),
+      )
+      .map((g) => Number(g.grade_level_id));
+  };
+  const gradeNames = (schoolId, userId) => {
+    const ids = savedGrades(schoolId, userId);
+    if (!ids) return "";
+    const names = (data?.grades || [])
+      .filter((g) => ids.includes(Number(g.id)))
+      .map((g) => g.name);
+    return names.length ? names.join(", ") : "ยังไม่ได้เลือกระดับชั้น";
   };
   const shown = (data?.roles || []).filter(
     (r) =>
@@ -128,6 +168,7 @@ export default function SchoolRoles({ embedded = false }) {
                   role_code: "other",
                   status: "active",
                   student_ids: [],
+                  grade_level_ids: null,
                 });
                 setEditorOpen(true);
               }}
@@ -280,6 +321,7 @@ export default function SchoolRoles({ embedded = false }) {
                             role_code: "other",
                             status: "active",
                             student_ids: [],
+                            grade_level_ids: null,
                           })
                         }
                       >
@@ -317,6 +359,10 @@ export default function SchoolRoles({ embedded = false }) {
                                 : allowed.find((code) => code !== "guardian") ||
                                   "other",
                             status: r?.status || "active",
+                            grade_level_ids: savedGrades(
+                              form.school_id,
+                              e.target.value,
+                            ),
                             student_ids: (data.guardians || [])
                               .filter(
                                 (g) =>
@@ -352,6 +398,18 @@ export default function SchoolRoles({ embedded = false }) {
                         )}
                       </SearchableSelect>
                     </label>
+                    {form.role_code === "counselor" && (
+                      <CounselorGradeScope
+                        grades={(data.grades || []).filter(
+                          (g) => String(g.school_id) === form.school_id,
+                        )}
+                        value={form.grade_level_ids ?? null}
+                        disabled={saving}
+                        onChange={(grade_level_ids) =>
+                          setForm({ ...form, grade_level_ids })
+                        }
+                      />
+                    )}
                     <label className="sch-field">
                       สถานะ
                       <SearchableSelect
@@ -480,7 +538,16 @@ export default function SchoolRoles({ embedded = false }) {
                           {data.schools.find((s) => s.id === r.school_id)?.name}
                         </td>
                         <td>{memberName(r.user_id)}</td>
-                        <td>{data.role_labels[r.role_code]}</td>
+                        <td>
+                          {data.role_labels[r.role_code]}
+                          {r.role_code === "counselor" &&
+                            gradeNames(r.school_id, r.user_id) && (
+                              <span className="sch-muted">
+                                {" "}
+                                · {gradeNames(r.school_id, r.user_id)}
+                              </span>
+                            )}
+                        </td>
                         <td>{r.status === "active" ? "ใช้งาน" : "ถอนบทบาท"}</td>
                         <td className="is-actions">
                           <button
@@ -497,6 +564,10 @@ export default function SchoolRoles({ embedded = false }) {
                                 user_id: String(r.user_id),
                                 role_code: r.role_code,
                                 status: r.status,
+                                grade_level_ids: savedGrades(
+                                  r.school_id,
+                                  r.user_id,
+                                ),
                                 student_ids: (data.guardians || [])
                                   .filter(
                                     (g) =>

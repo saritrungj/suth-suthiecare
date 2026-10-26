@@ -169,7 +169,7 @@ async function setup(
   return writes;
 }
 
-test("guardian opens only their student file and all health and insight tabs are read only", async ({
+test("guardian opens only their student file, read only, without the counselors' notes", async ({
   page,
 }) => {
   await setup(page);
@@ -181,13 +181,15 @@ test("guardian opens only their student file and all health and insight tabs are
     page.getByRole("button", { name: "เพิ่มนักเรียน", exact: true }),
   ).toHaveCount(0);
   await page.getByRole("button", { name: "ดูข้อมูล", exact: true }).click();
-  await page.getByRole("tab", { name: "ข้อมูลเชิงลึก", exact: true }).click();
-  await expect(page.getByText("ข้อมูลครอบครัวจำลอง")).toBeVisible();
-  await expect(page.getByText("บันทึกจำลอง", { exact: true })).toBeVisible();
-  await expect(page.getByText(/ครู สมใจ ดูแล/)).toBeVisible();
+  // Family background and guidance records are staff notes, not shown to
+  // guardians; the health tabs stay readable.
   await expect(
-    page.getByRole("button", { name: "บันทึกข้อมูลเชิงลึก" }),
+    page.getByRole("tab", { name: "ข้อมูลทั่วไป", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("tab", { name: "ข้อมูลเชิงลึก", exact: true }),
   ).toHaveCount(0);
+  await expect(page.getByText("บันทึกจำลอง", { exact: true })).toHaveCount(0);
   await expect(
     page.getByRole("button", { name: "เพิ่มบันทึกแนะแนว" }),
   ).toHaveCount(0);
@@ -201,7 +203,7 @@ test("guardian opens only their student file and all health and insight tabs are
     ),
   ).toBe(true);
   const accessibility = await new AxeBuilder({ page })
-    .include('[role="dialog"]')
+    .include(".cw-drawer--page")
     .analyze();
   expect(accessibility.violations).toEqual([]);
 });

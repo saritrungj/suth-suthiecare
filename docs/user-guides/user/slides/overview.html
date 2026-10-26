@@ -1,31 +1,124 @@
-<section id="overview" data-transition="fade" style="background:#FBF8F4;color:#1F2F3F;font-family:'Anuphan', Tahoma, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:56px">
-<h2 style="font-size:64px;font-weight:700;line-height:1.15">ใช้งานได้ใน 4 ขั้นตอน</h2>
-<div style="display:flex;flex-direction:row;gap:28px">
-<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFFFF;border:1px solid #EFE6DC;border-radius:28px;padding:40px">
-<x-icon name="Search" style="color:#B4410F;width:56px;height:56px"></x-icon>
-<p style="font-size:28px;font-weight:600;color:#B4410F">ขั้นที่ 1</p>
-<h3 style="font-size:36px;font-weight:700">เลือกบริการ</h3>
-<p style="font-size:26px;line-height:1.5;color:#4A5568">เลือกหน่วยบริการหรือคลินิก แล้วเลือกแบบประเมินที่ต้องการ</p>
-</div>
-<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFFFF;border:1px solid #EFE6DC;border-radius:28px;padding:40px">
-<x-icon name="Book" style="color:#B4410F;width:56px;height:56px"></x-icon>
-<p style="font-size:28px;font-weight:600;color:#B4410F">ขั้นที่ 2</p>
-<h3 style="font-size:36px;font-weight:700">ตอบแบบประเมิน</h3>
-<p style="font-size:26px;line-height:1.5;color:#4A5568">ตอบคำถามให้ครบ ข้อที่มีเครื่องหมาย * ต้องตอบ แล้วกดส่งคำตอบ</p>
-</div>
-<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFFFF;border:1px solid #EFE6DC;border-radius:28px;padding:40px">
-<x-icon name="CheckCircle" style="color:#2F7D7A;width:56px;height:56px"></x-icon>
-<p style="font-size:28px;font-weight:600;color:#2F7D7A">ขั้นที่ 3</p>
-<h3 style="font-size:36px;font-weight:700">รับผลและคำแนะนำ</h3>
-<p style="font-size:26px;line-height:1.5;color:#4A5568">ดูคะแนน ระดับผล และคำแนะนำเบื้องต้นได้ทันที</p>
-</div>
-<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#FFFFFF;border:1px solid #EFE6DC;border-radius:28px;padding:40px">
-<x-icon name="Clock" style="color:#2F7D7A;width:56px;height:56px"></x-icon>
-<p style="font-size:28px;font-weight:600;color:#2F7D7A">ขั้นที่ 4</p>
-<h3 style="font-size:36px;font-weight:700">ติดตามประวัติ</h3>
-<p style="font-size:26px;line-height:1.5;color:#4A5568">สมัครสมาชิกเพื่อดูผลย้อนหลังและการดูแลจากเจ้าหน้าที่</p>
-</div>
-</div>
-<p style="position:absolute;left:128px;bottom:64px;width:1200px;font-size:24px;color:#6B7280">SUTHie Care · คู่มือผู้รับบริการ</p>
-<aside>ภาพรวมการใช้งาน ทำแบบประเมินได้โดยไม่ต้องเข้าสู่ระบบ (ยกเว้นแบบฟอร์มที่หน่วยงานกำหนดให้ต้องเข้าสู่ระบบ) ส่วนการดูประวัติย้อนหลังต้องมีบัญชีผู้รับบริการ</aside>
+<section
+  id="overview"
+  data-transition="fade"
+  style="
+    background: #fbf8f4;
+    color: #1f2f3f;
+    font-family: &quot;Anuphan&quot;, Tahoma, sans-serif;
+    padding: 128px 128px 160px;
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+  "
+>
+  <h2 style="font-size: 64px; font-weight: 700; line-height: 1.15">
+    ใช้งานได้ใน 4 ขั้นตอน
+  </h2>
+  <div style="display: flex; flex-direction: row; gap: 28px">
+    <div
+      style="
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        background: #ffffff;
+        border: 1px solid #efe6dc;
+        border-radius: 28px;
+        padding: 40px;
+      "
+    >
+      <x-icon
+        name="Search"
+        style="color: #b4410f; width: 56px; height: 56px"
+      ></x-icon>
+      <p style="font-size: 28px; font-weight: 600; color: #b4410f">ขั้นที่ 1</p>
+      <h3 style="font-size: 36px; font-weight: 700">เลือกบริการ</h3>
+      <p style="font-size: 26px; line-height: 1.5; color: #4a5568">
+        เลือกหน่วยบริการหรือคลินิก แล้วเลือกแบบประเมินที่ต้องการ
+      </p>
+    </div>
+    <div
+      style="
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        background: #ffffff;
+        border: 1px solid #efe6dc;
+        border-radius: 28px;
+        padding: 40px;
+      "
+    >
+      <x-icon
+        name="Book"
+        style="color: #b4410f; width: 56px; height: 56px"
+      ></x-icon>
+      <p style="font-size: 28px; font-weight: 600; color: #b4410f">ขั้นที่ 2</p>
+      <h3 style="font-size: 36px; font-weight: 700">ตอบแบบประเมิน</h3>
+      <p style="font-size: 26px; line-height: 1.5; color: #4a5568">
+        ตอบคำถามให้ครบ ข้อที่มีเครื่องหมาย * ต้องตอบ แล้วกดส่งคำตอบ
+      </p>
+    </div>
+    <div
+      style="
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        background: #ffffff;
+        border: 1px solid #efe6dc;
+        border-radius: 28px;
+        padding: 40px;
+      "
+    >
+      <x-icon
+        name="CheckCircle"
+        style="color: #2f7d7a; width: 56px; height: 56px"
+      ></x-icon>
+      <p style="font-size: 28px; font-weight: 600; color: #2f7d7a">ขั้นที่ 3</p>
+      <h3 style="font-size: 36px; font-weight: 700">รับผลและคำแนะนำ</h3>
+      <p style="font-size: 26px; line-height: 1.5; color: #4a5568">
+        ดูคะแนน ระดับผล และคำแนะนำเบื้องต้นได้ทันที
+      </p>
+    </div>
+    <div
+      style="
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        background: #ffffff;
+        border: 1px solid #efe6dc;
+        border-radius: 28px;
+        padding: 40px;
+      "
+    >
+      <x-icon
+        name="Clock"
+        style="color: #2f7d7a; width: 56px; height: 56px"
+      ></x-icon>
+      <p style="font-size: 28px; font-weight: 600; color: #2f7d7a">ขั้นที่ 4</p>
+      <h3 style="font-size: 36px; font-weight: 700">ติดตามประวัติ</h3>
+      <p style="font-size: 26px; line-height: 1.5; color: #4a5568">
+        สมัครสมาชิกเพื่อดูผลย้อนหลังและการดูแลจากเจ้าหน้าที่
+      </p>
+    </div>
+  </div>
+  <p
+    style="
+      position: absolute;
+      left: 128px;
+      bottom: 64px;
+      width: 1200px;
+      font-size: 24px;
+      color: #6b7280;
+    "
+  >
+    SUTHie Care · คู่มือผู้รับบริการ
+  </p>
+  <aside>
+    ภาพรวมการใช้งาน ทำแบบประเมินได้โดยไม่ต้องเข้าสู่ระบบ
+    (ยกเว้นแบบฟอร์มที่หน่วยงานกำหนดให้ต้องเข้าสู่ระบบ)
+    ส่วนการดูประวัติย้อนหลังต้องมีบัญชีผู้รับบริการ
+  </aside>
 </section>

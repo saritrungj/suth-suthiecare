@@ -108,10 +108,7 @@ export default function ClinicHelpDetail() {
     }
 
     const clinicQuestions = faqs
-      .filter(
-        (faq) =>
-          isPublished(faq) && Number(faq.clinic_id) === Number(id),
-      )
+      .filter((faq) => isPublished(faq) && Number(faq.clinic_id) === Number(id))
       .sort(
         (a, b) =>
           (parseInt(a.display_order) || 0) - (parseInt(b.display_order) || 0),
@@ -162,8 +159,7 @@ export default function ClinicHelpDetail() {
   const normalizedSearch = clinicSearchQuery.trim().toLowerCase();
   const publishedClinicFaqs = allFaqs.filter(
     (faq) =>
-      isPublished(faq) &&
-      Number(faq.clinic_id) === Number(selectedClinic?.id),
+      isPublished(faq) && Number(faq.clinic_id) === Number(selectedClinic?.id),
   );
   const matchingFaqs = publishedClinicFaqs.filter((faq) =>
     String(faq.question || "")
@@ -183,7 +179,11 @@ export default function ClinicHelpDetail() {
   if (!selectedClinic) {
     return (
       <div
-        style={{ textAlign: "center", padding: "100px 0", color: "var(--suth-muted)" }}
+        style={{
+          textAlign: "center",
+          padding: "100px 0",
+          color: "var(--suth-muted)",
+        }}
       >
         <p style={{ fontSize: "var(--suth-fs-md)" }}>
           {loadError || "ไม่พบข้อมูลคลินิกที่คุณต้องการ"}
@@ -256,20 +256,20 @@ export default function ClinicHelpDetail() {
           <ul className="hc-sidebar-nested-menu">
             {matchingFaqs.length === 0 &&
               (normalizedSearch || clinicCategories.length === 0) && (
-              <li className="hc-sidebar-empty-state">
-                <FiMessageCircle aria-hidden="true" />
-                <strong>
-                  {normalizedSearch
-                    ? "ไม่พบคำถามที่ตรงกับคำค้นหา"
-                    : "ยังไม่มีคำถามที่เผยแพร่"}
-                </strong>
-                <span>
-                  {normalizedSearch
-                    ? "ลองใช้คำค้นหาอื่น หรือเคลียร์ช่องค้นหา"
-                    : "เมื่อหน่วยงานเผยแพร่คำถาม รายการจะแสดงที่นี่"}
-                </span>
-              </li>
-            )}
+                <li className="hc-sidebar-empty-state">
+                  <FiMessageCircle aria-hidden="true" />
+                  <strong>
+                    {normalizedSearch
+                      ? "ไม่พบคำถามที่ตรงกับคำค้นหา"
+                      : "ยังไม่มีคำถามที่เผยแพร่"}
+                  </strong>
+                  <span>
+                    {normalizedSearch
+                      ? "ลองใช้คำค้นหาอื่น หรือเคลียร์ช่องค้นหา"
+                      : "เมื่อหน่วยงานเผยแพร่คำถาม รายการจะแสดงที่นี่"}
+                  </span>
+                </li>
+              )}
             {/* กลุ่มที่ 1: คำถามที่ "ไม่มีหมวดหมู่ย่อยอยู่จริงๆ" (ไม่มีทั้ง ID และไม่มีทั้งชื่อหมวดหมู่) */}
             {matchingFaqs
               .filter((faq) => {

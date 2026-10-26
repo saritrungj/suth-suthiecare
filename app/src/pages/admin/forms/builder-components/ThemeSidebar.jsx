@@ -11,7 +11,6 @@ import {
 } from "react-icons/fa";
 import { BG_COLORS, THEME_COLORS } from "../formThemePalette";
 
-
 const ThemeSidebar = ({
   isOpen,
   onClose,

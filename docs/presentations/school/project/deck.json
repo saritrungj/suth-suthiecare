@@ -1,0 +1,58 @@
+{
+  "v": 4,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-10-19T09:45:00+07:00"
+  },
+  "lists": "css",
+  "title": "SUTHie Care สำหรับโรงเรียน",
+  "cover": "cover",
+  "order": [
+    "cover",
+    "benefits",
+    "setup",
+    "student",
+    "dashboard",
+    "rounds",
+    "risk",
+    "rescreen",
+    "health-file",
+    "alerts",
+    "behavior",
+    "counseling",
+    "follow-ups",
+    "documents",
+    "reports",
+    "privacy",
+    "thanks"
+  ],
+  "sections": {
+    "intro": {
+      "description": "SUTHie Care คืออะไร และช่วยโรงเรียนได้อย่างไร",
+      "start": "cover"
+    },
+    "flow": {
+      "description": "ใช้งานจริงตั้งแต่เตรียมรายชื่อ นักเรียนทำแบบประเมิน จนครูติดตามผล",
+      "start": "setup"
+    },
+    "care": {
+      "description": "เครื่องมือดูแลต่อเนื่อง: แจ้งเตือน พฤติกรรม นัดปรึกษา สุขภาพกาย เอกสาร และรายงาน",
+      "start": "alerts"
+    },
+    "trust": {
+      "description": "ใครเห็นข้อมูลอะไร และการดูแลข้อมูลส่วนบุคคล",
+      "start": "privacy"
+    },
+    "next": {
+      "description": "ถาม-ตอบ และปิดการนำเสนอ",
+      "start": "thanks"
+    }
+  },
+  "faces": {
+    "anuphan": {
+      "family": "Anuphan",
+      "href": "https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&display=swap"
+    }
+  },
+  "designSystems": []
+}

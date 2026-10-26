@@ -233,7 +233,14 @@ export default function UserManagement({ initialTab = "staff" }) {
     } finally {
       if (requestId === memberRequestRef.current) setLoading(false);
     }
-  }, [currentPage, itemsPerPage, search, statusFilter, typeFilter, memberScope]);
+  }, [
+    currentPage,
+    itemsPerPage,
+    search,
+    statusFilter,
+    typeFilter,
+    memberScope,
+  ]);
 
   useEffect(() => {
     if (activeTab !== "staff") return undefined;
@@ -552,11 +559,13 @@ export default function UserManagement({ initialTab = "staff" }) {
                     onChange={(event) => setTypeFilter(event.target.value)}
                   >
                     <option value="">ทุกประเภท</option>
-                    {Object.entries(MEMBER_TYPE_LABELS).map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
+                    {Object.entries(MEMBER_TYPE_LABELS).map(
+                      ([value, label]) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      ),
+                    )}
                   </SearchableSelect>
                 </label>
               )}
@@ -829,10 +838,7 @@ export default function UserManagement({ initialTab = "staff" }) {
                         <td className="sum-col-date" data-label="สมัคร">
                           {formatDate(member.created_at)}
                         </td>
-                        <td
-                          className="sum-col-date"
-                          data-label="เข้าใช้ล่าสุด"
-                        >
+                        <td className="sum-col-date" data-label="เข้าใช้ล่าสุด">
                           {formatDate(member.last_login_at)}
                         </td>
                         <td className="sum-member-status">

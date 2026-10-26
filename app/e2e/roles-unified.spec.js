@@ -346,3 +346,24 @@ test("school administrators keep school member management without system role ac
     page.getByRole("region", { name: "บทบาทและสิทธิ์ในหน่วยงาน", exact: true }),
   ).toHaveCount(0);
 });
+
+test("school presets are offered only for school units", async ({ page }) => {
+  await setup(page);
+  await page.goto("/admin/roles");
+  await page.getByText("เพิ่มบทบาทในหน่วยงานนี้", { exact: true }).click();
+  const presets = page.getByLabel("ชุดสิทธิ์ตั้งต้น", { exact: true });
+  await expect(presets.locator("option", { hasText: "ครูแนะแนว" })).toHaveCount(
+    0,
+  );
+  await page.getByLabel("หน่วยงานที่จัดการ", { exact: true }).selectOption("2");
+  await page.getByText("เพิ่มบทบาทในหน่วยงานนี้", { exact: true }).click();
+  for (const name of [
+    "ผู้ดูแลโรงเรียน",
+    "ผู้ดูแลสุขภาพจิต",
+    "ครูแนะแนว",
+    "ครูรายวิชา",
+  ])
+    await expect(
+      presets.locator("option", { hasText: name + ":" }),
+    ).toHaveCount(1);
+});

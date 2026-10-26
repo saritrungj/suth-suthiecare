@@ -315,6 +315,19 @@
   color: var(--suth-success);
   background: var(--suth-success-tint);
 }
+.ref-status--request-pending {
+  color: var(--suth-warning);
+  background: var(--suth-warning-tint);
+}
+.ref-status--request-approved {
+  color: var(--suth-success);
+  background: var(--suth-success-tint);
+}
+.ref-status--request-declined,
+.ref-status--request-cancelled {
+  color: var(--suth-ink-2);
+  background: var(--suth-neutral-tint);
+}
 .ref-status--rejected {
   color: var(--suth-danger);
   background: var(--suth-danger-tint);

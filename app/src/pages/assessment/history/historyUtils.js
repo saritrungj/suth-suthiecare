@@ -84,8 +84,14 @@ export const getRiskInfo = (scoreResults = []) => {
       l.includes("เฝ้าระวัง")
     );
   });
-  if (isHigh) return { label: "เสี่ยงสูง", color: "var(--suth-danger)", bg: "#fce4ec" };
-  if (isMed) return { label: "เฝ้าระวัง", color: "var(--suth-action-ink)", bg: "#fff3e0" };
+  if (isHigh)
+    return { label: "เสี่ยงสูง", color: "var(--suth-danger)", bg: "#fce4ec" };
+  if (isMed)
+    return {
+      label: "เฝ้าระวัง",
+      color: "var(--suth-action-ink)",
+      bg: "#fff3e0",
+    };
   return { label: "ปกติ", color: "var(--suth-success)", bg: "#e8f5e9" };
 };
 

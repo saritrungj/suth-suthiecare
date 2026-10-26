@@ -90,3 +90,45 @@ test("full disclosure and exports stop when mandatory audit storage is unavailab
     await new Promise((r) => server.close(r));
   }
 });
+
+test("imported students' temporary passwords reach a sub-router's reply", async () => {
+  auditFails = false;
+  const app = express();
+  app.use((req, res, next) => {
+    req.user = { id: 1 };
+    req.authorization = {
+      isSystemAdmin: false,
+      permissions: new Set(["pii.view", "pii.create"]),
+    };
+    req.organizationContext = 1;
+    next();
+  });
+  // Mounted like the real app: /api, then the school router at /school,
+  // which cuts "/school" off req.path before the route answers.
+  const api = express.Router();
+  api.use(privateDisclosure);
+  const school = express.Router();
+  school.post("/students/import", (_req, res) =>
+    res.json({
+      results: [{ username: "sc00269001", password: "Temp#Pass2569" }],
+    }),
+  );
+  school.get("/students/1", (_req, res) =>
+    res.json({ id: 1, password: "never-return" }),
+  );
+  api.use("/school", school);
+  app.use("/api", api);
+  const server = app.listen(0, "127.0.0.1");
+  await new Promise((r) => server.once("listening", r));
+  const base = "http://127.0.0.1:" + server.address().port + "/api/school";
+  try {
+    const issued = await (
+      await fetch(base + "/students/import", { method: "POST" })
+    ).json();
+    assert.equal(issued.results[0].password, "Temp#Pass2569");
+    const read = await (await fetch(base + "/students/1")).json();
+    assert.equal(read.password, undefined);
+  } finally {
+    await new Promise((r) => server.close(r));
+  }
+});

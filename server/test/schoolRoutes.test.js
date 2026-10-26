@@ -62,6 +62,19 @@ test("academic year master is school scoped and includes the current year", asyn
         if (sql.includes("FROM school_teachers st")) return [[]];
         if (sql.includes("FROM schools"))
           return [[{ id: 1, organization_id: 7 }]];
+        if (sql.includes("term1_starts_on"))
+          return [
+            [
+              {
+                school_id: 1,
+                academic_year: current,
+                term1_starts_on: `${current - 543}-05-16`,
+                term1_ends_on: `${current - 543}-10-10`,
+                term2_starts_on: `${current - 543}-11-01`,
+                term2_ends_on: `${current - 542}-03-31`,
+              },
+            ],
+          ];
         if (sql.includes("FROM school_academic_years")) {
           assert.deepEqual(params, [1, current - 10, 1, current - 10, current]);
           return [[{ academic_year: current + 1 }, { academic_year: current }]];
@@ -76,6 +89,14 @@ test("academic year master is school scoped and includes the current year", asyn
         current_year: current,
         minimum_year: current - 10,
         years: [current + 1, current],
+        terms: {
+          [current]: {
+            term1_starts_on: `${current - 543}-05-16`,
+            term1_ends_on: `${current - 543}-10-10`,
+            term2_starts_on: `${current - 543}-11-01`,
+            term2_ends_on: `${current - 542}-03-31`,
+          },
+        },
       });
     },
   );

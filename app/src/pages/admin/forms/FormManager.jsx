@@ -522,10 +522,12 @@ const FormManager = () => {
                             label: `ทุกคลินิก (${forms.length})`,
                           },
                           { value: "general", label: "ทั่วไป" },
-                          ...clinics.filter((c) => c.slug !== "general").map((c) => ({
-                            value: c.slug,
-                            label: c.name,
-                          })),
+                          ...clinics
+                            .filter((c) => c.slug !== "general")
+                            .map((c) => ({
+                              value: c.slug,
+                              label: c.name,
+                            })),
                         ]
                   }
                 />
@@ -844,7 +846,9 @@ const FormManager = () => {
                 borderRadius: "var(--suth-radius)",
                 overflow: "hidden",
                 marginBottom: "20px",
-                border: previewImage ? "none" : "2px dashed var(--suth-control-line)",
+                border: previewImage
+                  ? "none"
+                  : "2px dashed var(--suth-control-line)",
                 backgroundColor: "var(--suth-canvas)",
                 display: "flex",
                 alignItems: "center",
@@ -980,11 +984,13 @@ const FormManager = () => {
               }
             >
               <option value="general">ทั่วไป (ใช้ร่วมกัน)</option>
-              {clinics.filter((c) => c.slug !== "general").map((c) => (
-                <option key={c.slug} value={c.slug}>
-                  {c.name}
-                </option>
-              ))}
+              {clinics
+                .filter((c) => c.slug !== "general")
+                .map((c) => (
+                  <option key={c.slug} value={c.slug}>
+                    {c.name}
+                  </option>
+                ))}
             </SearchableSelect>
             <div className="fm-modal-actions" style={{ marginTop: "20px" }}>
               <button

@@ -4,6 +4,11 @@ import {
   mockResponsiveApi,
   setRouteSession,
 } from "./helpers/responsive-fixtures.js";
+import {
+  mockAuditLog,
+  mockSchoolShowcase,
+  mockStudentAccount,
+} from "./helpers/school-showcase.js";
 
 // End-to-end walk-throughs of the user guides: one journey per audience
 // (service user, central admin, hospital admin, school admin). Each step
@@ -11,6 +16,10 @@ import {
 // GUIDE_SHOTS=<dir> to also save the screenshots used in the guide slides.
 
 const SHOT_DIR = process.env.GUIDE_SHOTS;
+// Guide screenshots are 1920x1080: the desktop layout at 1.5x pixels.
+if (SHOT_DIR) test.use({ deviceScaleFactor: 1.5 });
+// Each journey walks a whole guide, well past the default 30 s.
+test.describe.configure({ timeout: 180_000 });
 
 async function shot(page, testInfo, name) {
   if (!SHOT_DIR || testInfo.project.name !== "desktop-chromium") return;
@@ -42,6 +51,7 @@ const HOSPITAL_MODULES = [
   "appointments",
   "patient_members",
   "clinics",
+  "audit",
 ];
 const SCHOOL_MODULES = [
   "master_data",
@@ -55,6 +65,10 @@ const SCHOOL_MODULES = [
   "student_health",
   "school_staff",
   "school_workflows",
+  "student_behavior",
+  "school_appointments",
+  "school_documents",
+  "audit",
 ];
 const ORGANIZATIONS = {
   hospital: {
@@ -344,6 +358,33 @@ test.describe("user", () => {
     await page.goto("/help-center");
     await expectHeading(page);
     await shot(page, testInfo, "10-help-center");
+
+    // A school student also sees the assessments their school asked for.
+    await mockStudentAccount(page);
+    await page.goto("/history/result");
+    const tasks = page.getByRole("region", { name: /แบบประเมินที่ต้องทำ/ });
+    await expect(tasks).toBeVisible();
+    await tasks.scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollBy(0, -120));
+    await shot(page, testInfo, "11-student-tasks");
+
+    // Counseling appointments and the school documents shared with students.
+    const counseling = page.getByRole("region", { name: "นัดหมายรับคำปรึกษา" });
+    await expect(counseling).toContainText("ครูแนะแนว ม.ต้น");
+    await counseling.scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollBy(0, -120));
+    await shot(page, testInfo, "12-student-counseling");
+    await counseling.getByRole("button", { name: "ขอนัดหมาย" }).click();
+    await expect(counseling.getByText(/สายด่วนสุขภาพจิต 1323/)).toBeVisible();
+    await counseling.evaluate((el) => el.scrollIntoView({ block: "start" }));
+    await page.evaluate(() => window.scrollBy(0, -140));
+    await shot(page, testInfo, "12b-student-booking");
+    await counseling.getByRole("button", { name: "ปิด", exact: true }).click();
+    const documents = page.getByRole("region", { name: "เอกสารจากโรงเรียน" });
+    await expect(documents).toContainText("เคล็ดลับจัดการความเครียดก่อนสอบ");
+    await documents.evaluate((el) => el.scrollIntoView({ block: "start" }));
+    await page.evaluate(() => window.scrollBy(0, -140));
+    await shot(page, testInfo, "13-student-documents");
   });
 });
 
@@ -353,6 +394,7 @@ test.describe("central-admin", () => {
     baseURL,
   }, testInfo) => {
     await mockResponsiveApi(page);
+    await mockAuditLog(page);
     await setRouteSession(page, "/login", baseURL);
     await page.goto("/login");
     await expect(
@@ -366,13 +408,14 @@ test.describe("central-admin", () => {
     await shot(page, testInfo, "02-dashboard");
 
     for (const [label, name] of [
-      ["หน่วยงานหลักและหน่วยงานย่อย", "03-organizations"],
+      ["หน่วยงาน", "03-organizations"],
       ["ผู้ดูแลระบบและเจ้าหน้าที่", "04-users"],
       ["บทบาทและสิทธิ์", "05-roles"],
       ["จัดการภาพแบนเนอร์", "06-banners"],
       ["จัดการฟอร์ม", "07-forms"],
       ["ภาพผลลัพธ์การประเมิน", "08-result-images"],
       ["จัดการข้อมูลหลัก", "09-master-data"],
+      ["ประวัติการแก้ไขข้อมูล", "09b-audit"],
     ]) {
       await openFromSidebar(page, label);
       await expectHeading(page);
@@ -397,13 +440,14 @@ test.describe("hospital-admin", () => {
     baseURL,
   }, testInfo) => {
     await signInUnitAdmin(page, baseURL, "hospital");
+    await mockAuditLog(page);
     await page.goto("/admin/dashboard");
     await expectHeading(page);
     await shot(page, testInfo, "01-dashboard");
 
     // Unit admins see their own organization's menus only.
     await expect(
-      page.getByRole("link", { name: "หน่วยงานหลักและหน่วยงานย่อย" }),
+      page.getByRole("link", { name: "หน่วยงาน", exact: true }),
     ).toHaveCount(0);
 
     for (const [label, name] of [
@@ -417,6 +461,7 @@ test.describe("hospital-admin", () => {
       ["ผู้มารับบริการ", "09-members"],
       ["จัดการศูนย์ช่วยเหลือ", "10-help-center"],
       ["จัดการข้อมูลหลัก", "11-master-data"],
+      ["ประวัติการแก้ไขข้อมูล", "11b-audit"],
     ]) {
       await openFromSidebar(page, label);
       await expectHeading(page);
@@ -442,6 +487,7 @@ test.describe("school-admin", () => {
     baseURL,
   }, testInfo) => {
     await signInUnitAdmin(page, baseURL, "school");
+    await mockSchoolShowcase(page);
     await page.goto("/admin/dashboard");
     await expectHeading(page);
     await shot(page, testInfo, "01-dashboard");
@@ -466,7 +512,46 @@ test.describe("school-admin", () => {
       await openFromSidebar(page, label);
       await expectHeading(page);
       await shot(page, testInfo, name);
+      if (name === "07-workflows") {
+        await page
+          .getByRole("button", { name: "ติดตามรายบุคคล", exact: true })
+          .click();
+        await expect(
+          page.getByRole("heading", { name: "ติดตามรายบุคคล" }),
+        ).toBeVisible();
+        await shot(page, testInfo, "07b-rescreen");
+        await page
+          .getByRole("button", { name: "ตั้งค่าการดูแล", exact: true })
+          .click();
+        await expect(page.getByText(/^กำลังโหลด/)).toHaveCount(0);
+        await shot(page, testInfo, "07c-care-settings");
+      }
     }
+
+    // The care tools added for school staff.
+    for (const [label, name] of [
+      ["บันทึกพฤติกรรม", "13-behavior"],
+      ["ติดตามสุขภาพกาย", "14-follow-ups"],
+      ["นัดหมายรับคำปรึกษา", "15-appointments"],
+      ["คลังเอกสาร", "16-documents"],
+      ["รายงานภาพรวม", "17-reports"],
+      ["ประวัติการแก้ไขข้อมูล", "18-audit"],
+    ]) {
+      await openFromSidebar(page, label);
+      await expectHeading(page);
+      await shot(page, testInfo, name);
+    }
+    const bell = page.getByRole("button", { name: /^การแจ้งเตือน/ });
+    await expect(bell).toHaveAccessibleName(/ยังไม่อ่าน 3 รายการ/);
+    // On phones the bell sits in the sidebar drawer.
+    if (testInfo.project.name.startsWith("mobile"))
+      await page
+        .getByRole("button", { name: "Open Menu", exact: true })
+        .click();
+    await bell.click();
+    await expect(page.getByText("พบนักเรียนกลุ่มเสี่ยงสูง")).toBeVisible();
+    await shot(page, testInfo, "19-notifications");
+    await page.keyboard.press("Escape");
 
     await expectManuals(page, [
       "คู่มือแอดมินโรงเรียน",

@@ -27,6 +27,13 @@ const MODULES = {
   student_health: { types: ["school"] },
   school_staff: { types: ["school"] },
   school_workflows: { types: ["school"] },
+  student_behavior: { types: ["school"] },
+  school_appointments: { types: ["school"] },
+  school_documents: { types: ["school"] },
+  // Approving a school's referral to a hospital before it is sent.
+  referral_approvals: { types: ["school"] },
+  // Audit history is read-only: only view and export ever pass a check.
+  audit: { types: ["hospital", "school"] },
 };
 
 // Banners stay a system-wide (System Admin) module.

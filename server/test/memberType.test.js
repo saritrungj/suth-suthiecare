@@ -12,8 +12,14 @@ test("a faculty answer makes a university student and keeps the faculty name", (
     faculty: "สำนักวิชาวิศวกรรมศาสตร์",
   });
   assert.equal(classifyStatusText("นักศึกษา").type, "university_student");
-  assert.equal(classifyStatusText("ชั้นปีที่ 5 หรือสูงกว่า").type, "university_student");
-  assert.equal(classifyStatusText("บัณฑิตศึกษา (ปริญญาโท-เอก)").type, "university_student");
+  assert.equal(
+    classifyStatusText("ชั้นปีที่ 5 หรือสูงกว่า").type,
+    "university_student",
+  );
+  assert.equal(
+    classifyStatusText("บัณฑิตศึกษา (ปริญญาโท-เอก)").type,
+    "university_student",
+  );
 });
 
 test("blank, dash and not-stated answers say nothing", () => {
@@ -46,7 +52,14 @@ test("the type rule puts an active roster row first and keeps former students", 
   const { type } = memberTypeSql("pa");
   const active = type.indexOf("rs.is_active = 1");
   const former = type.indexOf("rs.account_id IS NOT NULL");
-  assert.ok(active > -1 && former > active, "active roster is checked before former roster");
-  assert.match(type, /> rs\.left_at/, "a former student changes only after a newer answer");
+  assert.ok(
+    active > -1 && former > active,
+    "active roster is checked before former roster",
+  );
+  assert.match(
+    type,
+    /> rs\.left_at/,
+    "a former student changes only after a newer answer",
+  );
   assert.match(type, /ELSE 'unknown' END/, "no evidence stays unknown");
 });

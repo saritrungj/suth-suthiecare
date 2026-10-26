@@ -40,6 +40,7 @@ const FormBuilder = lazy(() => import("./pages/admin/forms/FormBuilder"));
 const Appointment = lazy(() => import("./pages/admin/Appointment"));
 const CaseData = lazy(() => import("./pages/admin/CaseData"));
 const CaseReferrals = lazy(() => import("./pages/admin/CaseReferrals"));
+const ReferralApprovals = lazy(() => import("./pages/admin/ReferralApprovals"));
 const RolesPermissions = lazy(() => import("./pages/admin/RolesPermissions"));
 const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
 const BannerManagement = lazy(() => import("./pages/admin/BannerManagement"));
@@ -73,8 +74,23 @@ const SchoolStructure = lazy(
   () => import("./pages/admin/school/SchoolStructure"),
 );
 const StudentList = lazy(() => import("./pages/admin/school/StudentList"));
+const StudentFilePage = lazy(
+  () => import("./pages/admin/school/StudentFilePage"),
+);
 const StudentImport = lazy(() => import("./pages/admin/school/StudentImport"));
 const TeacherList = lazy(() => import("./pages/admin/school/TeacherList"));
+const SchoolAppointments = lazy(
+  () => import("./pages/admin/school/SchoolAppointments"),
+);
+const AuditHistory = lazy(() => import("./pages/admin/AuditHistory"));
+const SchoolReports = lazy(() => import("./pages/admin/school/SchoolReports"));
+const SchoolDocuments = lazy(
+  () => import("./pages/admin/school/SchoolDocuments"),
+);
+const FollowUps = lazy(() => import("./pages/admin/school/FollowUps"));
+const BehaviorReports = lazy(
+  () => import("./pages/admin/school/BehaviorReports"),
+);
 const SchoolCaseData = lazy(
   () => import("./pages/admin/school/SchoolCaseData"),
 );
@@ -278,6 +294,14 @@ function App() {
                 }
               />
               <Route
+                path="referrals/approvals"
+                element={
+                  <PermissionRoute module="referral_approvals.view">
+                    <ReferralApprovals />
+                  </PermissionRoute>
+                }
+              />
+              <Route
                 path="referrals"
                 element={
                   <PermissionRoute module="Case Management">
@@ -306,6 +330,14 @@ function App() {
                 element={
                   <PermissionRoute module="roles.manage" systemAdminOnly>
                     <RolesPermissions />
+                  </PermissionRoute>
+                }
+              />
+              <Route
+                path="audit"
+                element={
+                  <PermissionRoute module="audit.view">
+                    <AuditHistory />
                   </PermissionRoute>
                 }
               />
@@ -401,6 +433,14 @@ function App() {
                 }
               />
               <Route
+                path="school/students/:studentId"
+                element={
+                  <SchoolRoute check="can_view_students">
+                    <StudentFilePage />
+                  </SchoolRoute>
+                }
+              />
+              <Route
                 path="school/import"
                 element={
                   <SchoolRoute check="can_view_school">
@@ -441,6 +481,46 @@ function App() {
               <Route
                 path="school/roles"
                 element={<Navigate to="/admin/users" replace />}
+              />
+              <Route
+                path="school/behavior"
+                element={
+                  <SchoolRoute check="can_use_behavior">
+                    <BehaviorReports />
+                  </SchoolRoute>
+                }
+              />
+              <Route
+                path="school/appointments"
+                element={
+                  <SchoolRoute check="can_use_appointments">
+                    <SchoolAppointments />
+                  </SchoolRoute>
+                }
+              />
+              <Route
+                path="school/reports"
+                element={
+                  <SchoolRoute check="can_view_reports">
+                    <SchoolReports />
+                  </SchoolRoute>
+                }
+              />
+              <Route
+                path="school/documents"
+                element={
+                  <SchoolRoute check="can_use_documents">
+                    <SchoolDocuments />
+                  </SchoolRoute>
+                }
+              />
+              <Route
+                path="school/follow-ups"
+                element={
+                  <SchoolRoute check="can_view_physical">
+                    <FollowUps />
+                  </SchoolRoute>
+                }
               />
               <Route
                 path="school/workflows"

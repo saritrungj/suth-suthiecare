@@ -17,6 +17,10 @@ const {
   responseRisk,
 } = require("../utils/schoolWorkflows");
 const { readField } = require("../utils/privateField");
+const {
+  roundTargetClause,
+  roundTargetParams,
+} = require("../services/schoolRescreen");
 const router = express.Router();
 const fail = (res, status, message) => res.status(status).json({ message });
 const json = (value) => (typeof value === "string" ? JSON.parse(value) : value);
@@ -77,26 +81,14 @@ async function transaction(req, action, target, id, run) {
     connection.release();
   }
 }
-async function activeStaff(connection, req, userId) {
-  const [[row]] = await connection.query(
-    "SELECT u.id FROM organization_memberships om JOIN users u ON u.id=om.user_id WHERE om.organization_id=? AND om.user_id=? AND om.status='active' AND u.status='active'",
-    [req.organizationContext, positiveId(userId)],
+const rescreenTasks = require("../services/rescreenTasks");
+const rescreenAssignees = (connection, req, ss, userId = null) =>
+  rescreenTasks.rescreenAssignees(
+    connection,
+    req.organizationContext,
+    ss,
+    userId,
   );
-  return row;
-}
-async function rescreenAssignees(connection, req, ss, userId = null) {
-  const [rows] = await connection.query(
-    `SELECT DISTINCT u.id,u.username FROM organization_memberships om JOIN users u ON u.id=om.user_id LEFT JOIN school_staff_roles r ON r.user_id=u.id AND r.school_id=? AND r.status='active' WHERE om.organization_id=? AND om.status='active' AND u.status='active'${userId ? " AND u.id=?" : ""} AND (EXISTS (SELECT 1 FROM user_system_roles usr WHERE usr.user_id=u.id AND usr.system_role_id=1) OR r.role_code IN ('mental_admin','counselor') OR (r.role_code='homeroom' AND EXISTS (SELECT 1 FROM school_classroom_teachers ct JOIN school_teachers t ON t.id=ct.teacher_id WHERE t.user_id=u.id AND t.school_id=? AND t.status='active' AND ct.classroom_id=? AND ct.role IN ('homeroom','co_homeroom')))) ORDER BY u.username`,
-    [
-      ss.school_id,
-      req.organizationContext,
-      ...(userId ? [Number(userId)] : []),
-      ss.school_id,
-      ss.classroom_id || 0,
-    ],
-  );
-  return rows;
-}
 async function form(req, id, domain) {
   const [[row]] = await db.query(
     "SELECT id,health_domain,questions FROM forms WHERE id=? AND organization_id=?",
@@ -139,11 +131,14 @@ router.get("/risk-summary", async (req, res) => {
   for (const row of responses)
     if (!latest.has(row.student_id)) latest.set(row.student_id, row);
   const [settings] = await db.query(
-    "SELECT school_id,care_advice_json FROM school_workflow_settings WHERE school_id IN (?)",
+    "SELECT school_id,care_advice_json,care_guidance_json FROM school_workflow_settings WHERE school_id IN (?)",
     [students.length ? [...new Set(students.map((s) => s.school_id))] : [0]],
   );
   const advice = new Map(
     settings.map((s) => [s.school_id, json(s.care_advice_json) || {}]),
+  );
+  const guidance = new Map(
+    settings.map((s) => [s.school_id, json(s.care_guidance_json) || {}]),
   );
   res.set("Cache-Control", "no-store");
   // Keep the queue limited to student identity, enrollment context and the
@@ -177,6 +172,7 @@ router.get("/risk-summary", async (req, res) => {
         assessed_on: latestResponse?.submitted_at || null,
         care_advice:
           advice.get(s.school_id)?.[risk] || "ยังไม่มีคำแนะนำที่โรงเรียนกำหนด",
+        care_guidance: filledSteps(guidance.get(s.school_id)?.[risk]),
       };
     }),
   });
@@ -287,6 +283,9 @@ router.get("/screening-rounds", async (req, res) => {
     "SELECT r.*,f.title AS form_title FROM school_screening_rounds r JOIN schools s ON s.id=r.school_id JOIN forms f ON f.id=r.form_id WHERE s.organization_id=? ORDER BY r.starts_on DESC,r.id DESC",
     [req.organizationContext],
   );
+  const ids = rows.map((r) => r.id);
+  const grades = await roundGrades(db, ids);
+  const classrooms = await roundClassrooms(db, ids);
   res.json(
     rows
       .filter(
@@ -303,13 +302,57 @@ router.get("/screening-rounds", async (req, res) => {
         ...r,
         starts_on: date(r.starts_on),
         ends_on: date(r.ends_on),
+        // Both empty: the round covers the whole school.
+        grades: grades.get(r.id) || [],
+        classrooms: classrooms.get(r.id) || [],
       })),
   );
 });
-router.post("/screening-rounds", async (req, res) => {
-  const b = req.body || {};
-  if (!(await school(req, res, b.school_id, "create"))) return;
+// Grade levels a round is limited to, by round id.
+async function roundGrades(connection, roundIds) {
+  const map = new Map();
+  if (!roundIds.length) return map;
+  const [rows] = await connection.query(
+    "SELECT rg.round_id,g.id,g.name FROM school_screening_round_grades rg JOIN school_grade_levels g ON g.id=rg.grade_level_id WHERE rg.round_id IN (?) ORDER BY g.level_order,g.name",
+    [roundIds],
+  );
+  for (const row of rows) {
+    if (!map.has(row.round_id)) map.set(row.round_id, []);
+    map.get(row.round_id).push({ id: row.id, name: row.name });
+  }
+  return map;
+}
+// Classrooms a round is limited to, by round id.
+async function roundClassrooms(connection, roundIds) {
+  const map = new Map();
+  if (!roundIds.length) return map;
+  const [rows] = await connection.query(
+    "SELECT rc.round_id,c.id,c.name,c.grade_level_id,g.name AS grade_name FROM school_screening_round_classrooms rc JOIN school_classrooms c ON c.id=rc.classroom_id JOIN school_grade_levels g ON g.id=c.grade_level_id WHERE rc.round_id IN (?) ORDER BY g.level_order,g.name,c.name",
+    [roundIds],
+  );
+  for (const row of rows) {
+    if (!map.has(row.round_id)) map.set(row.round_id, []);
+    map.get(row.round_id).push({
+      id: row.id,
+      name: row.name,
+      grade_level_id: row.grade_level_id,
+      grade_name: row.grade_name,
+    });
+  }
+  return map;
+}
+// Distinct positive ids of an optional list, or null when it is malformed.
+function idList(value) {
+  if (value == null) return [];
+  if (!Array.isArray(value)) return null;
+  const ids = value.map(positiveId);
+  return ids.every(Boolean) ? [...new Set(ids)] : null;
+}
+// Checks one round body for a school the caller may create rounds in.
+// Returns { error } or the values to insert.
+async function roundInput(req, b, schoolId) {
   if (
+    Number(b.school_id) !== Number(schoolId) ||
     !["mental", "physical"].includes(b.health_domain) ||
     !validDate(b.starts_on) ||
     !validDate(b.ends_on) ||
@@ -322,31 +365,106 @@ router.post("/screening-rounds", async (req, res) => {
     !b.name.trim() ||
     b.name.length > 180
   )
-    return fail(res, 422, "ข้อมูลรอบประเมินไม่ถูกต้อง");
+    return { error: "ข้อมูลรอบประเมินไม่ถูกต้อง" };
   if (!(await form(req, b.form_id, b.health_domain)))
-    return fail(res, 422, "แบบประเมินต้องอยู่ในหน่วยงานและด้านสุขภาพเดียวกัน");
-  const result = await transaction(
+    return { error: "แบบประเมินต้องอยู่ในหน่วยงานและด้านสุขภาพเดียวกัน" };
+  // Optional grade levels and classrooms of this school. Neither means the
+  // whole school (see roundTargetClause).
+  const gradeIds = idList(b.grade_level_ids);
+  if (!gradeIds) return { error: "ระดับชั้นไม่ถูกต้อง" };
+  const classroomIds = idList(b.classroom_ids);
+  if (!classroomIds) return { error: "ห้องเรียนไม่ถูกต้อง" };
+  if (gradeIds.length) {
+    const [found] = await db.query(
+      "SELECT id FROM school_grade_levels WHERE school_id=? AND id IN (?)",
+      [schoolId, gradeIds],
+    );
+    if (found.length !== gradeIds.length)
+      return { error: "ระดับชั้นต้องเป็นของโรงเรียนนี้" };
+  }
+  if (classroomIds.length) {
+    const [found] = await db.query(
+      "SELECT id FROM school_classrooms WHERE school_id=? AND id IN (?)",
+      [schoolId, classroomIds],
+    );
+    if (found.length !== classroomIds.length)
+      return { error: "ห้องเรียนต้องเป็นของโรงเรียนนี้" };
+  }
+  return {
+    values: [
+      schoolId,
+      b.name.trim(),
+      b.academic_year,
+      b.semester,
+      b.health_domain,
+      b.form_id,
+      b.starts_on,
+      b.ends_on,
+      req.user.id,
+    ],
+    gradeIds,
+    classroomIds,
+  };
+}
+async function insertRound(c, round) {
+  const [insert] = await c.query(
+    "INSERT INTO school_screening_rounds (school_id,name,academic_year,semester,health_domain,form_id,starts_on,ends_on,created_by) VALUES (?,?,?,?,?,?,?,?,?)",
+    round.values,
+  );
+  if (round.gradeIds.length)
+    await c.query(
+      "INSERT INTO school_screening_round_grades (round_id,grade_level_id) VALUES ?",
+      [round.gradeIds.map((g) => [insert.insertId, g])],
+    );
+  if (round.classroomIds.length)
+    await c.query(
+      "INSERT INTO school_screening_round_classrooms (round_id,classroom_id) VALUES ?",
+      [round.classroomIds.map((id) => [insert.insertId, id])],
+    );
+  return insert.insertId;
+}
+router.post("/screening-rounds", async (req, res) => {
+  const b = req.body || {};
+  if (!(await school(req, res, b.school_id, "create"))) return;
+  const round = await roundInput(req, b, positiveId(b.school_id));
+  if (round.error) return fail(res, 422, round.error);
+  const id = await transaction(
     req,
     "school.round.create",
     "school",
     b.school_id,
-    (c) =>
-      c.query(
-        "INSERT INTO school_screening_rounds (school_id,name,academic_year,semester,health_domain,form_id,starts_on,ends_on,created_by) VALUES (?,?,?,?,?,?,?,?,?)",
-        [
-          b.school_id,
-          b.name.trim(),
-          b.academic_year,
-          b.semester,
-          b.health_domain,
-          b.form_id,
-          b.starts_on,
-          b.ends_on,
-          req.user.id,
-        ],
-      ),
+    (c) => insertRound(c, round),
   );
-  res.status(201).json({ id: result[0].insertId });
+  res.status(201).json({ id });
+});
+// Several rounds of one school at once, e.g. one per classroom on the
+// homeroom timetable, so the classes do not all answer at the same time.
+// Every round is checked before any is written.
+router.post("/screening-rounds/batch", async (req, res) => {
+  const b = req.body || {};
+  if (!(await school(req, res, b.school_id, "create"))) return;
+  const schoolId = positiveId(b.school_id);
+  if (!Array.isArray(b.rounds) || !b.rounds.length || b.rounds.length > 200)
+    return fail(res, 422, "ต้องมีรอบประเมิน 1–200 รอบ");
+  const rounds = [];
+  for (const [index, body] of b.rounds.entries()) {
+    const round = await roundInput(req, body || {}, schoolId);
+    if (round.error)
+      return fail(res, 422, `รอบที่ ${index + 1}: ${round.error}`);
+    rounds.push(round);
+  }
+  const ids = await transaction(
+    req,
+    "school.round.create",
+    "school",
+    schoolId,
+    async (c) => {
+      const created = [];
+      for (const round of rounds) created.push(await insertRound(c, round));
+      return created;
+    },
+  );
+  res.status(201).json({ ids });
 });
 router.put("/screening-rounds/:id", async (req, res) => {
   const [[round]] = await db.query(
@@ -388,13 +506,14 @@ router.get("/screening-rounds/:id/progress", async (req, res) => {
     return fail(res, 403, "ไม่มีสิทธิ์ดูรอบนี้");
   const scope = studentScopeClause(req.schoolAccess, "ss");
   const [rows] = await db.query(
-    `SELECT ss.id,ss.student_code,ss.prefix,ss.first_name_encrypted,ss.last_name_encrypted,g.name AS grade_name,c.name AS classroom_name,MAX(fr.submitted_at) AS completed_on FROM school_students ss LEFT JOIN school_classrooms c ON c.id=ss.classroom_id LEFT JOIN school_grade_levels g ON g.id=c.grade_level_id LEFT JOIN form_responses fr ON (fr.person_id=ss.person_id OR (fr.person_id IS NULL AND fr.patient_account_id=ss.patient_account_id)) AND fr.organization_id=? AND fr.form_id=? AND DATE(fr.submitted_at) BETWEEN ? AND ? WHERE ss.school_id=? AND ss.status='active' AND ss.archived_at IS NULL${scope.sql} GROUP BY ss.id,ss.student_code,ss.prefix,ss.first_name_encrypted,ss.last_name_encrypted,g.name,c.name ORDER BY ss.student_code`,
+    `SELECT ss.id,ss.student_code,ss.prefix,ss.first_name_encrypted,ss.last_name_encrypted,g.name AS grade_name,c.name AS classroom_name,MAX(fr.submitted_at) AS completed_on FROM school_students ss LEFT JOIN school_classrooms c ON c.id=ss.classroom_id LEFT JOIN school_grade_levels g ON g.id=c.grade_level_id LEFT JOIN form_responses fr ON (fr.person_id=ss.person_id OR (fr.person_id IS NULL AND fr.patient_account_id=ss.patient_account_id)) AND fr.organization_id=? AND fr.form_id=? AND DATE(fr.submitted_at) BETWEEN ? AND ? WHERE ss.school_id=? AND ss.status='active' AND ss.archived_at IS NULL AND ${roundTargetClause("?")}${scope.sql} GROUP BY ss.id,ss.student_code,ss.prefix,ss.first_name_encrypted,ss.last_name_encrypted,g.name,c.name ORDER BY ss.student_code`,
     [
       req.organizationContext,
       round.form_id,
       date(round.starts_on),
       date(round.ends_on),
       round.school_id,
+      ...roundTargetParams(round.id),
       ...scope.params,
     ],
   );
@@ -438,10 +557,13 @@ router.get("/rescreen-assignees", async (req, res) => {
     return fail(res, 403, "ไม่มีสิทธิ์ติดตามสุขภาพจิตของนักเรียนนี้");
   res.json(await rescreenAssignees(db, req, ss));
 });
+// ?student_id= narrows the list to one student (the student file). A
+// completed task carries only the risk level of its result.
 router.get("/rescreen-tasks", async (req, res) => {
+  const studentId = positiveId(req.query.student_id);
   const [rows] = await db.query(
-    "SELECT t.*,ss.school_id,ss.classroom_id,ss.student_code,ss.archived_at,u.username AS assigned_username FROM school_rescreen_tasks t JOIN school_students ss ON ss.id=t.student_id JOIN schools s ON s.id=ss.school_id JOIN users u ON u.id=t.assigned_user_id WHERE s.organization_id=? ORDER BY t.due_on,t.id",
-    [req.organizationContext],
+    `SELECT t.*,ss.school_id,ss.classroom_id,ss.student_code,ss.archived_at,u.username AS assigned_username,f.title AS target_form_title,(COALESCE(ss.patient_account_id,p.patient_account_id) IS NOT NULL) AS has_account,cr.organization_id AS completed_org,cr.summary_data AS completed_summary FROM school_rescreen_tasks t JOIN school_students ss ON ss.id=t.student_id JOIN schools s ON s.id=ss.school_id JOIN users u ON u.id=t.assigned_user_id LEFT JOIN forms f ON f.id=t.target_form_id LEFT JOIN persons p ON p.id=ss.person_id LEFT JOIN form_responses cr ON cr.id=t.completed_response_id WHERE s.organization_id=?${studentId ? " AND t.student_id=?" : ""} ORDER BY t.due_on,t.id`,
+    [req.organizationContext, ...(studentId ? [studentId] : [])],
   );
   const today = new Date().toLocaleDateString("sv-SE", {
     timeZone: "Asia/Bangkok",
@@ -449,12 +571,23 @@ router.get("/rescreen-tasks", async (req, res) => {
   res.json(
     rows
       .filter(
-        (r) => !r.archived_at && canViewStudentHealth(req.schoolAccess, r),
+        // Follow-up tasks are staff work; guardians are never shown them.
+        (r) =>
+          !req.schoolAccess.isGuardian &&
+          !r.archived_at &&
+          canViewStudentHealth(req.schoolAccess, r),
       )
-      .map((r) => ({
+      .map(({ completed_org, completed_summary, ...r }) => ({
         ...r,
         due_on: date(r.due_on),
         overdue: r.status === "pending" && date(r.due_on) < today,
+        has_account: Boolean(Number(r.has_account)),
+        result_risk: completed_summary
+          ? responseRisk({
+              organization_id: completed_org,
+              summary_data: completed_summary,
+            })
+          : null,
       })),
   );
 });
@@ -464,52 +597,26 @@ router.post("/rescreen-tasks", async (req, res) => {
   if (!ss) return;
   if (!canHealthAction(req.schoolAccess, "assign", ss))
     return fail(res, 403, "ไม่มีสิทธิ์ติดตามสุขภาพจิตของนักเรียนนี้");
-  if (!validDate(b.due_on) || !(await form(req, b.target_form_id, "mental")))
-    return fail(res, 422, "วันที่ติดตามหรือแบบประเมินไม่ถูกต้อง");
-  const result = await transaction(
+  const id = await transaction(
     req,
     "school.rescreen.create",
     "student",
     ss.id,
-    async (c) => {
-      const [[source]] = await c.query(
-        "SELECT id FROM form_responses WHERE id=? AND organization_id=? AND (person_id=? OR (person_id IS NULL AND patient_account_id=?))",
-        [
-          b.source_response_id,
-          req.organizationContext,
-          ss.person_id || 0,
-          ss.patient_account_id || 0,
-        ],
-      );
-      if (!source)
-        throw Object.assign(new Error("ผลประเมินต้นทางไม่ใช่ของนักเรียนนี้"), {
-          status: 422,
-        });
-      if (!(await activeStaff(c, req, b.assigned_user_id)))
-        throw Object.assign(
-          new Error("ผู้รับผิดชอบต้องเป็นสมาชิกหน่วยงานที่ใช้งานอยู่"),
-          { status: 422 },
-        );
-      if (!(await rescreenAssignees(c, req, ss, b.assigned_user_id)).length)
-        throw Object.assign(
-          new Error("ผู้รับผิดชอบต้องมีสิทธิ์สุขภาพจิตของนักเรียนนี้"),
-          { status: 422 },
-        );
-      const [insert] = await c.query(
-        "INSERT INTO school_rescreen_tasks (student_id,source_response_id,target_form_id,assigned_user_id,due_on,created_by) VALUES (?,?,?,?,?,?)",
-        [
-          ss.id,
-          b.source_response_id,
-          b.target_form_id,
-          b.assigned_user_id,
-          b.due_on,
-          req.user.id,
-        ],
-      );
-      return insert;
-    },
+    (c) =>
+      rescreenTasks.createTask(c, {
+        organizationId: req.organizationContext,
+        userId: req.user.id,
+        ss,
+        task: {
+          source_response_id: b.source_response_id,
+          target_form_id: b.target_form_id,
+          assigned_user_id: b.assigned_user_id,
+          due_on: b.due_on,
+          task_kind: b.task_kind || "rescreen",
+        },
+      }),
   );
-  res.status(201).json({ id: result.insertId });
+  res.status(201).json({ id });
 });
 router.put("/rescreen-tasks/:id", async (req, res) => {
   const [[task]] = await db.query(
@@ -535,9 +642,10 @@ router.put("/rescreen-tasks/:id", async (req, res) => {
     async (c) => {
       if (req.body.status === "completed") {
         const [[response]] = await c.query(
-          "SELECT id FROM form_responses WHERE id=? AND id<>? AND form_id=? AND organization_id=? AND (person_id=? OR (person_id IS NULL AND patient_account_id=?)) AND submitted_at>=?",
+          "SELECT id FROM form_responses WHERE id=? AND (? IS NULL OR id<>?) AND form_id=? AND organization_id=? AND (person_id=? OR (person_id IS NULL AND patient_account_id=?)) AND submitted_at>=?",
           [
             req.body.completed_response_id,
+            task.source_response_id,
             task.source_response_id,
             task.target_form_id,
             req.organizationContext,
@@ -700,6 +808,133 @@ router.put("/workflow-settings/:schoolId", async (req, res) => {
   );
   res.json({ success: true });
 });
+// Risk alerts to homeroom teachers and grade counselors when a submitted
+// mental-health assessment is at risk (services/schoolRiskAlerts.js).
+router.get("/notification-settings/:schoolId", async (req, res) => {
+  if (!(await school(req, res, req.params.schoolId, "view"))) return;
+  const [[settings]] = await db.query(
+    "SELECT notification_json FROM school_workflow_settings WHERE school_id=?",
+    [req.params.schoolId],
+  );
+  res.json({
+    risk_alerts: require("../services/schoolRiskAlerts").riskAlertSettings(
+      settings?.notification_json,
+    ),
+  });
+});
+router.put("/notification-settings/:schoolId", async (req, res) => {
+  const s = await school(req, res, req.params.schoolId, "update");
+  if (!s) return;
+  const checked = require("../services/schoolRiskAlerts").validateSettings(
+    req.body?.risk_alerts,
+  );
+  if (checked.error) return fail(res, 422, checked.error);
+  await transaction(
+    req,
+    "school.notification_settings.update",
+    "school",
+    s.id,
+    (c) =>
+      c.query(
+        "INSERT INTO school_workflow_settings (school_id,notification_json) VALUES (?,?) ON DUPLICATE KEY UPDATE notification_json=VALUES(notification_json)",
+        [s.id, JSON.stringify({ risk_alerts: checked.value })],
+      ),
+  );
+  res.json({ success: true });
+});
+// Step-by-step guidance for teachers per risk level, next to the one-line
+// care advice. Saved on its own so the retention approval is untouched.
+const RISK_LEVELS = ["high", "medium", "normal", "none"];
+const GUIDANCE_STEPS = ["observe", "talk", "follow_up", "refer"];
+const emptyGuidance = () =>
+  Object.fromEntries(
+    RISK_LEVELS.map((risk) => [
+      risk,
+      Object.fromEntries(GUIDANCE_STEPS.map((step) => [step, ""])),
+    ]),
+  );
+// Only the steps the school wrote, in order, for display.
+function filledSteps(steps) {
+  return GUIDANCE_STEPS.filter((step) =>
+    String(steps?.[step] || "").trim(),
+  ).map((step) => ({ step, text: steps[step] }));
+}
+router.get("/care-guidance/:schoolId", async (req, res) => {
+  if (!(await school(req, res, req.params.schoolId, "view"))) return;
+  const [[settings]] = await db.query(
+    "SELECT care_advice_json,care_guidance_json FROM school_workflow_settings WHERE school_id=?",
+    [req.params.schoolId],
+  );
+  const advice = json(settings?.care_advice_json) || {};
+  const saved = json(settings?.care_guidance_json) || {};
+  const guidance = emptyGuidance();
+  for (const risk of RISK_LEVELS)
+    for (const step of GUIDANCE_STEPS)
+      guidance[risk][step] = String(saved?.[risk]?.[step] || "");
+  res.json({
+    care_advice: Object.fromEntries(
+      RISK_LEVELS.map((risk) => [risk, String(advice[risk] || "")]),
+    ),
+    care_guidance: guidance,
+  });
+});
+router.put("/care-guidance/:schoolId", async (req, res) => {
+  const s = await school(req, res, req.params.schoolId, "update");
+  if (!s) return;
+  const { care_advice, care_guidance } = req.body || {};
+  const text = (v) => typeof v === "string" && v.length <= 2000;
+  const valid =
+    care_advice &&
+    typeof care_advice === "object" &&
+    Object.keys(care_advice).every((k) => RISK_LEVELS.includes(k)) &&
+    Object.values(care_advice).every(text) &&
+    care_guidance &&
+    typeof care_guidance === "object" &&
+    Object.entries(care_guidance).every(
+      ([risk, steps]) =>
+        RISK_LEVELS.includes(risk) &&
+        steps &&
+        typeof steps === "object" &&
+        Object.keys(steps).every((k) => GUIDANCE_STEPS.includes(k)) &&
+        Object.values(steps).every(text),
+    );
+  if (!valid)
+    return fail(res, 422, "คำแนะนำไม่ถูกต้องหรือยาวเกิน 2,000 ตัวอักษร");
+  await transaction(req, "school.care_guidance.update", "school", s.id, (c) =>
+    c.query(
+      "INSERT INTO school_workflow_settings (school_id,care_advice_json,care_guidance_json) VALUES (?,?,?) ON DUPLICATE KEY UPDATE care_advice_json=VALUES(care_advice_json),care_guidance_json=VALUES(care_guidance_json)",
+      [s.id, JSON.stringify(care_advice), JSON.stringify(care_guidance)],
+    ),
+  );
+  res.json({ success: true });
+});
+// Guidance for one student's latest mental-health risk, for the people who
+// may see that risk (risk overview or the student's health).
+router.get("/students/:id/care-guidance", async (req, res) => {
+  const row = await student(req, res, req.params.id);
+  if (!row) return;
+  if (!(
+    req.schoolAccess.canViewRisk || canViewStudentHealth(req.schoolAccess, row)
+  ))
+    return fail(res, 403, "ไม่มีสิทธิ์ดูคำแนะนำการดูแลนักเรียนคนนี้");
+  const [[latest]] = await db.query(
+    `SELECT fr.id,fr.organization_id,fr.summary_data,fr.submitted_at FROM form_responses fr JOIN forms f ON f.id=fr.form_id WHERE fr.organization_id=? AND f.health_domain='mental' AND (fr.person_id=? OR (fr.person_id IS NULL AND fr.patient_account_id=?)) ORDER BY fr.submitted_at DESC,fr.id DESC LIMIT 1`,
+    [req.organizationContext, row.person_id || 0, row.patient_account_id || 0],
+  );
+  const risk = latest ? responseRisk(latest) : "none";
+  const [[settings]] = await db.query(
+    "SELECT care_advice_json,care_guidance_json FROM school_workflow_settings WHERE school_id=?",
+    [row.school_id],
+  );
+  res.set("Cache-Control", "no-store");
+  res.json({
+    risk,
+    care_advice: (json(settings?.care_advice_json) || {})[risk] || "",
+    care_guidance: filledSteps(
+      (json(settings?.care_guidance_json) || {})[risk],
+    ),
+  });
+});
 router.post("/retention/:schoolId", async (req, res) => {
   const s = await school(req, res, req.params.schoolId, "delete");
   if (!s) return;
@@ -745,3 +980,5 @@ router.post("/retention/:schoolId", async (req, res) => {
 
 router.use(require("./schoolTeacherImportRoutes"));
 module.exports = router;
+// Exposed for the local MySQL boundary test.
+module.exports.rescreenAssignees = rescreenAssignees;

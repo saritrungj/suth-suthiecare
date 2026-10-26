@@ -474,7 +474,8 @@
   z-index: var(--z-popover) !important;
   background-color: var(--suth-surface) !important;
   border: 1px solid var(--suth-line) !important;
-  box-shadow: 0 10px 15px -3px rgba(31, 47, 63, 0.1),
+  box-shadow:
+    0 10px 15px -3px rgba(31, 47, 63, 0.1),
     0 4px 6px -4px rgba(31, 47, 63, 0.1) !important;
   border-radius: var(--suth-radius) !important;
   padding: 8px 12px !important;
@@ -545,7 +546,8 @@
   opacity: 1 !important;
 }
 
-:is(.hc-table, .hc-mini-clinic-table) td button svg, :is(.hc-table, .hc-mini-clinic-table) td button i {
+:is(.hc-table, .hc-mini-clinic-table) td button svg,
+:is(.hc-table, .hc-mini-clinic-table) td button i {
   width: 18px !important;
   height: 18px !important;
   display: inline-block !important;
@@ -571,7 +573,8 @@
   max-width: 680px;
   border-radius: var(--suth-radius-icon);
   padding: 25px;
-  box-shadow: 0 20px 25px -5px rgba(31, 47, 63, 0.1),
+  box-shadow:
+    0 20px 25px -5px rgba(31, 47, 63, 0.1),
     0 10px 10px -5px rgba(31, 47, 63, 0.04);
   animation: hc-modal-fade 0.25s ease-out;
 }

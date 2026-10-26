@@ -12,6 +12,32 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--dir", "server", "start"],
       "port": 5000
+    },
+    {
+      "name": "crawl-api",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--dir", "server", "start"],
+      "port": 5055,
+      "env": {
+        "PORT": "5055",
+        "DB_NAME": "suth_crawl_20261026",
+        "CORS_ORIGINS": "http://localhost:3055,http://127.0.0.1:3055",
+        "RESEND_API_KEY": "",
+        "TELEGRAM_BOT_TOKEN": "",
+        "DISABLE_TURNSTILE": "true"
+      }
+    },
+    {
+      "name": "crawl-web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--dir", "app", "exec", "vite", "--port", "3055", "--strictPort"],
+      "port": 3055,
+      "env": {
+        "VITE_API_URL": "/api",
+        "VITE_API_PROXY_TARGET": "http://127.0.0.1:5055",
+        "VITE_DISABLE_TURNSTILE": "true",
+        "BROWSER": "none"
+      }
     }
   ]
 }

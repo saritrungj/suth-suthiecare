@@ -142,6 +142,8 @@ export default function Appointment() {
   const [search, setSearch] = useState("");
   const [filterService, setFilterService] = useState("");
   const [filterRisk, setFilterRisk] = useState("");
+  // Appointment status tabs above the table; "" shows every status.
+  const [filterApptStatus, setFilterApptStatus] = useState("");
 
   const [initialDateRange] = useState(getCurrentMonthDateRange);
   const [startDate, setStartDate] = useState(initialDateRange.startDate);
@@ -348,6 +350,25 @@ export default function Appointment() {
     formStatusFilter,
   ]);
 
+  const apptStatusOf = (a) =>
+    ["Completed", "Cancelled"].includes(a.appt_status)
+      ? a.appt_status
+      : "Scheduled";
+  const statusTabs = [
+    { value: "", label: "ทั้งหมด" },
+    { value: "Scheduled", label: "รอเข้ารับบริการ" },
+    { value: "Completed", label: "มาตามนัด" },
+    { value: "Cancelled", label: "ยกเลิกนัด" },
+  ].map((tab) => ({
+    ...tab,
+    count: tab.value
+      ? filteredAppointments.filter((a) => apptStatusOf(a) === tab.value).length
+      : filteredAppointments.length,
+  }));
+  const listedAppointments = filterApptStatus
+    ? filteredAppointments.filter((a) => apptStatusOf(a) === filterApptStatus)
+    : filteredAppointments;
+
   /* ================= HANDLERS ================= */
 
   // 🟢 2. เมื่อคลิกปฏิทิน ให้โชว์ Quick Action Popup แทนการเปิดหน้าต่างใหญ่เลย
@@ -417,7 +438,7 @@ export default function Appointment() {
       {
         resource: "appointments",
         filters: { startDate, endDate },
-        ids: filteredAppointments.map((r) => r.appointment_id || r.id),
+        ids: listedAppointments.map((r) => r.appointment_id || r.id),
       },
     ],
   });
@@ -636,6 +657,27 @@ export default function Appointment() {
             </FilterDropdown>
           </div>
 
+          {!calendarMode && (
+            <div
+              className="dz-pills apt-status-tabs"
+              role="group"
+              aria-label="สถานะนัดหมาย"
+            >
+              {statusTabs.map((tab) => (
+                <button
+                  key={tab.value || "all"}
+                  type="button"
+                  className="dz-pill"
+                  aria-pressed={filterApptStatus === tab.value}
+                  onClick={() => setFilterApptStatus(tab.value)}
+                >
+                  {tab.label}
+                  <span className="apt-status-tabs__count">{tab.count}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
           {!calendarMode ? (
             <AppointmentTable
               resetKey={[
@@ -645,10 +687,11 @@ export default function Appointment() {
                 selectedClinic,
                 filterService,
                 filterRisk,
+                filterApptStatus,
                 startDate,
                 endDate,
               ].join("|")}
-              appointments={filteredAppointments}
+              appointments={listedAppointments}
               chips={filterChips}
               onClearAll={clearMoreFilters}
               isLoading={isLoading || isInitialSetup}
@@ -838,7 +881,8 @@ export default function Appointment() {
                       fontWeight: "700",
                       fontSize: "var(--suth-fs-label)",
                       transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                      boxShadow: "0 2px 4px color-mix(in srgb, var(--suth-success) 5%, transparent)",
+                      boxShadow:
+                        "0 2px 4px color-mix(in srgb, var(--suth-success) 5%, transparent)",
                     }}
                     onMouseOver={(e) => {
                       e.currentTarget.style.background =
@@ -876,7 +920,8 @@ export default function Appointment() {
                       fontWeight: "700",
                       fontSize: "var(--suth-fs-label)",
                       transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                      boxShadow: "0 2px 4px color-mix(in srgb, var(--suth-danger) 5%, transparent)",
+                      boxShadow:
+                        "0 2px 4px color-mix(in srgb, var(--suth-danger) 5%, transparent)",
                     }}
                     onMouseOver={(e) => {
                       e.currentTarget.style.background =
@@ -943,7 +988,8 @@ export default function Appointment() {
                   fontWeight: "700",
                   fontSize: "var(--suth-fs-label)",
                   transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-                  boxShadow: "0 2px 4px color-mix(in srgb, var(--suth-info) 5%, transparent)",
+                  boxShadow:
+                    "0 2px 4px color-mix(in srgb, var(--suth-info) 5%, transparent)",
                 }}
                 onMouseOver={(e) => {
                   e.currentTarget.style.background = "var(--suth-info-tint)";

@@ -326,7 +326,7 @@ test("school Admin sees general details without health or insight tabs", async (
     .getByRole("button", { name: /ดูข้อมูล นักเรียนทดสอบ/ })
     .first()
     .click();
-  const dialog = page.getByRole("dialog");
+  const dialog = page.locator(".cw-drawer--page");
   await expect(dialog.getByText("0001", { exact: true })).toBeVisible();
   await expect(dialog.getByRole("tab", { name: "ข้อมูลเชิงลึก" })).toHaveCount(
     0,
@@ -347,20 +347,14 @@ test("authorized teacher can open optional family information", async ({
     .getByRole("button", { name: /ดูข้อมูล นักเรียนทดสอบ/ })
     .first()
     .click();
-  const dialog = page.getByRole("dialog");
+  const dialog = page.locator(".cw-drawer--page");
   await dialog.getByRole("tab", { name: "ข้อมูลเชิงลึก" }).click();
-  await expect(dialog.getByLabel("ชื่อผู้ปกครอง")).toHaveValue(
-    "ผู้ปกครองทดสอบ",
-  );
+  // Guardian details moved to the contacts on the general tab.
+  await expect(dialog.getByLabel("ชื่อผู้ปกครอง")).toHaveCount(0);
   await expect(dialog.getByText("ครู สมใจ ดูแล")).toBeVisible();
-  const relationship = dialog.getByLabel("ความสัมพันธ์ผู้ปกครอง");
-  await relationship.click();
-  await page
-    .locator(".searchable-select-menu")
-    .getByRole("option", { name: "บิดา", exact: true })
-    .click();
-  await expect(relationship).toHaveValue("father");
-  await dialog.getByLabel("ชื่อผู้ปกครอง").fill("ผู้ปกครองแก้ไข");
+  await dialog
+    .getByLabel("ความเป็นอยู่", { exact: true })
+    .fill("บ้านเช่าใกล้โรงเรียน");
   await dialog
     .getByRole("button", { name: "บันทึกข้อมูล", exact: true })
     .click();
@@ -379,7 +373,9 @@ test("authorized teacher can open optional family information", async ({
     expect.arrayContaining([
       expect.objectContaining({
         path: "/school/students/1/insights",
-        body: expect.objectContaining({ guardian_name: "ผู้ปกครองแก้ไข" }),
+        body: expect.objectContaining({
+          living_conditions: "บ้านเช่าใกล้โรงเรียน",
+        }),
       }),
       expect.objectContaining({
         path: "/school/students/1/guidance",

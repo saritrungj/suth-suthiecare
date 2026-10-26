@@ -6,21 +6,9 @@
       "width": 412,
       "documentWidth": 412,
       "brand": "#ff8a3d",
-      "title": "แบบลงทะเบียนขอเข้ารับคำปรึกษาปัญหาสุขภาพ",
+      "title": "เช็กสุขภาพกายและใจง่าย ๆ ในไม่กี่นาที",
       "screenshot": "--mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".sut2-hero__cta:nth-child(1)"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 10.5pt (14px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"sut2-hero__cta\">เริ่มต้นรับบริการ</button>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/login",
@@ -30,19 +18,7 @@
       "brand": "#ff8a3d",
       "title": "ดูแลข้อมูลและติดตามบริการได้อย่างมั่นใจ",
       "screenshot": "-login-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".patient-auth-button"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"patient-auth-button\" type=\"submit\">เข้าสู่ระบบ</button>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/account/login",
@@ -52,19 +28,7 @@
       "brand": "#ff8a3d",
       "title": "ดูประวัติสุขภาพของคุณได้อย่างมั่นใจ",
       "screenshot": "-account-login-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".patient-auth-button"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"patient-auth-button\" type=\"submit\">เข้าสู่ระบบ</button>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/account/register",
@@ -74,19 +38,7 @@
       "brand": "#ff8a3d",
       "title": "สร้างบัญชีเพื่อส่งและติดตามผลของคุณ",
       "screenshot": "-account-register-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".patient-auth-button"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"patient-auth-button\" type=\"submit\">"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/account/verify-email",
@@ -96,19 +48,7 @@
       "brand": "#ff8a3d",
       "title": "ยืนยันอีเมลนักเรียน",
       "screenshot": "-account-verify-email-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": ["button"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: normal). Expected contrast ratio of 4.5:1",
-              "html": "<button type=\"button\">ส่งรหัสยืนยัน</button>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/account/change-password",
@@ -118,19 +58,7 @@
       "brand": "#ff8a3d",
       "title": "ตั้งรหัสผ่านของคุณเอง",
       "screenshot": "-account-change-password-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".patient-auth-button"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"patient-auth-button\" type=\"submit\">"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/help-center",
@@ -150,29 +78,7 @@
       "brand": "#ff8a3d",
       "title": "คลินิกสาธิตสำหรับตรวจรูปแบบและการจัดวาง",
       "screenshot": "-help-center-clinic-1-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".hc-clinic-badge-label"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 1.67 (foreground color: #ffffff, background color: #ffb98b, font size: 9.4pt (12.5px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<div class=\"hc-clinic-badge-label\">"
-            },
-            {
-              "target": ["h1"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.43 between the foreground and shadow color (foreground color: #ffffff, text-shadow color: #fa873c, font size: 16.5pt (22px), font weight: bold). Expected contrast ratio of 3:1",
-              "html": "<h1>คลินิกสาธิตสำหรับตรวจรูปแบบและการจัดวาง</h1>"
-            },
-            {
-              "target": [".hc-clinic-text-block > p"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 11.3pt (15px), font weight: normal). Expected contrast ratio of 4.5:1",
-              "html": "<p>คำแนะนำและคำถามที่พบบ่อยเกี่ยวกับคลินิกสาธิตสำหรับตรวจรูปแบบและการจัดวาง</p>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/terms",
@@ -222,24 +128,7 @@
       "brand": "#ff8a3d",
       "title": "กรุณาดาวน์โหลด SUTH App",
       "screenshot": "-history-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".download-btn"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"download-btn\">"
-            },
-            {
-              "target": [".hr-filter-btn"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"hr-filter-btn active\">ทั้งหมด (0)</button>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/history/result",
@@ -249,24 +138,7 @@
       "brand": "#ff8a3d",
       "title": "กรุณาดาวน์โหลด SUTH App",
       "screenshot": "-history-result-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".download-btn"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"download-btn\">"
-            },
-            {
-              "target": [".hr-filter-btn"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 9.8pt (13px), font weight: normal). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"hr-filter-btn active\">ทั้งหมด (0)</button>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/clinic-detail",
@@ -316,26 +188,7 @@
       "brand": "#ff8a3d",
       "title": "แดชบอร์ด",
       "screenshot": "-admin-dashboard-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [
-                "div[aria-labelledby=\"db-clinic-label\"] > .dz-pill[type=\"button\"]:nth-child(1)"
-              ],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 10.6pt (14.08px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button type=\"button\" class=\"dz-pill\" aria-pressed=\"true\">ทั่วไป</button>"
-            },
-            {
-              "target": [".dz-pill[type=\"button\"]:nth-child(3)"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 10.6pt (14.08px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button type=\"button\" class=\"dz-pill\" aria-pressed=\"true\">เดือนนี้</button>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/forms",
@@ -345,19 +198,7 @@
       "brand": "#ff8a3d",
       "title": "จัดการฟอร์ม",
       "screenshot": "-admin-forms-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".fm-btn-add-form"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 10.9pt (14.5px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"fm-btn-add-form\">+ สร้างฟอร์ม</button>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/forms/create",
@@ -367,19 +208,7 @@
       "brand": "#ff8a3d",
       "title": "แบบฟอร์มไม่มีชื่อ",
       "screenshot": "-admin-forms-create-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".sfb-btn-save"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 9.8pt (13px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"sfb-btn-save\" style=\"background-color: rgb(251, 188, 4); color: rgb(0, 0, 0); opacity: 1; cursor: pointer;\">บันทึก</button>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/forms/edit/101",
@@ -389,19 +218,7 @@
       "brand": "#ff8a3d",
       "title": "แบบประเมินสุขภาพและการติดตามสำหรับบุคคลตัวอย่าง",
       "screenshot": "-admin-forms-edit-101-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".sfb-btn-save"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 9.8pt (13px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"sfb-btn-save\" style=\"background-color: rgb(25, 103, 210); color: rgb(255, 255, 255); opacity: 1; cursor: pointer;\">อัปเดตเผยแพร่</button>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/schedule",
@@ -411,19 +228,7 @@
       "brand": "#ff8a3d",
       "title": "ตารางนัดหมาย",
       "screenshot": "-admin-schedule-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".apt-view-btn.active[type=\"button\"]"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 10.9pt (14.5px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button type=\"button\" class=\"apt-view-btn active\" aria-pressed=\"true\">"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/referrals",
@@ -433,19 +238,7 @@
       "brand": "#ff8a3d",
       "title": "ส่งต่อระหว่างหน่วยงาน",
       "screenshot": "-admin-referrals-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": ["button[type=\"button\"]:nth-child(1) > span"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<span>รับเข้า</span>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/cases",
@@ -453,26 +246,9 @@
       "width": 412,
       "documentWidth": 412,
       "brand": "#ff8a3d",
-      "title": "กำลังโหลด...ทั่วไป",
+      "title": "แบบประเมินสุขภาพและการติดตามสำหรับบุคคลตัวอย่างทั่วไป",
       "screenshot": "-admin-cases-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".cw-mode > button[type=\"button\"]:nth-child(1)"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 11.0pt (14.72px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button type=\"button\" aria-pressed=\"true\">"
-            },
-            {
-              "target": [".cw-btn"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 11.4pt (15.2px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button type=\"button\" class=\"cw-btn\">"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/roles",
@@ -492,19 +268,7 @@
       "brand": "#ff8a3d",
       "title": "ผู้ดูแลระบบและเจ้าหน้าที่",
       "screenshot": "-admin-users-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".sum-add-btn"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"sum-add-btn\" title=\"เพิ่มผู้ใช้งาน\">"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/members",
@@ -522,26 +286,9 @@
       "width": 412,
       "documentWidth": 412,
       "brand": "#ff8a3d",
-      "title": "กำลังโหลด...ทั่วไป",
+      "title": "แบบประเมินสุขภาพและการติดตามสำหรับบุคคลตัวอย่างทั่วไป",
       "screenshot": "-admin-risk-cases-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".cw-mode > button[type=\"button\"]:nth-child(1)"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 11.0pt (14.72px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button type=\"button\" aria-pressed=\"true\">"
-            },
-            {
-              "target": [".cw-btn"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 11.4pt (15.2px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button type=\"button\" class=\"cw-btn\">"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/banner",
@@ -551,19 +298,7 @@
       "brand": "#ff8a3d",
       "title": "จัดการภาพแบนเนอร์",
       "screenshot": "-admin-banner-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".bm-add-btn"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 11.3pt (15px), font weight: normal). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"bm-add-btn\" style=\"opacity: 1; cursor: pointer;\">"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/clinics",
@@ -573,24 +308,7 @@
       "brand": "#ff8a3d",
       "title": "จัดการคลินิก",
       "screenshot": "-admin-clinics-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".cm-context-indicator > span"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 8.3pt (11px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<span>ขอบเขตข้อมูล</span>"
-            },
-            {
-              "target": [".cm-btn-add"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 11.3pt (15px), font weight: normal). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"cm-btn-add\">"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/help-center",
@@ -610,19 +328,7 @@
       "brand": "#ff8a3d",
       "title": "หน่วยงานหลักและหน่วยงานย่อย",
       "screenshot": "-admin-organizations-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".org-btn"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 11.4pt (15.2px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"org-btn\" type=\"button\">+ หน่วยงานหลัก</button>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/school",
@@ -632,21 +338,7 @@
       "brand": "#ff8a3d",
       "title": "ชั้นปีและห้องเรียน",
       "screenshot": "-admin-school-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [
-                ".sch-management-nav > .active[aria-current=\"page\"][href$=\"school\"]"
-              ],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<a aria-current=\"page\" class=\"active\" href=\"/admin/school\" data-discover=\"true\">ชั้นปีและห้องเรียน</a>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/school/students",
@@ -656,19 +348,7 @@
       "brand": "#ff8a3d",
       "title": "รายชื่อนักเรียน",
       "screenshot": "-admin-school-students-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".sch-btn"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button type=\"button\" class=\"sch-btn\">"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/school/import",
@@ -678,24 +358,7 @@
       "brand": "#ff8a3d",
       "title": "นำเข้าข้อมูลโรงเรียน",
       "screenshot": "-admin-school-import-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".is-active"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button type=\"button\" class=\"is-active\" aria-current=\"page\">นักเรียน</button>"
-            },
-            {
-              "target": ["li[aria-current=\"step\"]"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 10.2pt (13.6px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<li aria-current=\"step\">1. เลือกไฟล์</li>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/school/teachers",
@@ -705,26 +368,7 @@
       "brand": "#ff8a3d",
       "title": "รายชื่อครู",
       "screenshot": "-admin-school-teachers-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".sch-btn"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button type=\"button\" class=\"sch-btn\">"
-            },
-            {
-              "target": [
-                ".sch-management-nav > .active[aria-current=\"page\"][href$=\"teachers\"]"
-              ],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<a aria-current=\"page\" class=\"active\" href=\"/admin/school/teachers\" data-discover=\"true\">รายชื่อครู</a>"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/master-data",
@@ -744,19 +388,7 @@
       "brand": "#ff8a3d",
       "title": "ผู้ดูแลระบบและเจ้าหน้าที่",
       "screenshot": "-admin-school-roles-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".sum-add-btn"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button class=\"sum-add-btn\" title=\"เพิ่มผู้ใช้งาน\">"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/school/workflows",
@@ -766,19 +398,7 @@
       "brand": "#ff8a3d",
       "title": "คัดกรองและติดตามโรงเรียน",
       "screenshot": "-admin-school-workflows-mobile-chromium.png",
-      "violations": [
-        {
-          "id": "color-contrast",
-          "impact": "serious",
-          "nodes": [
-            {
-              "target": [".is-active"],
-              "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 2.34 (foreground color: #ffffff, background color: #ff8a3d, font size: 12.0pt (16px), font weight: bold). Expected contrast ratio of 4.5:1",
-              "html": "<button type=\"button\" class=\"is-active\" aria-current=\"page\" aria-controls=\"school-workflow-panel\">"
-            }
-          ]
-        }
-      ]
+      "violations": []
     },
     {
       "route": "/admin/profile",
@@ -788,6 +408,16 @@
       "brand": "#ff8a3d",
       "title": "ข้อมูลส่วนตัว",
       "screenshot": "-admin-profile-mobile-chromium.png",
+      "violations": []
+    },
+    {
+      "route": "/admin/manual",
+      "path": "/admin/manual",
+      "width": 412,
+      "documentWidth": 412,
+      "brand": "#ff8a3d",
+      "title": "คู่มือการใช้งาน",
+      "screenshot": "-admin-manual-mobile-chromium.png",
       "violations": []
     }
   ],

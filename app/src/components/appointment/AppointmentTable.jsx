@@ -1,12 +1,36 @@
 import { toDisplayText } from "../../utils/textPresentation.js";
 import { useModuleActions } from "../../permissions/useModuleActions";
 import "./AppointmentTable.css";
-import { FiCalendar } from "react-icons/fi";
+import { FiCalendar, FiCheck, FiX } from "react-icons/fi";
 import { formatBangkokDate } from "../../utils/caseDateFilter";
 import TablePagination from "../table/TablePagination";
 import usePagedRows from "../table/usePagedRows";
 import ResultSummary from "../table/ResultSummary";
 
+const APPT_STATUS = {
+  Scheduled: { label: "รอเข้ารับบริการ", tone: "is-warning" },
+  Completed: { label: "มาตามนัด", tone: "is-success" },
+  Cancelled: { label: "ยกเลิกนัด", tone: "is-danger" },
+};
+
+const RISK = {
+  สูง: "aptt-risk-high",
+  ปานกลาง: "aptt-risk-medium",
+  ต่ำ: "aptt-risk-low",
+};
+
+const caseCode = (a) =>
+  a.master_case_id
+    ? `MC-${String(a.master_case_id).padStart(4, "0")}`
+    : `RES-${String(a.case_id).padStart(4, "0")}`;
+
+const present = (value) => {
+  const text = toDisplayText(value);
+  return text && text !== "-" ? text : "";
+};
+
+// Six columns that fit the panel, so the whole row (and its actions) is
+// readable without scrolling sideways. Below 760px each row becomes a card.
 export default function AppointmentTable({
   appointments = [],
   isLoading,
@@ -17,17 +41,8 @@ export default function AppointmentTable({
   onClearAll,
 }) {
   const apptRights = useModuleActions("appointments");
-  // 🟢 กรองเอาเฉพาะเคสที่ "ยังไม่ปิดเคส" มาแสดงในตาราง
-  const activeAppointments = appointments.filter((a) => {
-    const safeStatus = a.status || "";
-    const isClosedCase =
-      safeStatus.includes("ปิดเคส") ||
-      safeStatus.includes("สำเร็จ") ||
-      safeStatus === "Closed";
-    return !isClosedCase; // คืนค่า true เฉพาะเคสที่ยังไม่ถูกปิด
-  });
   const { pageRows, pagination, setPage, setLimit } = usePagedRows(
-    activeAppointments,
+    appointments,
     { resetKeys: [resetKey] },
   );
   // Result line above every state, so active filter chips stay removable
@@ -41,84 +56,23 @@ export default function AppointmentTable({
     />
   ) : null;
 
-  const stripHtml = (html) => {
-    return toDisplayText(html);
-  };
-
-  const getRiskBadge = (riskLevel) => {
-    if (riskLevel === "สูง")
-      return <span className="aptt-risk-tag aptt-risk-high">สูง</span>;
-    if (riskLevel === "ปานกลาง")
-      return <span className="aptt-risk-tag aptt-risk-medium">ปานกลาง</span>;
-    return <span className="aptt-risk-tag aptt-risk-low">ต่ำ</span>;
-  };
-
-  if (isLoading) {
+  if (isLoading || appointments.length === 0) {
     return (
       <>
         {summary}
-        <div
-          className="aptt-wrapper-card aptt-empty-state"
-          style={{
-            minHeight: "350px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            border: "2px dashed var(--suth-line)",
-            boxShadow: "none",
-          }}
-        >
-          <div className="aptt-spinner"></div>
-          กำลังโหลดข้อมูล...
-        </div>
-      </>
-    );
-  }
-
-  if (activeAppointments.length === 0) {
-    return (
-      <>
-        {summary}
-        <div
-          className="aptt-wrapper-card aptt-empty-state"
-          style={{
-            minHeight: "350px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-            border: "2px dashed var(--suth-line)",
-            boxShadow: "none",
-          }}
-        >
-          <FiCalendar
-            style={{
-              fontSize: "var(--suth-fs-display-lg)",
-              color: "var(--suth-control-line)",
-              marginBottom: "16px",
-            }}
-          />
-          <h3
-            style={{
-              fontSize: "var(--suth-fs-section)",
-              color: "var(--suth-ink-2)",
-              margin: "0 0 8px 0",
-              fontWeight: "bold",
-            }}
-          >
-            ไม่มีข้อมูลในขณะนี้
-          </h3>
-          <p
-            style={{
-              fontSize: "var(--suth-fs-body)",
-              color: "var(--suth-muted)",
-              margin: 0,
-              fontWeight: "normal",
-            }}
-          >
-            ยังไม่มีข้อมูลในคลินิกนี้ หรือในช่วงเวลาที่เลือก
-          </p>
+        <div className="aptt-state" role="status">
+          {isLoading ? (
+            <>
+              <div className="aptt-spinner" aria-hidden="true" />
+              <p>กำลังโหลดนัดหมาย…</p>
+            </>
+          ) : (
+            <>
+              <FiCalendar className="aptt-state__icon" aria-hidden="true" />
+              <strong>ไม่มีนัดหมายในช่วงนี้</strong>
+              <p>ลองเปลี่ยนช่วงวันที่ สถานะ หรือตัวกรองด้านบน</p>
+            </>
+          )}
         </div>
       </>
     );
@@ -127,192 +81,160 @@ export default function AppointmentTable({
   return (
     <>
       {summary}
-      <div className="aptt-wrapper-card">
-        <div
-          className="aptt-scroll-container"
-          tabIndex={0}
-          role="region"
-          aria-label="รายการนัดหมาย"
+      <div className="aptt-frame">
+        <table
+          className="aptt-table admin-data-table"
+          aria-label="ตารางนัดหมาย"
         >
-          <table
-            className="aptt-main-table admin-data-table"
-            aria-label="ตารางนัดหมาย"
-          >
-            <thead>
-              <tr>
-                <th className="aptt-col-queue">ลำดับ</th>
-                <th className="aptt-col-case">Case ID</th>
-                <th className="aptt-col-name">ชื่อผู้รับบริการ</th>
-                <th className="aptt-col-age">อายุ</th>
-                <th className="aptt-col-service">บริการ</th>
-                <th className="aptt-col-date">วันนัด</th>
-                <th className="aptt-col-appt-status">สถานะนัด</th>
-                <th className="aptt-col-risk">ความเสี่ยง</th>
-                <th className="aptt-col-phone">เบอร์ติดต่อ</th>
-                <th className="aptt-col-note">หมายเหตุ</th>
-                <th className="aptt-col-status">สถานะเคส</th>
-                {/* 🟢 คอลัมน์นี้จะติดหนึบขอบขวา เพราะมี class aptt-col-action */}
-                <th className="aptt-col-action">จัดการคิว</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pageRows.map((a, i) => {
-                const summary = a.summary_data || {};
-                const caseIdStr = `CASE-${String(a.case_id).padStart(4, "0")}`;
-                const name =
-                  summary.display_name && summary.display_name !== "-"
-                    ? summary.display_name
-                    : caseIdStr;
-                const age = summary.age || summary.display_age || "-";
-                const phone = summary.phone || summary.display_phone || "-";
-
-                let dateStr = "-";
-                if (a.appointment_date) {
-                  dateStr = formatBangkokDate(a.appointment_date, "th-TH", {
+          <colgroup>
+            <col className="aptt-w-date" />
+            <col className="aptt-w-person" />
+            <col className="aptt-w-service" />
+            <col className="aptt-w-risk" />
+            <col className="aptt-w-status" />
+            <col className="aptt-w-action" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th scope="col">วันนัด</th>
+              <th scope="col">ผู้รับบริการ</th>
+              <th scope="col">บริการ / หมายเหตุ</th>
+              <th scope="col">ความเสี่ยง</th>
+              <th scope="col">สถานะ</th>
+              <th scope="col" className="aptt-col-action">
+                จัดการ
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {pageRows.map((a) => {
+              const summaryData = a.summary_data || {};
+              const code = caseCode(a);
+              const name = present(summaryData.display_name) || code;
+              const age = present(summaryData.age || summaryData.display_age);
+              const phone = present(
+                summaryData.phone || summaryData.display_phone,
+              );
+              const date = a.appointment_date
+                ? formatBangkokDate(a.appointment_date, "th-TH", {
                     day: "numeric",
                     month: "short",
                     year: "2-digit",
+                  })
+                : "-";
+              const time = a.appointment_date
+                ? formatBangkokDate(a.appointment_date, "th-TH", {
+                    weekday: "short",
                     hour: "2-digit",
                     minute: "2-digit",
-                  });
-                }
+                  })
+                : "";
+              const apptStatus = APPT_STATUS[a.appt_status]
+                ? a.appt_status
+                : "Scheduled";
+              const risk = RISK[a.overall_risk || a.risk_level]
+                ? a.overall_risk || a.risk_level
+                : "ต่ำ";
+              const note = present(a.note);
+              const caseStatus = present(a.status);
+              const id = a.appointment_id || a.id;
+              const caseDataForModal = {
+                id: a.case_id,
+                master_case_id: a.master_case_id,
+                form_id: a.form_id,
+                form_title: a.form_title,
+                identity_value: a.identity_value,
+                summary_data: a.summary_data,
+                status: a.status,
+                risk_level: a.risk_level,
+                overall_risk: a.overall_risk,
+                submitted_at: a.submitted_at,
+              };
 
-                const safeStatus = a.status || "";
-                const apptStatus = a.appt_status || "Scheduled";
-
-                const caseDataForModal = {
-                  id: a.case_id,
-                  master_case_id: a.master_case_id,
-                  form_id: a.form_id,
-                  form_title: a.form_title,
-                  identity_value: a.identity_value,
-                  summary_data: a.summary_data,
-                  status: a.status,
-                  risk_level: a.risk_level,
-                  overall_risk: a.overall_risk,
-                  submitted_at: a.submitted_at,
-                };
-
-                return (
-                  <tr key={a.appointment_id || a.id}>
-                    <td>{(pagination.page - 1) * pagination.limit + i + 1}</td>
-                    <td>
-                      {a.master_case_id
-                        ? `MC-${String(a.master_case_id).padStart(4, "0")}`
-                        : `RES-${String(a.case_id).padStart(4, "0")}`}
-                    </td>
-                    <td className="aptt-col-name">
-                      <button
-                        className="aptt-name-btn"
-                        onClick={() => onSelectCase(caseDataForModal)}
-                        title="คลิกเพื่อดูรายละเอียดเคส"
-                      >
-                        {name}
-                      </button>
-                    </td>
-                    <td>{stripHtml(age)}</td>
-                    <td className="aptt-col-service">
-                      {a.service_name || "-"}
-                    </td>
-                    <td className="aptt-col-date">{dateStr} น.</td>
-
-                    <td>
-                      <span
-                        className={
-                          "aptt-status-tag " +
-                          (apptStatus === "Completed"
-                            ? "is-success"
-                            : apptStatus === "Cancelled"
-                              ? "is-danger"
-                              : "is-warning")
-                        }
-                      >
-                        {apptStatus === "Completed"
-                          ? "เสร็จสิ้น"
-                          : apptStatus === "Cancelled"
-                            ? "ยกเลิก"
-                            : "รอเข้ารับบริการ"}
+              return (
+                <tr key={id}>
+                  <td data-label="วันนัด">
+                    <span className="aptt-date">{date}</span>
+                    {time && <span className="aptt-sub">{time} น.</span>}
+                  </td>
+                  <td data-label="ผู้รับบริการ">
+                    <button
+                      type="button"
+                      className="aptt-name-btn"
+                      onClick={() => onSelectCase(caseDataForModal)}
+                      title="ดูรายละเอียดเคส"
+                    >
+                      {name}
+                    </button>
+                    <span className="aptt-sub">
+                      {[code, age && `อายุ ${age}`, phone]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </span>
+                  </td>
+                  <td data-label="บริการ">
+                    <span className="aptt-service">
+                      {toDisplayText(a.service_name) || "-"}
+                    </span>
+                    {note && (
+                      <span className="aptt-sub aptt-line" title={note}>
+                        {note}
                       </span>
-                    </td>
-
-                    <td>
-                      {getRiskBadge(a.overall_risk || a.risk_level || "ต่ำ")}
-                    </td>
-                    <td>{stripHtml(phone)}</td>
-                    <td className="aptt-col-note" title={toDisplayText(a.note)}>
-                      {toDisplayText(a.note || "-")}
-                    </td>
-
-                    <td>
+                    )}
+                  </td>
+                  <td data-label="ความเสี่ยง">
+                    <span className={`aptt-tag ${RISK[risk]}`}>{risk}</span>
+                  </td>
+                  <td data-label="สถานะ">
+                    <span
+                      className={`aptt-tag ${APPT_STATUS[apptStatus].tone}`}
+                    >
+                      {APPT_STATUS[apptStatus].label}
+                    </span>
+                    {caseStatus && (
                       <span
-                        className={
-                          "aptt-status-tag " +
-                          (safeStatus.includes("ปิดเคส") ||
-                          safeStatus.includes("สำเร็จ")
-                            ? "is-success"
-                            : "is-neutral")
-                        }
+                        className="aptt-sub aptt-line"
+                        title={`สถานะเคส: ${caseStatus}`}
                       >
-                        {safeStatus || "-"}
+                        เคส: {caseStatus}
                       </span>
-                    </td>
-
-                    {/* 🟢 คอลัมน์นี้ใส่ class aptt-col-action เพื่อให้ติดหนึบขอบขวา */}
-                    <td className="aptt-col-action">
-                      {apptStatus === "Scheduled" ? (
-                        <div className="aptt-acts">
-                          <button
-                            hidden={!apptRights.update}
-                            className="aptt-act aptt-act--ok"
-                            type="button"
-                            onClick={() =>
-                              onUpdateApptStatus(
-                                a.appointment_id || a.id,
-                                "Completed",
-                              )
-                            }
-                            title="บันทึกว่าผู้รับบริการมาตามนัด"
-                          >
-                            มาตามนัด
-                          </button>
-                          <button
-                            hidden={!apptRights.delete}
-                            className="aptt-act aptt-act--cancel"
-                            type="button"
-                            onClick={() =>
-                              onUpdateApptStatus(
-                                a.appointment_id || a.id,
-                                "Cancelled",
-                              )
-                            }
-                            title="ยกเลิกการนัดหมายนี้"
-                          >
-                            ยกเลิกนัด
-                          </button>
-                        </div>
-                      ) : (
-                        <span
-                          style={{
-                            fontSize: "var(--suth-fs-label)",
-                            color: "var(--suth-muted)",
-                            fontWeight: "600",
-                            background: "var(--suth-surface-2)",
-                            padding: "8px 16px",
-                            borderRadius: "var(--suth-radius-card)",
-                            display: "inline-block",
-                            border: "1px dashed var(--suth-control-line)",
-                          }}
+                    )}
+                  </td>
+                  <td className="aptt-col-action">
+                    {apptStatus === "Scheduled" &&
+                    (apptRights.update || apptRights.delete) ? (
+                      <div className="aptt-acts">
+                        <button
+                          hidden={!apptRights.update}
+                          className="aptt-act aptt-act--ok"
+                          type="button"
+                          onClick={() => onUpdateApptStatus(id, "Completed")}
+                          title="บันทึกว่าผู้รับบริการมาตามนัด"
                         >
-                          จัดการแล้ว
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                          <FiCheck aria-hidden="true" /> มาตามนัด
+                        </button>
+                        <button
+                          hidden={!apptRights.delete}
+                          className="aptt-act aptt-act--cancel"
+                          type="button"
+                          onClick={() => onUpdateApptStatus(id, "Cancelled")}
+                          title="ยกเลิกนัด"
+                          aria-label="ยกเลิกนัด"
+                        >
+                          <FiX aria-hidden="true" />
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="aptt-done">
+                        {apptStatus === "Scheduled" ? "—" : "จัดการแล้ว"}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
         <TablePagination
           page={pagination.page}
           totalPages={pagination.total_pages}

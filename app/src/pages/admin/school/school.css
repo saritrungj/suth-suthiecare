@@ -762,6 +762,400 @@
   color: var(--suth-warning);
 }
 
+/* Student list: custom date range for the mental-health period, the line
+   naming the period shown, and the latest-result cell. The bar wraps onto
+   a second row instead of running past the card. */
+.sch-filter-bar.sch-filter-bar--wrap {
+  flex-wrap: wrap;
+}
+.sch-filter-bar > .sch-period-range {
+  display: flex;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.sch-period-note {
+  margin: 4px 0 10px;
+  font-size: var(--suth-fs-sm);
+}
+.sch-mental-result {
+  display: grid;
+  gap: 2px;
+  min-width: 170px;
+}
+@media (max-width: 760px) {
+  .sch-filter-bar > .sch-period-range {
+    flex: 1 1 100%;
+  }
+  .sch-period-range > .tdp {
+    flex: 1 1 140px;
+  }
+}
+
+/* General tab: contacts (edit button at the end of the heading) and the
+   counselor's note on how to work with the student. */
+.sch-contacts > h3 .sch-contacts-edit {
+  margin-left: auto;
+  min-height: 36px;
+  padding: 4px 14px;
+}
+.sch-contacts .cw-facts a {
+  color: var(--suth-action-ink);
+  font-weight: 700;
+}
+.sch-care-note > p {
+  margin: 0;
+  padding: 12px 14px;
+  border-left: 3px solid var(--suth-action);
+  border-radius: var(--suth-radius);
+  background: var(--suth-tint);
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.sch-care-note > p.sch-muted {
+  border-left-color: var(--suth-line);
+  background: var(--suth-canvas);
+}
+
+/* General tab: guardian sign-in accounts of the student. */
+.sch-guardian-list {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 12px;
+  padding: 0;
+  list-style: none;
+}
+.sch-guardian-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
+}
+.sch-guardians .sch-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Shared counseling schedule: weekday choices reuse the grade chip list. */
+.sch-schedule-days {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.sch-schedule-days legend {
+  font-weight: 700;
+}
+
+/* Screening round form: the grade levels a round is for. */
+.sch-round-grades {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 12px 16px;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
+}
+.sch-round-grades legend {
+  padding: 0 6px;
+  font-weight: 700;
+}
+.sch-round-grade-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.sch-round-grade-list label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 14px;
+  border: 1px solid var(--suth-control-line);
+  border-radius: var(--suth-radius-pill);
+  cursor: pointer;
+}
+.sch-round-grade-list label:has(input:checked) {
+  border-color: var(--suth-action);
+  background: var(--suth-tint);
+}
+.sch-round-grade-list input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--suth-action);
+}
+/* Classrooms of each grade, under the grade. A chosen grade covers all its
+   classrooms, so they show as chosen and locked. */
+.sch-round-target-row {
+  display: grid;
+  gap: 4px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--suth-line-soft);
+}
+.sch-round-target-row:last-child {
+  border-bottom: 0;
+}
+.sch-round-room-list {
+  margin-top: 0;
+  padding-left: 24px;
+}
+.sch-round-room-list label {
+  min-height: 36px;
+  padding: 4px 12px;
+}
+.sch-round-room-list label:has(input:disabled) {
+  cursor: default;
+  opacity: 0.7;
+}
+.sch-workflow-heading > .sch-round-create-actions {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Insights tab: the task opened with a follow-up record, and
+   the student's task list. */
+.sch-task-builder {
+  margin: 0;
+  padding: 12px 16px 16px;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-canvas);
+}
+.sch-task-builder legend {
+  padding: 0 6px;
+  font-weight: 700;
+}
+.sch-task-builder legend input {
+  width: 18px;
+  height: 18px;
+  vertical-align: -3px;
+  accent-color: var(--suth-action);
+}
+.sch-task-builder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px 16px;
+  margin-top: 8px;
+}
+.sch-task-builder-grid .sch-field {
+  margin: 0;
+}
+.sch-task-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.sch-task-state {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+}
+.sch-task-list .sch-name {
+  align-items: center;
+  flex-wrap: wrap;
+}
+.sch-overdue {
+  color: var(--suth-danger);
+}
+.sch-badge.mental-task-rescreen,
+.sch-badge.mental-task-follow_up {
+  background: var(--suth-info-tint);
+  color: var(--suth-info);
+}
+
+/* Physical tab: BMI-for-age category (WHO 2007). */
+.sch-badge.bmi-low {
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
+}
+.sch-badge.bmi-medium {
+  background: var(--suth-warning-tint);
+  color: var(--suth-warning);
+}
+.sch-badge.bmi-high {
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
+}
+.sch-output .sch-badge {
+  margin-left: 6px;
+  vertical-align: 1px;
+}
+
+/* Mental tab: the list's period, form checklist and one small chart per form. */
+.sch-period-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: var(--suth-radius);
+  background: var(--suth-tint);
+  color: var(--suth-ink);
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+}
+.sch-form-checklist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+}
+.sch-form-checklist label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 14px;
+  border: 1px solid var(--suth-control-line);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  cursor: pointer;
+}
+.sch-form-checklist label:has(input:checked) {
+  border-color: var(--suth-action);
+  background: var(--suth-tint);
+}
+.sch-form-checklist input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--suth-action);
+}
+.sch-form-checklist .sch-sub {
+  display: inline;
+}
+.sch-chart.sch-chart--multi {
+  height: 300px;
+}
+.sch-series-swatch {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+/* School structure: semester dates of an academic year. */
+.sch-terms-form {
+  display: grid;
+  gap: 10px;
+  padding: 16px 0 4px;
+  border-top: 1px solid var(--suth-line);
+}
+.sch-terms-form > .sch-field {
+  max-width: 320px;
+}
+.sch-terms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px 16px;
+}
+.sch-terms-form > button {
+  justify-self: start;
+}
+
+/* Student file: mental-health status now, care steps, and history by term. */
+.sch-mental-status {
+  margin-bottom: 16px;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius-card);
+  background: var(--suth-surface);
+}
+.sch-mental-status.sch-insights-section:first-of-type {
+  padding-top: 20px;
+}
+.sch-mental-now {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px 20px;
+  margin: 0 0 20px;
+}
+.sch-mental-now dt {
+  margin-bottom: 4px;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-label);
+  font-weight: 700;
+}
+.sch-mental-now dd {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  color: var(--suth-ink);
+}
+.sch-care-form {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--suth-radius);
+  background: var(--suth-canvas);
+}
+.sch-care-form textarea {
+  min-height: 72px;
+}
+.sch-mental-subhead,
+.sch-term-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  color: var(--suth-ink);
+  font-size: var(--suth-fs-md);
+  font-weight: 800;
+}
+.sch-term-head .sch-sub {
+  margin-left: auto;
+  font-weight: 600;
+}
+.sch-care-history p {
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+.sch-care-history .sch-name {
+  align-items: center;
+}
+.sch-term-history {
+  display: grid;
+  gap: 18px;
+}
+@media (max-width: 760px) {
+  .sch-care-form {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+}
+
+/* Mental-health status: automatic results, then recorded care steps. */
+.sch-badge.mental-not_assessed,
+.sch-badge.mental-closed {
+  background: var(--suth-neutral-tint);
+  color: var(--suth-ink-2);
+}
+.sch-badge.mental-no_screening {
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
+}
+.sch-badge.mental-screening {
+  background: var(--suth-warning-tint);
+  color: var(--suth-warning);
+}
+.sch-badge.mental-counselor_referral,
+.sch-badge.mental-following {
+  background: var(--suth-info-tint);
+  color: var(--suth-info);
+}
+.sch-badge.mental-hospital_referral {
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
+}
+
 /* Empty / loading */
 .sch-empty-state {
   max-width: 640px;
@@ -1775,29 +2169,94 @@ button.sch-tile.is-active {
   font-variant-numeric: tabular-nums;
 }
 
-.sch-followup-summary {
+/* Re-screening: status chips double as the summary and the filter. */
+.sch-followup-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin: 18px 0 4px;
+}
+.sch-followup-filter > .sch-search-group {
+  flex: 1 1 240px;
+}
+.sch-followup-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.sch-followup-status button {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  border: 1px solid var(--suth-control-line);
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.sch-followup-status button strong {
+  min-width: 24px;
+  padding: 1px 7px;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface-2, var(--suth-line-soft));
+  color: var(--suth-ink);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.sch-followup-status button.is-overdue strong {
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
+}
+.sch-followup-status button.is-pending strong {
+  background: var(--suth-warning-tint);
+  color: var(--suth-warning);
+}
+.sch-followup-status button.is-completed strong {
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
+}
+.sch-followup-status button:hover {
+  border-color: var(--suth-action);
+}
+.sch-followup-status button[aria-pressed="true"] {
+  border-color: var(--suth-action-strong);
+  background: var(--suth-action-strong);
+  color: #fff;
+}
+.sch-followup-status button[aria-pressed="true"] strong {
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+}
+.sch-followup-list {
+  margin-top: 8px;
+}
+.sch-followup-cell {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: 20px 0;
-  border-block: 1px solid var(--suth-line);
+  gap: 2px;
+  min-width: 0;
 }
-.sch-followup-summary > span {
-  padding: 14px 16px;
-  border-inline-end: 1px solid var(--suth-line);
+.sch-followup-cell strong {
+  font-weight: 700;
 }
-.sch-followup-summary > span:last-child {
-  border-inline-end: 0;
-}
-.sch-followup-summary small {
-  display: block;
+.sch-followup-cell small {
   color: var(--suth-muted);
   font-size: var(--suth-fs-label);
 }
-.sch-followup-summary strong {
-  display: block;
-  margin-top: 2px;
-  font-size: var(--suth-fs-title);
-  font-variant-numeric: tabular-nums;
+.sch-followup-cell small.is-shown {
+  color: var(--suth-success);
+}
+.sch-followup-cell small.is-manual {
+  color: var(--suth-warning);
+  font-weight: 700;
+}
+.sch-followup-cell small.is-late {
+  color: var(--suth-danger);
+  font-weight: 700;
 }
 .sch-field-hint {
   color: var(--suth-muted);
@@ -1830,6 +2289,19 @@ button.sch-tile.is-active {
 }
 .sch-notice--success {
   color: var(--suth-success);
+}
+.sch-notice--warning {
+  align-items: flex-start;
+  padding: 12px 14px;
+  border: 1px solid var(--suth-warning-line);
+  border-radius: var(--suth-radius-inner);
+  background: var(--suth-warning-tint);
+  color: var(--suth-warning);
+  line-height: 1.55;
+}
+.sch-notice--warning svg {
+  flex: none;
+  margin-top: 3px;
 }
 .sch-loading-dot {
   width: 8px;
@@ -1866,6 +2338,9 @@ button.sch-tile.is-active {
   .sch-workflow-heading > :is(.sch-btn, .sch-btn-secondary) {
     width: 100%;
   }
+  .sch-round-create-actions > * {
+    flex: 1 1 100%;
+  }
   .sch-risk-summary {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1890,10 +2365,11 @@ button.sch-tile.is-active {
   .sch-data-section .sch-table-wrap {
     overflow: visible;
   }
-  .sch-data-section .sch-table {
+  /* Beats the kit's 620px scrolling table: these rows become cards. */
+  .admin-shell .sch-data-section table.sch-table {
     min-width: 0;
   }
-  .sch-data-section .sch-table thead {
+  .admin-shell .sch-data-section table.sch-table thead {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -1922,6 +2398,10 @@ button.sch-tile.is-active {
   }
   .sch-data-section .sch-table td:last-child {
     border-bottom: 0;
+  }
+  .sch-data-section .sch-table td.sch-actions-col {
+    width: auto;
+    text-align: left;
   }
   .sch-data-section .sch-table td::before {
     content: attr(data-label);
@@ -2307,10 +2787,6 @@ body:has(:is(.sch-wrapper, .org-wrapper)) .swal2-container {
   min-height: 36px;
   border: 0;
   background: var(--suth-tint);
-}
-
-.sch-date-input > .tdp.is-icon .tdp-pop {
-  top: calc(100% + 14px);
 }
 
 /* ── Kit shape (moved here from kit-system.css) ─────────────── */

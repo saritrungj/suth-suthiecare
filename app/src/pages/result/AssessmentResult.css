@@ -123,6 +123,10 @@ body {
   max-width: 500px;
   margin: 0 auto;
 }
+/* Wording set in the back office keeps its line breaks. */
+.ar-hero-custom {
+  white-space: pre-line;
+}
 
 /* ─── RESULT CARD ─── */
 .ar-result-card {

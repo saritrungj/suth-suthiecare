@@ -8,6 +8,19 @@ const ALLOWED = new Set([
   "status",
   "field",
   "reason_code",
+  // Record identifiers and codes only: never names, notes or health values.
+  "report_id",
+  "appointment_id",
+  "follow_up_id",
+  "rule_id",
+  "document_id",
+  "category_id",
+  "user_id",
+  "role_code",
+  "assigned_to",
+  "grade_level_ids",
+  "preset",
+  "permissions",
 ]);
 async function requiredAudit(
   req,

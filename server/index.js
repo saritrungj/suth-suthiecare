@@ -6,8 +6,6 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
-const { clientIpKeyGenerator } = require("./utils/clientIp");
 require("./config/env");
 
 // 🟢 1. นำเข้า Utils (ถ้ายังมีใช้อยู่)
@@ -75,18 +73,9 @@ app.use(
 );
 
 // 🔒 Rate limit ทั่วทั้ง API (ป้องกันการยิงถี่ / brute-force / DoS)
-const apiLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 300,
-  standardHeaders: true,
-  legacyHeaders: false,
-  keyGenerator: clientIpKeyGenerator,
-  message: {
-    success: false,
-    message: "มีการเรียกใช้งานมากเกินไป กรุณารอสักครู่",
-  },
-});
-app.use("/api", apiLimiter);
+// Counted per session when the request has one, else per IP, so a school
+// that shares one public IP is not limited as if it were one user.
+app.use("/api", require("./utils/rateLimits").apiLimiters());
 
 app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ limit: "25mb", extended: true }));
@@ -302,6 +291,8 @@ app.use("/api", require("./routes/pdpaOrganizationRoutes"));
 app.use("/api", require("./routes/privateExportRoutes"));
 app.use("/api", require("./routes/pdpaGovernanceRoutes"));
 app.use("/api/patient-auth", patientAuthRoutes);
+app.use("/api/patient", require("./routes/patientSchoolAppointmentRoutes"));
+app.use("/api/patient", require("./routes/patientSchoolDocumentRoutes"));
 app.use("/api/patient", patientRoutes);
 app.use("/api", formRoutes);
 app.use("/api", userRoutes);
@@ -318,9 +309,18 @@ app.use("/api/admin/help-center", faqRoutes);
 app.use("/api/school", schoolRoutes);
 app.use("/api/school", require("./routes/schoolInsightRoutes"));
 app.use("/api/school", require("./routes/schoolWorkflowRoutes"));
+app.use("/api/school", require("./routes/schoolNotificationRoutes"));
+app.use("/api/school", require("./routes/schoolBehaviorRoutes"));
+app.use("/api/school", require("./routes/schoolPhysicalRiskRoutes"));
+app.use("/api/school", require("./routes/schoolAppointmentRoutes"));
+app.use("/api/school", require("./routes/schoolDocumentRoutes"));
+app.use("/api/school", require("./routes/schoolAuditRoutes"));
+app.use("/api/school", require("./routes/schoolReportRoutes"));
 app.use("/api/master-data", require("./routes/masterDataRoutes"));
 app.use("/api/exports", require("./routes/excelExportRoutes"));
 app.use("/api/case-referrals", caseReferralRoutes);
+app.use("/api/referral-approvals", require("./routes/referralApprovalRoutes"));
+app.use("/api/audit-logs", require("./routes/auditRoutes"));
 
 // 🟢 6. API ทดสอบ Telegram (ป้องกันด้วย token — เฉพาะผู้ที่ล็อกอินแล้ว)
 app.post(

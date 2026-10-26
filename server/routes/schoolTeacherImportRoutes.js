@@ -11,6 +11,7 @@ const {
 const { isStrongPassword } = require("../utils/passwordPolicy");
 const { requiredAudit } = require("../utils/pdpaAudit");
 const accountEmail = require("../utils/accountEmail");
+const { saveCounselorGrades } = require("../utils/schoolStaffRoles");
 const router = express.Router();
 
 router.post("/teachers/import", async (req, res) => {
@@ -64,9 +65,17 @@ router.post("/teachers/import", async (req, res) => {
       }
       const value = checked.value,
         role = raw.role_code || "other";
-      if (!["other", "homeroom", "counselor", "dorm_staff"].includes(role)) {
+      if (
+        ![
+          "other",
+          "homeroom",
+          "counselor",
+          "subject_teacher",
+          "dorm_staff",
+        ].includes(role)
+      ) {
         result.errors.push(
-          "บทบาทที่นำเข้าได้: ครูทั่วไป ครูประจำชั้น ครูแนะแนว หรือเจ้าหน้าที่หอพัก",
+          "บทบาทที่นำเข้าได้: ครูทั่วไป ครูประจำชั้น ครูแนะแนว ครูรายวิชา หรือเจ้าหน้าที่หอพัก",
         );
         continue;
       }
@@ -93,26 +102,53 @@ router.post("/teachers/import", async (req, res) => {
         );
         continue;
       }
-      let room = null;
-      if (raw.classroom) {
+      // A subject teacher may list several rooms of one grade ("1, 2, 3");
+      // every other duty takes at most one room.
+      const roomCell = String(raw.classroom || "");
+      const roomNames = (
+        role === "subject_teacher" ? roomCell.split(",") : [roomCell]
+      )
+        .map((name) => name.trim())
+        .filter(Boolean);
+      const rooms = [];
+      for (const name of roomNames) {
         const [[found]] = await connection.query(
           "SELECT c.id FROM school_classrooms c JOIN school_grade_levels g ON g.id=c.grade_level_id WHERE c.school_id=? AND c.name=? AND g.name=? AND c.academic_year=? AND c.status='active'",
-          [
-            school.id,
-            String(raw.classroom),
-            String(raw.grade || ""),
-            Number(raw.academic_year),
-          ],
+          [school.id, name, String(raw.grade || ""), Number(raw.academic_year)],
         );
-        if (!found) {
-          result.errors.push("ไม่พบห้องเรียน ชั้นปี และปีการศึกษาที่ระบุ");
-          continue;
-        }
-        room = found;
+        if (!found) break;
+        rooms.push(found);
       }
+      if (rooms.length !== roomNames.length) {
+        result.errors.push("ไม่พบห้องเรียน ชั้นปี และปีการศึกษาที่ระบุ");
+        continue;
+      }
+      const room = rooms[0] || null;
       if (role === "homeroom" && !room) {
         result.errors.push("ครูประจำชั้นต้องระบุชั้นปี ห้อง และปีการศึกษา");
         continue;
+      }
+      // A counselor row with grades but no room limits them to those grades
+      // ("ม.1, ม.2, ม.3"); no grade = the whole school.
+      let counselorGrades;
+      if (role === "counselor" && raw.grade && !room) {
+        const names = [
+          ...new Set(
+            String(raw.grade)
+              .split(/\s*,\s*/)
+              .map((name) => name.trim())
+              .filter(Boolean),
+          ),
+        ];
+        const [grades] = await connection.query(
+          "SELECT id,name FROM school_grade_levels WHERE school_id=? AND status='active' AND name IN (?)",
+          [school.id, names],
+        );
+        if (grades.length !== names.length) {
+          result.errors.push("ไม่พบระดับชั้นที่ครูแนะแนวดูแลตามที่ระบุ");
+          continue;
+        }
+        counselorGrades = grades.map((g) => Number(g.id));
       }
       if (!existing[0]) {
         const [[emailOwner]] = await connection.query(
@@ -164,15 +200,25 @@ router.post("/teachers/import", async (req, res) => {
           "INSERT INTO school_staff_roles (school_id,user_id,role_code,status,updated_by) VALUES (?,?,?,'active',?) ON DUPLICATE KEY UPDATE role_code=VALUES(role_code),status='active',updated_by=VALUES(updated_by)",
           [school.id, userId, role, req.user.id],
         );
-        if (room) {
+        await saveCounselorGrades(connection, {
+          schoolId: school.id,
+          userId,
+          roleCode: role,
+          gradeLevelIds:
+            role === "counselor" ? (counselorGrades ?? null) : null,
+          actorId: req.user.id,
+        });
+        if (rooms.length) {
           const [[teacher]] = await connection.query(
             "SELECT id FROM school_teachers WHERE school_id=? AND user_id=?",
             [school.id, userId],
           );
-          await connection.query(
-            "INSERT INTO school_classroom_teachers (classroom_id,teacher_id,role) VALUES (?,?,'homeroom') ON DUPLICATE KEY UPDATE role='homeroom'",
-            [room.id, teacher.id],
-          );
+          const seat = role === "subject_teacher" ? "subject" : "homeroom";
+          for (const seated of rooms)
+            await connection.query(
+              "INSERT INTO school_classroom_teachers (classroom_id,teacher_id,role) VALUES (?,?,?) ON DUPLICATE KEY UPDATE role=VALUES(role)",
+              [seated.id, teacher.id, seat],
+            );
         }
         result.status = existing[0] ? "linked" : "created";
         await connection.query("RELEASE SAVEPOINT teacher_row");

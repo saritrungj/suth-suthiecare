@@ -219,6 +219,7 @@ test("rescreen completion rejects another student response and denies physical-o
           assert.deepEqual(params, [
             99,
             10,
+            10,
             8,
             7,
             101,
@@ -313,6 +314,9 @@ test("general school risk summary returns only allowed fields and configured car
             {
               school_id: 2,
               care_advice_json: { high: "คำแนะนำที่โรงเรียนยืนยัน" },
+              care_guidance_json: {
+                high: { observe: "", talk: "ขั้นพูดคุยที่โรงเรียนเขียน" },
+              },
             },
           ],
         ];
@@ -335,8 +339,13 @@ test("general school risk summary returns only allowed fields and configured car
           "risk_status",
           "assessed_on",
           "care_advice",
+          // School-written guidance steps, not data about the student.
+          "care_guidance",
         ].sort(),
       );
+      assert.deepEqual(data[0].care_guidance, [
+        { step: "talk", text: "ขั้นพูดคุยที่โรงเรียนเขียน" },
+      ]);
       assert.equal(data[0].student_name, "เด็กชาย สมชาย ใจดี");
       assert.equal(data[0].grade_name, "ม.1");
       assert.equal(data[0].classroom_name, "1/1");
@@ -373,7 +382,22 @@ test("screening progress counts actual responses within the round, organization 
         assert.match(sql, /fr.organization_id=\?/);
         assert.match(sql, /DATE\(fr.submitted_at\) BETWEEN/);
         assert.match(sql, /ss.classroom_id IN/);
-        assert.deepEqual(params, [7, 8, "2026-11-02", "2026-11-15", 2, [10]]);
+        // A round limited to grade levels or classrooms counts only those
+        // students.
+        assert.match(sql, /school_screening_round_grades/);
+        assert.match(sql, /school_screening_round_classrooms/);
+        assert.deepEqual(params, [
+          7,
+          8,
+          "2026-11-02",
+          "2026-11-15",
+          2,
+          4,
+          4,
+          4,
+          4,
+          [10],
+        ]);
         return [
           [
             {
@@ -435,6 +459,178 @@ test("screening progress counts actual responses within the round, organization 
     },
   );
 });
+test("round target rule: none is the whole school, grades and classrooms add up", () => {
+  const { inRoundTarget } = require("../services/schoolRescreen");
+  const s11 = { classroom_id: 11, grade_level_id: 5 };
+  const s12 = { classroom_id: 12, grade_level_id: 5 };
+  const s21 = { classroom_id: 21, grade_level_id: 6 };
+  assert.ok(inRoundTarget({}, s11));
+  assert.ok(inRoundTarget({ grades: [5] }, s12));
+  assert.ok(!inRoundTarget({ grades: [5] }, s21));
+  // One classroom of the grade: the other classroom does not see it.
+  assert.ok(inRoundTarget({ classrooms: [11] }, s11));
+  assert.ok(!inRoundTarget({ classrooms: [11] }, s12));
+  // Grade and classroom together cover either.
+  assert.ok(inRoundTarget({ grades: [5], classrooms: [21] }, s12));
+  assert.ok(inRoundTarget({ grades: [5], classrooms: [21] }, s21));
+  assert.ok(!inRoundTarget({ grades: [6] }, { classroom_id: null }));
+});
+
+test("the student's pending rounds use the classroom target rule", async () => {
+  const { pendingRoundsForPatient } = require("../services/schoolRescreen");
+  let seen = "";
+  await pendingRoundsForPatient(
+    {
+      query: async (sql) => {
+        seen = sql;
+        return [[]];
+      },
+    },
+    9,
+  );
+  assert.match(
+    seen,
+    /school_screening_round_classrooms rc WHERE rc.round_id = r.id/,
+  );
+  assert.match(seen, /ss.classroom_id IN/);
+  assert.match(
+    seen,
+    /school_screening_round_grades rg WHERE rg.round_id = r.id/,
+  );
+});
+
+const roundBody = (extra = {}) => ({
+  school_id: 2,
+  name: "โฮมรูม ม.1/1",
+  academic_year: 2569,
+  semester: 2,
+  health_domain: "mental",
+  form_id: 8,
+  starts_on: "2026-10-26",
+  ends_on: "2026-10-26",
+  ...extra,
+});
+// Fake database for round creation: school 2 owns grade 5 and classrooms
+// 11 and 12. Records every write.
+function roundDb(writes) {
+  return async (sql, params) => {
+    if (sql.includes("FROM schools WHERE id=?")) return [[{ id: 2 }]];
+    if (sql.includes("FROM forms WHERE id=?"))
+      return [[{ id: 8, health_domain: "mental", questions: "[]" }]];
+    if (sql.includes("FROM school_grade_levels WHERE school_id=?"))
+      return [params[1].filter((id) => id === 5).map((id) => ({ id }))];
+    if (sql.includes("FROM school_classrooms WHERE school_id=?"))
+      return [
+        params[1].filter((id) => [11, 12].includes(id)).map((id) => ({ id })),
+      ];
+    if (/^\s*INSERT|^\s*UPDATE/.test(sql)) {
+      writes.push({ sql, params });
+      return [{ insertId: 40 + writes.length, affectedRows: 1 }];
+    }
+    throw Error(sql);
+  };
+}
+
+test("a round can be limited to classrooms of its school only", async () => {
+  const writes = [];
+  await withApp(roundDb(writes), admin, async (post) => {
+    const other = await post(
+      "/screening-rounds",
+      roundBody({ classroom_ids: [11, 99] }),
+    );
+    assert.equal(other.status, 422);
+    assert.equal(
+      (await other.json()).message,
+      "ห้องเรียนต้องเป็นของโรงเรียนนี้",
+    );
+    assert.equal(
+      (await post("/screening-rounds", roundBody({ classroom_ids: "11" })))
+        .status,
+      422,
+    );
+    assert.equal(writes.length, 0);
+    const ok = await post(
+      "/screening-rounds",
+      roundBody({ classroom_ids: [11, 11], grade_level_ids: [5] }),
+    );
+    assert.equal(ok.status, 201, await ok.clone().text());
+  });
+  const classroomInsert = writes.find((w) =>
+    w.sql.includes("school_screening_round_classrooms"),
+  );
+  assert.deepEqual(classroomInsert.params, [[[41, 11]]]);
+  assert.ok(
+    writes.some((w) => w.sql.includes("school_screening_round_grades")),
+  );
+});
+
+test("batch round creation checks every round before writing and needs the create right", async () => {
+  const writes = [];
+  await withApp(roundDb(writes), admin, async (post) => {
+    const bad = await post("/screening-rounds/batch", {
+      school_id: 2,
+      rounds: [
+        roundBody({ classroom_ids: [11] }),
+        roundBody({ classroom_ids: [99] }),
+      ],
+    });
+    assert.equal(bad.status, 422);
+    assert.match((await bad.json()).message, /^รอบที่ 2:/);
+    // A round may not name another school than the batch.
+    assert.equal(
+      (
+        await post("/screening-rounds/batch", {
+          school_id: 2,
+          rounds: [roundBody({ school_id: 3 })],
+        })
+      ).status,
+      422,
+    );
+    assert.equal(
+      (await post("/screening-rounds/batch", { school_id: 2, rounds: [] }))
+        .status,
+      422,
+    );
+    assert.equal(writes.length, 0);
+    const ok = await post("/screening-rounds/batch", {
+      school_id: 2,
+      rounds: [
+        roundBody({ classroom_ids: [11] }),
+        roundBody({
+          name: "โฮมรูม ม.1/2",
+          classroom_ids: [12],
+          starts_on: "2026-10-27",
+          ends_on: "2026-10-27",
+        }),
+      ],
+    });
+    assert.equal(ok.status, 201, await ok.clone().text());
+    assert.equal((await ok.json()).ids.length, 2);
+  });
+  const rounds = writes.filter((w) =>
+    w.sql.includes("INSERT INTO school_screening_rounds"),
+  );
+  assert.deepEqual(
+    rounds.map((w) => w.params[6]),
+    ["2026-10-26", "2026-10-27"],
+  );
+  assert.ok(writes.some((w) => w.sql.includes("audit")));
+
+  const denied = [];
+  await withApp(
+    roundDb(denied),
+    { ...admin, workflows: { ...admin.workflows, create: false } },
+    async (post) => {
+      const res = await post("/screening-rounds/batch", {
+        school_id: 2,
+        rounds: [roundBody({ classroom_ids: [11] })],
+      });
+      assert.equal(res.status, 403);
+    },
+  );
+  assert.equal(denied.length, 0);
+});
+
 test("promotion validates all destinations before any enrollment write", async () => {
   let writes = 0;
   await withApp(

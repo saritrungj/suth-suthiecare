@@ -94,6 +94,9 @@ async function withApp(
         return [[{ total: matches ? 1 : 0 }]];
       return [matches ? [{ ...state.referral }] : []];
     }
+    // Both test units are hospitals, so referrals go out without approval.
+    if (sql.startsWith("SELECT id,org_type FROM organizations"))
+      return [params.map((id) => ({ id: Number(id), org_type: "hospital" }))];
     if (sql.startsWith("SELECT u.*"))
       return [
         state.updates.map((update, i) => ({

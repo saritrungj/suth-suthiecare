@@ -14,6 +14,9 @@ import {
   faCalendarDays,
   faChevronDown,
   faChevronLeft,
+  faClipboardList,
+  faClockRotateLeft,
+  faHeartPulse,
   faChalkboardUser,
   faFilePen,
   faFileImport,
@@ -34,6 +37,7 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { usePermissions } from "../permissions/PermissionsProvider";
+import NotificationBell from "./NotificationBell";
 import { filterSidebarItems } from "../permissions/sidebarPolicy";
 import {
   getSelectableOrganizations,
@@ -93,6 +97,14 @@ const rawMenuItems = [
     key: "referrals",
     module: "Case Management",
   },
+  {
+    href: "/admin/referrals/approvals",
+    icon: <FontAwesomeIcon icon={faArrowRightArrowLeft} fixedWidth />,
+    label: "อนุมัติส่งต่อโรงพยาบาล",
+    key: "referral-approvals",
+    module: "referral_approvals.view",
+    orgTypes: ["school"],
+  },
 
   // 🏫 หน่วยงานประเภทโรงเรียน
   {
@@ -146,6 +158,46 @@ const rawMenuItems = [
     schoolCheck: (access) => access?.can_manage_staff,
   },
   {
+    href: "/admin/school/behavior",
+    icon: <FontAwesomeIcon icon={faClipboardList} fixedWidth />,
+    label: "บันทึกพฤติกรรม",
+    key: "school-behavior",
+    orgTypes: ["school"],
+    schoolCheck: (access) => access?.can_use_behavior,
+  },
+  {
+    href: "/admin/school/appointments",
+    icon: <FontAwesomeIcon icon={faCalendarDays} fixedWidth />,
+    label: "นัดหมายรับคำปรึกษา",
+    key: "school-appointments",
+    orgTypes: ["school"],
+    schoolCheck: (access) => access?.can_use_appointments,
+  },
+  {
+    href: "/admin/school/reports",
+    icon: <FontAwesomeIcon icon={faGaugeHigh} fixedWidth />,
+    label: "รายงานภาพรวม",
+    key: "school-reports",
+    orgTypes: ["school"],
+    schoolCheck: (access) => access?.can_view_reports,
+  },
+  {
+    href: "/admin/school/documents",
+    icon: <FontAwesomeIcon icon={faFolderOpen} fixedWidth />,
+    label: "คลังเอกสาร",
+    key: "school-documents",
+    orgTypes: ["school"],
+    schoolCheck: (access) => access?.can_use_documents,
+  },
+  {
+    href: "/admin/school/follow-ups",
+    icon: <FontAwesomeIcon icon={faHeartPulse} fixedWidth />,
+    label: "ติดตามสุขภาพกาย",
+    key: "school-follow-ups",
+    orgTypes: ["school"],
+    schoolCheck: (access) => access?.can_view_physical,
+  },
+  {
     href: "/admin/school/workflows",
     icon: <FontAwesomeIcon icon={faUserShield} fixedWidth />,
     label: "คัดกรองและติดตามโรงเรียน",
@@ -190,6 +242,13 @@ const rawMenuItems = [
     hideForSystemAdmin: true,
   },
   {
+    href: "/admin/audit",
+    icon: <FontAwesomeIcon icon={faClockRotateLeft} fixedWidth />,
+    label: "ประวัติการแก้ไขข้อมูล",
+    key: "audit-history",
+    module: "audit.view",
+  },
+  {
     href: "/admin/help-center",
     icon: <FontAwesomeIcon icon={faQuestionCircle} fixedWidth />,
     label: "จัดการศูนย์ช่วยเหลือ",
@@ -216,7 +275,7 @@ const rawMenuItems = [
   {
     href: "/admin/organizations",
     icon: <FontAwesomeIcon icon={faSitemap} fixedWidth />,
-    label: "หน่วยงานหลักและหน่วยงานย่อย",
+    label: "หน่วยงาน",
     key: "organizations",
     module: "organizations.manage",
     systemAdminOnly: true,
@@ -705,6 +764,7 @@ const Sidebar = ({ activeKey = "dashboard" }) => {
         </nav>
 
         <div className="sidebar-bottom">
+          <NotificationBell collapsed={collapsed} />
           <button
             className="menu-item logout-btn"
             onClick={handleLogout}

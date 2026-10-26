@@ -107,15 +107,42 @@ function getClinicConfig(slug, clinicsList = []) {
 }
 
 const caseRiskColors = {
-  "น้ำหนักน้อย / ผอม": { bg: "var(--suth-info-tint)", color: "var(--suth-info)" },
-  "ปกติ (สุขภาพดี)": { bg: "var(--suth-success-tint)", color: "var(--suth-success)" },
-  "ท้วม / โรคอ้วนระดับ 1": { bg: "var(--suth-warning-tint)", color: "var(--suth-warning)" },
-  "อ้วน / โรคอ้วนระดับ 2": { bg: "var(--suth-tint)", color: "var(--suth-warning)" },
-  "อ้วนมาก / โรคอ้วนระดับ 3": { bg: "var(--suth-danger-tint)", color: "var(--suth-danger)" },
-  "ปกติ / ไม่มีอาการซึมเศร้า": { bg: "var(--suth-success-tint)", color: "var(--suth-success)" },
-  มีอาการซึมเศร้าระดับน้อย: { bg: "var(--suth-warning-tint)", color: "var(--suth-warning)" },
-  มีอาการซึมเศร้าระดับปานกลาง: { bg: "var(--suth-tint)", color: "var(--suth-warning)" },
-  มีอาการซึมเศร้าระดับรุนแรง: { bg: "var(--suth-danger-tint)", color: "var(--suth-danger)" },
+  "น้ำหนักน้อย / ผอม": {
+    bg: "var(--suth-info-tint)",
+    color: "var(--suth-info)",
+  },
+  "ปกติ (สุขภาพดี)": {
+    bg: "var(--suth-success-tint)",
+    color: "var(--suth-success)",
+  },
+  "ท้วม / โรคอ้วนระดับ 1": {
+    bg: "var(--suth-warning-tint)",
+    color: "var(--suth-warning)",
+  },
+  "อ้วน / โรคอ้วนระดับ 2": {
+    bg: "var(--suth-tint)",
+    color: "var(--suth-warning)",
+  },
+  "อ้วนมาก / โรคอ้วนระดับ 3": {
+    bg: "var(--suth-danger-tint)",
+    color: "var(--suth-danger)",
+  },
+  "ปกติ / ไม่มีอาการซึมเศร้า": {
+    bg: "var(--suth-success-tint)",
+    color: "var(--suth-success)",
+  },
+  มีอาการซึมเศร้าระดับน้อย: {
+    bg: "var(--suth-warning-tint)",
+    color: "var(--suth-warning)",
+  },
+  มีอาการซึมเศร้าระดับปานกลาง: {
+    bg: "var(--suth-tint)",
+    color: "var(--suth-warning)",
+  },
+  มีอาการซึมเศร้าระดับรุนแรง: {
+    bg: "var(--suth-danger-tint)",
+    color: "var(--suth-danger)",
+  },
 };
 
 const CLINIC_RISK_OPTIONS = {
@@ -305,8 +332,11 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
         score_results: [
           {
             label: formData.riskLevel,
-            bg: caseRiskColors[formData.riskLevel]?.bg || "var(--suth-neutral-tint)",
-            color: caseRiskColors[formData.riskLevel]?.color || "var(--suth-ink-2)",
+            bg:
+              caseRiskColors[formData.riskLevel]?.bg ||
+              "var(--suth-neutral-tint)",
+            color:
+              caseRiskColors[formData.riskLevel]?.color || "var(--suth-ink-2)",
           },
         ],
       },
@@ -423,11 +453,13 @@ function CreateCaseModal({ onClose, onSave, clinics = [] }) {
                   onChange={(e) => handleChange("clinicType", e.target.value)}
                 >
                   <option value="general">ทั่วไป</option>
-                  {clinics.filter((c) => c.slug !== "general").map((c) => (
-                    <option key={c.slug} value={c.slug}>
-                      {c.name}
-                    </option>
-                  ))}
+                  {clinics
+                    .filter((c) => c.slug !== "general")
+                    .map((c) => (
+                      <option key={c.slug} value={c.slug}>
+                        {c.name}
+                      </option>
+                    ))}
                 </SearchableSelect>
               </div>
 

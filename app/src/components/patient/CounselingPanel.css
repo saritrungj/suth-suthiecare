@@ -1,0 +1,139 @@
+/* Counseling appointments on the student's member page (shares .at-* layout). */
+.cp-panel {
+  border-color: var(--suth-info-line);
+}
+.cp-icon {
+  background: var(--suth-info-tint);
+  color: var(--suth-info);
+}
+.cp-panel .at-head {
+  flex-wrap: wrap;
+}
+.cp-panel .at-heading {
+  flex: 1;
+}
+.cp-primary,
+.cp-secondary {
+  min-height: 44px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: var(--suth-radius-pill);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.cp-primary {
+  border: 0;
+  background: var(--suth-action-strong);
+  color: var(--suth-on-action, #2b1a0e);
+}
+.cp-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.cp-secondary {
+  border: 1px solid var(--suth-line);
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+}
+.cp-form {
+  display: grid;
+  gap: 16px;
+}
+.cp-form fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.cp-form legend {
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+.cp-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.cp-choices label {
+  min-height: 44px;
+  padding: 8px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
+  cursor: pointer;
+}
+.cp-choices label.is-on {
+  border-color: var(--suth-action-strong);
+  background: var(--suth-warning-tint);
+  font-weight: 700;
+}
+.cp-choices input {
+  accent-color: var(--suth-action-strong);
+}
+.cp-choices small {
+  color: var(--suth-muted);
+  font-weight: 400;
+}
+.cp-note {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+.cp-note textarea {
+  padding: 10px 12px;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
+  font: inherit;
+  font-weight: 400;
+  resize: vertical;
+}
+.cp-intro,
+.cp-urgent,
+.cp-empty {
+  margin: 0;
+  color: var(--suth-muted);
+}
+.cp-urgent {
+  font-size: var(--suth-fs-sm);
+}
+.cp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.cp-notice,
+.cp-error {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cp-notice {
+  color: var(--suth-success);
+}
+.cp-error {
+  color: var(--suth-danger);
+}
+.cp-status {
+  padding: 3px 10px;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface-2);
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+}
+.cp-status.is-requested,
+.cp-status.is-rescheduled {
+  background: var(--suth-warning-tint);
+  color: var(--suth-warning);
+}
+.cp-status.is-confirmed,
+.cp-status.is-completed {
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
+}

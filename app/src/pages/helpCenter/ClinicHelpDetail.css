@@ -105,7 +105,11 @@
 }
 
 .hc-clinic-badge-label {
-  background: color-mix(in srgb, var(--suth-surface) 40%, transparent) !important;
+  background: color-mix(
+    in srgb,
+    var(--suth-surface) 40%,
+    transparent
+  ) !important;
   border: 1px solid rgba(31, 47, 63, 0.25) !important;
   color: var(--suth-on-action) !important; /* อักษรขาวคมชัด */
   padding: 4px 12px;
@@ -332,7 +336,11 @@
 
 /* 🟢 จุดเปลี่ยนสถานะ Active (ข้อคำถามที่กำลังเปิดอ่านคำตอบ) */
 .hc-sub-question-item.active {
-  background: linear-gradient(135deg, var(--suth-tint) 0%, var(--suth-tint-strong) 100%) !important;
+  background: linear-gradient(
+    135deg,
+    var(--suth-tint) 0%,
+    var(--suth-tint-strong) 100%
+  ) !important;
   border-color: var(--suth-action) !important; /* ล็อกกรอบสีส้มระบบแท้ */
   color: var(--suth-action-ink) !important; /* ตัวหนังสือส้มเข้มคมชัด */
   font-weight: 600;
@@ -362,7 +370,9 @@
 .hc-clinic-main-content-pane .hc-answer-display-card {
   background: var(--suth-surface);
   border: 1px solid var(--suth-line-soft);
-  border-radius: var(--suth-radius-card); /* เพิ่มความโค้งมนให้ดูโมเดิร์นและเป็นมิตร */
+  border-radius: var(
+    --suth-radius-card
+  ); /* เพิ่มความโค้งมนให้ดูโมเดิร์นและเป็นมิตร */
   box-shadow: 0 10px 30px rgba(31, 47, 63, 0.03);
   overflow: hidden;
   box-sizing: border-box;
@@ -370,7 +380,11 @@
 
 /* 🟢 หัวกล่องแสดงคำถาม: ถมสีฟ้านวลไล่เฉดสไตล์คลินิกยุคใหม่ ลบล้างความจืดชืด */
 .hc-clinic-main-content-pane .hc-answer-header-zone {
-  background: linear-gradient(180deg, var(--suth-canvas) 0%, var(--suth-surface) 100%) !important;
+  background: linear-gradient(
+    180deg,
+    var(--suth-canvas) 0%,
+    var(--suth-surface) 100%
+  ) !important;
   padding: 32px 36px !important;
   border-bottom: 1px solid var(--suth-care-line) !important;
 }
@@ -629,7 +643,12 @@
   padding: 40px 0;
   border: 0;
   border-radius: 28px;
-  background: linear-gradient(120deg, var(--pub-peach) 0%, var(--pub-pink) 55%, var(--pub-lilac) 100%);
+  background: linear-gradient(
+    120deg,
+    var(--pub-peach) 0%,
+    var(--pub-pink) 55%,
+    var(--pub-lilac) 100%
+  );
 }
 @media (max-width: 1200px) {
   .hc-clinic-detail-hero {
@@ -687,7 +706,11 @@
   box-shadow: var(--pub-soft-shadow);
 }
 .hc-clinic-main-content-pane .hc-answer-header-zone {
-  background: linear-gradient(180deg, var(--pub-sky) 0%, var(--suth-surface) 100%) !important;
+  background: linear-gradient(
+    180deg,
+    var(--pub-sky) 0%,
+    var(--suth-surface) 100%
+  ) !important;
   border-bottom: 0 !important;
 }
 .hc-answer-placeholder-card {

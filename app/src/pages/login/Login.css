@@ -8,7 +8,11 @@
   isolation: isolate;
   overflow: hidden;
   background-color: var(--staff-civic-paper);
-  background-image: linear-gradient(color-mix(in srgb, var(--suth-surface-2) 78%, transparent), color-mix(in srgb, var(--suth-line-soft) 86%, transparent)),
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--suth-surface-2) 78%, transparent),
+      color-mix(in srgb, var(--suth-line-soft) 86%, transparent)
+    ),
     url("../../assets/login-image.png");
   background-size: cover;
   background-position: center;
@@ -34,14 +38,20 @@
   min-height: 632px;
   border: 1px solid rgba(31, 47, 63, 0.15);
   border-radius: var(--suth-radius);
-  box-shadow: 0 2px 4px rgba(31, 47, 63, 0.04),
+  box-shadow:
+    0 2px 4px rgba(31, 47, 63, 0.04),
     0 24px 60px rgba(31, 47, 63, 0.1);
 }
 
 .staff-login-intro {
   padding: clamp(46px, 5vw, 64px) clamp(34px, 4vw, 54px);
   background-color: var(--staff-civic-navy-deep);
-  background-image: linear-gradient(145deg, color-mix(in srgb, var(--suth-surface) 4%, transparent), transparent 44%),
+  background-image:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--suth-surface) 4%, transparent),
+      transparent 44%
+    ),
     repeating-linear-gradient(
       115deg,
       transparent 0 44px,
@@ -196,7 +206,11 @@
 @media (max-width: 480px) {
   .staff-login-page {
     background-color: var(--suth-neutral-tint);
-    background-image: linear-gradient(color-mix(in srgb, var(--suth-surface-2) 82%, transparent), color-mix(in srgb, var(--suth-line-soft) 90%, transparent)),
+    background-image:
+      linear-gradient(
+        color-mix(in srgb, var(--suth-surface-2) 82%, transparent),
+        color-mix(in srgb, var(--suth-line-soft) 90%, transparent)
+      ),
       url("../../assets/login-image.png");
     background-size: cover;
     background-position: center;
@@ -285,8 +299,18 @@
 }
 /* Staff panel uses lilac and the male doctor so the two roles read apart. */
 .staff-login-intro {
-  background: linear-gradient(170deg, var(--pub-lilac) 0%, #f4f1ff 62%, var(--pub-sky) 100%);
-  background-image: linear-gradient(170deg, var(--pub-lilac) 0%, #f4f1ff 62%, var(--pub-sky) 100%);
+  background: linear-gradient(
+    170deg,
+    var(--pub-lilac) 0%,
+    #f4f1ff 62%,
+    var(--pub-sky) 100%
+  );
+  background-image: linear-gradient(
+    170deg,
+    var(--pub-lilac) 0%,
+    #f4f1ff 62%,
+    var(--pub-sky) 100%
+  );
   color: var(--suth-ink);
 }
 /* Staff get their own care team: a doctor, a teacher/counsellor and a
@@ -324,7 +348,8 @@
 }
 .staff-login-page .patient-auth-button {
   border-radius: var(--suth-radius-pill);
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--suth-action) 35%, transparent);
+  box-shadow: 0 10px 24px
+    color-mix(in srgb, var(--suth-action) 35%, transparent);
 }
 @media (max-width: 480px) {
   .staff-login-page,

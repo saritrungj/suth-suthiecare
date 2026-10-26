@@ -151,38 +151,41 @@ export function DateRangePills({ value, onChange, label = "ช่วงเวล
       <span className="dz-range__label" id={id}>
         <FiCalendar aria-hidden="true" /> {label}
       </span>
-      <div className="dz-pills">
-        {DATE_PRESETS.map((p) => (
-          <button
-            key={p.key}
-            type="button"
-            className="dz-pill"
-            aria-pressed={active?.key === p.key}
-            onClick={() => onChange(p.range())}
-          >
-            {p.label}
-          </button>
-        ))}
-      </div>
-      <div className={active ? "dz-dates" : "dz-dates is-custom"}>
-        <ThaiDatePicker
-          label="ตั้งแต่วันที่"
-          value={value.startDate}
-          max={value.endDate}
-          rangeStart={value.startDate}
-          rangeEnd={value.endDate}
-          onChange={(v) => set(v, value.endDate)}
-        />
-        <span className="dz-dates__sep">ถึง</span>
-        <ThaiDatePicker
-          label="ถึงวันที่"
-          value={value.endDate}
-          min={value.startDate}
-          rangeStart={value.startDate}
-          rangeEnd={value.endDate}
-          align="end"
-          onChange={(v) => set(value.startDate, v)}
-        />
+      {/* Transparent by default; row toolbars lay the controls out as one line. */}
+      <div className="dz-range__controls">
+        <div className="dz-pills">
+          {DATE_PRESETS.map((p) => (
+            <button
+              key={p.key}
+              type="button"
+              className="dz-pill"
+              aria-pressed={active?.key === p.key}
+              onClick={() => onChange(p.range())}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+        <div className={active ? "dz-dates" : "dz-dates is-custom"}>
+          <ThaiDatePicker
+            label="ตั้งแต่วันที่"
+            value={value.startDate}
+            max={value.endDate}
+            rangeStart={value.startDate}
+            rangeEnd={value.endDate}
+            onChange={(v) => set(v, value.endDate)}
+          />
+          <span className="dz-dates__sep">ถึง</span>
+          <ThaiDatePicker
+            label="ถึงวันที่"
+            value={value.endDate}
+            min={value.startDate}
+            rangeStart={value.startDate}
+            rangeEnd={value.endDate}
+            align="end"
+            onChange={(v) => set(value.startDate, v)}
+          />
+        </div>
       </div>
     </div>
   );

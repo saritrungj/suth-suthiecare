@@ -529,7 +529,8 @@ textarea.cdm-form-input {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  box-shadow: 0 0 0 2px var(--suth-surface),
+  box-shadow:
+    0 0 0 2px var(--suth-surface),
     0 0 4px rgba(31, 47, 63, 0.2);
 }
 .cdm-dynamic-risk-system-note {
@@ -660,7 +661,9 @@ textarea.cdm-form-input {
   background: var(--suth-action-strong-hover) !important;
 }
 .cdm-comment-input {
-  background: var(--suth-tint) !important; /* พื้นหลังเหลืองอ่อนเหมือนกระดาษโน้ต */
+  background: var(
+    --suth-tint
+  ) !important; /* พื้นหลังเหลืองอ่อนเหมือนกระดาษโน้ต */
   border: 1px dashed var(--suth-warning-line) !important;
   font-size: var(--suth-fs-label) !important;
   margin-top: 8px;
@@ -888,7 +891,11 @@ textarea.cdm-form-input {
   max-height: 80px;
   position: relative;
   mask-image: linear-gradient(to bottom, var(--suth-ink) 50%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, var(--suth-ink) 50%, transparent 100%);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    var(--suth-ink) 50%,
+    transparent 100%
+  );
 }
 .cdm-log-content-wrapper.expanded {
   max-height: 5000px;
@@ -1170,7 +1177,8 @@ textarea.cdm-form-input {
   border-radius: var(--suth-radius-hero);
   font-weight: 700;
   font-size: var(--suth-fs-sm);
-  box-shadow: 0 4px 15px color-mix(in srgb, var(--suth-success) 30%, transparent);
+  box-shadow: 0 4px 15px
+    color-mix(in srgb, var(--suth-success) 30%, transparent);
   z-index: var(--z-toast);
   display: flex;
   align-items: center;
@@ -1409,7 +1417,11 @@ textarea.cdm-form-input {
   /* 🟢 แก้ Dropdown ให้โผล่จากขอบล่างจอแบบ Bottom Sheet (แก้ปัญหาโดนบัง 100%) */
   /* 🟢 เปลี่ยนแอนิเมชันให้สไลด์ลงมาจากด้านบนแทน */
   .cdm-interactive-tpl-card {
-    background: color-mix(in srgb, var(--suth-surface) 85%, transparent) !important;
+    background: color-mix(
+      in srgb,
+      var(--suth-surface) 85%,
+      transparent
+    ) !important;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-radius: var(--suth-radius-lg) !important;

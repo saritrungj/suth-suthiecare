@@ -34,6 +34,7 @@ import {
   FaFileAlt,
 } from "react-icons/fa";
 import RichTextInput from "./RichTextInput";
+import RuleImagePicker from "./RuleImagePicker";
 import { DEFAULT_SCORE_BAND_COLOR } from "../formThemePalette";
 
 // 🟢 โครงสร้างข้อมูลประเภทคำถามพร้อม Icon
@@ -238,7 +239,13 @@ const SortableQuestion = ({
   const addRule = () => {
     const newRules = [
       ...(q.scoringRules || []),
-      { min: 0, max: 0, label: "", color: DEFAULT_SCORE_BAND_COLOR, advice: "" },
+      {
+        min: 0,
+        max: 0,
+        label: "",
+        color: DEFAULT_SCORE_BAND_COLOR,
+        advice: "",
+      },
     ];
     updateScoringRules(q.id, newRules);
   };
@@ -636,6 +643,15 @@ const SortableQuestion = ({
                     value={rule.advice}
                     onChange={(e) =>
                       handleRuleChange(idx, "advice", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="sfb-scoring-rule-row">
+                  <RuleImagePicker
+                    value={rule.resultImage}
+                    color={rule.color}
+                    onChange={(value) =>
+                      handleRuleChange(idx, "resultImage", value)
                     }
                   />
                 </div>

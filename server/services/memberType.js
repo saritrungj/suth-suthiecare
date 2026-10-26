@@ -31,7 +31,8 @@ function classifyStatusText(value) {
   if (!text || /^[-–—.\s]*$/.test(text)) return null;
   if (/^(ไม่ระบุ|null|undefined)$/i.test(text)) return null;
   // "ไม่ใช่นักศึกษา มทส." and similar say the opposite of the word they contain.
-  if (/ไม่(ใช่|ได้เป็น|ได้ศึกษา)/.test(text)) return { type: "general", faculty: null };
+  if (/ไม่(ใช่|ได้เป็น|ได้ศึกษา)/.test(text))
+    return { type: "general", faculty: null };
   if (/สำนักวิชา|คณะ/.test(text))
     return {
       type: "university_student",
@@ -46,7 +47,12 @@ function classifyStatusText(value) {
 const flattenQuestions = (questions) =>
   (Array.isArray(questions) ? questions : []).flatMap((q) =>
     q
-      ? [q, ...flattenQuestions(q.subQuestions || q.questions || q.children || [])]
+      ? [
+          q,
+          ...flattenQuestions(
+            q.subQuestions || q.questions || q.children || [],
+          ),
+        ]
       : [],
   );
 
@@ -109,7 +115,9 @@ async function latestStatusAnswer(conn, accountId) {
         .filter(Boolean);
       if (found.length) {
         const withFaculty = found.find((item) => item.faculty);
-        const university = found.find((item) => item.type === "university_student");
+        const university = found.find(
+          (item) => item.type === "university_student",
+        );
         return {
           ...(withFaculty || university || found[0]),
           at: response.submitted_at,
@@ -174,7 +182,9 @@ function refreshPersonAnswerQuietly(conn, personId) {
   if (!personId) return Promise.resolve();
   return conn
     .query("SELECT patient_account_id FROM persons WHERE id = ?", [personId])
-    .then(([rows]) => refreshMemberAnswerQuietly(conn, rows[0]?.patient_account_id))
+    .then(([rows]) =>
+      refreshMemberAnswerQuietly(conn, rows[0]?.patient_account_id),
+    )
     .catch(() => {});
 }
 

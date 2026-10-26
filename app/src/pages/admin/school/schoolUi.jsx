@@ -28,6 +28,32 @@ export const RISK_LABELS = {
   none: "ยังไม่มีผลประเมิน",
 };
 
+// Mental-health status of a student in a period. The first four come from
+// the latest assessment; the rest are care steps teachers record.
+export const MENTAL_STATUS_LABELS = {
+  assessed: "ประเมินแล้ว",
+  not_assessed: "ยังไม่มีการประเมิน",
+  screening: "คัดกรอง",
+  no_screening: "ไม่ต้องคัดกรอง",
+  counselor_referral: "ส่งต่อครูแนะแนว",
+  following: "กำลังติดตาม",
+  hospital_referral: "ส่งต่อ รพ.",
+};
+export const CARE_STATUS_LABELS = {
+  counselor_referral: "ส่งต่อครูแนะแนว",
+  following: "กำลังติดตาม",
+  hospital_referral: "ส่งต่อ รพ.",
+  closed: "ปิดการดูแล",
+};
+export function MentalStatusBadge({ status }) {
+  if (!status) return <span className="sch-badge">-</span>;
+  return (
+    <span className={`sch-badge mental-${status}`}>
+      {MENTAL_STATUS_LABELS[status] || CARE_STATUS_LABELS[status] || status}
+    </span>
+  );
+}
+
 export const GENDER_LABELS = { male: "ชาย", female: "หญิง", other: "อื่น ๆ" };
 
 export const STUDENT_STATUS_LABELS = {
@@ -57,6 +83,7 @@ export const TEACHER_ROLE_LABELS = {
   homeroom: "ครูประจำชั้น",
   co_homeroom: "ครูประจำชั้นร่วม",
   counselor: "ครูแนะแนว",
+  subject: "ครูรายวิชา",
 };
 
 // Current Thai academic year: a new year starts in mid-May.

@@ -70,8 +70,8 @@ const QuestionBody = ({
     return (
       <div className="sfb-group-container">
         <p className="sfb-group-header">
-          <FaLayerGroup size={16} color="var(--suth-info)" /> คำถามย่อยในกลุ่มนี้ (
-          {subs.length} ข้อ)
+          <FaLayerGroup size={16} color="var(--suth-info)" />{" "}
+          คำถามย่อยในกลุ่มนี้ ({subs.length} ข้อ)
         </p>
 
         {subs.length > 0 ? (

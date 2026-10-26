@@ -1189,7 +1189,12 @@ const FormView = () => {
                           <div className="pdpa-check-circle">
                             {consents[q.id] === true && <FiCheck />}
                           </div>
-                          <span style={{ fontWeight: "600", fontSize: "var(--suth-fs-body)" }}>
+                          <span
+                            style={{
+                              fontWeight: "600",
+                              fontSize: "var(--suth-fs-body)",
+                            }}
+                          >
                             {t("form_view.pdpa_ack")}
                           </span>
                         </label>

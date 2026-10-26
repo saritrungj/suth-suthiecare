@@ -20,7 +20,13 @@ import { usePermissions } from "../../permissions/PermissionsProvider";
 import "./dashboard.css";
 import FormChartWorkspace from "../../components/FormChartWorkspace";
 import { useNavigate } from "react-router-dom";
-import { FiArrowRight, FiLayers, FiChevronDown } from "react-icons/fi";
+import {
+  FiArrowRight,
+  FiFileText,
+  FiGrid,
+  FiLayers,
+  FiChevronDown,
+} from "react-icons/fi";
 import ClinicKpiSummary from "../../components/dashboard/ClinicKpiSummary";
 import AllOrganizationsOverview from "../../components/dashboard/AllOrganizationsOverview";
 import {
@@ -417,11 +423,11 @@ function OrganizationDashboard() {
           tone={heroTone}
         />
 
-        <div className="dz-toolbar">
+        <div className="dz-toolbar dz-toolbar--rows">
           {clinics.length > 0 && (
             <div className="dz-field">
               <span className="dz-field__label" id="db-clinic-label">
-                คลินิก
+                <FiGrid aria-hidden="true" /> คลินิก
               </span>
               <div
                 className="dz-pills"
@@ -442,6 +448,38 @@ function OrganizationDashboard() {
               </div>
             </div>
           )}
+          {/* The form drives both the charts and the recent cases below. */}
+          <div className="dz-field">
+            <span className="dz-field__label" id="db-form-label">
+              <FiFileText aria-hidden="true" /> แบบฟอร์ม
+            </span>
+            <div
+              className="db-form-picker"
+              role="group"
+              aria-labelledby="db-form-label"
+            >
+              <CustomDropdown
+                icon={FiLayers}
+                label="แบบฟอร์ม"
+                value={selectedFormId}
+                onChange={(val) => {
+                  if (val) setSelectedFormId(val);
+                }}
+                options={formOptions}
+              />
+              <CustomDropdown
+                icon={FiLayers}
+                label="สถานะแบบฟอร์ม"
+                value={formStatusFilter}
+                onChange={setFormStatusFilter}
+                options={[
+                  { value: "published", label: "เผยแพร่แล้ว" },
+                  { value: "draft", label: "ฉบับร่าง/ซ่อน" },
+                  { value: "all", label: "ทุกสถานะ" },
+                ]}
+              />
+            </div>
+          </div>
           <DateRangePills value={range} onChange={setRange} />
         </div>
 
@@ -479,28 +517,6 @@ function OrganizationDashboard() {
               description="15 เคสล่าสุดของแบบฟอร์มที่เลือก ในช่วงเวลาเดียวกับด้านบน"
               aside={
                 <div className="dash-case-table-header">
-                  <div className="db-form-picker">
-                    <CustomDropdown
-                      icon={FiLayers}
-                      label="แบบฟอร์ม"
-                      value={selectedFormId}
-                      onChange={(val) => {
-                        if (val) setSelectedFormId(val);
-                      }}
-                      options={formOptions}
-                    />
-                    <CustomDropdown
-                      icon={FiLayers}
-                      label="สถานะแบบฟอร์ม"
-                      value={formStatusFilter}
-                      onChange={setFormStatusFilter}
-                      options={[
-                        { value: "published", label: "เผยแพร่แล้ว" },
-                        { value: "draft", label: "ฉบับร่าง/ซ่อน" },
-                        { value: "all", label: "ทุกสถานะ" },
-                      ]}
-                    />
-                  </div>
                   <button
                     type="button"
                     className="db-view-all-btn dz-link"

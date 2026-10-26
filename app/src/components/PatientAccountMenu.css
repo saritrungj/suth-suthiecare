@@ -18,7 +18,8 @@
   border-radius: var(--suth-radius-pill);
   background: var(--suth-action-strong);
   color: var(--suth-on-action);
-  box-shadow: 0 10px 30px color-mix(in srgb, var(--suth-action) 32%, transparent);
+  box-shadow: 0 10px 30px
+    color-mix(in srgb, var(--suth-action) 32%, transparent);
   font-size: var(--suth-fs-sm);
   font-weight: 800;
   line-height: 1;
@@ -38,7 +39,8 @@
 
 .patient-account-login:hover {
   background: var(--suth-action-ink);
-  box-shadow: 0 12px 30px color-mix(in srgb, var(--suth-action-pressed) 40%, transparent);
+  box-shadow: 0 12px 30px
+    color-mix(in srgb, var(--suth-action-pressed) 40%, transparent);
   transform: translateY(-1px);
 }
 

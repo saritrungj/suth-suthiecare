@@ -324,7 +324,7 @@ Mostly flat with tonal layering: grey canvas, white surface, Mist bands. Shadows
 
 ### Stacking
 
-Layers come from the `--z-*` tokens in `tokens.css` (sticky, raised, fab, sidebar, dropdown, popover, modal, drawer, toast, alert, portal menu). Plain values 1 to 10 are allowed only for ordering siblings inside one component (a badge over a card image, a drag handle over a card); anything that must clear another component uses a token.
+Layers come from the `--z-*` tokens in `tokens.css` (sticky, raised, fab, sidebar, dropdown, popover, mobile top bar, drawer, modal, nested modal, mobile nav, toast, alert, portal menu). The drawer sits below modals because every dialog a drawer opens must land above it; a drawer opened from a drawer stacks by open order on the same layer. Plain values 1 to 10 are allowed only for ordering siblings inside one component (a badge over a card image, a drag handle over a card); anything that must clear another component uses a token.
 
 ### Named Rules
 

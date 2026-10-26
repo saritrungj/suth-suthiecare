@@ -25,6 +25,10 @@ router.use(verifyToken, requireAction("cases.view"), (req, res, next) => {
     return res
       .status(422)
       .json({ message: "กรุณาเลือกหน่วยงานหนึ่งแห่งเพื่อใช้งานการส่งต่อ" });
+  // Referrals are between units; a school guardian account has no part in
+  // them (req.schoolAccess is set by the school privacy boundary).
+  if (req.schoolAccess?.isGuardian)
+    return res.status(403).json({ message: "คุณไม่มีสิทธิ์ดำเนินการนี้" });
   next();
 });
 const referralFrom = `FROM case_referrals r JOIN organizations so ON so.id=r.source_organization_id
@@ -220,102 +224,93 @@ router.post("/", requireAction("cases.assign"), async (req, res) => {
     return res
       .status(422)
       .json({ message: "กรุณาเลือกหน่วยงานปลายทางที่ต่างจากต้นทาง" });
+  const referrals = require("../services/caseReferralCreate");
   let connection;
   try {
     connection = await db.getConnection();
     await connection.beginTransaction();
-    const [links] = await connection.query(
-      "SELECT enabled FROM organization_referral_links WHERE source_organization_id=? AND destination_organization_id=? AND enabled=1 FOR UPDATE",
-      [req.organizationContext, body.destination_organization_id],
-    );
-    if (!links[0] || Number(links[0].enabled) !== 1) {
-      await connection.rollback();
-      return res.status(403).json({ code: "REFERRAL_DESTINATION_NOT_ALLOWED" });
-    }
-    const level = await organizationLevelSql("o");
-    const [units] = await connection.query(
-      `SELECT o.id FROM organizations o WHERE o.id IN (?,?) AND o.status='active' AND ${level}='unit' FOR UPDATE`,
-      [req.organizationContext, body.destination_organization_id],
-    );
-    if (units.length !== 2) {
-      await connection.rollback();
-      return res.status(422).json({
-        message: "หน่วยงานต้นทางและปลายทางต้องเป็นหน่วยงานที่เปิดใช้งาน",
-      });
-    }
-    const [cases] = await connection.query(
-      "SELECT fr.id, mc.id AS master_case_id, fr.summary_data, f.title AS form_title, pa.first_name_encrypted, pa.last_name_encrypted FROM form_responses fr LEFT JOIN forms f ON f.id=fr.form_id LEFT JOIN patient_accounts pa ON pa.id=fr.patient_account_id LEFT JOIN mastercases mc ON mc.id=fr.master_case_id AND mc.organization_id=fr.organization_id WHERE fr.id=? AND fr.organization_id=? FOR UPDATE",
-      [body.source_response_id, req.organizationContext],
-    );
-    if (!cases[0]) {
-      await connection.rollback();
-      return res.status(404).json({ message: "ไม่พบเคสในหน่วยงานต้นทาง" });
-    }
-    const source = cases[0];
-    let summary = require("../utils/decryptCaseData").decryptSummaryData(
-      source.summary_data,
-      decrypt,
+    const { source, error } = await referrals.referralSource(
+      connection,
       req.organizationContext,
+      body,
     );
-    const submittedName =
-      typeof summary.display_name === "string" ? summary.display_name : "";
-    const displayName =
-      submittedName && submittedName.trim() !== "-"
-        ? submittedName
-        : [
-            readField(
-              source.first_name_encrypted,
-              "patient_accounts",
-              "first_name_encrypted",
-            ),
-            readField(
-              source.last_name_encrypted,
-              "patient_accounts",
-              "last_name_encrypted",
-            ),
-          ]
-            .filter(Boolean)
-            .join(" ");
-    // The person's name and the assessment title travel only with "assign" rights.
-    const { can } = require("../authorization/can");
-    const sharedName =
-      can(req, "pii.view") && can(req, "pii.assign")
-        ? displayName
-        : "ไม่ระบุชื่อ";
-    const sharedTitle =
-      can(req, "clinical.view") && can(req, "clinical.assign")
-        ? source.form_title || null
-        : null;
-    const [created] = await connection.query(
-      "INSERT INTO case_referrals (source_organization_id,destination_organization_id,source_response_id,source_master_case_id,display_name_encrypted,form_title,reason_encrypted,created_by) VALUES (?,?,?,?,?,?,?,?)",
-      [
+    if (error) {
+      await connection.rollback();
+      return res.status(error.status).json(error.body);
+    }
+    const { shareName, shareTitle } = referrals.shareRights(req);
+    // A school referring to a hospital waits for approval inside the school.
+    if (
+      await referrals.needsApproval(
+        connection,
         req.organizationContext,
-        Number(body.destination_organization_id),
+        body.destination_organization_id,
+      )
+    ) {
+      const [request] = await connection.query(
+        "INSERT INTO case_referral_requests (source_organization_id,destination_organization_id,source_response_id,reason_encrypted,share_name,share_form,requested_by) VALUES (?,?,?,?,?,?,?)",
+        [
+          req.organizationContext,
+          Number(body.destination_organization_id),
+          source.id,
+          writeField(
+            body.reason.trim(),
+            "case_referral_requests",
+            "reason_encrypted",
+            req.organizationContext,
+          ),
+          shareName ? 1 : 0,
+          shareTitle ? 1 : 0,
+          req.user.id,
+        ],
+      );
+      const student = await referrals.studentOfResponse(
+        connection,
+        req.organizationContext,
         source.id,
-        source.master_case_id || null,
-        writeField(
-          sharedName,
-          "case_referrals",
-          "display_name_encrypted",
-          req.organizationContext,
-        ),
-        sharedTitle,
-        writeField(
-          body.reason.trim(),
-          "case_referrals",
-          "reason_encrypted",
-          req.organizationContext,
-        ),
-        req.user.id,
-      ],
-    );
-    await writeUpdate(
+      );
+      if (student)
+        await require("../services/schoolNotify").notify(connection, {
+          organizationId: req.organizationContext,
+          schoolId: student.school_id,
+          kind: "referral_approval",
+          studentId: student.id,
+          sourceType: "referral_request",
+          sourceId: request.insertId,
+          recipients: (
+            await referrals.approverIds(connection, req.organizationContext)
+          ).filter((id) => id !== Number(req.user.id)),
+          payload: {
+            title: "คำขอส่งต่อโรงพยาบาลรออนุมัติ",
+            body: `นักเรียนรหัส ${student.student_code} รอการอนุมัติส่งต่อ`,
+          },
+          dedupeKey: `referral_request:${request.insertId}`,
+        });
+      await requiredAudit(
+        req,
+        "referral_request.create",
+        "referral_request",
+        request.insertId,
+        {},
+        connection,
+      );
+      await connection.commit();
+      return res
+        .status(201)
+        .json({ request_id: request.insertId, status: "awaiting_approval" });
+    }
+    const id = await referrals.insertReferral(
       connection,
       req,
-      created.insertId,
-      "created",
-      "pending",
-      null,
+      {
+        source,
+        destinationId: body.destination_organization_id,
+        reason: body.reason.trim(),
+        shareName,
+        shareTitle,
+        createdBy: req.user.id,
+      },
+      writeUpdate,
     );
     await requiredAudit(
       req,
@@ -329,9 +324,9 @@ router.post("/", requireAction("cases.assign"), async (req, res) => {
     await audit(req, {
       action: "referrals.create",
       targetType: "case_referral",
-      targetId: created.insertId,
+      targetId: id,
     });
-    res.status(201).json({ id: created.insertId });
+    res.status(201).json({ id });
   } catch (error) {
     if (connection) await connection.rollback().catch(() => {});
     fail(res, error);
@@ -430,3 +425,5 @@ router.post("/:id/updates", requireAction("cases.update"), async (req, res) => {
   }
 });
 module.exports = router;
+module.exports.writeUpdate = writeUpdate;
+module.exports.fail = fail;

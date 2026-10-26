@@ -4,7 +4,8 @@
   flex: 1;
   min-height: 0;
   min-width: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .organization-workspace-empty {
   padding: clamp(1rem, 3vw, 2.5rem);

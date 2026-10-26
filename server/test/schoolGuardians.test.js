@@ -110,7 +110,7 @@ test("guardian membership drops broad role permissions and stays empty after rol
   );
 });
 
-test("guardian can read linked insights but cannot write insights or guidance and cannot guess another child ID", async () => {
+test("guardian cannot read the counselors' insights or write insights and guidance, even for a linked child", async () => {
   active = true;
   linked = true;
   const access = await loadSchoolAccess({ query }, request());
@@ -125,9 +125,8 @@ test("guardian can read linked insights but cannot write insights or guidance an
   await new Promise((resolve) => server.once("listening", resolve));
   const url = `http://127.0.0.1:${server.address().port}`;
   try {
-    const res = await fetch(url + "/students/11/insights");
-    assert.equal(res.status, 200);
-    assert.equal((await res.json()).can_update, false);
+    // Family background and guidance records are staff working notes.
+    assert.equal((await fetch(url + "/students/11/insights")).status, 404);
     for (const path of ["/students/11/insights", "/students/11/guidance"]) {
       assert.equal(
         (

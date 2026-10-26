@@ -61,6 +61,7 @@
   margin: 4px 0 0;
   flex: none;
   accent-color: var(--theme-color, var(--suth-action));
+  --choice-color: var(--theme-color, var(--suth-action));
 }
 .form-privacy-notice :is(summary, input):focus-visible {
   outline: 2px solid var(--theme-color, var(--suth-action));

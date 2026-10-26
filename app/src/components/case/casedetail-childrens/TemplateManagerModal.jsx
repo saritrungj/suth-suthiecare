@@ -286,8 +286,14 @@ export default function TemplateManagerModal({
                       <span
                         className="cdm-q-number"
                         style={{
-                          background: indentLevel > 0 ? "var(--suth-success-tint)" : "var(--suth-info-line)",
-                          color: indentLevel > 0 ? "var(--suth-success)" : "var(--suth-info)",
+                          background:
+                            indentLevel > 0
+                              ? "var(--suth-success-tint)"
+                              : "var(--suth-info-line)",
+                          color:
+                            indentLevel > 0
+                              ? "var(--suth-success)"
+                              : "var(--suth-info)",
                         }}
                       >
                         {displayNum}

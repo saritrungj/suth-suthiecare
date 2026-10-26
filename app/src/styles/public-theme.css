@@ -15,7 +15,8 @@
   --pub-lilac: #ebe5ff;
   --pub-lilac-ink: #5a45a8;
   --pub-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --pub-soft-shadow: 0 10px 30px color-mix(in srgb, var(--suth-ink) 8%, transparent);
+  --pub-soft-shadow: 0 10px 30px
+    color-mix(in srgb, var(--suth-ink) 8%, transparent);
   --pub-card-radius: 24px;
 }
 

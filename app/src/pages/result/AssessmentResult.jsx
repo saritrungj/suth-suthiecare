@@ -19,7 +19,7 @@ import riskMedium from "../../assets/02.png";
 import riskHigh from "../../assets/03.png";
 import "./AssessmentResult.css";
 import { buildAssessmentResultSections } from "./assessmentResultUtils";
-import { resultImageLevel } from "../../utils/resultImageLevel";
+import { resultImageChoice } from "../../utils/resultImageLevel";
 
 // 🟢 1. แก้บัค: นำเข้า api ให้ถูกต้อง
 import api, { getFormResultImages } from "../../services/api";
@@ -71,9 +71,14 @@ const getLevelConfig = (result, t) => {
   const lowerColor = hexCriteriaColor.toLowerCase();
 
   const isTooBright = isColorTooBright(hexCriteriaColor);
-  const readableTextColor = isTooBright ? DEFAULT_RESULT_COLOR : hexCriteriaColor;
+  const readableTextColor = isTooBright
+    ? DEFAULT_RESULT_COLOR
+    : hexCriteriaColor;
 
-  const imageLevel = resultImageLevel(lowerColor);
+  const { level: imageLevel, assetId: imageAssetId } = resultImageChoice(
+    result.resultImage,
+    lowerColor,
+  );
   const visualImage = DEFAULT_IMAGES[imageLevel];
 
   const rgbColor = hexToRgbArray(hexCriteriaColor);
@@ -95,6 +100,7 @@ const getLevelConfig = (result, t) => {
     colorBanner: `linear-gradient(135deg, rgba(${rgbString}, 0.7) 0%, rgba(${rgbString}, 1) 100%)`,
     visualImage,
     imageLevel,
+    imageAssetId,
   };
 };
 
@@ -102,6 +108,8 @@ export default function AssessmentResult() {
   const location = useLocation();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  // "en-US" and other regional English settings count as English.
+  const isEnglish = String(i18n.language || "").startsWith("en");
 
   // 🟢 รับ Payload ที่ถูกส่งมาจาก FormView
   const results = location.state?.results || [];
@@ -119,7 +127,7 @@ export default function AssessmentResult() {
     let isMounted = true;
     const translateResults = async () => {
       if (results.length === 0) return;
-      if (i18n.language !== "en") {
+      if (!isEnglish) {
         if (isMounted) setTranslatedResults(results);
         return;
       }
@@ -145,7 +153,7 @@ export default function AssessmentResult() {
     return () => {
       isMounted = false;
     };
-  }, [results, i18n.language]);
+  }, [results, isEnglish]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -155,20 +163,52 @@ export default function AssessmentResult() {
     }
   }, [navigate, formId]);
 
-  // Organizations may replace the bundled result pictures with their own.
+  // Organizations may replace the bundled result pictures and the page text
+  // in the back office.
   const [customImages, setCustomImages] = useState({});
+  const [customAssets, setCustomAssets] = useState({});
+  const [customTexts, setCustomTexts] = useState({});
   useEffect(() => {
     if (!formId) return undefined;
     let active = true;
     getFormResultImages(formId)
       .then((response) => {
-        if (active) setCustomImages(response.data?.images || {});
+        if (!active) return;
+        setCustomImages(response.data?.images || {});
+        setCustomAssets(response.data?.assets || {});
+        setCustomTexts(response.data?.texts || {});
       })
       .catch(() => {});
     return () => {
       active = false;
     };
   }, [formId]);
+
+  // Custom wording is written in Thai; English visitors get a translation.
+  const [shownTexts, setShownTexts] = useState({});
+  useEffect(() => {
+    let active = true;
+    if (!isEnglish) {
+      setShownTexts(customTexts);
+      return undefined;
+    }
+    Promise.all(
+      Object.entries(customTexts).map(async ([key, value]) => [
+        key,
+        await translateTextSmart(value),
+      ]),
+    ).then((entries) => {
+      if (active) setShownTexts(Object.fromEntries(entries));
+    });
+    return () => {
+      active = false;
+    };
+  }, [customTexts, isEnglish]);
+  const text = (key, i18nKey) => shownTexts[key] || t(i18nKey);
+  const visualFor = (level) =>
+    (level.imageAssetId && customAssets[level.imageAssetId]) ||
+    customImages[level.imageLevel] ||
+    level.visualImage;
 
   const [hasEvaluated, setHasEvaluated] = useState(false);
   useEffect(() => {
@@ -279,7 +319,7 @@ export default function AssessmentResult() {
         for (let i = 1; i <= 5; i++) {
           if (!getRadio(`q${i}`)) {
             Swal.showValidationMessage(
-              i18n.language === "en"
+              isEnglish
                 ? `Please complete part 1 question ${i}`
                 : `กรุณาตอบส่วนที่ 1 ข้อที่ ${i} ให้ครบถ้วน`,
             );
@@ -297,7 +337,7 @@ export default function AssessmentResult() {
           const val = getRadio(`sus${i}`);
           if (!val) {
             Swal.showValidationMessage(
-              i18n.language === "en"
+              isEnglish
                 ? `Please complete part 2 (SUS) question ${i}`
                 : `กรุณาตอบส่วนที่ 2 (SUS) ข้อที่ ${i} ให้ครบถ้วน`,
             );
@@ -414,7 +454,11 @@ export default function AssessmentResult() {
         >
           <div
             className="ar-success-icon"
-            style={{ backgroundColor: isSaved ? "var(--suth-risk-dot-low)" : "var(--suth-info)" }}
+            style={{
+              backgroundColor: isSaved
+                ? "var(--suth-risk-dot-low)"
+                : "var(--suth-info)",
+            }}
           >
             {isSaved ? (
               <FiCheckCircle size={40} color="var(--suth-on-action)" />
@@ -424,12 +468,19 @@ export default function AssessmentResult() {
           </div>
           <h2 className="ar-hero-title">
             {isSaved
-              ? t("assessment_result.hero_saved_title")
-              : t("assessment_result.hero_done_title")}
+              ? text("hero_saved_title", "assessment_result.hero_saved_title")
+              : text("hero_done_title", "assessment_result.hero_done_title")}
           </h2>
-          <p className="ar-hero-subtitle" style={{ color: "var(--suth-ink-2)" }}>
+          <p
+            className="ar-hero-subtitle"
+            style={{ color: "var(--suth-ink-2)" }}
+          >
             {isSaved ? (
-              t("assessment_result.hero_saved_desc")
+              text("hero_saved_desc", "assessment_result.hero_saved_desc")
+            ) : shownTexts.hero_done_desc ? (
+              <span className="ar-hero-custom">
+                {shownTexts.hero_done_desc}
+              </span>
             ) : results.length > 0 ? (
               <span
                 dangerouslySetInnerHTML={{
@@ -509,7 +560,7 @@ export default function AssessmentResult() {
                         className="ar-score__label"
                         style={{ color: "var(--suth-muted)" }}
                       >
-                        {t("assessment_result.score")}
+                        {text("score_label", "assessment_result.score")}
                       </span>
                       <span
                         className="ar-score__val"
@@ -534,7 +585,8 @@ export default function AssessmentResult() {
                       className="ar-advice-box__title"
                       style={{ color: level.textColor }}
                     >
-                      <FiInfo size={18} /> {t("assessment_result.advice")}
+                      <FiInfo size={18} />{" "}
+                      {text("advice_title", "assessment_result.advice")}
                     </h3>
 
                     <ul className="ar-advice__list">
@@ -562,9 +614,7 @@ export default function AssessmentResult() {
                       }}
                     >
                       <img
-                        src={
-                          customImages[level.imageLevel] || level.visualImage
-                        }
+                        src={visualFor(level)}
                         alt={toDisplayText(level.label)}
                       />
                     </div>
@@ -581,7 +631,7 @@ export default function AssessmentResult() {
             className="ar-btn ar-btn--ghost"
             onClick={() => navigate("/")}
           >
-            {t("assessment_result.back_home")}
+            {text("back_home", "assessment_result.back_home")}
           </button>
 
           {/* ปุ่มตรวจสอบประวัติ (แสดงหลังจากส่งสำเร็จแล้ว) */}
@@ -589,7 +639,9 @@ export default function AssessmentResult() {
             <button
               className="ar-btn"
               style={{
-                background: isColorTooBright(results[0]?.color || "var(--suth-info)")
+                background: isColorTooBright(
+                  results[0]?.color || "var(--suth-info)",
+                )
                   ? "var(--suth-info)"
                   : getLevelConfig(results[0]).color,
                 display: "flex",
@@ -599,7 +651,7 @@ export default function AssessmentResult() {
               }}
               onClick={() => navigate("/history")}
             >
-              <FiClock /> {t("assessment_result.btn_history")}
+              <FiClock /> {text("btn_history", "assessment_result.btn_history")}
             </button>
           )}
 
@@ -615,7 +667,7 @@ export default function AssessmentResult() {
             }}
             onClick={handleOpenEvaluation}
           >
-            {t("assessment_result.btn_eval")}
+            {text("btn_eval", "assessment_result.btn_eval")}
           </button>
         </div>
       </div>

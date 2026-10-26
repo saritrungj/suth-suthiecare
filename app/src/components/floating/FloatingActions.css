@@ -32,7 +32,8 @@
   flex-direction: column;
   gap: 4px;
   padding: 12px 16px;
-  border-radius: var(--suth-radius-panel) var(--suth-radius-panel) var(--suth-radius-xs) var(--suth-radius-panel);
+  border-radius: var(--suth-radius-panel) var(--suth-radius-panel)
+    var(--suth-radius-xs) var(--suth-radius-panel);
   background: var(--fab-paper);
   box-shadow: 0 8px 24px -8px rgb(24 94 93 / 28%);
   transition:
@@ -170,11 +171,14 @@
   fill: var(--fab-pink);
   animation-delay: 300ms;
 }
-.sut-fab-chat:focus-visible,
-.sut-fab-round:focus-visible {
+.sut-fab-chat:focus-visible {
   outline: 3px solid var(--fab-teal-ink);
   outline-offset: 5px;
   box-shadow: 0 0 0 5px var(--fab-paper);
+}
+.sut-fab-round:focus-visible {
+  outline: 3px solid var(--suth-action-strong);
+  outline-offset: 3px;
 }
 .sut-fab-chat:focus-visible .sut-fab-invite {
   background: var(--suth-success-tint);
@@ -182,28 +186,35 @@
 .sut-fab-chat:active .sut-fab-mascot {
   transform: scale(0.95);
 }
+/* Help and back-to-top use the site's orange: help is the filled primary,
+   back-to-top a white surface, so the two read as one pair. */
 .sut-fab-stack .sut-fab-round {
   display: grid;
   place-items: center;
-  width: 46px;
-  height: 46px;
-  margin-right: 19px;
-  border: 0;
+  width: 48px;
+  height: 48px;
+  margin-right: 18px;
+  padding: 0;
+  border: 1px solid transparent;
   border-radius: 50%;
-  background: var(--fab-teal);
-  color: var(--fab-paper);
-  box-shadow: 0 6px 16px -5px rgb(24 94 93 / 35%);
+  background: var(--suth-action-strong);
+  color: #fff;
+  box-shadow: 0 8px 20px -8px rgb(194 65 12 / 45%);
   cursor: pointer;
   transition:
     transform 200ms var(--fab-ease),
-    background-color 200ms var(--fab-ease);
+    background-color 200ms var(--fab-ease),
+    border-color 200ms var(--fab-ease);
 }
 .sut-fab-round svg {
   width: 21px;
   height: 21px;
 }
 .sut-fab-stack .sut-fab-top {
-  background: var(--suth-ink);
+  border-color: var(--suth-tint-line);
+  background: var(--suth-surface);
+  color: var(--suth-action-ink);
+  box-shadow: 0 8px 20px -10px rgb(194 65 12 / 35%);
 }
 .sut-fab-round:active {
   transform: scale(0.94);
@@ -218,7 +229,11 @@
   }
   .sut-fab-round:hover {
     transform: translateY(-2px);
-    background: var(--fab-teal-ink);
+    background: var(--suth-action-strong-hover);
+  }
+  .sut-fab-stack .sut-fab-top:hover {
+    border-color: var(--suth-action);
+    background: var(--suth-tint);
   }
 }
 /* The welcome wave settles; the ring and sparkles keep looping during hover. */

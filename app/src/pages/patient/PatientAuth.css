@@ -770,7 +770,8 @@
   isolation: isolate;
   overflow-x: hidden;
   background-color: var(--patient-civic-paper);
-  background-image: linear-gradient(var(--patient-civic-grid) 1px, transparent 1px),
+  background-image:
+    linear-gradient(var(--patient-civic-grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--patient-civic-grid) 1px, transparent 1px),
     linear-gradient(
       135deg,
@@ -848,13 +849,19 @@
   position: relative;
   border: 1px solid rgba(31, 47, 63, 0.15);
   border-radius: var(--suth-radius);
-  box-shadow: 0 2px 4px rgba(31, 47, 63, 0.04),
+  box-shadow:
+    0 2px 4px rgba(31, 47, 63, 0.04),
     0 24px 60px rgba(31, 47, 63, 0.1);
 }
 
 .patient-civic-intro {
   background-color: var(--suth-ink);
-  background-image: linear-gradient(145deg, color-mix(in srgb, var(--suth-surface) 4%, transparent), transparent 44%),
+  background-image:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--suth-surface) 4%, transparent),
+      transparent 44%
+    ),
     repeating-linear-gradient(
       115deg,
       transparent 0 44px,
@@ -1097,7 +1104,11 @@
 /* Use the original system artwork only on the history sign-in screen. */
 .patient-login-page.patient-civic-auth-page {
   background-color: var(--suth-neutral-tint);
-  background-image: linear-gradient(color-mix(in srgb, var(--suth-surface-2) 78%, transparent), color-mix(in srgb, var(--suth-line-soft) 86%, transparent)),
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--suth-surface-2) 78%, transparent),
+      color-mix(in srgb, var(--suth-line-soft) 86%, transparent)
+    ),
     url("../../assets/login-image.png");
   background-size: cover;
   background-position: center;
@@ -1306,7 +1317,11 @@
 
 @media (max-width: 480px) {
   .patient-login-page.patient-civic-auth-page {
-    background-image: linear-gradient(color-mix(in srgb, var(--suth-surface-2) 82%, transparent), color-mix(in srgb, var(--suth-line-soft) 90%, transparent)),
+    background-image:
+      linear-gradient(
+        color-mix(in srgb, var(--suth-surface-2) 82%, transparent),
+        color-mix(in srgb, var(--suth-line-soft) 90%, transparent)
+      ),
       url("../../assets/login-image.png");
   }
 }
@@ -1387,8 +1402,18 @@
 .patient-civic-intro,
 .staff-login-intro {
   isolation: isolate;
-  background: linear-gradient(170deg, var(--pub-sky) 0%, #eef7ff 62%, var(--pub-mint) 100%);
-  background-image: linear-gradient(170deg, var(--pub-sky) 0%, #eef7ff 62%, var(--pub-mint) 100%);
+  background: linear-gradient(
+    170deg,
+    var(--pub-sky) 0%,
+    #eef7ff 62%,
+    var(--pub-mint) 100%
+  );
+  background-image: linear-gradient(
+    170deg,
+    var(--pub-sky) 0%,
+    #eef7ff 62%,
+    var(--pub-mint) 100%
+  );
   color: var(--suth-ink);
 }
 .patient-login-intro::before {
@@ -1412,8 +1437,11 @@
   right: 20px;
   width: 166px;
   height: 172px;
-  background: url("../../assets/cartoons/care-team-patient.webp") bottom center / contain no-repeat;
-  filter: drop-shadow(0 10px 12px color-mix(in srgb, var(--suth-ink) 12%, transparent));
+  background: url("../../assets/cartoons/care-team-patient.webp") bottom
+    center / contain no-repeat;
+  filter: drop-shadow(
+    0 10px 12px color-mix(in srgb, var(--suth-ink) 12%, transparent)
+  );
   animation: patientCuteBob 3.6s ease-in-out infinite;
 }
 @keyframes patientCuteBob {
@@ -1483,7 +1511,9 @@
   border: 2px solid var(--suth-line);
   border-radius: 14px;
   background: var(--suth-surface);
-  transition: border-color 0.2s var(--pub-ease), box-shadow 0.2s var(--pub-ease);
+  transition:
+    border-color 0.2s var(--pub-ease),
+    box-shadow 0.2s var(--pub-ease);
 }
 .patient-auth-field input:focus,
 .patient-civic-auth-page .patient-auth-field input:focus {
@@ -1493,8 +1523,12 @@
 .patient-auth-button,
 .patient-civic-auth-page .patient-auth-button {
   border-radius: var(--suth-radius-pill);
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--suth-action) 35%, transparent);
-  transition: transform 0.3s var(--pub-ease), box-shadow 0.3s var(--pub-ease), background-color 0.2s;
+  box-shadow: 0 10px 24px
+    color-mix(in srgb, var(--suth-action) 35%, transparent);
+  transition:
+    transform 0.3s var(--pub-ease),
+    box-shadow 0.3s var(--pub-ease),
+    background-color 0.2s;
 }
 .patient-auth-button:hover:not(:disabled) {
   transform: translateY(-2px);

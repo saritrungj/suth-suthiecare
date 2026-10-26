@@ -1,0 +1,42 @@
+.grade-scope {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface-2);
+}
+.grade-scope legend {
+  padding: 0 4px;
+  font-weight: 600;
+  font-size: var(--suth-fs-sm);
+  color: var(--suth-ink);
+}
+.grade-scope__modes,
+.grade-scope__grades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}
+.grade-scope__grades {
+  margin-top: 10px;
+}
+.grade-scope label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  font-size: var(--suth-fs-body);
+  color: var(--suth-ink);
+  cursor: pointer;
+}
+.grade-scope input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--suth-action-strong);
+}
+.grade-scope__hint {
+  margin: 8px 0 0;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-sm);
+}

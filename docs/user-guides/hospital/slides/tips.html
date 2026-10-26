@@ -1,23 +1,111 @@
-<section id="tips" data-transition="fade" style="background:#FFF1E6;color:#1F2F3F;font-family:'Anuphan', Tahoma, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:56px">
-<h2 style="font-size:64px;font-weight:700;line-height:1.15">เคล็ดลับสำหรับแอดมิน</h2>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:28px">
-<div style="display:flex;flex-direction:row;gap:24px;align-items:start;background:#FBF8F4;border-radius:28px;padding:36px">
-<x-icon name="Home" style="color:#B4410F;width:48px;height:48px"></x-icon>
-<p style="flex:1;font-size:28px;line-height:1.5;color:#4A5568"><b>ตรวจหน่วยงานที่เลือก</b> ทุกครั้งก่อนเพิ่มหรือแก้ไขข้อมูล</p>
-</div>
-<div style="display:flex;flex-direction:row;gap:24px;align-items:start;background:#FBF8F4;border-radius:28px;padding:36px">
-<x-icon name="Warning" style="color:#B4410F;width:48px;height:48px"></x-icon>
-<p style="flex:1;font-size:28px;line-height:1.5;color:#4A5568"><b>เริ่มวันจากแดชบอร์ด</b> ดูเคสเสี่ยงสูงที่ยังไม่ปิดและเคสรอติดต่อกลับ</p>
-</div>
-<div style="display:flex;flex-direction:row;gap:24px;align-items:start;background:#FBF8F4;border-radius:28px;padding:36px">
-<x-icon name="Lock" style="color:#2F7D7A;width:48px;height:48px"></x-icon>
-<p style="flex:1;font-size:28px;line-height:1.5;color:#4A5568"><b>เมนูไม่ครบ</b> ให้ขอสิทธิ์เพิ่มจากผู้ดูแลระบบกลาง</p>
-</div>
-<div style="display:flex;flex-direction:row;gap:24px;align-items:start;background:#FBF8F4;border-radius:28px;padding:36px">
-<x-icon name="Key" style="color:#2F7D7A;width:48px;height:48px"></x-icon>
-<p style="flex:1;font-size:28px;line-height:1.5;color:#4A5568"><b>ลืมรหัสผ่าน</b> กดลืมรหัสผ่าน? รับรหัสทางอีเมล แล้วตั้งรหัสใหม่</p>
-</div>
-</div>
-<p style="position:absolute;left:128px;bottom:64px;width:1200px;font-size:24px;color:#6B7280">SUTHie Care · คู่มือแอดมินโรงพยาบาล</p>
-<aside>เมนูที่แสดงขึ้นกับบทบาทและสิทธิ์ที่ผู้ดูแลระบบกลางกำหนด หากเปิดหน้าที่ไม่มีสิทธิ์ ระบบจะแสดงหน้า 403 ไม่มีสิทธิ์เข้าถึง</aside>
+<section
+  id="tips"
+  data-transition="fade"
+  style="
+    background: #fff1e6;
+    color: #1f2f3f;
+    font-family: &quot;Anuphan&quot;, Tahoma, sans-serif;
+    padding: 128px 128px 160px;
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+  "
+>
+  <h2 style="font-size: 64px; font-weight: 700; line-height: 1.15">
+    เคล็ดลับสำหรับแอดมิน
+  </h2>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px">
+    <div
+      style="
+        display: flex;
+        flex-direction: row;
+        gap: 24px;
+        align-items: start;
+        background: #fbf8f4;
+        border-radius: 28px;
+        padding: 36px;
+      "
+    >
+      <x-icon
+        name="Home"
+        style="color: #b4410f; width: 48px; height: 48px"
+      ></x-icon>
+      <p style="flex: 1; font-size: 28px; line-height: 1.5; color: #4a5568">
+        <b>ตรวจหน่วยงานที่เลือก</b> ทุกครั้งก่อนเพิ่มหรือแก้ไขข้อมูล
+      </p>
+    </div>
+    <div
+      style="
+        display: flex;
+        flex-direction: row;
+        gap: 24px;
+        align-items: start;
+        background: #fbf8f4;
+        border-radius: 28px;
+        padding: 36px;
+      "
+    >
+      <x-icon
+        name="Warning"
+        style="color: #b4410f; width: 48px; height: 48px"
+      ></x-icon>
+      <p style="flex: 1; font-size: 28px; line-height: 1.5; color: #4a5568">
+        <b>เริ่มวันจากแดชบอร์ด</b> ดูเคสเสี่ยงสูงที่ยังไม่ปิดและเคสรอติดต่อกลับ
+      </p>
+    </div>
+    <div
+      style="
+        display: flex;
+        flex-direction: row;
+        gap: 24px;
+        align-items: start;
+        background: #fbf8f4;
+        border-radius: 28px;
+        padding: 36px;
+      "
+    >
+      <x-icon
+        name="Lock"
+        style="color: #2f7d7a; width: 48px; height: 48px"
+      ></x-icon>
+      <p style="flex: 1; font-size: 28px; line-height: 1.5; color: #4a5568">
+        <b>เมนูไม่ครบ</b> ให้ขอสิทธิ์เพิ่มจากผู้ดูแลระบบกลาง
+      </p>
+    </div>
+    <div
+      style="
+        display: flex;
+        flex-direction: row;
+        gap: 24px;
+        align-items: start;
+        background: #fbf8f4;
+        border-radius: 28px;
+        padding: 36px;
+      "
+    >
+      <x-icon
+        name="Key"
+        style="color: #2f7d7a; width: 48px; height: 48px"
+      ></x-icon>
+      <p style="flex: 1; font-size: 28px; line-height: 1.5; color: #4a5568">
+        <b>ลืมรหัสผ่าน</b> กดลืมรหัสผ่าน? รับรหัสทางอีเมล แล้วตั้งรหัสใหม่
+      </p>
+    </div>
+  </div>
+  <p
+    style="
+      position: absolute;
+      left: 128px;
+      bottom: 64px;
+      width: 1200px;
+      font-size: 24px;
+      color: #6b7280;
+    "
+  >
+    SUTHie Care · คู่มือแอดมินโรงพยาบาล
+  </p>
+  <aside>
+    เมนูที่แสดงขึ้นกับบทบาทและสิทธิ์ที่ผู้ดูแลระบบกลางกำหนด
+    หากเปิดหน้าที่ไม่มีสิทธิ์ ระบบจะแสดงหน้า 403 ไม่มีสิทธิ์เข้าถึง
+  </aside>
 </section>

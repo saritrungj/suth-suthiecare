@@ -40,6 +40,8 @@ const roles = {
   counselor: "ครูแนะแนว",
   homeroom: "ครูประจำชั้น",
   co_homeroom: "ครูประจำชั้นร่วม",
+  subject_teacher: "ครูรายวิชา",
+  subject: "ครูรายวิชา",
   other: "ครูทั่วไป",
   dorm_staff: "เจ้าหน้าที่หอพัก",
   system_admin: "ผู้ดูแลระบบ",

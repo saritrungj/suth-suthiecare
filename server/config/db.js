@@ -33,6 +33,10 @@ const db = mysql.createPool({
   queueLimit: numberFromEnv(process.env.DB_QUEUE_LIMIT, 0),
   maxIdle: numberFromEnv(process.env.DB_MAX_IDLE, 20),
   idleTimeout: numberFromEnv(process.env.DB_IDLE_TIMEOUT, 60000),
+  // When a classroom logs in together, password hashing keeps the event loop
+  // busy and a new connection's handshake can miss mysql2's 10s default,
+  // failing the request with ETIMEDOUT (seen in the 120-student load test).
+  connectTimeout: numberFromEnv(process.env.DB_CONNECT_TIMEOUT, 30000),
   timezone: BANGKOK_MYSQL_TIME_ZONE,
 });
 

@@ -90,6 +90,7 @@ async function schoolPrivacyBoundary(req, res, next) {
     path.match(/^\/cases\/(\d+)/)?.[1] ||
     req.body?.response_id ||
     req.body?.case_id ||
+    req.body?.source_response_id ||
     req.query?.source_response_id;
   const masterId =
     path.match(/^\/master-cases\/by-id\/(\d+)/)?.[1] ||

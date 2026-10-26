@@ -346,6 +346,29 @@ router.get("/me/school-health", async (req, res) => {
   }
 });
 
+// What the student's school asks them to do: screening rounds for their
+// group (`rounds`) and their own follow-up tasks (`tasks`). Only the form,
+// round name and due date are returned; the reason for a follow-up stays
+// with school staff.
+router.get("/me/assessment-tasks", async (req, res) => {
+  try {
+    const school = require("../services/schoolRescreen");
+    const [tasks, rounds] = await Promise.all([
+      school.pendingTasksForPatient(db, req.patient.id),
+      school.pendingRoundsForPatient(db, req.patient.id),
+    ]);
+    return res.json({ success: true, tasks, rounds });
+  } catch (error) {
+    console.error(
+      "Member assessment tasks failed:",
+      require("../utils/safeError").safeError(error),
+    );
+    return res
+      .status(500)
+      .json({ success: false, message: "ไม่สามารถโหลดแบบประเมินที่ต้องทำได้" });
+  }
+});
+
 // The member chooses their own type when no school roster or case says it.
 // It counts like a new answer (see services/memberType.js). School student is
 // never self-declared: it comes from the school roster.
@@ -363,9 +386,9 @@ router.put("/me/member-type", async (req, res) => {
       .json({ success: false, message: "กรุณาเลือกสำนักวิชา" });
   try {
     await memberTypes.declareMemberType(db, req.patient.id, type, faculty);
-    const memberType = (await memberTypes.memberTypesFor(db, [req.patient.id])).get(
-      req.patient.id,
-    );
+    const memberType = (
+      await memberTypes.memberTypesFor(db, [req.patient.id])
+    ).get(req.patient.id);
     const school =
       memberType?.type === "school_student"
         ? await memberTypes.memberSchoolRecord(db, req.patient.id)
@@ -421,9 +444,9 @@ router.get("/history", async (req, res) => {
         : "บัญชีผู้รับบริการ";
     const profile = publicAccount(req.patient);
     const memberTypes = require("../services/memberType");
-    const memberType = (await memberTypes.memberTypesFor(db, [req.patient.id])).get(
-      req.patient.id,
-    ) || {
+    const memberType = (
+      await memberTypes.memberTypesFor(db, [req.patient.id])
+    ).get(req.patient.id) || {
       type: "unknown",
       label: memberTypes.MEMBER_TYPE_LABELS.unknown,
       source: "none",

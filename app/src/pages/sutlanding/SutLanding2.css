@@ -164,7 +164,8 @@
   --sut2-pink-ink: var(--pub-pink-ink);
   --sut2-lilac: var(--pub-lilac);
   --sut2-lilac-ink: var(--pub-lilac-ink);
-  --sut2-soft-shadow: 0 10px 30px color-mix(in srgb, var(--suth-ink) 8%, transparent);
+  --sut2-soft-shadow: 0 10px 30px
+    color-mix(in srgb, var(--suth-ink) 8%, transparent);
 }
 /* The page flows through the brand tones top to bottom: warm peach behind
    the hero, sky by the service picker, mint by the steps, then peach and
@@ -194,11 +195,19 @@
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(30% 14% at 88% 30%, color-mix(in srgb, var(--suth-action) 22%, transparent), transparent 70%),
+    radial-gradient(
+      30% 14% at 88% 30%,
+      color-mix(in srgb, var(--suth-action) 22%, transparent),
+      transparent 70%
+    ),
     radial-gradient(34% 14% at 6% 44%, var(--pub-sky), transparent 70%),
     radial-gradient(36% 14% at 96% 58%, var(--pub-mint), transparent 70%),
     radial-gradient(30% 12% at 12% 74%, var(--pub-peach), transparent 70%),
-    radial-gradient(34% 12% at 90% 92%, color-mix(in srgb, var(--suth-care) 22%, transparent), transparent 70%);
+    radial-gradient(
+      34% 12% at 90% 92%,
+      color-mix(in srgb, var(--suth-care) 22%, transparent),
+      transparent 70%
+    );
   background-size: 120% 100%;
   animation: sut2Glow 26s ease-in-out infinite alternate;
 }
@@ -415,7 +424,8 @@
   font-size: var(--suth-fs-md);
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--suth-action) 38%, transparent);
+  box-shadow: 0 10px 24px
+    color-mix(in srgb, var(--suth-action) 38%, transparent);
   transition:
     transform 0.3s var(--sut2-ease),
     box-shadow 0.3s var(--sut2-ease),
@@ -427,7 +437,8 @@
 .sut2-hero__cta:hover {
   background: var(--suth-action-strong-hover);
   transform: translateY(-2px);
-  box-shadow: 0 14px 28px color-mix(in srgb, var(--suth-action) 45%, transparent);
+  box-shadow: 0 14px 28px
+    color-mix(in srgb, var(--suth-action) 45%, transparent);
 }
 .sut2-hero__cta:hover svg {
   transform: translateX(3px);
@@ -447,41 +458,6 @@
   background: var(--suth-surface);
   box-shadow: var(--sut2-soft-shadow);
 }
-.sut2-hero__stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 2rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-.sut2-hero__stats li {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 38px;
-  padding: 0 14px;
-  border-radius: var(--suth-radius-pill);
-  font-size: var(--suth-fs-sm);
-}
-.sut2-hero__stats strong {
-  font-size: var(--suth-fs-md);
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-.sut2-hero__stats .is-peach {
-  background: var(--sut2-peach);
-  color: var(--sut2-peach-ink);
-}
-.sut2-hero__stats .is-mint {
-  background: var(--sut2-mint);
-  color: var(--sut2-mint-ink);
-}
-.sut2-hero__stats .is-sky {
-  background: var(--sut2-sky);
-  color: var(--sut2-sky-ink);
-}
-
 /* ---------- Illustrated scene ---------- */
 .sut2-scene {
   position: relative;
@@ -556,14 +532,18 @@
   left: 30%;
   width: 34%;
   height: auto;
-  filter: drop-shadow(0 10px 10px color-mix(in srgb, var(--suth-ink) 14%, transparent));
+  filter: drop-shadow(
+    0 10px 10px color-mix(in srgb, var(--suth-ink) 14%, transparent)
+  );
   animation: sut2Bob 2.4s ease-in-out infinite;
 }
 .sut2-scene__doctor {
   position: absolute;
   bottom: 0;
   height: auto;
-  filter: drop-shadow(0 14px 16px color-mix(in srgb, var(--suth-ink) 16%, transparent));
+  filter: drop-shadow(
+    0 14px 16px color-mix(in srgb, var(--suth-ink) 16%, transparent)
+  );
 }
 .sut2-scene__doctor--f {
   left: 2%;
@@ -784,7 +764,9 @@
   background: var(--tone-bg);
   color: var(--tone);
   font-size: 2rem;
-  transition: transform 0.4s var(--sut2-ease), border-radius 0.6s var(--sut2-ease);
+  transition:
+    transform 0.4s var(--sut2-ease),
+    border-radius 0.6s var(--sut2-ease);
 }
 .sut2-step:hover .sut2-step__icon {
   border-radius: 50%;
@@ -836,7 +818,9 @@
   font-size: var(--suth-fs-body);
   font-weight: 600;
   text-decoration: none;
-  transition: border-color 0.2s, color 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
 }
 .sut2-manual-link:hover {
   border-color: var(--suth-action);

@@ -107,7 +107,8 @@
   border-color: var(--suth-action-strong);
   background: var(--suth-action-strong);
   color: var(--suth-on-action);
-  box-shadow: 0 4px 10px -4px color-mix(in srgb, var(--suth-action) 70%, transparent);
+  box-shadow: 0 4px 10px -4px
+    color-mix(in srgb, var(--suth-action) 70%, transparent);
 }
 
 .tp-pagination__nav:focus-visible,

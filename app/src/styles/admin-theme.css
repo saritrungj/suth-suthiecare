@@ -15,7 +15,11 @@
   accent-color: var(--suth-action);
   caret-color: var(--suth-action);
   --suth-admin-nav: var(--suth-accent);
-  --suth-admin-nav-hover: color-mix(in srgb, var(--suth-action) 70%, var(--suth-surface));
+  --suth-admin-nav-hover: color-mix(
+    in srgb,
+    var(--suth-action) 70%,
+    var(--suth-surface)
+  );
   --suth-admin-nav-ink: var(--suth-on-accent);
 }
 .admin-shell .sidebar {
@@ -76,7 +80,11 @@
   background: var(--suth-success);
 }
 .admin-shell .sidebar .sidebar-bottom {
-  border-top-color: color-mix(in srgb, var(--suth-ink) 20%, transparent) !important;
+  border-top-color: color-mix(
+    in srgb,
+    var(--suth-ink) 20%,
+    transparent
+  ) !important;
 }
 .admin-shell .sidebar .submenu-item .sub-icon {
   color: inherit;

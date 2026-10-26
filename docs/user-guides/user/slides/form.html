@@ -1,23 +1,149 @@
-<section id="form" data-transition="fade" style="background:#FBF8F4;color:#1F2F3F;font-family:'Anuphan', Tahoma, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:40px">
-<h2 style="font-size:56px;font-weight:700;line-height:1.15">ตอบแบบประเมิน</h2>
-<div style="display:flex;flex-direction:row;gap:48px;align-items:start">
-<img src="images/03-form.webp" alt="แบบประเมินที่กรอกคำตอบแล้ว" style="width:1088px;height:612px;object-fit:contain;background:#FFFFFF;border-radius:20px;border:1px solid #E7DED4;box-shadow:0 16px 40px rgba(31,47,63,0.12)">
-<div style="flex:1;display:flex;flex-direction:column;gap:24px">
-<p style="font-size:24px;font-weight:600;color:#B4410F;background:#FFE3CF;padding:8px 20px;border-radius:999px;align-self:start">ขั้นที่ 2</p>
-<div style="display:flex;flex-direction:row;gap:16px;align-items:start">
-<p style="width:48px;height:48px;font-size:26px;font-weight:700;line-height:1.85;text-align:center;color:#B4410F;background:#FFE3CF;border-radius:50%">1</p>
-<p style="flex:1;font-size:28px;line-height:1.45;color:#4A5568">ตอบทุกข้อ ข้อที่มี <b>*</b> ต้องตอบ หากเว้นไว้ ระบบจะเน้นข้อนั้นเป็นสีแดง</p>
-</div>
-<div style="display:flex;flex-direction:row;gap:16px;align-items:start">
-<p style="width:48px;height:48px;font-size:26px;font-weight:700;line-height:1.85;text-align:center;color:#B4410F;background:#FFE3CF;border-radius:50%">2</p>
-<p style="flex:1;font-size:28px;line-height:1.45;color:#4A5568">ตอบผิด กด <b>ล้างคำตอบ</b> ที่ข้อนั้น หรือ <b>ล้างแบบฟอร์ม</b> เพื่อเริ่มใหม่ทั้งหมด</p>
-</div>
-<div style="display:flex;flex-direction:row;gap:16px;align-items:start">
-<p style="width:48px;height:48px;font-size:26px;font-weight:700;line-height:1.85;text-align:center;color:#B4410F;background:#FFE3CF;border-radius:50%">3</p>
-<p style="flex:1;font-size:28px;line-height:1.45;color:#4A5568">ตรวจทานแล้วกด <b>ส่งคำตอบ</b> ที่มุมล่างขวา</p>
-</div>
-</div>
-</div>
-<p style="position:absolute;left:128px;bottom:64px;width:1200px;font-size:24px;color:#6B7280">SUTHie Care · คู่มือผู้รับบริการ</p>
-<aside>คำถามมีหลายรูปแบบ เช่น พิมพ์ข้อความ เลือกหนึ่งคำตอบ เลือกได้หลายคำตอบ ตาราง น้ำหนักและส่วนสูงเพื่อคำนวณ BMI และวันที่ แบบฟอร์มบางชุดหน่วยงานกำหนดให้ต้องเข้าสู่ระบบก่อนทำ</aside>
+<section
+  id="form"
+  data-transition="fade"
+  style="
+    background: #fbf8f4;
+    color: #1f2f3f;
+    font-family: &quot;Anuphan&quot;, Tahoma, sans-serif;
+    padding: 112px 128px 160px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  "
+>
+  <h2 style="font-size: 56px; font-weight: 700; line-height: 1.15">
+    ตอบแบบประเมิน
+  </h2>
+  <div
+    style="display: flex; flex-direction: row; gap: 48px; align-items: start"
+  >
+    <img
+      src="images/03-form.webp"
+      alt="แบบประเมินที่กรอกคำตอบแล้ว"
+      style="
+        width: 1088px;
+        height: 612px;
+        object-fit: contain;
+        background: #ffffff;
+        border-radius: 20px;
+        border: 1px solid #e7ded4;
+        box-shadow: 0 16px 40px rgba(31, 47, 63, 0.12);
+      "
+    />
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 24px">
+      <p
+        style="
+          font-size: 24px;
+          font-weight: 600;
+          color: #b4410f;
+          background: #ffe3cf;
+          padding: 8px 20px;
+          border-radius: 999px;
+          align-self: start;
+        "
+      >
+        ขั้นที่ 2
+      </p>
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          gap: 16px;
+          align-items: start;
+        "
+      >
+        <p
+          style="
+            width: 48px;
+            height: 48px;
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.85;
+            text-align: center;
+            color: #b4410f;
+            background: #ffe3cf;
+            border-radius: 50%;
+          "
+        >
+          1
+        </p>
+        <p style="flex: 1; font-size: 28px; line-height: 1.45; color: #4a5568">
+          ตอบทุกข้อ ข้อที่มี <b>*</b> ต้องตอบ หากเว้นไว้
+          ระบบจะเน้นข้อนั้นเป็นสีแดง
+        </p>
+      </div>
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          gap: 16px;
+          align-items: start;
+        "
+      >
+        <p
+          style="
+            width: 48px;
+            height: 48px;
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.85;
+            text-align: center;
+            color: #b4410f;
+            background: #ffe3cf;
+            border-radius: 50%;
+          "
+        >
+          2
+        </p>
+        <p style="flex: 1; font-size: 28px; line-height: 1.45; color: #4a5568">
+          ตอบผิด กด <b>ล้างคำตอบ</b> ที่ข้อนั้น หรือ
+          <b>ล้างแบบฟอร์ม</b> เพื่อเริ่มใหม่ทั้งหมด
+        </p>
+      </div>
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          gap: 16px;
+          align-items: start;
+        "
+      >
+        <p
+          style="
+            width: 48px;
+            height: 48px;
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.85;
+            text-align: center;
+            color: #b4410f;
+            background: #ffe3cf;
+            border-radius: 50%;
+          "
+        >
+          3
+        </p>
+        <p style="flex: 1; font-size: 28px; line-height: 1.45; color: #4a5568">
+          ตรวจทานแล้วกด <b>ส่งคำตอบ</b> ที่มุมล่างขวา
+        </p>
+      </div>
+    </div>
+  </div>
+  <p
+    style="
+      position: absolute;
+      left: 128px;
+      bottom: 64px;
+      width: 1200px;
+      font-size: 24px;
+      color: #6b7280;
+    "
+  >
+    SUTHie Care · คู่มือผู้รับบริการ
+  </p>
+  <aside>
+    คำถามมีหลายรูปแบบ เช่น พิมพ์ข้อความ เลือกหนึ่งคำตอบ เลือกได้หลายคำตอบ ตาราง
+    น้ำหนักและส่วนสูงเพื่อคำนวณ BMI และวันที่
+    แบบฟอร์มบางชุดหน่วยงานกำหนดให้ต้องเข้าสู่ระบบก่อนทำ
+  </aside>
 </section>

@@ -285,7 +285,7 @@ test("system-wide settings sit in their own admin section", async ({
   );
   const account = labels.indexOf("บัญชีของฉัน");
   expect(labels.slice(admin + 1, account)).toEqual([
-    "หน่วยงานหลักและหน่วยงานย่อย",
+    "หน่วยงาน",
     "ผู้ดูแลระบบและเจ้าหน้าที่",
     "ผู้มารับบริการ",
     "บทบาทและสิทธิ์",
@@ -295,6 +295,7 @@ test("system-wide settings sit in their own admin section", async ({
   expect(labels.slice(unit + 1, admin)).toEqual([
     "จัดการฟอร์ม",
     "ภาพผลลัพธ์การประเมิน",
+    "ประวัติการแก้ไขข้อมูล",
     "จัดการข้อมูลหลัก",
   ]);
 });

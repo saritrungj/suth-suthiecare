@@ -519,8 +519,9 @@ div.swal2-container button.swal2-styled {
    Every modal: a fixed header, a body that scrolls on its own and a fixed
    footer, with the same label, field and helper-text sizes. */
 
-/* Overlays always sit above the sidebar (1000) and the case drawer (10000
-   for nested dialogs); SweetAlert confirmations open above any modal. */
+/* Overlays always sit above the sidebar and above any open drawer, so a
+   dialog opened from the case or student drawer is never hidden behind it;
+   SweetAlert confirmations open above any modal. */
 :is(
   .adm-overlay,
   .abm-overlay,

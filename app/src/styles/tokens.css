@@ -129,13 +129,17 @@
   --z-fab: 90; /* scroll-to-top */
   --z-sidebar: 100;
   --z-dropdown: 1000; /* selects, filter menus, row menus, toolbars */
-  --z-popover: 1100; /* date picker, editor tooltips */
+  --z-popover: 1100; /* editor tooltips */
   --z-mobile-topbar: 9000;
-  --z-modal: 10000;
-  --z-modal-nested: 10050; /* a modal opened from a modal, school dialogs */
-  --z-drawer: 10100; /* case drawer: also opens from the student file */
+  /* Dialog layers, lowest first. A drawer is a panel over the page, and
+     every dialog a drawer opens (add a record, export, confirm) must land
+     above it, so drawers sit below modals. Drawer over drawer (the case file
+     from the student file) stacks by open order on the same layer. */
+  --z-drawer: 10000; /* case drawer and student file */
+  --z-modal: 10100;
+  --z-modal-nested: 10150; /* a modal opened from a modal, school dialogs */
   --z-mobile-nav: 10200;
   --z-toast: 10500;
   --z-alert: 11000; /* SweetAlert confirmations */
-  --z-portal-menu: 12000; /* SearchableSelect menu portalled to body */
+  --z-portal-menu: 12000; /* SearchableSelect menu and date-picker calendar, portalled */
 }

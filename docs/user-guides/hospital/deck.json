@@ -12,10 +12,12 @@
     "forms",
     "form-builder",
     "result-images",
+    "result-images-more",
     "clinics",
     "members",
     "help-center",
     "master-data",
+    "audit",
     "tips"
   ]
 }

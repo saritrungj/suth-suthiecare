@@ -329,13 +329,16 @@ test.describe("school organization", () => {
     await page
       .getByRole("button", { name: "ดูข้อมูล ด.ช. สมชาย ใจดี" })
       .click();
-    const dialog = page.getByRole("dialog", { name: "ด.ช. สมชาย ใจดี" });
+    const dialog = page.getByRole("region", { name: "ด.ช. สมชาย ใจดี" });
     await expect(dialog).toBeVisible();
     await dialog.getByRole("tab", { name: "สุขภาพกาย" }).click();
     await expect(dialog.getByText("แพ้กุ้ง")).toBeVisible();
     await dialog.getByRole("tab", { name: "สุขภาพจิต" }).click();
     await expect(dialog.getByText("เครียดสูง").first()).toBeVisible();
-    await page.keyboard.press("Escape");
+    // The file is its own page; "กลับไปรายการ" returns to the list.
+    await expect(page).toHaveURL(/\/admin\/school\/students\/\d+\?tab=mental$/);
+    await dialog.getByRole("button", { name: "กลับไปรายการ" }).click();
+    await expect(page).toHaveURL(/\/admin\/school\/students$/);
     await expect(dialog).toHaveCount(0);
   });
 
@@ -349,7 +352,7 @@ test.describe("school organization", () => {
     ).toBeVisible();
     if (testInfo.project.name === "mobile-chromium") {
       await page.locator(".cw-person-open").first().click();
-      const dialog = page.getByRole("dialog", { name: "ด.ช. สมชาย ใจดี" });
+      const dialog = page.getByRole("region", { name: "ด.ช. สมชาย ใจดี" });
       await dialog.getByRole("tab", { name: "สุขภาพจิต" }).click();
       await expect(dialog.getByText("เครียดสูง").first()).toBeVisible();
     } else
@@ -456,7 +459,7 @@ for (const width of [1440, 768, 390]) {
       fullPage: true,
     });
     await person.click();
-    const dialog = page.getByRole("dialog", { name: "ด.ช. สมชาย ใจดี" });
+    const dialog = page.getByRole("region", { name: "ด.ช. สมชาย ใจดี" });
     await expect(dialog.locator(".cw-activity-title")).toHaveText(
       ACTIVITY.title,
     );
@@ -524,7 +527,7 @@ test("editing a physical record refreshes the school queue and student file", as
   });
   await page.goto("/admin/cases");
   await page.locator(".cw-person-open").first().click();
-  const dialog = page.getByRole("dialog", { name: "ด.ช. สมชาย ใจดี" });
+  const dialog = page.getByRole("region", { name: "ด.ช. สมชาย ใจดี" });
   await dialog.getByRole("tab", { name: "สุขภาพกาย" }).click();
   await dialog.getByRole("button", { name: /แก้ไขผลตรวจวันที่/ }).click();
   const edit = page.getByRole("dialog", { name: "แก้ไขผลตรวจร่างกาย" });
@@ -532,11 +535,9 @@ test("editing a physical record refreshes the school queue and student file", as
   await expect(dialog.locator(".cw-activity-title")).toHaveText(
     "แก้ไขผลตรวจร่างกาย",
   );
-  expect(queueReads).toBeGreaterThan(1);
   await expect(page.locator(".swal2-container")).not.toBeVisible();
-  await dialog
-    .getByRole("button", { name: "ปิดหน้าต่าง", exact: true })
-    .click();
+  await dialog.getByRole("button", { name: "กลับไปรายการ" }).click();
+  await expect.poll(() => queueReads).toBeGreaterThan(1);
   await expect(
     page.locator(".cw-col-date, .cw-card-date").last(),
   ).toContainText("9 ต.ค.");

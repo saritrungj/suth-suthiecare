@@ -469,7 +469,6 @@
 
 /* Tablet and phone: tree above the form, the tree scrolls on its own. */
 @media (max-width: 820px) {
-
   .org-workspace {
     grid-template-columns: 1fr;
     border-radius: var(--suth-radius-panel);
@@ -479,7 +478,8 @@
   .org-tree {
     max-height: 320px;
     overflow-y: auto;
-    overscroll-behavior: contain;
+    /* No overscroll containment: a swipe that starts on the tree must
+       still scroll the page once the tree is at its end. */
     border-right: 0;
     border-bottom: 1px solid var(--suth-line);
   }

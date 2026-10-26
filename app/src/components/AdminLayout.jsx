@@ -37,7 +37,10 @@ const AdminLayout = () => {
           flexDirection: "column",
           width: "100%",
           height: "100vh",
-          overflow: "hidden",
+          // Pages with their own full-height scroll area never overflow
+          // here; any other page scrolls here instead of being cut off.
+          overflowX: "hidden",
+          overflowY: "auto",
         }}
       >
         <ExportProvider>

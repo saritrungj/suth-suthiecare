@@ -324,3 +324,82 @@ test("assessment stays public but preserves the draft and requires login to subm
   await expect(page).toHaveURL(/\/assessment-result$/);
   expect(receivedAuthorization).toBe("");
 });
+
+test("a school student sees the re-screening their school asked for", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    document.cookie = "suth_patient_session=synthetic-session; path=/";
+    sessionStorage.setItem(
+      "patient_user",
+      JSON.stringify({ id: 1, username: "student", status: "active" }),
+    );
+  });
+  await page.route("**/api/patient/history", (route) =>
+    route.fulfill({
+      json: {
+        success: true,
+        profile: { id: 1, username: "student", status: "active" },
+        member_type: { type: "school_student", source: "school" },
+        masterCases: [],
+        responses: [],
+      },
+    }),
+  );
+  await page.route("**/api/patient/me/school-health", (route) =>
+    route.fulfill({ json: { success: true, profile: {}, records: [] } }),
+  );
+  await page.route("**/api/patient/me/assessment-tasks", (route) =>
+    route.fulfill({
+      json: {
+        success: true,
+        tasks: [
+          {
+            id: 4,
+            form_id: 75,
+            title: "แบบประเมินความเครียดนักเรียน (ST-5)",
+            due_on: "2000-01-02",
+            overdue: true,
+            available: true,
+          },
+        ],
+        rounds: [
+          {
+            id: 9,
+            form_id: 80,
+            title: "แบบคัดกรอง SDQ",
+            round_name: "คัดกรองต้นภาคเรียน 1/2569",
+            due_on: "2099-01-31",
+            available: true,
+          },
+        ],
+      },
+    }),
+  );
+
+  await page.goto("/history/result");
+
+  const panel = page.getByRole("region", { name: /แบบประเมินที่ต้องทำ/ });
+  await expect(panel).toBeVisible();
+  // Screening rounds for the group and the student's own follow-ups are
+  // listed apart.
+  await expect(panel.locator(".at-count")).toHaveText("2");
+  const screening = panel.locator(".at-group").filter({
+    hasText: "แบบคัดกรองประจำภาคเรียน",
+  });
+  await expect(screening).toContainText("คัดกรองต้นภาคเรียน 1/2569");
+  await expect(
+    screening.getByRole("link", { name: "เริ่มทำ" }),
+  ).toHaveAttribute("href", "/assessment/80");
+  const followUp = panel.locator(".at-group").filter({
+    hasText: "แบบประเมินติดตาม",
+  });
+  await expect(followUp).toContainText("แบบประเมินความเครียดนักเรียน (ST-5)");
+  await expect(followUp).toContainText("เลยกำหนด");
+  // The student never sees why the school asked for it.
+  await expect(panel).not.toContainText("เสี่ยง");
+  await expect(followUp.getByRole("link", { name: "เริ่มทำ" })).toHaveAttribute(
+    "href",
+    "/assessment/75",
+  );
+});

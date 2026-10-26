@@ -1,4 +1,11 @@
-import React, { Suspense, lazy, useCallback, useEffect, useId, useState } from "react";
+import React, {
+  Suspense,
+  lazy,
+  useCallback,
+  useEffect,
+  useId,
+  useState,
+} from "react";
 import {
   FiActivity,
   FiArrowDownRight,
@@ -19,14 +26,28 @@ const HEARING = {
 };
 
 const MEASURES = [
-  { key: "weight_kg", th: "น้ำหนัก", en: "Weight", unitTh: "กก.", unitEn: "kg" },
-  { key: "height_cm", th: "ส่วนสูง", en: "Height", unitTh: "ซม.", unitEn: "cm" },
+  {
+    key: "weight_kg",
+    th: "น้ำหนัก",
+    en: "Weight",
+    unitTh: "กก.",
+    unitEn: "kg",
+  },
+  {
+    key: "height_cm",
+    th: "ส่วนสูง",
+    en: "Height",
+    unitTh: "ซม.",
+    unitEn: "cm",
+  },
   { key: "bmi", th: "BMI", en: "BMI", unitTh: "", unitEn: "" },
 ];
 
 const formatDate = (value, en, short = false) => {
   if (!value) return "-";
-  const date = new Date(String(value).length === 10 ? `${value}T00:00:00` : value);
+  const date = new Date(
+    String(value).length === 10 ? `${value}T00:00:00` : value,
+  );
   if (Number.isNaN(date.getTime())) return "-";
   return date.toLocaleDateString(en ? "en-GB" : "th-TH", {
     year: short ? "2-digit" : "numeric",
@@ -42,7 +63,11 @@ function trendOf(records, key, en) {
   const points = [...records]
     .reverse()
     .filter((record) => record[key] != null)
-    .map((record) => ({ date: formatDate(record.measured_at, en, true), value: Number(record[key]), at: record.measured_at }));
+    .map((record) => ({
+      date: formatDate(record.measured_at, en, true),
+      value: Number(record[key]),
+      at: record.measured_at,
+    }));
   const latest = points[points.length - 1] || null;
   const previous = points.length > 1 ? points[points.length - 2] : null;
   return { points, latest, previous };
@@ -55,7 +80,9 @@ function ChangeLine({ measure, latest, previous, en }) {
     return (
       <p className="sh-change sh-change--none">
         <FiMinus aria-hidden="true" />
-        {en ? "One check so far, no trend yet" : "มีผลตรวจครั้งเดียว ยังไม่มีแนวโน้ม"}
+        {en
+          ? "One check so far, no trend yet"
+          : "มีผลตรวจครั้งเดียว ยังไม่มีแนวโน้ม"}
       </p>
     );
   const diff = round1(latest.value - previous.value);
@@ -100,7 +127,9 @@ export default function SchoolHealthPanel({ language = "th" }) {
         data: null,
         error:
           error.response?.data?.message ||
-          (en ? "Could not load your health records." : "ไม่สามารถโหลดข้อมูลสุขภาพได้"),
+          (en
+            ? "Could not load your health records."
+            : "ไม่สามารถโหลดข้อมูลสุขภาพได้"),
       });
     }
   }, [en]);
@@ -114,22 +143,31 @@ export default function SchoolHealthPanel({ language = "th" }) {
   const latest = records[0];
 
   return (
-    <section className="sh-panel" aria-labelledby={titleId} aria-busy={state.loading}>
+    <section
+      className="sh-panel"
+      aria-labelledby={titleId}
+      aria-busy={state.loading}
+    >
       <header className="sh-head">
         <span className="sh-icon" aria-hidden="true">
           <FiActivity />
         </span>
         <div className="sh-heading">
-          <p className="sh-eyebrow">{en ? "From your school" : "ข้อมูลจากโรงเรียน"}</p>
+          <p className="sh-eyebrow">
+            {en ? "From your school" : "ข้อมูลจากโรงเรียน"}
+          </p>
           <h2 id={titleId} className="sh-title">
             {en ? "My physical health" : "สุขภาพกายของฉัน"}
           </h2>
         </div>
         {latest && (
           <p className="sh-meta">
-            {en ? "Last check" : "ตรวจล่าสุด"} {formatDate(latest.measured_at, en)}
+            {en ? "Last check" : "ตรวจล่าสุด"}{" "}
+            {formatDate(latest.measured_at, en)}
             <span aria-hidden="true"> · </span>
-            {en ? `${records.length} checks` : `ทั้งหมด ${records.length} ครั้ง`}
+            {en
+              ? `${records.length} checks`
+              : `ทั้งหมด ${records.length} ครั้ง`}
           </p>
         )}
       </header>
@@ -161,7 +199,11 @@ export default function SchoolHealthPanel({ language = "th" }) {
         <>
           <div className="sh-trends">
             {MEASURES.map((measure) => {
-              const { points, latest: last, previous } = trendOf(records, measure.key, en);
+              const {
+                points,
+                latest: last,
+                previous,
+              } = trendOf(records, measure.key, en);
               const label = tr(measure);
               const unit = en ? measure.unitEn : measure.unitTh;
               return (
@@ -171,7 +213,12 @@ export default function SchoolHealthPanel({ language = "th" }) {
                     {unit && <span> ({unit})</span>}
                   </h3>
                   <p className="sh-trend__value">{last ? last.value : "-"}</p>
-                  <ChangeLine measure={measure} latest={last} previous={previous} en={en} />
+                  <ChangeLine
+                    measure={measure}
+                    latest={last}
+                    previous={previous}
+                    en={en}
+                  />
                   {points.length > 1 && (
                     <div
                       className="sh-trend__chart"
@@ -182,8 +229,14 @@ export default function SchoolHealthPanel({ language = "th" }) {
                           : `${label} จากการตรวจ ${points.length} ครั้ง จาก ${points[0].value} เป็น ${last.value}`
                       }
                     >
-                      <Suspense fallback={<div className="sh-trend__loading" />}>
-                        <SchoolHealthTrend data={points} unit={unit} label={label} />
+                      <Suspense
+                        fallback={<div className="sh-trend__loading" />}
+                      >
+                        <SchoolHealthTrend
+                          data={points}
+                          unit={unit}
+                          label={label}
+                        />
                       </Suspense>
                     </div>
                   )}
@@ -199,12 +252,23 @@ export default function SchoolHealthPanel({ language = "th" }) {
           </p>
 
           <div className="sh-columns">
-            <section className="sh-block" aria-label={en ? "Latest check" : "ผลตรวจล่าสุด"}>
-              <h3 className="sh-block__title">{en ? "Latest check" : "ผลตรวจล่าสุด"}</h3>
+            <section
+              className="sh-block"
+              aria-label={en ? "Latest check" : "ผลตรวจล่าสุด"}
+            >
+              <h3 className="sh-block__title">
+                {en ? "Latest check" : "ผลตรวจล่าสุด"}
+              </h3>
               <dl className="sh-facts">
                 <div>
-                  <dt>{en ? "Blood pressure (mmHg)" : "ความดันโลหิต (mmHg)"}</dt>
-                  <dd>{latest.systolic ? `${latest.systolic}/${latest.diastolic ?? "-"}` : "-"}</dd>
+                  <dt>
+                    {en ? "Blood pressure (mmHg)" : "ความดันโลหิต (mmHg)"}
+                  </dt>
+                  <dd>
+                    {latest.systolic
+                      ? `${latest.systolic}/${latest.diastolic ?? "-"}`
+                      : "-"}
+                  </dd>
                 </div>
                 <div>
                   <dt>{en ? "Pulse (per minute)" : "ชีพจร (ครั้ง/นาที)"}</dt>
@@ -217,9 +281,12 @@ export default function SchoolHealthPanel({ language = "th" }) {
                   </dd>
                 </div>
                 <div>
-                  <dt>{en ? "Hearing (left / right)" : "การได้ยิน (ซ้าย / ขวา)"}</dt>
+                  <dt>
+                    {en ? "Hearing (left / right)" : "การได้ยิน (ซ้าย / ขวา)"}
+                  </dt>
                   <dd>
-                    {tr(HEARING[latest.hearing_left])} / {tr(HEARING[latest.hearing_right])}
+                    {tr(HEARING[latest.hearing_left])} /{" "}
+                    {tr(HEARING[latest.hearing_right])}
                   </dd>
                 </div>
                 <div>
@@ -229,8 +296,13 @@ export default function SchoolHealthPanel({ language = "th" }) {
               </dl>
             </section>
 
-            <section className="sh-block" aria-label={en ? "Health profile" : "ข้อมูลสุขภาพประจำตัว"}>
-              <h3 className="sh-block__title">{en ? "Health profile" : "ข้อมูลสุขภาพประจำตัว"}</h3>
+            <section
+              className="sh-block"
+              aria-label={en ? "Health profile" : "ข้อมูลสุขภาพประจำตัว"}
+            >
+              <h3 className="sh-block__title">
+                {en ? "Health profile" : "ข้อมูลสุขภาพประจำตัว"}
+              </h3>
               <dl className="sh-facts">
                 <div>
                   <dt>{en ? "Blood type" : "กรุ๊ปเลือด"}</dt>
@@ -247,7 +319,9 @@ export default function SchoolHealthPanel({ language = "th" }) {
                   <dd>{profile.chronic_conditions || "-"}</dd>
                 </div>
                 <div>
-                  <dt>{en ? "Drug / food allergies" : "ประวัติแพ้ยา / อาหาร"}</dt>
+                  <dt>
+                    {en ? "Drug / food allergies" : "ประวัติแพ้ยา / อาหาร"}
+                  </dt>
                   <dd>{profile.allergies || "-"}</dd>
                 </div>
                 <div>
@@ -269,27 +343,43 @@ export default function SchoolHealthPanel({ language = "th" }) {
                 <thead>
                   <tr>
                     <th scope="col">{en ? "Date" : "วันที่ตรวจ"}</th>
-                    <th scope="col" className="sh-num">{en ? "Weight (kg)" : "น้ำหนัก (กก.)"}</th>
-                    <th scope="col" className="sh-num">{en ? "Height (cm)" : "ส่วนสูง (ซม.)"}</th>
-                    <th scope="col" className="sh-num">BMI</th>
+                    <th scope="col" className="sh-num">
+                      {en ? "Weight (kg)" : "น้ำหนัก (กก.)"}
+                    </th>
+                    <th scope="col" className="sh-num">
+                      {en ? "Height (cm)" : "ส่วนสูง (ซม.)"}
+                    </th>
+                    <th scope="col" className="sh-num">
+                      BMI
+                    </th>
                     <th scope="col">{en ? "BP / pulse" : "ความดัน / ชีพจร"}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {records.map((record) => (
                     <tr key={record.id}>
-                      <td data-label={en ? "Date" : "วันที่ตรวจ"}>{formatDate(record.measured_at, en)}</td>
-                      <td data-label={en ? "Weight (kg)" : "น้ำหนัก (กก.)"} className="sh-num">
+                      <td data-label={en ? "Date" : "วันที่ตรวจ"}>
+                        {formatDate(record.measured_at, en)}
+                      </td>
+                      <td
+                        data-label={en ? "Weight (kg)" : "น้ำหนัก (กก.)"}
+                        className="sh-num"
+                      >
                         {record.weight_kg ?? "-"}
                       </td>
-                      <td data-label={en ? "Height (cm)" : "ส่วนสูง (ซม.)"} className="sh-num">
+                      <td
+                        data-label={en ? "Height (cm)" : "ส่วนสูง (ซม.)"}
+                        className="sh-num"
+                      >
                         {record.height_cm ?? "-"}
                       </td>
                       <td data-label="BMI" className="sh-num">
                         {record.bmi ?? "-"}
                       </td>
                       <td data-label={en ? "BP / pulse" : "ความดัน / ชีพจร"}>
-                        {record.systolic ? `${record.systolic}/${record.diastolic ?? "-"}` : "-"}
+                        {record.systolic
+                          ? `${record.systolic}/${record.diastolic ?? "-"}`
+                          : "-"}
                         {record.pulse ? ` · ${record.pulse}` : ""}
                       </td>
                     </tr>

@@ -30,6 +30,9 @@ async function main() {
   }
 }
 main().catch((error) => {
-  console.error("Patient member type migration failed:", error.code || error.message);
+  console.error(
+    "Patient member type migration failed:",
+    error.code || error.message,
+  );
   process.exitCode = 1;
 });

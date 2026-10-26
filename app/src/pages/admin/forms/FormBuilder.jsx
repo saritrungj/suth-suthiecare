@@ -205,7 +205,9 @@ const FormBuilder = () => {
   const [themeColor, setThemeColor] = useState(DEFAULT_FORM_THEME.color);
   const [bgColor, setBgColor] = useState(DEFAULT_FORM_THEME.bg);
   const [bannerType, setBannerType] = useState("none");
-  const [bannerBgColor, setBannerBgColor] = useState(DEFAULT_FORM_THEME.bannerBgColor);
+  const [bannerBgColor, setBannerBgColor] = useState(
+    DEFAULT_FORM_THEME.bannerBgColor,
+  );
   const [headerImage, setHeaderImage] = useState(null);
   const [bannerText, setBannerText] = useState("");
   const [bannerTextAlign, setBannerTextAlign] = useState("center");
@@ -295,7 +297,9 @@ const FormBuilder = () => {
             setThemeColor(t.color || DEFAULT_FORM_THEME.color);
             setBgColor(t.bg || DEFAULT_FORM_THEME.bg);
             setBannerType(t.bannerType || "none");
-            setBannerBgColor(t.bannerBgColor || DEFAULT_FORM_THEME.bannerBgColor);
+            setBannerBgColor(
+              t.bannerBgColor || DEFAULT_FORM_THEME.bannerBgColor,
+            );
             setHeaderImage(t.headerImage || null);
             setBannerText(t.bannerText || "");
             setBannerTextAlign(t.bannerTextAlign || "center");
@@ -1082,7 +1086,15 @@ const FormBuilder = () => {
         if (q.id === id) {
           const newRules =
             isScored && (!q.scoringRules || q.scoringRules.length === 0)
-              ? [{ min: 0, max: 0, label: "", color: DEFAULT_SCORE_BAND_COLOR, advice: "" }]
+              ? [
+                  {
+                    min: 0,
+                    max: 0,
+                    label: "",
+                    color: DEFAULT_SCORE_BAND_COLOR,
+                    advice: "",
+                  },
+                ]
               : q.scoringRules;
           return { ...q, isScored, scoringRules: newRules };
         }
@@ -1168,7 +1180,13 @@ const FormBuilder = () => {
               (!q.scoringRules || q.scoringRules.length === 0)
             ) {
               updates.scoringRules = [
-                { min: 0, max: 0, label: "", color: DEFAULT_SCORE_BAND_COLOR, advice: "" },
+                {
+                  min: 0,
+                  max: 0,
+                  label: "",
+                  color: DEFAULT_SCORE_BAND_COLOR,
+                  advice: "",
+                },
               ];
             }
           } else {
@@ -1240,7 +1258,10 @@ const FormBuilder = () => {
             <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
             <FaSpinner
               size={40}
-              style={{ animation: "spin 1s linear infinite", color: "var(--suth-info)" }}
+              style={{
+                animation: "spin 1s linear infinite",
+                color: "var(--suth-info)",
+              }}
             />
             <h3 style={{ marginTop: "16px", color: "var(--suth-muted)" }}>
               กำลังโหลดแบบฟอร์ม...
@@ -1313,7 +1334,9 @@ const FormBuilder = () => {
                   </span>
                   <span
                     className={`sfb-badge-type${
-                      formType === "Follow-up" ? " sfb-badge-type--followup" : ""
+                      formType === "Follow-up"
+                        ? " sfb-badge-type--followup"
+                        : ""
                     }`}
                   >
                     {formType === "Follow-up"
@@ -1594,7 +1617,9 @@ const FormBuilder = () => {
                     className="sfb-tool-icon"
                     style={{ color: "var(--suth-danger)" }}
                   />
-                  <span style={{ color: "var(--suth-danger)", fontWeight: "bold" }}>
+                  <span
+                    style={{ color: "var(--suth-danger)", fontWeight: "bold" }}
+                  >
                     เพิ่ม 9Q
                   </span>
                 </button>
@@ -1606,7 +1631,9 @@ const FormBuilder = () => {
                     className="sfb-tool-icon"
                     style={{ color: "var(--suth-info)" }}
                   />
-                  <span style={{ color: "var(--suth-info)", fontWeight: "bold" }}>
+                  <span
+                    style={{ color: "var(--suth-info)", fontWeight: "bold" }}
+                  >
                     เพิ่ม BMI
                   </span>
                 </button>
@@ -1633,7 +1660,10 @@ const FormBuilder = () => {
                     style={{ color: "var(--suth-chart-purple)" }}
                   />
                   <span
-                    style={{ color: "var(--suth-chart-purple)", fontWeight: "bold" }}
+                    style={{
+                      color: "var(--suth-chart-purple)",
+                      fontWeight: "bold",
+                    }}
                   >
                     เพิ่ม STIs
                   </span>

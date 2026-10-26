@@ -6,6 +6,9 @@ import { useTranslation } from "react-i18next";
 import "./HistoryResult.css";
 import MemberTypePanel from "../../../components/patient/MemberTypePanel";
 import SchoolHealthPanel from "../../../components/patient/SchoolHealthPanel";
+import AssessmentTasksPanel from "../../../components/patient/AssessmentTasksPanel";
+import CounselingPanel from "../../../components/patient/CounselingPanel";
+import SchoolDocumentsPanel from "../../../components/patient/SchoolDocumentsPanel";
 import Navbar from "../../../components/Navbar";
 import PublicBackdrop from "../../../components/public/PublicBackdrop";
 
@@ -1070,7 +1073,8 @@ export default function HistoryResult() {
                             : {
                                 backgroundColor: "transparent",
                                 color: "var(--suth-on-action)",
-                                border: "1px dashed color-mix(in srgb, var(--suth-surface) 55%, transparent)",
+                                border:
+                                  "1px dashed color-mix(in srgb, var(--suth-surface) 55%, transparent)",
                               }
                         }
                       >
@@ -1160,6 +1164,17 @@ export default function HistoryResult() {
             </div>
           </div>
         </div>
+
+        {/* School students: re-screening the school asked them to do. */}
+        {memberType?.type === "school_student" && (
+          <AssessmentTasksPanel language={i18n.language} />
+        )}
+        {memberType?.type === "school_student" && (
+          <CounselingPanel language={i18n.language} />
+        )}
+        {memberType?.type === "school_student" && (
+          <SchoolDocumentsPanel language={i18n.language} />
+        )}
 
         {/* The member's own type: school, university or general. */}
         {memberType && (
@@ -1410,7 +1425,10 @@ export default function HistoryResult() {
                                 : "-"}
                             </span>
                             <span
-                              style={{ display: "block", color: "var(--suth-muted)" }}
+                              style={{
+                                display: "block",
+                                color: "var(--suth-muted)",
+                              }}
                             >
                               {displayHeight && displayHeight !== "-"
                                 ? `${displayHeight} cm`
@@ -1473,7 +1491,8 @@ export default function HistoryResult() {
                           className="hr-advice-item"
                           style={{
                             borderLeftColor: cInfo.color,
-                            backgroundColor: "color-mix(in srgb, var(--suth-surface) 70%, transparent)",
+                            backgroundColor:
+                              "color-mix(in srgb, var(--suth-surface) 70%, transparent)",
                           }}
                         >
                           <ExpandableText
@@ -1754,7 +1773,9 @@ export default function HistoryResult() {
                                   ? "var(--suth-surface)"
                                   : "transparent",
                               color:
-                                currentTab === "scores" ? "var(--suth-info)" : "var(--suth-muted)",
+                                currentTab === "scores"
+                                  ? "var(--suth-info)"
+                                  : "var(--suth-muted)",
                               boxShadow:
                                 currentTab === "scores"
                                   ? "0 1px 3px rgba(0,0,0,0.1)"
@@ -1783,7 +1804,9 @@ export default function HistoryResult() {
                                 ? "var(--suth-surface)"
                                 : "transparent",
                             color:
-                              currentTab === "answers" ? "var(--suth-care)" : "var(--suth-muted)",
+                              currentTab === "answers"
+                                ? "var(--suth-care)"
+                                : "var(--suth-muted)",
                             boxShadow:
                               currentTab === "answers"
                                 ? "0 1px 3px rgba(0,0,0,0.1)"
@@ -1811,7 +1834,9 @@ export default function HistoryResult() {
                                 ? "var(--suth-surface)"
                                 : "transparent",
                             color:
-                              currentTab === "editable" ? "var(--suth-action)" : "var(--suth-muted)",
+                              currentTab === "editable"
+                                ? "var(--suth-action)"
+                                : "var(--suth-muted)",
                             boxShadow:
                               currentTab === "editable"
                                 ? "0 1px 3px rgba(0,0,0,0.1)"
@@ -1833,11 +1858,16 @@ export default function HistoryResult() {
                               <div
                                 key={i}
                                 className="hr-score-chip"
-                                style={{ borderColor: s.color || "var(--suth-line-soft)" }}
+                                style={{
+                                  borderColor:
+                                    s.color || "var(--suth-line-soft)",
+                                }}
                               >
                                 <span
                                   className="hr-score-big"
-                                  style={{ color: s.color || "var(--suth-ink-2)" }}
+                                  style={{
+                                    color: s.color || "var(--suth-ink-2)",
+                                  }}
                                 >
                                   {s.score}
                                 </span>
@@ -2209,7 +2239,9 @@ export default function HistoryResult() {
                                           style={{
                                             fontWeight: "bold",
                                             fontSize: "var(--suth-fs-section)",
-                                            color: scoreObj.color || "var(--suth-ink-2)",
+                                            color:
+                                              scoreObj.color ||
+                                              "var(--suth-ink-2)",
                                           }}
                                         >
                                           {scoreObj.score}

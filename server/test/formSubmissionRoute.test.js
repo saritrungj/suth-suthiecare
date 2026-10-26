@@ -8,12 +8,14 @@ const { encrypt, decrypt } = require("../utils/encryption");
 test("submits a hash-linked form and names it after the account", async () => {
   let insertedMasterCase;
   let insertedResponse;
+  const queries = {};
   const connection = {
     beginTransaction: async () => {},
     commit: async () => {},
     rollback: async () => {},
     release: () => {},
     query: async (sql, params) => {
+      if (sql.startsWith("SET TRANSACTION")) return [{}];
       if (sql.includes("FROM school_risk_triggers"))
         return [
           [
@@ -58,6 +60,10 @@ test("submits a hash-linked form and names it after the account", async () => {
       if (sql.startsWith("SELECT purpose,legal_basis,notice_version"))
         return [[]];
       if (sql.startsWith("UPDATE mastercases SET organization_id")) return [{}];
+      if (sql.includes("UPDATE school_rescreen_tasks")) {
+        queries.rescreen = params;
+        return [{ affectedRows: 1 }];
+      }
       throw new Error(`Unexpected SQL in form submission test: ${sql}`);
     },
   };
@@ -128,6 +134,8 @@ test("submits a hash-linked form and names it after the account", async () => {
     );
 
     assert.equal(response.status, 201);
+    // The school re-screening task for this form closes on this response.
+    assert.deepEqual(queries.rescreen, [901, 54, 1, 901, 9, 42]);
     assert.deepEqual(insertedMasterCase, [
       9,
       42,
@@ -172,6 +180,7 @@ test("accepts a public form submission without a patient session", async () => {
     rollback: async () => {},
     release: () => {},
     query: async (sql) => {
+      if (sql.startsWith("SET TRANSACTION")) return [{}];
       if (sql.includes("FROM school_risk_triggers")) return [[]];
       if (sql.startsWith("SELECT title, clinic_type")) {
         return [
@@ -263,6 +272,7 @@ test("blocks unauthenticated submission when login is strict or optional", async
       rollback: async () => {},
       release: () => {},
       query: async (sql) => {
+        if (sql.startsWith("SET TRANSACTION")) return [{}];
         if (sql.startsWith("SELECT title, clinic_type")) {
           return [
             [
@@ -346,6 +356,7 @@ test("rejects a submission to a draft form even by direct URL", async () => {
     rollback: async () => {},
     release: () => {},
     query: async (sql) => {
+      if (sql.startsWith("SET TRANSACTION")) return [{}];
       if (sql.startsWith("SELECT title, clinic_type")) {
         return [
           [
@@ -478,6 +489,7 @@ test("a form with default settings rejects missing consent and stale notice vers
     rollback: async () => {},
     release: () => {},
     query: async (sql) => {
+      if (sql.startsWith("SET TRANSACTION")) return [{}];
       if (sql.startsWith("SELECT title, clinic_type")) return [[publicForm]];
       if (sql.startsWith("SELECT purpose,legal_basis,notice_version"))
         return [[]];
@@ -505,6 +517,7 @@ test("a guest who consents is filed under their national ID", async () => {
     rollback: async () => {},
     release: () => {},
     query: async (sql, params) => {
+      if (sql.startsWith("SET TRANSACTION")) return [{}];
       if (sql.includes("FROM school_risk_triggers")) return [[]];
       if (sql.startsWith("SELECT title, clinic_type")) return [[publicForm]];
       if (sql.includes("FROM persons WHERE identity_hash"))
@@ -526,6 +539,8 @@ test("a guest who consents is filed under their national ID", async () => {
       if (sql.startsWith("SELECT purpose,legal_basis,notice_version"))
         return [[]];
       if (sql.startsWith("UPDATE mastercases SET organization_id")) return [{}];
+      if (sql.includes("UPDATE school_rescreen_tasks"))
+        return [{ affectedRows: 0 }];
       throw new Error(`Unexpected SQL in consent test: ${sql}`);
     },
   };
@@ -555,6 +570,7 @@ test("an invalid consented national ID is rejected before anything is saved", as
     rollback: async () => {},
     release: () => {},
     query: async (sql) => {
+      if (sql.startsWith("SET TRANSACTION")) return [{}];
       if (sql.startsWith("SELECT title, clinic_type")) return [[publicForm]];
       if (sql.startsWith("SELECT purpose,legal_basis,notice_version"))
         return [[]];
@@ -570,4 +586,135 @@ test("an invalid consented national ID is rejected before anything is saved", as
   });
   assert.equal(response.status, 422);
   assert.equal(beganTransaction, false);
+});
+
+test("a failing school risk alert never loses a high-risk mental-health submission", async () => {
+  const seen = [];
+  let committed = false;
+  const connection = {
+    beginTransaction: async () => {},
+    commit: async () => {
+      committed = true;
+    },
+    rollback: async () => {
+      throw new Error("the submission must not roll back");
+    },
+    release: () => {},
+    query: async (sql) => {
+      if (sql.startsWith("SET TRANSACTION")) return [{}];
+      seen.push(sql.trim().split(/\s+/).slice(0, 4).join(" "));
+      if (sql.includes("FROM school_risk_triggers"))
+        return [
+          [{ id: 6, question_id: "q1", answer_value: "yes", enabled: 1 }],
+        ];
+      if (sql.startsWith("SELECT title, clinic_type"))
+        return [
+          [
+            {
+              title: "Mental screening",
+              clinic_type: "general",
+              form_type: "Registration",
+              status: "published",
+              organization_id: 1,
+              health_domain: "mental",
+            },
+          ],
+        ];
+      if (sql.includes("FROM patient_accounts WHERE id = ? FOR UPDATE"))
+        return [[{ id: 42, identity_hash: "patient-identity-hash" }]];
+      if (sql.includes("FROM persons WHERE")) return [[]];
+      if (sql.startsWith("INSERT INTO persons")) return [{ insertId: 9 }];
+      if (sql.includes("FROM mastercases WHERE")) return [[]];
+      if (sql.startsWith("INSERT INTO mastercases")) return [{ insertId: 701 }];
+      if (sql.startsWith("INSERT INTO form_responses"))
+        return [{ insertId: 902 }];
+      if (sql.startsWith("INSERT INTO pdpa_consent_evidence")) return [{}];
+      if (sql.startsWith("INSERT INTO form_answers")) return [{}];
+      if (sql.startsWith("INSERT INTO organization_notification_events"))
+        return [{ insertId: 5 }];
+      if (sql.startsWith("SELECT purpose,legal_basis,notice_version"))
+        return [[]];
+      if (sql.startsWith("UPDATE mastercases SET organization_id")) return [{}];
+      if (sql.includes("UPDATE school_rescreen_tasks"))
+        return [{ affectedRows: 0 }];
+      if (
+        sql.startsWith("SAVEPOINT") ||
+        sql.startsWith("ROLLBACK TO SAVEPOINT")
+      )
+        return [{}];
+      // The alert's own lookup fails: only the alert is undone.
+      if (sql.includes("FROM school_students ss"))
+        throw new Error("alert lookup failed");
+      throw new Error(`Unexpected SQL in form submission test: ${sql}`);
+    },
+  };
+  require.cache[require.resolve("../config/db")] = {
+    exports: { getConnection: async () => connection },
+  };
+  const patient = {
+    id: 42,
+    identity_hash: "patient-identity-hash",
+    first_name_encrypted: encrypt("สมหญิง"),
+    last_name_encrypted: encrypt("ใจดี"),
+  };
+  require.cache[require.resolve("../middleware/patientAuthMiddleware")] = {
+    exports: {
+      verifyPatientToken: (req, _res, next) => (
+        (req.patient = patient),
+        next()
+      ),
+      attachOptionalPatient: (req, _res, next) => (
+        (req.patient = patient),
+        next()
+      ),
+    },
+  };
+  require.cache[
+    require.resolve("../services/organizationNotificationService")
+  ] = {
+    exports: { notifySubmission: async () => {} },
+  };
+  require.cache[require.resolve("../utils/telegram")] = {
+    exports: { dispatchTelegramAlert: () => {} },
+  };
+  for (const path of ["../routes/formRoutes", "../services/schoolRiskAlerts"])
+    delete require.cache[require.resolve(path)];
+  const app = express();
+  app.use(express.json());
+  app.use("/api", require("../routes/formRoutes"));
+  const server = app.listen(0, "127.0.0.1");
+  await new Promise((resolve) => server.once("listening", resolve));
+  const warn = console.warn;
+  console.warn = () => {};
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:${server.address().port}/api/forms/55/submit`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          processing_consent: true,
+          notice_version: "standard-v1",
+          answers: { q1: "yes" },
+          questionTitles: { q1: "Question" },
+          identityValue: "-",
+          summaryData: {},
+        }),
+      },
+    );
+    assert.equal(response.status, 201);
+    assert.ok(committed);
+    assert.ok(seen.includes("SAVEPOINT school_risk_alert"));
+    assert.ok(seen.some((s) => s.startsWith("ROLLBACK TO SAVEPOINT")));
+    assert.ok(
+      seen.indexOf("ROLLBACK TO SAVEPOINT school_risk_alert") <
+        seen.findIndex((s) =>
+          s.startsWith("INSERT INTO organization_notification_events"),
+        ),
+      "the organization notification is still written after the alert is undone",
+    );
+  } finally {
+    console.warn = warn;
+    await new Promise((resolve) => server.close(resolve));
+  }
 });

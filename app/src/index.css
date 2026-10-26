@@ -10,6 +10,7 @@
 }
 
 /* Form controls do not inherit the page font by default; keep Anuphan everywhere. */
+button,
 input,
 select,
 textarea,

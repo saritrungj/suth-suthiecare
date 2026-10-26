@@ -450,7 +450,8 @@ export default function CaseActionTab(props) {
                                       icon: "warning",
                                       title: "ข้อมูลไม่ครบถ้วน",
                                       text: "กรุณาระบุเหตุผลการเปลี่ยนระดับความเสี่ยง",
-                                      confirmButtonColor: "var(--suth-action-pressed)",
+                                      confirmButtonColor:
+                                        "var(--suth-action-pressed)",
                                     });
                                   }
                                   const newRule = fr.rules.find(
@@ -543,7 +544,12 @@ export default function CaseActionTab(props) {
                 >
                   ระดับความเสี่ยงภาพรวมของเคสนี้
                 </label>
-                <span style={{ fontSize: "var(--suth-fs-caption)", color: "var(--suth-muted)" }}>
+                <span
+                  style={{
+                    fontSize: "var(--suth-fs-caption)",
+                    color: "var(--suth-muted)",
+                  }}
+                >
                   * ประเมินโดยเจ้าหน้าที่
                   (การปรับแก้ตรงนี้จะไม่กระทบผลคะแนนเดิมของฟอร์ม)
                 </span>
@@ -577,7 +583,9 @@ export default function CaseActionTab(props) {
                   style={{
                     border: `1px solid ${riskLevel === opt.label ? opt.color : "var(--suth-control-line)"}`,
                     background:
-                      riskLevel === opt.label ? `${opt.color}20` : "var(--suth-surface)",
+                      riskLevel === opt.label
+                        ? `${opt.color}20`
+                        : "var(--suth-surface)",
                     color: "var(--suth-ink)",
                   }}
                 >
@@ -647,7 +655,10 @@ export default function CaseActionTab(props) {
             </h4>
 
             <div style={{ marginBottom: "16px" }}>
-              <label className="cdm-form-label" style={{ color: "var(--suth-danger)" }}>
+              <label
+                className="cdm-form-label"
+                style={{ color: "var(--suth-danger)" }}
+              >
                 ผลเจาะเลือด
               </label>
               <div
@@ -706,7 +717,9 @@ export default function CaseActionTab(props) {
                     }
                     style={{ accentColor: "var(--suth-danger)" }}
                   />
-                  <span style={{ color: "var(--suth-success)", fontWeight: "bold" }}>
+                  <span
+                    style={{ color: "var(--suth-success)", fontWeight: "bold" }}
+                  >
                     Negative
                   </span>
                 </label>
@@ -733,7 +746,9 @@ export default function CaseActionTab(props) {
                     }
                     style={{ accentColor: "var(--suth-danger)" }}
                   />
-                  <span style={{ color: "var(--suth-danger)", fontWeight: "bold" }}>
+                  <span
+                    style={{ color: "var(--suth-danger)", fontWeight: "bold" }}
+                  >
                     Positive
                   </span>
                 </label>
@@ -741,7 +756,10 @@ export default function CaseActionTab(props) {
             </div>
 
             <div>
-              <label className="cdm-form-label" style={{ color: "var(--suth-danger)" }}>
+              <label
+                className="cdm-form-label"
+                style={{ color: "var(--suth-danger)" }}
+              >
                 การรับยา PrEP
               </label>
               <div

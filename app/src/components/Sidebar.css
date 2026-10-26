@@ -66,7 +66,11 @@
 .sidebar {
   width: 280px;
   min-width: 280px;
-  background: linear-gradient(180deg, var(--suth-accent) 0%, var(--suth-action) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--suth-accent) 0%,
+    var(--suth-action) 100%
+  );
   color: var(--suth-on-action);
   height: 100vh;
   display: flex;
@@ -421,7 +425,11 @@ button.menu-item::-moz-focus-inner {
   color: color-mix(in srgb, var(--suth-on-action) 92%, transparent);
 }
 .logout-btn:hover {
-  background: color-mix(in srgb, var(--suth-risk-dot-high) 25%, transparent) !important;
+  background: color-mix(
+    in srgb,
+    var(--suth-risk-dot-high) 25%,
+    transparent
+  ) !important;
   color: var(--suth-on-action);
 }
 .sidebar.collapsed .logout-btn {
@@ -560,7 +568,11 @@ button.menu-item::-moz-focus-inner {
     left: auto !important;
     width: 44px !important;
     height: 44px !important; /* ขยายขนาดให้กดง่าย */
-    background: color-mix(in srgb, var(--suth-surface) 20%, transparent) !important; /* พื้นหลังวงกลมสว่างๆ */
+    background: color-mix(
+      in srgb,
+      var(--suth-surface) 20%,
+      transparent
+    ) !important; /* พื้นหลังวงกลมสว่างๆ */
     border-radius: 50% !important;
     border: 1.5px solid color-mix(in srgb, var(--suth-surface) 40%, transparent) !important;
     align-items: center !important;
@@ -572,7 +584,11 @@ button.menu-item::-moz-focus-inner {
   }
   .mobile-close-btn:active {
     transform: scale(0.9);
-    background: color-mix(in srgb, var(--suth-surface) 35%, transparent) !important;
+    background: color-mix(
+      in srgb,
+      var(--suth-surface) 35%,
+      transparent
+    ) !important;
   }
   .sidebar .top,
   .sidebar.collapsed .top {
@@ -605,7 +621,11 @@ button.menu-item::-moz-focus-inner {
     z-index: 2 !important;
     line-height: 1.2 !important;
     font-size: var(--suth-fs-label) !important;
-    color: color-mix(in srgb, var(--suth-on-action) 92%, transparent) !important;
+    color: color-mix(
+      in srgb,
+      var(--suth-on-action) 92%,
+      transparent
+    ) !important;
   }
   .sidebar .menu,
   .sidebar.collapsed .menu {
@@ -681,7 +701,11 @@ button.menu-item::-moz-focus-inner {
     justify-content: flex-start !important;
     padding: 0.65rem 1rem 0.65rem 3.4rem !important;
     background: transparent !important;
-    color: color-mix(in srgb, var(--suth-on-action) 92%, transparent) !important;
+    color: color-mix(
+      in srgb,
+      var(--suth-on-action) 92%,
+      transparent
+    ) !important;
     margin: 2px 0 !important;
     box-sizing: border-box !important;
     width: 100% !important;
@@ -694,7 +718,8 @@ button.menu-item::-moz-focus-inner {
   .sidebar .sidebar-bottom,
   .sidebar.collapsed .sidebar-bottom {
     margin-top: auto !important;
-    border-top: 1px solid color-mix(in srgb, var(--suth-surface) 15%, transparent) !important;
+    border-top: 1px solid
+      color-mix(in srgb, var(--suth-surface) 15%, transparent) !important;
     padding: 16px !important;
     display: block !important;
     border-left: none !important;
@@ -750,6 +775,8 @@ button.menu-item::-moz-focus-inner {
 }
 
 /* Current-page labels and icons take the orange ink of the white pill. */
-.sidebar :is(.menu-item.active, .submenu-item.active) :is(svg, .label, .sub-icon) {
+.sidebar
+  :is(.menu-item.active, .submenu-item.active)
+  :is(svg, .label, .sub-icon) {
   color: var(--suth-action-ink);
 }

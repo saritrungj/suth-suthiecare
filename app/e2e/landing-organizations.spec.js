@@ -48,7 +48,8 @@ test("landing groups services by organization and filters by the chosen one", as
   await page.goto("/");
   const orgChips = page.locator(".cfp-org");
   await expect(orgChips).toHaveCount(4);
-  await expect(page.locator(".sut2-hero__stats")).toContainText("3");
+  // The hero no longer shows service and assessment counts.
+  await expect(page.locator(".sut2-hero__stats")).toHaveCount(0);
   await expect(page.locator(".cfp-card")).toHaveCount(4);
 
   await orgChips.filter({ hasText: "โรงเรียนทดสอบ ข" }).click();

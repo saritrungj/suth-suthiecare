@@ -40,12 +40,17 @@ const ICONS = {
 // the server; a member can state it when it is unknown, change a stated or
 // answered type, and say they moved on after leaving school. An active school
 // roster always wins, so current school students cannot change it here.
-export default function MemberTypePanel({ memberType, language = "th", onChange }) {
+export default function MemberTypePanel({
+  memberType,
+  language = "th",
+  onChange,
+}) {
   const en = language === "en";
   const tr = (pair) => (pair ? pair[en ? "en" : "th"] : "");
   const type = memberType?.type || "unknown";
   const school = memberType?.school || null;
-  const formerStudent = type === "school_student" && school && school.status !== "active";
+  const formerStudent =
+    type === "school_student" && school && school.status !== "active";
   const canChange = type !== "school_student" || formerStudent;
 
   const [editing, setEditing] = useState(type === "unknown");
@@ -81,7 +86,9 @@ export default function MemberTypePanel({ memberType, language = "th", onChange 
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          (en ? "Could not save. Please try again." : "บันทึกไม่สำเร็จ กรุณาลองใหม่"),
+          (en
+            ? "Could not save. Please try again."
+            : "บันทึกไม่สำเร็จ กรุณาลองใหม่"),
       );
     } finally {
       setSaving(false);
@@ -95,7 +102,9 @@ export default function MemberTypePanel({ memberType, language = "th", onChange 
           [en ? "School" : "โรงเรียน", school.school_name],
           [
             en ? "Class" : "ชั้น / ห้อง",
-            [school.grade_name, school.classroom_name].filter(Boolean).join(" / "),
+            [school.grade_name, school.classroom_name]
+              .filter(Boolean)
+              .join(" / "),
           ],
           [en ? "Academic year" : "ปีการศึกษา", school.academic_year],
           [en ? "Student code" : "รหัสนักเรียน", school.student_code],
@@ -105,7 +114,8 @@ export default function MemberTypePanel({ memberType, language = "th", onChange 
         ? [
             [
               en ? "Faculty" : "สำนักวิชา",
-              memberType?.faculty || (en ? "Not known yet" : "ยังไม่ทราบสำนักวิชา"),
+              memberType?.faculty ||
+                (en ? "Not known yet" : "ยังไม่ทราบสำนักวิชา"),
             ],
           ]
         : [];
@@ -145,7 +155,10 @@ export default function MemberTypePanel({ memberType, language = "th", onChange 
       {facts.length > 0 && (
         <dl className="mt-panel__facts">
           {facts
-            .filter(([, value]) => value !== null && value !== undefined && value !== "")
+            .filter(
+              ([, value]) =>
+                value !== null && value !== undefined && value !== "",
+            )
             .map(([label, value]) => (
               <div key={label}>
                 <dt>{label}</dt>
@@ -207,7 +220,9 @@ export default function MemberTypePanel({ memberType, language = "th", onChange 
                 value={faculty}
                 onChange={(event) => setFaculty(event.target.value)}
               >
-                <option value="">{en ? "Choose your faculty" : "เลือกสำนักวิชา"}</option>
+                <option value="">
+                  {en ? "Choose your faculty" : "เลือกสำนักวิชา"}
+                </option>
                 {FACULTY_OPTIONS.map((option) => (
                   <option key={option} value={option}>
                     {option}
@@ -234,8 +249,18 @@ export default function MemberTypePanel({ memberType, language = "th", onChange 
                 {en ? "Cancel" : "ยกเลิก"}
               </button>
             )}
-            <button type="submit" className="mt-panel__primary" disabled={saving}>
-              {saving ? (en ? "Saving..." : "กำลังบันทึก...") : en ? "Save" : "บันทึก"}
+            <button
+              type="submit"
+              className="mt-panel__primary"
+              disabled={saving}
+            >
+              {saving
+                ? en
+                  ? "Saving..."
+                  : "กำลังบันทึก..."
+                : en
+                  ? "Save"
+                  : "บันทึก"}
             </button>
           </div>
         </form>

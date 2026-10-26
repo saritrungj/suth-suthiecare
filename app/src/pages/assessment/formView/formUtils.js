@@ -247,6 +247,10 @@ const resolveScoreResult = (question, score, fallbackTitle) => {
     label: matchedRule?.label || "ประเมินผลเสร็จสิ้น",
     color: matchedRule?.color || "#35756d",
     advice: matchedRule?.advice || "",
+    // The picture this range chose in the form builder, when it chose one.
+    ...(matchedRule?.resultImage
+      ? { resultImage: matchedRule.resultImage }
+      : {}),
   };
 };
 

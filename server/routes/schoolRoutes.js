@@ -77,7 +77,9 @@ const STATUSES = ["active", "inactive"];
 const STUDENT_STATUSES = Object.keys(require("../utils/studentStatus").labels);
 const CURRENT_STUDENT_STATUSES = require("../utils/studentStatus").current;
 const GENDERS = ["male", "female", "other"];
-const TEACHER_ROLES = ["homeroom", "co_homeroom", "counselor"];
+// "subject" seats a subject teacher in the room: they see its students, never
+// their health (health follows homeroom seats only).
+const TEACHER_ROLES = ["homeroom", "co_homeroom", "counselor", "subject"];
 const BLOOD_TYPES = ["A", "B", "AB", "O", "unknown"];
 const HEARING = ["normal", "abnormal", "not_tested"];
 const TEMP_PASSWORD_COST = 10; // replaced by the student at first sign-in
@@ -415,11 +417,57 @@ router.get(
       `SELECT academic_year FROM school_academic_years WHERE school_id = ? AND academic_year >= ? UNION SELECT academic_year FROM school_classrooms WHERE school_id = ? AND academic_year >= ? UNION SELECT ? AS academic_year ORDER BY academic_year DESC`,
       [school.id, current - 10, school.id, current - 10, current],
     );
+    const mental = require("../services/studentMentalStatus");
+    const terms = (await mental.loadTerms(db, [school.id])).get(school.id);
     res.json({
       current_year: current,
       minimum_year: current - 10,
       years: rows.map((r) => Number(r.academic_year)),
+      // Semester dates per year, used to file assessments under a semester.
+      terms: Object.fromEntries(
+        [...terms].map(([year, row]) => [
+          year,
+          Object.fromEntries(
+            mental.TERM_COLUMNS.map((c) => [c, mental.dateKey(row[c])]),
+          ),
+        ]),
+      ),
     });
+  },
+);
+router.put(
+  "/schools/:id/academic-years/:year/terms",
+  allow((a) => a.canUpdateSchool),
+  async (req, res) => {
+    const school = await schoolInOrganization(req, req.params.id);
+    if (!school) return fail(res, 404, "ไม่พบโรงเรียน");
+    const year = Number(req.params.year);
+    if (
+      !validAcademicYear(year) ||
+      !(await registeredAcademicYear(school.id, year))
+    )
+      return fail(res, 404, "ไม่พบปีการศึกษานี้");
+    const mental = require("../services/studentMentalStatus");
+    const { value, error } = mental.validateTerms(req.body, year);
+    if (error)
+      return fail(
+        res,
+        422,
+        "กรุณากรอกวันเปิด-ปิดของทั้งสองภาคเรียนให้ครบ เรียงตามลำดับ และอยู่ในปีการศึกษานั้น",
+      );
+    const columns = mental.TERM_COLUMNS;
+    await db.query(
+      `INSERT INTO school_academic_years (school_id, academic_year, ${columns.join(", ")}) VALUES (?, ?, ${columns.map(() => "?").join(", ")})
+       ON DUPLICATE KEY UPDATE ${columns.map((c) => `${c} = VALUES(${c})`).join(", ")}`,
+      [school.id, year, ...columns.map((c) => value[c])],
+    );
+    await audit(req, {
+      action: "school.update",
+      targetType: "academic_year",
+      targetId: `${school.id}:${year}`,
+      after: value,
+    });
+    res.json({ academic_year: year, ...value });
   },
 );
 router.post(
@@ -1147,10 +1195,59 @@ router.get(
   "/students",
   allow((a) => a.canViewStudents),
   async (req, res) => {
-    const students = await scopedStudents(req, req.query);
+    const mental = require("../services/studentMentalStatus");
+    const { mental_from: from, mental_status: wanted } = req.query;
+    const to = req.query.mental_to || mental.todayKey();
+    if (
+      (from && !/^\d{4}-\d{2}-\d{2}$/.test(from)) ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(to) ||
+      (from && from > to) ||
+      (wanted && !mental.MENTAL_STATUSES.includes(wanted))
+    )
+      return fail(res, 422, "ช่วงเวลาหรือสถานะสุขภาพจิตไม่ถูกต้อง");
+    let students = await scopedStudents(req, req.query);
+    // The same minimal risk view as the school risk queue: staff who may see
+    // risk get each student's latest status in the period, except students
+    // only a physical-health admin covers.
+    const access = req.schoolAccess;
+    const visible = access.canViewRisk
+      ? students.filter(
+          (s) =>
+            !access.physicalSchoolIds?.includes(Number(s.school_id)) ||
+            canViewStudentHealth(access, s),
+        )
+      : [];
+    const summaries = await mental.mentalSummaries(
+      db,
+      req.organizationContext,
+      visible,
+      { from: from || null, to },
+    );
+    students = students.map((s) => ({
+      ...s,
+      mental: summaries.get(Number(s.id)) || null,
+    }));
+    const counts = Object.fromEntries(
+      mental.MENTAL_STATUSES.map((status) => [
+        status,
+        students.filter((s) => mental.matchesStatus(s.mental, status)).length,
+      ]),
+    );
+    if (wanted)
+      students = students.filter((s) => mental.matchesStatus(s.mental, wanted));
+    const period = { from: from || null, to, can_view: access.canViewRisk };
     if (req.query.all === "1" && req.schoolAccess.canExportStudents)
-      return res.json({ data: students, pagination: null });
-    res.json(paginate(students, req.query));
+      return res.json({
+        data: students,
+        pagination: null,
+        mental_period: period,
+        mental_counts: access.canViewRisk ? counts : null,
+      });
+    res.json({
+      ...paginate(students, req.query),
+      mental_period: period,
+      mental_counts: access.canViewRisk ? counts : null,
+    });
   },
 );
 
@@ -1902,6 +1999,82 @@ function computeBmi(weightKg, heightCm) {
   return Number((weightKg / (meters * meters)).toFixed(1));
 }
 
+// Files every assessment under the semester and class it was taken in (so a
+// student's record reads from first enrollment to graduation, across class
+// changes) and returns the care steps recorded for the student, newest first.
+async function mentalTimeline(req, student, assessments) {
+  const mental = require("../services/studentMentalStatus");
+  const [terms, history, care] = await Promise.all([
+    mental.loadTerms(db, [student.school_id]),
+    mental.loadEnrollmentHistory(db, [student.id]),
+    mental.loadCareEvents(db, [student.id]),
+  ]);
+  const schoolTerms = terms.get(Number(student.school_id));
+  const events = care.get(student.id) || [];
+  const roomOf = new Map(
+    assessments.map((a) => [
+      a.id,
+      mental.classroomAt(
+        a.submitted_at,
+        history.get(student.id),
+        student.classroom_id,
+      ),
+    ]),
+  );
+  const rooms = await mental.loadClassrooms(db, [
+    ...roomOf.values(),
+    ...events.map((e) => e.classroom_id),
+  ]);
+  const roomLabel = (id) => {
+    const room = rooms.get(Number(id));
+    return room ? `${room.grade_name || ""} ห้อง ${room.name}`.trim() : null;
+  };
+  for (const a of assessments) {
+    const term = mental.termOf(mental.dateKey(a.submitted_at), schoolTerms);
+    Object.assign(a, {
+      academic_year: term.academic_year,
+      semester: term.semester,
+      term_label: mental.termLabel(term),
+      classroom_label: roomLabel(roomOf.get(a.id)),
+    });
+  }
+  const { readJson, fieldContext } = require("../utils/privateData");
+  const [users] = events.length
+    ? await db.query("SELECT id,username FROM users WHERE id IN (?)", [
+        [...new Set(events.map((e) => e.created_by))],
+      ])
+    : [[]];
+  const names = new Map(users.map((u) => [u.id, u.username]));
+  return [...events].reverse().map((e) => {
+    const term = {
+      academic_year: e.academic_year,
+      semester: e.semester,
+    };
+    const payload = e.payload_encrypted
+      ? readJson(
+          e.payload_encrypted,
+          fieldContext(
+            "school_student_care_statuses",
+            "payload_encrypted",
+            req.organizationContext,
+          ),
+        )
+      : null;
+    return {
+      id: e.id,
+      status: e.status,
+      effective_on: mental.dateKey(e.effective_on),
+      academic_year: e.academic_year,
+      semester: e.semester,
+      term_label: mental.termLabel(term),
+      classroom_label: roomLabel(e.classroom_id),
+      note: payload?.note || "",
+      recorded_by: names.get(e.created_by) || null,
+      recorded_at: e.created_at,
+    };
+  });
+}
+
 async function assessmentsOf(req, student) {
   if (!student.person_id && !student.patient_account_id) return [];
   const [rows] = await db.query(
@@ -1966,6 +2139,9 @@ router.get(
     const assessments = (await assessmentsOf(req, found.student)).filter((a) =>
       a.health_domain === "physical" ? physical : mental,
     );
+    const careHistory = mental
+      ? await mentalTimeline(req, found.student, assessments)
+      : [];
     const activities = mental
       ? await require("../services/latestActivity").schoolActivities(
           db,
@@ -1997,6 +2173,14 @@ router.get(
       ),
       can_view_mental: mental,
       can_view_physical: physical,
+      // Recording a care step is a health update on the roles page.
+      can_set_care_status:
+        mental &&
+        canHealthAction(req.schoolAccess, "update", found.student, false),
+      // Guardians see the care steps but not staff notes or who wrote them.
+      care_statuses: req.schoolAccess.isGuardian
+        ? careHistory.map(({ note, recorded_by, ...step }) => step)
+        : careHistory,
       profile: {
         blood_type: bloodType(profile, req.organizationContext),
         chronic_conditions: require("../utils/privateField").readField(
@@ -2096,8 +2280,6 @@ router.put(
          chronic_conditions_encrypted = VALUES(chronic_conditions_encrypted),
          allergies_encrypted = VALUES(allergies_encrypted),
          medications_encrypted = VALUES(medications_encrypted),
-         emergency_contact_name_encrypted = VALUES(emergency_contact_name_encrypted),
-         emergency_contact_phone_encrypted = VALUES(emergency_contact_phone_encrypted),
          notes_encrypted = VALUES(notes_encrypted),
          updated_by = VALUES(updated_by)`,
       [
@@ -2114,16 +2296,10 @@ router.put(
         secret(body.chronic_conditions, "chronic_conditions_encrypted"),
         secret(body.allergies, "allergies_encrypted"),
         secret(body.medications, "medications_encrypted"),
-        secret(
-          body.emergency_contact_name,
-          "emergency_contact_name_encrypted",
-          255,
-        ),
-        secret(
-          body.emergency_contact_phone,
-          "emergency_contact_phone_encrypted",
-          32,
-        ),
+        // Emergency contacts are edited with the student's contacts
+        // (PUT /students/:id/contacts), so a health save leaves them as is.
+        null,
+        null,
         secret(body.notes, "notes_encrypted"),
         req.user.id,
       ],
@@ -2213,6 +2389,33 @@ const physicalColumns = (v, org) => [
   encodeMeasurements(v, org),
 ];
 
+// Saves a physical record and, in the same transaction, opens follow-up items
+// for the school's approved physical risk rules it meets.
+async function withPhysicalRisk(req, student, values, write) {
+  const connection = await db.getConnection();
+  try {
+    await connection.beginTransaction();
+    const result = await write(connection);
+    await require("../services/physicalRisk").evaluatePhysicalRecord(
+      connection,
+      {
+        organizationId: req.organizationContext,
+        student,
+        values,
+        measuredAt: values.measured_at,
+        actorId: req.user.id,
+      },
+    );
+    await connection.commit();
+    return result;
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
+}
+
 router.post(
   "/students/:id/physical-records",
   allow((a) => a.canViewStudents),
@@ -2225,16 +2428,22 @@ router.post(
       return fail(res, 403, "คุณไม่มีสิทธิ์บันทึกข้อมูลสุขภาพของนักเรียนคนนี้");
     const payload = physicalPayload(req.body);
     if (payload.error) return fail(res, 422, payload.error);
-    const [result] = await db.query(
-      `INSERT INTO school_student_physical_records
-         (measured_at, weight_kg, height_cm, bmi, systolic, diastolic, pulse, vision_left, vision_right,
-          hearing_left, hearing_right, note_encrypted, measurements_encrypted, student_id, recorded_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        ...physicalColumns(payload.value, req.organizationContext),
-        found.student.id,
-        req.user.id,
-      ],
+    const [result] = await withPhysicalRisk(
+      req,
+      found.student,
+      payload.value,
+      (c) =>
+        c.query(
+          `INSERT INTO school_student_physical_records
+           (measured_at, weight_kg, height_cm, bmi, systolic, diastolic, pulse, vision_left, vision_right,
+            hearing_left, hearing_right, note_encrypted, measurements_encrypted, student_id, recorded_by)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            ...physicalColumns(payload.value, req.organizationContext),
+            found.student.id,
+            req.user.id,
+          ],
+        ),
     );
     await audit(req, {
       action: "student_health.update",
@@ -2267,16 +2476,19 @@ router.put(
       return fail(res, 403, "คุณไม่มีสิทธิ์แก้ไขผลตรวจร่างกาย");
     const payload = physicalPayload(req.body);
     if (payload.error) return fail(res, 422, payload.error);
-    await db.query(
-      `UPDATE school_student_physical_records SET measured_at = ?, weight_kg = ?, height_cm = ?, bmi = ?, systolic = ?,
-              diastolic = ?, pulse = ?, vision_left = ?, vision_right = ?, hearing_left = ?, hearing_right = ?,
-              note_encrypted = ?, measurements_encrypted = ?, recorded_by = ?
-        WHERE id = ?`,
-      [
-        ...physicalColumns(payload.value, req.organizationContext),
-        req.user.id,
-        record.id,
-      ],
+    const found = await loadStudent(req, record.student_id);
+    await withPhysicalRisk(req, found.student, payload.value, (c) =>
+      c.query(
+        `UPDATE school_student_physical_records SET measured_at = ?, weight_kg = ?, height_cm = ?, bmi = ?, systolic = ?,
+                diastolic = ?, pulse = ?, vision_left = ?, vision_right = ?, hearing_left = ?, hearing_right = ?,
+                note_encrypted = ?, measurements_encrypted = ?, recorded_by = ?
+          WHERE id = ?`,
+        [
+          ...physicalColumns(payload.value, req.organizationContext),
+          req.user.id,
+          record.id,
+        ],
+      ),
     );
     res.json({ success: true, bmi: payload.value.bmi });
   },
@@ -2309,7 +2521,11 @@ router.delete(
 router.get(
   "/cases",
   allow(
-    (a) => a.canViewAllHealth || a.isTeacher || a.isGuardian,
+    (a) =>
+      a.canViewAllHealth ||
+      a.isTeacher ||
+      a.isGuardian ||
+      a.counselorClassroomIds?.length > 0,
     "คุณไม่มีสิทธิ์ดูข้อมูลสุขภาพนักเรียน",
   ),
   async (req, res) => {

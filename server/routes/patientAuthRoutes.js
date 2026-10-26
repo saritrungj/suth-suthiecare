@@ -3,6 +3,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const rateLimit = require("express-rate-limit");
 const { getClientIp } = require("../utils/clientIp");
+const { patientLoginLimiters } = require("../utils/rateLimits");
 const { verifyTurnstile, isTurnstileDisabled } = require("../utils/turnstile");
 const {
   db,
@@ -45,6 +46,18 @@ const otpLimiter = rateLimit({
   max: 15,
   standardHeaders: true,
   legacyHeaders: false,
+});
+// A whole classroom logs in from one school IP, so login counts failures per
+// username + IP under a high per-IP ceiling (see utils/rateLimits.js).
+const loginLimiters = patientLoginLimiters();
+// The first-login password change runs after sign-in, so it is counted per
+// account rather than per IP.
+const passwordChangeLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 15,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => `patient-password:${req.patient.id}`,
 });
 const genericConflict = {
   success: false,
@@ -399,7 +412,7 @@ router.post("/password-recovery/reset", otpLimiter, async (req, res) => {
   }
 });
 
-router.post("/login", authLimiter, async (req, res) => {
+router.post("/login", loginLimiters, async (req, res) => {
   if (!(await requireTurnstile(req, res))) return;
   const username = String(req.body.username || "")
     .trim()
@@ -492,8 +505,8 @@ router.post("/login", authLimiter, async (req, res) => {
 // by a school import (must_change_password), and available to everyone else.
 router.post(
   "/password/change",
-  otpLimiter,
   verifyPatientTokenAllowingPasswordChange,
+  passwordChangeLimiter,
   async (req, res) => {
     const currentPassword = String(req.body.current_password || "");
     const newPassword = req.body.new_password;

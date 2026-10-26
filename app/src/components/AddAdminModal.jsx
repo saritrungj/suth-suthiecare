@@ -14,6 +14,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import "./AddAdminModal.css";
+import CounselorGradeScope, { gradeScopeError } from "./CounselorGradeScope";
 
 const MAX_NAME_LENGTH = 255;
 const MAX_USERNAME_LENGTH = 50;
@@ -21,7 +22,12 @@ const MAX_EMAIL_LENGTH = 100;
 const normaliseText = (value) =>
   value.normalize("NFC").trim().replace(/\s+/g, " ");
 const charLength = (value) => Array.from(value).length;
-const teacherSchoolRoles = new Set(["counselor", "homeroom", "other"]);
+const teacherSchoolRoles = new Set([
+  "counselor",
+  "homeroom",
+  "subject_teacher",
+  "other",
+]);
 const staffSchoolRoles = new Set([
   "admin",
   "mental_admin",
@@ -205,6 +211,14 @@ export default function AddAdminModal({
           newErrors.memberships = "กรุณาเลือกประเภทครู";
           break;
         }
+        const gradeError = gradeScopeError(
+          assignment.role_code,
+          assignment.grade_level_ids,
+        );
+        if (gradeError) {
+          newErrors.memberships = gradeError;
+          break;
+        }
       }
     }
     setErrors(newErrors);
@@ -245,6 +259,10 @@ export default function AddAdminModal({
                   : null,
                 employee_code: school_assignment.employee_code || "",
                 position: school_assignment.position || "",
+                // Only counselors carry a grade scope; null = whole school.
+                ...(school_assignment.role_code === "counselor" && {
+                  grade_level_ids: school_assignment.grade_level_ids ?? null,
+                }),
               }
             : null,
         }),
@@ -591,6 +609,8 @@ export default function AddAdminModal({
                                         school_assignment: {
                                           ...item.school_assignment,
                                           school_id: Number(event.target.value),
+                                          // Grades belong to one school.
+                                          grade_level_ids: null,
                                         },
                                       }),
                                     )
@@ -697,6 +717,29 @@ export default function AddAdminModal({
                                     ))}
                                 </SearchableSelect>
                               </div>
+                              {assignment?.role_code === "counselor" && (
+                                <CounselorGradeScope
+                                  grades={(schoolOptions?.grades || []).filter(
+                                    (grade) =>
+                                      Number(grade.school_id) ===
+                                      Number(assignment.school_id),
+                                  )}
+                                  value={assignment.grade_level_ids ?? null}
+                                  disabled={saving}
+                                  onChange={(grade_level_ids) =>
+                                    updateMembership(
+                                      organization.id,
+                                      (item) => ({
+                                        ...item,
+                                        school_assignment: {
+                                          ...item.school_assignment,
+                                          grade_level_ids,
+                                        },
+                                      }),
+                                    )
+                                  }
+                                />
+                              )}
                               {assignment?.personnel_kind === "teacher" && (
                                 <div className="adm-input-group">
                                   <label>ประเภทครู</label>

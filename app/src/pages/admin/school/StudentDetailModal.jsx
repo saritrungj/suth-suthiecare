@@ -2,6 +2,18 @@ import SearchableSelect from "../../../components/SearchableSelect";
 import { toDisplayText } from "../../../utils/textPresentation.js";
 import MasterSelect from "../../../components/MasterSelect";
 import StudentInsights from "./StudentInsights";
+import { StudentBehaviorTab } from "./behavior";
+import { StudentFollowUps } from "./followUpParts";
+import { StudentCareGuidance } from "./careSettings";
+import StudentAuditTab from "./StudentAuditTab";
+import StudentContactsSection from "./StudentContactsSection";
+import StudentGuardiansSection from "./StudentGuardiansSection";
+import { bangkokDateKey } from "../../../utils/caseDateFilter";
+import { BMI_SOURCE_NOTE, classifyBmi } from "../../../utils/bmiForAge";
+import {
+  MentalHistoryByTerm,
+  StudentMentalStatus,
+} from "./StudentMentalStatus";
 import {
   Suspense,
   lazy,
@@ -24,6 +36,8 @@ import {
   FiHeart,
   FiCornerUpRight,
   FiLayers,
+  FiClipboard,
+  FiClock,
   FiBookOpen,
   FiKey,
 } from "react-icons/fi";
@@ -63,9 +77,47 @@ const ScoreTrendChart = lazy(() =>
   })),
 );
 
-function ChartFrame({ label, children }) {
+// BMI judged against WHO BMI-for-age, by the student's age on the day.
+function BmiCategory({ bmi, student, measuredAt }) {
+  const result = classifyBmi({
+    bmi,
+    birthDate: student?.birth_date,
+    gender: student?.gender,
+    measuredAt,
+  });
+  if (!bmi) return null;
+  return result.category ? (
+    <span
+      className={`sch-badge bmi-${result.tone}`}
+      title={`z-score ${result.z}`}
+    >
+      {result.label}
+    </span>
+  ) : (
+    <span className="sch-badge" title={result.reason}>
+      ประเมินตามเกณฑ์ไม่ได้
+    </span>
+  );
+}
+
+// Line colours of the score chart, from the app's chart tokens.
+const SERIES_COLORS = [
+  "var(--suth-chart-purple)",
+  "var(--suth-chart-teal)",
+  "var(--suth-action)",
+  "var(--suth-chart-blue)",
+  "var(--suth-chart-sage)",
+  "var(--suth-chart-apricot)",
+  "var(--suth-danger)",
+];
+
+function ChartFrame({ label, children, className = "" }) {
   return (
-    <div className="sch-chart" role="img" aria-label={toDisplayText(label)}>
+    <div
+      className={`sch-chart ${className}`.trim()}
+      role="img"
+      aria-label={toDisplayText(label)}
+    >
       <Suspense
         fallback={<div className="sch-chart-loading">กำลังโหลดกราฟ...</div>}
       >
@@ -75,10 +127,95 @@ function ChartFrame({ label, children }) {
   );
 }
 
-const TABS = [
-  { id: "general", label: "ข้อมูลทั่วไป", icon: FiUser },
-  { id: "physical", label: "สุขภาพกาย", icon: FiActivity },
-  { id: "mental", label: "สุขภาพจิต", icon: FiHeart },
+// Tabs of the student file, in display order. A new tab is one entry here:
+// `visible(data, can, schoolAccess)` decides who sees it (data is null while
+// loading) and `render` draws it once the file has loaded.
+const STUDENT_TABS = [
+  {
+    id: "general",
+    label: "ข้อมูลทั่วไป",
+    icon: FiUser,
+    visible: () => true,
+    render: ({ data }) => (
+      <>
+        <GeneralTab data={data} />
+        {(data.can_view_mental || data.can_view_physical) && (
+          <StudentContactsSection studentId={data.student.id} />
+        )}
+        <StudentGuardiansSection student={data.student} />
+      </>
+    ),
+  },
+  {
+    id: "physical",
+    label: "สุขภาพกาย",
+    icon: FiActivity,
+    visible: (data) => Boolean(data?.can_view_physical),
+    render: ({ data, reload }) => (
+      <>
+        <StudentFollowUps studentId={data.student.id} />
+        <PhysicalTab data={data} reload={reload} />
+      </>
+    ),
+  },
+  {
+    id: "mental",
+    label: "สุขภาพจิต",
+    icon: FiHeart,
+    visible: (data) => Boolean(data?.can_view_mental),
+    render: ({ data, reload, period }) => (
+      <>
+        <StudentMentalStatus data={data} reload={reload} />
+        <StudentCareGuidance studentId={data.student.id} />
+        <MentalTab data={data} period={period} />
+      </>
+    ),
+  },
+  {
+    id: "behavior",
+    label: "พฤติกรรม",
+    icon: FiClipboard,
+    visible: (data, _can, access) =>
+      Boolean(
+        data &&
+        (access?.behavior_actions?.view || access?.behavior_actions?.create),
+      ),
+    render: ({ data }) => <StudentBehaviorTab student={data.student} />,
+  },
+  {
+    id: "insights",
+    label: "ข้อมูลเชิงลึก",
+    icon: FiLayers,
+    // Family background and guidance records are staff notes, not for
+    // guardians.
+    visible: (data, _can, access) =>
+      Boolean(data?.can_view_mental) && !access?.is_guardian,
+    render: ({ data, studentId }) => (
+      <StudentInsights
+        studentId={studentId}
+        assessments={data.assessments?.mental || []}
+      />
+    ),
+  },
+  {
+    id: "referrals",
+    label: "ส่งต่อ",
+    icon: FiCornerUpRight,
+    visible: (data, can, access) =>
+      Boolean(data?.can_view_mental) &&
+      can("cases.view") &&
+      !access?.is_guardian,
+    render: ({ data, reload }) => (
+      <StudentReferrals key={data.student.id} data={data} onUpdated={reload} />
+    ),
+  },
+  {
+    id: "audit",
+    label: "ประวัติการแก้ไข",
+    icon: FiClock,
+    visible: (data, can) => Boolean(data) && can("audit.view"),
+    render: ({ studentId }) => <StudentAuditTab studentId={studentId} />,
+  },
 ];
 
 const HEARING_LABELS = {
@@ -101,26 +238,37 @@ const today = () => {
 };
 
 // Student file: profile, physical health (records + physical assessments)
-// and mental health (assessment history). Opened from the student list and
-// from the school case list.
+// and mental health (assessment history). Shown as its own page
+// (StudentFilePage, opened from the student and case lists) or as a drawer.
 export default function StudentDetailModal({
   studentId,
   onUpdated,
   initialTab = "general",
   onClose,
   nav,
+  // { range: { from, to }, label } from the student list's period filter;
+  // the mental tab then shows that period only. Omitted: all time.
+  period = null,
+  // "page": the file's own page (StudentFilePage) instead of a side drawer.
+  variant = "drawer",
+  onTabChange,
+  backLabel,
 }) {
-  const { can } = usePermissions();
+  const { can, schoolAccess } = usePermissions();
   const [tab, setTab] = useState(initialTab);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const requestId = useRef(0);
+  // Student whose file is on screen. Reloading that same file (after a save
+  // inside a tab) refreshes quietly, so the open tab keeps its messages and
+  // half-filled forms instead of being replaced by "กำลังโหลด".
+  const shownStudent = useRef(null);
 
   const load = useCallback(async () => {
     const id = ++requestId.current;
-    setLoading(true);
+    if (shownStudent.current !== studentId) setLoading(true);
     setError("");
     try {
       const basic = await getSchoolStudent(studentId);
@@ -134,6 +282,7 @@ export default function StudentDetailModal({
             },
           };
       if (id === requestId.current) {
+        shownStudent.current = studentId;
         setData({
           ...response.data,
           can_view_mental:
@@ -171,6 +320,8 @@ export default function StudentDetailModal({
   }, [load, onUpdated]);
 
   const student = data?.student;
+  const tabs = STUDENT_TABS.filter((t) => t.visible(data, can, schoolAccess));
+  const current = tabs.find((t) => t.id === tab);
   return (
     <CaseDrawer
       title={student ? studentName(student) : "ข้อมูลนักเรียน"}
@@ -188,26 +339,15 @@ export default function StudentDetailModal({
       }
       exportTitle="ข้อมูลนักเรียน"
       nav={nav}
-      tabs={[
-        ...TABS.filter(
-          (t) =>
-            t.id === "general" ||
-            (t.id === "mental"
-              ? data?.can_view_mental
-              : data?.can_view_physical),
-        ),
-        ...(data?.can_view_mental
-          ? [
-              { id: "insights", label: "ข้อมูลเชิงลึก", icon: FiLayers },
-              ...(can("cases.view")
-                ? [{ id: "referrals", label: "ส่งต่อ", icon: FiCornerUpRight }]
-                : []),
-            ]
-          : []),
-      ]}
+      tabs={tabs.map(({ id, label, icon }) => ({ id, label, icon }))}
       activeTab={tab}
-      onTabChange={setTab}
+      onTabChange={(next) => {
+        setTab(next);
+        onTabChange?.(next);
+      }}
       onClose={onClose}
+      variant={variant}
+      backLabel={backLabel}
     >
       {loading && (
         <p className="sch-muted" role="status">
@@ -219,27 +359,9 @@ export default function StudentDetailModal({
           {error}
         </p>
       )}
-      {!loading && data && (
-        <>
-          {tab === "insights" && data.can_view_mental && (
-            <StudentInsights studentId={studentId} />
-          )}
-          {tab === "general" && <GeneralTab data={data} />}
-          {tab === "physical" && data.can_view_physical && (
-            <PhysicalTab data={data} reload={reloadHealth} />
-          )}
-          {tab === "mental" && data.can_view_mental && (
-            <MentalTab data={data} />
-          )}
-          {tab === "referrals" && data.can_view_mental && can("cases.view") && (
-            <StudentReferrals
-              key={data.student.id}
-              data={data}
-              onUpdated={reloadHealth}
-            />
-          )}
-        </>
-      )}
+      {!loading &&
+        data &&
+        current?.render({ data, studentId, reload: reloadHealth, period })}
     </CaseDrawer>
   );
 }
@@ -544,12 +666,7 @@ function PhysicalTab({ data, reload }) {
             </div>
             <div>
               <dt>ผู้ติดต่อฉุกเฉิน</dt>
-              <dd>
-                {profile.emergency_contact_name || "-"}
-                {profile.emergency_contact_phone
-                  ? ` (${profile.emergency_contact_phone})`
-                  : ""}
-              </dd>
+              <dd className="sch-muted">ดูและแก้ไขได้ที่แท็บข้อมูลทั่วไป</dd>
             </div>
             <div>
               <dt>หมายเหตุ</dt>
@@ -583,6 +700,13 @@ function PhysicalTab({ data, reload }) {
             <div className="sch-tile">
               <span>BMI</span>
               <strong>{latest.bmi ?? "-"}</strong>
+              <span className="sch-tile-meta">
+                <BmiCategory
+                  bmi={latest.bmi}
+                  student={data.student}
+                  measuredAt={latest.measured_at}
+                />
+              </span>
             </div>
             <div className="sch-tile">
               <span>น้ำหนัก / ส่วนสูง</span>
@@ -608,8 +732,18 @@ function PhysicalTab({ data, reload }) {
         )}
         {latest && (
           <p className="sch-muted sch-tile-note">
-            ตรวจเมื่อ {formatThaiDate(latest.measured_at)} · ค่า BMI
-            ของเด็กต้องแปลผลตามเกณฑ์อายุและเพศ จึงแสดงเป็นตัวเลขเท่านั้น
+            ตรวจเมื่อ {formatThaiDate(latest.measured_at)} · {BMI_SOURCE_NOTE}
+            {(() => {
+              const result = classifyBmi({
+                bmi: latest.bmi,
+                birthDate: data.student.birth_date,
+                gender: data.student.gender,
+                measuredAt: latest.measured_at,
+              });
+              return result.reason && latest.bmi
+                ? ` · ประเมินตามเกณฑ์ไม่ได้: ${result.reason}`
+                : "";
+            })()}
           </p>
         )}
       </section>
@@ -637,6 +771,7 @@ function PhysicalTab({ data, reload }) {
                   <th className="sch-num">น้ำหนัก</th>
                   <th className="sch-num">ส่วนสูง</th>
                   <th className="sch-num">BMI</th>
+                  <th>เกณฑ์ BMI</th>
                   <th>ความดัน / ชีพจร</th>
                   <th>สายตา (ซ/ข)</th>
                   <th>การได้ยิน (ซ/ข)</th>
@@ -663,6 +798,13 @@ function PhysicalTab({ data, reload }) {
                     </td>
                     <td data-label="BMI" className="sch-num">
                       {record.bmi ?? "-"}
+                    </td>
+                    <td data-label="เกณฑ์ BMI">
+                      <BmiCategory
+                        bmi={record.bmi}
+                        student={data.student}
+                        measuredAt={record.measured_at}
+                      />
                     </td>
                     <td data-label="ความดัน / ชีพจร">
                       {record.systolic
@@ -721,6 +863,7 @@ function PhysicalTab({ data, reload }) {
       {recordForm && (
         <PhysicalRecordForm
           studentId={data.student.id}
+          student={data.student}
           initial={recordForm}
           onClose={() => setRecordForm(null)}
           onSaved={async () => {
@@ -766,18 +909,6 @@ function HealthProfileForm({ studentId, profile, onCancel, onSaved }) {
           }))}
         />
       </label>
-      <label className="sch-field">
-        ผู้ติดต่อฉุกเฉิน
-        <input maxLength={255} {...field("emergency_contact_name")} />
-      </label>
-      <label className="sch-field">
-        เบอร์ผู้ติดต่อฉุกเฉิน
-        <input
-          maxLength={32}
-          inputMode="tel"
-          {...field("emergency_contact_phone")}
-        />
-      </label>
       <label className="sch-field sch-full">
         โรคประจำตัว
         <textarea {...field("chronic_conditions")} />
@@ -806,7 +937,7 @@ function HealthProfileForm({ studentId, profile, onCancel, onSaved }) {
   );
 }
 
-function PhysicalRecordForm({ studentId, initial, onClose, onSaved }) {
+function PhysicalRecordForm({ studentId, student, initial, onClose, onSaved }) {
   const [form, setForm] = useState({
     measured_at: initial.measured_at || today(),
     weight_kg: initial.weight_kg ?? "",
@@ -891,7 +1022,16 @@ function PhysicalRecordForm({ studentId, initial, onClose, onSaved }) {
         {number("height_cm", "ส่วนสูง (ซม.)")}
         <div className="sch-field">
           BMI (คำนวณอัตโนมัติ)
-          <output className="sch-output">{bmiPreview}</output>
+          <output className="sch-output">
+            {bmiPreview}{" "}
+            {bmiPreview !== "-" && (
+              <BmiCategory
+                bmi={bmiPreview}
+                student={student}
+                measuredAt={form.measured_at}
+              />
+            )}
+          </output>
         </div>
         {number("systolic", "ความดันตัวบน")}
         {number("diastolic", "ความดันตัวล่าง")}
@@ -956,9 +1096,27 @@ function PhysicalRecordForm({ studentId, initial, onClose, onSaved }) {
   );
 }
 
-function MentalTab({ data }) {
-  const items = data.assessments.mental;
-  // Latest result of each form, plus a score trend for forms done repeatedly.
+// Assessments inside a { from, to } range of Bangkok dates.
+const inRange = (item, range) => {
+  const day = bangkokDateKey(new Date(item.submitted_at));
+  return (
+    (!range.from || day >= range.from) &&
+    day <= (range.to || bangkokDateKey(new Date()))
+  );
+};
+
+function MentalTab({ data, period }) {
+  const all = data.assessments.mental;
+  // The period chosen on the student list applies until cleared here.
+  const [usePeriod, setUsePeriod] = useState(Boolean(period?.range));
+  const items = useMemo(
+    () =>
+      usePeriod && period?.range
+        ? all.filter((item) => inRange(item, period.range))
+        : all,
+    [all, usePeriod, period],
+  );
+  // Latest result of each form, plus one score chart per chosen form.
   const byForm = useMemo(() => {
     const groups = new Map();
     [...items].reverse().forEach((item) => {
@@ -972,32 +1130,74 @@ function MentalTab({ data }) {
     });
     return [...groups.values()];
   }, [items]);
-  const repeated = byForm.filter((group) => group.points.length > 1);
-  const [trendFormId, setTrendFormId] = useState(repeated[0]?.form_id || "");
-  const trend = repeated.find(
-    (group) => String(group.form_id) === String(trendFormId),
-  );
-  const trendData = (trend?.points || [])
-    .map((point) => ({
-      date: formatThaiDate(point.submitted_at),
-      คะแนน: Number(point.score_results[0]?.score),
+  // Forms unticked in the checklist; every form is shown by default.
+  const [hidden, setHidden] = useState(() => new Set());
+  // One line per form in one chart. A form keeps its colour while others
+  // are ticked on or off.
+  const colorOf = (formId) =>
+    SERIES_COLORS[
+      byForm.findIndex((g) => String(g.form_id) === String(formId)) %
+        SERIES_COLORS.length
+    ];
+  const charted = byForm
+    .filter((group) => !hidden.has(String(group.form_id)))
+    .map((group) => ({
+      key: String(group.form_id),
+      name: toDisplayText(group.title),
+      color: colorOf(group.form_id),
+      points: group.points
+        .map((point) => ({
+          t: new Date(point.submitted_at).getTime(),
+          score: Number(point.score_results[0]?.score),
+        }))
+        .filter((point) => Number.isFinite(point.score)),
     }))
-    .filter((point) => Number.isFinite(point["คะแนน"]));
+    .filter((series) => series.points.length);
+  const toggle = (formId) =>
+    setHidden((current) => {
+      const next = new Set(current);
+      const key = String(formId);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  const banner = period?.range && (
+    <div className="sch-period-banner" role="status">
+      <span>
+        {usePeriod ? period.label : "แสดงผลประเมินทั้งหมด ไม่จำกัดช่วงเวลา"}
+      </span>
+      <button
+        type="button"
+        className="sch-btn-ghost"
+        onClick={() => setUsePeriod((value) => !value)}
+      >
+        {usePeriod ? "ดูทั้งหมด" : "ใช้ช่วงเวลาจากหน้ารายชื่อ"}
+      </button>
+    </div>
+  );
 
   if (!items.length)
     return (
-      <div className="sch-empty-state">
-        <strong>ยังไม่มีผลแบบประเมินสุขภาพจิต</strong>
-        <span>
-          ผลจะแสดงเมื่อนักเรียนทำแบบประเมินที่ตั้งหมวดสุขภาพเป็น
-          &quot;สุขภาพจิต&quot; ด้วยบัญชีของตนเอง
-          หรือกรอกเลขบัตรประชาชนและยินยอม PDPA
-        </span>
-      </div>
+      <>
+        {banner}
+        <div className="sch-empty-state">
+          <strong>
+            {all.length
+              ? "ไม่มีผลแบบประเมินสุขภาพจิตในช่วงเวลานี้"
+              : "ยังไม่มีผลแบบประเมินสุขภาพจิต"}
+          </strong>
+          <span>
+            ผลจะแสดงเมื่อนักเรียนทำแบบประเมินที่ตั้งหมวดสุขภาพเป็น
+            &quot;สุขภาพจิต&quot; ด้วยบัญชีของตนเอง
+            หรือกรอกเลขบัตรประชาชนและยินยอม PDPA
+          </span>
+        </div>
+      </>
     );
 
   return (
     <>
+      {banner}
       <section className="sch-section">
         <h3>ผลล่าสุดของแต่ละแบบประเมิน</h3>
         <div className="sch-tiles">
@@ -1021,38 +1221,52 @@ function MentalTab({ data }) {
           })}
         </div>
       </section>
-      {repeated.length > 0 && (
-        <section className="sch-section">
-          <div className="sch-card-head">
-            <h3>แนวโน้มคะแนน</h3>
-            <label className="sch-field sch-trend-select">
-              <span className="sr-only">เลือกแบบประเมิน</span>
-              <SearchableSelect
-                value={trendFormId}
-                onChange={(event) => setTrendFormId(event.target.value)}
-              >
-                {repeated.map((group) => (
-                  <option key={group.form_id} value={group.form_id}>
-                    {toDisplayText(group.title)}
-                  </option>
-                ))}
-              </SearchableSelect>
-            </label>
-          </div>
-          {trendData.length > 1 ? (
-            <ChartFrame label={`กราฟแนวโน้มคะแนน ${trend?.title || ""}`}>
-              <ScoreTrendChart data={trendData} />
-            </ChartFrame>
-          ) : (
-            <p className="sch-muted">
-              แบบประเมินนี้ไม่มีคะแนนตัวเลขให้แสดงเป็นกราฟ
-            </p>
-          )}
-        </section>
-      )}
       <section className="sch-section">
-        <h3>ประวัติแบบประเมินสุขภาพจิตทั้งหมด</h3>
-        <AssessmentList items={items} />
+        <h3>กราฟคะแนนแบบประเมิน</h3>
+        <p className="sch-muted">
+          แบบประเมินละหนึ่งเส้น เลือกเปิดหรือปิดเส้นได้จากรายการด้านล่าง
+          คะแนนเต็มของแต่ละแบบอาจไม่เท่ากัน
+        </p>
+        <fieldset className="sch-form-checklist">
+          <legend className="sr-only">เลือกแบบประเมินที่จะแสดงกราฟ</legend>
+          {byForm.map((group) => (
+            <label key={group.form_id}>
+              <input
+                type="checkbox"
+                checked={!hidden.has(String(group.form_id))}
+                onChange={() => toggle(group.form_id)}
+              />
+              <span
+                className="sch-series-swatch"
+                style={{ background: colorOf(group.form_id) }}
+                aria-hidden="true"
+              />
+              {toDisplayText(group.title)}
+              <span className="sch-sub">{group.points.length} ครั้ง</span>
+            </label>
+          ))}
+        </fieldset>
+        {charted.length ? (
+          <ChartFrame
+            className="sch-chart--multi"
+            label={`กราฟคะแนน ${charted.map((c) => c.name).join(", ")}`}
+          >
+            <ScoreTrendChart series={charted} />
+          </ChartFrame>
+        ) : (
+          <p className="sch-muted">
+            เลือกแบบประเมินที่มีคะแนนตัวเลขอย่างน้อยหนึ่งแบบเพื่อดูกราฟ
+          </p>
+        )}
+      </section>
+      <section className="sch-section">
+        <h3>ประวัติแบบประเมินสุขภาพจิต แยกตามภาคเรียน</h3>
+        <p className="sch-muted">
+          {usePeriod && period?.range
+            ? "เฉพาะช่วงเวลาที่เลือก พร้อมชั้นเรียนในขณะที่ประเมิน"
+            : "รวมทุกครั้งตั้งแต่เข้าเรียน พร้อมชั้นเรียนในขณะที่ประเมิน"}
+        </p>
+        <MentalHistoryByTerm items={items} />
       </section>
     </>
   );

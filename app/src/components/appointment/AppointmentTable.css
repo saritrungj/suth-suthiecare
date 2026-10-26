@@ -1,126 +1,136 @@
 /* ============================================================
-   APPOINTMENT TABLE (UNIQUE PREFIX: aptt-)
+   APPOINTMENT TABLE (prefix: aptt-)
+   Six fixed columns that fit the panel: no sideways scrolling. The frame,
+   head band and row lines come from styles/data-table-system.css.
 ============================================================ */
 
-.aptt-wrapper-card {
-  background: var(--suth-surface);
-  border-radius: var(--suth-radius-card);
-  box-shadow: var(--suth-shadow-soft);
-  padding: clamp(0.75rem, 1.6vw, 1rem);
-  margin-top: 20px;
+.aptt-frame {
   width: 100%;
 }
 
-/* Scrolls sideways inside the card; the frame comes from
-   styles/data-table-system.css like every other admin table. */
-.aptt-scroll-container {
-  width: 100%;
-  overflow-x: auto !important;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
+.admin-shell table.aptt-table {
+  min-width: 0;
+  table-layout: fixed;
 }
 
-.aptt-main-table {
-  font-family: var(--suth-font);
-  width: 100%;
-  table-layout: auto;
-  min-width: 1300px;
+.aptt-w-date {
+  width: 14%;
+}
+.aptt-w-person {
+  width: 23%;
+}
+.aptt-w-service {
+  width: 22%;
+}
+.aptt-w-risk {
+  width: 9%;
+}
+.aptt-w-status {
+  width: 15%;
+}
+.aptt-w-action {
+  width: 17%;
 }
 
-/* Head and cells share the dashboard table look; this table centres its
-   short columns, and the name and note columns read from the left. */
-.aptt-main-table th,
-.aptt-main-table td {
-  text-align: center;
+.admin-shell table.aptt-table td {
+  vertical-align: top;
+  overflow-wrap: anywhere;
 }
 
-/* ================= จัดการความกว้างและสไตล์เฉพาะคอลัมน์ ================= */
-.aptt-col-name {
-  min-width: 200px;
-  text-align: left !important;
+/* Primary line + quiet second line in each cell. */
+.aptt-date {
+  white-space: nowrap;
 }
 
-.aptt-col-service {
-  min-width: 160px;
+.aptt-date,
+.aptt-service {
+  display: block;
+  color: var(--suth-ink);
   font-weight: 700;
 }
 
-.aptt-col-note {
-  min-width: 250px;
-  max-width: 350px;
-  white-space: nowrap;
+.aptt-sub {
+  display: block;
+  margin-top: 2px;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-caption);
+  line-height: 1.45;
+}
+
+/* Second lines stay on one line so every row keeps the same height;
+   the full text is in the cell's title. */
+.aptt-line {
   overflow: hidden;
   text-overflow: ellipsis;
-  text-align: left !important;
+  white-space: nowrap;
 }
 
-.aptt-col-date {
-  min-width: 160px;
-  font-weight: 600;
-}
-
-/* ================= สไตล์ปุ่มและป้ายกำกับ (นำมารวมไว้ในนี้ให้ไม่พึ่งพาไฟล์อื่น) ================= */
 .aptt-name-btn {
-  background: transparent;
-  border: none;
-  color: var(--suth-action-ink);
-  font-size: var(--suth-fs-sm);
-  font-weight: 600;
-  font-family: inherit;
-  text-decoration: underline;
-  cursor: pointer;
   padding: 0;
-  transition: color 0.2s;
+  border: 0;
+  background: transparent;
+  color: var(--suth-action-ink);
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  cursor: pointer;
 }
 .aptt-name-btn:hover {
   color: var(--suth-action-pressed);
   text-decoration-thickness: 2px;
 }
-
-.aptt-status-tag {
-  padding: 4px 12px;
-  border-radius: var(--suth-radius-panel);
-  font-size: var(--suth-fs-caption);
-  font-weight: bold;
-  display: inline-block;
-  white-space: nowrap;
+.aptt-name-btn:focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
-.aptt-risk-tag {
-  padding: 4px 12px;
-  border-radius: var(--suth-radius-lg);
+/* Status and risk tags share one pill shape. */
+.aptt-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--suth-radius-pill);
   font-size: var(--suth-fs-caption);
   font-weight: 700;
-  display: inline-block;
+  line-height: 1.5;
   white-space: nowrap;
 }
-.aptt-status-tag.is-success {
+.aptt-tag.is-success,
+.aptt-risk-low {
   background: var(--suth-success-tint);
   color: var(--suth-success);
 }
-.aptt-status-tag.is-danger {
-  background: var(--suth-danger-tint);
-  color: var(--suth-danger);
-}
-.aptt-status-tag.is-warning {
+.aptt-tag.is-warning,
+.aptt-risk-medium {
   background: var(--suth-warning-tint);
   color: var(--suth-warning);
 }
-.aptt-status-tag.is-neutral {
-  background: var(--suth-neutral-tint);
-  color: var(--suth-ink-2);
+.aptt-tag.is-danger,
+.aptt-risk-high {
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
 }
 
-/* Queue actions: two quiet pills, green to confirm, red to cancel. */
+/* Actions on one line: a labelled confirm pill and a round cancel button. */
+.admin-shell table.aptt-table :is(th, td).aptt-col-action {
+  padding-inline: 8px;
+  text-align: center;
+}
 .aptt-acts {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 .aptt-act {
-  min-height: 36px;
-  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 12px;
   border: 1px solid transparent;
   border-radius: var(--suth-radius-pill);
   font: inherit;
@@ -129,12 +139,10 @@
   line-height: 1.2;
   white-space: nowrap;
   cursor: pointer;
-  transition:
-    background-color 160ms var(--suth-ease-out),
-    transform 160ms var(--suth-ease-out);
+  transition: background-color 160ms var(--suth-ease-out);
 }
-.aptt-act:hover {
-  transform: translateY(-1px);
+.aptt-act[hidden] {
+  display: none;
 }
 .aptt-act--ok {
   background: var(--suth-success-tint);
@@ -145,141 +153,132 @@
   background: color-mix(in srgb, var(--suth-success) 14%, var(--suth-surface));
 }
 .aptt-act--cancel {
-  background: var(--suth-danger-tint);
+  width: 34px;
+  padding: 0;
+  background: var(--suth-surface);
   border-color: var(--suth-danger-line);
   color: var(--suth-danger);
 }
 .aptt-act--cancel:hover {
-  background: color-mix(in srgb, var(--suth-danger) 12%, var(--suth-surface));
+  background: var(--suth-danger-tint);
 }
 .aptt-act:focus-visible {
   outline: 3px solid var(--suth-focus);
   outline-offset: 2px;
 }
-@media (prefers-reduced-motion: reduce) {
-  .aptt-act {
-    transition: none;
-  }
-}
-
-.aptt-risk-high {
-  background: var(--suth-danger-tint);
-  color: var(--suth-danger);
-}
-.aptt-risk-medium {
-  background: var(--suth-warning-tint);
-  color: var(--suth-warning);
-}
-.aptt-risk-low {
-  background: var(--suth-success-tint);
-  color: var(--suth-success);
-}
-
-/* ================= Hover Effect & Scrollbar ================= */
-
-.aptt-scroll-container::-webkit-scrollbar {
-  height: 12px;
-}
-.aptt-scroll-container::-webkit-scrollbar-track {
-  background: var(--suth-surface-2);
-  border-radius: var(--suth-radius);
-  margin: 0 10px; /* ไม่ให้ scrollbar ชิดขอบซ้ายขวาเกินไป */
-}
-.aptt-scroll-container::-webkit-scrollbar-thumb {
-  background-color: var(--suth-control-line);
-  border-radius: var(--suth-radius);
-  border: 3px solid var(--suth-line-soft);
-  background-clip: content-box;
-}
-
-/* ================= Skeleton ================= */
-.aptt-skeleton-box {
-  height: 20px;
-  background: var(--suth-line-soft);
-  border-radius: var(--suth-radius-xs);
-  animation: aptt-pulse 1.3s infinite;
-}
-@keyframes aptt-pulse {
-  0% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.5;
-  }
-}
-
-/* 🟢 ทำให้คอลัมน์ "จัดการคิว" ติดหนึบอยู่ขวาสุด (Sticky Right) */
-.aptt-col-action {
-  position: sticky !important;
-  right: 0;
-  background: var(--suth-surface); /* ป้องกันเนื้อหาอื่นทะลุมาให้เห็น */
-  z-index: calc(var(--z-sticky) - 1);
-  border-left: 1px solid var(--suth-line-soft);
-  box-shadow: -4px 0px 10px rgba(31, 47, 63, 0.04); /* เพิ่มเงาด้านซ้ายให้ดูมีมิติลอยอยู่ */
-  text-align: center;
-}
-
-/* หัวตารางของจัดการคิว (ต้องลอยอยู่บนสุด) */
-.aptt-main-table th.aptt-col-action {
-  z-index: calc(
-    var(--z-sticky) + 1
-  ) !important; /* ต้องอยู่เหนือ Header ปกติและเซลล์ปกติ */
-}
-
-/* ทำให้สีพื้นหลังเปลี่ยนตามเวลามีการ Hover แถว (ป้องกันสีขาวโดด) */
-.aptt-main-table tr:hover td.aptt-col-action {
-  background: var(--suth-surface-hover) !important;
-}
-
-/* 🟢 ป้องกันไม่ให้รหัส Case ID โดนบีบจนขึ้นบรรทัดใหม่ */
-/* 🟢 ป้องกันไม่ให้รหัส Case ID โดนบีบ และกำหนดความกว้างขั้นต่ำให้พอดีกับคำว่า MC-0000 */
-.aptt-col-case {
-  white-space: nowrap;
-  min-width: 90px; /* เพิ่มความกว้างขั้นต่ำให้เพียงพอ */
-  text-align: center; /* (ไม่บังคับ) จัดให้อยู่กึ่งกลางให้ดูสวยงามขึ้น */
-}
-
-.aptt-col-phone {
-  white-space: nowrap;
-  min-width: 120px; /* เพิ่มความกว้างขั้นต่ำให้พอดีกับเบอร์โทร */
-  text-align: center; /* จัดให้อยู่กึ่งกลาง */
-}
-/* ================= Loading State (CaseData Style) ================= */
-.aptt-empty-state {
-  padding: 60px 20px !important;
-  text-align: center;
-  color: var(--suth-action-ink);
+.aptt-done {
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-label);
   font-weight: 600;
-  font-size: var(--suth-fs-body);
-  background: var(--suth-surface);
 }
 
+/* Loading and empty states. */
+.aptt-state {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 56px 20px;
+  border: 1.5px dashed var(--suth-line);
+  border-radius: var(--suth-radius-card);
+  color: var(--suth-ink-2);
+  text-align: center;
+}
+.aptt-state p {
+  margin: 0;
+  color: var(--suth-muted);
+}
+.aptt-state strong {
+  color: var(--suth-ink);
+  font-size: var(--suth-fs-md);
+}
+.aptt-state__icon {
+  width: 36px;
+  height: 36px;
+  color: var(--suth-control-line);
+}
 .aptt-spinner {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border: 4px solid var(--suth-tint-strong);
-  border-top: 1px solid var(--suth-line);
+  border-top-color: var(--suth-action);
   border-radius: 50%;
-  animation: tableSpin 1s linear infinite;
-  margin: 0 auto 16px auto;
+  animation: aptt-spin 0.9s linear infinite;
 }
-
-@keyframes tableSpin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
+@keyframes aptt-spin {
+  to {
     transform: rotate(360deg);
   }
 }
 
-/* ── Kit shape (moved here from kit-system.css) ─────────────── */
-.admin-shell .aptt-wrapper-card {
-  border-color: transparent;
-  border-radius: var(--suth-radius-card);
-  background: var(--suth-surface);
-  box-shadow: var(--suth-shadow-soft);
+/* Phones: one card per appointment, labels beside values. */
+@media (max-width: 760px) {
+  .admin-shell table.aptt-table,
+  .admin-shell table.aptt-table tbody,
+  .admin-shell table.aptt-table tr,
+  .admin-shell table.aptt-table td {
+    display: block;
+    width: 100%;
+  }
+  .admin-shell table.aptt-table colgroup,
+  .admin-shell table.aptt-table thead {
+    display: none;
+  }
+  .admin-shell table.aptt-table tr {
+    margin-bottom: 12px;
+    padding: 6px 14px 12px;
+    border: 1px solid var(--suth-line-soft);
+    border-radius: var(--suth-radius-panel);
+    background: var(--suth-surface);
+  }
+  .admin-shell table.aptt-table td {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 2px 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--suth-line-soft);
+  }
+  .admin-shell table.aptt-table td::before {
+    content: attr(data-label);
+    grid-row: span 2;
+    color: var(--suth-muted);
+    font-size: var(--suth-fs-caption);
+    font-weight: 700;
+  }
+  .admin-shell table.aptt-table td > * {
+    grid-column: 2;
+  }
+  .admin-shell table.aptt-table :is(th, td).aptt-col-action {
+    display: block;
+    width: 100%;
+    padding-top: 12px;
+    border-bottom: 0;
+  }
+  .admin-shell table.aptt-table td.aptt-col-action::before {
+    content: none;
+  }
+  .aptt-acts {
+    display: flex;
+    width: 100%;
+  }
+  .aptt-act--ok {
+    flex: 1 1 auto;
+    min-height: 40px;
+  }
+  .aptt-act--cancel {
+    width: 40px;
+    min-height: 40px;
+    flex: none;
+  }
+  .aptt-tag {
+    justify-self: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aptt-act {
+    transition: none;
+  }
+  .aptt-spinner {
+    animation-duration: 2.4s;
+  }
 }

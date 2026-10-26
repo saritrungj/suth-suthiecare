@@ -15,6 +15,39 @@ import "./RolesPermissions.css";
 import { PageHero } from "../../components/dashboard/DashboardKit";
 
 const TYPE_LABELS = { school: "โรงเรียน", hospital: "โรงพยาบาล" };
+// Starting rights for a new role (server: authorization/rolePresets.js).
+const ROLE_PRESETS = [
+  { id: "", label: "เริ่มจากว่าง แล้วติ๊กสิทธิ์เอง" },
+  {
+    id: "supervisor",
+    label: "หัวหน้างาน: ดูภาพรวม รายงาน และประวัติการแก้ไข",
+    name: "หัวหน้างาน",
+  },
+  {
+    id: "school_admin",
+    type: "school",
+    label: "ผู้ดูแลโรงเรียน: โครงสร้างโรงเรียน ทะเบียนและนำเข้านักเรียน",
+    name: "ผู้ดูแลโรงเรียน",
+  },
+  {
+    id: "mental_admin",
+    type: "school",
+    label: "ผู้ดูแลสุขภาพจิต: รอบคัดกรอง ดูแลนักเรียน และอนุมัติการส่งต่อ",
+    name: "ผู้ดูแลสุขภาพจิต",
+  },
+  {
+    id: "counselor",
+    type: "school",
+    label: "ครูแนะแนว: บันทึกแนะแนว มอบหมายงานติดตาม และดูแลเคส",
+    name: "ครูแนะแนว",
+  },
+  {
+    id: "subject_teacher",
+    type: "school",
+    label: "ครูรายวิชา: ดูรายชื่อนักเรียนและรายงานพฤติกรรม",
+    name: "ครูรายวิชา",
+  },
+];
 
 export default function RolesPermissions() {
   const { authorization, activeOrganization, setActiveOrganization } =
@@ -27,7 +60,8 @@ export default function RolesPermissions() {
     [busy, setBusy] = useState(false);
   const [roleId, setRoleId] = useState(""),
     [name, setName] = useState(""),
-    [description, setDescription] = useState("");
+    [description, setDescription] = useState(""),
+    [preset, setPreset] = useState("");
   const generation = useRef(0);
   const orgId =
     activeOrganization && activeOrganization !== "all"
@@ -95,6 +129,7 @@ export default function RolesPermissions() {
     setRoleId("");
     setName("");
     setDescription("");
+    setPreset("");
     load();
     return () => {
       generation.current++;
@@ -111,10 +146,12 @@ export default function RolesPermissions() {
       const { data } = await createOrganizationRole(scope, {
         name,
         description,
+        ...(preset && { preset }),
       });
       if (current !== generation.current) return;
       setName("");
       setDescription("");
+      setPreset("");
       event.target.closest("details")?.removeAttribute("open");
       await load(data.id);
       await showSuccessToast("เพิ่มบทบาทในหน่วยงานแล้ว");
@@ -180,6 +217,30 @@ export default function RolesPermissions() {
           เพิ่มบทบาทในหน่วยงานนี้
         </summary>
         <form onSubmit={create}>
+          <label>
+            ชุดสิทธิ์ตั้งต้น
+            <SearchableSelect
+              aria-label="ชุดสิทธิ์ตั้งต้น"
+              value={preset}
+              disabled={busy}
+              onChange={(e) => {
+                const chosen = ROLE_PRESETS.find(
+                  (p) => p.id === e.target.value,
+                );
+                setPreset(e.target.value);
+                if (chosen?.name && !name.trim()) setName(chosen.name);
+              }}
+            >
+              {ROLE_PRESETS.filter(
+                (p) =>
+                  !p.type || p.type === (organization?.org_type || "hospital"),
+              ).map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.label}
+                </option>
+              ))}
+            </SearchableSelect>
+          </label>
           <label>
             ชื่อบทบาท
             <input

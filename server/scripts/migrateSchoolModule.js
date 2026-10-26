@@ -17,6 +17,14 @@ const forward = [
   "20261014_school_workflows.sql",
   "20261015_school_guardians.sql",
   "20261015_school_academic_years.sql",
+  "20261020_school_care_extensions.sql",
+  "20261021_school_care_phase2.sql",
+  "20261022_school_care_phase5.sql",
+  "20261023_student_mental_status.sql",
+  "20261024_student_file_actions.sql",
+  "20261025_screening_round_grades.sql",
+  "20261026_appointment_schedule.sql",
+  "20261027_screening_round_classrooms.sql",
 ];
 
 // Same splitter as migrateAllForward.js: drops comment lines, splits on ";".

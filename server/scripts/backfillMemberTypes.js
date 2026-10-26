@@ -12,7 +12,9 @@ const {
 
 async function main() {
   const apply = process.argv.includes("--apply");
-  const [accounts] = await db.query("SELECT id FROM patient_accounts ORDER BY id");
+  const [accounts] = await db.query(
+    "SELECT id FROM patient_accounts ORDER BY id",
+  );
   const answers = {};
   for (const { id } of accounts) {
     const found = apply
@@ -21,7 +23,11 @@ async function main() {
     const key = found ? found.type : "no_answer";
     answers[key] = (answers[key] || 0) + 1;
   }
-  const report = { mode: apply ? "apply" : "dry-run", accounts: accounts.length, answers };
+  const report = {
+    mode: apply ? "apply" : "dry-run",
+    accounts: accounts.length,
+    answers,
+  };
   if (apply) {
     const sql = memberTypeSql("pa");
     const [rows] = await db.query(
@@ -29,7 +35,11 @@ async function main() {
          FROM patient_accounts pa ${sql.joins}
         GROUP BY member_type, source ORDER BY member_type, source`,
     );
-    report.types = rows.map((r) => ({ type: r.member_type, source: r.source, total: Number(r.total) }));
+    report.types = rows.map((r) => ({
+      type: r.member_type,
+      source: r.source,
+      total: Number(r.total),
+    }));
   }
   console.log(JSON.stringify(report, null, 1));
 }

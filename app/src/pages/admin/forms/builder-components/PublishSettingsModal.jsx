@@ -142,7 +142,9 @@ const PublishSettingsModal = ({
                   <div
                     style={{
                       background:
-                        formType === "Registration" ? "var(--suth-info-tint)" : "var(--suth-success-tint)",
+                        formType === "Registration"
+                          ? "var(--suth-info-tint)"
+                          : "var(--suth-success-tint)",
                       padding: "6px",
                       borderRadius: "50%",
                       display: "flex",
@@ -278,11 +280,13 @@ const PublishSettingsModal = ({
               }}
             >
               <option value="general">ทั่วไป (ใช้ร่วมกัน)</option>
-              {clinics.filter((c) => c.slug !== "general").map((c) => (
-                <option key={c.slug} value={c.slug}>
-                  {c.name}
-                </option>
-              ))}
+              {clinics
+                .filter((c) => c.slug !== "general")
+                .map((c) => (
+                  <option key={c.slug} value={c.slug}>
+                    {c.name}
+                  </option>
+                ))}
             </SearchableSelect>
           </div>
 
@@ -322,7 +326,12 @@ const PublishSettingsModal = ({
               <option value="physical">สุขภาพกาย</option>
               <option value="general">สุขภาพทั่วไป</option>
             </SearchableSelect>
-            <small style={{ color: "var(--suth-muted)", fontSize: "var(--suth-fs-caption)" }}>
+            <small
+              style={{
+                color: "var(--suth-muted)",
+                fontSize: "var(--suth-fs-caption)",
+              }}
+            >
               ใช้แยกผลแบบประเมินในแฟ้มสุขภาพนักเรียน (หน่วยงานโรงเรียน)
             </small>
           </div>
@@ -409,7 +418,10 @@ const PublishSettingsModal = ({
                   }}
                 >
                   <label
-                    style={{ fontSize: "var(--suth-fs-label)", color: "var(--suth-ink-2)" }}
+                    style={{
+                      fontSize: "var(--suth-fs-label)",
+                      color: "var(--suth-ink-2)",
+                    }}
                   >
                     เริ่มเปิดรับข้อมูลตั้งแต่เวลา:
                   </label>
@@ -428,7 +440,10 @@ const PublishSettingsModal = ({
                   }}
                 >
                   <label
-                    style={{ fontSize: "var(--suth-fs-label)", color: "var(--suth-ink-2)" }}
+                    style={{
+                      fontSize: "var(--suth-fs-label)",
+                      color: "var(--suth-ink-2)",
+                    }}
                   >
                     ปิดรับข้อมูลอัตโนมัติเมื่อถึงเวลา:
                   </label>
@@ -495,7 +510,9 @@ const PublishSettingsModal = ({
                   borderRadius: "var(--suth-radius-sm)",
                   border: `2px solid ${loginEnforcement === opt.value ? opt.color : "var(--suth-line)"}`,
                   background:
-                    loginEnforcement === opt.value ? opt.bgColor : "var(--suth-surface)",
+                    loginEnforcement === opt.value
+                      ? opt.bgColor
+                      : "var(--suth-surface)",
                   transition: "all 0.2s",
                 }}
               >
@@ -581,7 +598,9 @@ const PublishSettingsModal = ({
                   borderRadius: "var(--suth-radius-sm)",
                   border: `2px solid ${resultDisplayMode === "realtime" ? "var(--suth-action)" : "var(--suth-line)"}`,
                   background:
-                    resultDisplayMode === "realtime" ? "var(--suth-tint)" : "var(--suth-surface)",
+                    resultDisplayMode === "realtime"
+                      ? "var(--suth-tint)"
+                      : "var(--suth-surface)",
                   transition: "all 0.2s",
                 }}
               >
@@ -640,7 +659,9 @@ const PublishSettingsModal = ({
                   borderRadius: "var(--suth-radius-sm)",
                   border: `2px solid ${resultDisplayMode === "on_submit" ? "var(--suth-action)" : "var(--suth-line)"}`,
                   background:
-                    resultDisplayMode === "on_submit" ? "var(--suth-tint)" : "var(--suth-surface)",
+                    resultDisplayMode === "on_submit"
+                      ? "var(--suth-tint)"
+                      : "var(--suth-surface)",
                   transition: "all 0.2s",
                 }}
               >

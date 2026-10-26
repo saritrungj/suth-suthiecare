@@ -110,12 +110,18 @@ test(
       assert.equal(access.isGuardian, true);
       assert.equal(Boolean(canSeeStudent(access, child)), true);
       assert.equal(Boolean(canSeeStudent(access, children[1])), false);
+      // Counselors' insights stay with staff, even for the guardian's child.
       assert.equal(
         (await fetch(url + `/students/${child.id}/insights`)).status,
-        200,
+        404,
       );
+      // Contacts of their own child are readable, without the care note;
+      // another child's are not.
+      const contacts = await fetch(url + `/students/${child.id}/contacts`);
+      assert.equal(contacts.status, 200);
+      assert.equal("care_instructions" in (await contacts.json()), false);
       assert.equal(
-        (await fetch(url + `/students/${children[1].id}/insights`)).status,
+        (await fetch(url + `/students/${children[1].id}/contacts`)).status,
         404,
       );
       assert.equal((await create()).status, 403);

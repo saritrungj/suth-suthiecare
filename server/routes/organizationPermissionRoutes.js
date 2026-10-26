@@ -102,6 +102,10 @@ router.post(
     const { normaliseText } = require("../utils/userValidation");
     const name = normaliseText(req.body?.name),
       description = normaliseText(req.body?.description);
+    const { ROLE_PRESETS } = require("../authorization/rolePresets");
+    const preset = req.body?.preset || null;
+    if (preset !== null && !Object.hasOwn(ROLE_PRESETS, preset))
+      return res.status(422).json({ message: "ชุดสิทธิ์ตั้งต้นไม่ถูกต้อง" });
     if (
       name.length < 2 ||
       name.length > 100 ||
@@ -116,7 +120,7 @@ router.post(
     try {
       c = await db.getConnection();
       await c.beginTransaction();
-      await unit(c, req.params.id);
+      const organization = await unit(c, req.params.id);
       const [[existing]] = await c.query(
         "SELECT id,name FROM roles WHERE name=? FOR UPDATE",
         [name],
@@ -147,13 +151,33 @@ router.post(
         'INSERT INTO organization_role_permission_sets (organization_id,role_id,source,version,updated_by) VALUES (?,? ,"explicit",1,?)',
         [req.params.id, roleId, req.user.id],
       );
+      const { PRESET_TYPES } = require("../authorization/rolePresets");
+      if (
+        preset &&
+        PRESET_TYPES[preset] &&
+        PRESET_TYPES[preset] !==
+          (organization.org_type === "school" ? "school" : "hospital")
+      )
+        throw Object.assign(new Error(), {
+          status: 422,
+          code: "PRESET_TYPE_MISMATCH",
+        });
+      const offered = keysForOrganizationType(organization.org_type);
+      const presetKeys = preset
+        ? ROLE_PRESETS[preset].filter((key) => offered.has(key))
+        : [];
+      if (presetKeys.length)
+        await c.query(
+          "INSERT IGNORE INTO organization_role_permissions (organization_id,role_id,permission_key) VALUES ?",
+          [presetKeys.map((key) => [req.params.id, roleId, key])],
+        );
       req.organizationContext = Number(req.params.id);
       await requiredAudit(
         req,
         "permissions.unit_role.create",
         "role",
         roleId,
-        {},
+        preset ? { preset, permissions: presetKeys } : {},
         c,
       );
       await c.commit();

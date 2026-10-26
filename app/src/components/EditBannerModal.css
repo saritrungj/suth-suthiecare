@@ -87,7 +87,11 @@
 .ebm-header {
   padding: 30px 35px 20px;
   border-bottom: 1px solid var(--suth-line-soft);
-  background: linear-gradient(to right, var(--suth-surface), var(--suth-surface-2));
+  background: linear-gradient(
+    to right,
+    var(--suth-surface),
+    var(--suth-surface-2)
+  );
 }
 
 .ebm-header h3 {

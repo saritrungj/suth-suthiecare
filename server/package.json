@@ -34,6 +34,7 @@
     "verify:school-roles-demo": "node scripts/seedSchoolRoleDemo.js --verify-only && node scripts/verifySchoolRoleDemo.js",
     "migrate:organization-permissions": "node scripts/migrateOrganizationPermissions.js",
     "migrate:roles-page-only": "node scripts/migrateRolesPageOnly.js",
+    "migrate:school-care-permissions": "node scripts/migrateSchoolCarePermissions.js",
     "migrate:patient-member-types": "node scripts/migratePatientMemberTypes.js",
     "migrate:result-images": "node scripts/migrateResultImages.js",
     "backfill:member-types": "node scripts/backfillMemberTypes.js"

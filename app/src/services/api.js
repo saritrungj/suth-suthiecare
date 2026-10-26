@@ -132,6 +132,8 @@ export const resendPatientEmailChange = (data) =>
 export const getPatientHistory = () => patientApi.get("/patient/history");
 export const getPatientSchoolHealth = () =>
   patientApi.get("/patient/me/school-health");
+export const getPatientAssessmentTasks = () =>
+  patientApi.get("/patient/me/assessment-tasks");
 export const updatePatientMemberType = (data) =>
   patientApi.put("/patient/me/member-type", data);
 export const getPatientCaseLogs = (id) =>
@@ -148,6 +150,113 @@ export const updatePatientHistoryAnswer = (responseId, questionId, value) =>
 
 // ── School (หน่วยงานประเภทโรงเรียน) ──
 export const getSchoolAccess = () => api.get("/school/access");
+export const getSchoolNotifications = (params) =>
+  api.get("/school/notifications", { params });
+export const getSchoolNotificationCount = () =>
+  api.get("/school/notifications/unread-count");
+export const readSchoolNotification = (id) =>
+  api.put(`/school/notifications/${id}/read`);
+export const ackSchoolNotification = (id) =>
+  api.put(`/school/notifications/${id}/ack`);
+export const readAllSchoolNotifications = () =>
+  api.put("/school/notifications/read-all");
+export const getBehaviorOptions = () =>
+  api.get("/school/behavior-reports/options");
+export const getBehaviorReports = (params) =>
+  api.get("/school/behavior-reports", { params });
+export const getBehaviorReport = (id) =>
+  api.get(`/school/behavior-reports/${id}`);
+export const createBehaviorReport = (data) =>
+  api.post("/school/behavior-reports", data);
+export const updateBehaviorStatus = (id, data) =>
+  api.put(`/school/behavior-reports/${id}/status`, data);
+export const assignBehaviorReport = (id, assigned_to) =>
+  api.put(`/school/behavior-reports/${id}/assign`, { assigned_to });
+export const getPhysicalRules = (school_id) =>
+  api.get("/school/physical-risk-rules", { params: { school_id } });
+export const createPhysicalRule = (data) =>
+  api.post("/school/physical-risk-rules", data);
+export const updatePhysicalRule = (id, data) =>
+  api.put(`/school/physical-risk-rules/${id}`, data);
+export const getFollowUps = (params) =>
+  api.get("/school/follow-ups", { params });
+export const getFollowUp = (id) => api.get(`/school/follow-ups/${id}`);
+export const updateFollowUp = (id, data) =>
+  api.put(`/school/follow-ups/${id}`, data);
+export const getCareGuidance = (schoolId) =>
+  api.get(`/school/care-guidance/${schoolId}`);
+export const saveCareGuidance = (schoolId, data) =>
+  api.put(`/school/care-guidance/${schoolId}`, data);
+export const getSchoolAppointments = (params) =>
+  api.get("/school/appointments", { params });
+export const getSchoolAppointment = (id) =>
+  api.get(`/school/appointments/${id}`);
+export const actOnSchoolAppointment = (id, data) =>
+  api.put(`/school/appointments/${id}`, data);
+export const getMyAppointmentSlots = (params) =>
+  api.get("/school/appointment-slots", { params });
+export const createAppointmentSlots = (data) =>
+  api.post("/school/appointment-slots", data);
+export const closeAppointmentSlot = (id) =>
+  api.delete(`/school/appointment-slots/${id}`);
+export const getAppointmentTopics = (school_id) =>
+  api.get("/school/appointment-topics", { params: { school_id } });
+export const saveAppointmentTopics = (data) =>
+  api.put("/school/appointment-topics", data);
+// The school's shared counseling schedule used by every counselor.
+export const getAppointmentSchedule = (schoolId) =>
+  api.get("/school/appointment-schedule", { params: { school_id: schoolId } });
+export const saveAppointmentSchedule = (data) =>
+  api.put("/school/appointment-schedule", data);
+// Guardian sign-in accounts of one student, managed from the student file.
+export const getStudentGuardians = (studentId) =>
+  api.get(`/school/students/${studentId}/guardians`);
+export const addStudentGuardian = (studentId, data) =>
+  api.post(`/school/students/${studentId}/guardians`, data);
+export const removeStudentGuardian = (studentId, userId) =>
+  api.delete(`/school/students/${studentId}/guardians/${userId}`);
+export const getStudentAppointments = () =>
+  patientApi.get("/patient/school-appointments");
+export const getStudentAppointmentOptions = () =>
+  patientApi.get("/patient/school-appointments/options");
+export const requestStudentAppointment = (data) =>
+  patientApi.post("/patient/school-appointments", data);
+export const cancelStudentAppointment = (id) =>
+  patientApi.post(`/patient/school-appointments/${id}/cancel`);
+export const getDocumentCategories = (school_id) =>
+  api.get("/school/document-categories", { params: { school_id } });
+export const saveDocumentCategories = (data) =>
+  api.put("/school/document-categories", data);
+export const getSchoolDocuments = (params) =>
+  api.get("/school/documents", { params });
+export const createSchoolDocument = (data) =>
+  api.post("/school/documents", data);
+export const updateSchoolDocument = (id, data) =>
+  api.put(`/school/documents/${id}`, data);
+export const hideSchoolDocument = (id) => api.delete(`/school/documents/${id}`);
+export const downloadSchoolDocument = (id) =>
+  api.get(`/school/documents/${id}/file`, { responseType: "blob" });
+export const getStudentDocuments = () =>
+  patientApi.get("/patient/school-documents");
+export const downloadStudentDocument = (id) =>
+  patientApi.get(`/patient/school-documents/${id}/file`, {
+    responseType: "blob",
+  });
+export const getSchoolReport = (params) =>
+  api.get("/school/reports/overview", { params });
+export const exportSchoolReport = (params) =>
+  api.get("/school/reports/overview", {
+    params: { ...params, format: "csv" },
+    responseType: "blob",
+  });
+export const getNotificationSettings = (schoolId) =>
+  api.get(`/school/notification-settings/${schoolId}`);
+export const saveNotificationSettings = (schoolId, data) =>
+  api.put(`/school/notification-settings/${schoolId}`, data);
+export const getStudentCareGuidance = (studentId) =>
+  api.get(`/school/students/${studentId}/care-guidance`);
+export const cancelBehaviorReport = (id, note) =>
+  api.delete(`/school/behavior-reports/${id}`, { data: { note } });
 export const getSchools = () => api.get("/school/schools");
 export const getSchoolGrades = (schoolId) =>
   api.get(`/school/schools/${schoolId}/grades`);
@@ -177,6 +286,10 @@ export const updateSchoolTeacher = (id, data) =>
 export const deleteSchoolTeacher = (id) => api.delete(`/school/teachers/${id}`);
 export const getSchoolStudents = (params) =>
   api.get("/school/students", { params });
+export const setStudentCareStatus = (id, data) =>
+  api.post(`/school/students/${id}/care-status`, data);
+export const saveAcademicYearTerms = (schoolId, year, data) =>
+  api.put(`/school/schools/${schoolId}/academic-years/${year}/terms`, data);
 export const getSchoolStudent = (id) => api.get(`/school/students/${id}`);
 export const createSchoolStudent = (data) => api.post("/school/students", data);
 export const updateSchoolStudent = (id, data) =>
@@ -280,6 +393,12 @@ export const saveResultImage = (level, data) =>
   api.put(`/admin/result-images/${level}`, data);
 export const resetResultImage = (level) =>
   api.delete(`/admin/result-images/${level}`);
+export const addResultImageAsset = (data) =>
+  api.post("/admin/result-images/assets", data);
+export const deleteResultImageAsset = (id) =>
+  api.delete(`/admin/result-images/assets/${id}`);
+export const saveResultPageTexts = (texts) =>
+  api.put("/admin/result-images/texts", { texts });
 
 //--- services ---//
 export const getServices = () => api.get("/services");
@@ -339,6 +458,15 @@ export const getCaseReferrals = (params) =>
   api.get("/case-referrals", { params });
 export const getCaseReferral = (id) => api.get(`/case-referrals/${id}`);
 export const createCaseReferral = (data) => api.post("/case-referrals", data);
+// A school's referral to a hospital waits for approval in the school first.
+export const getReferralRequests = (params) =>
+  api.get("/referral-approvals", { params });
+export const approveReferralRequest = (id) =>
+  api.post(`/referral-approvals/${id}/approve`);
+export const declineReferralRequest = (id, note) =>
+  api.post(`/referral-approvals/${id}/decline`, { note });
+export const cancelReferralRequest = (id) =>
+  api.post(`/referral-approvals/${id}/cancel`);
 export const updateCaseReferral = (id, data) =>
   api.post(`/case-referrals/${id}/updates`, data);
 

@@ -20,7 +20,7 @@ async function loadSchoolAccess(db, req) {
     [req.user.id, req.organizationContext],
   );
   const [roles] = await db.query(
-    `SELECT r.school_id,r.role_code FROM school_staff_roles r
+    `SELECT r.school_id,r.role_code,r.grade_scoped FROM school_staff_roles r
     JOIN schools s ON s.id=r.school_id
     JOIN organization_memberships om ON om.user_id=r.user_id AND om.organization_id=s.organization_id AND om.status='active'
     JOIN users u ON u.id=r.user_id AND u.status='active'
@@ -59,7 +59,10 @@ async function loadSchoolAccess(db, req) {
       classroomIds: [],
       healthClassroomIds: [],
       adminSchoolIds: [],
+      mentalAdminSchoolIds: [],
       counselorSchoolIds: [],
+      counselorClassroomIds: [],
+      counselorGradeIds: [],
       physicalSchoolIds: [],
       dormSchoolIds: [],
       allStudentSchoolIds: [],
@@ -117,9 +120,43 @@ async function loadSchoolAccess(db, req) {
   const adminSchoolIds = roles
     .filter((r) => ["admin", "mental_admin"].includes(r.role_code))
     .map((r) => Number(r.school_id));
-  const counselorSchoolIds = roles
-    .filter((r) => ["counselor", "mental_admin"].includes(r.role_code))
+  // Mental-health admins oversee every counseling appointment of the school.
+  const mentalAdminSchoolIds = roles
+    .filter((r) => r.role_code === "mental_admin")
     .map((r) => Number(r.school_id));
+  // A grade-scoped counselor sees only the classrooms of their grades (none
+  // when no grade is set). mental_admin always covers the whole school.
+  const gradeScoped = (r) =>
+    r.role_code === "counselor" && Number(r.grade_scoped) === 1;
+  const counselorSchoolIds = roles
+    .filter(
+      (r) =>
+        ["counselor", "mental_admin"].includes(r.role_code) && !gradeScoped(r),
+    )
+    .map((r) => Number(r.school_id));
+  const scopedSchoolIds = roles
+    .filter(gradeScoped)
+    .map((r) => Number(r.school_id));
+  let counselorClassroomIds = [],
+    counselorGradeIds = [];
+  if (scopedSchoolIds.length) {
+    const [gradeRooms] = await db.query(
+      `SELECT g.grade_level_id,c.id AS classroom_id FROM school_staff_role_grades g
+      LEFT JOIN school_classrooms c ON c.grade_level_id=g.grade_level_id AND c.school_id=g.school_id
+      WHERE g.user_id=? AND g.school_id IN (?)`,
+      [req.user.id, scopedSchoolIds],
+    );
+    counselorGradeIds = [
+      ...new Set(gradeRooms.map((r) => Number(r.grade_level_id))),
+    ];
+    counselorClassroomIds = [
+      ...new Set(
+        gradeRooms
+          .filter((r) => r.classroom_id != null)
+          .map((r) => Number(r.classroom_id)),
+      ),
+    ];
+  }
   const physicalSchoolIds = roles
     .filter((r) => r.role_code === "physical_admin")
     .map((r) => Number(r.school_id));
@@ -138,6 +175,7 @@ async function loadSchoolAccess(db, req) {
   const healthUnitWide = healthView && roles.length === 0 && !isTeacher;
   const mentalScope =
     counselorSchoolIds.length > 0 ||
+    counselorClassroomIds.length > 0 ||
     healthClassroomIds.length > 0 ||
     healthUnitWide;
   const physicalScope = mentalScope || physicalSchoolIds.length > 0;
@@ -156,13 +194,23 @@ async function loadSchoolAccess(db, req) {
     classroomIds,
     healthClassroomIds,
     adminSchoolIds,
+    mentalAdminSchoolIds,
+    // No school duty and no classroom: unit-wide aggregate reports apply.
+    hasSchoolRole: roles.length > 0 || isTeacher,
     counselorSchoolIds,
+    counselorClassroomIds,
+    counselorGradeIds,
     physicalSchoolIds,
     dormSchoolIds,
     allStudentSchoolIds,
     staff: actions("school_staff"),
     workflows: actions("school_workflows"),
     health: actions("student_health"),
+    behavior: actions("student_behavior"),
+    appointments: actions("school_appointments"),
+    documents: actions("school_documents"),
+    canViewAudit: can("audit.view"),
+    canViewReports: can("dashboard.view"),
     canClinical: isSystemAdmin || (healthView && physicalScope),
     canMental: isSystemAdmin || (healthView && mentalScope),
     canPhysical: isSystemAdmin || (healthView && physicalScope),
@@ -219,9 +267,15 @@ function studentScopeClause(access, alias = "ss") {
     clauses.push(`(${alias}.school_id IN (?) AND ${alias}.is_boarder=1)`);
     params.push(access.dormSchoolIds);
   }
-  if (access.classroomIds.length) {
+  const rooms = [
+    ...new Set([
+      ...access.classroomIds,
+      ...(access.counselorClassroomIds || []),
+    ]),
+  ];
+  if (rooms.length) {
     clauses.push(`${alias}.classroom_id IN (?)`);
-    params.push(access.classroomIds);
+    params.push(rooms);
   }
   return {
     sql: clauses.length ? ` AND (${clauses.join(" OR ")})` : " AND 1 = 0",
@@ -243,6 +297,9 @@ const guardianOf = (access, student) =>
         Number(s.school_id) === Number(student?.school_id),
     ),
   );
+const counselsStudent = (access, student) =>
+  student?.classroom_id != null &&
+  Boolean(access.counselorClassroomIds?.includes(Number(student.classroom_id)));
 const canSeeStudent = (access, student) =>
   !student?.archived_at &&
   (guardianOf(access, student) ||
@@ -250,6 +307,7 @@ const canSeeStudent = (access, student) =>
     access.allStudentSchoolIds?.includes(Number(student?.school_id)) ||
     (student?.is_boarder &&
       access.dormSchoolIds?.includes(Number(student.school_id))) ||
+    counselsStudent(access, student) ||
     teachesStudent(access, student));
 const canViewStudentHealth = (access, student) =>
   !student?.archived_at &&
@@ -260,6 +318,7 @@ const canViewStudentHealth = (access, student) =>
     access.isSystemAdmin ||
     access.healthUnitWide ||
     access.counselorSchoolIds?.includes(Number(student?.school_id)) ||
+    counselsStudent(access, student) ||
     (student?.classroom_id != null &&
       access.healthClassroomIds?.includes(Number(student.classroom_id)) &&
       access.homeroomSchoolIds?.includes(Number(student.school_id))),
@@ -268,6 +327,18 @@ const canUpdateStudentHealth = (access, student) =>
   !access.isGuardian &&
   access.healthUpdate !== false &&
   canViewStudentHealth(access, student);
+// Counselor level or above for this student: a counselor or mental-health
+// admin covering it, unit-wide health staff, or a system admin. Homeroom
+// teachers of the class are not included.
+const canCounselStudent = (access, student) =>
+  !student?.archived_at &&
+  !access.isGuardian &&
+  Boolean(
+    access.isSystemAdmin ||
+    access.healthUnitWide ||
+    access.counselorSchoolIds?.includes(Number(student?.school_id)) ||
+    counselsStudent(access, student),
+  );
 const canViewPhysicalHealth = (access, student) =>
   !student?.archived_at &&
   access.clinicalAllowed !== false &&
@@ -281,6 +352,39 @@ const canHealthAction = (access, action, student, physical = false) =>
   (physical
     ? canViewPhysicalHealth(access, student)
     : canViewStudentHealth(access, student));
+// The roles-page keys whose absence alone stops this health check for a
+// student the caller can see. Empty when granting keys would not help (the
+// student is outside the caller's health scope), so the route keeps its 404.
+// check: false/true (view/update) or a health action such as "create".
+function missingHealthKeys(access, check, student) {
+  if (access.isSystemAdmin || access.isGuardian) return [];
+  if (!canSeeStudent(access, student)) return [];
+  const action = typeof check === "string" ? check : check ? "update" : "view";
+  const missing = [];
+  if (access.clinicalAllowed === false) missing.push("clinical.view");
+  if (access.healthView === false && !access.health?.view)
+    missing.push("student_health.view");
+  if (action !== "view" && !access.health?.[action])
+    missing.push(`student_health.${action}`);
+  if (!missing.length) return [];
+  // Staff with no school duty see health unit-wide once they may view it.
+  const granted = {
+    ...access,
+    clinicalAllowed: true,
+    healthView: true,
+    healthUpdate: true,
+    healthUnitWide: access.healthUnitWide || access.hasSchoolRole === false,
+    health: { ...access.health, view: true, [action]: true },
+  };
+  const passes =
+    typeof check === "string"
+      ? canHealthAction(granted, check, student)
+      : (check ? canUpdateStudentHealth : canViewStudentHealth)(
+          granted,
+          student,
+        );
+  return passes ? missing : [];
+}
 const canManageSchool = (access) =>
   access.isSystemAdmin || Boolean(access.canUpdateSchool);
 // Staff/guardian accounts and screening workflows, per action on the roles page.
@@ -328,6 +432,26 @@ const publicAccess = (access) => ({
   can_view_mental: access.canMental,
   can_view_physical: access.canPhysical,
   can_view_risk: access.canViewRisk,
+  counselor_grade_ids: access.counselorGradeIds || [],
+  behavior_actions: flags(access, access.behavior),
+  can_use_behavior: Boolean(
+    access.isSystemAdmin || access.behavior?.view || access.behavior?.create,
+  ),
+  appointment_actions: flags(access, access.appointments),
+  can_view_reports: Boolean(access.isSystemAdmin || access.canViewReports),
+  can_use_documents: Boolean(
+    access.isSystemAdmin ||
+    ["view", "create", "update", "delete", "assign"].some(
+      (a) => access.documents?.[a],
+    ),
+  ),
+  can_use_appointments: Boolean(
+    access.isSystemAdmin ||
+    access.appointments?.view ||
+    access.appointments?.create,
+  ),
+  document_actions: flags(access, access.documents),
+  can_view_audit: Boolean(access.isSystemAdmin || access.canViewAudit),
 });
 module.exports = {
   loadSchoolAccess,
@@ -335,8 +459,10 @@ module.exports = {
   canSeeStudent,
   canViewStudentHealth,
   canUpdateStudentHealth,
+  canCounselStudent,
   canViewPhysicalHealth,
   canHealthAction,
+  missingHealthKeys,
   canManageSchool,
   canManageStaffAt,
   canManageWorkflowsAt,

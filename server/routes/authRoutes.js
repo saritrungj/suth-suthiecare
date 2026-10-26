@@ -31,20 +31,26 @@ const {
   trustedSessionCookieOptions,
 } = require("../services/trustedSessionService");
 
-const loginLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 5,
-  standardHeaders: true,
-  legacyHeaders: false,
-  keyGenerator: clientIpKeyGenerator,
-  message: {
-    success: false,
-    message: "พยายามเข้าสู่ระบบมากเกินไป กรุณารอสักครู่",
-  },
-});
+// Teachers at one school share an IP: count failures per username + IP under
+// a per-IP ceiling (see utils/rateLimits.js).
+const loginLimiter = require("../utils/rateLimits").staffLoginLimiters();
 const otpLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 15,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: clientIpKeyGenerator,
+  message: { success: false, message: "ลองยืนยันรหัสมากเกินไป กรุณารอสักครู่" },
+});
+// Every teacher at a school passes this step from the same IP. A challenge
+// already allows only OTP_MAX_ATTEMPTS guesses, so only failures count here.
+const loginOtpLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: require("../utils/rateLimits").positiveIntFromEnv(
+    "STAFF_OTP_MAX_FAILURES_PER_IP",
+    60,
+  ),
+  skipSuccessfulRequests: true,
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: clientIpKeyGenerator,
@@ -201,7 +207,7 @@ router.post("/login", loginLimiter, async (req, res) => {
   }
 });
 
-router.post("/login/verify-otp", otpLimiter, async (req, res) => {
+router.post("/login/verify-otp", loginOtpLimiter, async (req, res) => {
   try {
     const result = await verifyChallenge(db, {
       challengeToken: req.body.challengeToken,

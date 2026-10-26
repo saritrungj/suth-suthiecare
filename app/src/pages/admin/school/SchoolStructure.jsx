@@ -1,5 +1,6 @@
 import SchoolManagementNav from "./SchoolManagementNav";
 import AcademicYearSelect, { useAcademicYears } from "./AcademicYearSelect";
+import AcademicTermsForm from "./AcademicTermsForm";
 import api from "../../../services/api";
 import SearchableSelect from "../../../components/SearchableSelect";
 import { toDisplayText } from "../../../utils/textPresentation.js";
@@ -425,6 +426,9 @@ function SchoolClasses({ school, access }) {
                 </button>
               </form>
             </div>
+          )}
+          {access?.can_update_school && (
+            <AcademicTermsForm schoolId={school.id} academic={academic} />
           )}
         </details>
       )}

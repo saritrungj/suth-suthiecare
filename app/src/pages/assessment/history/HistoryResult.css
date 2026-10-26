@@ -1150,7 +1150,8 @@
   padding: 10px 12px;
   background: var(--suth-surface);
   border-radius: var(--suth-radius-sm);
-  border: 1px solid color-mix(in srgb, var(--suth-control-line) 42%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--suth-control-line) 42%, transparent);
 }
 .hr-answer-row--editable {
   border-color: var(--theme-orange-200);
@@ -1302,7 +1303,8 @@
 .hr-hero-input {
   background: transparent;
   border: none;
-  border-bottom: 1px solid color-mix(in srgb, var(--suth-surface) 40%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--suth-surface) 40%, transparent);
   color: var(--suth-on-action);
   font-family: inherit;
   font-size: inherit;
@@ -2103,7 +2105,11 @@
 .hr-suth-promo-banner {
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, var(--suth-tint) 0%, var(--suth-tint-strong) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--suth-tint) 0%,
+    var(--suth-tint-strong) 100%
+  );
   border: 1px solid var(--suth-warning-line);
   border-radius: var(--suth-radius-card);
   padding: 10px 30px;
@@ -2218,7 +2224,8 @@
   border-radius: 28px;
   /* White text sits on the card, so it takes the deeper button orange. */
   background: var(--suth-action-strong);
-  box-shadow: 0 18px 40px color-mix(in srgb, var(--suth-action-strong) 28%, transparent);
+  box-shadow: 0 18px 40px
+    color-mix(in srgb, var(--suth-action-strong) 28%, transparent);
 }
 .hr-name {
   text-shadow: none;
@@ -2334,7 +2341,11 @@
 .hr-suth-promo-banner {
   border: 0;
   border-radius: 28px;
-  background: linear-gradient(120deg, var(--pub-peach) 0%, var(--pub-pink) 100%);
+  background: linear-gradient(
+    120deg,
+    var(--pub-peach) 0%,
+    var(--pub-pink) 100%
+  );
 }
 .download-btn {
   border-radius: var(--suth-radius-pill);

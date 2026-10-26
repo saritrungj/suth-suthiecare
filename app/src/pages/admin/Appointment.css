@@ -142,14 +142,34 @@
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-  background: var(--suth-surface-2);
-  padding: 20px;
-  border-radius: var(--suth-radius-panel);
-  border: 1px solid var(--suth-line-soft);
-  opacity: 0;
-  animation: aptFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+/* Appointment status tabs: the most used filter, one click away. */
+.apt-status-tabs {
+  width: fit-content;
+  max-width: 100%;
+  margin-bottom: 4px;
+}
+.apt-status-tabs .dz-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.apt-status-tabs__count {
+  min-width: 24px;
+  padding: 1px 7px;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-surface);
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-caption);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.apt-status-tabs .dz-pill[aria-pressed="true"] .apt-status-tabs__count {
+  background: color-mix(in srgb, var(--suth-surface) 24%, transparent);
+  color: var(--suth-on-action);
 }
 
 /* 🟢 ช่องค้นหา (Search) */
@@ -577,8 +597,8 @@
     flex: 1;
   }
 
-  .apt-filter-section {
-    padding: 16px;
+  .apt-status-tabs {
+    width: 100%;
   }
   .apt-date-wrapper {
     width: 100%;

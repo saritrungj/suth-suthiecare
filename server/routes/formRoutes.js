@@ -692,7 +692,7 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
     // Verify the form before opening a transaction. A missing form must never
     // create a response or a Master Case.
     const [formRows] = await connection.query(
-      "SELECT title, clinic_type, form_type, organization_id, login_enforcement, status, publish_start_date, publish_end_date, questions FROM forms WHERE id = ?",
+      "SELECT title, clinic_type, form_type, organization_id, login_enforcement, status, publish_start_date, publish_end_date, questions, health_domain FROM forms WHERE id = ?",
       [formId],
     );
     if (!formRows[0])
@@ -735,6 +735,12 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
         .status(422)
         .json({ message: "เลขบัตรประชาชนไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง" });
 
+    // A homeroom submits together. Under REPEATABLE READ the case lookups
+    // (FOR UPDATE on a row that does not exist yet) take gap locks that
+    // deadlock against classmates' new cases. READ COMMITTED drops those gap
+    // locks; one person's submissions are still serialised by the account and
+    // person row locks in resolvePerson. Applies to this transaction only.
+    await connection.query("SET TRANSACTION ISOLATION LEVEL READ COMMITTED");
     await connection.beginTransaction();
     const processingPurpose =
       await require("../services/privacyNoticeService").getProcessingNotice(
@@ -949,6 +955,31 @@ router.post("/forms/:id/submit", attachOptionalPatient, async (req, res) => {
         invitation,
         responseId,
       );
+    // A school re-screening task for this form closes on the student's own
+    // submission, so staff no longer link the new result by hand.
+    await require("../services/schoolRescreen").completeTasksForResponse(
+      connection,
+      {
+        formId: Number(formId),
+        organizationId: Number(form.organization_id),
+        responseId,
+        personId: owner.personId,
+        patientAccountId: owner.patientAccountId,
+      },
+    );
+    // An at-risk mental-health result tells the student's homeroom teachers
+    // and grade counselors (school setting), inside this transaction.
+    await require("../services/schoolRiskAlerts").alertForResponseSafely(
+      connection,
+      {
+        organizationId: Number(form.organization_id),
+        responseId,
+        healthDomain: form.health_domain,
+        summary: dbSummary,
+        personId: owner.personId,
+        patientAccountId: owner.patientAccountId,
+      },
+    );
     const [notification] = await connection.query(
       'INSERT INTO organization_notification_events (organization_id,response_id,status,reason_code) VALUES (?,? ,"pending",NULL)',
       [form.organization_id, responseId],

@@ -1,0 +1,364 @@
+/* School overview report, drawn as a ledger: inside each work surface the
+   structure is 1px rules, never boxes or tinted panels (DESIGN.md, Flat
+   Inside and Tint Means State). Risk uses the shared RiskPill. */
+.rp-page {
+  /* Neutral for "not assessed": grey, never a status colour. */
+  --rp-none: #c3cad5;
+}
+.rp-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.rp-section {
+  margin-top: 18px;
+}
+.rp-muted {
+  margin: 0;
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-sm);
+}
+
+/* Latest round: a stat strip split by vertical rules. */
+.rp-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+}
+.rp-stat {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+  padding: 4px 20px 6px;
+  border-left: 1px solid var(--suth-line-soft);
+}
+.rp-stat:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.rp-stat dd {
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+  margin: 0;
+}
+.rp-stat__value {
+  color: var(--suth-ink);
+  font-size: var(--suth-fs-display);
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.rp-stat__value small {
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+}
+.rp-stat__value.is-hidden,
+.rp-metric dd.is-hidden {
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-md);
+  font-weight: 700;
+}
+.rp-stat__meta {
+  color: var(--suth-muted);
+  font-size: var(--suth-fs-label);
+  font-variant-numeric: tabular-nums;
+}
+.rp-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  padding: 2px 9px 2px 7px;
+  border-radius: var(--suth-radius-pill);
+  font-size: var(--suth-fs-caption);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.rp-delta.is-good {
+  background: var(--suth-success-tint);
+  color: var(--suth-success);
+}
+.rp-delta.is-bad {
+  background: var(--suth-danger-tint);
+  color: var(--suth-danger);
+}
+.rp-delta.is-flat {
+  background: var(--suth-neutral-tint);
+  color: var(--suth-ink-2);
+}
+
+/* Coverage: a ruled line under the strip, not a panel. */
+.rp-coverage {
+  display: grid;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--suth-line-soft);
+}
+.rp-coverage__text {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  margin: 0;
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-sm);
+}
+.rp-coverage__text strong {
+  color: var(--suth-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Thin 100% bar with a 2px gap between parts. */
+.rp-split {
+  display: flex;
+  gap: 2px;
+  height: 8px;
+  border-radius: var(--suth-radius-pill);
+  overflow: hidden;
+}
+.rp-split span {
+  flex-basis: 0;
+  min-width: 4px;
+}
+.rp-split.is-empty {
+  background: var(--suth-line-soft);
+}
+
+/* Trend chart. */
+.rp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-sm);
+}
+.rp-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.rp-legend i,
+.rp-tooltip i,
+.rp-metric dt i {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--suth-radius-xs);
+  display: inline-block;
+}
+.rp-chart {
+  width: 100%;
+  min-height: 300px;
+}
+.rp-tooltip {
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  border: 1px solid var(--suth-line);
+  border-radius: var(--suth-radius);
+  background: var(--suth-surface);
+  color: var(--suth-ink);
+  font-size: var(--suth-fs-sm);
+  box-shadow: var(--suth-shadow-pop);
+}
+.rp-tooltip span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.rp-page .cw-mode button svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Follow-up ledger: one ruled row per area. */
+.rp-ledger {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--suth-line-soft);
+}
+.rp-row + .rp-row {
+  border-top: 1px solid var(--suth-line-soft);
+}
+.rp-row__inner {
+  display: grid;
+  grid-template-columns:
+    minmax(200px, 1.15fr) minmax(0, 1.6fr) minmax(90px, 0.7fr)
+    minmax(150px, auto);
+  align-items: center;
+  gap: 12px 24px;
+  padding: 14px 4px;
+}
+.rp-row__area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.rp-row__area h3 {
+  margin: 0;
+  color: var(--suth-ink);
+  font-size: var(--suth-fs-md);
+  font-weight: 800;
+}
+.rp-row__area .rp-muted {
+  margin-top: 2px;
+  font-size: var(--suth-fs-label);
+  font-weight: 400;
+}
+.rp-row__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--suth-radius-icon);
+  background: var(--suth-surface-2);
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-md);
+}
+.rp-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  gap: 10px 16px;
+  margin: 0;
+}
+.rp-metric {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.rp-metric dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--suth-ink-2);
+  font-size: var(--suth-fs-label);
+  font-weight: 700;
+}
+.rp-metric dd {
+  margin: 0;
+  color: var(--suth-ink);
+  font-size: var(--suth-fs-title);
+  font-weight: 800;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+.rp-row__end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px 14px;
+}
+.rp-attention {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px 3px 8px;
+  border-radius: var(--suth-radius-pill);
+  background: var(--suth-warning-tint);
+  color: var(--suth-warning);
+  font-size: var(--suth-fs-label);
+  font-weight: 800;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.rp-attention svg {
+  width: 14px;
+  height: 14px;
+}
+.rp-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 36px;
+  color: var(--suth-action-ink);
+  font-size: var(--suth-fs-sm);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.rp-open:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.rp-open:focus-visible {
+  outline: 3px solid var(--suth-focus);
+  outline-offset: 2px;
+  border-radius: var(--suth-radius-xs);
+}
+.rp-range {
+  min-width: 0;
+}
+
+@media (max-width: 1180px) {
+  .rp-row__inner {
+    grid-template-columns: minmax(170px, 1fr) minmax(0, 1.5fr) auto;
+  }
+  .rp-row__bar {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .rp-row__end {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}
+@media (max-width: 900px) {
+  .rp-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rp-stat:nth-child(3) {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .rp-stat:nth-child(n + 3) {
+    padding-top: 14px;
+    margin-top: 10px;
+    border-top: 1px solid var(--suth-line-soft);
+  }
+}
+@media (max-width: 760px) {
+  .rp-row__inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 16px 0;
+  }
+  .rp-row__bar,
+  .rp-row__end {
+    grid-column: auto;
+    grid-row: auto;
+  }
+  .rp-row__end {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .rp-open {
+    min-height: 44px;
+    margin-left: auto;
+  }
+  .rp-stat {
+    padding-right: 10px;
+    padding-left: 14px;
+  }
+  .rp-stat__value {
+    font-size: var(--suth-fs-title);
+  }
+  .rp-page .cw-mode button {
+    min-height: 44px;
+  }
+}

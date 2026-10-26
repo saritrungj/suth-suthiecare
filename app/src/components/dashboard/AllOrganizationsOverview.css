@@ -106,7 +106,8 @@
 .dz-org:hover {
   transform: translateY(-3px);
   border-color: var(--suth-tint-line);
-  box-shadow: 0 16px 34px -16px color-mix(in srgb, var(--suth-danger) 35%, transparent);
+  box-shadow: 0 16px 34px -16px
+    color-mix(in srgb, var(--suth-danger) 35%, transparent);
 }
 
 .dz-org__head {

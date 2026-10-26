@@ -222,6 +222,23 @@ async function setup(page, { mental = true, manage = true } = {}) {
             ends_on: "2026-11-15",
             status: "active",
           },
+          {
+            id: 6,
+            school_id: 1,
+            name: "โฮมรูม ม.1 ห้อง 1/2",
+            academic_year: 2569,
+            semester: 2,
+            health_domain: "mental",
+            form_id: 5,
+            form_title: "แบบคัดกรองตัวอย่าง",
+            starts_on: "2026-10-27",
+            ends_on: "2026-10-27",
+            status: "active",
+            grades: [],
+            classrooms: [
+              { id: 13, name: "1/2", grade_level_id: 5, grade_name: "ม.1" },
+            ],
+          },
         ],
       });
     if (path === "/school/screening-rounds/4/progress")
@@ -258,6 +275,8 @@ async function setup(page, { mental = true, manage = true } = {}) {
             due_on: "2026-11-15",
             status: "pending",
             overdue: false,
+            target_form_title: "แบบคัดกรองสุขภาพจิต",
+            has_account: true,
           },
         ],
       });
@@ -327,6 +346,7 @@ async function setup(page, { mental = true, manage = true } = {}) {
                   id: 11,
                   name: "1/1",
                   academic_year: 2569,
+                  grade_level_id: 5,
                   grade_name: "ม.1",
                   level_order: 1,
                 },
@@ -334,6 +354,7 @@ async function setup(page, { mental = true, manage = true } = {}) {
                   id: 13,
                   name: "1/2",
                   academic_year: 2569,
+                  grade_level_id: 5,
                   grade_name: "ม.1",
                   level_order: 1,
                 },
@@ -382,7 +403,7 @@ test("school workflows show minimal risk, actual round progress and accessible d
     path: `../outputs/school-workflows-risk-${info.project.name}.png`,
     fullPage: true,
   });
-  await page.getByRole("button", { name: "รอบประเมิน", exact: true }).click();
+  await page.getByRole("button", { name: "รอบคัดกรอง", exact: true }).click();
   const outstandingButton = page.getByRole("button", {
     name: "ดูผู้ยังไม่ประเมิน รอบ ต้นภาคเรียน",
   });
@@ -448,59 +469,51 @@ test("general and dormitory staff have the minimal workflow without insight mana
     page.getByText("คำแนะนำที่โรงเรียนยืนยัน", { exact: true }),
   ).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "คัดกรองซ้ำ", exact: true }),
+    page.getByRole("button", { name: "ติดตามรายบุคคล", exact: true }),
   ).toHaveCount(0);
   await expect(
     page.locator('summary[aria-label="เปิดเมนูจัดการ"]'),
   ).toHaveCount(0);
 });
-test("rescreen workflow selects an eligible assignee, source response and actual due date", async ({
+test("rescreen workflow lists tasks, filters by status and opens the student file to create one", async ({
   page,
 }, info) => {
   const writes = await setup(page);
   await page.goto("/admin/school/workflows");
-  await page.getByRole("button", { name: "คัดกรองซ้ำ", exact: true }).click();
+  await page
+    .getByRole("button", { name: "ติดตามรายบุคคล", exact: true })
+    .click();
+  const studentCell = page.locator('td[data-label="นักเรียน"]').first();
+  await expect(studentCell).toContainText("เด็กหญิง สมหญิง สุขใจ");
+  await expect(studentCell).toContainText("0001");
+  await expect(studentCell).toContainText("ม.1 ห้อง 1/1");
   await expect(
-    page.locator('td[data-label="รหัสนักเรียน"]', { hasText: "0001" }),
-  ).toBeVisible();
-  await expect(
-    page.locator('td[data-label="ชื่อ–นามสกุล"]', {
-      hasText: "เด็กหญิง สมหญิง สุขใจ",
-    }),
-  ).toBeVisible();
-  await expect(
-    page.locator('td[data-label="ชั้น / ห้อง"]', { hasText: "ม.1 ห้อง 1/1" }),
-  ).toBeVisible();
+    page.locator('td[data-label="แบบประเมิน"]').first(),
+  ).toContainText("แสดงในบัญชีนักเรียนแล้ว");
+  // The status chips filter the list and keep their counts.
+  await page.getByRole("button", { name: /^ประเมินแล้ว/ }).click();
+  await expect(page.getByText("ไม่พบงานตามตัวกรอง")).toBeVisible();
+  await page.getByRole("button", { name: /^ทั้งหมด/ }).click();
+  // New tasks are made in the student file: pick the student, and the file
+  // opens on the insights tab where the screening record and task are made.
+  const opened = page.waitForRequest((r) =>
+    new URL(r.url()).pathname.endsWith("/school/students/1"),
+  );
   await page.getByRole("button", { name: "สร้างงานใหม่", exact: true }).click();
   await expect(
-    page.getByRole("dialog", { name: "สร้างงานคัดกรองซ้ำ" }),
+    page.getByRole("dialog", { name: "สร้างงานคัดกรองหรือติดตาม" }),
   ).toBeVisible();
   await page
     .getByRole("combobox", { name: "นักเรียน", exact: true })
     .selectOption("1");
+  await page.getByRole("button", { name: "เปิดแฟ้มนักเรียน" }).click();
+  await opened;
   await expect(
-    page.getByRole("combobox", { name: "ผลประเมินต้นทาง" }),
-  ).toHaveValue("31");
-  await expect(
-    page.getByRole("combobox", { name: "แบบประเมิน", exact: true }),
-  ).toHaveValue("5");
-  await page.getByRole("combobox", { name: "ผู้รับผิดชอบ" }).selectOption("2");
-  await page
-    .getByRole("textbox", { name: "กำหนดประเมินซ้ำ" })
-    .fill("15/11/2569");
-  await page.getByRole("button", { name: "สร้างงานติดตาม" }).click();
-  await expect
-    .poll(() => writes.some((w) => w.path === "/school/rescreen-tasks"))
-    .toBe(true);
-  expect(
-    writes.find((w) => w.path === "/school/rescreen-tasks").body,
-  ).toMatchObject({
-    student_id: "1",
-    source_response_id: "31",
-    assigned_user_id: "2",
-    target_form_id: "5",
-    due_on: "2026-11-15",
-  });
+    page.getByRole("dialog", { name: "สร้างงานคัดกรองหรือติดตาม" }),
+  ).toHaveCount(0);
+  // The student file opens on its own page, on the insights tab.
+  await expect(page).toHaveURL(/\/admin\/school\/students\/1\?tab=insights$/);
+  await page.getByRole("button", { name: "กลับไปรายการ" }).click();
   const loadLatest = page.getByRole("button", {
     name: "โหลดการประเมินล่าสุดของ 0001",
   });
@@ -562,4 +575,147 @@ test("student Excel/CSV onboarding processes 800 rows in batches with email and 
     email: "student1@example.com",
     is_boarder: "ใช่",
   });
+});
+
+test("a screening round can be limited to grade levels, or cover the whole school", async ({
+  page,
+}) => {
+  const requests = await setup(page);
+  await page.goto("/admin/school/workflows");
+  await page.getByRole("button", { name: "รอบคัดกรอง", exact: true }).click();
+  // A round with no grade levels covers the whole school.
+  await expect(
+    page.locator("tr").filter({ hasText: "ต้นภาคเรียน" }),
+  ).toContainText("ทั้งโรงเรียน");
+  await page.getByRole("button", { name: "สร้างรอบประเมิน" }).click();
+  const dialog = page.getByRole("dialog", { name: "สร้างรอบประเมิน" });
+  await dialog.getByLabel("ชื่อรอบ").fill("ปลายภาคเรียน");
+  await dialog
+    .getByRole("combobox", { name: "แบบประเมิน", exact: true })
+    .selectOption("5");
+  await dialog
+    .getByRole("textbox", { name: "เริ่มประเมิน" })
+    .fill("01/02/2570");
+  await dialog
+    .getByRole("textbox", { name: "สิ้นสุดประเมิน" })
+    .fill("15/02/2570");
+  await dialog.getByRole("checkbox", { name: "ม.1" }).check();
+  await dialog
+    .getByRole("button", { name: "สร้างรอบประเมิน", exact: true })
+    .click();
+  await expect
+    .poll(() => requests.find((r) => r.path === "/school/screening-rounds"))
+    .toBeTruthy();
+  expect(
+    requests.find((r) => r.path === "/school/screening-rounds").body,
+  ).toMatchObject({
+    name: "ปลายภาคเรียน",
+    form_id: "5",
+    starts_on: "2027-02-01",
+    ends_on: "2027-02-15",
+    grade_level_ids: [5],
+  });
+});
+
+test("a screening round can target single classrooms of a grade", async ({
+  page,
+}) => {
+  const requests = await setup(page);
+  await page.goto("/admin/school/workflows");
+  await page.getByRole("button", { name: "รอบคัดกรอง", exact: true }).click();
+  // The rounds table names the classroom a round is for.
+  await expect(
+    page.locator("tr").filter({ hasText: "โฮมรูม ม.1 ห้อง 1/2" }),
+  ).toContainText("ม.1 ห้อง 1/2");
+  await page.getByRole("button", { name: "สร้างรอบประเมิน" }).click();
+  const dialog = page.getByRole("dialog", { name: "สร้างรอบประเมิน" });
+  const room11 = dialog.getByRole("checkbox", { name: "ห้อง 1/1" });
+  const room12 = dialog.getByRole("checkbox", { name: "ห้อง 1/2" });
+  // Choosing the grade covers all its classrooms.
+  await dialog.getByRole("checkbox", { name: "ม.1", exact: true }).check();
+  await expect(room11).toBeChecked();
+  await expect(room11).toBeDisabled();
+  await dialog.getByRole("checkbox", { name: "ม.1", exact: true }).uncheck();
+  await expect(room11).not.toBeChecked();
+  await room12.check();
+  await dialog.getByLabel("ชื่อรอบ").fill("โฮมรูม 1/2");
+  await dialog
+    .getByRole("combobox", { name: "แบบประเมิน", exact: true })
+    .selectOption("5");
+  await dialog
+    .getByRole("textbox", { name: "เริ่มประเมิน" })
+    .fill("27/10/2569");
+  await dialog
+    .getByRole("textbox", { name: "สิ้นสุดประเมิน" })
+    .fill("27/10/2569");
+  await dialog
+    .getByRole("button", { name: "สร้างรอบประเมิน", exact: true })
+    .click();
+  await expect
+    .poll(() => requests.find((r) => r.path === "/school/screening-rounds"))
+    .toBeTruthy();
+  expect(
+    requests.find((r) => r.path === "/school/screening-rounds").body,
+  ).toMatchObject({
+    name: "โฮมรูม 1/2",
+    grade_level_ids: [],
+    classroom_ids: [13],
+    starts_on: "2026-10-27",
+    ends_on: "2026-10-27",
+  });
+});
+
+test("rounds for every classroom follow the homeroom timetable in one request", async ({
+  page,
+}) => {
+  const requests = await setup(page);
+  await page.goto("/admin/school/workflows");
+  await page.getByRole("button", { name: "รอบคัดกรอง", exact: true }).click();
+  await page
+    .getByRole("button", { name: "สร้างรอบให้ทุกห้องตามตาราง" })
+    .click();
+  const dialog = page.getByRole("dialog", {
+    name: "สร้างรอบให้ทุกห้องตามตาราง",
+  });
+  await dialog
+    .getByRole("combobox", { name: "แบบประเมิน", exact: true })
+    .selectOption("5");
+  // Friday 23 Oct 2026, one classroom a day, weekends skipped.
+  await dialog
+    .getByRole("textbox", { name: "วันแรกของตาราง" })
+    .fill("23/10/2569");
+  await dialog.getByLabel("จำนวนห้องต่อวัน").fill("1");
+  const timetable = dialog.getByRole("region", { name: "ตารางรอบรายห้อง" });
+  await expect(
+    timetable.locator("tr").filter({ hasText: "ม.1 ห้อง 1/1" }),
+  ).toContainText("คัดกรองคาบโฮมรูม ม.1 ห้อง 1/1");
+  await expect(
+    timetable.locator("tr").filter({ hasText: "ม.1 ห้อง 1/2" }),
+  ).toContainText("26");
+  await dialog.getByRole("button", { name: "สร้าง 2 รอบ" }).click();
+  await expect
+    .poll(() =>
+      requests.find((r) => r.path === "/school/screening-rounds/batch"),
+    )
+    .toBeTruthy();
+  const body = requests.find(
+    (r) => r.path === "/school/screening-rounds/batch",
+  ).body;
+  expect(body.school_id).toBe(1);
+  expect(body.rounds).toHaveLength(2);
+  expect(body.rounds[0]).toMatchObject({
+    name: "คัดกรองคาบโฮมรูม ม.1 ห้อง 1/1",
+    form_id: "5",
+    starts_on: "2026-10-23",
+    ends_on: "2026-10-23",
+    classroom_ids: [11],
+  });
+  expect(body.rounds[1]).toMatchObject({
+    starts_on: "2026-10-26",
+    ends_on: "2026-10-26",
+    classroom_ids: [13],
+  });
+  await expect(
+    page.getByRole("dialog", { name: "สร้างรอบให้ทุกห้องตามตาราง" }),
+  ).toHaveCount(0);
 });
